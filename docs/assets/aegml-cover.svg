@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">AegML — О!дин запрос</title>
+  <desc id="desc">Команда из четырёх участников готовит агента для путешествий и отелей. Тёмно-синяя обложка с маршрутом и точками назначения.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101E35"/><stop offset="1" stop-color="#193C4B"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#E1F6F0" stroke-opacity=".045"/></pattern>
+    <linearGradient id="route" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#62D6B3"/><stop offset="1" stop-color="#FFCF70"/></linearGradient>
+  </defs>
+  <rect width="1280" height="400" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="400" rx="24" fill="url(#grid)"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <rect x="64" y="48" width="232" height="32" rx="16" fill="#62D6B3" fill-opacity=".12" stroke="#62D6B3" stroke-opacity=".3"/>
+    <circle cx="82" cy="64" r="4" fill="#62D6B3"/>
+    <text x="98" y="69" fill="#A5EBD6" font-size="12" font-weight="600" letter-spacing="1.5">O! HACKATHON · 2026</text>
+    <text x="60" y="177" fill="#F1F7F8" font-size="88" font-weight="750" letter-spacing="-4">AegML</text>
+    <text x="64" y="235" fill="#FFCF70" font-size="36" font-weight="600">О!дин запрос.</text>
+    <text x="64" y="280" fill="#C4D5DF" font-size="21">От идеи путешествия к понятному выбору.</text>
+    <path d="M64 326H624" stroke="#C4D5DF" stroke-opacity=".16"/>
+    <text x="64" y="357" fill="#92ACBA" font-size="13" letter-spacing="1">4 УЧАСТНИКА</text>
+    <text x="245" y="357" fill="#92ACBA" font-size="13" letter-spacing="1">TRAVEL + AI</text>
+    <text x="432" y="357" fill="#92ACBA" font-size="13" letter-spacing="1">FOUNDATION</text>
+  </g>
+  <g fill="none">
+    <circle cx="990" cy="200" r="143" stroke="#85B6BF" stroke-opacity=".17"/>
+    <ellipse cx="990" cy="200" rx="70" ry="143" stroke="#85B6BF" stroke-opacity=".17"/>
+    <path d="M847 200H1133M866 129Q990 169 1114 129M866 271Q990 231 1114 271M990 57V343" stroke="#85B6BF" stroke-opacity=".17"/>
+    <path d="M770 294C873 291 849 118 960 145S1048 310 1145 95" stroke="url(#route)" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 9"/>
+  </g>
+  <g><circle cx="770" cy="294" r="14" fill="#62D6B3" fill-opacity=".15"/><circle cx="770" cy="294" r="5" fill="#62D6B3"/>
+    <circle cx="960" cy="145" r="18" fill="#62D6B3" fill-opacity=".12"/><circle cx="960" cy="145" r="7" fill="#62D6B3"/>
+    <path d="M1145 63C1127 63 1117 76 1117 90C1117 109 1145 132 1145 132S1173 109 1173 90C1173 76 1163 63 1145 63Z" fill="#FFCF70"/>
+    <circle cx="1145" cy="90" r="9" fill="#193747"/>
+  </g>
+</svg>

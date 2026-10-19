@@ -1,0 +1,33 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Private preparation must never enter the public repository
+.private/
+private/
+team-private/
+
+# Python and tools
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+
+# Editors, OS, local outputs
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+output/
+artifacts/
+*.log
