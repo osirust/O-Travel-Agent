@@ -1,0 +1,1635 @@
+{
+  "audit_date": "2026-10-24",
+  "scope": "Статический аудит авторского корпуса. Приложение/LLM и сценарии не запускались; harness/код не создавались. Пути источников в этой копии нормализованы к репозиторию; числа и исходные сценарии не изменены.",
+  "method": "Python stdlib; чтение всех 106 объектов и всех полей; проверка ZIP inventory перед ограниченным чтением членов без распаковки/исполнения; буквальный разбор Markdown без семантических предположений.",
+  "provenance": "README архива и Markdown называют набор авторским, не официальным набором/критериями жюри.",
+  "sources": [
+    {
+      "bytes": 39195,
+      "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "source_name": "ostrovok_stress_tests.jsonl",
+      "repository_path": "docs/research/sources/ostrovok_stress_tests.jsonl"
+    },
+    {
+      "bytes": 37127,
+      "sha256": "6214755a11de9fb838e4052e7e8f09a07ffb508797c1bbd84ee4d5af1c2822b8",
+      "source_name": "ostrovok_stress_tests.md",
+      "repository_path": "docs/research/sources/ostrovok_stress_tests.md"
+    },
+    {
+      "bytes": 29520,
+      "sha256": "0d9e2dce388dd8b459a582252cf057dc470f8bfbc7df647dcb442df877e60fee",
+      "source_name": "ostrovok_agent_stress_tests_106.zip",
+      "repository_path": "docs/research/sources/ostrovok_agent_stress_tests_106.zip"
+    }
+  ],
+  "archive_entries": [
+    {
+      "name": "README.txt",
+      "uncompressed_bytes": 1695,
+      "compressed_bytes": 820,
+      "crc32": "8c2ef974",
+      "unix_mode": "0o100644",
+      "unsafe_reasons": [],
+      "sha256": "ed50cdb680f41a9fdc0bd5e9bbbab4500faafa4711635c9c0301cb3f78eb1af6"
+    },
+    {
+      "name": "ostrovok_stress_tests.md",
+      "uncompressed_bytes": 37127,
+      "compressed_bytes": 9245,
+      "crc32": "c9311f89",
+      "unix_mode": "0o100644",
+      "unsafe_reasons": [],
+      "sha256": "6214755a11de9fb838e4052e7e8f09a07ffb508797c1bbd84ee4d5af1c2822b8"
+    },
+    {
+      "name": "ostrovok_stress_tests.jsonl",
+      "uncompressed_bytes": 39195,
+      "compressed_bytes": 9225,
+      "crc32": "8c4a8651",
+      "unix_mode": "0o100644",
+      "unsafe_reasons": [],
+      "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e"
+    },
+    {
+      "name": "ostrovok_stress_tests.json",
+      "uncompressed_bytes": 46336,
+      "compressed_bytes": 9522,
+      "crc32": "8c1d05ce",
+      "unix_mode": "0o100644",
+      "unsafe_reasons": [],
+      "sha256": "6390b95c8e67abbbfd0ca93e83cd9b014aa9c2cdfbc184d193b82f55289873f2"
+    }
+  ],
+  "checks": {
+    "jsonl_physical_line_count": 106,
+    "jsonl_parsed_rows": 106,
+    "expected_106_rows": true,
+    "blank_jsonl_lines": [],
+    "duplicate_json_keys": [],
+    "schema_errors": [],
+    "unique_ids": 106,
+    "duplicate_ids": {},
+    "category_id_sequence_errors": [],
+    "zip_duplicate_entry_names": {},
+    "zip_unsafe_entries": [],
+    "zip_all_members_read_with_crc_verification": true,
+    "zip_plain_files_byte_equal": {
+      "ostrovok_stress_tests.jsonl": true,
+      "ostrovok_stress_tests.md": true
+    },
+    "zip_json_root_type": "dict",
+    "zip_json_root_is_array": false,
+    "zip_json_tests_type": "list",
+    "zip_json_tests_count": 106,
+    "zip_json_metadata": {
+      "title": "Набор стресс-тестов для AI-агента 'О!дин запрос'",
+      "created": "2026-10-24",
+      "scope": "Авторские тест-кейсы, не официальный набор жюри",
+      "version": 1,
+      "total": 106
+    },
+    "zip_json_metadata_total_equals_actual": true,
+    "zip_json_tests_equal_jsonl_including_order": true,
+    "zip_json_tests_id_order_equals_jsonl": true,
+    "markdown_test_count": 106,
+    "markdown_unique_ids": 106,
+    "markdown_duplicate_ids": {},
+    "markdown_id_order_equals_jsonl": true,
+    "markdown_field_mismatches": [],
+    "markdown_message_numbering_errors": [],
+    "markdown_unparsed_test_body_lines": [],
+    "exact_message_duplicates": [],
+    "exact_message_sequence_duplicates": []
+  },
+  "counts": {
+    "tests": 106,
+    "categories": 12,
+    "priorities": {
+      "P0": 76,
+      "P1": 30
+    },
+    "messages": 129,
+    "unique_exact_message_strings": 129,
+    "message_count_distribution": {
+      "1": 96,
+      "3": 8,
+      "4": 1,
+      "5": 1
+    },
+    "single_message_tests": 96,
+    "multi_message_tests": 10,
+    "multi_message_test_ids": [
+      "STATE-01",
+      "STATE-02",
+      "STATE-03",
+      "STATE-04",
+      "STATE-05",
+      "STATE-06",
+      "STATE-07",
+      "STATE-08",
+      "STATE-09",
+      "STATE-10"
+    ],
+    "test_setup_non_null": 16,
+    "test_setup_null": 90,
+    "field_type_counts": {
+      "category": {
+        "str": 106
+      },
+      "expected_behavior": {
+        "str": 106
+      },
+      "id": {
+        "str": 106
+      },
+      "messages": {
+        "list": 106
+      },
+      "priority": {
+        "str": 106
+      },
+      "test_setup": {
+        "NoneType": 90,
+        "str": 16
+      }
+    }
+  },
+  "category_counts": [
+    {
+      "category": "NLU",
+      "tests": 9,
+      "P0": 5,
+      "P1": 4,
+      "messages": 9,
+      "single_message_tests": 9,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 0,
+      "test_setup_null": 9,
+      "first_id": "NLU-01",
+      "last_id": "NLU-09"
+    },
+    {
+      "category": "CONFLICT",
+      "tests": 9,
+      "P0": 8,
+      "P1": 1,
+      "messages": 9,
+      "single_message_tests": 9,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 0,
+      "test_setup_null": 9,
+      "first_id": "CONFLICT-01",
+      "last_id": "CONFLICT-09"
+    },
+    {
+      "category": "GROUP",
+      "tests": 8,
+      "P0": 5,
+      "P1": 3,
+      "messages": 8,
+      "single_message_tests": 8,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 0,
+      "test_setup_null": 8,
+      "first_id": "GROUP-01",
+      "last_id": "GROUP-08"
+    },
+    {
+      "category": "DATE",
+      "tests": 10,
+      "P0": 8,
+      "P1": 2,
+      "messages": 10,
+      "single_message_tests": 10,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 0,
+      "test_setup_null": 10,
+      "first_id": "DATE-01",
+      "last_id": "DATE-10"
+    },
+    {
+      "category": "ROUTE",
+      "tests": 8,
+      "P0": 5,
+      "P1": 3,
+      "messages": 8,
+      "single_message_tests": 8,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 0,
+      "test_setup_null": 8,
+      "first_id": "ROUTE-01",
+      "last_id": "ROUTE-08"
+    },
+    {
+      "category": "HOTEL",
+      "tests": 10,
+      "P0": 6,
+      "P1": 4,
+      "messages": 10,
+      "single_message_tests": 10,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 2,
+      "test_setup_null": 8,
+      "first_id": "HOTEL-01",
+      "last_id": "HOTEL-10"
+    },
+    {
+      "category": "MONEY",
+      "tests": 8,
+      "P0": 6,
+      "P1": 2,
+      "messages": 8,
+      "single_message_tests": 8,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 2,
+      "test_setup_null": 6,
+      "first_id": "MONEY-01",
+      "last_id": "MONEY-08"
+    },
+    {
+      "category": "STATE",
+      "tests": 10,
+      "P0": 8,
+      "P1": 2,
+      "messages": 33,
+      "single_message_tests": 0,
+      "multi_message_tests": 10,
+      "test_setup_non_null": 0,
+      "test_setup_null": 10,
+      "first_id": "STATE-01",
+      "last_id": "STATE-10"
+    },
+    {
+      "category": "BOOK",
+      "tests": 8,
+      "P0": 7,
+      "P1": 1,
+      "messages": 8,
+      "single_message_tests": 8,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 4,
+      "test_setup_null": 4,
+      "first_id": "BOOK-01",
+      "last_id": "BOOK-08"
+    },
+    {
+      "category": "SOURCE",
+      "tests": 8,
+      "P0": 5,
+      "P1": 3,
+      "messages": 8,
+      "single_message_tests": 8,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 0,
+      "test_setup_null": 8,
+      "first_id": "SOURCE-01",
+      "last_id": "SOURCE-08"
+    },
+    {
+      "category": "SYSTEM",
+      "tests": 10,
+      "P0": 8,
+      "P1": 2,
+      "messages": 10,
+      "single_message_tests": 10,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 6,
+      "test_setup_null": 4,
+      "first_id": "SYSTEM-01",
+      "last_id": "SYSTEM-10"
+    },
+    {
+      "category": "UX",
+      "tests": 8,
+      "P0": 5,
+      "P1": 3,
+      "messages": 8,
+      "single_message_tests": 8,
+      "multi_message_tests": 0,
+      "test_setup_non_null": 2,
+      "test_setup_null": 6,
+      "first_id": "UX-01",
+      "last_id": "UX-08"
+    }
+  ],
+  "setup_scenarios": [
+    {
+      "id": "HOTEL-02",
+      "category": "HOTEL",
+      "priority": "P0",
+      "test_setup": "Каталог с дубликатами одного отеля и разными rate_id"
+    },
+    {
+      "id": "HOTEL-03",
+      "category": "HOTEL",
+      "priority": "P1",
+      "test_setup": "Каталог с одинаковыми названиями и разными geo_id"
+    },
+    {
+      "id": "MONEY-02",
+      "category": "MONEY",
+      "priority": "P0",
+      "test_setup": "Синтетический тариф с такими правилами"
+    },
+    {
+      "id": "MONEY-03",
+      "category": "MONEY",
+      "priority": "P0",
+      "test_setup": "Демо price_check изменяет итог"
+    },
+    {
+      "id": "BOOK-02",
+      "category": "BOOK",
+      "priority": "P0",
+      "test_setup": "Два конкурентных запроса c одним idempotency_key"
+    },
+    {
+      "id": "BOOK-03",
+      "category": "BOOK",
+      "priority": "P0",
+      "test_setup": "Инъекция изменения тарифа между search и checkout"
+    },
+    {
+      "id": "BOOK-04",
+      "category": "BOOK",
+      "priority": "P0",
+      "test_setup": "Инъекция timeout после сохранения первого заказа"
+    },
+    {
+      "id": "BOOK-08",
+      "category": "BOOK",
+      "priority": "P0",
+      "test_setup": "Инъекция ошибки при записи в БД"
+    },
+    {
+      "id": "SYSTEM-01",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "test_setup": "Запуск без LLM_API_KEY и без сети"
+    },
+    {
+      "id": "SYSTEM-02",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "test_setup": "Инъекция 429 от внешнего API"
+    },
+    {
+      "id": "SYSTEM-03",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "test_setup": "Инъекция 500/timeout во время price_check"
+    },
+    {
+      "id": "SYSTEM-04",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "test_setup": "В поле hotel.description вставить вредоносную инструкцию"
+    },
+    {
+      "id": "SYSTEM-09",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "test_setup": "LLM отвечает невалидным JSON вместо ожидаемой структуры"
+    },
+    {
+      "id": "SYSTEM-10",
+      "category": "SYSTEM",
+      "priority": "P1",
+      "test_setup": "Конкурентная работа двух пользователей с совпадающими названиями поездок"
+    },
+    {
+      "id": "UX-01",
+      "category": "UX",
+      "priority": "P0",
+      "test_setup": "Под условия подходит ровно один offer"
+    },
+    {
+      "id": "UX-02",
+      "category": "UX",
+      "priority": "P0",
+      "test_setup": "Нет подходящих offers"
+    }
+  ],
+  "findings": [
+    {
+      "id": "CORPUS-001",
+      "kind": "fixture_specification_gap",
+      "status": "OPEN_BEFORE_AUTOMATION",
+      "title": "16 test_setup — описания строками без готовых фикстур",
+      "test_ids": [
+        "HOTEL-02",
+        "HOTEL-03",
+        "MONEY-02",
+        "MONEY-03",
+        "BOOK-02",
+        "BOOK-03",
+        "BOOK-04",
+        "BOOK-08",
+        "SYSTEM-01",
+        "SYSTEM-02",
+        "SYSTEM-03",
+        "SYSTEM-04",
+        "SYSTEM-09",
+        "SYSTEM-10",
+        "UX-01",
+        "UX-02"
+      ],
+      "evidence": "Все 16 непустых test_setup имеют тип str; ZIP содержит только README и три представления корпуса. Готовых файлов каталогов/ошибок нет.",
+      "examples": {
+        "HOTEL-02": "Каталог с дубликатами одного отеля и разными rate_id",
+        "BOOK-04": "Инъекция timeout после сохранения первого заказа"
+      },
+      "future_action": "Задать версионированные payload/фикстуры и способ включения каждого сбоя. Сейчас не реализовывать.",
+      "closure": "Каждая требующая подготовки строка связана с воспроизводимой фикстурой или явно отмечена manual_review."
+    },
+    {
+      "id": "CORPUS-002",
+      "kind": "fixture_specification_gap",
+      "status": "OPEN_BEFORE_AUTOMATION",
+      "title": "Относительные даты без фиксированных часов и часового пояса",
+      "test_ids": [
+        "NLU-02",
+        "DATE-10"
+      ],
+      "evidence": "В обоих test_setup=null; отдельных полей reference_now/timezone в объекте нет.",
+      "examples": {
+        "NLU-02": [
+          "В Питер на следующие выходные, из Москвы."
+        ],
+        "DATE-10": [
+          "Вылет завтра, обратно после послезавтра, гибкость плюс-минус день."
+        ]
+      },
+      "future_action": "Определить reference_now/timezone и правила вычисления относительных выражений.",
+      "closure": "Указанные ID имеют фиксированные часы, часовой пояс и проверяемые ожидаемые даты."
+    },
+    {
+      "id": "CORPUS-003",
+      "kind": "fixture_specification_gap",
+      "status": "OPEN_BEFORE_AUTOMATION",
+      "title": "Ссылки на прежние варианты/заказы без описанного начального состояния",
+      "test_ids": [
+        "STATE-07",
+        "BOOK-05",
+        "BOOK-06",
+        "SYSTEM-08",
+        "UX-08"
+      ],
+      "evidence": "test_setup=null для всех перечисленных ID; поля initial_state нет.",
+      "examples": {
+        "STATE-07": [
+          "Меняем даты на два дня.",
+          "Подтверждаю прежний отель.",
+          "Оплачивай."
+        ],
+        "BOOK-05": [
+          "Моё бронирование отменилось, можно вернуть его как было?"
+        ],
+        "BOOK-06": [
+          "Забронировал 2 номера, хочу отменить только один."
+        ],
+        "SYSTEM-08": [
+          "Я на странице оформления нажал обновить."
+        ],
+        "UX-08": [
+          "Отель недоступен уже после выбора."
+        ]
+      },
+      "interpretation_limit": "Это структурный пробел воспроизводимости, не доказательство неправильности expected_behavior; ручной проверяющий может дополнительно подготовить состояние.",
+      "future_action": "Определить стартовые offer_id/order_id/состояние сессии и страницы либо предварительные шаги, сохранив исходный текст.",
+      "closure": "Для каждого указанного ID определён воспроизводимый старт либо режим ручной интерпретации."
+    },
+    {
+      "id": "CORPUS-004",
+      "kind": "fixture_specification_gap",
+      "status": "OPEN_BEFORE_AUTOMATION",
+      "title": "UI/конкурентность/сбои описаны словами без протокола операций",
+      "test_ids": [
+        "BOOK-02",
+        "BOOK-04",
+        "BOOK-08",
+        "SYSTEM-08",
+        "SYSTEM-10"
+      ],
+      "evidence": "messages имеет тип list[str]; полей операций, пользователей, конкурентного барьера и точек fault injection нет.",
+      "examples": {
+        "BOOK-02": "Два конкурентных запроса c одним idempotency_key",
+        "BOOK-04": "Инъекция timeout после сохранения первого заказа",
+        "BOOK-08": "Инъекция ошибки при записи в БД",
+        "SYSTEM-08": null,
+        "SYSTEM-10": "Конкурентная работа двух пользователей с совпадающими названиями поездок"
+      },
+      "future_action": "Позже определить UI/API/DB шаги и наблюдаемые эффекты; отправка слов в чат сама по себе не проверяет конкурентность, refresh или ошибку записи.",
+      "closure": "Указанные ID связаны с воспроизводимыми операциями/точками сбоя либо остаются manual_review."
+    },
+    {
+      "id": "CORPUS-005",
+      "kind": "automation_limit",
+      "status": "OPEN_BEFORE_AUTOMATION",
+      "title": "106 expected_behavior — проза без исполняемого oracle",
+      "test_ids": "all_106",
+      "evidence": "Все expected_behavior — непустые строки; expected_assertions/структурированных ожидаемых результатов нет. README прямо оговаривает, что это не эталонный JSON ответа модели.",
+      "future_action": "Позже задать наблюдаемые инварианты и ручную рубрику по ID.",
+      "closure": "Для каждого автоматизируемого ID определены наблюдаемые проверки; остальное имеет manual_review."
+    },
+    {
+      "id": "CORPUS-006",
+      "kind": "format_integration_note",
+      "status": "DOCUMENTED_NOT_SOURCE_DEFECT",
+      "title": "JSON из ZIP имеет объект-обёртку, массив находится в tests",
+      "test_ids": "all_106",
+      "evidence": {
+        "root_type": "dict",
+        "root_keys": [
+          "title",
+          "created",
+          "scope",
+          "version",
+          "total",
+          "tests"
+        ],
+        "tests_equals_jsonl": true,
+        "metadata": {
+          "title": "Набор стресс-тестов для AI-агента 'О!дин запрос'",
+          "created": "2026-10-24",
+          "scope": "Авторские тест-кейсы, не официальный набор жюри",
+          "version": 1,
+          "total": 106
+        }
+      },
+      "future_action": "Импортёр должен читать .tests и сохранять metadata; не считать корневой объект массивом.",
+      "closure": "Контракт импорта документирован; исправление исходного корпуса не требуется."
+    }
+  ],
+  "per_test": [
+    {
+      "id": "NLU-01",
+      "category": "NLU",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "d9e10d8c6e76d8ea103c7b1fee3723c6f19110e87f8a8fb313ef54e4899c6f5d",
+      "markdown_heading_line": 11,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-02",
+      "category": "NLU",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "4d00ba49674fe3bf3a2073f5a1332898677ebf608393f0948294ff5fede70973",
+      "markdown_heading_line": 15,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-03",
+      "category": "NLU",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "0dce5169d393add977554cfb6e6fa669016de14bb5bf728d6592e7d5e18fd453",
+      "markdown_heading_line": 19,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-04",
+      "category": "NLU",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "7034e79ab30a06e1d428b3b63f58bfd29dc35df7acf2bfdcd36b932e22d91f97",
+      "markdown_heading_line": 23,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-05",
+      "category": "NLU",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "f53495f342818d015c799e5ff4b4eea4363310b64a5f5603b60e475f68205c01",
+      "markdown_heading_line": 27,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-06",
+      "category": "NLU",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8e28c0b2dc53e9a4d4fcb1bdafbe18cb3f4ae685124f9e526a809137788cbd2f",
+      "markdown_heading_line": 31,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-07",
+      "category": "NLU",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "7a187a109015a8d59842008a1c329e0e1e416724fef9581374346a42fa239a7f",
+      "markdown_heading_line": 35,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-08",
+      "category": "NLU",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "1f175e8c24829cdf9a43dbf86fa549127aaae00a2cfa4d9757aac6b991afa0e0",
+      "markdown_heading_line": 39,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "NLU-09",
+      "category": "NLU",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "b53948d94d007f402fae22fc9271e81f5c354ae167add0274c7884a02fb58ca7",
+      "markdown_heading_line": 43,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-01",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "a1c51083bb36342da3b5d6c10ab85ff9e2911e0afa22f69344622631c9ef387b",
+      "markdown_heading_line": 49,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-02",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "7850a73ba256ba48e4ab247ac0f04b1df8a20a81c3cfabb9dca1e283a2b0f28e",
+      "markdown_heading_line": 53,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-03",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "9f3410551df1d4e84126b548249a7f3bb72f3e269607f581e99fe02c085909a5",
+      "markdown_heading_line": 57,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-04",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "9b394b5608d455c90ef2d71a754d1b6ea11503d69c9d43506021fa3e5052e77b",
+      "markdown_heading_line": 61,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-05",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "47036e0aa8c23f7aeb1c89a1e60fd5cbcc115aa1e51b6dff8386681f9abde253",
+      "markdown_heading_line": 65,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-06",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "fb251fe593d0d8cee416af65b652f61e3aae043bf8a82cd862805e271445040a",
+      "markdown_heading_line": 69,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-07",
+      "category": "CONFLICT",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "5b9078eb84d263b84237a6f3d6d1e56e975e444a2bfab3d8d64cf76badcd83ec",
+      "markdown_heading_line": 73,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-08",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "692393b08fd64e9131cb87262d3858100f0fcab29bacdd5e345ab9e345f5eccb",
+      "markdown_heading_line": 77,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "CONFLICT-09",
+      "category": "CONFLICT",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "86343338e5b11082f8dd136cb5c67ee1eaeca1667cdce135691ae44e0af526f6",
+      "markdown_heading_line": 81,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-01",
+      "category": "GROUP",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "f8f5466e90c609e18bc864e35c8af8b437e21360b32beba1a9f2bd87f99e2347",
+      "markdown_heading_line": 87,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-02",
+      "category": "GROUP",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "6e510e36c444a05a81872e2038a52bc4a1b0a5ef41db97b52668ece77bad911c",
+      "markdown_heading_line": 91,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-03",
+      "category": "GROUP",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "f72a2a3900da8ac120fd7d3573396a0203857bdaa77a677882a3cb4632dd2526",
+      "markdown_heading_line": 95,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-04",
+      "category": "GROUP",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "6b75396eb84a9ffe1a084b625efac3e7f132e0ab48390ef28424cda373f8819b",
+      "markdown_heading_line": 99,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-05",
+      "category": "GROUP",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "49292daff3896d4c9cfd4196a03af40637a8acfa72926790195926723aeeb2d5",
+      "markdown_heading_line": 103,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-06",
+      "category": "GROUP",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8e43c9f34bec99c61ba97156f6789d676c98ce312156f26d56c9c3715f08ce2f",
+      "markdown_heading_line": 107,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-07",
+      "category": "GROUP",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "6a5a41ae3b238d371e544f5db62dac45f8233944837578af44b5acbd10d87da3",
+      "markdown_heading_line": 111,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "GROUP-08",
+      "category": "GROUP",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "15fd69fef4b969edb7ffa8afb07cd230278897e655cebc2bbeff0299e8f127d5",
+      "markdown_heading_line": 115,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-01",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "3fb134a082940370f3a9305ab33bf813faff802ab691ad992fb135d8a0bf3a98",
+      "markdown_heading_line": 121,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-02",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "3d821968f093aa69e0b75d5fe9835829966cd77f2795a3294e0016c6f7a04e5f",
+      "markdown_heading_line": 125,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-03",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "7e8f043e74c705025cb15e36a2603c16a613db0915440960c87a08091fff6f88",
+      "markdown_heading_line": 129,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-04",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8b9ce1891092c84e4ee565c09b35b2e03c8333919d6f6a0fe13ad88abd07dd9e",
+      "markdown_heading_line": 133,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-05",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "aaf1af3ae8ce8159b2f813178a17b0887901789e80c09f37b28f4e1359152681",
+      "markdown_heading_line": 137,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-06",
+      "category": "DATE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "a12a425623bd0b51ff51aba7f6ee2bb9fbccbdf0cc911808332538465b8bc8c0",
+      "markdown_heading_line": 141,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-07",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "1ec7371636415d5643c561fbb397ded0a9c52003126e9f14d79bd21dce4168b0",
+      "markdown_heading_line": 145,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-08",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "5bf87f230a7a36f9bcbbbc833c597a3b5d5f96ab770542156afa52a52b037c13",
+      "markdown_heading_line": 149,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-09",
+      "category": "DATE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "4f7f4572644f103483ee87fe70870e943c623c94363df7615080a9b03768f733",
+      "markdown_heading_line": 153,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "DATE-10",
+      "category": "DATE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "cf8c68dbc4362d4d4590b9227e6462f40466cf751bd721b5e5598f7f51348e7c",
+      "markdown_heading_line": 157,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-01",
+      "category": "ROUTE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "5dd3827f5e4b9b0a2e510d906c90356589b0a604ba696e6cd9a6bbec20b0ca29",
+      "markdown_heading_line": 163,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-02",
+      "category": "ROUTE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "352d3b20dac4924a9a964d691f33162ef67b9efabc824f7a92992fff12282299",
+      "markdown_heading_line": 167,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-03",
+      "category": "ROUTE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "46ebc998e14b3d9d6c0ec65860d619c63c491f85ae71d0affc1b01c2b490c540",
+      "markdown_heading_line": 171,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-04",
+      "category": "ROUTE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "a7b26824c3f5682855913765832eaea25eea7a9d9163cedfb0bcf13945ff3a21",
+      "markdown_heading_line": 175,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-05",
+      "category": "ROUTE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "53b7ce5a1505736f9d388cf285e3fa00d0010a9874c3feb1b36ce9400df4e2c6",
+      "markdown_heading_line": 179,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-06",
+      "category": "ROUTE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "48736a5ebe8b0f465d31281286ed2337d4f7a8647fc624d2e399e84503303ee3",
+      "markdown_heading_line": 183,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-07",
+      "category": "ROUTE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "f39094413c42553777958a650d30cc8165503f1d4a16c5cf650aeaf135f975f8",
+      "markdown_heading_line": 187,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "ROUTE-08",
+      "category": "ROUTE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "ee5629791e5dfb4dc9cdeb842e7196e7cd2596c7134cc6b45153f6c46885eaf4",
+      "markdown_heading_line": 191,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-01",
+      "category": "HOTEL",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "4c56bf6743bfdf38fd7ae46231a50e6016cbfaad9d2a9b647f18166168fc6cf4",
+      "markdown_heading_line": 197,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-02",
+      "category": "HOTEL",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "d1171d28fc01c4c95a6899d46ae00e9325815785a000f572b6bcb149cc21ff5c",
+      "markdown_heading_line": 201,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-03",
+      "category": "HOTEL",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "b8df87f9f416d2e34ecc3366aa5fa5395a8bd5269eba90b302d749eb2afd423b",
+      "markdown_heading_line": 206,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-04",
+      "category": "HOTEL",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "d1a6fbcfad0b419e3f774d5579bbf9b5921443d8e970af4a1a4197bfe21deb7d",
+      "markdown_heading_line": 211,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-05",
+      "category": "HOTEL",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "db17f57469d7e43c228b564c72e13e388f5e1d4813d6e5ef8e8062c6062bf04b",
+      "markdown_heading_line": 215,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-06",
+      "category": "HOTEL",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "4a7a083708b28c62cb89ccddc30fb076f18e4f87ec5c9a5659a3b601ea7b4b4e",
+      "markdown_heading_line": 219,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-07",
+      "category": "HOTEL",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "9bf871105497c3ed19bef37117938de0a407f16f837ad4b184cec3bc1366fdac",
+      "markdown_heading_line": 223,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-08",
+      "category": "HOTEL",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "b6d84ed3d2c37ac225b6e5f6254bfd3065d0969c4b26eabc31f1cb681225ceb9",
+      "markdown_heading_line": 227,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-09",
+      "category": "HOTEL",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "3d99ea841f3163dba19a868dfd91c822157b2195ae018de1066e916beed4961d",
+      "markdown_heading_line": 231,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "HOTEL-10",
+      "category": "HOTEL",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "7162ab8b63cd291e2d3f186a5caa4b6af72dda4cf1cc02514f878d439137a12c",
+      "markdown_heading_line": 235,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-01",
+      "category": "MONEY",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8a71aa7e043bc8d605fa2f7eac4f975cc63abda5000013ccae4df83d05f74318",
+      "markdown_heading_line": 241,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-02",
+      "category": "MONEY",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "14d8ea264e6f108564c078dc81a26f8ce4681847e596a29a9d0f394e05577585",
+      "markdown_heading_line": 245,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-03",
+      "category": "MONEY",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "0520fcd8b58e35be9801ab5640a7febfeb01f4dc450fed0e2b0f2b9be66000b5",
+      "markdown_heading_line": 250,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-04",
+      "category": "MONEY",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "1b9a6194d584fa9a65c785a8b9f2b4b9a1316f55f72c3bcf26d567364d602a36",
+      "markdown_heading_line": 255,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-05",
+      "category": "MONEY",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8aee978c69d045618366c37b2e820cc01ed9cfd2ad6cc0f7d1928a3f2aaed5a2",
+      "markdown_heading_line": 259,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-06",
+      "category": "MONEY",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "ed2632abfab13dbab7004872b15992a277ed157e02d9f017f3623bdb30c1cbb2",
+      "markdown_heading_line": 263,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-07",
+      "category": "MONEY",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "0d85f04cef9467c00bbb8509d18a8b527ff7eb31c57ef3b1c31148a19f5eff66",
+      "markdown_heading_line": 267,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "MONEY-08",
+      "category": "MONEY",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "42f0a7513088167835eaf4fc81de91db446a96e1051a65fff508fa0e71e2e7b5",
+      "markdown_heading_line": 271,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-01",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 5,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8e1171be247ceea11997f3d0de498d67c683085064e5b3e2e1d9d2eec57968f5",
+      "markdown_heading_line": 277,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-02",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "62bd7f254be8ac9a348f1cc8f17dbf10db2f323d3e20f00ee4f8fd63ede00bb7",
+      "markdown_heading_line": 285,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-03",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "4439ffe8d9623c612ec9855b952d584b6e12bb29a82b7313c7994acf57a3a2c7",
+      "markdown_heading_line": 291,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-04",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "3a991b74c8bac7b030139827805588e0bb8437f5b8f34269cebf51f85a4948f7",
+      "markdown_heading_line": 297,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-05",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "2753c095ddc11160a20e6b318466ff6a5c64a250e5b507e80ef0ccc1e473a5f9",
+      "markdown_heading_line": 303,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-06",
+      "category": "STATE",
+      "priority": "P1",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "a0e3500a227221e392352b099844b7de491efb43d0bed1c85504cdad7749e6e9",
+      "markdown_heading_line": 309,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-07",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "9082eca070f83cddb44f8f5bbaceed1f96e6aef7959e5f41b45a998f0de3ea40",
+      "markdown_heading_line": 315,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-08",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 4,
+      "test_setup_present": false,
+      "canonical_object_sha256": "b4ba7e5671f7035011a8dc63f98a0855368c74e858c7d79f3c2cf73432567541",
+      "markdown_heading_line": 321,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-09",
+      "category": "STATE",
+      "priority": "P1",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "21f7ce2059a9719aecc77a65f4429ab26f40e1399b60ea55c0909a46703b7246",
+      "markdown_heading_line": 328,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "STATE-10",
+      "category": "STATE",
+      "priority": "P0",
+      "messages": 3,
+      "test_setup_present": false,
+      "canonical_object_sha256": "56d7857c615c8bf12577e4fb3ace2bd7fd5232168805df489f0c037107e0146a",
+      "markdown_heading_line": 334,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-01",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "a2bdd9a104e21578e3c349801ad9da32a3acf55e920f81ba69ea44ce17cbe4ea",
+      "markdown_heading_line": 342,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-02",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "f31ee64c688503054c54752c8b925401d2950d2d5b6fe7ba43b864da72bd915b",
+      "markdown_heading_line": 346,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-03",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "fbaeb48b8a5ca307b2d6f14dd89df3c8b91d1016b5a02db805071cea6f8d12af",
+      "markdown_heading_line": 351,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-04",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "345b20cb3a198d629019a1c387124eba7cf5998841485a06b3314b3d47265b7c",
+      "markdown_heading_line": 356,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-05",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "bae92d3140924a03431e922fb43b89178c2ac757a7f53e87a7945851ac5bafbd",
+      "markdown_heading_line": 361,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-06",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8fcb600c027c58d009ab637a727ecb5d82e9e6c27fa8261a7cf61aa9eca01d4f",
+      "markdown_heading_line": 365,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-07",
+      "category": "BOOK",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "0e975a93d995901c3fbdd1d166a3846030ca6acea2efcb81480906fd10bcd5e9",
+      "markdown_heading_line": 369,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "BOOK-08",
+      "category": "BOOK",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "9f59984e8a3e26e7900835bf0ebb1b9452e8f03ea53ff3bd1c67a79bc91af6fe",
+      "markdown_heading_line": 373,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-01",
+      "category": "SOURCE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "bd57027962979f776ba35b52ab7c6607b2fad09a6fec93451aca7432f0854dd8",
+      "markdown_heading_line": 380,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-02",
+      "category": "SOURCE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "d7f07856e5a587d1449faad14edfb205b9c6b76325d080642b36c937c018ed7e",
+      "markdown_heading_line": 384,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-03",
+      "category": "SOURCE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "71e6899d61fe6e80340545c88b89f4b065b30d402719f4cf08da0c18a208001d",
+      "markdown_heading_line": 388,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-04",
+      "category": "SOURCE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "2ae7b4bac4ccd42f30510b512a690f169653fe67dfe20dd6f98b4cb5025ce446",
+      "markdown_heading_line": 392,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-05",
+      "category": "SOURCE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "bbc339749326bdeda8c0dbae251f84b11ef8c2d772635f4c93c427996003f320",
+      "markdown_heading_line": 396,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-06",
+      "category": "SOURCE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "eccd3bb6a5dda0f99f39bf586e2c0c95c2d9399ac1f59eb6aab2fe20d981a2ae",
+      "markdown_heading_line": 400,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-07",
+      "category": "SOURCE",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "27e1f74067a66f6a11ae67397015092f35de9ea8d41cc6e58fe74fb8b54792fc",
+      "markdown_heading_line": 404,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SOURCE-08",
+      "category": "SOURCE",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "5985003a55184abbd89aa42d28bbcfdcec3bc5829ba14ace1184dbeff314852b",
+      "markdown_heading_line": 408,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-01",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "2fa8b097bd960b83fc70500e17cbff1408b498c91045575d7ccb52c0d85dccc9",
+      "markdown_heading_line": 414,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-02",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "8e5702f34e1004faf056cb8786de7b015630eb7ff6d5ff57a3f3667f1bec1303",
+      "markdown_heading_line": 419,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-03",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "a6abf757199a0ce505072297f9ad2bb0f6476c79dee850119b9637ef62ef1cb6",
+      "markdown_heading_line": 424,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-04",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "a0c5f637a2aee0f2baf18d9115a75fdd9559f7251626b1597e57f5e5cb89725f",
+      "markdown_heading_line": 429,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-05",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "6b67a40deeb5a018fcaa852aa5ae371a70b6929698a19d7ebc214399df2f89f1",
+      "markdown_heading_line": 434,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-06",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "f8d10868df09853b9ea3ef073279aaf4095bb02d9d37b1e34fdd12d9aa0a056e",
+      "markdown_heading_line": 438,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-07",
+      "category": "SYSTEM",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "8abec4e5e053382c05fbaf55c93039b8ac4cc783a457ff6e5bfe976f1b623845",
+      "markdown_heading_line": 442,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-08",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "211d971f2499264a4d649e5c4dde3d4f6bbe16211262639975f3084997195aa4",
+      "markdown_heading_line": 446,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-09",
+      "category": "SYSTEM",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "603a1b2910bcd929fe776a83ed048cef83a1ede81fd06894f2555c9ab76e2e22",
+      "markdown_heading_line": 450,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "SYSTEM-10",
+      "category": "SYSTEM",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "d4d1e506940d8cd505d044def88e6a98d9708346970f955a94d62a6d43116eea",
+      "markdown_heading_line": 455,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-01",
+      "category": "UX",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "ab2967b2bf63a60547727a822623f1156d86fba7fa320f6183497b3b83174a17",
+      "markdown_heading_line": 462,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-02",
+      "category": "UX",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": true,
+      "canonical_object_sha256": "0ee78febd0dd8f6fa1801a14b1f43bfdae2d5aa25f5e9884ef5173e7b0aefd0e",
+      "markdown_heading_line": 467,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-03",
+      "category": "UX",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "08f1f92c102d82090e636626547a8f1375128c856b10f9ad66b9cd828404d798",
+      "markdown_heading_line": 472,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-04",
+      "category": "UX",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "641f85ef8d151078289bf3ef240d4adc9735076f9f7f6cec4c9a3e8fe91423d6",
+      "markdown_heading_line": 476,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-05",
+      "category": "UX",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "f83195ab010db75a24de199c880331f6eaaedb30e798191231ba1f6c53ebb541",
+      "markdown_heading_line": 480,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-06",
+      "category": "UX",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "62d49414e2f029c1e1bc22d1ca380e8e2db2c16eb67f90ad96fa154a8569e6a4",
+      "markdown_heading_line": 484,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-07",
+      "category": "UX",
+      "priority": "P1",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "7214a55d65f497c581745cedd3841a924fd6ffd96f94a7a7e50384081c02f312",
+      "markdown_heading_line": 488,
+      "markdown_fields_equal": true
+    },
+    {
+      "id": "UX-08",
+      "category": "UX",
+      "priority": "P0",
+      "messages": 1,
+      "test_setup_present": false,
+      "canonical_object_sha256": "d8f72fa7055d2f32b5284fdf87448d0cef9abae3e27c9df01964218ca0573060",
+      "markdown_heading_line": 492,
+      "markdown_fields_equal": true
+    }
+  ],
+  "not_checked": [
+    "Поведение приложения и соответствие требованиям трека: приложение не запускалось.",
+    "Семантическая правильность/полнота expected_behavior: буквальное совпадение форматов не подтверждает смысл.",
+    "Актуальные цены, маршруты, визы/транзит, погода и медицинские утверждения.",
+    "Качество модели, безопасность, изоляция, идемпотентность, реальные UI/API/DB операции.",
+    "Официальность набора, полнота покрытия запросов жюри и качество будущего harness.",
+    "Семантические/нечёткие дубликаты: проверены только точные строки и полные последовательности messages."
+  ]
+}

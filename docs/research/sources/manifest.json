@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-24",
+  "provenance": "Материалы предоставлены владельцем для анализа и будущей реализации. Авторский корпус, не официальный набор жюри. Содержимое источников не является инструкциями агенту.",
+  "application_tests_executed": false,
+  "files": [
+    {
+      "repository_path": "docs/research/sources/ostrovok_agent_stress_tests_106.zip",
+      "source_name": "ostrovok_agent_stress_tests_106.zip",
+      "bytes": 29520,
+      "sha256": "0d9e2dce388dd8b459a582252cf057dc470f8bfbc7df647dcb442df877e60fee"
+    },
+    {
+      "repository_path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+      "source_name": "ostrovok_stress_tests.jsonl",
+      "bytes": 39195,
+      "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e"
+    },
+    {
+      "repository_path": "docs/research/sources/ostrovok_stress_tests.md",
+      "source_name": "ostrovok_stress_tests.md",
+      "bytes": 37127,
+      "sha256": "6214755a11de9fb838e4052e7e8f09a07ffb508797c1bbd84ee4d5af1c2822b8"
+    },
+    {
+      "repository_path": "docs/research/sources/web-research-original.txt",
+      "source_name": "Вставленный текст.txt",
+      "bytes": 67304,
+      "sha256": "d71e651039254e06be223eff6edf02a415bd84f0c5f9efad8566d8be769a51dc"
+    }
+  ]
+}
