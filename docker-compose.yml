@@ -1,0 +1,65 @@
+name: otravel
+
+services:
+  db:
+    image: postgres:17@sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe
+    environment:
+      POSTGRES_DB: otravel
+      POSTGRES_USER: otravel
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-otravel-local-demo}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=\"$${POSTGRES_PASSWORD}\" psql -h 127.0.0.1 -U otravel -d otravel -tAc 'SELECT 1' > /dev/null"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: otravel
+      DATABASE_USER: otravel
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-otravel-local-demo}
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_FREE_TIER_CONFIRMED: ${GEMINI_FREE_TIER_CONFIRMED:-false}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-google/gemma-4-31b-it:free}
+      OPENROUTER_BACKUP_MODEL: ${OPENROUTER_BACKUP_MODEL:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      LITEAPI_API_KEY: ${LITEAPI_API_KEY:-}
+      LITEAPI_MODE: ${LITEAPI_MODE:-sandbox}
+      DUFFEL_ACCESS_TOKEN: ${DUFFEL_ACCESS_TOKEN:-}
+      SERPAPI_API_KEY: ${SERPAPI_API_KEY:-}
+      SERPAPI_FREE_TIER_CONFIRMED: ${SERPAPI_FREE_TIER_CONFIRMED:-false}
+      HOTELBEDS_API_KEY: ${HOTELBEDS_API_KEY:-}
+      HOTELBEDS_API_SECRET: ${HOTELBEDS_API_SECRET:-}
+      HOTELBEDS_TEST_CONFIRMED: ${HOTELBEDS_TEST_CONFIRMED:-false}
+      RATEHAWK_KEY_ID: ${RATEHAWK_KEY_ID:-}
+      RATEHAWK_API_KEY: ${RATEHAWK_API_KEY:-}
+      RATEHAWK_TEST_CONFIRMED: ${RATEHAWK_TEST_CONFIRMED:-false}
+      TRAVELPAYOUTS_API_TOKEN: ${TRAVELPAYOUTS_API_TOKEN:-}
+      MAX_LLM_CALLS_PER_DAY: ${MAX_LLM_CALLS_PER_DAY:-40}
+      MAX_LLM_CALLS_PER_RUN: ${MAX_LLM_CALLS_PER_RUN:-2}
+      MAX_MESSAGE_CHARS: ${MAX_MESSAGE_CHARS:-8000}
+      PROVIDER_TIMEOUT: ${PROVIDER_TIMEOUT:-25}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000,http://localhost:8080,http://localhost:8081}
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 15
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-25T12:52:58.617954+00:00",
+  "full_suite": {
+    "command": "py scripts/run_tests.py -q",
+    "passed": 152,
+    "failed": 0,
+    "skipped": 0,
+    "database": "otravel_test",
+    "live_network_in_suite": false
+  },
+  "llm": {
+    "openrouter_key_active": true,
+    "credit_limit_usd": 0.01,
+    "usage_usd_at_readback": 0,
+    "gemma": {
+      "model": "google/gemma-4-31b-it:free",
+      "status": "BLOCKED_HTTP_429",
+      "limit_source": "upstream_provider_shared_pool",
+      "provider_name": "Google AI Studio"
+    },
+    "backup": {
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "synthetic_extraction_cases_passed": 1,
+      "expected_origin": "Казань",
+      "expected_budget_minor": 14000000,
+      "currency": "RUB"
+    },
+    "full_quality_evaluation": "NOT_RUN",
+    "gemini": "KEY_MISSING"
+  },
+  "not_evidence_of": [
+    "106 scenario qualification",
+    "full complex live trip",
+    "UI integration",
+    "live booking"
+  ]
+}

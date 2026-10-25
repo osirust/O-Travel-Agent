@@ -1,0 +1,270 @@
+# Контракт frontend ↔ backend
+
+Редакция: 25 октября 2026. Источник истины — `otravel/api.py` и выдаваемый им `/openapi.json`; интерактивная схема — `/docs`. Это описание реализованных HTTP-маршрутов, без frontend и без обещания качества свободного NLU. Реальные провайдеры требуют разрешённых ключей и своих условий доступа.
+
+## Адрес и авторизация
+
+Базовый адрес локального приложения: `http://localhost:8080`. Другой origin frontend должен быть явно внесён сервером в `CORS_ORIGINS` через запятую; wildcard автоматически не включается.
+
+Создать сессию:
+
+```http
+POST /api/v1/sessions
+Content-Type: application/json
+
+{}
+```
+
+Ответ `201` содержит `session_id`, `trip_id`, `state_version`, `trip_version` (его alias), `status`, `trip`, `waiting_reason`, `pending_question`, `available_actions` и **`session_token`**. Токен возвращается один раз. В запросе допустим необязательный `initial_trip`, соответствующий `TripState` из OpenAPI; поля черновика могут отсутствовать. Сервер назначает собственные trip/session ID и начальную версию.
+
+Все перечисленные ниже ресурсы сессии и run требуют:
+
+```http
+Authorization: Bearer <session_token>
+```
+
+Токен одной сессии не даёт доступа к другой. Hash владельца и внутренний input run в HTTP-ответы не попадают. Не передавать токен в URL и не передавать ключи LLM/туристических API из браузера: они настраиваются на сервере. Для утраченного токена отдельного endpoint восстановления сейчас нет.
+
+Публичны создание сессии, `/`, `/health`, `/api/v1/providers/status`, `/docs`, `/redoc` и `/openapi.json`. OpenAPI содержит схему `SessionBearer` для защищённых маршрутов.
+
+## Маршруты
+
+В таблице `S = /api/v1/sessions/{session_id}`.
+
+| Метод и путь | Назначение |
+|---|---|
+| `GET S` | Актуальный snapshot: `trip`, `state_version`, статус, вопрос/пауза. |
+| `GET S/messages` | `{messages:[...]}`: последовательность `sequence`, `role`, `text`, идентификаторы и время. Служебный ввод формы показан как структурированная команда, без внутреннего префикса. |
+| `GET S/events?after=0` | JSON-журнал и `next_cursor`; формат ниже. |
+| `GET /api/v1/runs/{run_id}` | Статус и сохранённый результат конкретной обработки; требуется токен её сессии. |
+| `POST S/messages` | Принять текст, вернуть `run_id`. |
+| `POST S/commands` | Структурированные изменения без NLU. |
+| `POST S/control` | Немедленная явная пауза или продолжение. |
+| `POST S/demo` | Явно заменить черновик сложным DEMO-примером и выполнить DEMO-поиск. |
+| `POST S/search` | DEMO-поиск по текущему черновику. |
+| `POST S/live/search` | Запросить отдельные внешние компоненты/погоду; их source labels обязательны. |
+| `POST S/checkout/preview` | Создать перепроверенную DEMO-корзину из сохранённого плана. |
+| `POST S/checkout/confirm` | Явно подтвердить конкретные версии; создать один локальный тестовый заказ. |
+| `GET S/orders` | `{orders:[...]}` — тестовые заказы этой сессии. |
+| `GET /health` | SQL readiness PostgreSQL; это не проверка LLM или live-цен. |
+| `GET /api/v1/providers/status` | Redacted-конфигурация провайдеров; `configured` не означает успешный live-прогон. |
+
+## Приём команды и polling результата
+
+```http
+POST S/messages
+
+{
+  "client_message_id": "<new-client-uuid>",
+  "text": "Добавь ребёнка шести лет и перенеси возвращение на два дня",
+  "expected_version": 1
+}
+```
+
+`expected_version` у текста необязателен; при наличии проверяется во время durable intake. Ответ `202`:
+
+```json
+{
+  "session_id": "<session-id>",
+  "run_id": "<run-id>",
+  "status": "pending",
+  "duplicate": false,
+  "poll_url": "/api/v1/runs/<run-id>"
+}
+```
+
+`202` означает принятую команду, а не готовую поездку. Сохранять client UUID до известного результата. При сетевом повторе отправлять **тот же UUID, текст/операции и expected_version**. Сервер вернёт прежний run с `duplicate=true`; тот же ключ с другими параметрами даёт `409`.
+
+Опрос `GET /api/v1/runs/{run_id}` можно начинать с интервала 0,5–1 секунды. Run-статусы: `pending`, `running`; конечные — `completed`, `failed`, `conflict`, `interrupted`. При локальном тайм-ауте интерфейса сначала перечитать существующий run, не создавать автоматически новую операцию с новым UUID.
+
+Форма результата сейчас содержит сохранённую оболочку Store:
+
+```json
+{
+  "run_id": "<run-id>",
+  "session_id": "<session-id>",
+  "status": "completed",
+  "based_version": 1,
+  "llm": {"provider": "openrouter", "model": "<actual-model-id>", "latency_ms": 123},
+  "result": {
+    "state_version": 2,
+    "state": {},
+    "reply": "<assistant text>",
+    "changes": [],
+    "error": null,
+    "result": {"plans": [], "questions": [], "warnings": [], "source_type": "DEMO", "llm": {}}
+  },
+  "error": null
+}
+```
+
+Это сокращённый пример формы, не готовый фактический ответ. Полезные пути: текст — `run.result.reply`; before/after — `run.result.changes`; планы — `run.result.result.plans`; варианты внешнего поиска — `run.result.result.live_offers`; погода — `run.result.result.weather`. `assistant_message` внутри сохранённой оболочки — объект сообщения, поэтому для строки использовать `reply`. После окончания run получить `GET S` и заменить snapshot по его версии.
+
+Статусы сессии: `NEW`, `TRIP_DRAFT`, `WAITING_USER`, `OPTIONS_READY`, `RECOVERABLE_ERROR`, `BOOKED_DEMO`. Текущее выполнение отслеживать по run, не выдумывать session-статус `SEARCHING`, которого API сейчас не устанавливает.
+
+## События: JSON polling; SSE пока отсутствует
+
+```http
+GET S/events?after=120
+Authorization: Bearer <session_token>
+```
+
+```json
+{
+  "events": [
+    {
+      "sequence": 121,
+      "event_id": "<event-id>",
+      "session_id": "<session-id>",
+      "run_id": "<run-id>",
+      "event_type": "MODEL_RESPONSE_RECEIVED",
+      "state_version": 1,
+      "payload": {"provider": "openrouter", "model": "<actual-model-id>", "latency_ms": 123},
+      "created_at": "<ISO timestamp>"
+    }
+  ],
+  "next_cursor": 121
+}
+```
+
+Запрашиваются события с `sequence > after`; последовательность может иметь пропуски. При reconnect использовать последний `next_cursor`, а не требовать непрерывные номера. Дедупликация по `event_id`/`sequence`. События показывают прогресс; `GET S` остаётся snapshot для UI. Событие старой версии не должно перезаписывать новую поездку.
+
+**SSE endpoint и `text/event-stream` в текущем backend не реализованы.** `/events` возвращает `application/json`, в том числе при произвольном Accept. Формат SSE `id/event/data` не утверждён и не должен имитироваться frontend. Сейчас использовать polling с Bearer-заголовком. После `RUN_FAILED` или окончания одного run не прекращать возможность дальнейшего session polling и получения новых событий.
+
+## Ожидание вопроса и явная пауза
+
+- `WAITING_USER + waiting_reason="clarification"`: `pending_question` содержит `question_id`, `text`, список `questions`, `state_version`, `reason`. Показывается первый существенный вопрос; одна реплика может заполнить сразу несколько полей.
+- `WAITING_USER + waiting_reason="user_pause"`: работа остановлена; новые дополнения долговременно принимаются как pending runs, но не передаются LLM до явного продолжения. `pending_question` не должен превращаться в форму подтверждения покупки.
+- Явный control: `POST S/control {"action":"pause"}` либо `{"action":"resume"}`. Возвращается свежий session snapshot. Control изменяет версию и инвалидирует старые корзины.
+- Без LLM распознаются только точные управляющие фразы: `подожди`, `пауза`, `подожди, я ещё дополню`/`допишу` и варианты `еще`; для продолжения — `продолжай`/`продолжить` (регистр и завершающие `.!` несущественны). **«Не продолжай» не возобновляет работу.** Для остальных формулировок нужна LLM либо control-кнопка.
+- Поздний результат не возобновляет паузу и не заменяет актуальное состояние. Дополнения, принятые до более позднего явного resume, не должны повторно включать старую паузу.
+
+Выбор карточки, ответ «да» на вопрос и согласие на конкретную корзину — разные действия. Чат сам по себе не создаёт заказ: создание идёт через `/checkout/confirm`.
+
+## Формы без LLM: типизированные команды
+
+```http
+POST S/commands
+
+{
+  "client_message_id": "<new-client-uuid>",
+  "expected_version": 1,
+  "operations": [
+    {"type":"set_budget","value":{"amount_minor":78000000,"currency":"RUB","scope":"whole_trip"}},
+    {"type":"shift_return","value":{"days":2}}
+  ],
+  "search": true
+}
+```
+
+`expected_version` здесь обязателен. Весь batch атомарен: при недопустимой операции часть полей не сохраняется. Ответ — `202/run_id`, затем тот же polling. Между формой и обработкой доменное состояние могло измениться: `stale_state` означает перечитать поездку и проверить изменения перед новым запросом. Pause/resume сами по себе не должны терять очередь корректных форм.
+
+Разрешённые типы: `set_origin`, `set_budget`, `add_traveler`, `remove_traveler`, `update_traveler`, `upsert_stay`, `remove_stay`, `set_constraint`, `clear_constraint`, `shift_return`, `replace_hotel`. Адресные операции используют `target_id` из snapshot; изменяемые поля — в `value`. Примеры:
+
+```json
+[
+  {"type":"set_origin","value":{"city":"Казань"}},
+  {"type":"add_traveler","value":{"id":"child-new","type":"child","age":6,"group_id":"family-1"}},
+  {"type":"update_traveler","target_id":"child-new","value":{"age":7}},
+  {"type":"set_constraint","value":{"key":"refundable","value":true,"hard":true}},
+  {"type":"replace_hotel","target_id":"stay-antalya","value":{"hotel_id":"<hotel-id-from-saved-offer>"}}
+]
+```
+
+Не подавать их автоматически: существование адресных ID и необходимость изменения проверяются по актуальному snapshot. `replace_hotel` принимает именно `hotel_id`, а preview — `plan_id`. Не генерировать эти значения из номера карточки. Неизвестные операции отклоняются; общего `undo` сейчас нет.
+
+Деньги — целые `amount_minor`/`total_minor`, для RUB это копейки; float и bool вместо суммы недопустимы. DEMO сейчас проверяет общий бюджет `whole_trip` в RUB. `shift_return` продлевает/сокращает последнюю остановку, сохраняя остальные. Rooms принадлежат конкретному stay, их `traveler_ids` ссылаются на устойчивые ID людей. Полную форму `TripState` брать из OpenAPI, не из текста чата.
+
+Предварительные guards реализации: 10 путешественников, 4 остановки, 5 номеров **на остановку**. Они обозначены как proposed, не как утверждённые владельцем продуктовые пределы. Неизвестные даты/возраст/город требуют уточнения; подходящих комбинаций или бюджета может действительно не оказаться.
+
+## Явный DEMO-путь
+
+1. Создать сессию и сохранить её token.
+2. `POST S/demo {}` → дождаться run. Это намеренная замена черновика примером, не автоматический fallback незнакомого текста.
+3. `GET S` → актуальная версия; планы взять из run.
+4. Изменять через `/commands`, при необходимости `search:true` либо отдельный `POST S/search {"mode":"DEMO"}`.
+5. Выбрать сохранённый план и пройти preview/confirm.
+
+`/demo` и `/search` принимают необязательные `client_message_id`, `expected_version`, `mode:"DEMO"`. При автоматическом UUID от сервера сетевой повтор может стать новой поисковой командой; для контролируемого replay лучше задавать UUID клиентом.
+
+Пример — Казань → Стамбул (3 ночи) → Анталья (4 ночи) → Казань; 6 взрослых, 3 ребёнка, 2 семьи, 3 номера на остановке. Identity сессии сохраняется. Все гостиницы, маршруты, тарифы и наличие здесь вымышлены. `plans[].room_assignments` содержит размещение на каждой остановке; у offer есть `kind`, `component_id`, `hotel_id` для проживания, `total_minor`, `currency`, подробный `breakdown` и source labels. `changes[]` содержит `field`, `before`, `after`, `operation`, `target_id`.
+
+## Внешний поиск и происхождение данных
+
+```http
+POST S/live/search
+
+{
+  "client_message_id":"<new-client-uuid>",
+  "kind":"hotels",
+  "provider":"liteapi",
+  "request":{
+    "hotelIds":["<known-provider-hotel-id>"],
+    "checkin":"2026-11-06",
+    "checkout":"2026-11-09",
+    "occupancies":[{"adults":2,"children":[6]}],
+    "guestNationality":"RU",
+    "currency":"RUB"
+  },
+  "demo_fallback":false
+}
+```
+
+Это пример формы, не проверенный реальный hotel ID. `kind`: `hotels`, `flights`, `weather`. Реализованы адаптеры hotels `liteapi`/`serpapi`, flights `duffel`/`serpapi`; для weather передавать `provider:"open_meteo"` и `request:{city,latitude,longitude}`. Flight request зависит от выбранного провайдера: IATA `slices`, даты, полный состав пассажиров; точные условия — [API_SETUP.md](API_SETUP.md) и схемы адаптера. Ключи и произвольные HTTP URL в request запрещены.
+
+Маршрут называется `live/search`, но фактический статус определяется данными, а не именем URL:
+
+| Source label | Как отображать |
+|---|---|
+| `DEMO`, `price_kind="synthetic"` | Вымышленная цена и наличие; локальный тестовый сценарий. |
+| `SANDBOX` | Тестовая среда поставщика; не реальная рыночная цена или бронь. |
+| `LIVE_INDICATIVE` | Поисковые/ориентировочные сведения, без обещания доступности и bookability. |
+| `NO_MATCHES` | Поставщик вернул пустую выдачу; это не доказательство невозможности поездки. |
+
+Показывать источник, валюту, охват цены и время получения, если они есть; не складывать nightly и total как равнозначные суммы. Ответы этого endpoint — отдельные `live_offers`/weather, **не готовая проверенная live-многогородская корзина**. Смешанный live/demo-план разрешён продуктом, но его полная автоматическая сборка этим endpoint ещё не подтверждена. DEMO-поиск и внешние результаты не склеиваются скрыто.
+
+При `demo_fallback:false` ошибка поставщика сохраняется в failed run, состояние поездки остаётся. При явно заданном `true` доступна маркированная DEMO-замена с `provider_error`; она не превращается в реальные данные.
+
+## Preview, подтверждение и версии
+
+```http
+POST S/checkout/preview
+
+{"plan_id":"<plan-id-from-this-session>","state_version":2}
+```
+
+План должен быть сохранён в run **этой сессии**, соответствовать текущей версии и пройти проверки. Сейчас preview поддерживает DEMO; внешние indicative/sandbox-компоненты не становятся supplier order. Ответ содержит `quote_id`, `quote_version`, `state_version`, `expires_at`, `status`, `plan`.
+
+```http
+POST S/checkout/confirm
+
+{
+  "quote_id":"<quote-id>",
+  "quote_version":1,
+  "state_version":2,
+  "idempotency_key":"<new-operation-uuid>",
+  "confirmed":true
+}
+```
+
+`confirmed` — только JSON boolean `true`, не строка. Подтверждать показанные пользователю quote/версию/сумму. Изменение поездки, pause/resume или истечение quote требует нового preview и нового осознанного подтверждения. После `409` нельзя автоматически подтверждать новую сумму.
+
+Повтор **той же операции** с тем же ключом и теми же параметрами возвращает прежний заказ. Тот же ключ с другим содержимым — `409`; разные ключи не дают создать второй заказ по тому же quote. Сохранить UUID до известного исхода; при сетевой неопределённости прочитать `/orders`, не создавать другую оплату.
+
+Заказ содержит `order_id`, `is_demo:true`, `booking_created_at_supplier:false`, `status:"BOOKED_DEMO"`. Реальная оплата и бронь у поставщика не создаются. Версия сессии после заказа меняется; перечитать `GET S`.
+
+## Модель, резерв и ошибки
+
+После успешной LLM-обработки фактическая модель видна в `GET run.llm` и `run.result.result.llm`: `provider`, `model`, `latency_ms`, `attempts`. Показывать это значение, а не жёсткую подпись «Gemma»: явно настроенная бесплатная резервная модель может ответить вместо primary. Failed run может содержать известные попытки в `error.llm`; при отсутствии самого вызова metadata может быть `null`.
+
+Резерв по умолчанию не выбирается. Явный `OPENROUTER_BACKUP_MODEL` допустим только как отличающийся `:free` ID с настроенным ключом. Переключение разрешено для upstream shared-pool 429, сетевой ошибки/timeout, 5xx или невалидной схемы. 401/402/403, account/key/workspace/credit и 429 неизвестного происхождения резервом не обходятся. Общий лимит попыток остаётся 2 на run и до 40 в сутки для реального gateway; UI не должен умножать эти попытки собственными автоматическими повторами.
+
+Без LLM нет имитации свободного NLU: run возвращает понятную ошибку, поездка сохраняется; формы, control и явный demo остаются доступны. Детерминированный пример и управляемые тестовые ответы адаптера не являются общим NLU PASS.
+
+Ошибки HTTP имеют форму:
+
+```json
+{"error":{"code":"stale_state","message":"Состояние поездки изменилось.","retryable":false}}
+```
+
+Основные статусы: `401/403` — token/access; `404` — отсутствующий ресурс этой сессии; `409` — версия/идемпотентность/устаревшая корзина; `413` — слишком большой ввод; `422` — схема/доменный запрос; `503` — недоступное хранилище/синхронный провайдер. Ошибка фонового LLM/tool обычно приходит через failed run после исходного `202`, а не как HTTP 503 на уже принятый POST. Не показывать пользователю raw traceback, секреты, raw HTTP-заголовки или ключи.
