@@ -560,8 +560,8 @@ class Harness:
                         }
                     details = exc.details if isinstance(exc, ProviderError) and isinstance(exc.details, dict) else {}
                     failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits") if key in details}}
-                    if isinstance(gateway, LLMGateway) and (request_metrics := gateway.request_metrics_for_current_call()):
-                        failed["request_metrics"] = request_metrics
+                    if isinstance(gateway, LLMGateway):
+                        failed.update(gateway.call_metadata_for_current_call())
                     attempt_meta.append({**failed, "outcome": "failed"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_CALL_FAILED", failed)
                     exc.llm_meta = {"provider": provider, "model": requested_model, "attempts": attempt_meta}

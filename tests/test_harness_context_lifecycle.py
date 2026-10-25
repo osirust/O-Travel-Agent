@@ -1,10 +1,15 @@
 """Controlled ModelResult + isolated PostgreSQL; no model or supplier requests."""
+import json
+from uuid import uuid4
+
+import httpx
 import pytest
 from sqlalchemy import select
 
 from otravel.domain import sample_trip
+from otravel.providers import LLMGateway
 from otravel.store import events
-from test_api import StubLLM, _session
+from test_api import StubLLM, _headers, _session, _snapshot, _wait
 from test_api import api_factory as context_api_factory
 from test_slot_continuation import _message
 
@@ -125,3 +130,42 @@ async def test_audit_distinguishes_model_arguments_from_grounded_values_without_
         assert checked["structured_contract"]["value"]["operations"][0]["value"]["amount_minor"] == 20000000
         assert canary not in str(rows)
         assert "[REDACTED]" in raw["structured_contract"]["value"]["reply"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("failure_kind", ["json", "schema"])
+async def test_consumed_tokens_are_persisted_when_generation_fails_validation(api_factory, failure_kind):
+    requests = []
+    canary = "synthetic-invalid-generation-secret"
+    def handler(request):
+        requests.append(request)
+        content = "{" if failure_kind == "json" else json.dumps({
+            "operations": [{"type": "unknown_operation", "value": {}}],
+            "control": {"action": "none"}, "reply": "", "unknowns": [], "conflicts": []})
+        return httpx.Response(200, json={
+            "candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": content}]}}],
+            "usageMetadata": {"promptTokenCount": 23, "candidatesTokenCount": 8,
+                              "totalTokenCount": 31, "raw_secret": canary}})
+    gateway = LLMGateway({"LLM_PROVIDER": "gemini", "GEMINI_API_KEY": canary,
+        "GEMINI_MODEL": "gemini-3.8-flash",
+        "GEMINI_FREE_TIER_CONFIRMED": True, "http_transport": httpx.MockTransport(handler)})
+    async with api_factory(gateway) as (client, _):
+        repository = client._transport.app.state.store
+        sid, token, before = await _session(client, sample_trip().model_dump(mode="json"))
+        accepted = await client.post(f"/api/v1/sessions/{sid}/messages", headers=_headers(token),
+            json={"client_message_id": str(uuid4()), "text": "Уточним пожелания по отдыху"})
+        assert accepted.status_code == 202
+        run = await _wait(client, accepted.json()["run_id"], token)
+        after = await _snapshot(client, sid, token)
+        assert run["status"] == "failed"
+        assert requests, run.get("error")
+        assert after["trip"] == before["trip"]
+        async with repository.engine.connect() as conn:
+            rows = (await conn.execute(select(events.c.payload).where(
+                events.c.run_id == run["run_id"], events.c.event_type == "MODEL_CALL_FAILED"))).scalars().all()
+        assert len(rows) == len(requests) == 2  # Initial call and one bounded repair.
+        for event in rows:
+            assert event["usage"] == {"input_tokens": 23, "output_tokens": 8, "total_tokens": 31}
+            assert len(event["request_metrics"]["prompt_sha256"]) == 64
+        assert canary not in str(rows) and "raw_secret" not in str(rows)
+        assert sum(event["usage"]["total_tokens"] for event in rows) == 31 * len(requests)

@@ -326,18 +326,32 @@ class LLMGateway(_HTTPGateway):
         self.client.timeout = httpx.Timeout(timeout, connect=min(10.0, timeout))
         self.wall_timeout = timeout
         self._request_metrics: ContextVar[dict | None] = ContextVar("otravel_request_metrics", default=None)
+        self._response_usage: ContextVar[dict | None] = ContextVar("otravel_response_usage", default=None)
 
     def request_metrics_for_current_call(self) -> dict | None:
         return self._request_metrics.get()
 
+    def call_metadata_for_current_call(self) -> dict:
+        metadata = {}
+        if metrics := self._request_metrics.get():
+            metadata["request_metrics"] = metrics
+        if usage := self._response_usage.get():
+            metadata["usage"] = usage
+        return metadata
+
     async def _request(self, provider: str, method: str, url: str, **kwargs: Any) -> dict:
         try:
-            return await asyncio.wait_for(super()._request(provider, method, url, **kwargs), self.wall_timeout)
+            body = await asyncio.wait_for(super()._request(provider, method, url, **kwargs), self.wall_timeout)
         except asyncio.TimeoutError:
             raise ProviderError("REQUEST_TIMEOUT", "Превышено общее время ответа LLM.", True, provider) from None
+        # Generation is already consumed even if its content/finish reason or
+        # operation schema fails below. Capture counts before those checks.
+        self._response_usage.set(usage_counts(provider, body) or None)
+        return body
 
     async def extract_operations(self, context: dict) -> dict:
         self._request_metrics.set(None)
+        self._response_usage.set(None)
         self.last_call = {}
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
         if provider not in {"gemini", "openrouter", "ollama", "groq"}:
@@ -489,9 +503,7 @@ class LLMGateway(_HTTPGateway):
             if violations:
                 raise ProviderError("INVALID_LLM_OPERATION", "Ответ модели нарушает контракт доступных операций.",
                     provider=provider, details={"schema_errors": violations})
-        metadata = {"provider": provider, "model": model, "request_metrics": metrics}
-        if counts := usage_counts(provider, body):
-            metadata["usage"] = counts
+        metadata = {"provider": provider, "model": model, **self.call_metadata_for_current_call()}
         # Kept for legacy callers. Harness uses the per-result metadata instead
         # of this mutable attribute when sessions share a gateway concurrently.
         self.last_call = metadata

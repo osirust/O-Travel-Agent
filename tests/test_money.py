@@ -222,3 +222,45 @@ def test_increase_to_is_absolute_and_reduce_nonpositive_is_not_clamped():
     assert increased == proposed(12_000_000) and notes[0]["mode"] == "absolute"
     reduced, notes = ground_budget_operations(state, proposed(), "Сократи бюджет на 120к")
     assert reduced == proposed(-2_000_000) and notes[0]["mode"] == "relative_decrease"
+
+
+@pytest.mark.parametrize("text", [
+    "Номер до 10000 рублей на ночь",
+    "Номер до 10000 рублей на сутки",
+    "Отель до 10000 рублей на день",
+    "Проживание до 10000 рублей на неделю",
+    "Гостиница до 10к на ночь",
+    "Бюджет на номер 10000 рублей на ночь",
+    # Existing explicit rate markers must stay covered as well.
+    "Номер до 10000 рублей в сутки",
+    "Проживание до 10000 рублей за ночь",
+])
+def test_lodging_price_for_duration_cannot_become_whole_trip_budget(text):
+    safe_op = {"type": "set_origin", "value": {"city": "Казань"}}
+    operations = [safe_op] + proposed(1_000_000, scope="whole_trip")
+    original = deepcopy(operations)
+    state = sample_trip()
+    before = state.model_dump(mode="json")
+    changed, notes = ground_budget_operations(state, operations, text)
+    assert changed == [safe_op]
+    assert notes == [{"field": "budget.amount_minor", "status": "clarification_required",
+        "code": "budget_scope_ambiguous", "reason": "unit_price_scope", "operation_suppressed": True}]
+    assert operations == original and state.model_dump(mode="json") == before
+
+
+@pytest.mark.parametrize("text", [
+    "Общий бюджет 100000 рублей на неделю",
+    "Бюджет 100000 рублей на день",
+    "Бюджет 100000 рублей на сутки",
+    "Общий бюджет 100000 рублей на ночь",
+    "Номер любой. Общий бюджет 100000 рублей на неделю",
+    "Хочу номер на неделю, общий бюджет 100000 рублей",
+    "Хочу номер, бюджет 100000 рублей на неделю",
+])
+def test_trip_duration_and_lodging_mention_do_not_relabel_explicit_total_budget(text):
+    operations = proposed(123)
+    changed, notes = ground_budget_operations(sample_trip(), operations, text)
+    assert changed == proposed(10_000_000)
+    assert notes[0]["after"] == 10_000_000 and notes[0]["mode"] == "absolute"
+    assert not notes[0].get("operation_suppressed")
+    assert operations == proposed(123)
