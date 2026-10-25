@@ -101,6 +101,8 @@ GROUP-02/DATE-08/MONEY-08/STATE-08 уже относятся к EVAL-004 и пр
 
 Новый [пакет oracle_bindings](../../fixtures/evaluation/oracle_bindings/README.md) хранит 106 **неисполненных** bindings с исходными/новыми record SHA, revision, полными репликами и отдельным обязательным `original_behavior` check. У cases с пустыми flags тоже есть непустой обязательный check: нельзя получить PASS через `all([])`.
 
+Отдельный [pilot revision 2](../../fixtures/evaluation/oracle_bindings/PILOT_V2.md) подготовлен для NLU-01/03/06/09: 34 конкретных typed checks BOUND, 8 обязательств UNBOUND. Его ожидания зафиксированы до actual inference; 22 pure counterexample tests проверяют только grader. Это не результаты четырёх модельных cases и не изменение revision 1. Все четыре `original_behavior` остаются открыты; duration-only 7 nights / 4 nights / 4 days не объявлены сохранёнными без представления в состоянии.
+
 `oracle_flags_proposed` — source annotations. Адаптер связывает флаг с конкретным surface, expression, исходным baseline, clock, fixtures/fault и evaluator revision. Пока любой обязательный check `UNBOUND`, case `BLOCKED` для полной приёмки. `UNKNOWN` evaluator, неисполненная setup-action или неподдержанный assertion также не дают PASS. Предложенные schema/data files не реализуют runner.
 
 Bindings и результаты разделены. В binding запрещено писать PASS. Отдельный execution report обязан хранить case/turn/check IDs, binding revision/SHA, реально исполненный слой, ожидание/наблюдение, модель/попытки, state revisions, messages/events, source/quote/order IDs и список skipped/unbound checks. Никаких токенов сессии, ключей, DSN или сырых provider credentials.

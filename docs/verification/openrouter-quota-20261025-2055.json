@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-10-25T17:53:37.531314+00:00",
+  "read_only": true,
+  "inference_attempts": 0,
+  "free_model_daily_requests": {
+    "used": 21,
+    "limit": 50,
+    "remaining": 29
+  },
+  "limit": 0.01,
+  "limit_remaining": 0.01,
+  "usage": 0,
+  "limit_reset": null
+}

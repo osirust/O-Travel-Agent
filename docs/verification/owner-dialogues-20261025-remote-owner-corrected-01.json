@@ -1,0 +1,378 @@
+{
+  "mode": "ACTUAL_HTTP_HARNESS_EVALUATION",
+  "fixture": "fixtures/evaluation/frozen-owner-dialogues.json",
+  "fixture_sha256": "5b78429fdb2c4bdc806ac34bc508d6b74e3ddf09a0737b261f66e3652f54037d",
+  "oracle_sha256": "b853f61906c4fafcf55fdaafb7f7fd546c87cd9d0e70bf759e43af0b2fd4d00b",
+  "selected_case_ids": [
+    "OWNER-DIALOGUE-01",
+    "OWNER-DIALOGUE-02",
+    "OWNER-DIALOGUE-03"
+  ],
+  "turns": 8,
+  "attempt_cap": 4,
+  "base_url": "http://localhost:8081",
+  "report": "docs/verification/owner-dialogues-20261025-remote-owner-corrected-01.json",
+  "oracle_functions": [
+    "_assert_question",
+    "_assert_trip",
+    "_pointer",
+    "_requested_country"
+  ],
+  "stub_execution": false,
+  "status": "NOT_ALL_PASS",
+  "started_at": "2026-10-25T17:44:28.285193+00:00",
+  "cases": [
+    {
+      "id": "OWNER-DIALOGUE-01",
+      "title": "Сербия, другой город и исправление географического факта",
+      "status": "NOT_ALL_PASS",
+      "turns": [
+        {
+          "index": 1,
+          "text": "в сербию может быть поехать?",
+          "status": "FAIL",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": false,
+              "reason": "Turn did not complete"
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "session_status",
+              "passed": false,
+              "reason": "Unexpected session_status"
+            },
+            {
+              "name": "waiting_reason",
+              "passed": false,
+              "reason": "Unexpected waiting_reason"
+            },
+            {
+              "name": "pending_country",
+              "passed": false,
+              "reason": "Requested country lost"
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": false,
+              "reason": "Human clarification must mention серб"
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "actual_model_metadata",
+              "passed": true
+            },
+            {
+              "name": "response_source_reported",
+              "passed": false,
+              "reason": "Backend must distinguish contextual slot from LLM"
+            }
+          ],
+          "response_source": "not_reported",
+          "evaluation_path": "llm_extraction_with_server_guards",
+          "actual_model_attempts": 2,
+          "actual_model_metadata": {
+            "model": "xingchen-agi/xing4.0-29b-a4b:free",
+            "attempts": [
+              {
+                "code": "REQUEST_TIMEOUT",
+                "model": "dots-studio/dots-3-note-preview:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 10183
+              },
+              {
+                "code": "PROVIDER_RESPONSE_ERROR",
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 6158
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "elapsed_seconds": 28.346,
+          "assistant_text": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+          "state_before": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "NEW",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "RECOVERABLE_ERROR",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-remote-owner-corrected-01/OWNER-DIALOGUE-01-turn-01.json"
+          ]
+        },
+        {
+          "index": 2,
+          "status": "NOT_EXECUTED",
+          "reason": "DEPENDENCY_FAILED"
+        },
+        {
+          "index": 3,
+          "status": "NOT_EXECUTED",
+          "reason": "DEPENDENCY_FAILED"
+        }
+      ],
+      "session_alias": "session-1"
+    },
+    {
+      "id": "OWNER-DIALOGUE-02",
+      "title": "Опечатка в известном сербском городе без выдуманного покрытия поиска",
+      "status": "NOT_ALL_PASS",
+      "turns": [
+        {
+          "index": 1,
+          "text": "в сербию хочу",
+          "status": "BLOCKED_PROVIDER",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": false,
+              "reason": "Turn did not complete"
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "pending_country",
+              "passed": false,
+              "reason": "Requested country lost"
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": false,
+              "reason": "Human clarification must mention серб"
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "response_source_reported",
+              "passed": false,
+              "reason": "Backend must distinguish contextual slot from LLM"
+            }
+          ],
+          "response_source": "not_reported",
+          "evaluation_path": "unknown",
+          "actual_model_attempts": 0,
+          "actual_model_metadata": null,
+          "elapsed_seconds": 12.309,
+          "assistant_text": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+          "state_before": {
+            "session_id": "session-14",
+            "trip_id": "trip-15",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "NEW",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-15",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-14",
+            "trip_id": "trip-15",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "RECOVERABLE_ERROR",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-15",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-remote-owner-corrected-01/OWNER-DIALOGUE-02-turn-01.json"
+          ]
+        },
+        {
+          "index": 2,
+          "status": "NOT_EXECUTED",
+          "reason": "PROVIDER_UNAVAILABLE"
+        }
+      ],
+      "session_alias": "session-14"
+    },
+    {
+      "id": "OWNER-DIALOGUE-03",
+      "status": "NOT_EXECUTED",
+      "reason": "PROVIDER_UNAVAILABLE",
+      "turns": []
+    }
+  ],
+  "scope": "Three owner dialogues, not the original106 corpus or raw-model NLU. Server guards may override LLM output; contextual slots are counted separately.",
+  "model_calls_authorization": "Explicit --confirm-inference, backend owns credentials and durable budgets",
+  "runtime_provider_metadata": {
+    "llm_provider": "openrouter",
+    "model": "dots-studio/dots-3-note-preview:free"
+  },
+  "conservative_attempt_reservation_per_turn": 2,
+  "actual_model_attempts": 2,
+  "finished_at": "2026-10-25T17:45:41.650369+00:00",
+  "response_path_counts": {
+    "contextual_slot": 0,
+    "llm_extraction_with_server_guards": 1,
+    "unknown": 1
+  }
+}

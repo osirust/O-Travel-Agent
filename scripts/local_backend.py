@@ -40,12 +40,16 @@ DATABASE = "otravel_local_eval"
 PORT = 8083
 BASE = f"http://127.0.0.1:{PORT}"
 HBA = "/var/lib/postgresql/data/pg_hba.conf"
-KEYS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
+KEYS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
         "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY",
         "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN")
 ARGV = [str(PYTHON), "-m", "uvicorn", "otravel.api:app", "--host", "127.0.0.1",
         "--port", str(PORT), "--no-access-log"]
+# Historical receipts used only these five files. Retain them for compatibility,
+# but never use them as evidence for a complete loaded package revision.
 SOURCE_FILES = ("api.py", "providers.py", "config.py", "harness.py", "store.py")
+MANIFEST_FORMAT = "otravel.package_source_manifest.v1"
+SOURCE_SUFFIXES = {".py", ".html", ".css", ".js", ".json"}
 OPENER = build_opener(ProxyHandler({}))
 CURRENT_STAGE = "preflight"
 SAFE_CONTEXT = {}
@@ -337,23 +341,116 @@ def http(path):
 
 
 def source_hashes():
+    """Legacy five-file snapshot; not a complete package fingerprint."""
     return {name: hashlib.sha256((SOURCE / "otravel" / name).read_bytes()).hexdigest() for name in SOURCE_FILES}
+
+
+def source_manifest(root=None):
+    """Complete package source/assets and pyproject, using relative paths only.
+
+    Never traverse environment/runtime trees or follow symlinks. Private hidden
+    files and bytecode are not package sources and are excluded before reading.
+    """
+    root = SOURCE if root is None else Path(root)
+    root = root.absolute()
+    require(root.is_dir() and not root.is_symlink() and root.resolve() == root, "source_manifest_root_not_canonical")
+    package = root / "otravel"
+    require(package.is_dir() and not package.is_symlink() and package.resolve() == package, "source_manifest_package_missing_or_symlinked")
+    files = []
+    for current, directories, names in os.walk(package, followlinks=False):
+        current = Path(current)
+        kept = []
+        for name in sorted(directories):
+            if name.startswith(".") or name == "__pycache__":
+                continue
+            path = current / name
+            require(not path.is_symlink() and path.resolve() == path, "source_manifest_symlink_directory_refused")
+            kept.append(name)
+        directories[:] = kept
+        for name in names:
+            path = current / name
+            if name.startswith(".") or path.suffix not in SOURCE_SUFFIXES:
+                continue
+            require(not path.is_symlink() and path.is_file() and path.resolve() == path, "source_manifest_symlink_file_refused")
+            files.append(path)
+    project = root / "pyproject.toml"
+    require(project.is_file() and not project.is_symlink() and project.resolve() == project, "source_manifest_pyproject_missing_or_symlinked")
+    files.append(project)
+    entries = []
+    for path in sorted(files, key=lambda item: item.relative_to(root).as_posix()):
+        raw = path.read_bytes()
+        entries.append({"path": path.relative_to(root).as_posix(), "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()})
+    canonical = json.dumps(entries, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return {"format": MANIFEST_FORMAT, "sha256": hashlib.sha256(canonical).hexdigest(),
+            "file_count": len(entries), "files": entries}
+
+
+def loaded_manifest_status(metadata, current):
+    """Legacy/mismatched snapshots cannot attest the loaded source revision."""
+    started = metadata.get("source_manifest")
+    matches = (isinstance(started, dict) and started.get("format") == MANIFEST_FORMAT
+               and isinstance(started.get("files"), list) and bool(started["files"])
+               and isinstance(current, dict) and started == current)
+    reason = ("exact_complete_start_and_current_match" if matches else
+              "legacy_process_has_no_complete_start_manifest" if not isinstance(started, dict) else
+              "current_complete_manifest_unavailable" if current is None else
+              "complete_start_and_current_manifest_differ")
+    return {"status": "MATCHES_FULL_START_MANIFEST" if matches else "UNKNOWN",
+            "reason": reason, "matches_current": matches, "restart_required": not matches}
+
+
+def legacy_snapshots(previous):
+    """Preserve old hashes as historical data, without private identity fields."""
+    snapshots = list(previous.get("legacy_five_file_snapshots", []))
+    historical = {"observed_at_utc": previous.get("checked_at_utc"),
+                  "scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF"}
+    for key in ("source_sha256", "process_start_source_sha256"):
+        value = previous.get(key)
+        if isinstance(value, dict) and value and set(value) <= set(SOURCE_FILES):
+            historical[key] = value
+    if len(historical) > 2 and not any(
+        item.get("source_sha256") == historical.get("source_sha256") and
+        item.get("process_start_source_sha256") == historical.get("process_start_source_sha256")
+        for item in snapshots if isinstance(item, dict)
+    ):
+        snapshots.append(historical)
+    return snapshots
 
 
 def save_evidence(action, account, extra=None):
     identity = recorded_process(account)
+    metadata = json.loads(IDENTITY.read_text()) if IDENTITY.is_file() else {}
+    try:
+        current_manifest = source_manifest()
+        manifest_error = None
+    except (OSError, Refusal) as exc:
+        current_manifest = None
+        manifest_error = str(exc) if isinstance(exc, Refusal) else type(exc).__name__
+    try:
+        legacy_current = source_hashes()
+    except OSError:
+        legacy_current = None
     record = {"checked_at_utc": now(), "action": action, "source": str(SOURCE), "venv_python": str(PYTHON),
               "helper_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "database": DATABASE, "url": BASE, "process": identity, "listeners": listeners(),
               "no_inference_requested": True, "no_supplier_requests": True,
-              "provider_credentials_inherited": False, "source_sha256": source_hashes(),
+              "provider_credentials_inherited": False, "source_sha256": legacy_current,
+              "source_sha256_scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+              "process_start_source_sha256": metadata.get("source_sha256", {}),
+              "current_source_manifest": current_manifest,
+              "process_start_source_manifest": metadata.get("source_manifest"),
+              "loaded_manifest": loaded_manifest_status(metadata, current_manifest) if identity else
+                  {"status": "NOT_RUNNING", "matches_current": None, "restart_required": False},
               "limits": {"provider": "ollama", "model": "qwen3.5:4b", "request_timeout_seconds": 105,
                          "max_local_calls_per_day": 500, "max_calls_per_run": 1, "max_remote_calls_per_day": 0},
               "limitations": ["Health/docs/debug are not a successful model turn or full acceptance suite.",
                               "No global service/autostart change; only the exact recorded process may be stopped.",
                               "Database and HBA rules are retained by stop; no DROP or runtime/test data mutation."]}
+    if manifest_error:
+        record["current_source_manifest_error"] = manifest_error
+    if action == "start_reused_owned_process":
+        record["reuse_full_source_manifest_verified"] = record["loaded_manifest"]["matches_current"] is True
     if identity:
-        record["process_start_source_sha256"] = json.loads(IDENTITY.read_text()).get("source_sha256", {})
         require_owned_listener(identity)
         observations = {}
         for path in ("/health", "/docs", "/debug", "/api/v1/providers/status"):
@@ -372,6 +469,7 @@ def save_evidence(action, account, extra=None):
         record.update(extra)
     if EVIDENCE.exists():
         previous = json.loads(EVIDENCE.read_text())
+        record["legacy_five_file_snapshots"] = legacy_snapshots(previous)
         for key in ("database_setup", "database_counts_before", "database_counts_after", "import_check", "setup_corrections", "windows_loopback_health", "helper_guard_checks"):
             if key in previous and key not in record:
                 record[key] = previous[key]
@@ -402,6 +500,7 @@ def start(account):
     SAFE_CONTEXT["database_setup"] = database.receipt
     env = environment(database)
     initial_sources = source_hashes()
+    initial_manifest = source_manifest()
     probe = ("import importlib,json,pathlib,otravel.api; from otravel.config import Settings; "
              "from otravel.providers import LLMGateway; s=Settings.from_env(); "
              "print(json.dumps({'api_file':str(pathlib.Path(otravel.api.__file__).resolve()),'provider':s.llm_mode,"
@@ -413,7 +512,7 @@ def start(account):
     facts = json.loads(imported.stdout)
     require(facts == {"api_file": str(SOURCE / "otravel" / "api.py"), "provider": "ollama", "local_limit": 500, "run_limit": 1},
             "native_gateway_import_or_limits_mismatch")
-    require(source_hashes() == initial_sources, "native_sources_changed_during_preflight")
+    require(source_manifest() == initial_manifest, "native_complete_sources_changed_during_preflight")
     stage("allowing_exact_database_scram_hba_and_reload")
     database.allow_local_database()
     stage("creating_or_verifying_isolated_database")
@@ -429,6 +528,7 @@ def start(account):
                         user=account.pw_uid, group=account.pw_gid, extra_groups=[])
     require(connected.returncode == 0, "isolated_database_bridge_connection_failed_details_suppressed")
     require(not listeners(), "port_8083_became_occupied_before_start_nothing_stopped")
+    require(source_manifest() == initial_manifest, "native_complete_sources_changed_before_launch")
     stage("launching_owned_uvicorn")
     log_fd = os.open(LOG, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
     try:
@@ -440,7 +540,9 @@ def start(account):
     identity = process_identity(process.pid)
     require(identity is not None, "owned_backend_exited_immediately_private_log_retained")
     atomic_json(IDENTITY, {**identity, "created_by": "local_backend.py", "created_at_utc": now(),
-                           "database": DATABASE, "port": PORT, "source_sha256": initial_sources})
+                           "database": DATABASE, "port": PORT, "source_sha256": initial_sources,
+                           "source_sha256_scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+                           "source_manifest": initial_manifest})
     for _ in range(45):
         require(process.poll() is None, "owned_backend_exited_during_startup_private_log_retained")
         try:
@@ -455,6 +557,7 @@ def start(account):
         time.sleep(1)
     else:
         raise Refusal("owned_backend_health_timeout_process_retained_for_owner_review")
+    require(source_manifest() == initial_manifest, "native_complete_sources_changed_during_startup_process_retained")
     after = database.counts()
     require(after.get("model_call_started", 0) == before.get("model_call_started", 0), "unexpected_model_event_during_status_only_start")
     return save_evidence("start", account, {"database_setup": database.receipt, "database_counts_before": before,
@@ -529,6 +632,8 @@ def main():
                    "credentials_printed": False, "no_inference_requested": True, **SAFE_CONTEXT}
         if sys.platform != "win32":
             EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
+            if EVIDENCE.exists():
+                failure["legacy_five_file_snapshots"] = legacy_snapshots(json.loads(EVIDENCE.read_text()))
             atomic_json(EVIDENCE, failure, 0o644)
         print(json.dumps(failure))
         return 2

@@ -1,0 +1,246 @@
+{
+  "observed_at_utc": "2026-10-25T19:37:18.306257+00:00",
+  "purpose": "Keep running services stable while owner performs 100 full adaptive conversations; E worktree may change independently",
+  "profiles": {
+    "8081": {
+      "llm_provider": "groq",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "8083": {
+      "llm_provider": "ollama",
+      "model": "qwen3.5:4b"
+    }
+  },
+  "api_image_id": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+  "local_start_manifest": {
+    "format": "otravel.package_source_manifest.v1",
+    "sha256": "3837e5849bc9d71ace31b359dad2e89fc200605959fdf100a23503d9fc9f26bb",
+    "file_count": 21,
+    "files": [
+      {
+        "path": "otravel/__init__.py",
+        "bytes": 82,
+        "sha256": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a"
+      },
+      {
+        "path": "otravel/api.py",
+        "bytes": 26173,
+        "sha256": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05"
+      },
+      {
+        "path": "otravel/clarifications.py",
+        "bytes": 29025,
+        "sha256": "d9a538e37e96ca37c827a1a2638c108409b9888240ae1f9fce5b03ad0f825457"
+      },
+      {
+        "path": "otravel/config.py",
+        "bytes": 5609,
+        "sha256": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d"
+      },
+      {
+        "path": "otravel/date_slots.py",
+        "bytes": 5847,
+        "sha256": "627cd1a7d4bceb9ecb6200416cca6ad4f69a1d2478189c04051db0e4d592c92b"
+      },
+      {
+        "path": "otravel/domain.py",
+        "bytes": 26953,
+        "sha256": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514"
+      },
+      {
+        "path": "otravel/geography.py",
+        "bytes": 9262,
+        "sha256": "080c064d1686b8cd7f3780855655c4e94840ff098e84b8dfc83b58b21c3c67f5"
+      },
+      {
+        "path": "otravel/harness.py",
+        "bytes": 62913,
+        "sha256": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6"
+      },
+      {
+        "path": "otravel/history.py",
+        "bytes": 6726,
+        "sha256": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb"
+      },
+      {
+        "path": "otravel/inventory.py",
+        "bytes": 28020,
+        "sha256": "5c4084aa1a0e0bf5fdced24d0abbc98b6ffa660cb9e230177bf8dd4003a57b99"
+      },
+      {
+        "path": "otravel/llm_contract.py",
+        "bytes": 8814,
+        "sha256": "8b81b5ea56a759eb5f1341268fb4fcc8a1817c7386cbef464803e38e793fdeca"
+      },
+      {
+        "path": "otravel/money.py",
+        "bytes": 10768,
+        "sha256": "08cb7c6fdec0da25b53f4abc3bd6c04a64d3fb42493a98dd6fe444742cd33c8d"
+      },
+      {
+        "path": "otravel/orchestrator.py",
+        "bytes": 20451,
+        "sha256": "55768d2034e0b551d4863a618453e261edb409d9272fde0b51c4678695c14c23"
+      },
+      {
+        "path": "otravel/planning.py",
+        "bytes": 27405,
+        "sha256": "0359ed88cf0672d85a309f905657d935a64bf83eb334d58d4e6e392ddc1a827b"
+      },
+      {
+        "path": "otravel/provider_facts.py",
+        "bytes": 16393,
+        "sha256": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55"
+      },
+      {
+        "path": "otravel/providers.py",
+        "bytes": 65408,
+        "sha256": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530"
+      },
+      {
+        "path": "otravel/static/chat.css",
+        "bytes": 7362,
+        "sha256": "fb32fe81daf5bb49fb57c0e1ad66a93a5b030b6dcafa823825ebede85ce867ef"
+      },
+      {
+        "path": "otravel/static/chat.js",
+        "bytes": 11857,
+        "sha256": "d2c2c3c722351769e5bf903fcd0c10162a0ce7b002bff17c1c4cd146b2d655a1"
+      },
+      {
+        "path": "otravel/static/debug.html",
+        "bytes": 3583,
+        "sha256": "ddea33d746d7dd3cf766f2aa7651e7b536ad9a9db31f9b9f7e87dcd84292d3bf"
+      },
+      {
+        "path": "otravel/store.py",
+        "bytes": 55823,
+        "sha256": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 870,
+        "sha256": "64e616db211d786cccc588f5fd15acab0ef9373fadbcb317baa11a161d418e52"
+      }
+    ]
+  },
+  "local_loaded_manifest": {
+    "status": "MATCHES_FULL_START_MANIFEST",
+    "reason": "exact_complete_start_and_current_match",
+    "matches_current": true,
+    "restart_required": false
+  },
+  "canonical_source_at_freeze": [
+    {
+      "path": "otravel/__init__.py",
+      "bytes": 82,
+      "sha256": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a"
+    },
+    {
+      "path": "otravel/api.py",
+      "bytes": 26173,
+      "sha256": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05"
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "bytes": 29025,
+      "sha256": "d9a538e37e96ca37c827a1a2638c108409b9888240ae1f9fce5b03ad0f825457"
+    },
+    {
+      "path": "otravel/config.py",
+      "bytes": 5609,
+      "sha256": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d"
+    },
+    {
+      "path": "otravel/date_slots.py",
+      "bytes": 5847,
+      "sha256": "627cd1a7d4bceb9ecb6200416cca6ad4f69a1d2478189c04051db0e4d592c92b"
+    },
+    {
+      "path": "otravel/domain.py",
+      "bytes": 26953,
+      "sha256": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514"
+    },
+    {
+      "path": "otravel/geography.py",
+      "bytes": 9262,
+      "sha256": "080c064d1686b8cd7f3780855655c4e94840ff098e84b8dfc83b58b21c3c67f5"
+    },
+    {
+      "path": "otravel/harness.py",
+      "bytes": 62913,
+      "sha256": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6"
+    },
+    {
+      "path": "otravel/history.py",
+      "bytes": 6726,
+      "sha256": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb"
+    },
+    {
+      "path": "otravel/inventory.py",
+      "bytes": 28020,
+      "sha256": "5c4084aa1a0e0bf5fdced24d0abbc98b6ffa660cb9e230177bf8dd4003a57b99"
+    },
+    {
+      "path": "otravel/llm_contract.py",
+      "bytes": 8814,
+      "sha256": "8b81b5ea56a759eb5f1341268fb4fcc8a1817c7386cbef464803e38e793fdeca"
+    },
+    {
+      "path": "otravel/money.py",
+      "bytes": 10768,
+      "sha256": "08cb7c6fdec0da25b53f4abc3bd6c04a64d3fb42493a98dd6fe444742cd33c8d"
+    },
+    {
+      "path": "otravel/orchestrator.py",
+      "bytes": 20451,
+      "sha256": "55768d2034e0b551d4863a618453e261edb409d9272fde0b51c4678695c14c23"
+    },
+    {
+      "path": "otravel/planning.py",
+      "bytes": 27405,
+      "sha256": "0359ed88cf0672d85a309f905657d935a64bf83eb334d58d4e6e392ddc1a827b"
+    },
+    {
+      "path": "otravel/provider_facts.py",
+      "bytes": 16393,
+      "sha256": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55"
+    },
+    {
+      "path": "otravel/providers.py",
+      "bytes": 65408,
+      "sha256": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530"
+    },
+    {
+      "path": "otravel/static/chat.css",
+      "bytes": 7362,
+      "sha256": "fb32fe81daf5bb49fb57c0e1ad66a93a5b030b6dcafa823825ebede85ce867ef"
+    },
+    {
+      "path": "otravel/static/chat.js",
+      "bytes": 11857,
+      "sha256": "d2c2c3c722351769e5bf903fcd0c10162a0ce7b002bff17c1c4cd146b2d655a1"
+    },
+    {
+      "path": "otravel/static/debug.html",
+      "bytes": 3583,
+      "sha256": "ddea33d746d7dd3cf766f2aa7651e7b536ad9a9db31f9b9f7e87dcd84292d3bf"
+    },
+    {
+      "path": "otravel/store.py",
+      "bytes": 55823,
+      "sha256": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 870,
+      "sha256": "64e616db211d786cccc588f5fd15acab0ef9373fadbcb317baa11a161d418e52"
+    }
+  ],
+  "canonical_source_aggregate_sha256": "3837e5849bc9d71ace31b359dad2e89fc200605959fdf100a23503d9fc9f26bb",
+  "git_head_before_checkpoint": "d19a05edaa5e9bf6279fbf7b36d723a7a357e45d",
+  "git_worktree_dirty": true,
+  "identity_limit": "Runtime uses native C copy/installed wheel; future E edits are not deployed automatically",
+  "inference_requests_from_this_receipt": 0,
+  "do_not_sync_or_restart_during_owner_series": true
+}

@@ -137,6 +137,10 @@ class Evaluation:
         self.stop = None
         self.reserve_per_turn = 2  # Fail closed until provider metadata confirms local single attempt.
 
+    def checkpoint(self):
+        target = ROOT / self.report["report"]
+        target.write_text(json.dumps(self.evidence.clean(self.report), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
     def events(self, route, token):
         return self.http.get(route + "/events", token)["events"]
 
@@ -179,6 +183,8 @@ class Evaluation:
                 record["turns"].append({"index": index, "status": "NOT_EXECUTED", "reason": self.stop})
                 continue
             before = self.http.get(route, token)
+            record["turns"].append({"index": index, "text": turn["text"], "status": "IN_PROGRESS", "state_before": before})
+            self.checkpoint()
             start = time.monotonic()
             status, accepted = self.http.request("POST", route + "/messages", token, {
                 "client_message_id": str(uuid4()), "expected_version": before["state_version"], "text": turn["text"]})
@@ -186,6 +192,8 @@ class Evaluation:
                 raise RuntimeError("intake_http_" + str(status))
             run_id = accepted["run_id"]
             self.evidence.identity(run_id, "run")
+            record["turns"][-1]["run_alias"] = self.evidence.identities[run_id]
+            self.checkpoint()
             run = self.http.wait(run_id, token)
             after = self.http.get(route, token)
             history = self.http.get(route + "/messages", token)["messages"]
@@ -257,7 +265,7 @@ class Evaluation:
                 "elapsed_seconds": round(time.monotonic() - start, 3), "assistant_text": reply,
                 "state_before": before, "state_after": after,
                 "evidence_paths": [str(evidence_path.relative_to(ROOT)).replace("\\", "/")]}
-            record["turns"].append(turn_record)
+            record["turns"][-1] = turn_record
             error = (run.get("error") or {}).get("code")
             if error in PROVIDER_ERRORS:
                 self.stop = "PROVIDER_UNAVAILABLE"
@@ -267,6 +275,7 @@ class Evaluation:
                 for rest in range(index + 1, len(case["turns"]) + 1):
                     record["turns"].append({"index": rest, "status": "NOT_EXECUTED", "reason": "DEPENDENCY_FAILED"})
                 break
+            self.checkpoint()
             print(json.dumps({"case": case["id"], "turn": index, "status": turn_record["status"],
                               "source": classification, "attempts": len(calls)}, ensure_ascii=False), flush=True)
         record["status"] = "PASS" if len(record["turns"]) == len(case["turns"]) and all(turn["status"] == "PASS" for turn in record["turns"]) else "NOT_ALL_PASS"

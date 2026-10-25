@@ -54,7 +54,6 @@ async def test_conflicts_block_patch_but_preserve_explicit_wait(declared, api_fa
 async def test_missing_age_is_clarification_and_answer_can_continue_without_resume(api_factory):
     model = StubLLM([
         _answer([{"type": "add_traveler", "value": {"id": "child-pending-age", "type": "child", "group_id": "family-1"}}], control="wait", unknowns=["Сколько лет ребёнку?"]),
-        _answer([{"type": "update_traveler", "target_id": "child-pending-age", "value": {"age": 6}}]),
     ])
     async with api_factory(model) as (client, _):
         sid, token, _ = await _session(client, sample_trip().model_dump(mode="json"))
@@ -65,9 +64,12 @@ async def test_missing_age_is_clarification_and_answer_can_continue_without_resu
         assert waiting["waiting_reason"] == "clarification"
         assert waiting["pending_question"] and "лет" in waiting["pending_question"]["text"]
         second = await client.post(path, json={"client_message_id": "age-answer", "text": "Шесть лет"}, headers=_headers(token))
-        await _wait(client, second.json()["run_id"], token)
+        answered = await _wait(client, second.json()["run_id"], token)
         after = await _snapshot(client, sid, token)
-        assert len(model.calls) == 2 and after["waiting_reason"] != "user_pause"
+        # The persisted exact child slot now accepts Russian number words
+        # without a second model call. Keep the behavioral age assertions.
+        assert len(model.calls) == 1 and after["waiting_reason"] != "user_pause"
+        assert answered["result"]["result"]["response_source"] == "contextual_slot"
         people = _trip(after)["travelers"]
         assert len(people) == 10
         assert next(person for person in people if person["id"] == "child-pending-age")["age"] == 6

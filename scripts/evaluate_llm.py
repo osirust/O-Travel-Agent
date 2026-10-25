@@ -109,6 +109,7 @@ class Evaluation:
                 record["status"] = "PARTIAL_BUDGET"
                 break
             before = self.events(path, token)
+            before_snapshot = self.get(path, token)
             run = None
             if "action" in turn:
                 code, control = self.request("POST", path + "/control", token, {"action": turn["action"]})
@@ -169,6 +170,18 @@ class Evaluation:
             turn_record = {"index": index, "status": "PASS" if not failures else "FAIL", "failed_checks": failures,
                            "model_attempts": calls, "session_status": snapshot["status"],
                            "llm": (run or {}).get("llm"), "error_code": ((run or {}).get("error") or {}).get("code")}
+            # Preserve facts needed to diagnose a semantic failure. Never dump
+            # internal session rows, bearer tokens, DB credentials or raw HTTP.
+            from otravel.providers import _safe
+            turn_record["observation"] = _safe({
+                "request_text": turn.get("text"),
+                "trip_before": before_snapshot["trip"], "trip_after": snapshot["trip"],
+                "pending_before": before_snapshot.get("pending_question"),
+                "pending_after": snapshot.get("pending_question"),
+                "changes": ((run or {}).get("result") or {}).get("changes", []),
+                "assistant_message": ((run or {}).get("result") or {}).get("reply"),
+                "response_source": nested.get("response_source"),
+            })
             record["turns"].append(turn_record)
             if turn_record["error_code"] in {"RATE_LIMITED", "HTTP_ERROR", "CONFIG_MISSING", "MODEL_BUDGET_EXHAUSTED", "MODEL_COOLDOWN", "REQUEST_TIMEOUT", "NETWORK_ERROR"}:
                 # Provider availability is not language accuracy. Stop on the
@@ -177,11 +190,11 @@ class Evaluation:
                 turn_record["status"] = "BLOCKED_PROVIDER"
                 record["status"] = "BLOCKED_PROVIDER"
                 self.provider_blocked = True
-                print(json.dumps({"case": case["id"], **turn_record}, ensure_ascii=False), flush=True)
+                print(json.dumps({"case": case["id"], **{k: v for k, v in turn_record.items() if k != "observation"}}, ensure_ascii=False), flush=True)
                 break
             if failures:
                 record["status"] = "FAIL"
-            print(json.dumps({"case": case["id"], **turn_record}, ensure_ascii=False), flush=True)
+            print(json.dumps({"case": case["id"], **{k: v for k, v in turn_record.items() if k != "observation"}}, ensure_ascii=False), flush=True)
         if record["status"] != "PASS":
             if case.get("after_actions"):
                 record["after_actions"] = [{"status": "NOT_EXECUTED_DEPENDENCY_FAILED"}]

@@ -1,0 +1,44 @@
+# O!Travel Agent — состояние на 25.10.2026
+
+## Отдельная серия тестировщика D100 — завершена, исправления не выполнялись
+
+По прямому запросу владельца проверен backend 8083 через /messages: **100 сценариев / 130 завершённых реплик, 55 raw PASS / 45 FAIL**, 108 подтверждённых вызовов модели, 0 инструментов и заказов. В 8 raw PASS независимо найдены дополнительные ошибки; спорные оракулы 010/030 и вопросы политики выделены отдельно. [Результат и открытые IDs](docs/verification/dialogue-break-100-20261025/FINDINGS.md), [все 100 протоколов](docs/verification/dialogue-break-100-20261025/complete/TRANSCRIPTS.md).
+
+Серия 25.10, 21:15–21:24 МСК характеризует фактически обслуживавший 8083 runtime; его source SHA через API неизвестен. Это не квалификация параллельных неразвёрнутых исправлений ниже. Первая попытка 058 прервана при чтении после HTTP 202, исход UNKNOWN; run-01 сохранён, те же входы 058–100 исполнены в run-02, завершённые 57 не повторялись. Приложение и конфигурация этим тестировщиком не менялись и не перезапускались. Исходный checkout «завтра» в точном pending-контексте и карточка UI отдельно OPEN; другой PASS их не закрывает. Следующий шаг тестировщика — относящийся прогон после команды владельца с указанием runtime-ревизии.
+
+## Цель и следующий шаг
+
+Уточнение D100 после чтения deployment receipt: 8083 запущен в 21:20:09 МСК между фазами. 55/45 — сводка двух состояний: 001–057 = 25 PASS / 32 FAIL; 058–100 = 30 PASS / 13 FAIL. Runtime manifest сообщён отдельным receipt, но per-request PID/build не фиксировался. См. D100/RUNTIME_BOUNDARY.json; первую фазу не переносить как оценку развёрнутого после неё исправления.
+
+Выполняем HARNESS001…008. Текущий приоритет: **HARNESS004 — устойчивые диалоги**, затем исходный106-корпус с исполняемыми оракулами, затем actual-source сложная поездка HARNESS001. Новые сообщения владельца уточняют текущую работу, не отменяют план. Финальный frontend делает сокомандник.
+
+Сейчас вносятся исправления двух новых цепочек владельца: информационный вопрос ≠ изменение поездки; составная реплика сохраняет все явные факты; Белгород при сильном контексте Сербии понимается как опечатка Белграда с видимым пояснением; относительная дата с противоречием вызывает вопрос. **Последние правки развёрнуты на8081/8083; package20files и полный process-start manifest совпадают.** Общий прогон935PASS. Реальный API/PG date slot через browser:26.10→«завтра» задаёт вопрос о более позднем выезде,0LLM/0consoleerrors; это не rawNLU. Ближайшее: actual owner11/derivedcompound, сравнение с API-моделью после получения ключа, затем расширение106oracles.
+
+## Проверенные результаты
+
+- Owner-3: **3/3 диалога,8/8 реплик PASS на local Qwen+harness**,3 настоящих extraction вызова и5 contextual slots. `owner-dialogues-20261025-local-owner-corrected-01.json`. Это не весь106 и не8сырых ответов модели.
+- Remote Owner-3: **NOT_ALL_PASS**, Dots REQUEST_TIMEOUT, Xing PROVIDER_RESPONSE_ERROR, далее cooldown. `owner-dialogues-20261025-remote-owner-corrected-01.json`; отказ поставщика не записывается как успешное понимание.
+- Development local7 сначала6PASS/1FAIL: неизвестный child-1 остался без возраста, изменён child-2. HARNESS-004-SLOT-AGE-001: конкретный persisted slot + bounded возраст словами. Тот же ACC-CLARIFY-01 после исправления PASS:1LLM+1contextual; полный development7 после фикса PASS,10LLM attempts. Старые FAIL сохранены.
+- Общий интегрированный прогон **935 pytest PASS**, `full-suite-20261025-dialogue-integrated.xml`. Это не935NLUcases. Development7 на обновлённой schema:6PASS/1FAIL(ACC-UNKNOWN-01 придумал взрослого), NOT_ALL_PASS сохранён; прежний7PASS относится к предыдущему checkpoint.
+- DEMO: сложная группа9людей/2семьи/3номера и2города; сборка/пересборка, quote/order только имитация, CAS/version/idempotency/undo/cancel/pause и persistence.
+- MIXED:16 связанных PG/API checks — exact source binding, fees/allocation/evidence/currency/expiry, refresh/revocation, simulated confirm. **Actual-source многогородская групповая цепочка ещё не принята; OTR-007 supplier comparison OPEN.**
+- PG: отдельный временный Compose PG SIGKILL→503JSON→WAL recovery, состояние/токен/пауза/order/idempotency сохранились. Это контролируемый single-node crash, не все distributed/disk failures.
+- Debug UI desktop/mobile smoke ранее PASS, XSSliteral/0consoleerrors/0modelcalls. API-кнопка убрана; Swagger-disable flag для сдачи TODO, глобальной внешней авторизации нет.
+
+## Корпус и новые материалы
+
+106оригинальных IDs/129реплик неизменны.71имеют executed partial typed/domain/adapter/PG assertions,35NOT_EXECUTED; полных исходных actual106 NLU PASS пока0. Новый audit и acceptance-oracles MD/JSONL сохранены byte-exact в docs/research/sources/manifest.json.106revision1 bindings/185checks UNBOUND/NOT_RUN.
+
+Pilot-v2: NLU01/03/06/09,34BOUND typed checks и8UNBOUND, все4fullcase BLOCKED_ORACLE. Grader22purechecks PASS; actual pilot4 наQwen:NLU01/09 PASS_BOUND_CHECKS, NLU03/06 FAIL_BOUND_CHECKS,4реальных вызова. У NLU03Сочи ошибочноorigin и100к→10к;NLU06потеряныСтамбул/120тыс. Все4полныхcase BLOCKED_ORACLE, не2полныхPASS. Новая owner11цепочка — development regression, не holdout; исходные inputs заморожены до replay. Политика contextual typo уточнена владельцем после v1, отдельный v2 overlay нужен; исходный v1 не переписывать.
+
+## Среда и доступы
+
+- Source E:/work/aegml; native/runtime C:/WSL/AegML-Hackathon, /home/aegml/projects/otravel. Repo private ostrovok-hackathon-2026/aegml; branch codex/backend-harness-foundation; Draft PR1. Последний push d19a05e, текущий checkpoint/push готовится; чужие untracked dialogue-break-100 артефакты не включать без установления авторства.
+- Main Docker app127.0.0.1:8081; PG17.11 без host port; DB otravel/runtime, otravel_test/tests. Local standalone127.0.0.1:8083, отдельная otravel_local_eval, useraegml, APIkeys unset. Lifecycle только scripts/local_backend.py с PID/start/UID/argv verification. Source sync не обновляет уже загруженный процесс.
+- Ollama0.40.11, qwen3.5:4b Q4_K_M,3.32GB model; install/models наC, archive+runtime+model~7.32GB. RTX5070Ti16GB, GPU.127.0.0.1:11434, cloud off. Это dev-стенд, не обязательная4GBзагрузка проверяющим.
+- OpenRouter only :free+max_price0, cap$0.01 owner-approved, расходов0. Primary Dots/backup Xing; Gemma ранее upstream shared-pool429.25.10 20:53MSK read-only /key: used21/limit50/remaining29. Remote app ceiling40/day+2/run, local500/day+1/run; cooldown durable. Gemini key отсутствует.
+- LiteAPI sandbox, Duffel test, SerpApi LIVE_INDICATIVE, Open-Meteo настроены и имели actual responses. Настройка ≠ постоянная доступность/бронируемый тариф. Hotelbeds/RateHawk/Travelpayouts только adapters без ключей/actual qualification. Настоящие orders/payments0.
+- SETUP-004 OPEN: три travelkeys раньше вставлены владельцем в чат, нужен перевыпуск и скрытая локальная замена. Не повторять значения. Ключи только native .env0600; secret scan перед Git push.
+- ENV003: E SSD disconnect/reconnect подтверждён владельцем, drvfs access восстановлен overlaymount без force/shutdown. Не делать случайные umount/kill; native runtimeC. AEGYX INDEX81 paused передSOURCE3; AEGYX/Ubuntu24.04/WindowsPG/PEM не трогать. Порт8080 важный PEMHTTPD, оставлен.
+
+API-сравнение: docs/research/free-llm-options-20261025.md; Gemini3.8Flash Free подтверждён документацией, адаптер есть, ключа/аккаунтной квоты ещё нет. ТочныеRPM/TPM/RPD смотреть в егоAIStudio. GroqQwen27B опубликованы30RPM/1000RPD/8kTPM/200kTPD; ключа/адаптера иactualquality пока нет. Новые аккаунты/billing не включались.

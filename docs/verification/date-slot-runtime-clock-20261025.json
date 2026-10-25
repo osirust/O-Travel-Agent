@@ -1,0 +1,6 @@
+{
+  "scope": "RUNTIME_CLOCK_FOR_DATE_SLOT_REPLAY",
+  "observed_at_utc": "2026-10-25T18:29:50.590723+00:00",
+  "reference_now_msk": "2026-10-25T21:29:50.590862+03:00",
+  "timezone": "Europe/Moscow"
+}

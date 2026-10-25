@@ -54,6 +54,7 @@ _CITIES = {
     "Дубай": ("AE", ("Dubai", "Дубаи", "Дубае")),
     "Белград": ("RS", ("Belgrade", "Beograd", "Белграде")),
     "Нови-Сад": ("RS", ("Novi Sad", "Нови Сад", "Нови-Саде", "Новом Саде")),
+    "Белгород": ("RU", ("Belgorod", "Белгороде")),
 }
 _AMBIGUOUS = {
     "georgia": "Вы имеете в виду страну Грузию или штат Джорджия в США? Уточните город.",
@@ -75,6 +76,13 @@ def _key(value: str) -> str:
 
 _COUNTRY_ALIASES = {_key(alias): code for code, aliases in _COUNTRIES.items() for alias in (*aliases, code)}
 _CITY_ALIASES = {_key(alias): name for name, (_, aliases) in _CITIES.items() for alias in (name, *aliases)}
+
+
+def known_cities() -> tuple[str, ...]:
+    """Curated geographic names, independent of supported search inventory."""
+    return tuple(_CITIES)
+
+
 _PREFIX = re.compile(
     r"^(?:(?:я |мы )?(?:хочу|хотим)(?: поехать| полететь| отправиться)? (?:в|во) |"
     r"(?:поехать|полететь|еду|едем|летим) (?:в|во) |(?:в|во) |"

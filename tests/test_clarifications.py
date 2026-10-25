@@ -239,6 +239,109 @@ def test_country_itself_never_guesses_a_city():
     assert result["pending_context"]["requested_destination"]["kind"] == "country"
 
 
+def test_policy_v2_nonbare_belgorod_retains_country_confirmation_without_catalogue_claim():
+    # The former bare-Belgorod v1 oracle was superseded by explicit owner policy.
+    before = state(origin="Москва")
+    pending = country_pending()
+    snapshot = deepcopy((before.model_dump(mode="json"), pending))
+    result = resolve_short_answer(before, pending, "в Белгород")
+    assert result["handled"] and result["operations"] == []
+    assert all(name in result["question"] for name in ("Белгород", "Белград", "Россия", "Сербия"))
+    assert "Меняем страну" in result["question"] and "каталог" not in result["question"]
+    assert result["pending_context"]["requested_destination"]["country_code"] == "RS"
+    assert result["pending_context"]["proposed_destination"] == {"kind": "city", "name": "Белгород", "country_code": "RU"}
+    assert (before.model_dump(mode="json"), pending) == snapshot
+
+
+def test_policy_v2_belgrade_after_nonbare_belgorod_preserves_serbian_selection():
+    before = state(origin="Москва")
+    first = resolve_short_answer(before, country_pending(), "в Белгород")
+    result = resolve_short_answer(before, first["pending_context"], "Белград")
+    assert result["handled"] and result["operations"] == [] and "не входит в каталог" in result["question"]
+    assert "Белград" in result["question"] and "Сербия" in result["question"]
+    assert result["pending_context"]["requested_destination"] == {"kind": "city", "name": "Белград", "country_code": "RS"}
+    assert "proposed_destination" not in result["pending_context"] and not result["pending_context"].get("confirmation_required")
+    assert "Выберем другой город" not in result["question"] and "доступных:" not in result["question"]
+    assert not any(city in result["question"] for city in CITIES)
+    assert before.origin == "Москва" and before.stays == []
+    assert human_question("destination.city", before, result["pending_context"]) == result["question"]
+    assert resolve_short_answer(before, result["pending_context"], "да")["operations"] == []
+
+
+@pytest.mark.parametrize("text", ["Белгород", "белгород", " БЕЛГОРОД "])
+def test_policy_v2_bare_belgorod_in_serbia_is_visible_contextual_belgrade_correction(text):
+    before = state(origin="Москва")
+    pending = country_pending()
+    snapshot = deepcopy((before.model_dump(mode="json"), pending))
+    result = resolve_short_answer(before, pending, text)
+    assert result["handled"] and result["operations"] == []
+    assert result["notice"] == "Понял как «Белград», Сербия."
+    assert result["question"].startswith(result["notice"]) and "не входит в каталог" in result["question"]
+    assert "Меняем страну" not in result["question"] and "Россия" not in result["question"]
+    assert result["pending_context"]["requested_destination"] == {"kind": "city", "name": "Белград", "country_code": "RS"}
+    assert result["pending_context"]["contextual_correction"]["interpreted_city"] == "Белград"
+    assert human_question("destination.city", before, result["pending_context"]) == result["question"]
+    assert (before.model_dump(mode="json"), pending) == snapshot
+
+
+@pytest.mark.parametrize("text", ["именно Белгород", "Белгород, Россия", "Белгород в России", "Белгород RU", "в Белгород"])
+def test_policy_v2_explicit_or_nonbare_belgorod_is_not_contextually_rewritten(text):
+    result = resolve_short_answer(state(), country_pending(), text)
+    assert "notice" not in result and "contextual_correction" not in result.get("pending_context", {})
+    chosen = result.get("pending_context", {}).get("requested_destination", {})
+    assert chosen.get("kind") != "city" or chosen.get("name") != "Белград"
+
+
+@pytest.mark.parametrize("pending", ["destination.city", {"field": "destination.city", "requested_destination": parse_destination("Турция")["requested_destination"]}, {"field": "origin.city", "requested_origin": country_pending()["requested_destination"]}])
+def test_policy_v2_belgorod_is_not_a_global_alias_or_an_origin_correction(pending):
+    result = resolve_short_answer(state(), pending, "Белгород")
+    assert result["handled"] and "notice" not in result and "contextual_correction" not in result.get("pending_context", {})
+    context = result["pending_context"]
+    chosen = context.get("proposed_destination", context.get("requested_destination", context.get("requested_origin")))
+    assert chosen["name"] == "Белгород" and chosen["country_code"] == "RU"
+
+
+def test_confirmed_supported_city_replaces_old_sidebar_metadata_without_stale_slot():
+    before = state(origin="Москва")
+    old_selection = resolve_short_answer(before, country_pending(), "Белград")["pending_context"]
+    origin = parse_destination("Россия")["requested_destination"]
+    pending = {**old_selection, "requested_origin": origin, "children_known": True}
+    proposed = resolve_short_answer(before, pending, "Санкт-Петербург")
+    assert proposed["operations"] == [] and proposed["pending_context"]["confirmation_required"]
+    selected = resolve_short_answer(before, proposed["pending_context"], "да")
+    after, _ = apply_operations(before, selected["operations"])
+    assert after.stays[0].city == "Санкт-Петербург" and after.origin == "Москва"
+    metadata = selected["pending_context"]
+    assert metadata["requested_destination"] == {"kind": "city", "name": "Санкт-Петербург", "country_code": "RU"}
+    assert metadata["requested_origin"] == origin and metadata["children_known"] is True
+    assert not any(key in metadata for key in ("field", "target_id", "stay_id", "proposed_destination", "confirmation_required"))
+    next_slot = derive_pending_field(["check_in"], after)
+    assert next_slot["field"] == "stay.check_in" and next_slot["target_id"] == after.stays[0].id
+
+
+def test_direct_supported_city_commit_returns_current_metadata_without_binding():
+    selected = resolve_short_answer(state(), {"field": "destination.city", "target_id": "new-stay"}, "Сочи")
+    assert selected["pending_context"] == {"requested_destination": {"kind": "city", "name": "Сочи", "country_code": "RU"}}
+    assert selected["operations"][0]["target_id"] == "new-stay"
+
+
+def test_unselected_country_metadata_survives_declining_city_change():
+    original = country_pending()
+    proposed = resolve_short_answer(state(), original, "Стамбул")
+    declined = resolve_short_answer(state(), proposed["pending_context"], "нет")
+    assert declined["operations"] == [] and declined["pending_context"]["requested_destination"] == original["requested_destination"]
+    assert declined["pending_context"]["field"] == "destination.city"
+
+
+@pytest.mark.parametrize("city,country", [("Белград", "Сербия"), ("Белгород", "Россия")])
+def test_known_unsupported_city_keeps_selection_and_offers_no_search_or_forced_replacement(city, country):
+    result = resolve_short_answer(state(), "destination.city", city)
+    assert result["handled"] and result["operations"] == []
+    assert city in result["question"] and country in result["question"] and "не входит в каталог" in result["question"]
+    assert result["pending_context"]["requested_destination"]["name"] == city
+    assert "Выберем другой город" not in result["question"] and "доступных:" not in result["question"]
+
+
 def test_unique_known_typo_suggestion_is_confirmation_only_then_metadata():
     result = resolve_short_answer(state(), country_pending(), "Белгрод")
     assert result["operations"] == [] and result["question"] == "Вы имеете в виду город «Белград»?"
@@ -311,3 +414,98 @@ def test_inputs_are_not_mutated_and_dict_state_supported():
     human_question(pending, before)
     derive_pending_field([pending], before)
     assert (before, pending) == snapshot
+
+
+def test_actual_age_continuation_updates_unknown_child_not_already_known_sibling():
+    before = state(origin="Казань", travelers=[
+        {"id": "adult", "type": "adult", "age": 35},
+        {"id": "child-1", "type": "child", "age": None},
+        {"id": "child-2", "type": "child", "age": 7},
+    ])
+    pending = {"field": "traveler.age", "target_id": "child-1"}
+    result = resolve_short_answer(before, pending, "Ему четыре года на дату выезда. Это единственное уточнение.")
+    assert result["handled"]
+    assert result["operations"] == [{"type": "update_traveler", "target_id": "child-1", "value": {"age": 4}}]
+    after, _ = apply_operations(before, result["operations"])
+    assert [(p.id, p.type, p.age) for p in after.travelers] == [
+        ("adult", "adult", 35), ("child-1", "child", 4), ("child-2", "child", 7)]
+
+
+_AGE_WORD_CASES = [
+    ("ноль", 0), ("нуль", 0), ("один", 1), ("два", 2), ("три", 3),
+    ("четыре", 4), ("пять", 5), ("шесть", 6), ("семь", 7), ("восемь", 8),
+    ("девять", 9), ("десять", 10), ("одиннадцать", 11), ("двенадцать", 12),
+    ("тринадцать", 13), ("четырнадцать", 14), ("пятнадцать", 15),
+    ("шестнадцать", 16), ("семнадцать", 17),
+]
+
+
+@pytest.mark.parametrize("text,age", _AGE_WORD_CASES + [
+    ("0", 0), ("17 лет", 17), ("Ему четыре года", 4), ("Ей 4 года на дату поездки", 4),
+    ("Ребёнку будет семь лет на дату выезда", 7),
+    ("Ей семнадцать лет на дату поездки. Это единственное уточнение.", 17),
+    ("4 года, это единственное уточнение", 4),
+])
+def test_bounded_age_words_and_qualifiers_change_only_exact_unknown_child(text, age):
+    from otravel.domain import sample_trip
+
+    before = sample_trip()
+    before.travelers[6].age = None  # child-1; preserve groups, allocations and route.
+    snapshot = before.model_dump(mode="json")
+    pending = {"field": "traveler.age", "target_id": "child-1", "question_id": "known-question"}
+    prior_pending = deepcopy(pending)
+    result = resolve_short_answer(before, pending, text)
+    assert result["handled"] and result["operations"] == [
+        {"type": "update_traveler", "target_id": "child-1", "value": {"age": age}}]
+    after, _ = apply_operations(before, result["operations"])
+    expected = deepcopy(snapshot)
+    expected["travelers"][6]["age"] = age
+    assert after.model_dump(mode="json") == expected
+    assert before.model_dump(mode="json") == snapshot and pending == prior_pending
+
+
+@pytest.mark.parametrize("text", [
+    "Ему четыре года и бюджет 200000 рублей", "Ему четыре года, добавь взрослого",
+    "Ему четыре года. Перенеси выезд на два дня.", "Ему четыре года на дату 2026-12-01",
+    "Ему четыре года; это единственное уточнение", "Ему четыре года\nЭто единственное уточнение",
+    "Ребёнку №2 четыре года", "child-2 четыре года", "Другому ребёнку четыре года",
+    "Младшему четыре года", "Ему не четыре года", "Не ему четыре года",
+    "Если ему четыре года", "А если ему четыре года?", "Ему четыре года?",
+    "Наверное, ему четыре года", "Ему примерно четыре года", "Четыре или пять лет",
+    "От четырёх до пяти лет", "4-5 лет", "Ему восемнадцать лет", "Ему 18 лет",
+    "Ему -1 год", "Ему 4.5 года", "Ему четыре года. Это единственное уточнение, но убери отель",
+    "Ему четыре года, но это не единственное уточнение", "Это единственное уточнение",
+])
+def test_age_parser_does_not_intercept_compound_other_child_or_nonasserted_age(text):
+    before = state(travelers=[{"id": "child-1", "type": "child"}, {"id": "child-2", "type": "child", "age": 7}])
+    snapshot = before.model_dump(mode="json")
+    result = resolve_short_answer(before, {"field": "traveler.age", "target_id": "child-1"}, text)
+    assert result == {"handled": False, "operations": []}
+    assert before.model_dump(mode="json") == snapshot
+
+
+@pytest.mark.parametrize("person", [{"id": "target", "type": "adult"},
+    {"id": "target", "type": "child", "age": 7},
+    {"id": "target", "type": "child", "birth_date": "2022-03-01"}])
+def test_word_age_never_overwrites_adult_known_age_or_birth_date(person):
+    before = state(travelers=[person])
+    result = resolve_short_answer(before, {"field": "traveler.age", "target_id": "target"}, "Ему четыре года")
+    assert result["operations"] == []
+    assert before.travelers[0].model_dump(mode="json") == {"age": None, "birth_date": None, "group_id": None, **person}
+
+
+@pytest.mark.parametrize("pending", [None, {}, {"field": "stay.check_in", "target_id": "child-1"},
+    {"field": "party.children"}, {"field": "traveler.age"},
+    {"field": "traveler.age", "target_id": "missing"}])
+def test_word_age_requires_existing_question_and_exact_existing_child_target(pending):
+    before = state(travelers=[{"id": "child-1", "type": "child"}])
+    result = resolve_short_answer(before, pending, "Ему четыре года")
+    assert result["operations"] == []
+
+
+def test_age_target_metadata_in_nested_pending_context_is_respected():
+    before = state(travelers=[{"id": "child-1", "type": "child"}, {"id": "child-2", "type": "child"}])
+    pending = {"field": "traveler.age", "context": {"traveler_id": "child-2"}}
+    result = resolve_short_answer(before.model_dump(mode="json"), pending, "Ей четыре года")
+    assert result["operations"] == [{"type": "update_traveler", "target_id": "child-2", "value": {"age": 4}}]
+    assert result["pending_context"]["target_id"] == "child-1"

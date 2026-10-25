@@ -192,6 +192,15 @@ class _HTTPGateway:
             status = response.status_code
             details: dict[str, Any] = {"http_status": status}
             if status == 429:
+                if provider == "groq" and url == "https://api.groq.com/openai/v1/chat/completions":
+                    # Preserve only a bounded delta-seconds hint from the fixed
+                    # Groq endpoint. Never expose raw headers or parse HTTP dates
+                    # using an implicit clock; waiting/retry belongs to Store.
+                    hint = response.headers.get("retry-after", "").strip().lstrip("0")
+                    if re.fullmatch(r"[0-9]{1,5}", hint):
+                        seconds = int(hint)
+                        if 1 <= seconds <= 86400:
+                            details["retry_after_seconds"] = seconds
                 details["limit_source"] = "unknown"
                 try:
                     blocked = response.json().get("error", {}).get("metadata", {})
@@ -230,7 +239,9 @@ _LLM_SCHEMA = {
             "action": {"type": "string", "enum": ["continue", "wait", "resume", "cancel", "request_checkout", "confirm", "none"]}},
             "additionalProperties": False},
         "reply": {"type": "string"}, "unknowns": {"type": "array", "items": {"type": "string"}},
-        "conflicts": {"type": "array", "items": {"type": "string"}}},
+        "conflicts": {"type": "array", "items": {"type": "string"}},
+        "speech_act": {"type": "string", "enum": ["CHANGE", "ASK", "PROPOSE"]},
+        "information_subject": {"type": ["string", "null"], "maxLength": 80}},
     "additionalProperties": False,
 }
 
@@ -271,6 +282,21 @@ Distinguish a country from a city. Serbia is a country, not a city. If only a
 country is given, ask which city or propose city choices as a clarification;
 never put the country name into origin/stay.city. Catalogue coverage limits
 searching, not the ability to understand and discuss an intended destination.
+Always include speech_act: CHANGE for an explicit request or an answer to the
+current clarification, ASK for an informational question, PROPOSE for a tentative
+suggestion. 'Do you know Serbia?' is ASK with information_subject='Сербия', not a
+request to start trip intake. A bare country answering a destination question is
+CHANGE. information_subject is a place name for ASK, otherwise null. Do not add
+trip operations or missing-booking questions to an informational ASK. The server
+will ground place facts; do not invent prices, visa advice or availability.
+'Minimum cost'/'as cheap as possible' is an explicit soft price_priority preference
+with value lowest_total, not a numeric budget. Preserve all hard constraints.
+An early-morning departure is departure_time=early_morning, without invented
+clock hours. Extract origin, people, known destination and these preferences in
+one compound message, even when that city is outside the DEMO search coverage.
+Known geographic cities in the schema can be retained; search coverage is a
+separate backend decision. 'No children' is known absence, not a reason to ask
+again. Never discard the remaining explicit facts because one field is missing.
 """
 
 
@@ -298,7 +324,7 @@ class LLMGateway(_HTTPGateway):
 
     async def extract_operations(self, context: dict) -> dict:
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
-        if provider not in {"gemini", "openrouter", "ollama"}:
+        if provider not in {"gemini", "openrouter", "ollama", "groq"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         try:
             prompt = json.dumps(_safe({key: value for key, value in context.items() if key != "__response_schema"}), ensure_ascii=False, allow_nan=False)
@@ -365,6 +391,30 @@ class LLMGateway(_HTTPGateway):
                 content = choice["message"]["content"]
             except (TypeError, KeyError, IndexError):
                 _fail("LLM не вернула текст ответа.", provider, "INVALID_LLM_RESPONSE")
+        elif provider == "groq":
+            model = str(_setting(self.settings, "GROQ_MODEL", "qwen/qwen3.8-27b"))
+            if model != "qwen/qwen3.8-27b":
+                _fail("Для Groq разрешён только явно выбранный free-tier model ID qwen/qwen3.8-27b.", provider, "CONFIG_BLOCKED")
+            confirmed = _setting(self.settings, "GROQ_FREE_TIER_CONFIRMED")
+            if confirmed is None:
+                confirmed = os.getenv("GROQ_FREE_TIER_CONFIRMED", "false")
+            if not _truth(confirmed):
+                _fail("Человек должен подтвердить Groq Free Tier до вызова.", provider, "CONFIG_BLOCKED")
+            key = self._key("GROQ_API_KEY", provider)
+            # JSON mode is requested explicitly; the supplied per-trip schema
+            # is still validated on the server below. No paid routing, hidden
+            # fallback, reasoning or provider-specific sampling fields are sent.
+            body = await self._request(provider, "POST", "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {key}"}, json={"model": model,
+                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+                    "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens)})
+            try:
+                choice = body["choices"][0]
+                if choice.get("finish_reason") in {"length", "content_filter", "error"}:
+                    _fail("LLM не завершила структурированный ответ.", provider, "INVALID_LLM_RESPONSE")
+                content = choice["message"]["content"]
+            except (TypeError, KeyError, IndexError):
+                _fail("LLM не вернула текст ответа.", provider, "INVALID_LLM_RESPONSE")
         else:
             model = str(_setting(self.settings, "OLLAMA_MODEL", "qwen3.5:4b"))
             if model != "qwen3.5:4b":
@@ -394,11 +444,16 @@ class LLMGateway(_HTTPGateway):
             result = json.loads(content, parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
         except (TypeError, ValueError):
             _fail("Ответ LLM не является корректным JSON.", provider, "INVALID_LLM_RESPONSE")
-        if (not isinstance(result, dict) or set(result) != set(_LLM_SCHEMA["required"])
+        if (not isinstance(result, dict) or set(_LLM_SCHEMA["required"]) - set(result)
+                or set(result) - set(_LLM_SCHEMA["properties"])
                 or not isinstance(result.get("operations"), list) or not isinstance(result.get("control"), dict)
                 or set(result["control"]) != {"action"}
                 or result["control"].get("action") not in _LLM_SCHEMA["properties"]["control"]["properties"]["action"]["enum"]
                 or not isinstance(result.get("reply"), str)
+                or not isinstance(result.get("speech_act", "CHANGE"), str)
+                or result.get("speech_act", "CHANGE") not in {"CHANGE", "ASK", "PROPOSE"}
+                or (result.get("information_subject") is not None and
+                    (not isinstance(result["information_subject"], str) or len(result["information_subject"]) > 80))
                 or any(not isinstance(result.get(field), list) or any(not isinstance(v, str) for v in result[field])
                        for field in ("unknowns", "conflicts"))):
             _fail("Ответ LLM нарушает контракт извлечения операций.", provider, "INVALID_LLM_RESPONSE")

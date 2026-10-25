@@ -13,7 +13,7 @@ import inspect
 import json
 from typing import Any, Callable
 
-from .domain import TripState, validate_trip
+from .domain import CITIES, TripState, validate_trip
 from .inventory import DemoInventory, _allocation
 from .planning import assemble_plan, compare_plans
 from .providers import ProviderError
@@ -84,6 +84,11 @@ class TripSearch:
             return moment.astimezone(timezone.utc)
         current_time()
         errors = [issue for issue in validate_trip(state) if not (issue["code"] == "unsupported_budget" and state.budget and state.budget.scope == "whole_trip")]
+        outside = list(dict.fromkeys(city for city in [state.origin, *[stay.city for stay in state.stays],
+            *[city for leg in state.legs for city in (leg.origin, leg.destination)]] if city and city not in CITIES))
+        if outside:
+            errors.append(_issue("unsupported_provider_geography", "Текущие поисковые адаптеры не покрывают: "
+                + ", ".join(outside) + ". Направление сохранено; предложения не выдумываются.", cities=outside))
         questions = list(dict.fromkeys(i["message"] for i in errors if i["code"].startswith("missing_")))
         if errors:
             return {"plans": [], "questions": questions, "warnings": [], "violations": errors,

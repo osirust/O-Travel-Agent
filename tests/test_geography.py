@@ -24,7 +24,8 @@ def test_common_country_aliases_require_city(phrase, code):
     assert result["requested_destination"]["kind"] == "country"
     assert result["requested_destination"]["country_code"] == code
     assert result["clarification"]
-    assert all(city["name"] in CITIES and city["available"] for city in result["requested_destination"]["suggested_cities"])
+    assert all(city["available"] == (city["name"] in CITIES) and city["country_code"] == code
+               for city in result["requested_destination"]["suggested_cities"])
 
 
 @pytest.mark.parametrize("phrase,code", [("в Грузию хочу", "GE"), ("Belarus", "BY"), ("в Таиланд", "TH"), ("Египте", "EG"), ("China", "CN"), ("в Японию", "JP"), ("France", "FR"), ("Германии", "DE"), ("в Черногорию", "ME"), ("in Sri Lanka", "LK"), ("USA", "US"), ("United Kingdom", "GB")])
@@ -69,14 +70,25 @@ def test_suggestions_follow_explicit_supported_city_list():
     ]
 
 
-def test_geography_does_not_expand_domain_coverage():
+def test_curated_domain_city_identity_does_not_expand_inventory_coverage():
     assert len(CITIES) == 7
     parse_destination("Белград")
     parse_destination("Сербия")
-    for value in ("Сербия", "Белград", "Нови-Сад"):
-        with pytest.raises(DomainError) as error:
-            canonical_city(value)
-        assert error.value.code == "unsupported_city"
+    assert canonical_city("Белград") == "Белград"
+    assert canonical_city("Нови-Сад") == "Нови-Сад"
+    assert "Белград" not in CITIES and "Нови-Сад" not in CITIES
+    with pytest.raises(DomainError) as error:
+        canonical_city("Сербия")
+    assert error.value.code == "unsupported_city"
+
+
+@pytest.mark.parametrize("phrase", ["Белгород", "белгород", "Belgorod", "в Белгороде"])
+def test_belgorod_is_real_russian_city_distinct_from_serbian_belgrade(phrase):
+    assert parse_destination(phrase)["requested_destination"] == {"kind": "city", "name": "Белгород", "country_code": "RU"}
+    assert parse_destination("Белград")["requested_destination"] == {"kind": "city", "name": "Белград", "country_code": "RS"}
+    assert len(CITIES) == 7 and "Белгород" not in CITIES and "Белград" not in CITIES
+    assert canonical_city("Белгород") == "Белгород"
+    assert canonical_city(phrase) == "Белгород"
 
 
 def test_alias_and_bad_type():

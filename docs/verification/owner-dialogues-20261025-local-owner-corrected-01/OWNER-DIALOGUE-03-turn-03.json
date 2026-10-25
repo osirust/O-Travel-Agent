@@ -1,0 +1,439 @@
+{
+  "case_id": "OWNER-DIALOGUE-03",
+  "turn_index": 3,
+  "request_text": "1",
+  "state_before": {
+    "session_id": "session-44",
+    "trip_id": "trip-45",
+    "state_version": 2,
+    "trip_version": 2,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Поедут ли с вами дети? Если да, сколько их будет?",
+      "field": "party.children",
+      "reason": "clarification",
+      "context": {
+        "children_known": false
+      },
+      "questions": [
+        "Поедут ли с вами дети? Если да, сколько их будет?"
+      ],
+      "target_id": null,
+      "question_id": "run-55-question",
+      "state_version": 2
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-45",
+      "travelers": [
+        {
+          "id": "traveler-adult-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 2
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "state_after": {
+    "session_id": "session-44",
+    "trip_id": "trip-45",
+    "state_version": 3,
+    "trip_version": 3,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Сколько лет будет ребёнку на дату поездки?",
+      "field": "traveler.age",
+      "reason": "clarification",
+      "context": {
+        "children_count": 1,
+        "children_known": true
+      },
+      "questions": [
+        "Сколько лет будет ребёнку на дату поездки?"
+      ],
+      "target_id": "traveler-child-1",
+      "question_id": "run-62-question",
+      "state_version": 3
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-45",
+      "travelers": [
+        {
+          "id": "traveler-adult-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        {
+          "id": "traveler-child-1",
+          "age": null,
+          "type": "child",
+          "group_id": null,
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 3
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "actual_run": {
+    "run_id": "run-62",
+    "session_id": "session-44",
+    "status": "completed",
+    "based_version": 2,
+    "result": {
+      "run": {
+        "id": "run-62",
+        "error": null,
+        "result": null,
+        "run_id": "run-62",
+        "status": "completed",
+        "created_at": "2026-10-25T17:38:14.420490+00:00",
+        "session_id": "session-44",
+        "started_at": "2026-10-25T17:38:14.427869+00:00",
+        "finished_at": null,
+        "based_version": 2,
+        "current_status": "completed",
+        "input_message_id": "id-63",
+        "client_message_id": "id-64",
+        "request_expected_version": 2
+      },
+      "error": null,
+      "reply": "Сколько лет будет ребёнку на дату поездки?",
+      "state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "trip-45",
+        "travelers": [
+          {
+            "id": "traveler-adult-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "traveler-child-1",
+            "age": null,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 3
+      },
+      "result": {
+        "response_source": "contextual_slot"
+      },
+      "run_id": "run-62",
+      "status": "WAITING_USER",
+      "changes": [
+        {
+          "after": [
+            {
+              "id": "traveler-adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "traveler-child-1",
+              "age": null,
+              "type": "child",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "field": "travelers",
+          "before": [
+            {
+              "id": "traveler-adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "operation": "add_traveler",
+          "target_id": null
+        }
+      ],
+      "message": {
+        "id": "id-65",
+        "role": "assistant",
+        "text": "Сколько лет будет ребёнку на дату поездки?",
+        "run_id": "run-62",
+        "sequence": 66,
+        "created_at": "2026-10-25T17:38:14.438177+00:00",
+        "session_id": "session-44",
+        "client_message_id": null
+      },
+      "session": {
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "trip-45",
+          "travelers": [
+            {
+              "id": "traveler-adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "traveler-child-1",
+              "age": null,
+              "type": "child",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 3
+        },
+        "status": "WAITING_USER",
+        "trip_id": "trip-45",
+        "created_at": "2026-10-25T17:37:23.403899+00:00",
+        "session_id": "session-44",
+        "updated_at": "2026-10-25T17:38:14.436504+00:00",
+        "state_version": 3,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Сколько лет будет ребёнку на дату поездки?",
+          "field": "traveler.age",
+          "reason": "clarification",
+          "context": {
+            "children_count": 1,
+            "children_known": true
+          },
+          "questions": [
+            "Сколько лет будет ребёнку на дату поездки?"
+          ],
+          "target_id": "traveler-child-1",
+          "question_id": "run-62-question",
+          "state_version": 3
+        }
+      },
+      "trip_id": "trip-45",
+      "created_at": "2026-10-25T17:37:23.403899+00:00",
+      "session_id": "session-44",
+      "updated_at": "2026-10-25T17:38:14.436504+00:00",
+      "state_version": 3,
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Сколько лет будет ребёнку на дату поездки?",
+        "field": "traveler.age",
+        "reason": "clarification",
+        "context": {
+          "children_count": 1,
+          "children_known": true
+        },
+        "questions": [
+          "Сколько лет будет ребёнку на дату поездки?"
+        ],
+        "target_id": "traveler-child-1",
+        "question_id": "run-62-question",
+        "state_version": 3
+      },
+      "assistant_message": {
+        "id": "id-65",
+        "role": "assistant",
+        "text": "Сколько лет будет ребёнку на дату поездки?",
+        "run_id": "run-62",
+        "sequence": 66,
+        "created_at": "2026-10-25T17:38:14.438177+00:00",
+        "session_id": "session-44",
+        "client_message_id": null
+      }
+    },
+    "error": null,
+    "llm": null,
+    "created_at": "2026-10-25T17:38:14.420490+00:00",
+    "finished_at": "2026-10-25T17:38:14.438643+00:00",
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control"
+    ]
+  },
+  "messages": [
+    {
+      "sequence": 61,
+      "id": "id-47",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "client_message_id": "id-48",
+      "role": "user",
+      "text": "из Москвы",
+      "created_at": "2026-10-25T17:37:33.619193+00:00"
+    },
+    {
+      "sequence": 62,
+      "id": "id-49",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Сколько взрослых поедет в поездку?",
+      "created_at": "2026-10-25T17:37:34.335814+00:00"
+    },
+    {
+      "sequence": 63,
+      "id": "id-56",
+      "session_id": "session-44",
+      "run_id": "run-55",
+      "client_message_id": "id-57",
+      "role": "user",
+      "text": "я взрослый",
+      "created_at": "2026-10-25T17:37:54.079221+00:00"
+    },
+    {
+      "sequence": 64,
+      "id": "id-58",
+      "session_id": "session-44",
+      "run_id": "run-55",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Поедут ли с вами дети? Если да, сколько их будет?",
+      "created_at": "2026-10-25T17:37:54.098402+00:00"
+    },
+    {
+      "sequence": 65,
+      "id": "id-63",
+      "session_id": "session-44",
+      "run_id": "run-62",
+      "client_message_id": "id-64",
+      "role": "user",
+      "text": "1",
+      "created_at": "2026-10-25T17:38:14.420490+00:00"
+    },
+    {
+      "sequence": 66,
+      "id": "id-65",
+      "session_id": "session-44",
+      "run_id": "run-62",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Сколько лет будет ребёнку на дату поездки?",
+      "created_at": "2026-10-25T17:38:14.438177+00:00"
+    }
+  ],
+  "current_run_events": [
+    {
+      "sequence": 163,
+      "event_id": "id-66",
+      "session_id": "session-44",
+      "run_id": "run-62",
+      "event_type": "USER_MESSAGE_RECEIVED",
+      "state_version": 2,
+      "payload": {
+        "message_id": "id-63"
+      },
+      "created_at": "2026-10-25T17:38:14.421572+00:00"
+    },
+    {
+      "sequence": 164,
+      "event_id": "id-67",
+      "session_id": "session-44",
+      "run_id": "run-62",
+      "event_type": "RUN_STARTED",
+      "state_version": 2,
+      "payload": {},
+      "created_at": "2026-10-25T17:38:14.428631+00:00"
+    },
+    {
+      "sequence": 165,
+      "event_id": "id-68",
+      "session_id": "session-44",
+      "run_id": "run-62",
+      "event_type": "RUN_COMPLETED",
+      "state_version": 3,
+      "payload": {
+        "error": null,
+        "domain_changed": true
+      },
+      "created_at": "2026-10-25T17:38:14.439106+00:00"
+    }
+  ],
+  "orders": [],
+  "http_routes": [
+    "POST /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/runs/{run_id}",
+    "GET /api/v1/sessions/{session_id}",
+    "GET /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/sessions/{session_id}/events",
+    "GET /api/v1/sessions/{session_id}/orders"
+  ]
+}

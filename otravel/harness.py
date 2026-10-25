@@ -18,10 +18,11 @@ from .domain import CITIES, DomainError, Operation, TripState, apply_operations,
 from .inventory import DemoInventory
 from .orchestrator import TripSearch
 from .history import plan_history
-from .geography import parse_destination
+from .geography import known_cities, parse_destination
 from .money import ground_budget_operations
 from .llm_contract import build_operation_schema
 from .clarifications import derive_pending_field, human_question, question_field, resolve_short_answer
+from .date_slots import resolve_date_answer
 from .providers import LLMGateway, ProviderError
 from .store import Conflict, StoreError
 
@@ -47,6 +48,13 @@ def explicit_pause_hint(text: str) -> bool:
     return bool(re.search(r"\b(подожди|приостанови|пауза|поставь на паузу|допишу|дополню|не продолжай|не запускай поиск|ничего не ищи|пока не ищи|пока не подбирай|пока ничего не подбирай)\b", value))
 
 
+def explicit_no_children(text: str) -> bool:
+    # A complete explicit clause can establish zero children inside a compound
+    # request. Broader/negated/conditional language still belongs to the model.
+    clauses = re.split(r"[,;.!\n]", text.casefold().replace("ё", "е"))
+    return any(" ".join(part.split()) in {"детей нет", "без детей", "дети не едут"} for part in clauses)
+
+
 def encode_command(kind: str, session: dict, **fields: Any) -> str:
     return TYPED_PREFIX + json.dumps({"kind": kind, "base_state_hash": state_fingerprint(session["state"]), **fields}, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
@@ -63,6 +71,9 @@ class ModelResult(BaseModel):
     reply: str
     unknowns: list[str]
     conflicts: list[str]
+    speech_act: Literal["CHANGE", "ASK", "PROPOSE"] = "CHANGE"
+    information_subject: str | None = Field(default=None, max_length=80)
+    candidate_operations: list[Operation] = Field(default_factory=list, exclude=True)
     destination_request: dict[str, Any] | None = Field(default=None, exclude=True)
     operation_normalizations: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
     pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
@@ -74,6 +85,7 @@ OPERATION_GUIDE = {
     "supported_operations": {
         "set_origin": {"value": {"city": "Казань"}},
         "set_budget": {"value": {"amount_minor": 50000000, "currency": "RUB", "scope": "whole_trip"}},
+        "set_preference": {"value": {"key": "price_priority", "value": "lowest_total"}},
         "add_traveler": {"value": {"id": "new-traveler-1", "type": "child", "age": 6, "group_id": "EXISTING_GROUP_ID"}},
         "update_traveler": {"target_id": "EXISTING_TRAVELER_ID", "value": {"age": 7}},
         "remove_traveler": {"target_id": "EXISTING_TRAVELER_ID", "value": {}},
@@ -89,6 +101,7 @@ OPERATION_GUIDE = {
     "room_shape": {"id": "STABLE_ROOM_ID", "traveler_ids": ["EXISTING_TRAVELER_ID"]},
     "known_hard_constraints": ["breakfast", "refundable", "pets_allowed", "pets"],
     "supported_cities": list(CITIES),
+    "known_geographic_cities": list(known_cities()),
     "constraint_contract": {"breakfast": "boolean: включённый завтрак конкретного тарифа", "refundable": "boolean: возвратность конкретного тарифа", "pets_allowed": "boolean: свойство отеля", "pets": {"kind": "dog|cat", "weight_kg": "known positive number"}},
     "do_not_invent": ["city", "date", "age", "budget", "hotel_id", "consent"],
 }
@@ -171,6 +184,8 @@ def _requested_model(gateway: Any, provider: str) -> str:
     config = getattr(gateway, "settings", {})
     if isinstance(config, dict) and provider == "ollama":
         return str(config.get("OLLAMA_MODEL", "qwen3.5:4b"))
+    if isinstance(config, dict) and provider == "groq":
+        return str(config.get("GROQ_MODEL", "qwen/qwen3.8-27b"))
     if isinstance(config, dict) and provider in {"gemini", "openrouter"}:
         return str(config.get("GEMINI_MODEL" if provider == "gemini" else "OPENROUTER_MODEL", ""))
     return str(getattr(gateway, "last_call", {}).get("model", "controlled_test_adapter"))
@@ -391,6 +406,12 @@ class Harness:
                 gateway, provider, fallback = fallback, "openrouter", None
             elif primary == "openrouter" and not router_ready:
                 raise ProviderError("CONFIG_MISSING", "Бесплатная LLM API не настроена.")
+            elif primary == "groq":
+                if not config.get("GROQ_API_KEY"):
+                    raise ProviderError("CONFIG_MISSING", "Ключ Groq не настроен.", provider="groq")
+                if str(config.get("GROQ_FREE_TIER_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
+                    raise ProviderError("CONFIG_BLOCKED", "Подтвердите бесплатный аккаунт Groq без billing.", provider="groq")
+                provider = "groq"
             else:
                 provider = primary
             # No backup is selected by default. Only an explicitly configured,
@@ -400,12 +421,14 @@ class Harness:
             if provider == "openrouter" and router_ready and backup != selected and backup.endswith(":free") and re.fullmatch(r"[\w./:-]+", backup):
                 fallback = LLMGateway({**config, "LLM_PROVIDER": "openrouter", "OPENROUTER_MODEL": backup})
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
-        if provider == "ollama":
-            attempts = min(1, attempts)  # A 105s cold call fits in the durable 120s lease.
+        if provider in {"ollama", "groq"}:
+            # Ollama cold call fits the lease. Groq Free has a tight token/minute
+            # quota: do not immediately resend a whole context for schema repair.
+            attempts = min(1, attempts)
         temporary = gateway is not self.llm
         attempt_meta: list[dict] = []
         try:
-            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter"}:
+            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq"}:
                 current_model = _requested_model(gateway, provider)
                 health = await self.store.model_availability(provider, current_model)
                 if not health["available"]:
@@ -433,14 +456,22 @@ class Harness:
                 requested_model = _requested_model(gateway, provider)
                 started = perf_counter()
                 try:
-                    extracted = ModelResult.model_validate(await gateway.extract_operations(context))
+                    raw_extraction = await gateway.extract_operations(context)
+                    extracted = ModelResult.model_validate(raw_extraction)
+                    model_speech_act = extracted.speech_act
+                    if extracted.speech_act in {"ASK", "PROPOSE"} and extracted.control.action == "none" and not extracted.conflicts:
+                        # Questions/suggestions are not permission to change a
+                        # trip. Keep proposed edits as audit data, never execute.
+                        extracted.candidate_operations = extracted.operations
+                        extracted.operations = []
+                        extracted.unknowns = []
                     if not extracted.conflicts and extracted.control.action != "cancel":
                         extracted.operations, extracted.operation_normalizations = ground_budget_operations(
                             TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None
-                    if country_context is not None and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
+                    if country_context is not None and extracted.speech_act != "ASK" and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
                         # This bounded parser matched a country-only request,
                         # not dates/people or a confirmed city. City guesses are
                         # suggestions and must not mutate a concrete route.
@@ -482,14 +513,16 @@ class Harness:
                                         "loc": [part if isinstance(part, int) or part in fields else "<field>" for part in entry.get("loc", [])]}
                                         for entry in error.details if isinstance(entry, dict) and "loc" in entry]
                                 raise ProviderError("INVALID_LLM_OPERATION", "Операции LLM не прошли проверку схемы.", provider=provider) from None
-                    if country_context is not None and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
+                    if country_context is not None and extracted.speech_act != "ASK" and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
                         extracted.destination_request = country_context
                         if not extracted.operations and not extracted.conflicts:
                             extracted.unknowns = [location["clarification"]]
                     last_call = getattr(gateway, "last_call", {})
                     actual = {"provider": str(last_call.get("provider", provider)), "model": str(last_call.get("model", requested_model)), "latency_ms": max(0, int((perf_counter() - started) * 1000))}
                     attempt_meta.append({**actual, "outcome": "response"})
-                    await self.store.save_event(session["session_id"], run["run_id"], "MODEL_RESPONSE_RECEIVED", {**actual, "operations": len(extracted.operations), "attempt": attempt + 1})
+                    await self.store.save_event(session["session_id"], run["run_id"], "MODEL_RESPONSE_RECEIVED", {
+                        **actual, "operations": len(extracted.operations), "attempt": attempt + 1,
+                        "speech_act": model_speech_act, "speech_act_explicit": "speech_act" in raw_extraction})
                     return extracted, {**actual, "attempts": attempt_meta}
                 except (ProviderError, ValidationError) as exc:
                     if isinstance(exc, ProviderError) and exc.code == "INVALID_LLM_OPERATION" and exc.details.get("schema_errors"):
@@ -503,7 +536,7 @@ class Harness:
                             "expected_contract": {"required": ["operations", "control", "reply", "unknowns", "conflicts"], "note": "Верни весь корректный JSON-объект. Не повторяй невалидную структуру; не меняй известные поля без запроса."},
                         }
                     details = exc.details if isinstance(exc, ProviderError) and isinstance(exc.details, dict) else {}
-                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name") if key in details}}
+                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds") if key in details}}
                     attempt_meta.append({**failed, "outcome": "failed"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_CALL_FAILED", failed)
                     exc.llm_meta = {"provider": provider, "model": requested_model, "attempts": attempt_meta}
@@ -540,7 +573,9 @@ class Harness:
             if not pending.get("field"):
                 binding = derive_pending_field(pending.get("questions") or [pending.get("text")], session["state"])
                 pending.update({key: value for key, value in binding.items() if value is not None})
-            resolved = resolve_short_answer(session["state"], pending, run["input_text"])
+            resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
+            if not resolved["handled"]:
+                resolved = resolve_short_answer(session["state"], pending, run["input_text"])
             if resolved["handled"]:
                 question = resolved.get("question")
                 extracted = ModelResult(operations=[Operation.model_validate(op) for op in resolved["operations"]],
@@ -617,6 +652,23 @@ class Harness:
                 await self.store.cancel_processing(session["session_id"], version,
                     target_run_id=run["run_id"], result={"llm": model_meta})
                 return
+            elif (extracted.speech_act == "ASK" or extracted.speech_act == "PROPOSE" and extracted.destination_request is None) and extracted.control.action == "none":
+                # No intake questionnaire or search is started merely because
+                # someone asked about a place. Preserve any previous exact slot.
+                preserve_pending = True
+                status, waiting_reason = session["status"], session.get("waiting_reason")
+                subject = parse_destination(extracted.information_subject or "")["requested_destination"]
+                if extracted.speech_act == "PROPOSE":
+                    notice = "Предложение сохранено отдельно; поездка не изменена. Чтобы применить его, сформулируйте изменение явно."
+                elif subject.get("kind") == "country":
+                    notice = f"Да, {subject['name']} — страна. Могу помочь обсудить маршрут и условия поездки; ваш вопрос сам по себе не меняет поездку."
+                elif subject.get("kind") == "city":
+                    country = parse_destination(subject["country_code"])["requested_destination"]
+                    notice = f"Город «{subject['name']}» находится в стране «{country['name']}»."
+                else:
+                    notice = "Могу помочь с направлением, маршрутом и условиями поездки. Уточните, что именно хотите узнать."
+                result.update(notice=notice, conversation={"speech_act": extracted.speech_act, "subject": subject},
+                    candidate_operations=[op.model_dump(mode="json") for op in extracted.candidate_operations])
             else:
                 try:
                     candidate, changes, undo_meta = await self._apply_or_undo(session, state, extracted.operations)
@@ -662,7 +714,13 @@ class Harness:
             if extracted.destination_request is not None:
                 clarification_metadata["requested_destination"] = extracted.destination_request
             if extracted.pending_context is not None:
+                chosen = extracted.pending_context.get("requested_destination")
+                if isinstance(chosen, dict) and chosen.get("kind") == "city" and not extracted.pending_context.get("confirmation_required"):
+                    for stale_choice in ("proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction"):
+                        clarification_metadata.pop(stale_choice, None)
                 clarification_metadata.update(extracted.pending_context)
+            if extracted.speech_act == "CHANGE" and not any(person.type == "child" for person in current.travelers) and explicit_no_children(run["input_text"]):
+                clarification_metadata.update(children_known=True, children_count=0)
             clarification_metadata.pop("field", None)
             clarification_metadata.pop("target_id", None)
             for stale_address in ("traveler_id", "stay_id", "leg_id"):
@@ -679,7 +737,20 @@ class Harness:
                     bound = derive_pending_field([{**clarification_metadata, "text": raw}], current)
                     if question_field(raw) and bound["field"] is None and not trusted and not extracted.conflicts:
                         continue  # This precise slot is already filled.
-                    normalized.append(raw if trusted else human_question({**clarification_metadata, "text": raw}, current, bound))
+                    rendered = raw if trusted else human_question({**clarification_metadata, "text": raw}, current, bound)
+                    if (not trusted and not extracted.conflicts and bound["field"] is None
+                            and rendered == human_question(None, current)):
+                        # An unknown model field must not erase the address of
+                        # a missing domain fact. Ask a specific validated slot
+                        # before accepting its answer; never guess an edit target.
+                        for issue in validate_trip(current):
+                            if not issue["code"].startswith("missing_"):
+                                continue
+                            domain_slot = derive_pending_field([issue], current)
+                            if domain_slot["field"] is not None:
+                                rendered = human_question(issue, current, domain_slot)
+                                break
+                    normalized.append(rendered)
                 questions = list(dict.fromkeys(normalized))[:1]
                 if not questions:
                     waiting_reason = None
@@ -713,6 +784,8 @@ class Harness:
                 result["deferred_questions"] = questions
         elif questions:
             reply = questions[0]
+            if any(change.get("field") == "preferences" for change in changes):
+                reply = "Пожелания по поездке сохранены. " + reply
         elif result.get("plans"):
             reply = (f"Подобрано DEMO-планов: {len(result['plans'])}. Все цены и наличие вымышлены; бронь не создана."
                      if result.get("source_type") == "DEMO" else

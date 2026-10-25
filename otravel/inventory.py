@@ -291,6 +291,11 @@ class DemoInventory:
         pets, pet_questions = _pet_request(state)
         questions = [item["message"] for item in issues if item["code"].startswith("missing_")] + pet_questions
         blocking = [item for item in issues if not item["code"].startswith("missing_")]
+        outside = list(dict.fromkeys(city for city in [state.origin, *[stay.city for stay in state.stays],
+            *[city for leg in state.legs for city in (leg.origin, leg.destination)]] if city and city not in CITIES))
+        if outside:
+            blocking.append(_error("unsupported_city", "Текущее покрытие DEMO-поиска не включает: " + ", ".join(outside)
+                + ". Направление сохранено; предложения для него не выдумываются.", cities=outside))
         for constraint in state.constraints:
             if constraint.hard and constraint.key not in SUPPORTED_CONSTRAINTS:
                 blocking.append(_error("unsupported_constraint", "DEMO не подтверждает это жёсткое условие.", key=constraint.key))

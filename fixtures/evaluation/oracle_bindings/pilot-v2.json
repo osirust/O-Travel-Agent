@@ -1,0 +1,1445 @@
+{
+  "format": "otravel.acceptance_pilot.v2",
+  "suite_id": "C106-FOUR-CASE-TYPED-PILOT",
+  "binding_revision": 2,
+  "scope": "BOUND_TYPED_SUBSET_ONLY_NOT_FULL_CASE_NLU",
+  "clock_policy": {
+    "reference_date": "2026-10-25",
+    "timezone": "Europe/Moscow",
+    "relative_date_assertions": false,
+    "runtime_clock_injection_required": false,
+    "note": "Fixed evaluation reference date only. These bound predicates do not normalize relative dates. Record actual backend clock separately."
+  },
+  "grade_input_contract": "Saved observation: case_id,request_text,state_before,state_after,actual_run,current_run_events,orders. No HTTP in the grader.",
+  "cases": [
+    {
+      "id": "NLU-01",
+      "initial_trip": {},
+      "turns": [
+        {
+          "text": "Хочу в тепло осенью, где недорого."
+        }
+      ],
+      "binding": {
+        "binding_format": "otravel.oracle_bindings.v1",
+        "case_id": "NLU-01",
+        "binding_revision": 2,
+        "source_pair_sha256": "6d50dda8c3e727d3b099166008ae22bc386f1eb839c595d6e29c5b4f3153a82e",
+        "source": {
+          "original": {
+            "path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+            "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+            "record_sha256": "333afa1cd464aa911bbe01eb02a474d91b52b3d4f5ce2fc6f726b6b567e52099",
+            "line": 1,
+            "hash_kind": "physical_line_including_line_ending"
+          },
+          "proposed": {
+            "path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+            "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e",
+            "record_sha256": "dc57ee45e4da1b27ae58b03c1a6464cc99732f347b40877e0879b1186e030607",
+            "line": 1,
+            "hash_kind": "physical_line_including_line_ending"
+          }
+        },
+        "category": "NLU",
+        "original_priority": "P0",
+        "messages": [
+          "Хочу в тепло осенью, где недорого."
+        ],
+        "test_setup_original": null,
+        "scope": {
+          "source_proposal": "supported_in_hackathon_demo_with_actual_data_limits",
+          "accepted": "BOUND_TYPED_SUBSET_ONLY_FULL_BEHAVIOR_REVIEW_OPEN",
+          "known_gap_notes": "Проверена только явно перечисленная typed/domain/MockTransport часть; исходный естественный язык и остальные end-to-end ожидания не квалифицированы."
+        },
+        "intent_contract": {
+          "allowed_acts": [
+            "ASK",
+            "PROPOSE"
+          ],
+          "target_slot": "fresh-explicit-trip-facts-only",
+          "required_confirmation": false
+        },
+        "setup_binding": {
+          "initial_state_ref": "fresh:empty-TripState-pilot-v2",
+          "clock_ref": "inline:pilot-v2.clock_policy",
+          "seed_ref": "not_applicable:typed-predicate-grading-record-model-seed-separately",
+          "fault_ref": "not_applicable:no-fault-in-pilot-v2",
+          "supplier_snapshots_ref": "not_applicable:no-source-search-before-required-parameters",
+          "history_ref": "fresh:empty-session",
+          "ui_fixture_ref": "not_applicable:backend-saved-observation-only"
+        },
+        "expectedChecks": [
+          {
+            "check_id": "original_behavior",
+            "origin": "original_human",
+            "statement": "Уточнить необходимые параметры и предложить направления, не выдумывая точных условий.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "missing_fields_recorded",
+            "origin": "proposed_flag",
+            "statement": "A durable nonempty clarification exists; its complete semantic quality and destination proposals remain unbound.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "dialogue.response"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/status",
+                  "expected": "WAITING_USER"
+                },
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/waiting_reason",
+                  "expected": "clarification"
+                },
+                {
+                  "surface": "session",
+                  "operator": "within",
+                  "path": "/pending_question/questions",
+                  "where": {
+                    "measure": "nonempty_strings"
+                  },
+                  "expected": {
+                    "min": 1
+                  }
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "no_fabricated_prices",
+            "origin": "proposed_flag",
+            "statement": "no_fabricated_prices",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [
+              "dialogue.response",
+              "source.assertions"
+            ],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "completed_run",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "A completed run is required before grading its state.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "source",
+              "operator": "eq",
+              "path": "/run_status",
+              "expected": "completed"
+            }
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No structured hotel/flight offer or plan is fabricated before required inputs are known; free-text price claims are not covered.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/plans",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/offers",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/live_offers",
+                  "expected": []
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No supplier search starts during this incomplete intake.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "events",
+              "operator": "count_where",
+              "path": "",
+              "where": {
+                "event_type": "TOOL_CALL_STARTED"
+              },
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "no_order_created",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No order is created from an intake message.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "orders",
+              "operator": "count_where",
+              "path": "",
+              "where": {},
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "origin_not_invented",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "An unspecified departure city stays unknown.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "eq",
+              "path": "/origin",
+              "expected": null
+            }
+          },
+          {
+            "check_id": "destination_not_committed_without_choice",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "A vague request permits proposals, not a chosen concrete destination.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/stays",
+                  "where": {
+                    "$any_nonempty": [
+                      "city"
+                    ]
+                  },
+                  "expected": 0
+                },
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/legs",
+                  "where": {
+                    "$any_nonempty": [
+                      "destination"
+                    ]
+                  },
+                  "expected": 0
+                }
+              ]
+            }
+          }
+        ],
+        "source_annotations": {
+          "oracle_flags_proposed": [
+            "missing_fields_recorded",
+            "no_fabricated_prices"
+          ],
+          "oracle_layers_proposed": [
+            "controlled_parser",
+            "actual_local_llm",
+            "actual_remote_llm"
+          ],
+          "evidence_needed": "Test run ID + model/provider + fixed clock/seed + state-before/after + API events + assertions; redact secrets"
+        },
+        "coverage_reference": {
+          "path": "fixtures/evaluation/corpus-map.json",
+          "sha256": "7b780a50b559838ae06be9c946ba5c9362bc6456aac085cd3b73d630671ead43",
+          "mapping_revision": 3,
+          "partial_status": "ASSERTIONS_PASS_TYPED_OR_MOCK",
+          "full_language_status": "NOT_RUN",
+          "test_refs": [
+            {
+              "path": "scripts/run_corpus.py",
+              "check_id": "missing",
+              "type": "typed_or_in_memory_mock"
+            }
+          ]
+        },
+        "readiness": "DRAFT",
+        "case_execution_default": "NOT_RUN",
+        "requested_eval_layers": [
+          "actual_local_llm"
+        ],
+        "missing_inputs": [
+          "complete_original_behavior_semantic_oracle",
+          "free_text_price_and_destination_proposal_semantic_checks"
+        ]
+      }
+    },
+    {
+      "id": "NLU-03",
+      "initial_trip": {},
+      "turns": [
+        {
+          "text": "Хочу в Сочи на недельку с семьёй, не дороже 100к."
+        }
+      ],
+      "binding": {
+        "binding_format": "otravel.oracle_bindings.v1",
+        "case_id": "NLU-03",
+        "binding_revision": 2,
+        "source_pair_sha256": "13ad885c8c756c1d4fe7246bbe5c609ae2ef7255f5043eb1b40b7016ba7a65e2",
+        "source": {
+          "original": {
+            "path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+            "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+            "record_sha256": "5a58b30ba33e53bbb3db59825544ebfb02827e3efa4dc020498a9ed263eddcaa",
+            "line": 3,
+            "hash_kind": "physical_line_including_line_ending"
+          },
+          "proposed": {
+            "path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+            "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e",
+            "record_sha256": "c015ccb9acbb3e236ea348e43e141102386da7310204bf711cbf0f3db7af15cc",
+            "line": 3,
+            "hash_kind": "physical_line_including_line_ending"
+          }
+        },
+        "category": "NLU",
+        "original_priority": "P0",
+        "messages": [
+          "Хочу в Сочи на недельку с семьёй, не дороже 100к."
+        ],
+        "test_setup_original": null,
+        "scope": {
+          "source_proposal": "supported_in_hackathon_demo_with_actual_data_limits",
+          "accepted": "BOUND_TYPED_SUBSET_ONLY_FULL_BEHAVIOR_REVIEW_OPEN",
+          "known_gap_notes": "Проверена только явно перечисленная typed/domain/MockTransport часть; исходный естественный язык и остальные end-to-end ожидания не квалифицированы."
+        },
+        "intent_contract": {
+          "allowed_acts": [
+            "ASK",
+            "CHANGE"
+          ],
+          "target_slot": "fresh-explicit-trip-facts-only",
+          "required_confirmation": false
+        },
+        "setup_binding": {
+          "initial_state_ref": "fresh:empty-TripState-pilot-v2",
+          "clock_ref": "inline:pilot-v2.clock_policy",
+          "seed_ref": "not_applicable:typed-predicate-grading-record-model-seed-separately",
+          "fault_ref": "not_applicable:no-fault-in-pilot-v2",
+          "supplier_snapshots_ref": "not_applicable:no-source-search-before-required-parameters",
+          "history_ref": "fresh:empty-session",
+          "ui_fixture_ref": "not_applicable:backend-saved-observation-only"
+        },
+        "expectedChecks": [
+          {
+            "check_id": "original_behavior",
+            "origin": "original_human",
+            "statement": "Уточнить состав семьи и значимость общего бюджета; не считать 100к за человека.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "family_occupancy_not_assumed",
+            "origin": "proposed_flag",
+            "statement": "The word family does not invent concrete people; room/partition semantics are not fully graded.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "allocation.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "count_where",
+              "path": "/travelers",
+              "where": {},
+              "expected": 0
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "budget_scope_not_silently_changed",
+            "origin": "proposed_flag",
+            "statement": "100k RUB is the whole-trip ceiling, not a per-person price.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "money.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "eq",
+                  "path": "/budget/amount_minor",
+                  "expected": 10000000
+                },
+                {
+                  "surface": "trip",
+                  "operator": "eq",
+                  "path": "/budget/currency",
+                  "expected": "RUB"
+                },
+                {
+                  "surface": "trip",
+                  "operator": "eq",
+                  "path": "/budget/scope",
+                  "expected": "whole_trip"
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "completed_run",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "A completed run is required before grading its state.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "source",
+              "operator": "eq",
+              "path": "/run_status",
+              "expected": "completed"
+            }
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No structured hotel/flight offer or plan is fabricated before required inputs are known; free-text price claims are not covered.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/plans",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/offers",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/live_offers",
+                  "expected": []
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No supplier search starts during this incomplete intake.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "events",
+              "operator": "count_where",
+              "path": "",
+              "where": {
+                "event_type": "TOOL_CALL_STARTED"
+              },
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "no_order_created",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No order is created from an intake message.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "orders",
+              "operator": "count_where",
+              "path": "",
+              "where": {},
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "missing_parameters_have_question",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "Missing participants/dates/origin produce a nonempty durable clarification.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "dialogue.response"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/status",
+                  "expected": "WAITING_USER"
+                },
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/waiting_reason",
+                  "expected": "clarification"
+                },
+                {
+                  "surface": "session",
+                  "operator": "within",
+                  "path": "/pending_question/questions",
+                  "where": {
+                    "measure": "nonempty_strings"
+                  },
+                  "expected": {
+                    "min": 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "origin_not_invented",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No departure city was stated.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "eq",
+              "path": "/origin",
+              "expected": null
+            }
+          },
+          {
+            "check_id": "explicit_destination_sochi",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "The explicit destination is Sochi and no additional destination is selected.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/stays",
+                  "where": {
+                    "city": "Сочи"
+                  },
+                  "expected": 1
+                },
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/stays",
+                  "where": {
+                    "$any_nonempty": [
+                      "city"
+                    ]
+                  },
+                  "expected": 1
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "requested_duration_not_lost",
+            "origin": "derived_reviewed",
+            "statement": "Preserve the requested duration: 7 nights. NOT_REPRESENTED: no bound duration-only canonical slot or accepted pending-context path. Do not infer calendar dates or translate days into nights.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [
+              "temporal.assertions"
+            ],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          }
+        ],
+        "source_annotations": {
+          "oracle_flags_proposed": [
+            "family_occupancy_not_assumed",
+            "budget_scope_not_silently_changed"
+          ],
+          "oracle_layers_proposed": [
+            "controlled_parser",
+            "actual_local_llm",
+            "actual_remote_llm"
+          ],
+          "evidence_needed": "Test run ID + model/provider + fixed clock/seed + state-before/after + API events + assertions; redact secrets"
+        },
+        "coverage_reference": {
+          "path": "fixtures/evaluation/corpus-map.json",
+          "sha256": "7b780a50b559838ae06be9c946ba5c9362bc6456aac085cd3b73d630671ead43",
+          "mapping_revision": 3,
+          "partial_status": "ASSERTIONS_PASS_TYPED_OR_MOCK",
+          "full_language_status": "NOT_RUN",
+          "test_refs": [
+            {
+              "path": "scripts/run_corpus.py",
+              "check_id": "missing",
+              "type": "typed_or_in_memory_mock"
+            }
+          ]
+        },
+        "readiness": "DRAFT",
+        "case_execution_default": "NOT_RUN",
+        "requested_eval_layers": [
+          "actual_local_llm"
+        ],
+        "missing_inputs": [
+          "complete_original_behavior_semantic_oracle",
+          "NOT_REPRESENTED_duration_7_nights"
+        ]
+      }
+    },
+    {
+      "id": "NLU-06",
+      "initial_trip": {},
+      "turns": [
+        {
+          "text": "Из СПб в Стамбул, на 4 ночи, ок 120 тыс на всех."
+        }
+      ],
+      "binding": {
+        "binding_format": "otravel.oracle_bindings.v1",
+        "case_id": "NLU-06",
+        "binding_revision": 2,
+        "source_pair_sha256": "57ebfeaeb69651a7dc6d2cd34fdd79fe24cbb7163f9a758f02d015fbc4cf2808",
+        "source": {
+          "original": {
+            "path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+            "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+            "record_sha256": "a667b7cff3ce3766e2a7e526d80efffdb3d2d2309a9eaa22945af982637ddc29",
+            "line": 6,
+            "hash_kind": "physical_line_including_line_ending"
+          },
+          "proposed": {
+            "path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+            "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e",
+            "record_sha256": "d40ba03d4adac6c33f4825475b395fa117a0597247325e759084a0b20875d833",
+            "line": 6,
+            "hash_kind": "physical_line_including_line_ending"
+          }
+        },
+        "category": "NLU",
+        "original_priority": "P0",
+        "messages": [
+          "Из СПб в Стамбул, на 4 ночи, ок 120 тыс на всех."
+        ],
+        "test_setup_original": null,
+        "scope": {
+          "source_proposal": "supported_in_hackathon_demo_with_actual_data_limits",
+          "accepted": "BOUND_TYPED_SUBSET_ONLY_FULL_BEHAVIOR_REVIEW_OPEN",
+          "known_gap_notes": "Проверена только явно перечисленная typed/domain/MockTransport часть; исходный естественный язык и остальные end-to-end ожидания не квалифицированы."
+        },
+        "intent_contract": {
+          "allowed_acts": [
+            "ASK",
+            "CHANGE"
+          ],
+          "target_slot": "fresh-explicit-trip-facts-only",
+          "required_confirmation": false
+        },
+        "setup_binding": {
+          "initial_state_ref": "fresh:empty-TripState-pilot-v2",
+          "clock_ref": "inline:pilot-v2.clock_policy",
+          "seed_ref": "not_applicable:typed-predicate-grading-record-model-seed-separately",
+          "fault_ref": "not_applicable:no-fault-in-pilot-v2",
+          "supplier_snapshots_ref": "not_applicable:no-source-search-before-required-parameters",
+          "history_ref": "fresh:empty-session",
+          "ui_fixture_ref": "not_applicable:backend-saved-observation-only"
+        },
+        "expectedChecks": [
+          {
+            "check_id": "original_behavior",
+            "origin": "original_human",
+            "statement": "Распознать сокращения, валюту по контексту, общий бюджет, недостаточные параметры уточнить.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "origin_st_petersburg",
+            "origin": "proposed_flag",
+            "statement": "SPb is the origin.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "eq",
+              "path": "/origin",
+              "expected": "Санкт-Петербург"
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "destination_istanbul",
+            "origin": "proposed_flag",
+            "statement": "Istanbul is the explicit destination, not the departure city.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/stays",
+                  "where": {
+                    "city": "Стамбул"
+                  },
+                  "expected": 1
+                },
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/stays",
+                  "where": {
+                    "$any_nonempty": [
+                      "city"
+                    ]
+                  },
+                  "expected": 1
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "total_budget_120000",
+            "origin": "proposed_flag",
+            "statement": "120k RUB is the whole-trip budget.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "money.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "eq",
+                  "path": "/budget/amount_minor",
+                  "expected": 12000000
+                },
+                {
+                  "surface": "trip",
+                  "operator": "eq",
+                  "path": "/budget/currency",
+                  "expected": "RUB"
+                },
+                {
+                  "surface": "trip",
+                  "operator": "eq",
+                  "path": "/budget/scope",
+                  "expected": "whole_trip"
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "need_missing_fields_question",
+            "origin": "proposed_flag",
+            "statement": "A durable clarification exists for still-unknown dates/party.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "dialogue.response"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/status",
+                  "expected": "WAITING_USER"
+                },
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/waiting_reason",
+                  "expected": "clarification"
+                },
+                {
+                  "surface": "session",
+                  "operator": "within",
+                  "path": "/pending_question/questions",
+                  "where": {
+                    "measure": "nonempty_strings"
+                  },
+                  "expected": {
+                    "min": 1
+                  }
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "completed_run",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "A completed run is required before grading its state.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "source",
+              "operator": "eq",
+              "path": "/run_status",
+              "expected": "completed"
+            }
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No structured hotel/flight offer or plan is fabricated before required inputs are known; free-text price claims are not covered.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/plans",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/offers",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/live_offers",
+                  "expected": []
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No supplier search starts during this incomplete intake.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "events",
+              "operator": "count_where",
+              "path": "",
+              "where": {
+                "event_type": "TOOL_CALL_STARTED"
+              },
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "no_order_created",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No order is created from an intake message.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "orders",
+              "operator": "count_where",
+              "path": "",
+              "where": {},
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "party_not_invented",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "The phrase for everyone does not invent a traveler count.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "allocation.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "count_where",
+              "path": "/travelers",
+              "where": {},
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "requested_duration_not_lost",
+            "origin": "derived_reviewed",
+            "statement": "Preserve the requested duration: 4 nights. NOT_REPRESENTED: no bound duration-only canonical slot or accepted pending-context path. Do not infer calendar dates or translate days into nights.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [
+              "temporal.assertions"
+            ],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          }
+        ],
+        "source_annotations": {
+          "oracle_flags_proposed": [
+            "origin_st_petersburg",
+            "destination_istanbul",
+            "total_budget_120000",
+            "need_missing_fields_question"
+          ],
+          "oracle_layers_proposed": [
+            "controlled_parser",
+            "actual_local_llm",
+            "actual_remote_llm"
+          ],
+          "evidence_needed": "Test run ID + model/provider + fixed clock/seed + state-before/after + API events + assertions; redact secrets"
+        },
+        "coverage_reference": {
+          "path": "fixtures/evaluation/corpus-map.json",
+          "sha256": "7b780a50b559838ae06be9c946ba5c9362bc6456aac085cd3b73d630671ead43",
+          "mapping_revision": 3,
+          "partial_status": "ASSERTIONS_PASS_TYPED_OR_MOCK",
+          "full_language_status": "NOT_RUN",
+          "test_refs": [
+            {
+              "path": "scripts/run_corpus.py",
+              "check_id": "alias",
+              "type": "typed_or_in_memory_mock"
+            }
+          ]
+        },
+        "readiness": "DRAFT",
+        "case_execution_default": "NOT_RUN",
+        "requested_eval_layers": [
+          "actual_local_llm"
+        ],
+        "missing_inputs": [
+          "complete_original_behavior_semantic_oracle",
+          "NOT_REPRESENTED_duration_4_nights"
+        ]
+      }
+    },
+    {
+      "id": "NLU-09",
+      "initial_trip": {},
+      "turns": [
+        {
+          "text": "Вылет из Москвы. Куда-нибудь на 4 дня, один взрослый."
+        }
+      ],
+      "binding": {
+        "binding_format": "otravel.oracle_bindings.v1",
+        "case_id": "NLU-09",
+        "binding_revision": 2,
+        "source_pair_sha256": "3b9d15aee6d6587b092321fa7e81ffaec94d27488d68913fb5d361b85bb65955",
+        "source": {
+          "original": {
+            "path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+            "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+            "record_sha256": "5bb0e958e6b4877e87d16579f698a2513de2e75729dfb4554dbe49cd22ce743d",
+            "line": 9,
+            "hash_kind": "physical_line_including_line_ending"
+          },
+          "proposed": {
+            "path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+            "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e",
+            "record_sha256": "2a754061f831425f552301dbdb69b2532dad5839c4764957af3a80530b86dfb4",
+            "line": 9,
+            "hash_kind": "physical_line_including_line_ending"
+          }
+        },
+        "category": "NLU",
+        "original_priority": "P0",
+        "messages": [
+          "Вылет из Москвы. Куда-нибудь на 4 дня, один взрослый."
+        ],
+        "test_setup_original": null,
+        "scope": {
+          "source_proposal": "supported_in_hackathon_demo_with_actual_data_limits",
+          "accepted": "BOUND_TYPED_SUBSET_ONLY_FULL_BEHAVIOR_REVIEW_OPEN",
+          "known_gap_notes": "Проверена только явно перечисленная typed/domain/MockTransport часть; исходный естественный язык и остальные end-to-end ожидания не квалифицированы."
+        },
+        "intent_contract": {
+          "allowed_acts": [
+            "ASK",
+            "CHANGE"
+          ],
+          "target_slot": "fresh-explicit-trip-facts-only",
+          "required_confirmation": false
+        },
+        "setup_binding": {
+          "initial_state_ref": "fresh:empty-TripState-pilot-v2",
+          "clock_ref": "inline:pilot-v2.clock_policy",
+          "seed_ref": "not_applicable:typed-predicate-grading-record-model-seed-separately",
+          "fault_ref": "not_applicable:no-fault-in-pilot-v2",
+          "supplier_snapshots_ref": "not_applicable:no-source-search-before-required-parameters",
+          "history_ref": "fresh:empty-session",
+          "ui_fixture_ref": "not_applicable:backend-saved-observation-only"
+        },
+        "expectedChecks": [
+          {
+            "check_id": "original_behavior",
+            "origin": "original_human",
+            "statement": "Продвинуть подбор с допустимыми предположениями и минимальным вопросом о датах/бюджете.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "origin_moscow",
+            "origin": "proposed_flag",
+            "statement": "Moscow is the explicitly stated origin.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "eq",
+              "path": "/origin",
+              "expected": "Москва"
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "adult_count_1",
+            "origin": "proposed_flag",
+            "statement": "Exactly one adult, without invented children or duplicate people.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "allocation.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/travelers",
+                  "where": {
+                    "type": "adult"
+                  },
+                  "expected": 1
+                },
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/travelers",
+                  "where": {},
+                  "expected": 1
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "destination_not_assumed",
+            "origin": "proposed_flag",
+            "statement": "No concrete destination was chosen.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "state.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/stays",
+                  "where": {
+                    "$any_nonempty": [
+                      "city"
+                    ]
+                  },
+                  "expected": 0
+                },
+                {
+                  "surface": "trip",
+                  "operator": "count_where",
+                  "path": "/legs",
+                  "where": {
+                    "$any_nonempty": [
+                      "destination"
+                    ]
+                  },
+                  "expected": 0
+                }
+              ]
+            },
+            "critical": true,
+            "result_default": "NOT_RUN"
+          },
+          {
+            "check_id": "completed_run",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "A completed run is required before grading its state.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "source",
+              "operator": "eq",
+              "path": "/run_status",
+              "expected": "completed"
+            }
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No structured hotel/flight offer or plan is fabricated before required inputs are known; free-text price claims are not covered.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "source.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/plans",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/offers",
+                  "expected": []
+                },
+                {
+                  "surface": "source",
+                  "operator": "eq",
+                  "path": "/live_offers",
+                  "expected": []
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No supplier search starts during this incomplete intake.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "events",
+              "operator": "count_where",
+              "path": "",
+              "where": {
+                "event_type": "TOOL_CALL_STARTED"
+              },
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "no_order_created",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No order is created from an intake message.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "quote_order.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "orders",
+              "operator": "count_where",
+              "path": "",
+              "where": {},
+              "expected": 0
+            }
+          },
+          {
+            "check_id": "missing_parameters_have_question",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "A durable clarification exists; minimal date/budget semantics are not fully graded.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "dialogue.response"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "all_of",
+              "path": "",
+              "children": [
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/status",
+                  "expected": "WAITING_USER"
+                },
+                {
+                  "surface": "session",
+                  "operator": "eq",
+                  "path": "/waiting_reason",
+                  "expected": "clarification"
+                },
+                {
+                  "surface": "session",
+                  "operator": "within",
+                  "path": "/pending_question/questions",
+                  "where": {
+                    "measure": "nonempty_strings"
+                  },
+                  "expected": {
+                    "min": 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "check_id": "budget_not_invented",
+            "origin": "derived_reviewed",
+            "critical": true,
+            "result_default": "NOT_RUN",
+            "statement": "No budget was stated.",
+            "binding_status": "BOUND",
+            "candidate_adapters": [
+              "money.assertions"
+            ],
+            "implementation_ref": "scripts/check_acceptance_pilot.py:evaluate_observation@revision2",
+            "expression": {
+              "surface": "trip",
+              "operator": "eq",
+              "path": "/budget",
+              "expected": null
+            }
+          },
+          {
+            "check_id": "requested_duration_not_lost",
+            "origin": "derived_reviewed",
+            "statement": "Preserve the requested duration: 4 days. NOT_REPRESENTED: no bound duration-only canonical slot or accepted pending-context path. Do not infer calendar dates or translate days into nights.",
+            "binding_status": "UNBOUND",
+            "candidate_adapters": [
+              "temporal.assertions"
+            ],
+            "implementation_ref": null,
+            "expression": null,
+            "critical": true,
+            "result_default": "NOT_RUN"
+          }
+        ],
+        "source_annotations": {
+          "oracle_flags_proposed": [
+            "origin_moscow",
+            "adult_count_1",
+            "destination_not_assumed"
+          ],
+          "oracle_layers_proposed": [
+            "controlled_parser",
+            "actual_local_llm",
+            "actual_remote_llm"
+          ],
+          "evidence_needed": "Test run ID + model/provider + fixed clock/seed + state-before/after + API events + assertions; redact secrets"
+        },
+        "coverage_reference": {
+          "path": "fixtures/evaluation/corpus-map.json",
+          "sha256": "7b780a50b559838ae06be9c946ba5c9362bc6456aac085cd3b73d630671ead43",
+          "mapping_revision": 3,
+          "partial_status": "ASSERTIONS_PASS_TYPED_OR_MOCK",
+          "full_language_status": "NOT_RUN",
+          "test_refs": [
+            {
+              "path": "scripts/run_corpus.py",
+              "check_id": "missing",
+              "type": "typed_or_in_memory_mock"
+            }
+          ]
+        },
+        "readiness": "DRAFT",
+        "case_execution_default": "NOT_RUN",
+        "requested_eval_layers": [
+          "actual_local_llm"
+        ],
+        "missing_inputs": [
+          "complete_original_behavior_semantic_oracle",
+          "NOT_REPRESENTED_duration_4_days"
+        ]
+      }
+    }
+  ]
+}

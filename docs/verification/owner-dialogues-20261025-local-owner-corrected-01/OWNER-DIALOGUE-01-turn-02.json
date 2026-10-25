@@ -1,0 +1,482 @@
+{
+  "case_id": "OWNER-DIALOGUE-01",
+  "turn_index": 2,
+  "request_text": "стамбул?",
+  "state_before": {
+    "session_id": "session-1",
+    "trip_id": "trip-2",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "questions": [
+        "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+      ],
+      "target_id": null,
+      "question_id": "run-3-question",
+      "state_version": 0,
+      "requested_destination": {
+        "kind": "country",
+        "name": "Сербия",
+        "country_code": "RS",
+        "suggested_cities": [
+          {
+            "name": "Белград",
+            "available": false,
+            "country_code": "RS"
+          },
+          {
+            "name": "Нови-Сад",
+            "available": false,
+            "country_code": "RS"
+          }
+        ]
+      }
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-2",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "state_after": {
+    "session_id": "session-1",
+    "trip_id": "trip-2",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "proposed_destination": {
+          "kind": "city",
+          "name": "Стамбул",
+          "country_code": "TR"
+        },
+        "confirmation_required": true,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "questions": [
+        "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?"
+      ],
+      "target_id": null,
+      "question_id": "run-12-question",
+      "state_version": 0,
+      "requested_destination": {
+        "kind": "country",
+        "name": "Сербия",
+        "country_code": "RS",
+        "suggested_cities": [
+          {
+            "name": "Белград",
+            "available": false,
+            "country_code": "RS"
+          },
+          {
+            "name": "Нови-Сад",
+            "available": false,
+            "country_code": "RS"
+          }
+        ]
+      }
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-2",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "actual_run": {
+    "run_id": "run-12",
+    "session_id": "session-1",
+    "status": "completed",
+    "based_version": 0,
+    "result": {
+      "run": {
+        "id": "run-12",
+        "error": null,
+        "result": null,
+        "run_id": "run-12",
+        "status": "completed",
+        "created_at": "2026-10-25T17:36:10.075615+00:00",
+        "session_id": "session-1",
+        "started_at": "2026-10-25T17:36:10.083764+00:00",
+        "finished_at": null,
+        "based_version": 0,
+        "current_status": "completed",
+        "input_message_id": "id-13",
+        "client_message_id": "id-14",
+        "request_expected_version": 0
+      },
+      "error": null,
+      "reply": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+      "state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "trip-2",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "result": {
+        "response_source": "contextual_slot"
+      },
+      "run_id": "run-12",
+      "status": "WAITING_USER",
+      "changes": [],
+      "message": {
+        "id": "id-15",
+        "role": "assistant",
+        "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+        "run_id": "run-12",
+        "sequence": 54,
+        "created_at": "2026-10-25T17:36:10.093154+00:00",
+        "session_id": "session-1",
+        "client_message_id": null
+      },
+      "session": {
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "trip-2",
+          "travelers": [],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 0
+        },
+        "status": "WAITING_USER",
+        "trip_id": "trip-2",
+        "created_at": "2026-10-25T17:35:29.315865+00:00",
+        "session_id": "session-1",
+        "updated_at": "2026-10-25T17:36:10.092328+00:00",
+        "state_version": 0,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "proposed_destination": {
+              "kind": "city",
+              "name": "Стамбул",
+              "country_code": "TR"
+            },
+            "confirmation_required": true,
+            "requested_destination": {
+              "kind": "country",
+              "name": "Сербия",
+              "country_code": "RS",
+              "suggested_cities": [
+                {
+                  "name": "Белград",
+                  "available": false,
+                  "country_code": "RS"
+                },
+                {
+                  "name": "Нови-Сад",
+                  "available": false,
+                  "country_code": "RS"
+                }
+              ]
+            }
+          },
+          "questions": [
+            "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?"
+          ],
+          "target_id": null,
+          "question_id": "run-12-question",
+          "state_version": 0,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        }
+      },
+      "trip_id": "trip-2",
+      "created_at": "2026-10-25T17:35:29.315865+00:00",
+      "session_id": "session-1",
+      "updated_at": "2026-10-25T17:36:10.092328+00:00",
+      "state_version": 0,
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "proposed_destination": {
+            "kind": "city",
+            "name": "Стамбул",
+            "country_code": "TR"
+          },
+          "confirmation_required": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?"
+        ],
+        "target_id": null,
+        "question_id": "run-12-question",
+        "state_version": 0,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "assistant_message": {
+        "id": "id-15",
+        "role": "assistant",
+        "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+        "run_id": "run-12",
+        "sequence": 54,
+        "created_at": "2026-10-25T17:36:10.093154+00:00",
+        "session_id": "session-1",
+        "client_message_id": null
+      }
+    },
+    "error": null,
+    "llm": null,
+    "created_at": "2026-10-25T17:36:10.075615+00:00",
+    "finished_at": "2026-10-25T17:36:10.093634+00:00",
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control"
+    ]
+  },
+  "messages": [
+    {
+      "sequence": 51,
+      "id": "id-4",
+      "session_id": "session-1",
+      "run_id": "run-3",
+      "client_message_id": "id-5",
+      "role": "user",
+      "text": "в сербию может быть поехать?",
+      "created_at": "2026-10-25T17:35:35.429358+00:00"
+    },
+    {
+      "sequence": 52,
+      "id": "id-6",
+      "session_id": "session-1",
+      "run_id": "run-3",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "created_at": "2026-10-25T17:35:54.847248+00:00"
+    },
+    {
+      "sequence": 53,
+      "id": "id-13",
+      "session_id": "session-1",
+      "run_id": "run-12",
+      "client_message_id": "id-14",
+      "role": "user",
+      "text": "стамбул?",
+      "created_at": "2026-10-25T17:36:10.075615+00:00"
+    },
+    {
+      "sequence": 54,
+      "id": "id-15",
+      "session_id": "session-1",
+      "run_id": "run-12",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+      "created_at": "2026-10-25T17:36:10.093154+00:00"
+    }
+  ],
+  "current_run_events": [
+    {
+      "sequence": 139,
+      "event_id": "id-16",
+      "session_id": "session-1",
+      "run_id": "run-12",
+      "event_type": "USER_MESSAGE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "message_id": "id-13"
+      },
+      "created_at": "2026-10-25T17:36:10.076886+00:00"
+    },
+    {
+      "sequence": 140,
+      "event_id": "id-17",
+      "session_id": "session-1",
+      "run_id": "run-12",
+      "event_type": "RUN_STARTED",
+      "state_version": 0,
+      "payload": {},
+      "created_at": "2026-10-25T17:36:10.084864+00:00"
+    },
+    {
+      "sequence": 141,
+      "event_id": "id-18",
+      "session_id": "session-1",
+      "run_id": "run-12",
+      "event_type": "RUN_COMPLETED",
+      "state_version": 0,
+      "payload": {
+        "error": null,
+        "domain_changed": false
+      },
+      "created_at": "2026-10-25T17:36:10.094139+00:00"
+    }
+  ],
+  "orders": [],
+  "http_routes": [
+    "POST /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/runs/{run_id}",
+    "GET /api/v1/sessions/{session_id}",
+    "GET /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/sessions/{session_id}/events",
+    "GET /api/v1/sessions/{session_id}/orders"
+  ]
+}

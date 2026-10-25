@@ -109,6 +109,28 @@ def test_invalid_llm_response_is_structured_error(content):
     assert error.value.code == "INVALID_LLM_RESPONSE"
 
 
+@pytest.mark.parametrize("metadata,valid", [
+    ({"speech_act": "ASK", "information_subject": "Сербия"}, True),
+    ({"speech_act": "PROPOSE", "information_subject": None}, True),
+    ({"speech_act": "BOOK_NOW"}, False),
+    ({"speech_act": []}, False),
+    ({"information_subject": 42}, False),
+    ({"information_subject": "x" * 81}, False),
+    ({"unapproved_action": "buy"}, False),
+])
+def test_provider_accepts_bounded_speech_metadata_without_relaxing_unknown_fields(metadata, valid):
+    payload = {**RESULT, **metadata}
+    def handler(request):
+        return httpx.Response(200, json={"choices": [{"message": {"content": json.dumps(payload)}}]})
+    gateway = LLMGateway(settings(handler, LLM_PROVIDER="openrouter", OPENROUTER_API_KEY="fake"))
+    if valid:
+        assert call(gateway, "extract_operations", {}) == payload
+    else:
+        with pytest.raises(ProviderError) as error:
+            call(gateway, "extract_operations", {})
+        assert error.value.code == "INVALID_LLM_RESPONSE"
+
+
 @pytest.mark.parametrize("provider,method,case_request,config", [
     ("liteapi", "search_hotels", HOTEL_REQUEST, {"LITEAPI_API_KEY": ""}),
     ("duffel", "search_flights", FLIGHT_REQUEST, {"DUFFEL_ACCESS_TOKEN": "duffel_live_fake"}),

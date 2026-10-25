@@ -26,7 +26,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 SCHEMA_VERSION = 1
-REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter"})
+REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq"})
 LOCAL_MODEL_PROVIDERS = frozenset({"ollama"})
 metadata = MetaData()
 schema_versions = Table(
@@ -824,7 +824,10 @@ class Store:
             day_start = reserved_at.replace(hour=0, minute=0, second=0, microsecond=0)
             event_provider = events.c.payload["provider"].astext
             if provider in REAL_MODEL_PROVIDERS:
-                provider_scope = event_provider.in_(sorted(REAL_MODEL_PROVIDERS))
+                # New independent Groq account has its own conservative daily
+                # pool. The existing Gemini/OpenRouter shared cap is retained.
+                provider_scope = (event_provider == "groq" if provider == "groq" else
+                    event_provider.in_(sorted(REAL_MODEL_PROVIDERS - {"groq"})))
                 effective_limit, per_run_limit = min(limit, 40), 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
@@ -833,9 +836,10 @@ class Store:
                 provider_scope = event_provider.not_in(sorted(REAL_MODEL_PROVIDERS | LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = limit, None
             if per_run_limit is not None:
+                run_scope = event_provider.in_(sorted(REAL_MODEL_PROVIDERS)) if provider in REAL_MODEL_PROVIDERS else provider_scope
                 run_count = (await conn.execute(select(func.count()).select_from(events).where(
                     events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
-                    provider_scope,
+                    run_scope,
                 ))).scalar_one()
                 if run_count >= per_run_limit:
                     return False
@@ -929,13 +933,14 @@ class Store:
         columns = (events.c.event_type, events.c.payload, events.c.created_at, events.c.sequence)
         common = (events.c.event_type.in_(event_types), events.c.payload["provider"].astext == provider,
                   events.c.created_at <= instant)
+        lookback = instant - timedelta(days=1) if provider == "groq" else instant - timedelta(minutes=10)
         async with self.engine.connect() as conn:
             # One statement snapshot for model cooldown and provider-wide limits:
             # a second query must not miss a concurrent account block seen by one.
             rows = (await conn.execute(select(*columns).where(
-                *common, events.c.created_at >= min(day_start, instant - timedelta(minutes=10))
+                *common, events.c.created_at >= min(day_start, lookback)
             ).order_by(events.c.created_at.desc(), events.c.sequence.desc()))).mappings().all()
-        provider_rows = [row for row in rows if row["created_at"] >= day_start]
+        provider_rows = [row for row in rows if row["created_at"] >= day_start or provider == "groq"]
         model_rows = [row for row in rows if row["payload"].get("model") == model and row["created_at"] >= instant - timedelta(minutes=10)]
 
         def answer(available: bool, reason: str, scope: str, until: datetime | None = None,
@@ -949,6 +954,16 @@ class Store:
             if row["event_type"] == "MODEL_RESPONSE_RECEIVED":
                 if isinstance(row["payload"].get("model"), str) and row["payload"]["model"].strip():
                     break
+                continue
+            payload = row["payload"]
+            hint = payload.get("retry_after_seconds")
+            if (provider == "groq" and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
+                    and type(hint) is int and 1 <= hint <= 86400):
+                until = row["created_at"] + timedelta(seconds=hint)
+                if until > instant:
+                    return answer(False, "provider_retry_after", "provider", until)
+                continue
+            if row["created_at"] < day_start:
                 continue
             scope, reason = classify(row["payload"])
             if scope == "provider":

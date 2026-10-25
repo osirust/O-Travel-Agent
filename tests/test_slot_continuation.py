@@ -209,3 +209,38 @@ async def test_room_count_machine_slot_is_humanized_and_bound_to_exact_stay(api_
         assert "Стамбул" in pending["text"]
         assert asked["trip"] == created["trip"]
         assert not RAW_FIELD.search(await _reply(client, sid, token, run))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("unknown", ["youngest_age", "child-1", "age_missing_for_youngest"])
+@pytest.mark.parametrize("answer", ["4", "Ему четыре года на дату выезда. Это единственное уточнение."])
+async def test_unrecognized_model_field_falls_back_to_missing_domain_slot_before_answer(api_factory, unknown, answer):
+    initial = sample_trip().model_dump(mode="json")
+    initial["travelers"][6]["age"] = None
+    model = StubLLM([{"unknowns": [unknown]}])
+    async with api_factory(model) as (client, _):
+        sid, token, created = await _session(client, initial)
+        first, asked = await _message(client, sid, token, "Подбери поездку, возраст младшего пока не указан")
+        pending = _human_pending(asked)
+        assert pending["field"] == "traveler.age"
+        assert pending["target_id"] == initial["travelers"][6]["id"]
+        assert "ребёнку" in await _reply(client, sid, token, first)
+        _, answered = await _message(client, sid, token, answer)
+        assert answered["trip"]["travelers"][6]["age"] == 4
+        assert answered["trip"]["travelers"][7] == created["trip"]["travelers"][7]
+        for field in ("groups", "stays", "legs", "budget", "constraints"):
+            assert answered["trip"][field] == created["trip"][field]
+        assert len(model.calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_natural_question_is_preserved_when_domain_has_another_missing_slot(api_factory):
+    initial = sample_trip().model_dump(mode="json")
+    initial["travelers"][6]["age"] = None
+    question = "Кому нужен отдельный номер?"
+    model = StubLLM([{"unknowns": [question]}])
+    async with api_factory(model) as (client, _):
+        sid, token, created = await _session(client, initial)
+        run, asked = await _message(client, sid, token, "Уточним отдельный номер")
+        assert await _reply(client, sid, token, run) == question
+        assert asked["trip"] == created["trip"]

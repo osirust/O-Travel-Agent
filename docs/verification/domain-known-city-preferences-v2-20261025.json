@@ -1,0 +1,68 @@
+{
+  "checked_at_utc": "2026-10-25T18:13:09.481310+00:00",
+  "scope": "OWNER_AUTHORIZED_DOMAIN_POLICY_V2_ONLY_NOT_NLU",
+  "authority": "Latest owner override relayed by root: curated known cities are accepted as city identity, inventory CITIES remains seven; two preference key/value pairs allowed.",
+  "runtime_file": "otravel/domain.py",
+  "runtime_sha256": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514",
+  "old_policy_failures_superseded_explicitly": {
+    "evidence": {
+      "path": "docs/verification/known-city-domain-policy-initial-20261025.xml",
+      "sha256": "cc854bcf49b4b01007ddf07d856043c83854d67305b9d4f8c6d117f3c39aaddf",
+      "tests": "63",
+      "failures": "5",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.400"
+    },
+    "explanation": "Five old assertions expected curated Belgrade/Novi Sad/Belgorod to be rejected by canonical_city. They are superseded by the owner v2 boundary. Country/unknown-city rejection and seven-city inventory assertions remain."
+  },
+  "intermediate_test_adapter_error": {
+    "evidence": {
+      "path": "docs/verification/known-city-domain-policy-v2-20261025.xml",
+      "sha256": "0ff915bf083cac34af45e34274c8d0bc289467794febb6db761ea6c927520a80",
+      "tests": "152",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.024"
+    },
+    "explanation": "New test called nonexistent DemoInventory.search; corrected only the test call to existing search_trip. No inventory implementation change was made by this agent."
+  },
+  "qualified_retest": {
+    "path": "docs/verification/known-city-domain-policy-v2-retest-20261025.xml",
+    "sha256": "228a1066cdb846d7f9f168547d01e760f06ebf886bc5e3168ca3e88094ef4b91",
+    "tests": "152",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "0.872"
+  },
+  "behavior_verified": [
+    "Curated known cities and aliases normalize without modifying CITIES.",
+    "Countries, ambiguous/unregistered names and context-free Белгрод remain rejected city values.",
+    "Complete Belgrade trip persists canonical route but DEMO returns no plans and unsupported_city; no fabricated inventory.",
+    "Preferences whitelist price_priority/lowest_total and departure_time/early_morning; arbitrary numeric budgets or clock hours are rejected.",
+    "Preference edits preserve budget, constraints, people, groups, rooms, route and source policy; repeats are no-op and optional weight does not reset an existing weight."
+  ],
+  "freeze_v1": {
+    "path": "fixtures/evaluation/owner-dialogue-extended-v1.json",
+    "sha256": "4c628fb7928dcd159c6a174adf4276586936544df17edbfd5d2f6c69c027dd22",
+    "input_sha256": "98d090da188161f1d0ad1165c773afd8aac9f2ff15b5a174714ab5dd11cb08fd",
+    "provenance": "development regression, frozen before first actual replay; fixes had already begun; not a holdout or original full-chat export"
+  },
+  "policy_overlay_v2": {
+    "path": "fixtures/evaluation/owner-dialogue-extended-policy-v2.json",
+    "sha256": "6bbdb9493dd24e2b3ce32e14ae7d888bfa59e36bf2207d6d01eaff234410d5c1",
+    "execution_status": "NOT_RUN_BY_THIS_TASK"
+  },
+  "model_http_db_calls_by_this_task": 0,
+  "limitations": [
+    "Domain/pure inventory tests are not actual LLM, PG durability or complete dialogue replay.",
+    "Context-dependent Белгород->Белград normalization belongs to parent clarification/harness policy, not canonical_city.",
+    "Soft early_morning records no exact hours and is not proof that supplier search honors that timing.",
+    "Lowest_total does not guarantee a global market minimum."
+  ],
+  "runtime_sha256_before_import_spacing_cleanup": "388b98d5dbf7afbcf5372c4675ce30521920d04ae05fb642f46ddce10d9e42f4",
+  "post_retest_nonsemantic_edit": "Removed one pre-existing extra blank line after imports to satisfy Ruff I001; executable statements unchanged.",
+  "ruff_scoped": "PASS"
+}

@@ -79,6 +79,10 @@ async function poll(runId, runEpoch) {
       if (!["pending","running"].includes(run.status)) {
         tracked.delete(runId); await refresh();
         const result = run.result?.result || {};
+        if (result.response_source === "contextual_slot") {
+          $("model").textContent = "Уточнение обработано harness";
+          $("model-detail").textContent = "Без вызова LLM · попыток: 0";
+        }
         renderPlans(result.plans);
         if (result.no_changes && result.model_reply && !result.operation_normalizations?.length && result.model_reply !== run.result?.reply)
           addMessage("assistant",result.model_reply,`model-${runId}`,"Текст модели · состояние поездки не менялось");

@@ -43,7 +43,7 @@ def _clean(value: Any) -> Any:
         return [_clean(item) for item in value]
     if isinstance(value, str):
         # Never echo configured credentials, even inside an otherwise public string.
-        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN"):
+        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN"):
             secret = os.getenv(name)
             if secret:
                 value = value.replace(secret, "[REDACTED]")

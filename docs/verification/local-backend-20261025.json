@@ -1,15 +1,15 @@
 {
-  "checked_at_utc": "2026-10-25T16:14:47.990350+00:00",
-  "action": "status",
+  "checked_at_utc": "2026-10-25T18:57:46.189449+00:00",
+  "action": "start",
   "source": "/home/aegml/projects/otravel",
   "venv_python": "/home/aegml/venvs/otravel-harness-20261025/bin/python",
-  "helper_sha256": "6391ce4e8ee7d1bc9a5aa222cea13022889bc09ca8d3663556896953609c3605",
+  "helper_sha256": "b62dfb0f8ca0c46ff49fca1a172c36fac97cce6bcc05335dbae9551470b83547",
   "database": "otravel_local_eval",
   "url": "http://127.0.0.1:8083",
   "process": {
-    "pid": 175377,
+    "pid": 304542,
     "uid": 1000,
-    "start_ticks": 1505433,
+    "start_ticks": 2525877,
     "argv": [
       "/home/aegml/venvs/otravel-harness-20261025/bin/python",
       "-m",
@@ -28,7 +28,7 @@
     {
       "address": "127.0.0.1:8083",
       "pids": [
-        175377
+        304542
       ]
     }
   ],
@@ -36,11 +36,249 @@
   "no_supplier_requests": true,
   "provider_credentials_inherited": false,
   "source_sha256": {
-    "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
-    "providers.py": "0d883669a60caa8e073f04cea9ad5140c72a94071060705fa66d4ca327f40d73",
-    "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
-    "harness.py": "ef43a14dc031d4059c155e06046bbd764362f8065ceba88b89d0a01353ef49b2",
-    "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+    "api.py": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05",
+    "providers.py": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530",
+    "config.py": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d",
+    "harness.py": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6",
+    "store.py": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+  },
+  "source_sha256_scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+  "process_start_source_sha256": {
+    "api.py": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05",
+    "providers.py": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530",
+    "config.py": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d",
+    "harness.py": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6",
+    "store.py": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+  },
+  "current_source_manifest": {
+    "format": "otravel.package_source_manifest.v1",
+    "sha256": "3837e5849bc9d71ace31b359dad2e89fc200605959fdf100a23503d9fc9f26bb",
+    "file_count": 21,
+    "files": [
+      {
+        "path": "otravel/__init__.py",
+        "bytes": 82,
+        "sha256": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a"
+      },
+      {
+        "path": "otravel/api.py",
+        "bytes": 26173,
+        "sha256": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05"
+      },
+      {
+        "path": "otravel/clarifications.py",
+        "bytes": 29025,
+        "sha256": "d9a538e37e96ca37c827a1a2638c108409b9888240ae1f9fce5b03ad0f825457"
+      },
+      {
+        "path": "otravel/config.py",
+        "bytes": 5609,
+        "sha256": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d"
+      },
+      {
+        "path": "otravel/date_slots.py",
+        "bytes": 5847,
+        "sha256": "627cd1a7d4bceb9ecb6200416cca6ad4f69a1d2478189c04051db0e4d592c92b"
+      },
+      {
+        "path": "otravel/domain.py",
+        "bytes": 26953,
+        "sha256": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514"
+      },
+      {
+        "path": "otravel/geography.py",
+        "bytes": 9262,
+        "sha256": "080c064d1686b8cd7f3780855655c4e94840ff098e84b8dfc83b58b21c3c67f5"
+      },
+      {
+        "path": "otravel/harness.py",
+        "bytes": 62913,
+        "sha256": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6"
+      },
+      {
+        "path": "otravel/history.py",
+        "bytes": 6726,
+        "sha256": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb"
+      },
+      {
+        "path": "otravel/inventory.py",
+        "bytes": 28020,
+        "sha256": "5c4084aa1a0e0bf5fdced24d0abbc98b6ffa660cb9e230177bf8dd4003a57b99"
+      },
+      {
+        "path": "otravel/llm_contract.py",
+        "bytes": 8814,
+        "sha256": "8b81b5ea56a759eb5f1341268fb4fcc8a1817c7386cbef464803e38e793fdeca"
+      },
+      {
+        "path": "otravel/money.py",
+        "bytes": 10768,
+        "sha256": "08cb7c6fdec0da25b53f4abc3bd6c04a64d3fb42493a98dd6fe444742cd33c8d"
+      },
+      {
+        "path": "otravel/orchestrator.py",
+        "bytes": 20451,
+        "sha256": "55768d2034e0b551d4863a618453e261edb409d9272fde0b51c4678695c14c23"
+      },
+      {
+        "path": "otravel/planning.py",
+        "bytes": 27405,
+        "sha256": "0359ed88cf0672d85a309f905657d935a64bf83eb334d58d4e6e392ddc1a827b"
+      },
+      {
+        "path": "otravel/provider_facts.py",
+        "bytes": 16393,
+        "sha256": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55"
+      },
+      {
+        "path": "otravel/providers.py",
+        "bytes": 65408,
+        "sha256": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530"
+      },
+      {
+        "path": "otravel/static/chat.css",
+        "bytes": 7362,
+        "sha256": "fb32fe81daf5bb49fb57c0e1ad66a93a5b030b6dcafa823825ebede85ce867ef"
+      },
+      {
+        "path": "otravel/static/chat.js",
+        "bytes": 11857,
+        "sha256": "d2c2c3c722351769e5bf903fcd0c10162a0ce7b002bff17c1c4cd146b2d655a1"
+      },
+      {
+        "path": "otravel/static/debug.html",
+        "bytes": 3583,
+        "sha256": "ddea33d746d7dd3cf766f2aa7651e7b536ad9a9db31f9b9f7e87dcd84292d3bf"
+      },
+      {
+        "path": "otravel/store.py",
+        "bytes": 55823,
+        "sha256": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 870,
+        "sha256": "64e616db211d786cccc588f5fd15acab0ef9373fadbcb317baa11a161d418e52"
+      }
+    ]
+  },
+  "process_start_source_manifest": {
+    "format": "otravel.package_source_manifest.v1",
+    "sha256": "3837e5849bc9d71ace31b359dad2e89fc200605959fdf100a23503d9fc9f26bb",
+    "file_count": 21,
+    "files": [
+      {
+        "path": "otravel/__init__.py",
+        "bytes": 82,
+        "sha256": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a"
+      },
+      {
+        "path": "otravel/api.py",
+        "bytes": 26173,
+        "sha256": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05"
+      },
+      {
+        "path": "otravel/clarifications.py",
+        "bytes": 29025,
+        "sha256": "d9a538e37e96ca37c827a1a2638c108409b9888240ae1f9fce5b03ad0f825457"
+      },
+      {
+        "path": "otravel/config.py",
+        "bytes": 5609,
+        "sha256": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d"
+      },
+      {
+        "path": "otravel/date_slots.py",
+        "bytes": 5847,
+        "sha256": "627cd1a7d4bceb9ecb6200416cca6ad4f69a1d2478189c04051db0e4d592c92b"
+      },
+      {
+        "path": "otravel/domain.py",
+        "bytes": 26953,
+        "sha256": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514"
+      },
+      {
+        "path": "otravel/geography.py",
+        "bytes": 9262,
+        "sha256": "080c064d1686b8cd7f3780855655c4e94840ff098e84b8dfc83b58b21c3c67f5"
+      },
+      {
+        "path": "otravel/harness.py",
+        "bytes": 62913,
+        "sha256": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6"
+      },
+      {
+        "path": "otravel/history.py",
+        "bytes": 6726,
+        "sha256": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb"
+      },
+      {
+        "path": "otravel/inventory.py",
+        "bytes": 28020,
+        "sha256": "5c4084aa1a0e0bf5fdced24d0abbc98b6ffa660cb9e230177bf8dd4003a57b99"
+      },
+      {
+        "path": "otravel/llm_contract.py",
+        "bytes": 8814,
+        "sha256": "8b81b5ea56a759eb5f1341268fb4fcc8a1817c7386cbef464803e38e793fdeca"
+      },
+      {
+        "path": "otravel/money.py",
+        "bytes": 10768,
+        "sha256": "08cb7c6fdec0da25b53f4abc3bd6c04a64d3fb42493a98dd6fe444742cd33c8d"
+      },
+      {
+        "path": "otravel/orchestrator.py",
+        "bytes": 20451,
+        "sha256": "55768d2034e0b551d4863a618453e261edb409d9272fde0b51c4678695c14c23"
+      },
+      {
+        "path": "otravel/planning.py",
+        "bytes": 27405,
+        "sha256": "0359ed88cf0672d85a309f905657d935a64bf83eb334d58d4e6e392ddc1a827b"
+      },
+      {
+        "path": "otravel/provider_facts.py",
+        "bytes": 16393,
+        "sha256": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55"
+      },
+      {
+        "path": "otravel/providers.py",
+        "bytes": 65408,
+        "sha256": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530"
+      },
+      {
+        "path": "otravel/static/chat.css",
+        "bytes": 7362,
+        "sha256": "fb32fe81daf5bb49fb57c0e1ad66a93a5b030b6dcafa823825ebede85ce867ef"
+      },
+      {
+        "path": "otravel/static/chat.js",
+        "bytes": 11857,
+        "sha256": "d2c2c3c722351769e5bf903fcd0c10162a0ce7b002bff17c1c4cd146b2d655a1"
+      },
+      {
+        "path": "otravel/static/debug.html",
+        "bytes": 3583,
+        "sha256": "ddea33d746d7dd3cf766f2aa7651e7b536ad9a9db31f9b9f7e87dcd84292d3bf"
+      },
+      {
+        "path": "otravel/store.py",
+        "bytes": 55823,
+        "sha256": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 870,
+        "sha256": "64e616db211d786cccc588f5fd15acab0ef9373fadbcb317baa11a161d418e52"
+      }
+    ]
+  },
+  "loaded_manifest": {
+    "status": "MATCHES_FULL_START_MANIFEST",
+    "reason": "exact_complete_start_and_current_match",
+    "matches_current": true,
+    "restart_required": false
   },
   "limits": {
     "provider": "ollama",
@@ -55,13 +293,6 @@
     "No global service/autostart change; only the exact recorded process may be stopped.",
     "Database and HBA rules are retained by stop; no DROP or runtime/test data mutation."
   ],
-  "process_start_source_sha256": {
-    "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
-    "providers.py": "0d883669a60caa8e073f04cea9ad5140c72a94071060705fa66d4ca327f40d73",
-    "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
-    "harness.py": "ef43a14dc031d4059c155e06046bbd764362f8065ceba88b89d0a01353ef49b2",
-    "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
-  },
   "http": {
     "/health": {
       "status": 200,
@@ -112,16 +343,25 @@
     "hba_original_before_sha256": "7c57eea64e402152a42d67244ae766bb5e34fad44f4cee5c30f018a92220a4d3",
     "database_oid": 18958
   },
-  "database_counts_before": {},
-  "database_counts_after": {
-    "agent_events": 0,
-    "agent_runs": 0,
+  "database_counts_before": {
+    "agent_events": 1239,
+    "agent_runs": 237,
     "demo_orders": 0,
-    "messages": 0,
-    "quotes": 0,
-    "sessions": 0,
+    "messages": 480,
+    "quotes": 4,
+    "sessions": 148,
     "pending_or_running": 0,
-    "model_call_started": 0
+    "model_call_started": 182
+  },
+  "database_counts_after": {
+    "agent_events": 1239,
+    "agent_runs": 237,
+    "demo_orders": 0,
+    "messages": 480,
+    "quotes": 4,
+    "sessions": 148,
+    "pending_or_running": 0,
+    "model_call_started": 182
   },
   "import_check": {
     "api_file": "/home/aegml/projects/otravel/otravel/api.py",
@@ -129,6 +369,80 @@
     "local_limit": 500,
     "run_limit": 1
   },
+  "legacy_five_file_snapshots": [
+    {
+      "observed_at_utc": "2026-10-25T17:55:40.787468+00:00",
+      "scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+      "source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "49c295103c0675d18a2cc283057c3f13d4673d164db10cbd92cbc2b0c439a66b",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "470163c27efe3321df5f4124dbfc5fded463d3e965b1935757fab7da2bae4b26",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      },
+      "process_start_source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "49c295103c0675d18a2cc283057c3f13d4673d164db10cbd92cbc2b0c439a66b",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "470163c27efe3321df5f4124dbfc5fded463d3e965b1935757fab7da2bae4b26",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      }
+    },
+    {
+      "observed_at_utc": "2026-10-25T18:19:52.784762+00:00",
+      "scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+      "source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "311e9cdede1aa472ee2b66f1b7930748364bfc88afe4c9dd320d746174d7f069",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "ea9ba112ce8894fe22d4f4d0ce041d871fbd75711336b1e575fe87601d7d3930",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      },
+      "process_start_source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "49c295103c0675d18a2cc283057c3f13d4673d164db10cbd92cbc2b0c439a66b",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "470163c27efe3321df5f4124dbfc5fded463d3e965b1935757fab7da2bae4b26",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      }
+    },
+    {
+      "observed_at_utc": "2026-10-25T18:20:09.961779+00:00",
+      "scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+      "source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "311e9cdede1aa472ee2b66f1b7930748364bfc88afe4c9dd320d746174d7f069",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "ea9ba112ce8894fe22d4f4d0ce041d871fbd75711336b1e575fe87601d7d3930",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      },
+      "process_start_source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "311e9cdede1aa472ee2b66f1b7930748364bfc88afe4c9dd320d746174d7f069",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "ea9ba112ce8894fe22d4f4d0ce041d871fbd75711336b1e575fe87601d7d3930",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      }
+    },
+    {
+      "observed_at_utc": "2026-10-25T18:57:29.107013+00:00",
+      "scope": "LEGACY_FIVE_FILES_NOT_FULL_PACKAGE_PROOF",
+      "source_sha256": {
+        "api.py": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05",
+        "providers.py": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530",
+        "config.py": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d",
+        "harness.py": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6",
+        "store.py": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+      },
+      "process_start_source_sha256": {
+        "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+        "providers.py": "311e9cdede1aa472ee2b66f1b7930748364bfc88afe4c9dd320d746174d7f069",
+        "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+        "harness.py": "ea9ba112ce8894fe22d4f4d0ce041d871fbd75711336b1e575fe87601d7d3930",
+        "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+      }
+    }
+  ],
   "setup_corrections": [
     {
       "id": "LOCAL-SETUP-001",
@@ -167,5 +481,5 @@
     "signals_only_to_test_created_child": true,
     "inference_requests": 0
   },
-  "startup_observed_at_utc": "2026-10-25T16:07:41.556124+00:00"
+  "startup_observed_at_utc": "2026-10-25T18:57:46.189449+00:00"
 }

@@ -1,56 +1,36 @@
-# O!Travel Agent — текущий статус, 25.10.2026
+# O!Travel Agent — короткое состояние,25.10.2026
 
-## Активная цель и ближайший шаг
+## Цель и рабочий режим
 
-Выполнять HARNESS001…008 из docs/research/harness-plan-review.md. Новый аудит/106oracle-proposals подтверждают приоритет: **HARNESS004, три диалога владельца → actual NLU106 → actual mixed flow001**. Не добавлять новые API/модели/таблицы/фреймворки вместо диалоговых исправлений. Финальный frontend делает сокомандник; минимальный debug-chat был отдельно запрошен владельцем и уже доступен.
+HARNESS001…008 продолжаются. Владелец уточнил: в другом чате он проверяет **100 отдельных полноценных многошаговых разговоров**, адаптируя следующий ход к фактическому ответу; один разговор может иметь несколько ошибок. Старый D100 из100сценариев/130реплик этому требованию НЕ соответствует. Его55rawPASS/45FAIL — только историческое исследование двух runtime-фаз, не приёмка100полных диалогов и не оценкаGroq. Исходники/ошибки/UNKNOWN058 сохранены.
 
-Сейчас строгий operation-schema и contextual clarifications ВСТРОЕНЫ в рабочее дерево. Последний общий прогон **713 PASS** (`docs/verification/full-suite-20261025.xml`), включая controlled owner3 и slot-continuation11. Это НЕ713пользовательскихNLUслучаев. Ближайший шаг: syncC → безопасноrestartmainapp/localbackend → actualТОТЖЕ frozenowner3 наQwen и доступнойAPIмодели; затемповторитьlocal7case/11turn и развивать106oracles. Не менять freeze послеFAIL.
+**Работающие8081/8083 сохранять стабильными на время нового прогона.** Разработка только E:/work/aegml, offline/controlled проверки в otravel_test; не sync_to_wsl и не restart app/Ollama до согласованной новой границы. Native runtimeC:/WSL/AegML-Hackathon,/home/aegml/projects/otravel. Source changes наE не означают изменение загруженногоC-процесса.
 
-## Код и развёртывание — различать
+Ближайший этап: воспроизвести и исправить адресный pending-context (подтверждённыйD100-036/3 с0LLM), даты/отрицания и деньги, добавить безопасные extraction/usage-traces и уменьшить стоимость prompt. Далее тот же вход/initial/pending/history/clock: контролируемый правильныйModelResult против реальнойAPIмодели; source/raw/guards/commit/reply учитывать отдельно. Не списывать все45FAIL на4B. Код/typed PASS не заменяет actual NLU.
 
-- Canonical source E:/work/aegml, private repo ostrovok-hackathon-2026/aegml, ветка codex/backend-harness-foundation, Draft PR1. Последний ранее запушенный cb4db37; текущий большой checkpoint готовится после713PASS/secret-scan0matches. Личный CVmirror не настроен.
-- Native build/runtime copy /home/aegml/projects/otravel в C:/WSL/AegML-Hackathon. Последние713изменения ещё нужно синхронизировать и перезапустить процессы: нельзя считать старые app8081/local8083 автоматически обновлёнными.
-- Main Docker backend http://localhost:8081/debug, /health; standalone local backend http://localhost:8083/debug. Local process managed scripts/local_backend.py, useraegml, separateDBotravel_local_eval, noAPIkeys; PID175377 — исторический runtime snapshot, перед сигналомобязательнаidentityпроверка.
+## Подтверждено и ограничения
 
-## Что проверено
+- **1070pytestPASS**,docs/verification/full-suite-20261025-groq-final.xml. Это проверки кода, не1070NLUдиалогов.
+- 8081: **Groq/qwen3.8-27b**,Free/no-card подтверждён владельцем; ключ толькоnative.env0600, backup не выбирается. MetadataGET200. Одна actualcompoundB1→PASS_BOUND_SUBSET_ONLY/1call/1775ms (Москва,Белград,adult1,nochildren,earlymorning сохранены). Это не полныйDoD. Следующий пользовательский«привет»→429unknown,безсохранённогоRetry-After; причина/остатокvendorquotaне установлены.19:06UTCвнашемruntimeledger2Groqattempts,1response+1RATE_LIMITED. Новые генерацииGroq пока не делать.
+- 8083: **Ollama/qwen3.5:4b**,GPU,отдельнаяotravel_local_eval,APIkeys unset. Модель наC,3.32GBQ4_K_M, runtime+archive~7.32GB;127.0.0.1:11434,cloud off.500calls/day/1run engineeringcap,неAPIтокены.
+- Groq40/day отдельныйпул; Gemini/OpenRouter прежнийобщий40/day,он25.10исчерпан. Remote≤2/run,Groqgateway≤1/run;trustedGroq429Retry-After1..86400сек сохраняется,безавторетрая. Повышениеплатныхтарифов/платежей/заказов0.
+- LiteAPI SANDBOX,Duffel TEST,SerpApi LIVE_INDICATIVE,Open-Meteo имелиactualresponses; это неготоваяполнаяреальнаякорзина. Hotelbeds/RateHawk/Travelpayouts безключей/actualqualification. HARNESS001actualgroupflow иOTR007suppliercomparisonOPEN.
+- Mistral: владелецприслалключ,ноегоFreeкабинеттребуетUpgradeдляAPI. Ключнеиспользован/несохранён,платныйпланневключён. Geminiключа нет,доступвладельцанедоступен.
+- DEMOсложная9person/2family/3rooms/2stays, revisions/CAS/queue/idempotentquote/order/undo/cancel/pause и16mixedPG/APIchecksпроверены. Single-nodePGSIGKILL→503JSON→WALrecoveryпроверенотдельно,неallfaults.
+- DebugUI desktop/mobile иactualAPIdate-slot26.10→«завтра»PASS0LLM/0consoleerrors,карточкиисточникиXSSliteral. Swaggerdisableflag/globalexternalauthTODO. Финальныйfrontend делаетсокомандник.
 
-- CanonicalTripState/whitelist operations, ID/group/room/date/budget checks, source policy versioned, compound edits/before→after.
-- PostgreSQL: sessions/messages/runs/events/revisions/quotes/demo_orders, bearer tokenHASH, per-session queue/CAS/idempotency/oneactive-run. Remote40/day+2/run; localOllama500/day+1/run; durable cooldown, knownupstream10min, unknown/accountlimitsfailclosed. Никаких networkcallsподSQLlock.
-- DEMOcomplex9people/2families/3roomsperstay/Kazan→Istanbul→Antalya→Kazan, demoquote/order/idempotency/staleconsent.
-- Undo monotonicnewrevision, cancel отдельно, historicalfirstplan notbookable, partialhotelrestore typedfixture. Publiclegmodesetterне добавлен.
-- MIXEDpureplanning/orchestrator/checkout16PGtests: exactbinding, fees/allocation/evidence, currencybasis, providerrefresh, sourceTTL, previousquotesrevoked, simulatedonlyorders.
-- RealPGSIGKILL в НОВОМ временномComposeproject:503JSON(DBDNSfailurefixed),WAL recovery, trip/version/pause/token/order/idempotencyсохранились,partialintake0. OldFAILattempts сохранены. ОсновнойPGне убивался. Это не все распределённыеfaultoutcomes.
-- DebugUIdesktop/mobile,DEMO/pause/resume/literalXSStext,0consoleerrors/0modelcalls. APIкнопка убрана. Swaggerdisableflagдлясдаваемогорежима ещё TODO; сессионнаяавторизациянеравнаглобальнойавторизациисайта.
+## Корпуса и диалоговые findings
 
-## HARNESS004 — реальные дефекты и новые исправления
+Оригинал106/129messagesнеизменён:71executedpartialtyped/domain/adapter/PG,35NOT_EXECUTED;полныхactual106NLUPASS0. Pilot4actualQwen:NLU01/09PASS_BOUND,NLU03/06FAIL_BOUND(Сочиошибочноorigin/100к→10к;Стамбул/120тыс потеряны),все4fullcaseBLOCKED_ORACLE.106bindings/185checksUNBOUND. Original/newsourceSHA —docs/research/sources/manifest.json.
 
-Владелец выявил country/city confusion, 'Стамбул?'→wrongorigin, rawdestination.city, 'я взрослый'loop/'1'invalidoperation. Initial frozenowner3=3FAIL, затем controlledowner3 PASS. Slot-continuationbaseline6FAIL/5PASS, послефиксов11PASS (нольдетей/ageID/post-searchrawdatefields).
+Owner3localраньше3/3диалога,8turns(3LLM+5contextslots)PASS;remoteNOT_ALL_PASS(Dots timeout/Xing error). Age-slotHARNESS004-SLOT-AGE001relatedPASS:child1=4,child2=7,exactfixture;oldFAILсохранены. Development7послеagefixPASSисторический;последнийпослеинтеграции6PASS/1FAIL(придуманadult). Новыйowner11/derivedcompound на4B NOT_ALL_BOUND_CHECKS_PASS,sourceevidence E:/work/tmp/otravel-dialogue-regressions/owner11-compound-v3-20261025-a.json; исходныеv1/v2иv3erratumнепереписывать.
 
-- llm_contract.py:47purepayloadtests,5-fieldenvelope,typedoneOf/valuefields,existingtargetIDenumrequired,newIDsbounded. ProviderпередаётschemaвnativeOllamaformat иsystemprompt; serverjsonschema4.23валидируетответ; schemaне sharedmutable acrosssessions. Countryнеcityenum.
-- clarifications.py:90purecases, pendingfield/target/context→shortanswerops, independentorigin/destinationcountries, hypothetical/countrychangeconfirmation, uniquefuzzyBelгрод→confirmБелград. unknown/placeackнеforcedhandled.
-- Geography28countries/9knowncities vs7searchcities; странаSerbiaRSраспознана, невыдумываемсербскийinventory.
-- Humanquestions sanitize model+typed/search paths, filledslotнеповторяется, выбраныйnextchild/стейимеетточныйtargetID. context-drivenanswerне называетсяrealLLMcall.
-- money.py54tests: scalar/relativeRUB groundingдляужеимеющегосяsetbudget, ambiguous/historical/pernightнеугадываются. updateageнепереставляетgroupmembers.
+HARNESS004-CONTEXT-MERGE001 OPEN: D100036/3contextual/0LLM,«нет»показываетRSнооставляетTRproposal/confirmation;актуальныйmergeкодподозреваем,нужентотжеконтролируемыйPGrepro. HARNESS004-DATE001 OPENFULLDIALOGUE: bare-targetdatehelper47pure+PG/browserPASS,ноD100051«Выездзавтра»безpendingнепокрыт. HARNESS004-COMPOUND001 OPENFULL:singleGroqB1PASSнеполнаяцепочка. COUNTRY-TYPO001policyv2:strongRS+bareБелгород→visibleБелград,явнаяRUнеalias;каталог7нерасширен.
 
-ActualmodelПРОВЕРКИОТДЕЛЬНО: initialAPI10attempts NOT_ALL_PASS; repairedAPI12attemptsblockedNvidia5xx+Gemma429; alternateAPI11attemptsXing429/Dotsresponses+budget/groupfindings. OldlocalQwen7case/11actualcalls=5casePASS/2FAIL(targetNonehotel/age) ДОновойсхемы. CountryregressionactualDots2.7s иQwen20.5s PASS. Actualowner3после713integrationЕЩЁНЕВЫПОЛНЕНЫ.
+## Материалы/следующий обмен
 
-## 106 исходных случаев и новые оракулы
+По прямому указанию владельца отправлен запрос в существующийChatGPTчат6adc7653-72c4-83eb-9550-c61a36268e73:официальныйAPIresearch+≥250userturns/50связныхдиалоговсоракуламивJSONL/MD. Доставка usermessagee9e4ac27…подтверждена. **Владелец сампришлётответ;чатдальшенеопрашивать.** D250отдельноот106,старогоD100и нового100adaptive. ResearchfreeLLM —docs/research/free-llm-options-20261025.md; ZAI/CF/NVIDIA/Gigaусловиядокументальноисследованы,новыхключей/actualprobesнет.
 
-Все106/129messages прочитаны;71sourceIDимеетчастичныйexecutedassertion,35ещёнеисполнены,fulloriginal106NLUPASS0. corpus-maprev3 и separateevidence — fixtures/evaluation,docs/verification/corpus*. Не суммироватьpartialкакfullE2E.
+SETUP004OPEN: ранее3travelkeyи2новыхключавставленывчат;неповторять/неGit. ИспользованныйGroqтолькоnative.env,неиспользованныйMistralнесохранён;перевыпускпередпередачей. Передpush secret-scan. Repo privateostrovok-hackathon-2026/aegml,branchcodex/backend-harness-foundation,DraftPR1;текущийcheckpointпосле1070готовится. АртефактыдругогочатаD100не изменять/нестадитьвслепую.
 
-Новое25октября: aegml_acceptance_oracles_106.md/jsonl + auditTXTскопированыbyteexactвdocs/research/sources/manifest. Original106fields106/106совпали0diff;flagsестьу52/106(79предложений),setupnull90/106. Этоproposal,нетполныхexpectedstates. oracle_bindings106records/185checks покаUNBOUND/NOT_RUN, форматfailclosed. План docs/testing/ACCEPTANCE_PLAN.md; конкретныеclock/seed/init/fault/slot/consentорaкулыещёнужны. Originalsource и2LLMfreezeSHA сохранять.
-
-## LLM/поставщики
-
-- OpenRouterconfigured, только:free иmax_price0; cap$0.01разрешёнвладельцем,кредиты/платныемодели/платежине покупались. NativecurrentprofileDotsprimary/Xingbackup. Dotsотвечал;Xing/Gemmaupstreampool429,Nvidiaпозже5xx. Geminiнеподключён.
-- LiteAPIsandbox catalog/rates actualHTTP200,586initialoffers;9people/3roomresponseфактыoccupancyNumber/counts/ages/BI/taxesполучены. provider_facts83puretests+adapterintegration; sourceSANDBOX,availabilityFalse. Полныйactualmixedsearch/refresh/checkoutTODO. Prebookещёне вызывался,обычныйrepriceповторяетratesearch.
-- Duffeltestactual9offers,neverlive; SerpFreeactual20hotel/4flightindicative; OpenMeteo7dayforecast. Hotelbeds/RateHawk/Travelpayoutsтолькоguardedfixtures,ключей/actualprobesнет.
-- LocalOllama0.40.11/qwen3.5:4b(4.2B,Q4_K_M),Cnative,officialSHA,12711434,noCloud,parallel1,ctx16k,GPU5070Ti16GB. Modelmetadata3.324GB,totalruntime+archive+models≈7.3GB. Coldmicro48.69s,warmlocal7case1.1–2s;неSLA. LocalHTTP105s/1runвlease120. ВесаНЕвSQL/НЕвGit. MainAPIиlocalbenchнезависимы.
-
-## Сохранённые ограничения/IDs
-
-OTR001actualNLUOPEN;002primaryselected/CVmirrorOPEN;003foundationchecked/productOPEN;004publicationrightsOPEN;005sandboxindicativepartial/realbookableOPEN;006numericalboundsOPEN;007comparableactualsuppliersOPEN. HARNESSprimaryblocksобновляютсявharness-plan-review.md. CORPUS/REVIEWoriginalIDs не закрывать несвязаннымPASS.
-
-SETUP004: триtravelkeyвладелецприслалвчат,перевыпуск/заменавсёещёOPEN;ключи не повторять/не коммитить. JSON/env/логипроверятьsecret-scanпередпушем. Keyvaluesonlynativeignored.env0600. SQLданные/LLMevidenceразличатьотсамоймодели.
-
-ENV003: владелецподтвердилSSD Edisconnect/reconnect; drvfsErrno19accessrestoredoverlaymountсSHAWindows/WSL,безforceumount/shutdown. Extraalias/stalelayerбылиbusy;не делатьслучайныйkill. SourceEcanonical, runtimeCstable. AEGYX INDEX81pausedпередSOURCE3; source не запускать, Ubuntu24.04/WindowsPG/PEM не трогать. НашWSLkeepermetadata %LOCALAPPDATA%/OTravel/setup/wsl-keeper.json,сигналытолькопослепроверкиPID/start/argv.
+AEGYX INDEX81PAUSEпередSOURCE3. Не трогатьAEGYX/Ubuntu24.04/WindowsPG/PEM/8080,не wsl--shutdown/dockerprune. ENV003SSD Edisconnect/reconnectподтверждён,drvfsвосстановленoverlayбезforce;C-runtimeотдельно. LifecyclePIDтолькочерезscripts/local_backend.py сidentityguards.

@@ -1,0 +1,48 @@
+{
+  "format": "otravel.owner_dialogue_policy_erratum.v3",
+  "revision": 3,
+  "provenance_class": "owner_correction_development_regression",
+  "created_at_utc": "2026-10-25T18:21:16.912060+00:00",
+  "status": "ORACLE_PLAN_NOT_RUN",
+  "supersedes": {
+    "path": "fixtures/evaluation/owner-dialogue-extended-policy-v2.json",
+    "sha256": "6bbdb9493dd24e2b3ce32e14ae7d888bfa59e36bf2207d6d01eaff234410d5c1",
+    "only_paths": [
+      "/new_compound_scenario_plan/continuation_semantic_steps/0",
+      "/new_compound_scenario_plan/continuation_semantic_steps/1"
+    ]
+  },
+  "confirmed_error": "The v2 semantic recipe incorrectly assigned Saint Petersburg to origin. The owner explicitly states that it is a new destination.",
+  "corrected_invariant": "Origin stays Moscow in both compound scenarios. Saint Petersburg replaces destination Belgrade only.",
+  "preserved_v2_policy": [
+    "Under strong requested-RS context, Белгород may be resolved to Белград with visible acknowledgment; retain the raw user input.",
+    "Genuine ambiguity or explicit Russia/Belgorod-RU intent still requires clarification.",
+    "Curated geographic city identity is separate from seven-city inventory coverage.",
+    "Lowest-total and early-morning are soft preferences, not numeric budget or exact clock hours."
+  ],
+  "historical_input_qualification": "Old 1/no answers followed erroneous repeated adult/children questions; they are not unconditional valid slot answers in corrected flow.",
+  "sources": {
+    "owner11_v1": {
+      "path": "fixtures/evaluation/owner-dialogue-extended-v1.json",
+      "sha256": "4c628fb7928dcd159c6a174adf4276586936544df17edbfd5d2f6c69c027dd22"
+    },
+    "historical8": {
+      "path": "fixtures/evaluation/owner-dialogue-compound-history-v1.json",
+      "sha256": "3145cc98f2e2093214192cf4c16ed8a35d2ed9030f9f8553cd4ae865a12863af"
+    },
+    "derived_acceptance": {
+      "path": "fixtures/evaluation/owner-dialogue-compound-derived-v1.json",
+      "sha256": "b80c9e60eb8841501df67a6251cedc421dee702c1e97ad2af274067f899a5d9f"
+    }
+  },
+  "clock_policy": {
+    "reference_date": "2026-10-25",
+    "timezone": "Europe/Moscow",
+    "check_in": "2026-10-26",
+    "tomorrow_resolves_to": "2026-10-26",
+    "runtime_reference_clock_binding_required": true,
+    "must_block_on_different_or_unverified_runtime_reference_date": true
+  },
+  "immutable_prior_files_preserved": true,
+  "execution_status": "NOT_RUN"
+}

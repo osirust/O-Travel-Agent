@@ -1,0 +1,13 @@
+{
+  "target_chat_id": "6adc7653-72c4-83eb-9550-c61a36268e73",
+  "request_user_message_id": "e9e4ac27-5e33-4618-8c27-ea5519d9804e",
+  "delivery_confirmed": true,
+  "research_response_obtained": false,
+  "owner_will_forward_response": true,
+  "further_polling_requested": false,
+  "requested_user_messages_minimum": 250,
+  "requested_dialogues_example": 50,
+  "source_prompt_sha256": "58cb1ec966132a713a5e1d724b77aa90041066130fff0ec717fbc3bc5f8f4f20",
+  "credentials_included": false,
+  "groq_inference_requests": 0
+}

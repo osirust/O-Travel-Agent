@@ -1,8 +1,7 @@
 """Payload acceptance/rejection for the native schema; no model or DB calls.
 
-jsonschema is not installed in the project's runtime. This intentionally small
-test-only interpreter checks every keyword used by this module, rather than
-claiming a full JSON Schema validator or testing only schema snapshots.
+This small test interpreter exercises the module's vocabulary independently of
+the runtime Draft202012Validator; it is not a general JSON Schema validator.
 """
 
 import ast
@@ -213,3 +212,14 @@ def test_envelope_all_five_fields_required_and_no_extra_operations(state):
     payload = response(*[op("set_origin", {"city": "Москва"}) for _ in range(31)])
     assert not accepts(payload, schema)
     assert accepts(response(), schema)
+
+
+def test_speech_act_metadata_and_minimum_price_are_bounded(state):
+    schema = build_operation_schema(state)
+    for act in ("ASK", "PROPOSE", "CHANGE"):
+        assert accepts({**response(), "speech_act": act, "information_subject": "Сербия"}, schema)
+    assert not accepts({**response(), "speech_act": "BOOK_NOW"}, schema)
+    payload = response(op("set_preference", {"key": "price_priority", "value": "lowest_total"}))
+    assert accepts(payload, schema)
+    payload["operations"][0]["value"]["value"] = 100000
+    assert not accepts(payload, schema)

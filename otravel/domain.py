@@ -9,7 +9,6 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-
 # Proposed implementation guards, not approved product limits. Rooms are per stay.
 MVP_LIMITS = {"travelers": 10, "stays": 4, "rooms_per_stay": 5}
 CITIES = ("Москва", "Санкт-Петербург", "Сочи", "Казань", "Стамбул", "Анталья", "Дубай")
@@ -39,7 +38,12 @@ def canonical_city(value: str) -> str:
         raise DomainError("missing_city", "Укажите город.")
     key = " ".join(value.strip().casefold().replace("ё", "е").split())
     if key not in _ALIASES:
-        raise DomainError("unsupported_city", f"Направление «{value}» пока не входит в каталог поиска. Уточните город; доступные направления: {', '.join(CITIES)}.", {"supported": list(CITIES)})
+        from .geography import known_cities, parse_destination
+
+        place = parse_destination(value, available_cities=CITIES)["requested_destination"]
+        if place["kind"] == "city" and place["name"] in known_cities():
+            return place["name"]
+        raise DomainError("unsupported_city", f"Город «{value}» не распознан в справочнике известных городов. Уточните название города.")
     return _ALIASES[key]
 
 
@@ -281,7 +285,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
     data = deepcopy(state.model_dump(mode="json"))
     changes: list[dict[str, Any]] = []
     route_changed = False
-    allowed = {"set_origin", "set_budget", "set_search_policy", "add_traveler", "remove_traveler", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
+    allowed = {"set_origin", "set_budget", "set_search_policy", "set_preference", "add_traveler", "remove_traveler", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
     for raw_operation in operations:
         try:
             operation = raw_operation if isinstance(raw_operation, Operation) else Operation.model_validate(raw_operation)
@@ -295,6 +299,20 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
             elif kind == "set_budget":
                 _keys(value, {"amount_minor", "currency", "scope"})
                 data["budget"] = Budget.model_validate(value).model_dump(mode="json")
+            elif kind == "set_preference":
+                _keys(value, {"key", "value", "weight"})
+                if target is not None or (value.get("key"), value.get("value")) not in (("price_priority", "lowest_total"), ("departure_time", "early_morning")):
+                    raise DomainError("invalid_preference", "Поддерживаются предпочтения минимальной стоимости и раннего вылета без привязки к объекту.")
+                if "weight" in value and type(value["weight"]) not in {int, float}:
+                    raise DomainError("invalid_preference", "Вес предпочтения задаётся числом от 0 до 1.")
+                existing = next((i for i, item in enumerate(data["preferences"]) if item["key"] == value["key"]), None)
+                prior = data["preferences"][existing] if existing is not None else {}
+                preference = Preference.model_validate({**prior, **value}).model_dump(mode="json")
+                if existing is None:
+                    data["preferences"].append(preference)
+                else:
+                    data["preferences"][existing] = preference
+                    data["preferences"] = [item for i, item in enumerate(data["preferences"]) if item["key"] != preference["key"] or i == existing]
             elif kind == "set_search_policy":
                 _keys(value, set(SearchPolicy.model_fields))
                 data["search_policy"] = SearchPolicy.model_validate({**data["search_policy"], **value}).model_dump(mode="json")

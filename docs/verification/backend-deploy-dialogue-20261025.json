@@ -1,0 +1,25 @@
+{
+  "scope": "PACKAGE_DEPLOYMENT_NOT_NLU",
+  "main_health": {
+    "status": "ok",
+    "database": "ready",
+    "application": "backend",
+    "supplier_booking": false
+  },
+  "image": "sha256:7d9463140525a403b6ff266cb9228e3789de6886f9e8d4dad7e1df61af0b30a1",
+  "packaged_file_count": 20,
+  "package_exactly_matches_canonical_source": true,
+  "local_loaded_manifest": {
+    "status": "MATCHES_FULL_START_MANIFEST",
+    "reason": "exact_complete_start_and_current_match",
+    "matches_current": true,
+    "restart_required": false
+  },
+  "local_process_manifest_sha256": "49628929399d1eec4a315702fdfa68c33c8516e6a3062e4f2d3c484a501067b9",
+  "source_date": "2026-10-25",
+  "api_inference_calls": 0,
+  "limitations": [
+    "Dependency binary identity not asserted by source hashes",
+    "External API availability and NLU quality are separate results"
+  ]
+}

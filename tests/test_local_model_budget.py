@@ -125,9 +125,58 @@ async def test_remote_shared_40_cap_does_not_consume_local_or_test_bucket(ledger
     await seed(ledger, ["gemini"] * 20 + ["openrouter"] * 19)
     assert await reserve(ledger, await new_run(ledger), provider="openrouter", limit=500)
     assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=500)
+    assert await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
     assert await reserve(ledger, await new_run(ledger), provider="test_ledger", limit=1)
     assert not await reserve(ledger, await new_run(ledger), provider="injected_test_adapter", limit=1)
+
+
+@pytest.mark.asyncio
+async def test_groq_independent_40_day_pool_does_not_reset_or_consume_other_provider_caps(ledger):
+    await seed(ledger, ["groq"] * 39)
+    assert await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
+    assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
+    assert await reserve(ledger, await new_run(ledger), provider="openrouter", limit=1)
+    assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=1)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cross_midnight", [False, True])
+async def test_groq_retry_after_expires_at_provider_hint_and_survives_midnight(ledger, cross_midnight):
+    repository, sid, day = ledger
+    at = day + timedelta(hours=23, minutes=59, seconds=50) if cross_midnight else day
+    run = await new_run(ledger)
+    with patch("otravel.store._now", return_value=at):
+        await repository.save_event(sid, run, "MODEL_CALL_FAILED", {"provider": "groq", "model": "qwen/qwen3.8-27b",
+            "code": "RATE_LIMITED", "http_status": 429, "limit_source": "unknown", "retry_after_seconds": 60})
+    blocked = await repository.model_availability("groq", "qwen/qwen3.8-27b", now=at + timedelta(seconds=30))
+    assert not blocked["available"] and blocked["scope"] == "provider"
+    assert blocked["retry_after"] == 30 and not blocked["allow_fallback"]
+    ready = await repository.model_availability("groq", "qwen/qwen3.8-27b", now=at + timedelta(seconds=60))
+    assert ready["available"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("hint", [None, 0, -1, 1.5, True, 86401, "30"])
+async def test_invalid_groq_retry_hint_keeps_conservative_provider_block(ledger, hint):
+    repository, sid, day = ledger
+    run = await new_run(ledger)
+    with patch("otravel.store._now", return_value=day):
+        await repository.save_event(sid, run, "MODEL_CALL_FAILED", {"provider": "groq", "model": "qwen/qwen3.8-27b",
+            "code": "RATE_LIMITED", "http_status": 429, "retry_after_seconds": hint})
+    health = await repository.model_availability("groq", "qwen/qwen3.8-27b", now=day + timedelta(seconds=60))
+    assert not health["available"] and health["scope"] == "provider"
+
+
+@pytest.mark.asyncio
+async def test_groq_authentication_error_cannot_be_lifted_by_retry_hint(ledger):
+    repository, sid, day = ledger
+    run = await new_run(ledger)
+    with patch("otravel.store._now", return_value=day):
+        await repository.save_event(sid, run, "MODEL_CALL_FAILED", {"provider": "groq", "model": "qwen/qwen3.8-27b",
+            "code": "HTTP_ERROR", "http_status": 403, "retry_after_seconds": 1})
+    health = await repository.model_availability("groq", "qwen/qwen3.8-27b", now=day + timedelta(seconds=60))
+    assert not health["available"] and health["reason"] == "provider_auth_blocked"
 
 
 @pytest.mark.asyncio
@@ -146,12 +195,13 @@ async def test_test_bucket_cannot_exhaust_actual_local_or_remote(ledger):
 
 
 @pytest.mark.asyncio
-async def test_remote_per_run_cap_is_shared_by_gemini_and_router(ledger):
+async def test_remote_per_run_cap_is_shared_by_gemini_router_and_groq(ledger):
     run = await new_run(ledger)
     assert await reserve(ledger, run, provider="gemini", limit=40)
-    assert await reserve(ledger, run, provider="openrouter", limit=40)
+    assert await reserve(ledger, run, provider="groq", limit=40)
     assert not await reserve(ledger, run, provider="gemini", limit=40)
     assert not await reserve(ledger, run, provider="openrouter", limit=40)
+    assert not await reserve(ledger, run, provider="groq", limit=40)
     assert await reserve(ledger, await new_run(ledger), provider="openrouter", limit=40)
 
 

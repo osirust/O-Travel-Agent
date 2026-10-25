@@ -38,9 +38,22 @@ _ALIASES = {
 _COUNTRY_NAMES = {"RS": "Сербия", "RU": "Россия", "TR": "Турция", "AE": "ОАЭ"}
 _ORIGIN_FORMS = {"москвы": "Москва", "санкт-петербурга": "Санкт-Петербург",
                  "сочи": "Сочи", "казани": "Казань", "стамбула": "Стамбул",
-                 "антальи": "Анталья", "дубая": "Дубай", "белграда": "Белград", "нови-сада": "Нови-Сад"}
+                 "антальи": "Анталья", "дубая": "Дубай", "белграда": "Белград", "нови-сада": "Нови-Сад",
+                 "белгорода": "Белгород"}
 _YES = {"да", "верно", "правильно", "подтверждаю", "да выбираем", "да меняем"}
 _NO = {"нет", "не надо", "не меняем"}
+_AGE_WORDS = {
+    "ноль": 0, "нуль": 0, "один": 1, "два": 2, "три": 3, "четыре": 4,
+    "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10,
+    "одиннадцать": 11, "двенадцать": 12, "тринадцать": 13, "четырнадцать": 14,
+    "пятнадцать": 15, "шестнадцать": 16, "семнадцать": 17,
+}
+_AGE_ANSWER = re.compile(
+    r"(?:(?:ему|ей|ребенку) )?(?:будет )?"
+    r"(?P<age>[0-9]{1,2}|" + "|".join(sorted(_AGE_WORDS, key=len, reverse=True)) + r")"
+    r"(?:\s*(?:лет|год|года))?(?: на дату (?:поездки|выезда))?"
+    r"(?:(?:[.!] *|, *| )это единственное уточнение)?"
+)
 
 
 def _data(value: Any) -> dict:
@@ -49,6 +62,23 @@ def _data(value: Any) -> dict:
 
 def _key(value: str) -> str:
     return " ".join(value.casefold().replace("ё", "е").split()).strip(" .!?,:;«»\"'")
+
+
+def _age_answer(text: str) -> int | None:
+    """A closed answer grammar, used only for an already bound child-age slot.
+
+    Full-match deliberately excludes extra edits, another named child, negation,
+    hypotheticals and ranges. A question is not an asserted age. The optional
+    acknowledgement does not expand the grammar into general intent extraction.
+    """
+    if "?" in text:
+        return None
+    match = _AGE_ANSWER.fullmatch(_key(text))
+    if match is None:
+        return None
+    value = match["age"]
+    age = int(value) if value.isascii() and value.isdigit() else _AGE_WORDS[value]
+    return age if 0 <= age < 18 else None
 
 
 def _field(raw: Any) -> str | None:
@@ -103,7 +133,7 @@ def _context(raw: Any, extra: dict | None = None) -> dict:
         if isinstance(raw.get("details"), dict):
             result.update(deepcopy(raw["details"]))
         for name in ("target_id", "stay_id", "traveler_id", "leg_id", "requested_destination", "requested_origin",
-                     "proposed_destination", "confirmation_required", "children_known", "children_count", "force_clarification"):
+                     "proposed_destination", "confirmation_required", "children_known", "children_count", "force_clarification", "contextual_correction"):
             if name in raw:
                 result[name] = deepcopy(raw[name])
     if isinstance(extra, dict):
@@ -144,6 +174,10 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
             country = destination.get("name") or _COUNTRY_NAMES.get(destination.get("country_code"))
             if country:
                 return f"Какой город в стране «{country}» вы выбираете для поездки?"
+        if isinstance(destination, dict) and destination.get("kind") == "city" and isinstance(destination.get("name"), str):
+            known = parse_destination(destination["name"])["requested_destination"]
+            if known["kind"] == "city" and known["name"] not in CITIES:
+                return _unsupported_city_question(known, ctx)
         return "В какой город вы хотите поехать?"
     if field == "party.adults":
         return "Сколько взрослых поедет в поездку?"
@@ -210,12 +244,14 @@ def derive_pending_field(raw_questions: Any, state: Any) -> dict:
     return {"field": None, "target_id": None, "context": {}}
 
 
-def _answer(operations=None, *, question=None, context=None) -> dict:
+def _answer(operations=None, *, question=None, context=None, notice=None) -> dict:
     result = {"handled": True, "operations": operations or []}
     if question:
         result["question"] = question
     if context is not None:
         result["pending_context"] = context
+    if notice:
+        result["notice"] = notice
     return result
 
 
@@ -263,8 +299,26 @@ def _country_change_question(place: dict, field: str, ctx: dict) -> str:
                    if isinstance(previous, dict) else None)
     direction = "отправления" if field == "origin.city" else "назначения"
     earlier = f" Ранее обсуждали страну «{old_country}»." if old_country else ""
-    return (f"Город «{place['name']}» находится в стране «{country}».{earlier} "
+    distinction = (" Есть похожее название «Белград» — это город в стране «Сербия»."
+                   if field == "destination.city" and place["name"] == "Белгород" and isinstance(previous, dict) and previous.get("country_code") == "RS" else "")
+    return (f"Город «{place['name']}» находится в стране «{country}».{distinction}{earlier} "
             f"Меняем страну {direction} на «{country}» и выбираем этот город?")
+
+
+def _contextual_notice(place: dict, context: dict) -> str | None:
+    correction = context.get("contextual_correction")
+    if isinstance(correction, dict) and correction.get("interpreted_city") == place.get("name") and correction.get("country_code") == place.get("country_code"):
+        country = _COUNTRY_NAMES.get(place["country_code"], place["country_code"])
+        return f"Понял как «{place['name']}», {country}."
+    return None
+
+
+def _unsupported_city_question(place: dict, context: dict | None = None) -> str:
+    country = _COUNTRY_NAMES.get(place.get("country_code"), place.get("country_code"))
+    notice = _contextual_notice(place, context or {})
+    prefix = f"{notice} " if notice else ""
+    return (f"{prefix}Город «{place['name']}» находится в стране «{country}», но пока не входит в каталог поиска. "
+            "Сохраняем это направление без поиска или вы хотите его изменить?")
 
 
 def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: str) -> dict:
@@ -289,6 +343,19 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
     else:
         place = _answer_place(text, field)
     requested = ctx.get(requested_key)
+    # Owner policy v2: only a bare name inside an explicit Serbian destination
+    # context may be read as the similarly named Serbian city. This deliberately
+    # does not change the geographic registry or rewrite explicit Russian input.
+    contextual_correction = (field == "destination.city" and isinstance(requested, dict)
+                             and requested.get("country_code") == "RS"
+                             and requested.get("kind") in {"country", "city"}
+                             and text.strip().casefold() == "белгород")
+    if contextual_correction:
+        place = parse_destination("Белград")["requested_destination"]
+        ctx = {**ctx, "contextual_correction": {"original_text": text, "interpreted_city": "Белград",
+                                               "country_code": "RS", "basis": "requested_country"}}
+    elif "contextual_correction" in ctx:
+        ctx = {key: value for key, value in ctx.items() if key != "contextual_correction"}
     if place["kind"] == "country":
         return _answer(question=human_question(field, data, {"requested_destination": place}),
                        context={**ctx, "field": field, "target_id": target, requested_key: place})
@@ -318,9 +385,12 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
         return _answer(question=question, context={**ctx, "field": field, "target_id": target,
                        "proposed_destination": place, "confirmation_required": True})
     if place["name"] not in CITIES:
-        country = _COUNTRY_NAMES.get(new_country, new_country)
-        return _answer(question=f"Город «{place['name']}» находится в стране «{country}», но пока не входит в каталог поиска. Выберем другой город из доступных: {', '.join(CITIES)}?",
-                       context={**ctx, "field": field, "target_id": target, requested_key: place})
+        # A new explicit city supersedes an earlier proposed alternative. Keep
+        # the choice as metadata, without inventing coverage or forcing a route.
+        clean = {key: value for key, value in ctx.items() if key not in {"proposed_destination", "confirmation_required"}}
+        return _answer(question=_unsupported_city_question(place, clean),
+                       context={**clean, "field": field, "target_id": target, requested_key: place},
+                       notice=_contextual_notice(place, clean))
     if field == "origin.city":
         return _answer([{"type": "set_origin", "value": {"city": place["name"]}}])
     stays = data.get("stays", [])
@@ -331,7 +401,13 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
         if len(stays) > 1:
             return _answer(question="Для какой остановки нужно изменить город назначения?", context={**ctx, "field": field})
         target = stays[0]["id"] if stays else _new_id("stay", stays)
-    return _answer([{"type": "upsert_stay", "target_id": target, "value": {"city": place["name"]}}])
+    # A committed destination replaces display metadata as well as the stay.
+    # Return only metadata here: the next question must derive its own binding.
+    clean = {key: value for key, value in ctx.items()
+             if key not in {"field", "target_id", "stay_id", "traveler_id", "leg_id",
+                            "proposed_destination", "confirmation_required", "suggested_cities"}}
+    return _answer([{"type": "upsert_stay", "target_id": target, "value": {"city": place["name"]}}],
+                   context={**clean, "requested_destination": place})
 
 
 def resolve_short_answer(state: Any, pending_question: Any, text: str) -> dict:
@@ -342,11 +418,13 @@ def resolve_short_answer(state: Any, pending_question: Any, text: str) -> dict:
     dates, ages of adults, country-to-city mapping or unrelated edits are made.
     """
     unhandled = {"handled": False, "operations": []}
-    if not isinstance(text, str) or not text.strip() or len(text) > 100 or len(text.split()) > 7 or ";" in text or "\n" in text:
+    if not isinstance(text, str) or not text.strip() or len(text) > 100 or ";" in text or "\n" in text:
         return unhandled
     data, field = _data(state), _field(pending_question)
     ctx = _context(pending_question)
     if not field:
+        return unhandled
+    if field != "traveler.age" and len(text.split()) > 7:
         return unhandled
     target, key = _target(field, data, ctx), _key(text)
     if field in {"origin.city", "destination.city"}:
@@ -354,13 +432,16 @@ def resolve_short_answer(state: Any, pending_question: Any, text: str) -> dict:
             return unhandled
         return _city_answer(data, field, target, ctx, text.strip())
     if field == "traveler.age":
-        match = re.fullmatch(r"(\d{1,2})(?:\s*(?:лет|год|года))?", key)
-        if not match:
+        age = _age_answer(text)
+        if age is None:
             return unhandled
+        # A supplied answer never chooses a person, even when only one age is
+        # missing. The persisted question must already carry its stable target.
+        target = ctx.get("target_id") or ctx.get("traveler_id")
         child = next((p for p in data.get("travelers", []) if p["id"] == target and p.get("type") == "child"), None)
-        if child is None or child.get("birth_date") or child.get("age") is not None or not 0 <= int(match[1]) < 18:
+        if child is None or child.get("birth_date") or child.get("age") is not None:
             return _answer(question=human_question(field, data, ctx), context={**ctx, "field": field, "target_id": target})
-        operations = [{"type": "update_traveler", "target_id": target, "value": {"age": int(match[1])}}]
+        operations = [{"type": "update_traveler", "target_id": target, "value": {"age": age}}]
         remaining = [p for p in data.get("travelers", []) if p["id"] != target and p.get("type") == "child" and p.get("age") is None and not p.get("birth_date")]
         if remaining:
             next_context = {"field": field, "target_id": remaining[0]["id"], "children_known": True}

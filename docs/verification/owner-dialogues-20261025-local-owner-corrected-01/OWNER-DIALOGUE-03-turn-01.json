@@ -1,0 +1,370 @@
+{
+  "case_id": "OWNER-DIALOGUE-03",
+  "turn_index": 1,
+  "request_text": "из Москвы",
+  "state_before": {
+    "session_id": "session-44",
+    "trip_id": "trip-45",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "NEW",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": null,
+      "trip_id": "trip-45",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "state_after": {
+    "session_id": "session-44",
+    "trip_id": "trip-45",
+    "state_version": 1,
+    "trip_version": 1,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Сколько взрослых поедет в поездку?",
+      "field": "party.adults",
+      "reason": "clarification",
+      "context": {},
+      "questions": [
+        "Сколько взрослых поедет в поездку?"
+      ],
+      "target_id": null,
+      "question_id": "run-46-question",
+      "state_version": 1
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-45",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 1
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "actual_run": {
+    "run_id": "run-46",
+    "session_id": "session-44",
+    "status": "completed",
+    "based_version": 0,
+    "result": {
+      "run": {
+        "id": "run-46",
+        "error": null,
+        "result": null,
+        "run_id": "run-46",
+        "status": "completed",
+        "created_at": "2026-10-25T17:37:33.619193+00:00",
+        "session_id": "session-44",
+        "started_at": "2026-10-25T17:37:33.643826+00:00",
+        "finished_at": null,
+        "based_version": 0,
+        "current_status": "completed",
+        "input_message_id": "id-47",
+        "client_message_id": "id-48",
+        "request_expected_version": 0
+      },
+      "error": null,
+      "reply": "Сколько взрослых поедет в поездку?",
+      "state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "trip-45",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "result": {
+        "llm": {
+          "model": "qwen3.5:4b",
+          "attempts": [
+            {
+              "model": "qwen3.5:4b",
+              "outcome": "response",
+              "provider": "ollama",
+              "latency_ms": 661
+            }
+          ],
+          "provider": "ollama",
+          "latency_ms": 661
+        },
+        "plans": [],
+        "warnings": [
+          "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся."
+        ],
+        "questions": [
+          "Кто поедет: сколько взрослых и детей?",
+          "В какие города и на какие даты планируете поездку?"
+        ],
+        "price_kind": "synthetic",
+        "violations": [],
+        "model_reply": "Откуда поездка установлена как Москва.",
+        "source_type": "DEMO",
+        "limits_status": "proposed_implementation_guards_not_owner_approved",
+        "max_tool_calls": 16,
+        "response_source": "llm",
+        "tool_calls_used": 0,
+        "operation_normalizations": []
+      },
+      "run_id": "run-46",
+      "status": "WAITING_USER",
+      "changes": [
+        {
+          "after": "Москва",
+          "field": "origin",
+          "before": null,
+          "operation": "set_origin",
+          "target_id": null
+        }
+      ],
+      "message": {
+        "id": "id-49",
+        "role": "assistant",
+        "text": "Сколько взрослых поедет в поездку?",
+        "run_id": "run-46",
+        "sequence": 62,
+        "created_at": "2026-10-25T17:37:34.335814+00:00",
+        "session_id": "session-44",
+        "client_message_id": null
+      },
+      "session": {
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "trip-45",
+          "travelers": [],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 1
+        },
+        "status": "WAITING_USER",
+        "trip_id": "trip-45",
+        "created_at": "2026-10-25T17:37:23.403899+00:00",
+        "session_id": "session-44",
+        "updated_at": "2026-10-25T17:37:34.332469+00:00",
+        "state_version": 1,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Сколько взрослых поедет в поездку?",
+          "field": "party.adults",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "Сколько взрослых поедет в поездку?"
+          ],
+          "target_id": null,
+          "question_id": "run-46-question",
+          "state_version": 1
+        }
+      },
+      "trip_id": "trip-45",
+      "created_at": "2026-10-25T17:37:23.403899+00:00",
+      "session_id": "session-44",
+      "updated_at": "2026-10-25T17:37:34.332469+00:00",
+      "state_version": 1,
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Сколько взрослых поедет в поездку?",
+        "field": "party.adults",
+        "reason": "clarification",
+        "context": {},
+        "questions": [
+          "Сколько взрослых поедет в поездку?"
+        ],
+        "target_id": null,
+        "question_id": "run-46-question",
+        "state_version": 1
+      },
+      "assistant_message": {
+        "id": "id-49",
+        "role": "assistant",
+        "text": "Сколько взрослых поедет в поездку?",
+        "run_id": "run-46",
+        "sequence": 62,
+        "created_at": "2026-10-25T17:37:34.335814+00:00",
+        "session_id": "session-44",
+        "client_message_id": null
+      }
+    },
+    "error": null,
+    "llm": {
+      "model": "qwen3.5:4b",
+      "attempts": [
+        {
+          "model": "qwen3.5:4b",
+          "outcome": "response",
+          "provider": "ollama",
+          "latency_ms": 661
+        }
+      ],
+      "provider": "ollama",
+      "latency_ms": 661
+    },
+    "created_at": "2026-10-25T17:37:33.619193+00:00",
+    "finished_at": "2026-10-25T17:37:34.336670+00:00",
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control"
+    ]
+  },
+  "messages": [
+    {
+      "sequence": 61,
+      "id": "id-47",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "client_message_id": "id-48",
+      "role": "user",
+      "text": "из Москвы",
+      "created_at": "2026-10-25T17:37:33.619193+00:00"
+    },
+    {
+      "sequence": 62,
+      "id": "id-49",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Сколько взрослых поедет в поездку?",
+      "created_at": "2026-10-25T17:37:34.335814+00:00"
+    }
+  ],
+  "current_run_events": [
+    {
+      "sequence": 155,
+      "event_id": "id-50",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "event_type": "USER_MESSAGE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "message_id": "id-47"
+      },
+      "created_at": "2026-10-25T17:37:33.620471+00:00"
+    },
+    {
+      "sequence": 156,
+      "event_id": "id-51",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "event_type": "RUN_STARTED",
+      "state_version": 0,
+      "payload": {},
+      "created_at": "2026-10-25T17:37:33.644789+00:00"
+    },
+    {
+      "sequence": 157,
+      "event_id": "id-52",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "event_type": "MODEL_CALL_STARTED",
+      "state_version": 0,
+      "payload": {
+        "provider": "ollama"
+      },
+      "created_at": "2026-10-25T17:37:33.658859+00:00"
+    },
+    {
+      "sequence": 158,
+      "event_id": "id-53",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "event_type": "MODEL_RESPONSE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "model": "qwen3.5:4b",
+        "attempt": 1,
+        "provider": "ollama",
+        "latency_ms": 661,
+        "operations": 1
+      },
+      "created_at": "2026-10-25T17:37:34.325825+00:00"
+    },
+    {
+      "sequence": 159,
+      "event_id": "id-54",
+      "session_id": "session-44",
+      "run_id": "run-46",
+      "event_type": "RUN_COMPLETED",
+      "state_version": 1,
+      "payload": {
+        "error": null,
+        "domain_changed": true
+      },
+      "created_at": "2026-10-25T17:37:34.337589+00:00"
+    }
+  ],
+  "orders": [],
+  "http_routes": [
+    "POST /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/runs/{run_id}",
+    "GET /api/v1/sessions/{session_id}",
+    "GET /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/sessions/{session_id}/events",
+    "GET /api/v1/sessions/{session_id}/orders"
+  ]
+}

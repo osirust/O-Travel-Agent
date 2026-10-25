@@ -11,6 +11,7 @@ from copy import deepcopy
 from typing import Any
 
 from .domain import CITIES, MVP_LIMITS, TripState
+from .geography import known_cities
 
 
 DATE_PATTERN = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
@@ -18,7 +19,7 @@ CONTROL_ACTIONS = ("continue", "wait", "resume", "cancel", "request_checkout", "
 OPERATION_TYPES = frozenset({
     "set_origin", "set_budget", "set_search_policy", "add_traveler",
     "update_traveler", "remove_traveler", "upsert_stay", "remove_stay",
-    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo",
+    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference",
 })
 
 
@@ -73,7 +74,7 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     room_ids = list(dict.fromkeys(room.id for stay in state.stays for room in stay.rooms))
     room_ids += _candidates("room", set(room_ids), MVP_LIMITS["rooms_per_stay"])
     date = _nullable(_text(pattern=DATE_PATTERN))
-    city = _enum(CITIES)
+    city = _enum(known_cities())
     group = _nullable(_enum(all_groups)) if all_groups else {"type": "null"}
     stay_reference = _nullable(_enum(all_stays)) if all_stays else {"type": "null"}
     variants: list[dict] = []
@@ -87,6 +88,10 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     operation("set_origin", _object({"city": city}, ("city",)))
     operation("set_budget", _object({"amount_minor": {"type": "integer", "minimum": 1},
         "currency": _text(pattern=r"^[A-Z]{3}$"), "scope": {"type": "string", "const": "whole_trip"}}, ("amount_minor",)))
+    operation("set_preference", {"oneOf": [_object({"key": {"type": "string", "const": key},
+        "value": {"type": "string", "const": value},
+        "weight": {"type": "number", "minimum": 0, "maximum": 1}}, ("key", "value"))
+        for key, value in (("price_priority", "lowest_total"), ("departure_time", "early_morning"))]})
     operation("set_search_policy", _object({
         "mode": _enum(("DEMO", "HYBRID")), "hotel_provider": _enum(("liteapi", "serpapi")),
         "flight_provider": _enum(("duffel", "serpapi")), "demo_fallback": {"type": "boolean"},
@@ -143,6 +148,8 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
         "reply": {"type": "string"},
         "unknowns": {"type": "array", "items": {"type": "string"}},
         "conflicts": {"type": "array", "items": {"type": "string"}},
+        "speech_act": _enum(("CHANGE", "ASK", "PROPOSE")),
+        "information_subject": _nullable(_text(maxLength=80)),
     }, ("operations", "control", "reply", "unknowns", "conflicts"))
     # Every invocation owns its nested containers; callers may attach the schema
     # to one request context without mutating settings or another session.

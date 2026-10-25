@@ -40,6 +40,7 @@ class Settings:
     def provider_settings(self) -> dict[str, Any]:
         keys = [
             "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL",
+            "GROQ_API_KEY", "GROQ_MODEL",
             "LITEAPI_API_KEY", "LITEAPI_MODE", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY",
             "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY",
             "TRAVELPAYOUTS_API_TOKEN",
@@ -51,6 +52,8 @@ class Settings:
             "GEMINI_MODEL": os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
             "OPENROUTER_MODEL": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"),
             "GEMINI_FREE_TIER_CONFIRMED": enabled("GEMINI_FREE_TIER_CONFIRMED"),
+            "GROQ_MODEL": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
+            "GROQ_FREE_TIER_CONFIRMED": enabled("GROQ_FREE_TIER_CONFIRMED"),
             "SERPAPI_FREE_TIER_CONFIRMED": enabled("SERPAPI_FREE_TIER_CONFIRMED"),
             "HOTELBEDS_TEST_CONFIRMED": enabled("HOTELBEDS_TEST_CONFIRMED"),
             "RATEHAWK_TEST_CONFIRMED": enabled("RATEHAWK_TEST_CONFIRMED"),
@@ -70,9 +73,11 @@ def provider_status() -> dict[str, Any]:
         "_runtime": {"llm_provider": os.getenv("LLM_PROVIDER", "openrouter"),
                      "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b") if os.getenv("LLM_PROVIDER") == "ollama"
                               else os.getenv("GEMINI_MODEL", "gemini-3.8-flash") if os.getenv("LLM_PROVIDER") == "gemini"
+                              else os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b") if os.getenv("LLM_PROVIDER") == "groq"
                               else os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")},
         "gemini": {"configured": bool(os.getenv("GEMINI_API_KEY")), "free_tier_confirmed": enabled("GEMINI_FREE_TIER_CONFIRMED"), "model": os.getenv("GEMINI_MODEL", "gemini-3.8-flash")},
         "openrouter": {"configured": bool(os.getenv("OPENROUTER_API_KEY")), "model": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"), "backup_model": os.getenv("OPENROUTER_BACKUP_MODEL", ""), "paid_fallback": False},
+        "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False},
         "ollama": {"configured": os.getenv("LLM_PROVIDER") == "ollama", "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b"), "source": "LOCAL_MODEL", "paid_fallback": False},
         "liteapi": {"configured": bool(os.getenv("LITEAPI_API_KEY")), "mode": os.getenv("LITEAPI_MODE", "sandbox")},
         "duffel": {"configured": bool(os.getenv("DUFFEL_ACCESS_TOKEN")), "mode": "sandbox"},
