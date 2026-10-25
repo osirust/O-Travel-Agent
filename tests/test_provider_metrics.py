@@ -164,3 +164,67 @@ async def test_two_concurrent_contexts_keep_local_usage_and_hash_despite_last_ca
         assert gateway.request_metrics_for_current_call() is None  # Child contexts do not leak into their parent.
     finally:
         await gateway.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("provider", ["groq", "openrouter", "gemini", "ollama"])
+@pytest.mark.parametrize("failure_kind", ["json", "shape", "schema", "truncated"])
+async def test_consumed_usage_survives_invalid_generation(provider, failure_kind):
+    vendor = ({"promptTokenCount": 17, "candidatesTokenCount": 5} if provider == "gemini" else
+              {"prompt_eval_count": 17, "eval_count": 5} if provider == "ollama" else
+              {"prompt_tokens": 17, "completion_tokens": 5, "raw_secret": CANARY})
+    content = "{" if failure_kind == "json" else json.dumps(
+        {**RESULT, "reply": 5} if failure_kind == "shape" else {**RESULT, "reply": "a" * 41})
+    schema = {**SCHEMA, "properties": {**SCHEMA["properties"], "reply": {"type": "string", "maxLength": 40}}}
+    def handler(request):
+        body = json.loads(response(provider, vendor).content)
+        if provider == "gemini":
+            body["candidates"][0]["content"]["parts"][0]["text"] = content
+            if failure_kind == "truncated":
+                body["candidates"][0]["finishReason"] = "MAX_TOKENS"
+        elif provider == "ollama":
+            body["message"]["content"] = content
+            if failure_kind == "truncated":
+                body["done_reason"] = "length"
+        else:
+            body["choices"][0]["message"]["content"] = content
+            if failure_kind == "truncated":
+                body["choices"][0]["finish_reason"] = "length"
+        return httpx.Response(200, json=body)
+    gateway = LLMGateway(configuration(provider, handler))
+    try:
+        with pytest.raises(ProviderError) as failure:
+            await gateway.extract_operations({"current_message": "Уточним пожелания", "__response_schema": schema})
+        assert failure.value.code == ("INVALID_LLM_OPERATION" if failure_kind == "schema" else "INVALID_LLM_RESPONSE")
+        metadata = gateway.call_metadata_for_current_call()
+        assert metadata["usage"] == {"input_tokens": 17, "output_tokens": 5}
+        assert len(metadata["request_metrics"]["prompt_sha256"]) == 64
+        assert CANARY not in json.dumps(metadata)
+        assert "raw_secret" not in json.dumps(metadata)
+        assert gateway.last_call == {}  # No successful result was fabricated.
+    finally:
+        await gateway.close()
+
+
+@pytest.mark.asyncio
+async def test_failed_response_usage_is_cleared_before_next_http_or_pre_http_failure():
+    attempts = []
+    def handler(request):
+        attempts.append(request)
+        if len(attempts) == 1:
+            return httpx.Response(200, json={"usage": {"prompt_tokens": 19}, "choices": []})
+        return httpx.Response(429, json={"error": {"type": "requests"}})
+    gateway = LLMGateway(configuration("groq", handler))
+    try:
+        with pytest.raises(ProviderError):
+            await gateway.extract_operations({"current_message": "Первый"})
+        assert gateway.call_metadata_for_current_call()["usage"] == {"input_tokens": 19}
+        with pytest.raises(ProviderError):
+            await gateway.extract_operations({"current_message": "Второй"})
+        assert "usage" not in gateway.call_metadata_for_current_call()
+        with pytest.raises(ProviderError):
+            await gateway.extract_operations({"non_json": {1, 2}})
+        assert gateway.call_metadata_for_current_call() == {}
+        assert len(attempts) == 2
+    finally:
+        await gateway.close()

@@ -36,6 +36,8 @@ _TOTAL_SCOPE = re.compile(r"\b(?:общий|весь)\s+бюджет\b|\bна\s+
 _FOREIGN = re.compile(r"[$€£¥]|\b(?:usd|eur|gbp|aed|cny|try|byn|uah|kzt|доллар\w*|евро|дирхам\w*|тенге|грив\w*)\b", re.I)
 _HISTORY = re.compile(r"\b(?:был\w*|вчера\w*|раньше|ранее|прежде|изначально|историческ\w*|прошл\w*)\b", re.I)
 _UNIT_PRICE = re.compile(r"\b(?:за|в)\s+(?:ночь|сутки|день|неделю|месяц|номер|человека|гостя)\b|\bна\s+(?:человека|одного|каждого)\b|\bper\s+(?:night|person|room|day)\b", re.I)
+_DURATION_PRICE = re.compile(r"\bна\s+(?:ночь|сутки|день|неделю)\b", re.I)
+_LODGING = re.compile(r"\b(?:номер\w*|отел\w*|гостиниц\w*|проживани\w*)\b", re.I)
 _REDUCE = re.compile(r"\b(?:сократ\w*|уменьш\w*|сниз\w*|сниж\w*|уреж\w*)\b", re.I)
 _INCREASE = re.compile(r"\b(?:увелич\w*|повысь|повыс\w*|подними)\b", re.I)
 _RANGE = re.compile(rf"\b(?:от|между)\s*{_SEQUENCE}\s*(?:до|и)\s*{_SEQUENCE}(?!\w)", re.I)
@@ -89,6 +91,29 @@ def _number(phrase: str) -> Decimal | None:
 
 def _scaled(phrase: str) -> bool:
     return any(token in _SCALES or token == "полмиллиона" for token in _LEXER.findall(phrase))
+
+
+def _duration_price_scopes(text: str) -> list[re.Match]:
+    """Recognize lodging amounts followed by a duration, not trip duration.
+
+    A bare 'budget for a week' is a whole-trip duration. Require a local lodging
+    subject followed by a monetary literal, with no newer budget subject, before
+    treating 'на ночь/неделю' as a component price. This never creates an intent.
+    """
+    result = []
+    for scope in _DURATION_PRICE.finditer(text):
+        boundary = max(text.rfind(symbol, 0, scope.start()) for symbol in ";!?\n")
+        prefix = text[max(boundary + 1, scope.start() - 120):scope.start()]
+        products = list(_LODGING.finditer(prefix))
+        if not products:
+            continue
+        product = products[-1]
+        if any(marker.start() > product.start() for marker in _MARKER.finditer(prefix)):
+            continue
+        amount = prefix[product.end():]
+        if _MONEY.search(amount) or any(_scaled(run.group("number")) for run in _RUNS.finditer(amount)):
+            result.append(scope)
+    return result
 
 
 def _near_budget(text: str, start: int, end: int, *, scaled_context: bool = False) -> tuple[str, bool]:
@@ -151,7 +176,7 @@ def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[l
             "field": "budget.amount_minor", "status": "clarification_required",
             "code": "budget_scope_ambiguous", "reason": reason, "operation_suppressed": True}]
 
-    unit_scopes = list(_UNIT_PRICE.finditer(normalized))
+    unit_scopes = list(_UNIT_PRICE.finditer(normalized)) + _duration_price_scopes(normalized)
     if unit_scopes:
         return suppress_scope("mixed_scope" if _TOTAL_SCOPE.search(normalized) or len(unit_scopes) > 1 else "unit_price_scope")
     bare = _RUNS.fullmatch(normalized.strip(" .!"))
