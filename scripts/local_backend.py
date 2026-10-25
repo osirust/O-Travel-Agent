@@ -42,7 +42,8 @@ BASE = f"http://127.0.0.1:{PORT}"
 HBA = "/var/lib/postgresql/data/pg_hba.conf"
 KEYS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
         "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY",
-        "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN")
+        "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN",
+        "ZAI_API_KEY", "COHERE_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "NVIDIA_API_KEY")
 ARGV = [str(PYTHON), "-m", "uvicorn", "otravel.api:app", "--host", "127.0.0.1",
         "--port", str(PORT), "--no-access-log"]
 # Historical receipts used only these five files. Retain them for compatibility,

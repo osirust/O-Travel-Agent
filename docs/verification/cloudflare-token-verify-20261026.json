@@ -1,0 +1,10 @@
+{
+  "checked_at_utc": "2026-10-25T21:01:29.301476+00:00",
+  "endpoint": "user/tokens/verify",
+  "http_status": 200,
+  "success": true,
+  "token_status": "active",
+  "error_codes": [],
+  "model_inference_calls": 0,
+  "billing_changed": false
+}

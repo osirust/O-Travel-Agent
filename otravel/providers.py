@@ -28,7 +28,7 @@ from .observability import groq_rate_facts, request_stats, usage_counts
 
 
 _SECRETS: set[str] = set()
-_SENSITIVE_FIELDS = {"api_key", "apikey", "key", "authorization", "access_token", "password", "secret"}
+_SENSITIVE_FIELDS = {"api_key", "apikey", "api_token", "key", "authorization", "access_token", "password", "secret"}
 _LIMIT_SOURCES = {
     "upstream_provider_shared_pool", "account_quota", "key_rate_limit",
     "workspace_credit_limit", "exhausted_global_quota", "unknown",
@@ -46,14 +46,14 @@ def _safe_text(value: Any) -> str:
     for secret in sorted(_SECRETS, key=len, reverse=True):
         if secret:
             text = text.replace(secret, "[REDACTED]")
-    return re.sub(r"(?i)([?&](?:api_key|key|access_token|token)=)[^&\s'\"]+", r"\1[REDACTED]", text)
+    return re.sub(r"(?i)([?&](?:api_key|api_token|key|access_token|token)=)[^&\s'\"]+", r"\1[REDACTED]", text)
 
 
 def _safe(value: Any) -> Any:
     if isinstance(value, dict):
         def sensitive(key: Any) -> bool:
             name = str(key).lower().replace("-", "_")
-            return name in _SENSITIVE_FIELDS or name.endswith(("_api_key", "_api_secret", "_access_token", "_password", "_secret", "_key_id"))
+            return name in _SENSITIVE_FIELDS or name.endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_key_id"))
         return {str(k): _safe(v) for k, v in value.items() if not sensitive(k)}
     if isinstance(value, (list, tuple)):
         return [_safe(item) for item in value]
@@ -354,7 +354,7 @@ class LLMGateway(_HTTPGateway):
         self._response_usage.set(None)
         self.last_call = {}
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
-        if provider not in {"gemini", "openrouter", "ollama", "groq"}:
+        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         try:
             prompt = json.dumps(_safe({key: value for key, value in context.items() if key != "__response_schema"}), ensure_ascii=False, allow_nan=False)
@@ -437,6 +437,35 @@ class LLMGateway(_HTTPGateway):
             # is still validated on the server below. No paid routing, hidden
             # fallback, reasoning or provider-specific sampling fields are sent.
             body = await self._request(provider, "POST", "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {key}"}, json={"model": model,
+                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+                    "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens)})
+            try:
+                choice = body["choices"][0]
+                if choice.get("finish_reason") in {"length", "content_filter", "error"}:
+                    _fail("LLM не завершила структурированный ответ.", provider, "INVALID_LLM_RESPONSE")
+                content = choice["message"]["content"]
+            except (TypeError, KeyError, IndexError):
+                _fail("LLM не вернула текст ответа.", provider, "INVALID_LLM_RESPONSE")
+        elif provider == "cloudflare":
+            model = str(_setting(self.settings, "CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
+            if model != "@cf/meta/llama-3.3-70b-instruct-fp8-fast":
+                _fail("Для Cloudflare разрешена только выбранная модель Workers Free.", provider, "CONFIG_BLOCKED")
+            confirmed = _setting(self.settings, "CLOUDFLARE_FREE_TIER_CONFIRMED")
+            if confirmed is None:
+                confirmed = os.getenv("CLOUDFLARE_FREE_TIER_CONFIRMED", "false")
+            if not _truth(confirmed):
+                _fail("Подтвердите Workers Free без карты, Paid и prepaid credits.", provider, "CONFIG_BLOCKED")
+            account = _setting(self.settings, "CLOUDFLARE_ACCOUNT_ID")
+            if account is None:
+                account = os.getenv("CLOUDFLARE_ACCOUNT_ID", "")
+            if not account:
+                _fail("Cloudflare Account ID не настроен.", provider, "CONFIG_MISSING")
+            if not isinstance(account, str) or not re.fullmatch(r"[a-fA-F0-9]{32}", account):
+                _fail("Cloudflare Account ID должен содержать 32 hex-символа.", provider, "CONFIG_BLOCKED")
+            key = self._key("CLOUDFLARE_API_TOKEN", provider)
+            body = await self._request(provider, "POST",
+                f"https://api.cloudflare.com/client/v4/accounts/{account}/ai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {key}"}, json={"model": model,
                     "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
                     "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens)})

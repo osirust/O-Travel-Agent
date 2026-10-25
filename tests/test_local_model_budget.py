@@ -268,3 +268,91 @@ async def test_bad_local_provider_or_limit_fails_closed(ledger, provider, limit)
     repository, sid, _ = ledger
     with pytest.raises(StoreError):
         await repository.reserve_model_call(sid, await new_run(ledger), limit, provider)
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_40_day_pool_is_independent_of_all_other_pools(ledger):
+    await seed(ledger, ["gemini"] * 20 + ["openrouter"] * 20 + ["groq"] * 40 + ["cloudflare"] * 39)
+    assert await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=500)
+    assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=500)
+    assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=500)
+    assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
+    assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
+    assert await reserve(ledger, await new_run(ledger), provider="test_cloudflare_ledger", limit=1)
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_boundary_is_atomic_across_concurrent_reservations(ledger):
+    await seed(ledger, ["cloudflare"] * 39)
+    run_ids = [await new_run(ledger) for _ in range(3)]
+    repository, sid, day = ledger
+    with patch("otravel.store._now", return_value=day):
+        results = await asyncio.gather(*(repository.reserve_model_call(sid, run, 500, "cloudflare") for run in run_ids))
+    assert results.count(True) == 1 and results.count(False) == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("other", ["gemini", "openrouter", "groq"])
+@pytest.mark.parametrize("cloudflare_first", [False, True])
+async def test_cloudflare_one_per_run_cannot_be_bypassed_by_remote_switching(ledger, other, cloudflare_first):
+    run = await new_run(ledger)
+    first, second = ("cloudflare", other) if cloudflare_first else (other, "cloudflare")
+    assert await reserve(ledger, run, provider=first, limit=40)
+    assert not await reserve(ledger, run, provider=second, limit=40)
+    if cloudflare_first:
+        assert not await reserve(ledger, run, provider="cloudflare", limit=40)
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_lower_cap_survives_new_store_and_rollover_preserves_run_identity(ledger):
+    repository, sid, day = ledger
+    run = await new_run(ledger)
+    assert await reserve(ledger, run, provider="cloudflare", limit=1)
+    another = Store(os.environ["TEST_DATABASE_URL"])
+    try:
+        with patch("otravel.store._now", return_value=day):
+            assert not await another.reserve_model_call(sid, await new_run(ledger), 1, "cloudflare")
+        with patch("otravel.store._now", return_value=day + timedelta(days=1)):
+            assert not await another.reserve_model_call(sid, run, 1, "cloudflare")
+            assert await another.reserve_model_call(sid, await new_run(ledger), 1, "cloudflare")
+    finally:
+        await another.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("cross_midnight", [False, True])
+async def test_cloudflare_retry_hint_is_persistent_and_crosses_utc_midnight(ledger, cross_midnight):
+    repository, sid, day = ledger
+    at = day + timedelta(hours=23, minutes=59, seconds=50) if cross_midnight else day
+    with patch("otravel.store._now", return_value=at):
+        await repository.save_event(sid, None, "MODEL_CALL_FAILED", {"provider": "cloudflare", "model": "test/cf-model",
+            "code": "RATE_LIMITED", "http_status": 429, "retry_after_seconds": 60})
+    blocked = await repository.model_availability("cloudflare", "test/cf-model", now=at + timedelta(seconds=30))
+    assert not blocked["available"] and blocked["retry_after"] == 30 and not blocked["allow_fallback"]
+    assert (await repository.model_availability("cloudflare", "test/cf-model", now=at + timedelta(seconds=60)))["available"]
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_auth_block_cannot_be_cleared_by_other_provider_success(ledger):
+    repository, sid, day = ledger
+    with patch("otravel.store._now", return_value=day):
+        await repository.save_event(sid, None, "MODEL_CALL_FAILED", {"provider": "cloudflare", "model": "test/cf-model",
+            "code": "HTTP_ERROR", "http_status": 403, "retry_after_seconds": 1})
+    with patch("otravel.store._now", return_value=day + timedelta(seconds=1)):
+        await repository.save_event(sid, None, "MODEL_RESPONSE_RECEIVED", {"provider": "groq", "model": "test/groq-model"})
+    blocked = await repository.model_availability("cloudflare", "test/cf-model", now=day + timedelta(seconds=60))
+    assert not blocked["available"] and blocked["reason"] == "provider_auth_blocked"
+    assert blocked["retry_after"] == 86340 and not blocked["allow_fallback"]
+    assert (await repository.model_availability("cloudflare", "test/cf-model", now=day + timedelta(days=1)))["available"]
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_transient_model_cooldown_never_advertises_fallback(ledger):
+    repository, sid, day = ledger
+    with patch("otravel.store._now", return_value=day):
+        await repository.save_event(sid, None, "MODEL_CALL_FAILED", {"provider": "cloudflare", "model": "test/cf-model",
+            "code": "HTTP_ERROR", "http_status": 503})
+    blocked = await repository.model_availability("cloudflare", "test/cf-model", now=day + timedelta(seconds=60))
+    assert not blocked["available"] and blocked["scope"] == "model" and blocked["retry_after"] == 540
+    assert blocked["allow_fallback"] is False
+    assert (await repository.model_availability("cloudflare", "test/cf-model", now=day + timedelta(minutes=10)))["available"]

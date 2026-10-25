@@ -26,7 +26,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 SCHEMA_VERSION = 1
-REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq"})
+REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq", "cloudflare"})
+INDEPENDENT_REMOTE_PROVIDERS = frozenset({"groq", "cloudflare"})
 LOCAL_MODEL_PROVIDERS = frozenset({"ollama"})
 metadata = MetaData()
 schema_versions = Table(
@@ -798,7 +799,9 @@ class Store:
         """Reserve an actual attempt in remote/local/test durable budget buckets.
 
         This is an application budget, not a query of the provider's allowance.
-        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Ollama has
+        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Groq and
+        Cloudflare have separate hard 40/day pools; Cloudflare is 1/run, with no
+        other remote attempt allowed before or after it in that run. Ollama has
         an independent hard 500/day and 1/run local bucket; it is not a test
         adapter. Caller limits can reduce but never increase these ceilings.
         Injected test adapters share a third bucket excluding both actual buckets.
@@ -824,11 +827,11 @@ class Store:
             day_start = reserved_at.replace(hour=0, minute=0, second=0, microsecond=0)
             event_provider = events.c.payload["provider"].astext
             if provider in REAL_MODEL_PROVIDERS:
-                # New independent Groq account has its own conservative daily
-                # pool. The existing Gemini/OpenRouter shared cap is retained.
-                provider_scope = (event_provider == "groq" if provider == "groq" else
-                    event_provider.in_(sorted(REAL_MODEL_PROVIDERS - {"groq"})))
-                effective_limit, per_run_limit = min(limit, 40), 2
+                # Independent accounts retain their own conservative daily pool.
+                # Gemini/OpenRouter continue sharing the original remote cap.
+                provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
+                    event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
+                effective_limit, per_run_limit = min(limit, 40), 1 if provider == "cloudflare" else 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = min(limit, 500), 1
@@ -843,6 +846,13 @@ class Store:
                 ))).scalar_one()
                 if run_count >= per_run_limit:
                     return False
+                if provider in REAL_MODEL_PROVIDERS and provider != "cloudflare" and run_count:
+                    prior_cloudflare = (await conn.execute(select(func.count()).select_from(events).where(
+                        events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
+                        event_provider == "cloudflare",
+                    ))).scalar_one()
+                    if prior_cloudflare:
+                        return False
             count = (await conn.execute(select(func.count()).select_from(events).where(
                 events.c.event_type == "MODEL_CALL_STARTED",
                 events.c.created_at >= day_start,
@@ -933,14 +943,14 @@ class Store:
         columns = (events.c.event_type, events.c.payload, events.c.created_at, events.c.sequence)
         common = (events.c.event_type.in_(event_types), events.c.payload["provider"].astext == provider,
                   events.c.created_at <= instant)
-        lookback = instant - timedelta(days=1) if provider == "groq" else instant - timedelta(minutes=10)
+        lookback = instant - timedelta(days=1) if provider in INDEPENDENT_REMOTE_PROVIDERS else instant - timedelta(minutes=10)
         async with self.engine.connect() as conn:
             # One statement snapshot for model cooldown and provider-wide limits:
             # a second query must not miss a concurrent account block seen by one.
             rows = (await conn.execute(select(*columns).where(
                 *common, events.c.created_at >= min(day_start, lookback)
             ).order_by(events.c.created_at.desc(), events.c.sequence.desc()))).mappings().all()
-        provider_rows = [row for row in rows if row["created_at"] >= day_start or provider == "groq"]
+        provider_rows = [row for row in rows if row["created_at"] >= day_start or provider in INDEPENDENT_REMOTE_PROVIDERS]
         model_rows = [row for row in rows if row["payload"].get("model") == model and row["created_at"] >= instant - timedelta(minutes=10)]
 
         def answer(available: bool, reason: str, scope: str, until: datetime | None = None,
@@ -957,7 +967,7 @@ class Store:
                 continue
             payload = row["payload"]
             hint = payload.get("retry_after_seconds")
-            if (provider == "groq" and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
+            if (provider in INDEPENDENT_REMOTE_PROVIDERS and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
                     and type(hint) is int and 1 <= hint <= 86400):
                 until = row["created_at"] + timedelta(seconds=hint)
                 if until > instant:
@@ -974,5 +984,5 @@ class Store:
             scope, reason = classify(row["payload"])
             until = row["created_at"] + timedelta(minutes=10)
             if scope == "model" and until > instant:
-                return answer(False, reason, "model", until, allow_fallback=True)
+                return answer(False, reason, "model", until, allow_fallback=provider != "cloudflare")
         return answer(True, "no_active_cooldown", "model")

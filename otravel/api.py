@@ -33,17 +33,17 @@ from .providers import LLMGateway, ProviderError, TravelGateway
 from .store import Conflict, NotFound, Store, StoreError
 
 
-_PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
+_PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "api_token", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
 
 
 def _clean(value: Any) -> Any:
     if isinstance(value, dict):
-        return {key: _clean(item) for key, item in value.items() if key.casefold().replace("-", "_") not in _PRIVATE and not key.casefold().endswith(("_api_key", "_api_secret", "_access_token"))}
+        return {key: _clean(item) for key, item in value.items() if key.casefold().replace("-", "_") not in _PRIVATE and not key.casefold().endswith(("_api_key", "_api_secret", "_access_token", "_api_token"))}
     if isinstance(value, list):
         return [_clean(item) for item in value]
     if isinstance(value, str):
         # Never echo configured credentials, even inside an otherwise public string.
-        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN"):
+        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN", "ZAI_API_KEY", "COHERE_API_KEY", "CLOUDFLARE_API_TOKEN", "NVIDIA_API_KEY"):
             secret = os.getenv(name)
             if secret:
                 value = value.replace(secret, "[REDACTED]")

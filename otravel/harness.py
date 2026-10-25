@@ -188,6 +188,8 @@ def _requested_model(gateway: Any, provider: str) -> str:
         return str(config.get("OLLAMA_MODEL", "qwen3.5:4b"))
     if isinstance(config, dict) and provider == "groq":
         return str(config.get("GROQ_MODEL", "qwen/qwen3.8-27b"))
+    if isinstance(config, dict) and provider == "cloudflare":
+        return str(config.get("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
     if isinstance(config, dict) and provider in {"gemini", "openrouter"}:
         return str(config.get("GEMINI_MODEL" if provider == "gemini" else "OPENROUTER_MODEL", ""))
     return str(getattr(gateway, "last_call", {}).get("model", "controlled_test_adapter"))
@@ -414,6 +416,16 @@ class Harness:
                 if str(config.get("GROQ_FREE_TIER_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
                     raise ProviderError("CONFIG_BLOCKED", "Подтвердите бесплатный аккаунт Groq без billing.", provider="groq")
                 provider = "groq"
+            elif primary == "cloudflare":
+                token = config.get("CLOUDFLARE_API_TOKEN")
+                if not isinstance(token, str) or not token.strip():
+                    raise ProviderError("CONFIG_MISSING", "Токен Cloudflare не настроен.", provider="cloudflare")
+                account = config.get("CLOUDFLARE_ACCOUNT_ID")
+                if not isinstance(account, str) or re.fullmatch(r"[0-9a-fA-F]{32}", account) is None:
+                    raise ProviderError("CONFIG_BLOCKED", "Нужен корректный Account ID Cloudflare.", provider="cloudflare")
+                if str(config.get("CLOUDFLARE_FREE_TIER_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
+                    raise ProviderError("CONFIG_BLOCKED", "Подтвердите Workers Free без billing.", provider="cloudflare")
+                provider = "cloudflare"
             else:
                 provider = primary
             # No backup is selected by default. Only an explicitly configured,
@@ -423,14 +435,14 @@ class Harness:
             if provider == "openrouter" and router_ready and backup != selected and backup.endswith(":free") and re.fullmatch(r"[\w./:-]+", backup):
                 fallback = LLMGateway({**config, "LLM_PROVIDER": "openrouter", "OPENROUTER_MODEL": backup})
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
-        if provider in {"ollama", "groq"}:
-            # Ollama cold call fits the lease. Groq Free has a tight token/minute
-            # quota: do not immediately resend a whole context for schema repair.
+        if provider in {"ollama", "groq", "cloudflare"}:
+            # Keep local and tightly capped free providers to one generation;
+            # a malformed answer does not trigger an immediate full-context repair.
             attempts = min(1, attempts)
         temporary = gateway is not self.llm
         attempt_meta: list[dict] = []
         try:
-            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq"}:
+            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq", "cloudflare"}:
                 current_model = _requested_model(gateway, provider)
                 health = await self.store.model_availability(provider, current_model)
                 if not health["available"]:

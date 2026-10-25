@@ -15,6 +15,7 @@ docker compose up -d app
 | Groq | `LLM_PROVIDER=groq`, `GROQ_API_KEY`, `GROQ_MODEL=qwen/qwen3.8-27b`, `GROQ_FREE_TIER_CONFIRMED=true` |
 | OpenRouter | `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` с окончанием `:free` |
 | Gemini | `LLM_PROVIDER=gemini`, `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.8-flash`, `GEMINI_FREE_TIER_CONFIRMED=true` |
+| Cloudflare | `LLM_PROVIDER=cloudflare`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_MODEL=@cf/meta/llama-3.3-70b-instruct-fp8-fast`, `CLOUDFLARE_FREE_TIER_CONFIRMED=true` |
 
 Флаги Free ставятся после проверки тарифа в кабинете провайдера. Приложение не подключает оплату. У OpenRouter дополнительно запрещены ненулевые цены и неявный выбор платной модели.
 
@@ -29,6 +30,10 @@ py scripts/configure_keys.py
 ```
 
 Enter пропускает отсутствующий ключ. Эта команда сохраняет ключи, но не меняет основной провайдер.
+
+Для Cloudflare разрешена указанная модель Workers Free, одна попытка на сообщение и отдельный предел40вызовов в сутки. Это ограничение приложения; фактическая квота Cloudflare измеряется в neurons. Автоматического переключения с Cloudflare на другой источник нет.
+
+Ключи Z.ai, Cohere и NVIDIA пока можно сохранить для следующих сравнений. Сохранённый ключ не означает готового runtime-адаптера. Первая короткая проверка доступа Z.ai прошла; качество его диалогов ещё не измерено. У Cloudflare единичная проба извлечения выявила пропущенное направление — полная приёмка открыта.
 
 Бесплатные квоты ограничивают и число запросов, и объём токенов. При429 не отправляйте сообщение многократно. Поездка сохраняется; причина отказа и доступное время повтора записываются в журнал, если их сообщил поставщик.
 

@@ -1,0 +1,103 @@
+{
+  "results": [
+    {
+      "provider": "cloudflare",
+      "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      "started_at_utc": "2026-10-25T21:10:39.198790+00:00",
+      "maximum_http_attempts": 1,
+      "scope": "single actual adapter extraction; no persistent harness/full dialogue",
+      "runtime_changed": false,
+      "checks": {
+        "schema_valid": true,
+        "origin_moscow": true,
+        "destination_istanbul": false,
+        "one_adult": true,
+        "no_children": true,
+        "budget_not_invented": true,
+        "morning_preference": true
+      },
+      "status": "NOT_ALL_BOUND_CHECKS_PASS",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+        "request_metrics": {
+          "system_utf8_bytes": 10074,
+          "context_utf8_bytes": 3747,
+          "schema_utf8_bytes": 5573,
+          "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+          "prompt_sha256": "a96379a28004cf7d5f9724c33ec395f4b6fb0bd91f2f983971dc8bc769c7f237"
+        },
+        "usage": {
+          "input_tokens": 3789,
+          "output_tokens": 137,
+          "total_tokens": 3926
+        }
+      },
+      "structured_contract": {
+        "sha256": "2d480d83115b9ab1857a0a977d0e70436ade3b2413bff382d582fb722ed9b6a8",
+        "utf8_bytes": 354,
+        "captured": true,
+        "value": {
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              }
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "type": "adult"
+              }
+            },
+            {
+              "type": "set_preference",
+              "value": {
+                "key": "departure_time",
+                "value": "early_morning",
+                "weight": 1.0
+              }
+            }
+          ],
+          "control": {
+            "action": "none"
+          },
+          "reply": "",
+          "unknowns": [],
+          "conflicts": [],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "latency_ms": 8254
+    },
+    {
+      "provider": "zai",
+      "model": "glm-4.7-flash",
+      "started_at_utc": "2026-10-25T21:10:47.468649+00:00",
+      "scope": "one tiny zero-price model connectivity check; not harness validation",
+      "maximum_http_attempts": 1,
+      "runtime_changed": false,
+      "http_status": 200,
+      "json_ok": true,
+      "usage": {
+        "input_tokens": 75,
+        "output_tokens": 10,
+        "total_tokens": 85
+      },
+      "status": "CONNECTIVITY_PASS"
+    }
+  ],
+  "billing_changed": false,
+  "source_files_sha256_recorded_after_call": {
+    "otravel/providers.py": "f2336323f79c3a81ba227a045e28dbe77fc3b212fd578ab59ba9df83c1142a1f",
+    "otravel/domain.py": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514",
+    "otravel/harness.py": "fc84d18b4a830007a039366f4ee0559703183f036f164b6e1a5bde875b17d2b8",
+    "otravel/llm_contract.py": "3813a766e0eb2a0ad8969a8ba4dbaf9ded10003d238a98814e4ccf933dacf566",
+    "otravel/observability.py": "1d4fa461551248c4355013b9c4b8288641946183781c919a1d08001a2cffb3be"
+  },
+  "input_text": "Из Москвы в Стамбул, один взрослый, детей нет, вылет рано утром.",
+  "initial_state_note": "Empty TripState(); generated trip_id was not retained. This is a bounded extraction probe, not a full reproducible dialogue oracle."
+}
