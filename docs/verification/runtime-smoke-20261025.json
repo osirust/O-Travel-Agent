@@ -1,0 +1,90 @@
+{
+  "checked_at_utc": "2026-10-25T12:36:46.160951+00:00",
+  "base_url": "http://localhost:8081",
+  "scope": "local_http_demo_only",
+  "real_supplier_booking": false,
+  "credentials_recorded": false,
+  "database_records_deleted": false,
+  "docker_restarted": false,
+  "limitations": [
+    "Нет проверки LLM/NLU или live API",
+    "Reprice детерминированный DEMO",
+    "Нет проверки перезапуска контейнера или браузерного frontend",
+    "Созданные synthetic sessions/orders сохранены"
+  ],
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "health",
+      "passed": true,
+      "http_status": 200,
+      "database": "ready",
+      "supplier_booking": false
+    },
+    {
+      "name": "session_authorization",
+      "passed": true,
+      "missing_token_status": 401,
+      "invalid_token_status": 403,
+      "other_session_token_status": 403
+    },
+    {
+      "name": "complex_demo_loaded",
+      "passed": true,
+      "origin": "Казань",
+      "stay_cities": [
+        "Стамбул",
+        "Анталья"
+      ],
+      "legs": 3,
+      "groups": 2,
+      "travelers": 9,
+      "rooms_per_stay": [
+        3,
+        3
+      ]
+    },
+    {
+      "name": "demo_search",
+      "passed": true,
+      "plans": 2,
+      "offers_in_selected_plan": 7,
+      "selected_total_minor": 33340000,
+      "currency": "RUB",
+      "source_type": "DEMO"
+    },
+    {
+      "name": "quote_preview",
+      "passed": true,
+      "quote_version": 1,
+      "state_version": 1,
+      "repriced": true,
+      "reprice_kind": "deterministic_demo_not_live"
+    },
+    {
+      "name": "simulated_order_and_idempotency",
+      "passed": true,
+      "status": "BOOKED_DEMO",
+      "created_at_supplier": false,
+      "order_count": 1,
+      "exact_retry_status": 200,
+      "changed_payload_status": 409,
+      "second_operation_status": 409
+    },
+    {
+      "name": "stale_quote_after_control",
+      "passed": true,
+      "confirmation_status": 409,
+      "order_count": 0,
+      "state_preserved": true
+    },
+    {
+      "name": "no_model_or_live_tools",
+      "passed": true,
+      "audited_events": 16,
+      "external_call_events": 0,
+      "free_text_messages_sent": 0,
+      "live_search_requests_sent": 0
+    }
+  ]
+}

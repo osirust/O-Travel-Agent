@@ -1,0 +1,453 @@
+{
+  "case_id": "OWNER-DIALOGUE-02",
+  "turn_index": 1,
+  "request_text": "в сербию хочу",
+  "state_before": {
+    "session_id": "session-26",
+    "trip_id": "trip-27",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "NEW",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-27",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "state_after": {
+    "session_id": "session-26",
+    "trip_id": "trip-27",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "questions": [
+        "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+      ],
+      "target_id": null,
+      "question_id": "run-28-question",
+      "state_version": 0,
+      "requested_destination": {
+        "kind": "country",
+        "name": "Сербия",
+        "country_code": "RS",
+        "suggested_cities": [
+          {
+            "name": "Белград",
+            "available": false,
+            "country_code": "RS"
+          },
+          {
+            "name": "Нови-Сад",
+            "available": false,
+            "country_code": "RS"
+          }
+        ]
+      }
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-27",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "actual_run": {
+    "run_id": "run-28",
+    "session_id": "session-26",
+    "status": "completed",
+    "based_version": 0,
+    "result": {
+      "run": {
+        "id": "run-28",
+        "error": null,
+        "result": null,
+        "run_id": "run-28",
+        "status": "completed",
+        "created_at": "2026-10-25T17:36:48.801226+00:00",
+        "session_id": "session-26",
+        "started_at": "2026-10-25T17:36:48.809677+00:00",
+        "finished_at": null,
+        "based_version": 0,
+        "current_status": "completed",
+        "input_message_id": "id-29",
+        "client_message_id": "id-30",
+        "request_expected_version": 0
+      },
+      "error": null,
+      "reply": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "trip-27",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "result": {
+        "llm": {
+          "model": "qwen3.5:4b",
+          "attempts": [
+            {
+              "model": "qwen3.5:4b",
+              "outcome": "response",
+              "provider": "ollama",
+              "latency_ms": 602
+            }
+          ],
+          "provider": "ollama",
+          "latency_ms": 602
+        },
+        "model_reply": "Сербия не входит в список поддерживаемых городов. Уточните, пожалуйста, конкретный город или направление.",
+        "response_source": "llm",
+        "operation_normalizations": []
+      },
+      "run_id": "run-28",
+      "status": "WAITING_USER",
+      "changes": [],
+      "message": {
+        "id": "id-31",
+        "role": "assistant",
+        "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+        "run_id": "run-28",
+        "sequence": 58,
+        "created_at": "2026-10-25T17:36:49.437767+00:00",
+        "session_id": "session-26",
+        "client_message_id": null
+      },
+      "session": {
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "trip-27",
+          "travelers": [],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 0
+        },
+        "status": "WAITING_USER",
+        "trip_id": "trip-27",
+        "created_at": "2026-10-25T17:36:40.633851+00:00",
+        "session_id": "session-26",
+        "updated_at": "2026-10-25T17:36:49.437030+00:00",
+        "state_version": 0,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "country",
+              "name": "Сербия",
+              "country_code": "RS",
+              "suggested_cities": [
+                {
+                  "name": "Белград",
+                  "available": false,
+                  "country_code": "RS"
+                },
+                {
+                  "name": "Нови-Сад",
+                  "available": false,
+                  "country_code": "RS"
+                }
+              ]
+            }
+          },
+          "questions": [
+            "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+          ],
+          "target_id": null,
+          "question_id": "run-28-question",
+          "state_version": 0,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        }
+      },
+      "trip_id": "trip-27",
+      "created_at": "2026-10-25T17:36:40.633851+00:00",
+      "session_id": "session-26",
+      "updated_at": "2026-10-25T17:36:49.437030+00:00",
+      "state_version": 0,
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+        ],
+        "target_id": null,
+        "question_id": "run-28-question",
+        "state_version": 0,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "assistant_message": {
+        "id": "id-31",
+        "role": "assistant",
+        "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+        "run_id": "run-28",
+        "sequence": 58,
+        "created_at": "2026-10-25T17:36:49.437767+00:00",
+        "session_id": "session-26",
+        "client_message_id": null
+      }
+    },
+    "error": null,
+    "llm": {
+      "model": "qwen3.5:4b",
+      "attempts": [
+        {
+          "model": "qwen3.5:4b",
+          "outcome": "response",
+          "provider": "ollama",
+          "latency_ms": 602
+        }
+      ],
+      "provider": "ollama",
+      "latency_ms": 602
+    },
+    "created_at": "2026-10-25T17:36:48.801226+00:00",
+    "finished_at": "2026-10-25T17:36:49.438283+00:00",
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control"
+    ]
+  },
+  "messages": [
+    {
+      "sequence": 57,
+      "id": "id-29",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "client_message_id": "id-30",
+      "role": "user",
+      "text": "в сербию хочу",
+      "created_at": "2026-10-25T17:36:48.801226+00:00"
+    },
+    {
+      "sequence": 58,
+      "id": "id-31",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "created_at": "2026-10-25T17:36:49.437767+00:00"
+    }
+  ],
+  "current_run_events": [
+    {
+      "sequence": 146,
+      "event_id": "id-32",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "event_type": "USER_MESSAGE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "message_id": "id-29"
+      },
+      "created_at": "2026-10-25T17:36:48.803029+00:00"
+    },
+    {
+      "sequence": 147,
+      "event_id": "id-33",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "event_type": "RUN_STARTED",
+      "state_version": 0,
+      "payload": {},
+      "created_at": "2026-10-25T17:36:48.810585+00:00"
+    },
+    {
+      "sequence": 148,
+      "event_id": "id-34",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "event_type": "MODEL_CALL_STARTED",
+      "state_version": 0,
+      "payload": {
+        "provider": "ollama"
+      },
+      "created_at": "2026-10-25T17:36:48.825269+00:00"
+    },
+    {
+      "sequence": 149,
+      "event_id": "id-35",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "event_type": "MODEL_RESPONSE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "model": "qwen3.5:4b",
+        "attempt": 1,
+        "provider": "ollama",
+        "latency_ms": 602,
+        "operations": 0
+      },
+      "created_at": "2026-10-25T17:36:49.432528+00:00"
+    },
+    {
+      "sequence": 150,
+      "event_id": "id-36",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "event_type": "RUN_COMPLETED",
+      "state_version": 0,
+      "payload": {
+        "error": null,
+        "domain_changed": false
+      },
+      "created_at": "2026-10-25T17:36:49.439096+00:00"
+    }
+  ],
+  "orders": [],
+  "http_routes": [
+    "POST /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/runs/{run_id}",
+    "GET /api/v1/sessions/{session_id}",
+    "GET /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/sessions/{session_id}/events",
+    "GET /api/v1/sessions/{session_id}/orders"
+  ]
+}

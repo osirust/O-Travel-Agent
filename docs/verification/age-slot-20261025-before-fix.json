@@ -1,0 +1,340 @@
+{
+  "finding_id": "HARNESS-004-SLOT-AGE-001",
+  "status": "FAIL_BEFORE_FIX",
+  "scope": "historical actual Qwen/harness observations from local-integrated report, not new inference",
+  "source_report": "llm-acceptance-20261025-local-integrated.json",
+  "case_id": "ACC-CLARIFY-01",
+  "expected_target": "child-1",
+  "expected_age": 4,
+  "observed_wrong_target": "child-2",
+  "turns": [
+    {
+      "input": "Переподбери всю поездку под этот состав. Возраст младшего я пока не назвал; остальные параметры уже есть.",
+      "pending_question": {
+        "text": "Что нужно уточнить о поездке, чтобы продолжить?",
+        "field": null,
+        "reason": "clarification",
+        "context": {},
+        "questions": [
+          "Что нужно уточнить о поездке, чтобы продолжить?"
+        ],
+        "target_id": null,
+        "question_id": "957b0a18-9c60-454e-bad2-9c5475f488bc-question",
+        "state_version": 0
+      },
+      "reply": "Что нужно уточнить о поездке, чтобы продолжить?",
+      "model_reply": "Возраст младшего ребёнка (child-1) не указан. Пожалуйста, уточните его возраст.",
+      "changes": [],
+      "travelers": [
+        {
+          "id": "adult-1",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "adult-2",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "adult-3",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "adult-4",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-2",
+          "birth_date": null
+        },
+        {
+          "id": "adult-5",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-2",
+          "birth_date": null
+        },
+        {
+          "id": "adult-6",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-2",
+          "birth_date": null
+        },
+        {
+          "id": "child-1",
+          "age": null,
+          "type": "child",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "child-2",
+          "age": 7,
+          "type": "child",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "child-3",
+          "age": 15,
+          "type": "child",
+          "group_id": "family-2",
+          "birth_date": null
+        }
+      ],
+      "llm": {
+        "model": "qwen3.5:4b",
+        "attempts": [
+          {
+            "model": "qwen3.5:4b",
+            "outcome": "response",
+            "provider": "ollama",
+            "latency_ms": 1464
+          }
+        ],
+        "provider": "ollama",
+        "latency_ms": 1464
+      }
+    },
+    {
+      "input": "Ему четыре года на дату выезда. Это единственное уточнение.",
+      "pending_question": {
+        "text": "Сколько лет будет ребёнку №1 на дату поездки?",
+        "field": "traveler.age",
+        "reason": "clarification",
+        "context": {},
+        "questions": [
+          "Сколько лет будет ребёнку №1 на дату поездки?"
+        ],
+        "target_id": "child-1",
+        "question_id": "0d6c71f5-026e-4130-8bb6-3fcae47dffe3-question",
+        "state_version": 1
+      },
+      "reply": "Сколько лет будет ребёнку №1 на дату поездки?",
+      "model_reply": "Возраст child-2 обновлен до 4 лет.",
+      "changes": [
+        {
+          "after": [
+            {
+              "id": "adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "adult-2",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "adult-3",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "adult-4",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-2",
+              "birth_date": null
+            },
+            {
+              "id": "adult-5",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-2",
+              "birth_date": null
+            },
+            {
+              "id": "adult-6",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-2",
+              "birth_date": null
+            },
+            {
+              "id": "child-1",
+              "age": null,
+              "type": "child",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "child-2",
+              "age": 4,
+              "type": "child",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "child-3",
+              "age": 15,
+              "type": "child",
+              "group_id": "family-2",
+              "birth_date": null
+            }
+          ],
+          "field": "travelers",
+          "before": [
+            {
+              "id": "adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "adult-2",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "adult-3",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "adult-4",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-2",
+              "birth_date": null
+            },
+            {
+              "id": "adult-5",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-2",
+              "birth_date": null
+            },
+            {
+              "id": "adult-6",
+              "age": null,
+              "type": "adult",
+              "group_id": "family-2",
+              "birth_date": null
+            },
+            {
+              "id": "child-1",
+              "age": null,
+              "type": "child",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "child-2",
+              "age": 7,
+              "type": "child",
+              "group_id": "family-1",
+              "birth_date": null
+            },
+            {
+              "id": "child-3",
+              "age": 15,
+              "type": "child",
+              "group_id": "family-2",
+              "birth_date": null
+            }
+          ],
+          "operation": "update_traveler",
+          "target_id": "child-2"
+        }
+      ],
+      "travelers": [
+        {
+          "id": "adult-1",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "adult-2",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "adult-3",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "adult-4",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-2",
+          "birth_date": null
+        },
+        {
+          "id": "adult-5",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-2",
+          "birth_date": null
+        },
+        {
+          "id": "adult-6",
+          "age": null,
+          "type": "adult",
+          "group_id": "family-2",
+          "birth_date": null
+        },
+        {
+          "id": "child-1",
+          "age": null,
+          "type": "child",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "child-2",
+          "age": 4,
+          "type": "child",
+          "group_id": "family-1",
+          "birth_date": null
+        },
+        {
+          "id": "child-3",
+          "age": 15,
+          "type": "child",
+          "group_id": "family-2",
+          "birth_date": null
+        }
+      ],
+      "llm": {
+        "model": "qwen3.5:4b",
+        "attempts": [
+          {
+            "model": "qwen3.5:4b",
+            "outcome": "response",
+            "provider": "ollama",
+            "latency_ms": 1217
+          }
+        ],
+        "provider": "ollama",
+        "latency_ms": 1217
+      }
+    }
+  ]
+}

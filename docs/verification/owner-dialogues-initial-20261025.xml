@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="3" time="1.927" timestamp="2026-10-25T19:39:38.275830+03:00" hostname="Libvi21"><testcase classname="tests.test_owner_dialogues" name="test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human[OWNER-DIALOGUE-01]" time="0.627"><failure message="AssertionError: Unexpected value at /origin&#10;assert 'Стамбул' == 'Москва'&#10;  &#10;  - Москва&#10;  + Стамбул">tests/test_owner_dialogues.py:124: in test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human
+    _assert_trip(snapshot["trip"], baseline, expected.get("assertions", []))
+tests/test_owner_dialogues.py:61: in _assert_trip
+    assert actual == rule["value"], f"Unexpected value at {rule['path']}"
+E   AssertionError: Unexpected value at /origin
+E   assert 'Стамбул' == 'Москва'
+E     
+E     - Москва
+E     + Стамбул</failure></testcase><testcase classname="tests.test_owner_dialogues" name="test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human[OWNER-DIALOGUE-02]" time="0.266"><failure message="AssertionError: Human clarification must mention белград&#10;assert 'белград' in 'направление «белгрод» пока не входит в каталог поиска. уточните город; доступные направления: москва, санкт-петербург, сочи, казань, стамбул, анталья, дубай.'">tests/test_owner_dialogues.py:133: in test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human
+    _assert_question(snapshot, reply, expected["question"])
+tests/test_owner_dialogues.py:92: in _assert_question
+    assert fragment in lowered, f"Human clarification must mention {fragment}"
+E   AssertionError: Human clarification must mention белград
+E   assert 'белград' in 'направление «белгрод» пока не входит в каталог поиска. уточните город; доступные направления: москва, санкт-петербург, сочи, казань, стамбул, анталья, дубай.'</failure></testcase><testcase classname="tests.test_owner_dialogues" name="test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human[OWNER-DIALOGUE-03]" time="0.278"><failure message="AssertionError: Adult count was lost or duplicated&#10;assert 0 == 1&#10; +  where 0 = sum(&lt;generator object test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human.&lt;locals&gt;.&lt;genexpr&gt; at 0x7530aad052f0&gt;)">tests/test_owner_dialogues.py:131: in test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human
+    assert sum(person["type"] == "adult" for person in snapshot["trip"]["travelers"]) == expected["adult_count"], "Adult count was lost or duplicated"
+E   AssertionError: Adult count was lost or duplicated
+E   assert 0 == 1
+E    +  where 0 = sum(&lt;generator object test_frozen_owner_dialogue_with_wrong_model_is_safe_and_human.&lt;locals&gt;.&lt;genexpr&gt; at 0x7530aad052f0&gt;)</failure></testcase></testsuite></testsuites>

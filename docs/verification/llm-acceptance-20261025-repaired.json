@@ -1,0 +1,302 @@
+{
+  "started_at": "2026-10-25T14:07:50.588785+00:00",
+  "fixture_sha256": "9b1de3ecb35a9a1b879b9206b0f88630ec8d5f0b2c63e00bed5f458313685075",
+  "suite_id": "harness-acceptance-ru-20261025",
+  "cases": [
+    {
+      "id": "ACC-MASS-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/budget/amount_minor",
+            "state:/stays/1/check_out",
+            "state:/legs/2/departure_date",
+            "session_status",
+            "run_failed"
+          ],
+          "model_attempts": 2,
+          "session_status": "RECOVERABLE_ERROR",
+          "llm": {
+            "model": "google/gemma-4-31b-it:free",
+            "attempts": [
+              {
+                "code": "HTTP_ERROR",
+                "model": "nvidia/nemotron-3.5-super-vl:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 790
+              },
+              {
+                "code": "RATE_LIMITED",
+                "model": "google/gemma-4-31b-it:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 449,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Google AI Studio"
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "error_code": "RATE_LIMITED"
+        },
+        {
+          "index": 1,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/stays/1/hotel_id",
+            "state:/budget/amount_minor",
+            "state:/stays/1/check_out",
+            "session_status",
+            "run_failed"
+          ],
+          "model_attempts": 2,
+          "session_status": "RECOVERABLE_ERROR",
+          "llm": {
+            "model": "google/gemma-4-31b-it:free",
+            "attempts": [
+              {
+                "code": "HTTP_ERROR",
+                "model": "nvidia/nemotron-3.5-super-vl:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 352
+              },
+              {
+                "code": "RATE_LIMITED",
+                "model": "google/gemma-4-31b-it:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 673,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Google AI Studio"
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "error_code": "RATE_LIMITED"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ACC-CLARIFY-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "FAIL",
+          "failed_checks": [
+            "session_status",
+            "waiting_reason",
+            "run_failed"
+          ],
+          "model_attempts": 2,
+          "session_status": "RECOVERABLE_ERROR",
+          "llm": {
+            "model": "google/gemma-4-31b-it:free",
+            "attempts": [
+              {
+                "code": "HTTP_ERROR",
+                "model": "nvidia/nemotron-3.5-super-vl:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 323
+              },
+              {
+                "code": "RATE_LIMITED",
+                "model": "google/gemma-4-31b-it:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 467,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Google AI Studio"
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "error_code": "RATE_LIMITED"
+        },
+        {
+          "index": 1,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/travelers/6/age",
+            "session_status",
+            "run_failed"
+          ],
+          "model_attempts": 2,
+          "session_status": "RECOVERABLE_ERROR",
+          "llm": {
+            "model": "google/gemma-4-31b-it:free",
+            "attempts": [
+              {
+                "code": "HTTP_ERROR",
+                "model": "nvidia/nemotron-3.5-super-vl:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 339
+              },
+              {
+                "code": "RATE_LIMITED",
+                "model": "google/gemma-4-31b-it:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 327,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Google AI Studio"
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "error_code": "RATE_LIMITED"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ACC-PAUSE-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 0,
+          "session_status": "WAITING_USER",
+          "llm": null,
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 0,
+          "session_status": "WAITING_USER",
+          "llm": null,
+          "error_code": null
+        },
+        {
+          "index": 2,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/budget/amount_minor",
+            "session_status",
+            "run_failed"
+          ],
+          "model_attempts": 2,
+          "session_status": "RECOVERABLE_ERROR",
+          "llm": {
+            "model": "google/gemma-4-31b-it:free",
+            "attempts": [
+              {
+                "code": "HTTP_ERROR",
+                "model": "nvidia/nemotron-3.5-super-vl:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 465
+              },
+              {
+                "code": "RATE_LIMITED",
+                "model": "google/gemma-4-31b-it:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 485,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Google AI Studio"
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "error_code": "RATE_LIMITED"
+        },
+        {
+          "index": 3,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/budget/amount_minor",
+            "session_status",
+            "run_failed"
+          ],
+          "model_attempts": 2,
+          "session_status": "RECOVERABLE_ERROR",
+          "llm": {
+            "model": "google/gemma-4-31b-it:free",
+            "attempts": [
+              {
+                "code": "HTTP_ERROR",
+                "model": "nvidia/nemotron-3.5-super-vl:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 382
+              },
+              {
+                "code": "RATE_LIMITED",
+                "model": "google/gemma-4-31b-it:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 381,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Google AI Studio"
+              }
+            ],
+            "provider": "openrouter"
+          },
+          "error_code": "RATE_LIMITED"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ACC-QUOTE-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "FAIL",
+      "after_actions": [
+        {
+          "action": "confirm_original_quote",
+          "passed": false,
+          "http_status": 200
+        }
+      ]
+    },
+    {
+      "id": "ACC-UNKNOWN-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET"
+    },
+    {
+      "id": "ACC-MALICIOUS-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET"
+    },
+    {
+      "id": "ACC-CONFLICT-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET"
+    }
+  ],
+  "scope": "actual model HTTP turns; not the entire106 corpus",
+  "actual_model_attempts": 12,
+  "finished_at": "2026-10-25T14:07:58.963290+00:00",
+  "status": "NOT_ALL_PASS"
+}

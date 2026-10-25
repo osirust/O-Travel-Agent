@@ -1,0 +1,41 @@
+{
+  "format": "otravel.compound_dialogue_freeze_manifest.v1",
+  "frozen_at_utc": "2026-10-25T18:21:16.922483+00:00",
+  "historical_exact_input_count": 8,
+  "derived_candidate_input_count": 5,
+  "derived_active_input_count_range": [
+    4,
+    5
+  ],
+  "historical_input_sha256": "60737706915bb8a776a533bf3c40c8439608f919e82f980a6913b2458dd4fb04",
+  "derived_input_sha256": "d62ce11daf84f76b70da4bf99071f1ca698bf9c5d7b82b4c4841d106d668e616",
+  "files": [
+    {
+      "path": "fixtures/evaluation/owner-dialogue-compound-history-v1.json",
+      "bytes": 8320,
+      "sha256": "3145cc98f2e2093214192cf4c16ed8a35d2ed9030f9f8553cd4ae865a12863af"
+    },
+    {
+      "path": "fixtures/evaluation/owner-dialogue-compound-derived-v1.json",
+      "bytes": 7375,
+      "sha256": "b80c9e60eb8841501df67a6251cedc421dee702c1e97ad2af274067f899a5d9f"
+    },
+    {
+      "path": "fixtures/evaluation/owner-dialogue-policy-v3-erratum.json",
+      "bytes": 2440,
+      "sha256": "478dbc1eadc6686afb600b0d94c8fc9242e3b9cbfe4ba4e23662e0e178dcd49d"
+    }
+  ],
+  "prior_fixtures_unchanged": [
+    {
+      "path": "fixtures/evaluation/owner-dialogue-extended-v1.json",
+      "sha256": "4c628fb7928dcd159c6a174adf4276586936544df17edbfd5d2f6c69c027dd22"
+    },
+    {
+      "path": "fixtures/evaluation/owner-dialogue-extended-policy-v2.json",
+      "sha256": "6bbdb9493dd24e2b3ce32e14ae7d888bfa59e36bf2207d6d01eaff234410d5c1"
+    }
+  ],
+  "application_http_model_calls": 0,
+  "full_case_pass": false
+}

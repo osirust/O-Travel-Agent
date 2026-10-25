@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-10-25T12:49:19.507715+00:00",
+  "project": "otravel-cleancheck-20261025",
+  "external_api_keys_supplied": false,
+  "checks": {
+    "fresh_volume_boot": true,
+    "database_ready": true,
+    "special_password_supported": true,
+    "no_host_database_port": true
+  },
+  "runtime_volume_touched": false,
+  "status": "PASS",
+  "temporary_project_removed": true
+}

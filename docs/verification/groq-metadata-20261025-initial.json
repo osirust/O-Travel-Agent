@@ -1,0 +1,19 @@
+{
+  "observed_at_utc": "2026-10-25T18:47:19.010799+00:00",
+  "scope": "AUTHENTICATED_METADATA_NOT_GENERATION",
+  "inference_calls": 0,
+  "free_confirmed": true,
+  "metadata_http_status": 200,
+  "requested_model": {
+    "id": "qwen/qwen3.8-27b",
+    "listed": true,
+    "active": true,
+    "context_window": 131072
+  },
+  "runtime_today_attempt_reservations": [
+    {
+      "provider": "openrouter",
+      "attempts": 40
+    }
+  ]
+}

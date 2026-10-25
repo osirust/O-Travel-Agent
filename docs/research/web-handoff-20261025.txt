@@ -1,0 +1,70 @@
+Актуальное состояние O!Travel Agent / AegML — 25 октября 2026
+
+Нужно независимо оценить этот отчёт и составить реалистичный порядок оставшейся разработки до сдачи 29 октября 10:00UTC+3. Не считать проект готовым по числу unit-тестов. Не утверждать, что просмотрен приватный GitHub-код, если доступа нет. Отделять подтверждённый код, контролируемые проверки, настоящие LLM-вызовы и реальную доступность поставщиков. Фронт пока исключить из основного плана: один участник делает полноценный frontend, другой будет тестировать; временный диагностический чат уже есть.
+
+ПРОДУКТ И ОГРАНИЧЕНИЯ
+Команда 3 человека. Мы создаём собственный управляемый harness вокруг LLM, не переезжаем сейчас на LangGraph/Redis/Kafka/рой агентов. BackendFastAPI+PostgreSQL+DockerCompose. Главное: составные изменения поездки, группы/дети/несколько номеров/городов, сохранение остальных требований, проверка совместимости и бюджета, «Было→Стало», явная пауза до «продолжай», восстановление после ошибок.
+Начальный каталог: Москва, СПб, Сочи, Казань, Стамбул, Анталья, Дубай. Приоритет внешнего поиска, синтетический резерв обязателен. Смешанные планы разрешены с маркировкой каждого компонента. Готовность реального бронирования не утверждаем: все покупки имитируются, настоящие supplier orders и платежи не создаются. Одного агрегатора с различимыми поставщиками достаточно, но сравнимость тарифов нужно доказать.
+
+ОКРУЖЕНИЕ
+Windows11, Ryzen5 9600X6/12,32GBRAM,RTX5070Ti16GB. Отдельная WSL2 AegML-Hackathon на внутреннем NVMeC:. DockerEngine29.9.1/Compose5.6.1, PostgreSQL17 в своём контейнере; app8081, defaultCompose8080. Windows8080 занят PEM, WindowsPostgreSQL5432 и другой проект AEGYX не менялись. Исходники E:/work/aegml, нативная build/runtime-копия C-backedWSL /home/aegml/projects/otravel. ESSD отключался/включался: доступ DrvFs восстановлен, SHA сверены; это событие хранения, не доказанный дефект приложения. Нельзяделать globalwslshutdown/dockerprune.
+Приватный командный repo ostrovok-hackathon-2026/aegml, draftPR1, ветка codex/backend-harness-foundation. Первый foundation запушен; текущий большой этап имеет незакоммиченные изменения. Нельзя считать содержимое старого PR точным зеркалом текущего рабочего дерева до очередного checkpoint. Личный CVmirror не настроен, публикация/лицензия не согласованы.
+
+ЧТО НАДЁЖНО ПРОВЕРЕНО В ОСНОВАНИИ
+1. Docker app+PG стартовали на новом пустом volume; схема создаётся автоматически. Данные сохраняются после restart.
+2. PostgreSQL хранит sessions/messages/agent_runs/agent_events/state_revisions/quotes/demo_orders. Отдельные DBotravel(рабочая),otravel_test(накопленные тесты),otravel_local_eval(локальные реальные LLM-прогоны). Веса модели и API-ключи в SQL не грузятся. Ключи в ignored native.env0600; API session tokens в БД только как hash. Глобальный каталог отелей не импортирован.
+3. CanonicalTripState со стабильными ID людей/групп/остановок/комнат/плеч; constraints hard/soft; изменения через whitelist операций. Search policy тоже версионна. Предварительные ресурсные guards10 людей/4 остановки/5 комнат — не утверждённые владельцем продуктовые пределы.
+4. Sequence/idempotency_key/payloadfingerprint/CAS/один active изменяющий run/session. Повтор сообщения/подтверждения не создаёт второе действие. Другой payload с тем же ключом отклоняется.
+5. OwnerBearer авторизация сессий и runs; чужой токен не даёт читать поездку. Перед каждым model/tool dispatch проверяются lease/version/pause. Поздний ответ не должен перезаписать более новую поездку. Транзакции короткие, HTTP вне SQL транзакций.
+6. DEMO полный путь: Казань→Стамбул→Анталья→Казань,9 путешественников/2 семьи/3 номеранаостановку, поиск/проверка/котировка/один BOOKED_DEMO/idempotency/stalequote.
+7. Undo создаёт новую revision, не оживляет старую цену/согласие, не отменяет существующие заказы. Cancel отдельно останавливает обработку; это не undo и не pause. История первого предложения доступна как historical-only. Частичный возврат отеля с сохранением актуального транспорта проверен typed-fixture; смена транспорта в его setup была через Store, publiclegmode setter ещё нет.
+8. Настоящий SIGKILL своей временной PG→503JSON при DBdown→WALrecovery: trip/version/pause/token/order сохранились, повтор confirm тотже order, partialintake0. Ранее был 500 из-за socket.gaierror; исправление проверено новым crash-прогоном. Старые FAIL сохранены. Это не доказательство всех распределённых/дисковых отказов.
+
+HARNESS001…008 — ЧЕСТНЫЕ СТАТУСЫ
+001: смешанный план и simulatedcheckout реализованы и проверены 16 PG/API тестами с контролируемыми источниками. Явные bindings stays/rooms/legs, fees/allocation/constraints evidence, source snapshots/hash, TTL, before→after, refresh каждого внешнего компонента, отзыв старого consent. Не готово: полный actual-source многогородской групповой путь→refresh→simulatedconfirm и доказанное сравнение сопоставимых реальных supplier тарифов.
+002: закрыт типизированный canonical/domain scope, не вся география/извлечение реальной LLM.
+003: typedundo/cancel/history/частичный hotelrestore проверены; естественные «отмена/вернипервый» и все ссылки ещё не приняты.
+004: основной незакрытый продуктовый блок! Механика pause/clarification/conflicts/repair есть, но диалоги пользователя выявили неправильные слоты и повторные вопросы. Нельзя называть его готовым.
+005: перечисленные persistentguards проверены; exactly-once произвольного внешнего HTTP не обещаем. RemoteLLM жёстко 40 попыток/UTC сутки и 2/run; Ollama отдельно 500/сутки и 1/run. Cooldown в PG: известный upstream10 мин, account/key/unknown429provider-wide безобхода до UTCreset/подтверждённого ответа.
+006: backendcontract/OpenAPI и временный/debug чат проверены; финальный front делает другой человек, пока не оценивать его готовность. Swagger ещёне выключенфлагомпоставки, API кнопка убрана из debugheader. Удаление кнопки не заменяет авторизацию.
+007: перечисленные fault/recovery границы проверены; не закрыта универсальная faultmatrix всех возможных распределённых сбоев.
+008: весь исходный 106 корпус прочитан и mapped.71 source ID имеют выполненные ПОДМНОЖЕСТВА assertions (typed/domain/adapter/PG/history),35 пока без исполнения. Полных исходных 106 NLUPASS=0. Нельзя выдавать 71 частичный check илилюбую 106puretest сумму за 106 пройденных пользовательских диалогов.
+
+ПРОВЕРКИ И СЧЁТЧИКИ
+Последний зафиксированный общий прогон:339 PASS. После него добавлялись новые targeted наборы; новый общий итог ещё надо зафиксировать, не суммировать пересекающиеся отчёты.
+Отдельные подтверждения:16mixedPG/API;13 fault+runtimeguards;30 durablecooldown;17 localmodelbudget;83 LiteAPIproviderfacts;54 moneygrounding;59 geography;47 strictoperationcontract;75 clarificationhelper. Последние 2 модуля подготовлены и проходят puretests, но на момент этого среза НЕ встроены в работающий диалог.
+Отдельная 7 case/11 turnLLM development suite не равна исходным 106. NVIDIAinitial/другие API серии NOT_ALL_PASS сохранены. LocalQwen suite:11 настоящих локальных вызовов,5 case PASS/2 case FAIL: ошибочные отсутствующие targetID при замене второгоотеля и ответе возрастаребёнка. Пауза/продолжение, quoteinvalidation, неизвестный/вредоносный/противоречивый запрос в этой серии прошли, но это не гарантия остальных формулировок.
+
+СВЕЖИЕ ОШИБКИ ИЗ РЕАЛЬНОГО UI
+A. «в сербию хочу» раньше→«ГородСербия вне DEMO». Один этот case исправлен: страна RS→«Понял:Сербия. Какойгородвыбираем—БелградилиНови-Сад?». Проверено actualDots2.7 s и actualLocalQwen20.5 s. Это точечная regression, не решение всех диалогов.
+B. «в сербию может быть поехать?»→неполный вопрос; «стамбул?» ошибочно записывает origin Стамбул, хотя речь о destination; «стамбул это же турция»→сырой destination_city. Нужны country/city consistency, различение предположения/вопроса/подтверждённой правки, контекстный slotbinding.
+C. После Countryquestion «белгрод»(опечаткаБелград)→сырой destination.city. Нужен безопасный unique candidate matching/уточнение, а не назначение неподтверждённого места.
+D. «Я взрослый» не сохраняет 1adult, повторяется тот же вопрос; «1» после вопроса приводит к invalidoperation. Нужен pending.field+target_id, точныйразборкороткогоответаи отсутствиеизменениядругогослота.
+Три owner-dialogues зафиксированы ДОпрогона; исходный ASGI/PG controlledwrongLLM прогон 3 FAIL. Ожидания после FAIL непереписывались. Сейчас подготовлены llm_contract.py(dynamicstrictschema/requiredIDenum) и clarifications.py(humanquestions+shortanswers), интеграция и повторТОЙЖЕцепочки — текущий приоритет. Не надо начинать новый infra рефакторинг вместо этого.
+
+КАКИЕ LLM/API ПОДКЛЮЧЕНЫ
+OpenRouter: личный ключ настроен через PKCE, денежный cap$0.01 разрешён владельцем, но приложение допускает только:free+provider.max_price prompt/completion/request=0; платные модели/покупкикредитов не использовались. Primary втекущем API-стенде Dots3NotePreview(dots-studio/dots-3-note-preview:free), резерв Xing4.0(xingchen-agi/xing4.0-29b-a4b:free). Dots реально отвечал примерно 1.8–3.6s, но это не SLA. Xing→Phala часто upstreampool429; его первыйответошибсяв масштабе бюджета. NvidiaNemotron3.5SuperVL:free сначала отвечал, потом 5xx/плохое uptime; Gemma4-31b-it:free—upstreampool429. Не делатьнедоступнуюмодельосновнойтолькоиз-заназвания. Все OpenRouter модели делят accountquota.
+Gemini: ключа нет, личный freeproject/регион не проверены. Не считать его настроенным резервом и не включать billing.
+LiteAPI/Nuitee: sandboxkey настроен; реальный HTTPsandboxcatalog/rates работал. Первый probe586 тарифов, позднее 3 номера/9 гостейотвечали с occupancyNumber/adultCount/childCount/childrenAges/boardType/taxes. Нормализация проверяет факты, не копирует knownflags сзапроса; fees/null semantics провереныпо primarydocs, breakfastBI, cancellationdeadline толькос явной TZ. Не переводит SANDBOX вреальнуюдоступность. Reprice покаповторный rate search, не supplierprebook/order. Полный actualmixedcheckout ещёнепринят.
+Duffel: только duffel_test token; получены 9 тестовыхавиапредложений. Несколькоплеч/пассажиры поддержаныадаптером, totalincludesbasetaxes/excludesoptionalextras. Никаких supplierorders; EUR не складываемс RUB безподтверждённого FX.
+SerpApi: Free подтверждён; metadata250 остаткаприначальнойпроверке, затем hotelsearch20/flightsearch4 результата. LIVE_INDICATIVE, не guaranteedavailability. Multiroomallocation невыдумывается; цена pernight нестановитсясуммойвсейпоездки.
+Open-Meteo: безключа, получен 7-дневныйпрогноз, attribution; неотель/авиапровайдер.
+HotelbedsTest/RateHawkSandbox/Travelpayouts: guardedread-only адаптерыи MockTransport проверки, НОнетключей/реальных accountprobes. Не нужнысрочно ещё 10 регистраций.
+Три travelkey былиприсланывчатвладельцем: остаётся OPEN ихперевыпуск/локальнаязамена; не повторятьключивответе/плане/Git.
+
+ЛОКАЛЬНАЯ МОДЕЛЬ И СТЕНД
+По явному разрешению владельца установлен Ollama0.40.11, официальный SHA проверен. Скачана qwen3.5:4b(4.2B,Q4_K_M), полнаямодель, недообучение. Modeldigestd8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04; metadata size3,324,173,934B, runtime+weights+сохранённый archive≈7.3GB на C. Подтверждён 100%GPU,context16k,parallel1,VRAM≈3.65GB. APIOllama только 127.0.0.1:11434,cloud отключён; драйверы/Dockerdaemon/AEGYX не менялись. ColdmicroJSON48.69 s, warm контекстные вызовы в 7 case прогонеоколо 1.1–2.0s. Нельзя объявитьскоростьгарантированной.
+APIbackend8081/debug и localbackend8083/debug независимы. Localbackend на WSLhost с nativeCsource,безключейпоставщиков, отдельная DBotravel_local_eval,105s wall-timeout/1attempt в lease120. Настоящий путь Qwen→harness→PG уже прошёл один countrycase. Проверки локальноймоделине подтверждаюткачество Dots/Gemma/Nvidia.
+
+БЕЗОПАСНОСТЬ И ПОСТАВКА
+Пока localhost127.0.0.1, PG не опубликованна Windows5432. OwnsessionBearer неравенобщейавторизациисайта: человексдоступомк backend можетсоздатьсвоюсессию ирасходоватьобщуюквоту, чужуюпоездкубезтокенане читает. Готовностькпубличномуинтернетуне заявлена. DebugUI тестировался desktop/mobile:не blank,0 console errors,DEMO/pause/resume, literalHTML как text. Это не fullproductionsecurityaudit.
+ZIP проверяющему долженподнятьЕГОэкземпляр app+PG однойкомандой DockerCompose, безнашегокомпьютера. DBbootstrap/freshvolume проверены. Но API ключине появляютсяавтоматически; нуженявныйразрешённыйрежимпередачиограниченных testkeys илисобственныеключипроверяющих. LocalQwen покадополнительныйстенд,необязательная 4GB зависимостьфинальногопакета. Финальный UI отдельногоучастника ещё неинтегрирован.
+
+ЧТО НУЖНО ОТ ТЕБЯ, ВЕБ
+1. Проверьпротиворечия этогоотчёта; не додумывай PASS отсутствующихпроверок.
+2. Дайприоритетныйпланзакрытия HARNESS001/003/004/008 безпереписыванияготового PG/Docker.
+3. Начнис полногоисправленияописанных owner диалогов: чёткийконтракт intents/operations/pendingquestions,слоты,география/опечатки,нельзяпредположениепревращатьвправку,никаких fieldIDs вответе.
+4. Раздели acceptance:domain/PG на controlledanswers, actuallocalQwen, actualAPI модель, actualtravelproviders. Чтоявляется oracle длякаждогоиз 106?
+5. Укажи,какиеиз 35 NOT_EXECUTED реальнонужно реализовать,какиебезопасноотклонятьвсогласованном scope,гденужныточныеуточнения oracle.
+6. Спланируйполный actualmixedsearch→refresh→simulatedcheckout,маркировку,fees/currency/expiry/suppliercomparability. Не подменяйреальнуюдоступность sandbox ответом.
+7. Определиостановки/DoD послекаждогоблока и cutline длястабильнойсдачи 29 октября 10:00UTC+3. Финальный front покаисключи, учтиего API контракт/последующуюинтеграцию.

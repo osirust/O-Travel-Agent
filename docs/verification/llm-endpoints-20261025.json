@@ -1,0 +1,108 @@
+{
+  "observed_at_utc": "2026-10-25T14:17:15Z",
+  "observation_note": "Public GET snapshots collected over several minutes, not an atomic health check.",
+  "scope": "Read-only official status/model metadata and local adapter inspection. No API keys, authenticated requests, completions, inference probes, tests, paid routes or runtime/configuration edits.",
+  "sources": [
+    {"url": "https://openrouter.ai/api/v1/models", "kind": "official_public_model_catalog"},
+    {"url": "https://openrouter.ai/api/v1/models/xingchen-agi/xing4.0-29b-a4b:free/endpoints", "kind": "official_public_free_variant_endpoints"},
+    {"url": "https://openrouter.ai/api/v1/models/dots-studio/dots-3-note-preview:free/endpoints", "kind": "official_public_free_variant_endpoints"},
+    {"url": "https://openrouter.ai/api/v1/models/nvidia/nemotron-3.5-super-vl:free/endpoints", "kind": "official_public_free_variant_endpoints"},
+    {"url": "https://status.openrouter.ai/", "kind": "official_status_page"},
+    {"url": "https://status.openrouter.ai/config.json", "kind": "public_status_data_loaded_by_official_status_page"},
+    {"url": "https://openrouter.ai/docs/guides/best-practices/reasoning-tokens", "kind": "official_reasoning_contract"},
+    {"url": "https://openrouter.ai/docs/guides/features/structured-outputs", "kind": "official_json_schema_contract"},
+    {"url": "https://openrouter.ai/docs/guides/routing/provider-selection", "kind": "official_parameter_and_price_routing_contract"}
+  ],
+  "official_status": {
+    "public": true,
+    "page_name": "OpenRouter",
+    "canonical_page_url": "https://openrouter.statuspage.datadoghq.com",
+    "source_url": "https://status.openrouter.ai/config.json",
+    "chat_gateway_component": "operational",
+    "other_gateway_components": {"video": "operational", "image": "operational", "tts": "operational", "stt": "operational", "embeddings": "operational"},
+    "web_application_services": "operational",
+    "limitation": "Gateway-wide status does not establish that an individual model endpoint is available. No claim about incident history or account-specific quota is made."
+  },
+  "free_candidates": [
+    {
+      "id": "xingchen-agi/xing4.0-29b-a4b:free",
+      "hugging_face_id": "XingChen-AGI/Xing4.0-29B-A4B",
+      "context_length": 262144,
+      "max_completion_tokens": 235929,
+      "pricing": {"prompt": "0", "completion": "0"},
+      "catalog_reasoning": {"mandatory": false, "default_enabled": true},
+      "endpoint": {
+        "provider_name": "Phala",
+        "tag": "phala",
+        "raw_status": 0,
+        "uptime_last_5m": 100,
+        "uptime_last_30m": 100,
+        "supported_parameters": ["reasoning", "include_reasoning", "max_tokens", "temperature", "top_p", "stop", "frequency_penalty", "presence_penalty", "seed", "top_k", "min_p", "repetition_penalty", "response_format", "structured_outputs", "tools", "tool_choice"],
+        "source_url": "https://openrouter.ai/api/v1/models/xingchen-agi/xing4.0-29b-a4b:free/endpoints"
+      },
+      "compatibility": "Catalog and endpoint advertise the parameters sent by the current JSON-object adapter. Schema conformance, Russian extraction quality, latency and account access have not been tested."
+    },
+    {
+      "id": "dots-studio/dots-3-note-preview:free",
+      "hugging_face_id": null,
+      "context_length": 512000,
+      "max_completion_tokens": 460800,
+      "pricing": {"prompt": "0", "completion": "0"},
+      "catalog_reasoning": {"mandatory": false},
+      "endpoint": {
+        "provider_name": "AtlasCloud",
+        "tag": "atlas-cloud/fp8",
+        "raw_status": 0,
+        "uptime_last_5m": 100,
+        "uptime_last_30m": 100,
+        "supported_parameters": ["reasoning", "include_reasoning", "max_tokens", "temperature", "top_p", "response_format", "structured_outputs", "tools", "tool_choice"],
+        "source_url": "https://openrouter.ai/api/v1/models/dots-studio/dots-3-note-preview:free/endpoints"
+      },
+      "compatibility": "A second explicit free model with a different reported upstream from Phala, Nvidia and Google AI Studio. Availability and NLU are not established by this listing."
+    }
+  ],
+  "nvidia_free_snapshot": {
+    "id": "nvidia/nemotron-3.5-super-vl:free",
+    "provider_name": "Nvidia",
+    "tag": "nvidia",
+    "pricing": {"prompt": "0", "completion": "0"},
+    "raw_status": -2,
+    "uptime_last_5m": 80,
+    "uptime_last_30m": 56.666666666666664,
+    "context_length": 1000000,
+    "max_completion_tokens": 131072,
+    "catalog_reasoning": {"mandatory": false},
+    "supported_parameters": ["reasoning", "include_reasoning", "temperature", "max_tokens", "seed", "top_p", "tools", "tool_choice", "response_format", "structured_outputs"],
+    "source_url": "https://openrouter.ai/api/v1/models/nvidia/nemotron-3.5-super-vl:free/endpoints",
+    "limitation": "Raw status and rolling uptime are recorded without inventing an undocumented status-code label. This is consistent with endpoint-level availability trouble, not proof of the cause of a particular 5xx."
+  },
+  "reasoning_diagnosis": {
+    "local_source": "otravel/providers.py::LLMGateway.extract_operations",
+    "request_shape_condition": "For LLM_REASONING_ENABLED=false as reported by root; when unset, the adapter omits enabled.",
+    "current_request_shape": {"response_format": {"type": "json_object"}, "reasoning": {"exclude": true, "enabled": false}, "provider": {"allow_fallbacks": false, "require_parameters": true, "max_price": {"prompt": 0, "completion": 0, "request": 0}}},
+    "confirmed": [
+      "The adapter adds enabled only when LLM_REASONING_ENABLED is configured; it always requests exclude=true.",
+      "The public Nvidia free catalog has mandatory=false and advertises reasoning plus response_format/structured_outputs.",
+      "Official docs distinguish exclude=true (hide reasoning output) from disabling reasoning; enabled=false is a supported reasoning control.",
+      "The repaired report records Nvidia HTTP_ERROR in 323-790 ms, not REQUEST_TIMEOUT. The local wall-timeout branch produces REQUEST_TIMEOUT.",
+      "The current harness permits HTTP_ERROR fallback only for a 5xx status, so a following backup attempt supports that inference; the exact Nvidia HTTP status/body is not present in this report."
+    ],
+    "conclusion": "No static incompatibility of the current reasoning/JSON parameters is established. A provider/gateway translation bug cannot be excluded, but claiming reasoning caused the failures would be unsupported. Fast 5xx and the free endpoint status snapshot support investigating upstream availability first.",
+    "suggested_non_inference_followup": "Keep only sanitized http_status/provider_name/limit_source or error type in failure audit to distinguish future routing/parameter errors from provider 5xx; never retain keys, raw HTTP bodies or hidden reasoning."
+  },
+  "proposed_emergency_configuration": {
+    "status": "PROPOSAL_NOT_APPLIED",
+    "LLM_PROVIDER": "openrouter",
+    "OPENROUTER_MODEL": "xingchen-agi/xing4.0-29b-a4b:free",
+    "OPENROUTER_BACKUP_MODEL": "dots-studio/dots-3-note-preview:free",
+    "LLM_REASONING_ENABLED": "false",
+    "retain_guards": ["Explicit :free IDs", "Zero max_price", "No provider paid fallback", "At most two model attempts per run", "Shared durable 40/day harness budget", "Do not bypass account/key/workspace/unknown quota limits", "Record actual model and each attempt"],
+    "next_step": "Root may perform a separately authorized bounded harness call after checking remaining quota. A listing or a successful metadata GET is not inference success or NLU acceptance."
+  },
+  "cautions": [
+    "No benchmark-based superiority claim or recommended paid provider.",
+    "Use the :free endpoint URLs. The catalog's canonical links.details can enumerate paid endpoints or an empty non-free listing and must not be substituted for free-variant availability.",
+    "The current adapter uses JSON-object mode with application validation; advertising structured_outputs does not itself enable strict JSON Schema mode.",
+    "No live model call, test request, key read or runtime/configuration change was made in this inspection."
+  ]
+}

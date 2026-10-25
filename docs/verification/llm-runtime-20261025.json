@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-25T12:58:42.080991+00:00",
+  "status": "PASS",
+  "run_status": "completed",
+  "session_status": "WAITING_USER",
+  "expected": {
+    "origin": true,
+    "relative_budget": true,
+    "travelers_preserved": true,
+    "state_version_advanced": true
+  },
+  "llm": {
+    "model": "nvidia/nemotron-3.5-super-vl:free",
+    "attempts": [
+      {
+        "code": "RATE_LIMITED",
+        "model": "google/gemma-4-31b-it:free",
+        "outcome": "failed",
+        "provider": "openrouter",
+        "latency_ms": 516,
+        "limit_source": "upstream_provider_shared_pool",
+        "provider_name": "Google AI Studio"
+      },
+      {
+        "model": "nvidia/nemotron-3.5-super-vl:free",
+        "outcome": "response",
+        "provider": "openrouter",
+        "latency_ms": 24342
+      }
+    ],
+    "provider": "openrouter",
+    "latency_ms": 24342
+  },
+  "error": null,
+  "durable_model_attempts": 2,
+  "supplier_orders": 0,
+  "scope": "one actual HTTP harness turn with two relative edits and preservation; not full NLU evaluation"
+}
