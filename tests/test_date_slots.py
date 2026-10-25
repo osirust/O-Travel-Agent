@@ -11,6 +11,201 @@ from otravel.domain import TripState, apply_operations, sample_trip
 NOW = datetime(2026, 10, 25, 12, 0, tzinfo=UTC)
 
 
+def proposal_pending(state, text="Выезд 14.11.2026", now=NOW):
+    answer = resolve_date_answer(state, None, text, now)
+    return {"field": answer["pending_context"]["field"], "target_id": None,
+            "context": answer["pending_context"]}
+
+
+def test_deferred_date_proposal_keeps_absolute_date_and_exact_target_until_consumed():
+    before = sample_trip()
+    original = before.model_dump(mode="json")
+    bound = proposal_pending(before)
+    proposal = bound["context"]["date_proposal"]
+    assert proposal["resolved_date"] == "2026-11-14"
+    assert proposal["timezone"] == "Europe/Moscow"
+    assert proposal["based_state_version"] == before.state_version
+    assert proposal["candidate_stay_ids"] == [stay.id for stay in before.stays]
+    answer = resolve_date_answer(before, bound, "Анталья", NOW)
+    assert answer["operations"] == [{"type": "upsert_stay", "target_id": "stay-antalya", "value": {"check_out": "2026-11-14"}}]
+    assert answer["pending_context_clear"] == ["date_proposal"]
+    assert before.model_dump(mode="json") == original
+
+
+@pytest.mark.parametrize("selection", ["Анталья", "Анталии", "2", "вторая", "остановка 2", "stay-antalya"])
+def test_deferred_date_accepts_unique_existing_city_ordinal_or_id(selection):
+    state = sample_trip()
+    bound = proposal_pending(state)
+    original = deepcopy(bound)
+    answer = resolve_date_answer(state, bound, selection, NOW)
+    assert answer["operations"] == [{"type": "upsert_stay", "target_id": "stay-antalya", "value": {"check_out": "2026-11-14"}}]
+    assert bound == original
+
+
+@pytest.mark.parametrize("selection", ["Анталья?", "не Анталья", "не первая", "вторая и бюджет 100000", "2?", "99", "Казань", "если вторая", "Анталья или Стамбул"])
+def test_owned_proposal_questions_negation_compounds_and_missing_choice_ask_without_operations(selection):
+    state = sample_trip()
+    bound = proposal_pending(state)
+    answer = resolve_date_answer(state, bound, selection, NOW)
+    assert answer["handled"] and not answer["operations"]
+    assert answer["pending_context"]["date_proposal"] == bound["context"]["date_proposal"]
+    assert answer["pending_context"]["target_selection_required"] is True
+
+
+def test_deferred_relative_date_does_not_move_when_selected_after_msk_midnight():
+    state = TripState(stays=[{"id": "one", "city": "Стамбул"}, {"id": "two", "city": "Анталья"}])
+    bound = proposal_pending(state, "Заезд завтра")
+    later = datetime(2026, 10, 25, 22, 30, tzinfo=UTC)
+    answer = resolve_date_answer(state, bound, "Анталья", later)
+    assert answer["operations"][0]["value"] == {"check_in": "2026-10-26"}
+    too_late = datetime(2026, 10, 27, 12, tzinfo=UTC)
+    rejected = resolve_date_answer(state, bound, "Анталья", too_late)
+    assert rejected["handled"] and not rejected["operations"] and "прошлом" in rejected["question"]
+
+
+def test_deferred_date_checks_full_route_and_keeps_proposal_on_collision():
+    state = sample_trip()
+    before = state.model_dump(mode="json")
+    bound = proposal_pending(state)
+    rejected = resolve_date_answer(state, bound, "Стамбул", NOW)
+    assert rejected["handled"] and not rejected["operations"]
+    assert "пересекается" in rejected["question"]
+    assert rejected["pending_context"]["date_proposal"] == bound["context"]["date_proposal"]
+    assert state.model_dump(mode="json") == before
+
+
+def test_duplicate_city_needs_ordinal_and_duplicate_id_never_binds_first():
+    state = sample_trip().model_dump(mode="json")
+    state["stays"][1]["city"] = "Стамбул"
+    bound = proposal_pending(state)
+    answer = resolve_date_answer(state, bound, "Стамбул", NOW)
+    assert not answer["operations"] and answer["handled"]
+    assert resolve_date_answer(state, bound, "2", NOW)["operations"][0]["target_id"] == "stay-antalya"
+    state["stays"][1]["id"] = state["stays"][0]["id"]
+    rejected = resolve_date_answer(state, bound, "1", NOW)
+    assert rejected["handled"] and not rejected["operations"]
+
+
+@pytest.mark.parametrize("alteration", ["version", "order", "trip", "date", "clock", "slot", "owner", "bool_version"])
+def test_deferred_date_rejects_stale_or_malformed_bound_proposal(alteration):
+    state = sample_trip().model_dump(mode="json")
+    bound = proposal_pending(state)
+    proposal = bound["context"]["date_proposal"]
+    if alteration == "version":
+        state["state_version"] += 1
+    elif alteration == "order":
+        state["stays"].reverse()
+    elif alteration == "trip":
+        state["trip_id"] = "another-trip"
+    elif alteration == "date":
+        proposal["resolved_date"] = "2026-11-15"
+    elif alteration == "clock":
+        proposal["reference_clock"] = "2026-10-25T12:00:00"
+    elif alteration == "slot":
+        bound["field"] = "stay.check_in"
+    elif alteration == "owner":
+        proposal["owner"] = "other"
+    else:
+        proposal["based_state_version"] = False
+    answer = resolve_date_answer(state, bound, "Анталья", NOW)
+    if alteration == "slot":
+        # A newer date question owns its answer; a city is not that date.
+        assert answer == {"handled": False, "operations": []}
+        return
+    assert answer["handled"] and not answer["operations"]
+    assert answer["pending_context_clear"] == ["date_proposal"]
+    assert "date_proposal" not in answer["pending_context"]
+
+
+def test_new_explicit_date_replaces_proposal_instead_of_applying_old_date():
+    state = sample_trip()
+    bound = proposal_pending(state)
+    replacement = resolve_date_answer(state, bound, "Заезд 10.11.2026", NOW)
+    assert not replacement["operations"]
+    proposal = replacement["pending_context"]["date_proposal"]
+    assert proposal["field"] == "stay.check_in" and proposal["resolved_date"] == "2026-11-10"
+    selected = resolve_date_answer(state, {"field": "stay.check_in", "context": replacement["pending_context"]}, "2", NOW)
+    assert selected["operations"][0]["value"] == {"check_in": "2026-11-10"}
+
+
+@pytest.mark.parametrize("text", ["пауза", "стоп", "отмена", "продолжай"])
+def test_owned_date_proposal_does_not_swallow_explicit_execution_controls(text):
+    state = sample_trip()
+    assert resolve_date_answer(state, proposal_pending(state), text, NOW) == {"handled": False, "operations": []}
+
+
+@pytest.mark.parametrize("value", [[], {}, None, False, 1])
+def test_malformed_proposal_field_is_clarification_instead_of_type_error(value):
+    state = sample_trip()
+    bound = proposal_pending(state)
+    bound["context"]["date_proposal"]["field"] = value
+    result = resolve_date_answer(state, bound, "Анталья", NOW)
+    assert result["handled"] and not result["operations"]
+    assert result["pending_context_clear"] == ["date_proposal"]
+
+
+def test_old_date_packet_never_hijacks_new_origin_question_or_unrelated_edit():
+    state = sample_trip()
+    bound = proposal_pending(state)
+    bound["field"] = "origin.city"
+    bound["context"]["field"] = "origin.city"
+    assert resolve_date_answer(state, bound, "Москва", NOW) == {"handled": False, "operations": []}
+    bound = proposal_pending(state)
+    assert resolve_date_answer(state, bound, "Добавь ребёнка 4 лет", NOW) == {"handled": False, "operations": []}
+
+
+def test_new_bare_date_replaces_proposal_and_requires_target_again():
+    state = sample_trip()
+    bound = proposal_pending(state)
+    answer = resolve_date_answer(state, bound, "17.11.2026", NOW)
+    assert answer["handled"] and not answer["operations"]
+    context = answer["pending_context"]
+    proposal = context["date_proposal"]
+    assert proposal["source_kind"] == "date_answer" and proposal["source_text"] == "17.11.2026"
+    assert proposal["resolved_date"] == "2026-11-17"
+    selected = resolve_date_answer(state, {"field": "stay.check_out", "context": context}, "2", NOW)
+    assert selected["operations"][0]["value"] == {"check_out": "2026-11-17"}
+
+
+def test_invalid_calendar_keeps_previously_valid_exact_multi_stay_address():
+    state = sample_trip()
+    bound = {"field": "stay.check_out", "target_id": "stay-antalya"}
+    invalid = resolve_date_answer(state, bound, "31.11.2026", NOW)
+    assert invalid["handled"] and not invalid["operations"]
+    assert invalid["pending_context"]["target_id"] == "stay-antalya"
+    assert not invalid["pending_context"].get("target_selection_required")
+    fixed = resolve_date_answer(state, {"field": "stay.check_out", "context": invalid["pending_context"]}, "14.11.2026", NOW)
+    assert fixed["operations"][0]["target_id"] == "stay-antalya"
+
+
+def test_new_exact_checkin_question_is_not_replaced_by_old_checkout_packet():
+    state = sample_trip()
+    bound = proposal_pending(state)
+    bound.update(field="stay.check_in", target_id="stay-istanbul")
+    bound["context"].update(field="stay.check_in")
+    answer = resolve_date_answer(state, bound, "06.11.2026", NOW)
+    assert answer["operations"] == [{"type": "upsert_stay", "target_id": "stay-istanbul", "value": {"check_in": "2026-11-06"}}]
+    assert answer["pending_context_clear"] == ["date_proposal"]
+
+
+def test_new_exact_target_question_owns_bare_date_even_when_old_packet_has_same_field():
+    state = sample_trip()
+    bound = proposal_pending(state)
+    bound["target_id"] = "stay-antalya"
+    bound["context"].pop("target_selection_required")
+    answer = resolve_date_answer(state, bound, "15.11.2026", NOW)
+    assert answer["operations"] == [{"type": "upsert_stay", "target_id": "stay-antalya", "value": {"check_out": "2026-11-15"}}]
+    assert answer["pending_context_clear"] == ["date_proposal"]
+
+
+def test_question_like_id_or_ambiguous_numeric_id_cannot_override_selection_safety():
+    state = TripState(stays=[{"id": "2", "city": "Стамбул"}, {"id": "stay?", "city": "Анталья"}])
+    bound = proposal_pending(state)
+    for text in ("2", "stay?"):
+        result = resolve_date_answer(state, bound, text, NOW)
+        assert result["handled"] and not result["operations"]
+
+
 def trip(**stay):
     return TripState(origin="Москва", stays=[{"id": "stay-exact", "city": "Казань", **stay}])
 

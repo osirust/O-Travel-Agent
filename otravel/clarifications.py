@@ -44,8 +44,9 @@ _YES = {"да", "верно", "правильно", "подтверждаю", "�
 _NO = {"нет", "не надо", "не меняем"}
 # Internal unset-before-merge contract. Destination/origin selections and known
 # party facts are deliberately outside this allowlist.
-PENDING_CONTEXT_CLEAR_KEYS = ("proposed_destination", "confirmation_required", "suggested_cities",
-                              "contextual_correction", "proposal_field")
+_GEOGRAPHY_CLEAR_KEYS = ("proposed_destination", "confirmation_required", "suggested_cities",
+                         "contextual_correction", "proposal_field")
+PENDING_CONTEXT_CLEAR_KEYS = (*_GEOGRAPHY_CLEAR_KEYS, "date_proposal")
 _AGE_WORDS = {
     "ноль": 0, "нуль": 0, "один": 1, "два": 2, "три": 3, "четыре": 4,
     "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10,
@@ -257,12 +258,12 @@ def _answer(operations=None, *, question=None, context=None, notice=None, clear_
     if notice:
         result["notice"] = notice
     if clear_pending:
-        result["pending_context_clear"] = list(PENDING_CONTEXT_CLEAR_KEYS)
+        result["pending_context_clear"] = list(_GEOGRAPHY_CLEAR_KEYS)
     return result
 
 
 def _without_proposal(context: dict) -> dict:
-    return {key: value for key, value in context.items() if key not in PENDING_CONTEXT_CLEAR_KEYS}
+    return {key: value for key, value in context.items() if key not in _GEOGRAPHY_CLEAR_KEYS}
 
 
 def _active_proposal(context: dict, field: str) -> bool:

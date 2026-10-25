@@ -134,7 +134,7 @@ async def test_audit_distinguishes_model_arguments_from_grounded_values_without_
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("failure_kind", ["json", "schema"])
-async def test_consumed_tokens_are_persisted_when_generation_fails_validation(api_factory, failure_kind):
+async def test_consumed_tokens_are_persisted_when_generation_fails_validation(api_factory, failure_kind, monkeypatch):
     requests = []
     canary = "synthetic-invalid-generation-secret"
     def handler(request):
@@ -151,6 +151,16 @@ async def test_consumed_tokens_are_persisted_when_generation_fails_validation(ap
         "GEMINI_FREE_TIER_CONFIRMED": True, "http_transport": httpx.MockTransport(handler)})
     async with api_factory(gateway) as (client, _):
         repository = client._transport.app.state.store
+        # This test audits failed-generation persistence, with fake HTTP. Keep
+        # its real PostgreSQL reservations in the explicit test-adapter bucket
+        # with the fixture's high test budget. Unique labels retain provenance;
+        # Store intentionally pools these labels rather than isolating quotas.
+        reserve = repository.reserve_model_call
+        budget_namespace = "test_usage_" + uuid4().hex
+        async def reserve_test_call(session_id, run_id, limit, provider):
+            assert provider == "gemini" and limit == 40
+            return await reserve(session_id, run_id, 1_000_000, budget_namespace)
+        monkeypatch.setattr(repository, "reserve_model_call", reserve_test_call)
         sid, token, before = await _session(client, sample_trip().model_dump(mode="json"))
         accepted = await client.post(f"/api/v1/sessions/{sid}/messages", headers=_headers(token),
             json={"client_message_id": str(uuid4()), "text": "Уточним пожелания по отдыху"})
@@ -163,7 +173,10 @@ async def test_consumed_tokens_are_persisted_when_generation_fails_validation(ap
         async with repository.engine.connect() as conn:
             rows = (await conn.execute(select(events.c.payload).where(
                 events.c.run_id == run["run_id"], events.c.event_type == "MODEL_CALL_FAILED"))).scalars().all()
+            reservations = (await conn.execute(select(events.c.payload).where(
+                events.c.run_id == run["run_id"], events.c.event_type == "MODEL_CALL_STARTED"))).scalars().all()
         assert len(rows) == len(requests) == 2  # Initial call and one bounded repair.
+        assert reservations == [{"provider": budget_namespace}] * len(requests)
         for event in rows:
             assert event["usage"] == {"input_tokens": 23, "output_tokens": 8, "total_tokens": 31}
             assert len(event["request_metrics"]["prompt_sha256"]) == 64

@@ -78,7 +78,7 @@ class ModelResult(BaseModel):
     destination_request: dict[str, Any] | None = Field(default=None, exclude=True)
     operation_normalizations: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
     pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
-    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field"]] = Field(default_factory=list, max_length=5, exclude=True)
+    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field", "date_proposal"]] = Field(default_factory=list, max_length=6, exclude=True)
     response_source: str = Field(default="llm", exclude=True)
 
 
@@ -871,6 +871,14 @@ class Harness:
                 binding = {"field": extracted.pending_context["field"], "target_id": extracted.pending_context.get("target_id")}
             else:
                 binding = derive_pending_field([{**clarification_metadata, "text": question} for question in questions], current)
+            date_packet = clarification_metadata.get("date_proposal")
+            if (binding.get("field") not in {"stay.check_in", "stay.check_out"}
+                    or isinstance(date_packet, dict) and (date_packet.get("field") != binding.get("field")
+                        or binding.get("target_id") is not None)):
+                # A deferred hotel date cannot intercept an answer to a newer
+                # unrelated slot. This cleanup commits with the new question.
+                clarification_metadata.pop("date_proposal", None)
+                clarification_metadata.pop("target_selection_required", None)
             if binding.get("field") == "traveler.age" and binding.get("target_id") is None:
                 # Choose whom to ASK, not whose age an ambiguous prior answer
                 # meant. The persisted question names its exact target first.
