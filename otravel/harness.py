@@ -21,8 +21,9 @@ from .history import plan_history
 from .geography import known_cities, parse_destination
 from .money import ground_budget_operations
 from .llm_contract import build_operation_schema
-from .clarifications import derive_pending_field, human_question, question_field, resolve_short_answer
+from .clarifications import PENDING_CONTEXT_CLEAR_KEYS, derive_pending_field, human_question, question_field, resolve_short_answer
 from .date_slots import resolve_date_answer
+from .observability import model_snapshot
 from .providers import LLMGateway, ProviderError
 from .store import Conflict, StoreError
 
@@ -77,6 +78,7 @@ class ModelResult(BaseModel):
     destination_request: dict[str, Any] | None = Field(default=None, exclude=True)
     operation_normalizations: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
     pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
+    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field"]] = Field(default_factory=list, max_length=5, exclude=True)
     response_source: str = Field(default="llm", exclude=True)
 
 
@@ -459,6 +461,17 @@ class Harness:
                     raw_extraction = await gateway.extract_operations(context)
                     extracted = ModelResult.model_validate(raw_extraction)
                     model_speech_act = extracted.speech_act
+                    gateway_settings = getattr(gateway, "settings", {})
+                    trace_settings = {**self.settings.provider_settings(), **(gateway_settings if isinstance(gateway_settings, dict) else {})}
+                    validated_snapshot = model_snapshot(raw_extraction, trace_settings)
+                    if not validated_snapshot.get("captured"):
+                        raise ProviderError("INVALID_LLM_RESPONSE", "Структурированный ответ модели превышает допустимый объём.", provider=provider)
+                    # Known configured credentials must not reach either stored
+                    # replies or state values, even if a provider echoes them.
+                    extracted = ModelResult.model_validate(validated_snapshot["value"])
+                    await self.store.save_event(session["session_id"], run["run_id"], "MODEL_EXTRACTION_VALIDATED", {
+                        "based_state_version": session["state_version"], "provider": provider,
+                        "model": requested_model, "structured_contract": validated_snapshot})
                     if extracted.speech_act in {"ASK", "PROPOSE"} and extracted.control.action == "none" and not extracted.conflicts:
                         # Questions/suggestions are not permission to change a
                         # trip. Keep proposed edits as audit data, never execute.
@@ -468,6 +481,9 @@ class Harness:
                     if not extracted.conflicts and extracted.control.action != "cancel":
                         extracted.operations, extracted.operation_normalizations = ground_budget_operations(
                             TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
+                        if any(note.get("status") == "clarification_required" for note in extracted.operation_normalizations):
+                            extracted.unknowns = ["Вы указали стоимость за ночь или за человека. Какой общий бюджет всей поездки нужно установить?"]
+                            extracted.pending_context = {**(extracted.pending_context or {}), "field": "budget.amount_minor", "budget_scope_ambiguous": True}
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None
@@ -517,8 +533,15 @@ class Harness:
                         extracted.destination_request = country_context
                         if not extracted.operations and not extracted.conflicts:
                             extracted.unknowns = [location["clarification"]]
-                    last_call = getattr(gateway, "last_call", {})
+                    last_call = getattr(raw_extraction, "call_metadata", None) or getattr(gateway, "last_call", {})
                     actual = {"provider": str(last_call.get("provider", provider)), "model": str(last_call.get("model", requested_model)), "latency_ms": max(0, int((perf_counter() - started) * 1000))}
+                    for metric in ("usage", "request_metrics"):
+                        if isinstance(last_call.get(metric), dict):
+                            actual[metric] = last_call[metric]
+                    await self.store.save_event(session["session_id"], run["run_id"], "MODEL_OPERATIONS_CHECKED", {
+                        "based_state_version": session["state_version"], "provider": provider, "model": requested_model,
+                        "structured_contract": model_snapshot(extracted.model_dump(mode="json"), trace_settings),
+                        "normalizations": extracted.operation_normalizations})
                     attempt_meta.append({**actual, "outcome": "response"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_RESPONSE_RECEIVED", {
                         **actual, "operations": len(extracted.operations), "attempt": attempt + 1,
@@ -536,7 +559,9 @@ class Harness:
                             "expected_contract": {"required": ["operations", "control", "reply", "unknowns", "conflicts"], "note": "Верни весь корректный JSON-объект. Не повторяй невалидную структуру; не меняй известные поля без запроса."},
                         }
                     details = exc.details if isinstance(exc, ProviderError) and isinstance(exc.details, dict) else {}
-                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds") if key in details}}
+                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits") if key in details}}
+                    if isinstance(gateway, LLMGateway) and (request_metrics := gateway.request_metrics_for_current_call()):
+                        failed["request_metrics"] = request_metrics
                     attempt_meta.append({**failed, "outcome": "failed"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_CALL_FAILED", failed)
                     exc.llm_meta = {"provider": provider, "model": requested_model, "attempts": attempt_meta}
@@ -573,15 +598,20 @@ class Harness:
             if not pending.get("field"):
                 binding = derive_pending_field(pending.get("questions") or [pending.get("text")], session["state"])
                 pending.update({key: value for key, value in binding.items() if value is not None})
-            resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
-            if not resolved["handled"]:
-                resolved = resolve_short_answer(session["state"], pending, run["input_text"])
-            if resolved["handled"]:
-                question = resolved.get("question")
-                extracted = ModelResult(operations=[Operation.model_validate(op) for op in resolved["operations"]],
-                    control={"action": "none"}, reply=question or "Ответ сохранён.", unknowns=[question] if question else [], conflicts=[],
-                    pending_context=resolved.get("pending_context"), response_source="contextual_slot")
-                return extracted, None
+        resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
+        if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
+            resolved = resolve_short_answer(session["state"], pending, run["input_text"])
+        if resolved["handled"]:
+            question = resolved.get("question")
+            extracted = ModelResult(operations=[Operation.model_validate(op) for op in resolved["operations"]],
+                control={"action": "none"}, reply=question or "Ответ сохранён.", unknowns=[question] if question else [], conflicts=[],
+                pending_context=resolved.get("pending_context"), pending_context_clear=resolved.get("pending_context_clear", []),
+                response_source="contextual_slot")
+            await self.store.save_event(session["session_id"], run["run_id"], "CONTEXT_ANSWER_PROPOSED", {
+                "based_state_version": session["state_version"], "pending_field": (pending or {}).get("field"),
+                "target_id": (pending or {}).get("target_id"), "context_clear": extracted.pending_context_clear,
+                "operations": [op.model_dump(mode="json") for op in extracted.operations]})
+            return extracted, None
         return await self._extract(session, run)
 
     async def _process(self, run: dict) -> None:
@@ -713,12 +743,20 @@ class Harness:
         if not run["input_text"].startswith(TYPED_PREFIX):
             if extracted.destination_request is not None:
                 clarification_metadata["requested_destination"] = extracted.destination_request
+            for key in extracted.pending_context_clear:
+                if key in PENDING_CONTEXT_CLEAR_KEYS:
+                    clarification_metadata.pop(key, None)
             if extracted.pending_context is not None:
                 chosen = extracted.pending_context.get("requested_destination")
                 if isinstance(chosen, dict) and chosen.get("kind") == "city" and not extracted.pending_context.get("confirmation_required"):
                     for stale_choice in ("proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction"):
                         clarification_metadata.pop(stale_choice, None)
                 clarification_metadata.update(extracted.pending_context)
+            if (any(op.type == "upsert_stay" and op.target_id and set(op.value).intersection({"check_in", "check_out"}) for op in extracted.operations)
+                    or extracted.pending_context and extracted.pending_context.get("target_id") and extracted.pending_context.get("field", "").startswith("stay.")):
+                clarification_metadata.pop("target_selection_required", None)
+            if any(op.type == "set_budget" for op in extracted.operations):
+                clarification_metadata.pop("budget_scope_ambiguous", None)
             if extracted.speech_act == "CHANGE" and not any(person.type == "child" for person in current.travelers) and explicit_no_children(run["input_text"]):
                 clarification_metadata.update(children_known=True, children_count=0)
             clarification_metadata.pop("field", None)
@@ -726,6 +764,8 @@ class Harness:
             for stale_address in ("traveler_id", "stay_id", "leg_id"):
                 clarification_metadata.pop(stale_address, None)
             if extracted.conflicts:
+                clarification_metadata["force_clarification"] = True
+            elif clarification_metadata.get("budget_scope_ambiguous"):
                 clarification_metadata["force_clarification"] = True
             else:
                 clarification_metadata.pop("force_clarification", None)
@@ -816,7 +856,8 @@ class Harness:
                     text = human_question({"field": "traveler.age", "target_id": missing_children[0].id}, current)
                     pending.update(text=text, questions=[text])
                     reply = text
-            if binding.get("field", "") and binding["field"].startswith(("stay.", "leg.")) and binding.get("target_id") is None:
+            if (binding.get("field", "") and binding["field"].startswith(("stay.", "leg.")) and binding.get("target_id") is None
+                    and not clarification_metadata.get("target_selection_required")):
                 field_name = binding["field"].split(".", 1)[1]
                 collection = current.legs if binding["field"].startswith("leg.") else current.stays
                 candidates = [item for item in collection if not getattr(item, field_name, None)]

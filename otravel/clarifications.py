@@ -42,6 +42,10 @@ _ORIGIN_FORMS = {"москвы": "Москва", "санкт-петербург�
                  "белгорода": "Белгород"}
 _YES = {"да", "верно", "правильно", "подтверждаю", "да выбираем", "да меняем"}
 _NO = {"нет", "не надо", "не меняем"}
+# Internal unset-before-merge contract. Destination/origin selections and known
+# party facts are deliberately outside this allowlist.
+PENDING_CONTEXT_CLEAR_KEYS = ("proposed_destination", "confirmation_required", "suggested_cities",
+                              "contextual_correction", "proposal_field")
 _AGE_WORDS = {
     "ноль": 0, "нуль": 0, "один": 1, "два": 2, "три": 3, "четыре": 4,
     "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10,
@@ -133,7 +137,7 @@ def _context(raw: Any, extra: dict | None = None) -> dict:
         if isinstance(raw.get("details"), dict):
             result.update(deepcopy(raw["details"]))
         for name in ("target_id", "stay_id", "traveler_id", "leg_id", "requested_destination", "requested_origin",
-                     "proposed_destination", "confirmation_required", "children_known", "children_count", "force_clarification", "contextual_correction"):
+                     "proposed_destination", "confirmation_required", "proposal_field", "children_known", "children_count", "force_clarification", "contextual_correction"):
             if name in raw:
                 result[name] = deepcopy(raw[name])
     if isinstance(extra, dict):
@@ -244,7 +248,7 @@ def derive_pending_field(raw_questions: Any, state: Any) -> dict:
     return {"field": None, "target_id": None, "context": {}}
 
 
-def _answer(operations=None, *, question=None, context=None, notice=None) -> dict:
+def _answer(operations=None, *, question=None, context=None, notice=None, clear_pending=False) -> dict:
     result = {"handled": True, "operations": operations or []}
     if question:
         result["question"] = question
@@ -252,7 +256,24 @@ def _answer(operations=None, *, question=None, context=None, notice=None) -> dic
         result["pending_context"] = context
     if notice:
         result["notice"] = notice
+    if clear_pending:
+        result["pending_context_clear"] = list(PENDING_CONTEXT_CLEAR_KEYS)
     return result
+
+
+def _without_proposal(context: dict) -> dict:
+    return {key: value for key, value in context.items() if key not in PENDING_CONTEXT_CLEAR_KEYS}
+
+
+def _active_proposal(context: dict, field: str) -> bool:
+    proposed = context.get("proposed_destination")
+    if context.get("confirmation_required") is not True or not isinstance(proposed, dict) or proposed.get("kind") != "city":
+        return False
+    if "proposal_field" in context:
+        return context["proposal_field"] == field
+    # Historical untagged proposals used the destination-named key. Never bind
+    # those to origin; origin-only metadata also makes a destination ambiguous.
+    return field == "destination.city" and ("requested_origin" not in context or "requested_destination" in context)
 
 
 def _new_id(prefix: str, items: list[dict]) -> str:
@@ -324,19 +345,19 @@ def _unsupported_city_question(place: dict, context: dict | None = None) -> str:
 def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: str) -> dict:
     requested_key = "requested_origin" if field == "origin.city" else "requested_destination"
     proposed = ctx.get("proposed_destination")
-    if ctx.get("confirmation_required") and isinstance(proposed, dict):
+    if _active_proposal(ctx, field):
         if _key(text) in _YES:
             place = proposed
-            ctx = {**ctx, requested_key: proposed, "confirmation_required": False}
+            ctx = {**_without_proposal(ctx), requested_key: proposed}
         elif _key(text) in _NO:
-            clean = {k: v for k, v in ctx.items() if k not in {"proposed_destination", "confirmation_required"}}
-            return _answer(question=human_question(field, data, clean), context={**clean, "field": field, "target_id": target})
+            clean = _without_proposal(ctx)
+            return _answer(question=human_question(field, data, clean), context={**clean, "field": field, "target_id": target}, clear_pending=True)
         else:
             if _asserts_proposed_geography(text, proposed):
                 # A factual observation/question is not consent to change a route.
                 verified = parse_destination(proposed.get("name", ""))["requested_destination"]
                 return _answer(question=_country_change_question(verified, field, ctx),
-                               context={**ctx, "field": field, "target_id": target})
+                               context={**ctx, "field": field, "target_id": target, "proposal_field": field})
             place = _answer_place(text, field)
             if place["kind"] == "unknown":
                 return {"handled": False, "operations": []}
@@ -358,7 +379,7 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
         ctx = {key: value for key, value in ctx.items() if key != "contextual_correction"}
     if place["kind"] == "country":
         return _answer(question=human_question(field, data, {"requested_destination": place}),
-                       context={**ctx, "field": field, "target_id": target, requested_key: place})
+                       context={**_without_proposal(ctx), "field": field, "target_id": target, requested_key: place}, clear_pending=True)
     if place["kind"] != "city":
         suggestions = requested.get("suggested_cities", []) if isinstance(requested, dict) else []
         if field == "destination.city":
@@ -373,7 +394,7 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
         if len(candidates) == 1:
             place = candidates[0]
             return _answer(question=f"Вы имеете в виду город «{place['name']}»?",
-                           context={**ctx, "field": field, "target_id": target, "proposed_destination": place, "confirmation_required": True})
+                           context={**ctx, "field": field, "target_id": target, "proposed_destination": place, "confirmation_required": True, "proposal_field": field})
         if place["kind"] == "unknown":
             return {"handled": False, "operations": []}
         return _answer(question=human_question(field, data, ctx), context={**ctx, "field": field, "target_id": target})
@@ -383,16 +404,21 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
         question = (_country_change_question(place, field, ctx)
                     if old_country and old_country != new_country else f"Выбираем город «{place['name']}» для поездки?")
         return _answer(question=question, context={**ctx, "field": field, "target_id": target,
-                       "proposed_destination": place, "confirmation_required": True})
+                       "proposed_destination": place, "confirmation_required": True, "proposal_field": field})
     if place["name"] not in CITIES:
         # A new explicit city supersedes an earlier proposed alternative. Keep
         # the choice as metadata, without inventing coverage or forcing a route.
-        clean = {key: value for key, value in ctx.items() if key not in {"proposed_destination", "confirmation_required"}}
+        clean = _without_proposal(ctx)
+        if contextual_correction:
+            clean["contextual_correction"] = ctx["contextual_correction"]
         return _answer(question=_unsupported_city_question(place, clean),
                        context={**clean, "field": field, "target_id": target, requested_key: place},
-                       notice=_contextual_notice(place, clean))
+                       notice=_contextual_notice(place, clean), clear_pending=True)
     if field == "origin.city":
-        return _answer([{"type": "set_origin", "value": {"city": place["name"]}}])
+        clean = {key: value for key, value in _without_proposal(ctx).items()
+                 if key not in {"field", "target_id", "stay_id", "traveler_id", "leg_id"}}
+        return _answer([{"type": "set_origin", "value": {"city": place["name"]}}],
+                       context={**clean, "requested_origin": place}, clear_pending=True)
     stays = data.get("stays", [])
     if target is not None and not any(s["id"] == target for s in stays):
         if stays:
@@ -403,11 +429,10 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
         target = stays[0]["id"] if stays else _new_id("stay", stays)
     # A committed destination replaces display metadata as well as the stay.
     # Return only metadata here: the next question must derive its own binding.
-    clean = {key: value for key, value in ctx.items()
-             if key not in {"field", "target_id", "stay_id", "traveler_id", "leg_id",
-                            "proposed_destination", "confirmation_required", "suggested_cities"}}
+    clean = {key: value for key, value in _without_proposal(ctx).items()
+             if key not in {"field", "target_id", "stay_id", "traveler_id", "leg_id"}}
     return _answer([{"type": "upsert_stay", "target_id": target, "value": {"city": place["name"]}}],
-                   context={**clean, "requested_destination": place})
+                   context={**clean, "requested_destination": place}, clear_pending=True)
 
 
 def resolve_short_answer(state: Any, pending_question: Any, text: str) -> dict:

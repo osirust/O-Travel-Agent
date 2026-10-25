@@ -2,11 +2,15 @@ FROM python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3
 WORKDIR /build
 COPY pyproject.toml requirements.lock ./
 COPY otravel ./otravel
-RUN python -m venv /opt/venv && /opt/venv/bin/pip install --no-cache-dir -c requirements.lock .
+RUN python -m pip install --no-cache-dir --only-binary=:all: pip==26.2.2 \
+    && python -m venv /opt/venv \
+    && /opt/venv/bin/python -m pip install --no-cache-dir --only-binary=:all: pip==26.2.2 \
+    && /opt/venv/bin/pip install --no-cache-dir -c requirements.lock .
 
 FROM python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70 AS runtime
 ENV PATH="/opt/venv/bin:$PATH" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
-RUN useradd --system --uid 10001 --create-home app
+RUN python -m pip install --no-cache-dir --only-binary=:all: pip==26.2.2 \
+    && useradd --system --uid 10001 --create-home app
 COPY --from=builder /opt/venv /opt/venv
 WORKDIR /app
 USER app

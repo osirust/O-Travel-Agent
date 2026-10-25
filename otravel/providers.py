@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import asyncio
+from contextvars import ContextVar
 import hashlib
 import json
 import logging
@@ -23,6 +24,7 @@ import httpx
 from jsonschema import Draft202012Validator
 
 from .provider_facts import lite_rate_facts
+from .observability import groq_rate_facts, request_stats, usage_counts
 
 
 _SECRETS: set[str] = set()
@@ -193,14 +195,15 @@ class _HTTPGateway:
             details: dict[str, Any] = {"http_status": status}
             if status == 429:
                 if provider == "groq" and url == "https://api.groq.com/openai/v1/chat/completions":
-                    # Preserve only a bounded delta-seconds hint from the fixed
-                    # Groq endpoint. Never expose raw headers or parse HTTP dates
-                    # using an implicit clock; waiting/retry belongs to Store.
-                    hint = response.headers.get("retry-after", "").strip().lstrip("0")
-                    if re.fullmatch(r"[0-9]{1,5}", hint):
-                        seconds = int(hint)
-                        if 1 <= seconds <= 86400:
-                            details["retry_after_seconds"] = seconds
+                    try:
+                        error_body = response.json()
+                    except (ValueError, UnicodeError):
+                        error_body = None
+                    facts = groq_rate_facts(response.headers, error_body)
+                    if facts:
+                        details["rate_limits"] = facts
+                        if "retry_after_seconds" in facts:
+                            details["retry_after_seconds"] = facts["retry_after_seconds"]
                 details["limit_source"] = "unknown"
                 try:
                     blocked = response.json().get("error", {}).get("metadata", {})
@@ -300,6 +303,13 @@ again. Never discard the remaining explicit facts because one field is missing.
 """
 
 
+class ExtractionOutput(dict):
+    """Mapping-compatible model contract with request-local diagnostic metadata."""
+    def __init__(self, value: dict, metadata: dict):
+        super().__init__(value)
+        self.call_metadata = metadata
+
+
 class LLMGateway(_HTTPGateway):
     def __init__(self, settings: dict):
         super().__init__(settings)
@@ -315,6 +325,10 @@ class LLMGateway(_HTTPGateway):
         # lookups retain their separate, shorter provider timeout.
         self.client.timeout = httpx.Timeout(timeout, connect=min(10.0, timeout))
         self.wall_timeout = timeout
+        self._request_metrics: ContextVar[dict | None] = ContextVar("otravel_request_metrics", default=None)
+
+    def request_metrics_for_current_call(self) -> dict | None:
+        return self._request_metrics.get()
 
     async def _request(self, provider: str, method: str, url: str, **kwargs: Any) -> dict:
         try:
@@ -323,6 +337,8 @@ class LLMGateway(_HTTPGateway):
             raise ProviderError("REQUEST_TIMEOUT", "Превышено общее время ответа LLM.", True, provider) from None
 
     async def extract_operations(self, context: dict) -> dict:
+        self._request_metrics.set(None)
+        self.last_call = {}
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
         if provider not in {"gemini", "openrouter", "ollama", "groq"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
@@ -341,6 +357,8 @@ class LLMGateway(_HTTPGateway):
         # JSON mode alone does not tell a model which envelope fields to emit.
         # OpenRouter free endpoints need this contract in the prompt as well.
         system += "\nRequired output JSON Schema:\n" + json.dumps(output_schema, ensure_ascii=False)
+        metrics = request_stats(system, prompt, output_schema)
+        self._request_metrics.set(metrics)
         if provider == "gemini":
             model = str(_setting(self.settings, "GEMINI_MODEL", "gemini-3.8-flash"))
             if model != "gemini-3.8-flash":
@@ -471,8 +489,13 @@ class LLMGateway(_HTTPGateway):
             if violations:
                 raise ProviderError("INVALID_LLM_OPERATION", "Ответ модели нарушает контракт доступных операций.",
                     provider=provider, details={"schema_errors": violations})
-        self.last_call = {"provider": provider, "model": model}
-        return result
+        metadata = {"provider": provider, "model": model, "request_metrics": metrics}
+        if counts := usage_counts(provider, body):
+            metadata["usage"] = counts
+        # Kept for legacy callers. Harness uses the per-result metadata instead
+        # of this mutable attribute when sessions share a gateway concurrently.
+        self.last_call = metadata
+        return ExtractionOutput(result, metadata)
 
 
 class TravelGateway(_HTTPGateway):

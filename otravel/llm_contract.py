@@ -8,6 +8,7 @@ New IDs are deterministic aliases for this snapshot, not invented identities.
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 from typing import Any
 
 from .domain import CITIES, MVP_LIMITS, TripState
@@ -51,6 +52,99 @@ def _candidates(prefix: str, existing: set[str], count: int) -> list[str]:
     return result
 
 
+def _local_definitions(schema: dict) -> dict:
+    """Intern identical schema nodes only, using deterministic local references.
+
+    Property maps and literal values are not schemas and must not be replaced.
+    Small or single-use definitions are inlined again when a parent definition
+    has removed their original repetition. No shared/global state or external
+    resolver is involved.
+    """
+    def encoded(value: dict) -> str:
+        return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+    def children(node: dict):
+        for child in node.get("properties", {}).values():
+            yield child
+        if isinstance(node.get("items"), dict):
+            yield node["items"]
+        for keyword in ("oneOf", "anyOf", "allOf"):
+            yield from node.get(keyword, [])
+
+    counts: dict[str, int] = {}
+
+    def collect(node: dict) -> None:
+        key = encoded(node)
+        counts[key] = counts.get(key, 0) + 1
+        for child in children(node):
+            collect(child)
+
+    collect(schema)
+    names = {}
+    for key, count in counts.items():
+        size = len(key.encode("utf-8"))
+        name = "s" + str(len(names))
+        reference_size = len(encoded({"$ref": "#/$defs/" + name}))
+        if (count - 1) * size > count * reference_size + len(name) + 4:
+            names[key] = name
+    definitions: dict[str, dict] = {}
+
+    def rewrite(node: dict, *, define=False) -> dict:
+        key = encoded(node)
+        if not define and key in names:
+            name = names[key]
+            if name not in definitions:
+                definitions[name] = rewrite(node, define=True)
+            return {"$ref": "#/$defs/" + name}
+        result = deepcopy(node)
+        if "properties" in result:
+            result["properties"] = {key: rewrite(child) for key, child in node["properties"].items()}
+        if isinstance(result.get("items"), dict):
+            result["items"] = rewrite(node["items"])
+        for keyword in ("oneOf", "anyOf", "allOf"):
+            if keyword in result:
+                result[keyword] = [rewrite(child) for child in node[keyword]]
+        return result
+
+    result = rewrite(schema)
+
+    def refs(value: Any, counts: dict[str, int]) -> None:
+        if isinstance(value, dict):
+            if set(value) == {"$ref"}:
+                name = value["$ref"].removeprefix("#/$defs/")
+                counts[name] = counts.get(name, 0) + 1
+            for child in value.values():
+                refs(child, counts)
+        elif isinstance(value, list):
+            for child in value:
+                refs(child, counts)
+
+    def inline(value: Any, name: str, replacement: dict) -> Any:
+        if isinstance(value, dict):
+            if value == {"$ref": "#/$defs/" + name}:
+                return deepcopy(replacement)
+            return {key: inline(child, name, replacement) for key, child in value.items()}
+        if isinstance(value, list):
+            return [inline(child, name, replacement) for child in value]
+        return value
+
+    while definitions:
+        uses: dict[str, int] = {}
+        refs(result, uses)
+        refs(definitions, uses)
+        unprofitable = next((name for name, node in definitions.items()
+            if (uses.get(name, 0) - 1) * len(encoded(node).encode("utf-8")) <=
+               uses.get(name, 0) * len(encoded({"$ref": "#/$defs/" + name})) + len(name) + 4), None)
+        if unprofitable is None:
+            break
+        replacement = definitions.pop(unprofitable)
+        result = inline(result, unprofitable, replacement)
+        definitions = inline(definitions, unprofitable, replacement)
+    if definitions:
+        result["$defs"] = definitions
+    return result
+
+
 def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     """Build the complete five-field response envelope for one immutable snapshot.
 
@@ -80,18 +174,20 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     variants: list[dict] = []
 
     def operation(kind: str, value: dict, targets: list[str] | None = None) -> None:
-        properties = {"type": {"type": "string", "const": kind}, "value": value,
+        properties = {"type": {"const": kind}, "value": value,
                       "target_id": _enum(targets) if targets is not None else {"type": "null"}}
-        required = ("type", "value", "target_id") if targets is not None else ("type", "value")
-        variants.append(_object(properties, required))
+        variant = {"properties": properties}
+        if targets is not None:
+            variant["required"] = ["target_id"]
+        variants.append(variant)
 
     operation("set_origin", _object({"city": city}, ("city",)))
     operation("set_budget", _object({"amount_minor": {"type": "integer", "minimum": 1},
         "currency": _text(pattern=r"^[A-Z]{3}$"), "scope": {"type": "string", "const": "whole_trip"}}, ("amount_minor",)))
-    operation("set_preference", {"oneOf": [_object({"key": {"type": "string", "const": key},
-        "value": {"type": "string", "const": value},
-        "weight": {"type": "number", "minimum": 0, "maximum": 1}}, ("key", "value"))
-        for key, value in (("price_priority", "lowest_total"), ("departure_time", "early_morning"))]})
+    operation("set_preference", _object({"key": {}, "value": {},
+        "weight": {"type": "number", "minimum": 0, "maximum": 1}}, ("key", "value"),
+        oneOf=[{"properties": {"key": {"const": key}, "value": {"const": value}}}
+            for key, value in (("price_priority", "lowest_total"), ("departure_time", "early_morning"))]))
     operation("set_search_policy", _object({
         "mode": _enum(("DEMO", "HYBRID")), "hotel_provider": _enum(("liteapi", "serpapi")),
         "flight_provider": _enum(("duffel", "serpapi")), "demo_fallback": {"type": "boolean"},
@@ -101,10 +197,10 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     if new_people:
         people = []
         for kind, lower, upper in (("adult", 18, 120), ("child", 0, 17)):
-            people.append(_object({"id": _enum(new_people), "type": {"type": "string", "const": kind},
-                "age": _nullable({"type": "integer", "minimum": lower, "maximum": upper}),
-                "birth_date": date, "group_id": group}, ("id", "type")))
-        operation("add_traveler", {"oneOf": people})
+            people.append({"properties": {"type": {"const": kind},
+                "age": _nullable({"type": "integer", "minimum": lower, "maximum": upper})}})
+        operation("add_traveler", _object({"id": _enum(new_people), "type": {}, "age": {},
+            "birth_date": date, "group_id": group}, ("id", "type"), oneOf=people))
     if traveler_ids:
         operation("update_traveler", _object({"type": _enum(("adult", "child")),
             "age": _nullable({"type": "integer", "minimum": 0, "maximum": 120}),
@@ -128,22 +224,22 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     # A new unsupported key belongs in unknowns, not an invented operation. No
     # arbitrary object is permitted: the only structured value is a known pet.
     existing_unknown_keys = [c.key for c in state.constraints if c.key not in {"breakfast", "refundable", "pets_allowed", "pets"}]
-    condition_values = [_object({"key": _enum(("breakfast", "refundable", "pets_allowed")),
-        "value": {"type": "boolean"}, "hard": {"type": "boolean"}, "stay_id": stay_reference}, ("key", "value")),
-        _object({"key": {"type": "string", "const": "pets"},
+    condition_values = [{"properties": {"key": _enum(("breakfast", "refundable", "pets_allowed")),
+        "value": {"type": "boolean"}}},
+        {"properties": {"key": {"const": "pets"},
             "value": _object({"kind": _enum(("dog", "cat")),
-                "weight_kg": {"type": "number", "exclusiveMinimum": 0}}, ("kind",)),
-            "hard": {"type": "boolean"}, "stay_id": stay_reference}, ("key", "value"))]
+                "weight_kg": {"type": "number", "exclusiveMinimum": 0}}, ("kind",))}}]
     if existing_unknown_keys:
-        condition_values.append(_object({"key": _enum(list(dict.fromkeys(existing_unknown_keys))),
-            "value": {"type": ["boolean", "string", "number", "null"]},
-            "hard": {"type": "boolean"}, "stay_id": stay_reference}, ("key", "value")))
-    operation("set_constraint", {"oneOf": condition_values})
+        condition_values.append({"properties": {"key": _enum(list(dict.fromkeys(existing_unknown_keys))),
+            "value": {"type": ["boolean", "string", "number", "null"]}}})
+    operation("set_constraint", _object({"key": {}, "value": {}, "hard": {"type": "boolean"},
+        "stay_id": stay_reference}, ("key", "value"), oneOf=condition_values))
     operation("clear_constraint", _object({"key": _text(), "stay_id": stay_reference}, ("key",)))
     operation("undo", _object({}))
 
     schema = _object({
-        "operations": {"type": "array", "maxItems": 30, "items": {"oneOf": variants}},
+        "operations": {"type": "array", "maxItems": 30,
+            "items": _object({"type": {}, "value": {}, "target_id": {}}, ("type", "value"), oneOf=variants)},
         "control": _object({"action": _enum(CONTROL_ACTIONS)}, ("action",)),
         "reply": {"type": "string"},
         "unknowns": {"type": "array", "items": {"type": "string"}},
@@ -153,7 +249,7 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     }, ("operations", "control", "reply", "unknowns", "conflicts"))
     # Every invocation owns its nested containers; callers may attach the schema
     # to one request context without mutating settings or another session.
-    return deepcopy(schema)
+    return _local_definitions(schema)
 
 
 # Compatibility with the task's spelling; Python callers normally use snake_case.

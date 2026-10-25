@@ -187,7 +187,9 @@ def test_unrelated_weather_is_not_swallowed_by_geographic_confirmation():
 @pytest.mark.parametrize("text", ["из Москвы", "из москвы"])
 def test_origin_from_phrase_is_moscow_without_question_loop(text):
     result = resolve_short_answer(state(), "origin.city", text)
-    assert result == {"handled": True, "operations": [{"type": "set_origin", "value": {"city": "Москва"}}]}
+    assert result["handled"] and result["operations"] == [{"type": "set_origin", "value": {"city": "Москва"}}]
+    assert result["pending_context"]["requested_origin"]["name"] == "Москва" and "question" not in result
+    assert set(result["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
 
 
 def test_origin_country_confirmation_names_departure_not_destination():
@@ -212,7 +214,9 @@ def test_destination_country_memory_does_not_constrain_origin_city():
     pending = {"field": "origin.city", "context": {"requested_destination": parse_destination("Турция")["requested_destination"]}}
     snapshot = deepcopy(pending)
     result = resolve_short_answer(state(), pending, "Москва")
-    assert result == {"handled": True, "operations": [{"type": "set_origin", "value": {"city": "Москва"}}]}
+    assert result["handled"] and result["operations"] == [{"type": "set_origin", "value": {"city": "Москва"}}]
+    assert result["pending_context"]["requested_destination"] == pending["context"]["requested_destination"]
+    assert set(result["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
     assert pending == snapshot
 
 
@@ -509,3 +513,106 @@ def test_age_target_metadata_in_nested_pending_context_is_respected():
     result = resolve_short_answer(before.model_dump(mode="json"), pending, "Ей четыре года")
     assert result["operations"] == [{"type": "update_traveler", "target_id": "child-2", "value": {"age": 4}}]
     assert result["pending_context"]["target_id"] == "child-1"
+
+
+_CLEAR_PROPOSAL_KEYS = {"proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field"}
+
+
+def _merge_pending(previous, result):
+    """Simulate the root's required unset-before-merge, without Store or app."""
+    merged = deepcopy(previous)
+    for key in result.get("pending_context_clear", []):
+        merged.pop(key, None)
+    merged.update(deepcopy(result.get("pending_context", {})))
+    return merged
+
+
+def test_decline_explicitly_unsets_old_proposal_before_merge_and_no_yes_can_revive_it():
+    before = state(origin="Москва")
+    remembered = {**country_pending(), "children_known": True, "children_count": 0,
+                  "requested_origin": parse_destination("Россия")["requested_destination"]}
+    proposed = resolve_short_answer(before, remembered, "Стамбул")
+    previous = _merge_pending(remembered, proposed)
+    previous["suggested_cities"] = [{"name": "Стамбул", "country_code": "TR"}]
+    previous["contextual_correction"] = {"interpreted_city": "Стамбул", "country_code": "TR"}
+    snapshot = deepcopy(previous)
+    declined = resolve_short_answer(before, previous, "нет")
+    assert set(declined["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
+    merged = _merge_pending(previous, declined)
+    assert not any(key in merged for key in _CLEAR_PROPOSAL_KEYS)
+    assert merged["requested_destination"]["country_code"] == "RS"
+    assert merged["children_known"] is True and merged["children_count"] == 0
+    assert merged["requested_origin"]["country_code"] == "RU"
+    assert resolve_short_answer(before, merged, "нет")["operations"] == []
+    assert resolve_short_answer(before, merged, "да")["operations"] == []
+    assert previous == snapshot and before.stays == [] and before.origin == "Москва"
+
+
+def test_new_country_clears_previous_city_proposal_but_keeps_other_metadata():
+    initial = {**country_pending(), "children_known": True,
+               "requested_origin": parse_destination("Россия")["requested_destination"]}
+    previous = _merge_pending(initial, resolve_short_answer(state(), initial, "Стамбул"))
+    changed = resolve_short_answer(state(), previous, "Турция")
+    assert changed["operations"] == [] and set(changed["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
+    merged = _merge_pending(previous, changed)
+    assert merged["requested_destination"]["kind"] == "country" and merged["requested_destination"]["country_code"] == "TR"
+    assert merged["requested_origin"]["country_code"] == "RU" and merged["children_known"] is True
+    assert not any(key in merged for key in _CLEAR_PROPOSAL_KEYS)
+
+
+def test_supported_city_commit_clears_stale_proposal_packet_before_metadata_merge():
+    before = state(origin="Москва")
+    initial = {**country_pending(), "children_known": True, "requested_origin": parse_destination("Россия")["requested_destination"]}
+    proposed = resolve_short_answer(before, initial, "Санкт-Петербург")
+    previous = _merge_pending(initial, proposed)
+    confirmed = resolve_short_answer(before, previous, "да")
+    assert set(confirmed["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
+    merged = _merge_pending(previous, confirmed)
+    assert merged["requested_destination"]["name"] == "Санкт-Петербург" and merged["requested_origin"]["country_code"] == "RU"
+    assert merged["children_known"] and not any(key in merged for key in _CLEAR_PROPOSAL_KEYS)
+    assert confirmed["operations"][0]["type"] == "upsert_stay"
+
+
+@pytest.mark.parametrize("proposal_field", ["destination.city", None])
+def test_destination_proposal_never_answers_origin_yes(proposal_field):
+    pending = {"field": "origin.city", "requested_destination": parse_destination("Сербия")["requested_destination"],
+               "proposed_destination": parse_destination("Стамбул")["requested_destination"], "confirmation_required": True}
+    if proposal_field:
+        pending["proposal_field"] = proposal_field
+    snapshot = deepcopy(pending)
+    result = resolve_short_answer(state(), pending, "да")
+    assert result == {"handled": False, "operations": []}
+    assert pending == snapshot
+
+
+def test_new_origin_proposal_is_bound_to_origin_and_does_not_replace_destination():
+    pending = {"field": "origin.city", "requested_origin": parse_destination("Сербия")["requested_destination"],
+               "requested_destination": parse_destination("ОАЭ")["requested_destination"], "children_known": True}
+    proposed = resolve_short_answer(state(), pending, "из Стамбула")
+    assert proposed["pending_context"]["proposal_field"] == "origin.city"
+    previous = _merge_pending(pending, proposed)
+    confirmed = resolve_short_answer(state(), previous, "да")
+    assert confirmed["operations"] == [{"type": "set_origin", "value": {"city": "Стамбул"}}]
+    assert set(confirmed["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
+    merged = _merge_pending(previous, confirmed)
+    assert merged["requested_destination"]["country_code"] == "AE" and merged["children_known"] is True
+
+
+def test_unambiguous_legacy_destination_confirmation_still_works_and_is_consumed():
+    pending = {**country_pending(), "proposed_destination": parse_destination("Стамбул")["requested_destination"],
+               "confirmation_required": True}
+    result = resolve_short_answer(state(), pending, "да")
+    assert result["operations"][0]["type"] == "upsert_stay" and result["operations"][0]["value"]["city"] == "Стамбул"
+    assert set(result["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
+
+
+def test_unsupported_contextual_typo_selection_clears_old_flags_but_reintroduces_new_ack():
+    initial = country_pending()
+    previous = _merge_pending(initial, resolve_short_answer(state(), initial, "Стамбул"))
+    selected = resolve_short_answer(state(), previous, "Белгород")
+    assert selected["operations"] == [] and set(selected["pending_context_clear"]) == _CLEAR_PROPOSAL_KEYS
+    merged = _merge_pending(previous, selected)
+    assert merged["requested_destination"]["name"] == "Белград" and merged["requested_destination"]["country_code"] == "RS"
+    assert "Понял как «Белград», Сербия." in selected["question"]
+    assert merged["contextual_correction"]["interpreted_city"] == "Белград"
+    assert "proposed_destination" not in merged and "confirmation_required" not in merged and "proposal_field" not in merged

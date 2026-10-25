@@ -1,0 +1,74 @@
+{
+  "format": "otravel.dependency_audit_commit_summary.v1",
+  "checked_at_utc": "2026-10-25T20:49:57.924485+00:00",
+  "tool": "pip-audit2.10.1",
+  "services": [
+    "PyPI",
+    "OSV"
+  ],
+  "flags": [
+    "--no-deps",
+    "--disable-pip",
+    "--strict"
+  ],
+  "candidate_image_id": "sha256:4cea47c19b5f3714cfced757641d8242e1e992045056b57212b21a72a2270ed0",
+  "candidate_deployed": false,
+  "candidate_interpreters": {
+    "/opt/venv/bin/python": {
+      "pip": "26.2.2",
+      "audited_packages": 29,
+      "reported_known_advisories": 0,
+      "skipped": 0
+    },
+    "/usr/local/bin/python": {
+      "pip": "26.2.2",
+      "audited_packages": 1,
+      "reported_known_advisories": 0,
+      "skipped": 0
+    }
+  },
+  "requirements_lock": {
+    "sha256": "bfeb82fa46f4d3a7d99b98f83c48014cbd354e41daae4d4eeca2a2e7f65fc56c",
+    "pins": 36,
+    "reported_known_advisories": 0,
+    "skipped": 0,
+    "installed_for_audit": false
+  },
+  "live_baseline": {
+    "image_id": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+    "pip": "25.0.1",
+    "reported_unique_advisories": 6,
+    "cve_ids": [
+      "CVE-2025-8869",
+      "CVE-2026-13346",
+      "CVE-2026-1703",
+      "CVE-2026-3219",
+      "CVE-2026-6357",
+      "CVE-2026-8643"
+    ],
+    "unchanged": true
+  },
+  "excluded_first_party": {
+    "name": "otravel-agent",
+    "version": "0.2.0",
+    "reason": "First-party source not covered by public third-party package lookup"
+  },
+  "installed_runtime_declared_licenses": {
+    "MIT": 16,
+    "Apache-2.0": 3,
+    "MPL-2.0": 1,
+    "BSD-3-Clause": 7,
+    "MIT AND PSF-2.0": 1,
+    "PSF-2.0": 1
+  },
+  "unknowns": [
+    "otravel-agent installed license metadata is undeclared; no automatic MIT assignment",
+    "Dev-only lockpackage license files not inspected",
+    "Application exploitability/source code, stdlib/native/OS vulnerabilities and legal compatibility not assessed"
+  ],
+  "live_or_native_environment_changes": false,
+  "raw_evidence": "Local ignored files in this directory; SHA/commands/timestamps in candidate-summary.json and manifest.json",
+  "full_security_verified": false,
+  "candidate_matches_lock_runtime_pins": true,
+  "build_session_97666": "No longer readable (Unknown process id); audited completed immutable image identified by candidate tag instead."
+}

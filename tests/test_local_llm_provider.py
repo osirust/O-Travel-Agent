@@ -27,7 +27,8 @@ async def test_ollama_is_native_json_schema_without_cloud_keys_or_thinking():
     try:
         assert gateway.wall_timeout == 105
         assert await gateway.extract_operations({"current_message": "в Сербию"}) == result()
-        assert gateway.last_call == {"provider": "ollama", "model": "qwen3.5:4b"}
+        assert {key: gateway.last_call[key] for key in ("provider", "model")} == {"provider": "ollama", "model": "qwen3.5:4b"}
+        assert gateway.last_call["request_metrics"]["context_utf8_bytes"] > 0
     finally:
         await gateway.close()
 

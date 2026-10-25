@@ -1,77 +1,50 @@
-# API: ключи, бесплатные режимы и происхождение данных
+# Настройка API
 
-Проверка публичных условий: 25 октября 2026 года. Адаптеры используют `httpx`, без SDK, OpenCode runtime и создания supplier orders. OpenRouter, LiteAPI sandbox, Duffel test и SerpApi настроены локально; Open-Meteo работает без ключа. Фактические пробы и их ограничения приведены ниже; тесты с `MockTransport` сами по себе не подтверждают внешнюю интеграцию.
+Ключи храните в локальном `.env`. Для демонстрационного поиска они не нужны. После изменения настроек нужно пересоздать контейнер приложения:
 
-## Фактическая проверка аккаунтов
+```bash
+docker compose up -d app
+```
 
-В [ограниченном прогоне](verification/travel-api-probes-20261025.json) выполнено семь HTTP-запросов: LiteAPI catalog+rates вернули586SANDBOXтарифов, Duffel9SANDBOXпредложений, SerpApi Free metadata подтвердили250остатка до проб, затем20hotel/4flight результатов, Open-Meteo7днейпрогноза. Транспорт ограничен allowlist и не более7запросами, повтор за эти сутки блокируется. Заказы у поставщиков0. Один номер/одно авиаплечо на синтетическую группу не доказывают живую сложную корзину или reprice.
+## Модель
 
-Gemma после активации ключа и разрешённого cap$0.01 остаётся заблокирована upstream429 Google AI Studio. NVIDIA `nvidia/nemotron-3.5-super-vl:free` прошла одну synthetic extraction JSON+domain и настроена как явный `OPENROUTER_BACKUP_MODEL`; Ещё один [HTTP harness-turn](verification/llm-runtime-20261025.json) прошёл относительные правки origin/бюджета и сохранение3гостей; успешный backup ответилза24342мс послеGemma429. Это не PASS многошагового NLU. Платных запросов нет. Gemini не проверен: ключа пока нет. Hotelbeds/RateHawk/Travelpayouts проверены только на fixtures.
+Основной провайдер выбирается через `LLM_PROVIDER`.
 
-Три travel-key были присланы владельцем в чат; рекомендовано перевыпустить и заменить локально. Их значения и содержимое ответов поставщиков в этом документе не сохраняются. Статус configured не равен успешному текущему запросу: API/квоты/срок действия ключа могут измениться.
+| Провайдер | Настройки |
+| --- | --- |
+| Groq | `LLM_PROVIDER=groq`, `GROQ_API_KEY`, `GROQ_MODEL=qwen/qwen3.8-27b`, `GROQ_FREE_TIER_CONFIRMED=true` |
+| OpenRouter | `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` с окончанием `:free` |
+| Gemini | `LLM_PROVIDER=gemini`, `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.8-flash`, `GEMINI_FREE_TIER_CONFIRMED=true` |
 
-Владелец самостоятельно регистрирует аккаунты, принимает ToS и создаёт ключи. Мы не включаем billing, не привязываем карту и не покупаем квоты. Секреты храните в локальном `.env`, не отправляйте в чат и не коммитьте. Настройки-заглушки находятся в `.env.example`.
+Флаги Free ставятся после проверки тарифа в кабинете провайдера. Приложение не подключает оплату. У OpenRouter дополнительно запрещены ненулевые цены и неявный выбор платной модели.
 
-## LLM
+[Ключи Groq](https://console.groq.com/keys) · [Ключи OpenRouter](https://openrouter.ai/settings/keys) · [Ключи Gemini](https://aistudio.google.com/api-keys)
 
-| Режим | Настройки | Где получить и проверить |
+Для дополнительных провайдеров: [регистрация и бесплатные квоты Z.ai, Cohere, Cloudflare и NVIDIA](LLM_ACCOUNTS.md). Их доступ и подключение к проекту проверяются отдельно.
+
+В настроенной WSL-среде ключи можно ввести без отображения в терминале:
+
+```powershell
+py scripts/configure_keys.py
+```
+
+Enter пропускает отсутствующий ключ. Эта команда сохраняет ключи, но не меняет основной провайдер.
+
+Бесплатные квоты ограничивают и число запросов, и объём токенов. При429 не отправляйте сообщение многократно. Поездка сохраняется; причина отказа и доступное время повтора записываются в журнал, если их сообщил поставщик.
+
+При недоступной модели остаются демосценарий и структурированные команды. Свободный диалог требует работающей LLM.
+
+## Туристические данные
+
+| Источник | Настройки | Данные |
 | --- | --- | --- |
-| Gemini, основной | `LLM_PROVIDER=gemini`, `GEMINI_MODEL=gemini-3.8-flash`, `GEMINI_API_KEY`, `GEMINI_FREE_TIER_CONFIRMED=true` только после ручной проверки бесплатного проекта | [AI Studio: ключи](https://aistudio.google.com/apikey), [модель](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash), [pricing](https://ai.google.dev/gemini-api/docs/pricing), [условия](https://ai.google.dev/gemini-api/terms) |
-| OpenRouter, явно выбранный резерв | `LLM_PROVIDER=openrouter`, `OPENROUTER_MODEL=google/gemma-4-31b-it:free`, `OPENROUTER_API_KEY` | [ключи](https://openrouter.ai/settings/keys), [модель](https://openrouter.ai/google/gemma-4-31b-it%3Afree), [лимиты](https://openrouter.ai/docs/api_reference/limits), [ToS](https://openrouter.ai/terms) |
+| LiteAPI | `LITEAPI_API_KEY`, `LITEAPI_MODE=sandbox` | Тестовые отели и тарифы |
+| Duffel | `DUFFEL_ACCESS_TOKEN` с префиксом `duffel_test_` | Тестовые перелёты |
+| SerpApi | `SERPAPI_API_KEY`, `SERPAPI_FREE_TIER_CONFIRMED=true` | Цены из поиска, без гарантии покупки |
+| Open-Meteo | Ключ не нужен | Прогноз погоды |
 
-Gemini вызывается нативным REST: `POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent`. Ключ передаётся в `x-goog-api-key`, не в URL. Настройка включает `generationConfig.responseMimeType=application/json` и `responseJsonSchema`, без старых sampling-параметров. Формат JSON не доказывает правильность смысла: после ответа нужны Pydantic/domain-проверки. [REST GenerationConfig](https://ai.google.dev/api/generate-content#v1beta.GenerationConfig).
+Для Hotelbeds, RateHawk и Travelpayouts есть адаптеры, но доступ к аккаунтам пока не проверен. Настройки для них перечислены в `.env.example`.
 
-Google публикует Standard Free Tier для этой модели, но конкретные RPM/TPM/RPD задаются проектом и проверяются в AI Studio. Не включайте billing ради этого setup. Флаг `GEMINI_FREE_TIER_CONFIRMED` — ручное подтверждение владельца, а не автоматическое определение бесплатности аккаунта. Россия отсутствует в [списке регионов](https://ai.google.dev/gemini-api/docs/available-regions); ключ не отменяет региональных условий. Используйте разрешённые аккаунт и среду; доступ из фактической сети ещё не проверен. Free-tier content может использоваться для улучшения продуктов. [Квоты](https://ai.google.dev/gemini-api/docs/rate-limits), [pricing и обработка данных](https://ai.google.dev/gemini-api/docs/pricing).
+Каждое предложение хранит источник, время получения и тип данных: `DEMO`, `SANDBOX`, `LIVE_INDICATIVE` или `LIVE_BOOKABLE`. Смешанная поездка не становится подтверждённой рыночной корзиной только из-за успешного поиска.
 
-OpenRouter вызывается через `POST https://openrouter.ai/api/v1/chat/completions`, Bearer key, JSON mode. Разрешены только model ID с `:free`; запрос ограничивает `provider.max_price` нулями для prompt/completion/request и запрещает fallback на другого провайдера. Ключ без покупки кредитов даёт опубликованные 20 RPM и 50 запросов/день; повышение дневной квоты до 1 000 требует покупки кредитов и здесь не используется. Неудачные запросы также могут расходовать дневную квоту. Поддержка JSON mode не означает JSON Schema enforcement. [Лимиты](https://openrouter.ai/docs/api_reference/limits), [free model](https://openrouter.ai/google/gemma-4-31b-it%3Afree), [защита цены маршрута](https://openrouter.ai/docs/guides/routing/provider-selection#max-price).
-
-При ошибке модели gateway не меняет provider/model и не делает скрытые retries. Один `extract_operations` — одна HTTP-попытка. Выбор резерва, общий счётчик квоты, максимум повторов/repair и сохранение состояния принадлежат приложению. HTTP timeout ограничен 30 секундами, output — 4 096 токенами. Региональные условия OpenRouter и выбранного upstream сохраняются.
-
-## Поиск и погода
-
-| Адаптер | Получение без наших финансовых действий | Статус результата и ограничения |
-| --- | --- | --- |
-| LiteAPI Hotels | Владелец получает sandbox key в [dashboard](https://dashboard.liteapi.travel/). `LITEAPI_API_KEY`, `LITEAPI_MODE=sandbox`. [Инструкция sandbox](https://docs.liteapi.travel/docs/getting-a-sandbox-key), [условия](https://www.liteapi.travel/terms/) | Только `SANDBOX`. Sandbox key доступен без карты; production требует отдельных условий/карты и в этой реализации заблокирован. Sandbox не доказывает live-наличие. |
-| Duffel Flights | Собственный Developer test token, `DUFFEL_ACCESS_TOKEN=duffel_test_…`. [Dashboard](https://app.duffel.com/), [test mode](https://duffel.com/docs/api/overview/test-mode), [условия](https://duffel.com/services-agreement) | Только `SANDBOX`; live token блокируется до HTTP-вызова. Нет создания orders/оплат. Live onboarding/KYC и финансовые условия не подключены. |
-| SerpApi Hotels/Flights | Собственный [free account](https://serpapi.com/users/sign_up), ключ в [dashboard](https://serpapi.com/manage-api-key). `SERPAPI_API_KEY` и `SERPAPI_FREE_TIER_CONFIRMED=true` после проверки плана. [Pricing](https://serpapi.com/pricing), [ToS](https://serpapi.com/legal) | `LIVE_INDICATIVE`: реальная поисковая выдача Google, не supplier availability/hold. На проверенной pricing-page — 250 поисков/месяц и 50/час. Платный план не выбирается. Без флага бесплатной квоты вызов заблокирован. |
-| Open-Meteo | Ключ/аккаунт/карта не нужны для free non-commercial evaluation. [Pricing](https://open-meteo.com/en/pricing), [условия](https://open-meteo.com/en/terms) | Прогноз на ближайшие семь дней с атрибуцией CC BY 4.0; не обещание погоды в произвольную будущую дату. Условия free: ниже 600/min, 5 000/hour, 10 000/day. Коммерческое использование проверяется отдельно. |
-| Hotelbeds / HBX Hotels | Владелец получает evaluation key/secret по [официальной инструкции](https://developer.hotelbeds.com/documentation/getting-started/). `HOTELBEDS_API_KEY`, `HOTELBEDS_API_SECRET`, `HOTELBEDS_TEST_CONFIRMED=true` после проверки test-доступа | Опциональный read-only адаптер, строго `api.test.hotelbeds.com`, `SANDBOX`. Документация указывает evaluation-квоту 50 requests/day. Production и создание заказов отсутствуют. |
-| RateHawk / ETG | Собственный **sandbox** key ID + API key из разрешённого доступа; [авторизация и типы ключей](https://docs.emergingtravel.com/docs/fundamentals/authorization/). `RATEHAWK_KEY_ID`, `RATEHAWK_API_KEY`, `RATEHAWK_TEST_CONFIRMED=true` | Опциональный read-only sandbox-поиск с BasicAuth. Квоты/доступные методы зависят от ключа; общий бесплатный live-доступ не обещается. Название флага TEST не разрешает финансовый ETG test environment. |
-| Travelpayouts / Aviasales Data API | Владелец получает токен в [Profile → API token](https://app.travelpayouts.com/), `TRAVELPAYOUTS_API_TOKEN`; [официальная инструкция](https://support.travelpayouts.com/hc/en-us/articles/203956163-Aviasales-Data-API) | Опциональные cached справочные цены, `LIVE_INDICATIVE` + `cached=true`, не live availability. Для `prices_for_dates` опубликован лимит 600/min; доступ аккаунта не проверен. [Лимиты](https://support.travelpayouts.com/hc/en-us/articles/4402565416594-API-rate-limits). |
-
-### Точные контракты адаптеров
-
-- **LiteAPI:** `POST https://api.liteapi.travel/v3.0/hotels/rates`, header `X-API-Key`. До HTTP проверяются одновременно `LITEAPI_MODE=sandbox` и префикс ключа `sand_` либо `sandbox_`; `prod_` и неизвестный префикс блокируются даже при указанном sandbox-mode. `reprice` проходит ту же проверку. [Официальные префиксы ключей](https://docs.liteapi.travel/reference/prompt-for-vibe-coding-tools). Нужны `hotelIds`, `checkin`, `checkout`, `currency`, `guestNationality`, `occupancies=[{adults, children:[точные возраста]}]`. Несуществующие даты, неполная группа или отсутствие ключа не приводят к HTTP-вызову. Для нескольких комнат сумма берётся только из агрегированного `offerRetailRate`; произвольные альтернативные `rates` не складываются. Поиск по city/координатам пока не реализован: требуется предварительно получить реальные hotel IDs. [Rates](https://docs.liteapi.travel/reference/post_hotels-rates), [справочник hotels](https://docs.liteapi.travel/reference/get_data-hotels).
-- **Duffel:** `POST https://api.duffel.com/air/offer_requests?return_offers=true`, Bearer test token, `Duffel-Version: v2`. Нужны все `slices=[{origin:IATA,destination:IATA,departure_date}]` и `passengers=[{type:adult}|{age:6}]`. Поддерживаются несколько плеч; сохранённый test offer обновляется через `GET /air/offers/{id}`. Orders endpoint отсутствует. [Offer Requests](https://duffel.com/docs/api/v2/offer-requests), [Offers](https://duffel.com/docs/api/v2/offers).
-- **SerpApi:** `GET https://serpapi.com/search.json`, engines `google_hotels` / `google_flights`. Ключ по контракту сервиса находится в query; адаптер удаляет его из диагностик и маскирует HTTPX-логи. Не включайте внешнее журналирование полных URL. Hotel request требует `city`/`q`, даты, валюту и одну occupancy; несколько комнат явно отклоняются как неподтверждённая allocation. Flights принимает все slices и явные adults/children; multi-city использует `type=3` и `multi_city_json`. Выдача может описывать только выбранное плечо, поэтому `itinerary_complete=false` до проверки приложением. [Hotels](https://serpapi.com/google-hotels-api), [Flights](https://serpapi.com/google-flights-api).
-- **Open-Meteo:** `GET https://api.open-meteo.com/v1/forecast`, проверенные координаты, `forecast_days=7`, текущая температура/код и дневные min/max/осадки. Этот endpoint не предоставляет отели, рейсы или цены. [Документация](https://open-meteo.com/en/docs).
-
-### Опциональные read-only источники
-
-**Hotelbeds.** `search_hotels(request, provider='hotelbeds')` отправляет `POST https://api.test.hotelbeds.com/hotel-api/1.0/hotels`. Вход: `hotel_ids` как числовые ID именно Hotelbeds test-каталога, `checkin`, `checkout`, `occupancies=[{adults,children:[возраста]}]`; optional `sourceMarket`. Все комнаты передаются одним запросом; для детей формируются `paxes=[{type:'CH',age:6}]`. Даты/гости не угадываются. Авторизация — `Api-key` и `X-Signature = hex(SHA256(apiKey + secret + Unix timestamp seconds))`: это **не HMAC**. API key, secret и подпись не включаются в URL или диагностические сообщения. [Подпись и test host](https://developer.hotelbeds.com/documentation/getting-started/), [multiroom/возраста](https://developer.hotelbeds.com/documentation/hotels/knowledge-base/certification-process/).
-
-Ответ нормализует каждый `rateKey` отдельно и сохраняет `net` как `PROVIDER_NET_RATE`, не как розничную сумму всех номеров. `sellingRate`, налоги и условия остаются в details. Даже `rateType=BOOKABLE` в test-ответе не превращает source_type в `LIVE_BOOKABLE`. `allocation_verified=false`: совместный набор комнат не строится сложением альтернативных rates. [Формат rates](https://developer.hotelbeds.com/documentation/hotels/booking-api/workflow/).
-
-**RateHawk.** `search_hotels(request, provider='ratehawk')` использует только `POST https://api-sandbox.ratehawk.com/api/b2b/v3/search/serp/hotels/`, BasicAuth `KEY_ID:API_KEY`. Вход: `hids` из sandbox, даты, `residency`, `currency='USD'`, `guests` либо `occupancies`. Максимумы контракта: девять комнат, шесть взрослых и четыре ребёнка в комнате; нужны точные возраста. Sandbox документирован как USD/en, поэтому другая валюта явно отклоняется, не пересчитывается придуманным курсом. Сумма берётся из `show_amount/show_currency_code`, если они есть, иначе из явно указанной contract-валюты. Невключённые налоги сохраняются; не считаются нулевыми. [Search contract](https://docs.emergingtravel.com/docs/affiliate-api/hotel-search/search-by-hotel-ids/).
-
-**Особенность ETG:** sandbox host отличается от `api.ratehawk.com`, где отдельный тип ключа `test` может подразумевать реальные брони с финансовыми обязательствами. Здесь тот host вообще не вызывается. Старый `worldota.net` не используется. SERP-результат не равен hotelpage/prebook, multiroom allocation не считается подтверждённой. [Среды и ключи](https://docs.emergingtravel.com/docs/fundamentals/authorization/).
-
-**Travelpayouts.** `search_flights(request, provider='travelpayouts')` делает `GET https://api.travelpayouts.com/aviasales/v3/prices_for_dates`, токен только в `X-Access-Token`. Вход: одна `slice={origin,destination,departure_date}`, явная валюта; optional boolean `direct` и `market`. Здесь `one_way=true`; multi-city возвращает `UNSUPPORTED_REQUEST`. Это reference fare без гарантии мест и **без расчёта цены всей группы**: не умножается на гостей и не становится full itinerary. Метод описан как кэш находок пользователей за 48 часов, а не новый поиск. `price_kind=CACHED_REFERENCE_FARE`, `cached=true`, `group_quote=false`; время upstream неизвестно, если поставщик его не сообщил. При отсутствии upstream expiry не придумывается свежий TTL для checkout. [Контракт и происхождение](https://support.travelpayouts.com/hc/en-us/articles/203956163-Aviasales-Data-API).
-
-## Перепроверка и происхождение
-
-Нормализованный offer содержит `offer_id`, `provider`, `source_type`, `price_kind`, `retrieved_at`, `expires_at`, `amount_minor`, `currency`, `description`, `details`. Цена в минимальных единицах указанной валюты; неизвестные обязательные сборы нельзя выдать за нулевые. Не складывайте `INDICATIVE_NIGHTLY` как полную стоимость проживания. Совпадение отеля и разных подписей поставщиков не доказывает сравнимость room/rate/питания/отмены и не закрывает DEC-005.
-
-`reprice` в этой версии означает обновление **того же источника**: LiteAPI повторяет sandbox rate search, Duffel обновляет test offer, SerpApi повторяет поиск с `no_cache=true`. Ни один из этих шагов не повышает результат в `LIVE_BOOKABLE`. У SerpApi default cache до часа; `no_cache=true` потребляет поисковую квоту. Если прежний offer не найден, возвращается `OFFER_UNAVAILABLE`, а не успешная старая цена. Повторная поисковая цена не равна supplier prebook. [SerpApi cache](https://serpapi.com/google-flights-api#api-parameters-serpapi-parameters-no-cache).
-
-LiteAPI `POST https://book.liteapi.travel/v3.0/rates/prebook` существует, но здесь **не вызывается**: это отдельный checkout-шаг, не бесконтрольный setup lookup. Для реального подтверждения inventory понадобятся отдельно согласованные разрешённый доступ и контракт; текущая имитация не создаёт supplier booking. [Prebook](https://docs.liteapi.travel/reference/post_rates-prebook).
-
-Для Hotelbeds, RateHawk и Travelpayouts реализован только описанный read-only поиск и нормализация на fixtures. `reprice` возвращает `UNSUPPORTED_REPRICE` без HTTP-вызова: supplier CheckRate/hotelpage/prebook/live reprice и финансовые операции не подключены. Наличие адаптера или env-переменной не подтверждает доступ аккаунта, production-пригодность, полноту группы или успешную live-интеграцию. Флаги `HOTELBEDS_TEST_CONFIRMED`/`RATEHAWK_TEST_CONFIRMED` по умолчанию false; перед ключами владелец самостоятельно проверяет и принимает условия сервиса.
-
-Перед ключом LiteAPI владелец отдельно сверяет продуктовый сценарий с [текущими ToS](https://www.liteapi.travel/terms/): там ограничены mapping к сторонним источникам, competitive analysis и хранение данных вне разрешённого использования. Здесь не подтверждено разрешение на выбранное сравнение поставщиков или долговременный каталог из ответов LiteAPI. Fixtures тестов созданы самостоятельно, данные поставщика для них не скачивались.
-
-## Проверка без ключей и следующий шаг
-
-`python -m pytest tests/test_providers.py -q` использует только HTTPX MockTransport: проверяет отправляемые payload, нормализацию, запрет paid/live режимов, отсутствие вызовов без ключей, обработку ошибок и маскирование секретов. Это не live smoke test.
-
-Для ещё не подключённых провайдеров после получения разрешённого бесплатного ключа отдельно проверяем ограниченный запрос, квоту, географию/группу и происхождение ответа. Их статус — «fixtures, доступ не подтверждён». Для уже подключённых источников следующие проверки — сложная группа/несколько комнат, срок действия и перепроверка того же предложения, перенос результатов в канонический план и корректное возвращение demo→live. Отсутствующий ключ блокируется доHTTP; внешний429/ошибка могут расходовать лимит аккаунта. Приложение сохраняет состояние и показывает согласованный ограниченный режим.
+Перед тестовым оформлением цена и наличие перепроверяются. Настоящие заказы у поставщиков и платежи приложение не создаёт.

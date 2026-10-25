@@ -63,7 +63,8 @@ async def test_groq_literal_endpoint_minimal_json_body_and_dynamic_schema():
     gateway = LLMGateway(settings)
     assert await extract(gateway, {"current_message": "Ему четыре года", "__response_schema": schema,
                                   "GROQ_API_KEY": "never-forward-this-context-secret"}) == RESULT
-    assert gateway.last_call == {"provider": "groq", "model": MODEL}
+    assert {key: gateway.last_call[key] for key in ("provider", "model")} == {"provider": "groq", "model": MODEL}
+    assert gateway.last_call["request_metrics"]["schema_utf8_bytes"] > 0
     assert len(calls) == 1 and settings == untouched
 
 
@@ -156,8 +157,8 @@ async def test_groq_failure_never_retries_or_logs_credentials(status, caplog):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("header,seconds", [("1", 1), ("60", 60), ("86400", 86400), (" 120 ", 120), ("00060", 60)])
-async def test_groq_429_preserves_only_bounded_integer_retry_after_hint(header, seconds):
+@pytest.mark.parametrize("header,seconds", [("1", 1), ("60", 60), ("86400", 86400), (" 120 ", 120), ("00060", 60), ("1.5", 2)])
+async def test_groq_429_preserves_bounded_retry_after_rounded_up_to_seconds(header, seconds):
     calls = []
     def handler(request):
         calls.append(request)
@@ -166,13 +167,14 @@ async def test_groq_429_preserves_only_bounded_integer_retry_after_hint(header, 
     with pytest.raises(ProviderError) as error:
         await extract(LLMGateway(config(handler)))
     assert error.value.code == "RATE_LIMITED" and error.value.provider == "groq"
-    assert error.value.details == {"http_status": 429, "limit_source": "unknown", "retry_after_seconds": seconds}
+    assert error.value.details == {"http_status": 429, "limit_source": "unknown", "retry_after_seconds": seconds,
+        "rate_limits": {"retry_after_seconds": seconds}}
     assert type(error.value.details["retry_after_seconds"]) is int
     assert len(calls) == 1 and SECRET not in json.dumps(error.value.as_dict())
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("header", [None, "", "0", "000", "-1", "+60", "1.5", "1e2", "86401",
+@pytest.mark.parametrize("header", [None, "", "0", "000", "-1", "+60", "1e2", "86401",
     "99999999999999999999", "120 seconds", "60, 120", "Wed, 21 Oct 2015 07:28:00 GMT", SECRET])
 async def test_groq_missing_or_invalid_retry_after_is_omitted(header):
     def handler(request):

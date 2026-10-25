@@ -1,14 +1,19 @@
 """Payload acceptance/rejection for the native schema; no model or DB calls.
 
-This small test interpreter exercises the module's vocabulary independently of
-the runtime Draft202012Validator; it is not a general JSON Schema validator.
+Use the runtime Draft202012Validator, including its local-reference resolution.
+An unrecognised $ref must never silently turn a negative case into a PASS.
 """
 
 import ast
+import base64
+from copy import deepcopy
+import hashlib
 import inspect
-import re
+import json
+import zlib
 
 import pytest
+from jsonschema import Draft202012Validator
 
 from otravel import domain
 from otravel.domain import Operation, TripState, apply_operations, sample_trip
@@ -16,50 +21,7 @@ from otravel.llm_contract import OPERATION_TYPES, Build_operation_schema, build_
 
 
 def accepts(value, schema):
-    if "oneOf" in schema and sum(accepts(value, child) for child in schema["oneOf"]) != 1:
-        return False
-    if "anyOf" in schema and not any(accepts(value, child) for child in schema["anyOf"]):
-        return False
-    kinds = schema.get("type")
-    if kinds is not None:
-        kinds = [kinds] if isinstance(kinds, str) else kinds
-        types = {"object": isinstance(value, dict), "array": isinstance(value, list),
-                 "string": isinstance(value, str), "integer": type(value) is int,
-                 "number": type(value) in (int, float), "boolean": type(value) is bool, "null": value is None}
-        if not any(types[kind] for kind in kinds):
-            return False
-    if "const" in schema and (type(value) is not type(schema["const"]) or value != schema["const"]):
-        return False
-    if "enum" in schema and value not in schema["enum"]:
-        return False
-    if isinstance(value, dict):
-        props = schema.get("properties", {})
-        if set(schema.get("required", [])) - value.keys():
-            return False
-        if schema.get("additionalProperties") is False and value.keys() - props.keys():
-            return False
-        if len(value) < schema.get("minProperties", 0):
-            return False
-        if any(not accepts(item, props[key]) for key, item in value.items() if key in props):
-            return False
-    if isinstance(value, list):
-        if len(value) > schema.get("maxItems", float("inf")):
-            return False
-        if schema.get("uniqueItems") and any(item in value[:index] for index, item in enumerate(value)):
-            return False
-        if "items" in schema and not all(accepts(item, schema["items"]) for item in value):
-            return False
-    if isinstance(value, str):
-        if len(value) < schema.get("minLength", 0):
-            return False
-        if "pattern" in schema and re.search(schema["pattern"], value) is None:
-            return False
-    if type(value) in (int, float):
-        if value < schema.get("minimum", float("-inf")) or value > schema.get("maximum", float("inf")):
-            return False
-        if "exclusiveMinimum" in schema and value <= schema["exclusiveMinimum"]:
-            return False
-    return True
+    return Draft202012Validator(schema).is_valid(value)
 
 
 def response(*operations):
@@ -223,3 +185,182 @@ def test_speech_act_metadata_and_minimum_price_are_bounded(state):
     assert accepts(payload, schema)
     payload["operations"][0]["value"]["value"] = 100000
     assert not accepts(payload, schema)
+
+
+def _baseline_schema(name):
+    snapshot = _FROZEN_BASELINE_SCHEMAS[name]
+    raw = zlib.decompress(base64.b85decode(snapshot["zlib_base85"]))
+    assert len(raw) == snapshot["bytes"]
+    assert hashlib.sha256(raw).hexdigest() == snapshot["sha256"]
+    return json.loads(raw)
+
+
+# After this refactor, same compact UTF-8 JSON encoding as the frozen originals.
+# Byte counts are not model-token counts; no tokenizer or inference was run.
+_COMPRESSED_SCHEMA_SERIALIZATION = {
+    "empty": {"bytes": 5573, "sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc"},
+    "sample": {"bytes": 6712, "sha256": "bcf2ec2c071334f764b45293d3f3f2efbc7e0731a77c7c67c0142e6b5e0ec2a3"},
+}
+
+
+@pytest.mark.parametrize("name,state", [("empty", TripState()), ("sample", sample_trip())])
+def test_schema_serialized_bytes_drop_at_least_25_percent_with_frozen_synthetic_baseline(name, state):
+    original = _baseline_schema(name)
+    schema = build_operation_schema(state)
+    Draft202012Validator.check_schema(original)
+    Draft202012Validator.check_schema(schema)
+    raw = json.dumps(schema, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    assert len(raw) <= _FROZEN_BASELINE_SCHEMAS[name]["bytes"] * 0.75
+    assert len(raw) == _COMPRESSED_SCHEMA_SERIALIZATION[name]["bytes"]
+    assert hashlib.sha256(raw).hexdigest() == _COMPRESSED_SCHEMA_SERIALIZATION[name]["sha256"]
+    assert json.dumps(build_operation_schema(state), ensure_ascii=False, separators=(",", ":")).encode() == raw
+
+
+@pytest.mark.parametrize("state", [TripState(), sample_trip(), TripState(travelers=[{"id": "name/with~pointer", "type": "adult"}])])
+def test_all_references_are_local_resolvable_and_schema_owns_its_definitions(state):
+    schema = build_operation_schema(state)
+    assert schema.get("$defs")
+    def walk(value):
+        if isinstance(value, dict):
+            if "$ref" in value:
+                ref = value["$ref"]
+                assert ref.startswith("#/$defs/") and set(value) == {"$ref"}
+                assert ref[len("#/$defs/"):] in schema["$defs"]
+            for child in value.values():
+                walk(child)
+        elif isinstance(value, list):
+            for child in value:
+                walk(child)
+    walk(schema)
+    fresh = build_operation_schema(state)
+    first_definition = next(iter(schema["$defs"]))
+    schema["$defs"][first_definition].clear()
+    assert fresh == build_operation_schema(state)
+
+
+@pytest.mark.parametrize("operation", [
+    op("update_traveler", {"age": 4}, "stay-istanbul"),
+    op("remove_traveler", {}, "new-traveler-1"),
+    op("remove_traveler", {}, "new-group-1"),
+    op("upsert_stay", {"city": "Стамбул"}, "child-1"),
+    op("remove_stay", {}, "new-stay-1"),
+    op("replace_hotel", {"hotel_id": "h"}, "new-stay-1"),
+    op("add_traveler", {"id": "new-stay-1", "type": "adult"}),
+    op("add_traveler", {"id": "new-traveler-1", "type": "adult", "group_id": "stay-istanbul"}),
+    op("upsert_stay", {"rooms": [{"id": "child-1", "traveler_ids": ["child-1"]}]}, "stay-istanbul"),
+    op("upsert_stay", {"rooms": [{"id": "new-room-1", "traveler_ids": ["new-room-1"]}]}, "stay-istanbul"),
+    op("set_constraint", {"key": "breakfast", "value": True, "stay_id": "child-1"}),
+    op("set_origin", {"city": "Москва"}, "stay-istanbul"),
+    op("undo", {}, "child-1"),
+])
+def test_local_reference_enums_reject_cross_typed_and_new_edit_target_ids(operation):
+    assert not accepts(response(operation), build_operation_schema(sample_trip()))
+
+
+def _equivalence_payloads():
+    """Fixed operation/value cases plus independent envelope mutations."""
+    operations = [op("set_origin", {"city": "Москва"}), op("set_origin", {"city": "Белград"}),
+        op("set_budget", {"amount_minor": 1}), op("set_budget", {"amount_minor": 123, "currency": "RUB", "scope": "whole_trip"}),
+        op("set_search_policy", {"mode": "HYBRID", "guest_nationality": None}),
+        op("set_preference", {"key": "price_priority", "value": "lowest_total", "weight": 0}),
+        op("set_preference", {"key": "departure_time", "value": "early_morning", "weight": 1}),
+        op("add_traveler", {"id": "new-traveler-1", "type": "adult", "age": 18}),
+        op("add_traveler", {"id": "new-traveler-2", "type": "child", "age": 17, "group_id": "new-group-1"}),
+        op("update_traveler", {"age": None, "birth_date": "2020-02-01"}, "child-1"),
+        op("remove_traveler", {}, "child-1"),
+        op("upsert_stay", {"city": None, "check_in": None, "rooms": []}, "new-stay-1"),
+        op("upsert_stay", {"city": "Стамбул", "rooms": [{"id": "new-room-1", "traveler_ids": ["new-traveler-1"]}]}, "stay-istanbul"),
+        op("remove_stay", {}, "stay-istanbul"), op("replace_hotel", {"hotel_id": "h"}, "stay-istanbul"),
+        op("shift_return", {"days": -2}), op("set_constraint", {"key": "breakfast", "value": True, "stay_id": None}),
+        op("set_constraint", {"key": "pets", "value": {"kind": "cat", "weight_kg": 0.1}, "hard": False, "stay_id": "new-stay-1"}),
+        op("clear_constraint", {"key": "breakfast", "stay_id": "stay-istanbul"}), op("undo", {})]
+    yield response()
+    for operation in operations:
+        yield response(operation)
+        for name in ("type", "value"):
+            changed = deepcopy(operation)
+            changed.pop(name)
+            yield response(changed)
+        for target in (None, "", "missing-id", "new-traveler-1", "stay-istanbul"):
+            yield response({**deepcopy(operation), "target_id": target})
+        yield response({**deepcopy(operation), "private_extra": True})
+        yield response({**deepcopy(operation), "value": {**operation["value"], "private_extra": True}})
+        yield {**response(operation), "private_extra": True}
+    for field in ("operations", "control", "reply", "unknowns", "conflicts"):
+        changed = response()
+        changed.pop(field)
+        yield changed
+    for length in (30, 31):
+        yield response(*[op("set_origin", {"city": "Москва"}) for _ in range(length)])
+    for subject in (None, "", "x" * 80, "x" * 81, 1):
+        yield {**response(), "information_subject": subject}
+    for speech_act in ("ASK", "CHANGE", "PROPOSE", "BOOK", None, True):
+        yield {**response(), "speech_act": speech_act}
+    for age in (-1, 0, 17, 18, 120, 121, None, True, "4"):
+        for kind in ("adult", "child"):
+            yield response(op("add_traveler", {"id": "new-traveler-1", "type": kind, "age": age}))
+    for weight in (-0.1, 0, 1, 1.1, True, None):
+        yield response(op("set_preference", {"key": "price_priority", "value": "lowest_total", "weight": weight}))
+    for value in (True, False, None, "yes", {}, [], 1):
+        yield response(op("set_constraint", {"key": "breakfast", "value": value}))
+    for key in ("breakfast", "pets", "arbitrary_condition"):
+        yield response(op("set_constraint", {"key": key, "value": {"kind": "dog", "weight_kg": 3}}))
+
+
+@pytest.mark.parametrize("name,state", [("empty", TripState()), ("sample", sample_trip())])
+def test_frozen_original_and_ref_schema_agree_on_operation_envelope_and_boundary_matrix(name, state):
+    original = Draft202012Validator(_baseline_schema(name))
+    current = Draft202012Validator(build_operation_schema(state))
+    accepted, rejected = 0, 0
+    for index, payload in enumerate(_equivalence_payloads()):
+        before, after = original.is_valid(payload), current.is_valid(payload)
+        assert before == after, (name, index, payload)
+        accepted += before
+        rejected += not before
+    assert accepted > 20 and rejected > 100
+
+
+def test_existing_unknown_constraint_scalar_union_and_shared_objects_remain_strict():
+    state = TripState(constraints=[{"key": "custom", "value": "old"}])
+    schema = build_operation_schema(state)
+    for value in (None, True, 4, "new"):
+        assert accepts(response(op("set_constraint", {"key": "custom", "value": value})), schema)
+    for operation in (op("set_constraint", {"key": "custom", "value": []}),
+                      op("set_constraint", {"key": "custom", "value": {"secret": True}}),
+                      op("set_constraint", {"key": "new_unsupported", "value": True}),
+                      op("set_preference", {"key": "price_priority", "value": "early_morning"}),
+                      op("set_preference", {"key": "departure_time", "value": "lowest_total"}),
+                      op("add_traveler", {"id": "new-traveler-1", "type": "adult", "age": 17})):
+        assert not accepts(response(operation), schema)
+
+
+def test_local_definitions_never_confuse_ids_with_json_pointer_paths():
+    state = TripState(origin="Москва", travelers=[{"id": "person/with~pointer", "type": "adult"}],
+                      stays=[{"id": "stay/with~pointer", "city": "Сочи"}])
+    schema = build_operation_schema(state)
+    assert accepts(response(op("update_traveler", {"age": 35}, "person/with~pointer")), schema)
+    assert accepts(response(op("upsert_stay", {"check_in": "2027-03-01"}, "stay/with~pointer")), schema)
+    assert not accepts(response(op("update_traveler", {"age": 35}, "stay/with~pointer")), schema)
+    assert not accepts(response(op("upsert_stay", {"check_in": "2027-03-01"}, "person/with~pointer")), schema)
+
+
+@pytest.mark.parametrize("count,expected", [(5, True), (6, False)])
+def test_room_array_bound_survives_local_refs(count, expected):
+    payload = response(op("upsert_stay", {"rooms": [{"id": "new-room-1", "traveler_ids": ["child-1"]}] * count}, "stay-istanbul"))
+    assert accepts(payload, build_operation_schema(sample_trip())) is expected
+
+
+# Synthetic pre-change schemas from a93f6f0, compact UTF-8 JSON. No provider keys.
+# Frozen before equivalence checks; this is an oracle snapshot, not a second builder.
+_FROZEN_BASELINE_SCHEMAS = {
+    "empty": {
+        "bytes": 7776,
+        "sha256": "f716da2bb8d7f7c2633e0a3b80e2bfa5c5166f96c23ba9b0b293c35bcb716553",
+        "zlib_base85": "c-rk*UvJws5dSX19%I0<o#xM5wgzjlbqU(1t?&d|I$4}4Ql+T4Mi8Lu9`;gT8?dKg!?16Vt|`_vTRwyQjdrALN0JrGO4GpE_K-k#JRZrr-yM(VBTJ1!uy!ob`wARoty!TIAxK3bvUZLv{Y?}V+)xu)A|)B2Xh5FcR}kP(ySZl3^b_ZB*!QfR$43>q)6tn!q$K5ilyY!2r5T`XA!(m->v+vNBrMK~U!v5ZYE-5acpTuKtmNn9eEfCtHu*g{L3Z+6a+3U=yd6JpB)=xF$ItQaS@LrH4gP<Xj-QXeP2T9wpHTD<Ek1r>Mo{=9`AZ8YXPWUnj%e1|_{I1;&G->VULxa9P5h9&PR^27sP`l})r?<~bKJz6hS|btMg&)UhGVBz_ZZJD;Ymy-xO(&EaNRYFxGvRBA?zS?c#p6MaE2nXkEWw;#tuAY%qprgV^hmksl5(w_F@-zR>PYl5HVMFK)H|^Y04G!L23w6P6O@PbyVuaQUZ5M{f~m50`DsyMR66P6iAK&Uq0S#e9=8>AAg{?6**$@DTcmaU?Vr2vu19ux7bOc1P`<wA?K)Nqj~_NMJt4oI)H0XjBEsR2^8k0FfoKk*-9wF^n@YMzOQn23wn7pG);1vBBNkYy~FD=XvJw=2#Hj&M99zpmO3pE$wqb{B-i|#J#KfUff=D`9N!KFqt2*C5($J0i>`#bdk^-Jy!ZKs5AWZ#v<-ZrfFVf5A$376n#=IkBOygj1TxfLdcMcB%a&5$#-0bPFyDnh*l0P{BhDZ*yC*RF5OW>&V;vKmq!yoCdW4ViF}iH}Ynk*{@OSb0S?pu8MwYw2vS32xn8L{+F!aq;a$N2_b1vmDY)sWR)^Q-mXcZalBBN7eY!n%Hij2)7W2?y6E;81e25Qx|ikZ2wNgqlfR(2O}W%E(1S%R!Jt4F2sZI>vxDsr2R?e0<MxRHLeE<Q@Jj3FaM98R!!`FdF|ni(?}rc^6OwR2P_M{VS&J2`4IM{VV(?HrZ*sUkErA}79l*WmdNVcYR3b8BKdchzqGkL=Y!_UaZdafp{Y)-Q^TuJDqrcIfST)0P3)@xd9`_|U(hfJxUAvAU@Rr4T_`3uV?cdDo<@7nsGfAzE3Yoh3S1Vk1qJlhlc!v&=Sc_q`Bv`Xq))>q^NOvaPK3W_bq68mRJhf1z$;_ME6n&snhDR4rcWN1dl;J~TutOSH2@XTC|5ORd>u-}@WUr=GGU;Cs7H$IvCCsHC@4JeCo=#cdt)EeRg)I@>x^-1H=nfkz@eQGyq9m-LuEU<fL*@g*yUc<yeAS2Ax}pGdcSL}RU1eNz|1m1W2cHjT8&YT$Q3`NEKPg;7qFF@M@kvIqULh7vq=SRBzqcrYt>=j@<Ys|<sGi6>XLq;$}p^0Jt|68iGj&x-izmgZYbe`0x$)VbN;*O86&ar;UNw#3gej@Gj%>1b7yn*v}+XnHF|aR4S0amRE#^<H%o(-h;n7B@Tas0=h#@M4;;EhY<B+DJmkN>FZUzX2CRUZcpJSjJ=2Q8lMUA%NrCxa&o>`sm*7XCLn&WB1V~`2XPH{=xpEJ(H~|_k;{glh=;o)EPBiELet4sjX&p#ASZ$y#T}1m>JV$?NQ;1e*jB;$5#"
+    },
+    "sample": {
+        "bytes": 9107,
+        "sha256": "fa4a61469b35bfd1f347b7828686101df994e30d432d938873fb7ee448adf1c7",
+        "zlib_base85": "c-rk+QE%He5dJU19&Ny}lda2JwgzjlbqU(1t?&d|I@z2lQl-eaMi8Lu9`;gT8?dKg!?1slt|`_vTYiK5k9MSNMRF9&c2dt-`w-)JB#-2GAMZ#ihmIOX;A}gh^EG(NsX37p5lBTLcD4^4BNIghx217gA|)AO(~vyAt02UxR-@+7RKz|U_5x@7;bDdCv^HxMD@l15TX{H|G73<xkhDv=b5wH<2-ErIml*Y^8kQLau0x!Yll+pLjlM}<Cx0Zzs7`)Qj+1|q*Q2NP<hSJI=qdg^NuH0s#orfc{n_Zd<dqSB#-@Lo=A&n}1{)tIf1Ae1sZsoZHAZzhdN%srD1O44=cxG06n;!zCa1{@w0oSK7{#y28BXF=-A>^o*91p=f^{cO`v})9;gO~id^35wxOUAUzE6!)2;0vsJ|HXx?4gM4B6QTx;lMRx&a^pOH$k?_>~(mvqkWv&0^TH{&|JA8<wE9KQ?8&3(om3c8XC`Tpixgt3EV67KQ{afcvtnXDUL#v0?Dz#R}XjUU$zfhNAH<w#h#eGia}2>a8VmwK(jE{8|<V=LI4IwC^%}~UEPP_tPvtfJ-{(2?rbD;2^B7MVPXKWa+OeonGOS>-JUAo7IunkXxQL1Va61qW`@@VXvJ!Mh=^2LB4ua@bFCJLWJ5O;k{kVMm)l-zV#WxK*K;Gms5e|7h=jt2St;T6?!7%M-udFA`*&|U27{hZz>uWkfchY3^<|j#NJLQ+gN%%1`UlLoY%T-74gz3P{e1|9i^#DK@%p*m9f8q@*mT&{W>0XEB0f%fgb#~*bl&jSwBc{c-_z-5wvX)?dF{s9k_nAt2qy=?&^OD(xWalaxRk@7J~3b4unw)Bk!Ch8k}i}wvMl4>%J2GSqr`tTr$eRcxjs>_EI%6c58H>ENA*-_o(rXnL1Idwqp`;?A8&$HKtjrfh*E7LHc>PPT01Fx6}&X=7(;wj=3KjDy&h%$f{raj^AFy+^#-Rc9T^{$2b<+APY_NcMr};6_7xcR7DtY2%4p@zu~SQ>W+t^VX)}|yGU@$^Lv7zwYGzXF;)Sq4=KSQ|G_fU~P!5(M_96~=2lsg#!Q&yGfE5`o@fK3OnQqprNLldkdf@e4%2ySv((!~=s~S)W5tco|WzTL`IoTLu)hYh+j%IZ;l-&{~>SnpRHBl3exAY;IvQf}BOSP?W^v*hFg=W4`XttRzY^4XXaYVvhIS*PZizT(P)1&6}k%sXbs*)P=Z>k%O@&i$RftB&|+}u`nudT|kdCvZ4DYU?`DZ-4ww5pAKp}Bq;a<P#8CbHv9B-aVAh!GE5%h3grT%OZ2nLM@7tlwLOa@?bVawRA&7x}8<lVM!){yx1d+w2BEeOp-)T;6p)eNQOTkwE$ZiA_fdf#yExFtfl2RO}LF-nrAO+_YD6?|wZZ{qh>axVdjnONZCWTl)%M*9~q9kho9z%q{E-Yn&+SgY?<m?RU#w-r=#wbW9K6UUsFvfP)#WaxeU!+_}EbFdl*`FWcQqQLuPMS|?}S(C~}VP^|Qvbmb*m^l|!13O2`=Y|q%46@H8<%I$ezKxmpIVjY5wN!+s^iOgKhcOQHEG?!01gMiA=a0T<!#iPb};7W|l`KyHL_LkD;V!#);PK}WX81>YG-Qozq>$y1VSy+91XXo=zc2TkO;8XnFzrVM?_h8q?ZOQ{7L;GFKjdkjb1+M6LVVaa~HL7=9?*C)X$uI#k2VEYI3RnCK9x|5|"
+    }
+}
