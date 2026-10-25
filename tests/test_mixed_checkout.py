@@ -196,11 +196,33 @@ async def test_mixed_search_preview_refresh_and_idempotent_simulated_confirm(mix
 
 
 @pytest.mark.asyncio
-async def test_new_preview_price_change_stales_previous_active_quote(mixed_api):
+async def test_new_preview_price_change_stales_previous_active_quote(mixed_api, monkeypatch):
     """MONEY-07/BOOK-03: source repricing revokes old consent; not an NLU test."""
+    import otravel.api as api_module
+    import otravel.orchestrator as orchestrator_module
+    import otravel.store as store_module
+
+    # This case isolates a price change. Independent host clock reads previously
+    # moved backwards between search and preview, making a fresh fixture appear
+    # future-dated. Expiry/clock rejection has separate explicit tests below.
+    class FixedDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            instant = cls(2026, 10, 26, tzinfo=timezone.utc)
+            return instant.astimezone(tz) if tz is not None else instant.replace(tzinfo=None)
+
+    monkeypatch.setitem(globals(), "datetime", FixedDatetime)
+    monkeypatch.setattr(api_module, "datetime", FixedDatetime)
+    monkeypatch.setattr(orchestrator_module, "datetime", FixedDatetime)
+    monkeypatch.setattr(store_module, "_now", lambda: FixedDatetime.now(timezone.utc))
     client, gateway, store = mixed_api
     sid, token, session, plan = await prepared(client)
-    first = (await preview(client, sid, token, session["state_version"], plan)).json()
+    first_response = await preview(client, sid, token, session["state_version"], plan)
+    assert first_response.status_code == 200, first_response.text
+    first = first_response.json()
+    assert datetime.fromisoformat(first["created_at"]) == FixedDatetime.now(timezone.utc)
+    assert all(datetime.fromisoformat(snapshot["retrieved_at"]) == FixedDatetime.now(timezone.utc)
+               for snapshot in first["plan"]["source_snapshots"] if snapshot["source_type"] != "DEMO")
     gateway.delta = 150_000  # Authoritative fake source: each tariff increases 15%.
     second_response = await preview(client, sid, token, session["state_version"], plan)
     assert second_response.status_code == 200, second_response.text

@@ -26,8 +26,9 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 SCHEMA_VERSION = 1
-REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq", "cloudflare"})
-INDEPENDENT_REMOTE_PROVIDERS = frozenset({"groq", "cloudflare"})
+REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq", "cloudflare", "zai"})
+INDEPENDENT_REMOTE_PROVIDERS = frozenset({"groq", "cloudflare", "zai"})
+SINGLE_ATTEMPT_REMOTE_PROVIDERS = frozenset({"cloudflare", "zai"})
 LOCAL_MODEL_PROVIDERS = frozenset({"ollama"})
 metadata = MetaData()
 schema_versions = Table(
@@ -800,8 +801,10 @@ class Store:
 
         This is an application budget, not a query of the provider's allowance.
         Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Groq and
-        Cloudflare have separate hard 40/day pools; Cloudflare is 1/run, with no
-        other remote attempt allowed before or after it in that run. Ollama has
+        Cloudflare have separate hard 40/day pools. Z.ai has a separate default
+        40/day caller limit; dedicated evaluation may explicitly raise it up to
+        2000/day. Cloudflare and Z.ai are 1/run, with no other remote attempt
+        allowed before or after them in that run. Ollama has
         an independent hard 500/day and 1/run local bucket; it is not a test
         adapter. Caller limits can reduce but never increase these ceilings.
         Injected test adapters share a third bucket excluding both actual buckets.
@@ -831,7 +834,8 @@ class Store:
                 # Gemini/OpenRouter continue sharing the original remote cap.
                 provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
                     event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
-                effective_limit, per_run_limit = min(limit, 40), 1 if provider == "cloudflare" else 2
+                effective_limit = min(limit, 2000 if provider == "zai" else 40)
+                per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = min(limit, 500), 1
@@ -846,12 +850,12 @@ class Store:
                 ))).scalar_one()
                 if run_count >= per_run_limit:
                     return False
-                if provider in REAL_MODEL_PROVIDERS and provider != "cloudflare" and run_count:
-                    prior_cloudflare = (await conn.execute(select(func.count()).select_from(events).where(
+                if provider in REAL_MODEL_PROVIDERS and provider not in SINGLE_ATTEMPT_REMOTE_PROVIDERS and run_count:
+                    prior_single_attempt = (await conn.execute(select(func.count()).select_from(events).where(
                         events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
-                        event_provider == "cloudflare",
+                        event_provider.in_(sorted(SINGLE_ATTEMPT_REMOTE_PROVIDERS)),
                     ))).scalar_one()
-                    if prior_cloudflare:
+                    if prior_single_attempt:
                         return False
             count = (await conn.execute(select(func.count()).select_from(events).where(
                 events.c.event_type == "MODEL_CALL_STARTED",
@@ -984,5 +988,5 @@ class Store:
             scope, reason = classify(row["payload"])
             until = row["created_at"] + timedelta(minutes=10)
             if scope == "model" and until > instant:
-                return answer(False, reason, "model", until, allow_fallback=provider != "cloudflare")
+                return answer(False, reason, "model", until, allow_fallback=provider not in SINGLE_ATTEMPT_REMOTE_PROVIDERS)
         return answer(True, "no_active_cooldown", "model")

@@ -190,6 +190,8 @@ def _requested_model(gateway: Any, provider: str) -> str:
         return str(config.get("GROQ_MODEL", "qwen/qwen3.8-27b"))
     if isinstance(config, dict) and provider == "cloudflare":
         return str(config.get("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
+    if isinstance(config, dict) and provider == "zai":
+        return str(config.get("ZAI_MODEL", "glm-4.7-flash"))
     if isinstance(config, dict) and provider in {"gemini", "openrouter"}:
         return str(config.get("GEMINI_MODEL" if provider == "gemini" else "OPENROUTER_MODEL", ""))
     return str(getattr(gateway, "last_call", {}).get("model", "controlled_test_adapter"))
@@ -426,6 +428,16 @@ class Harness:
                 if str(config.get("CLOUDFLARE_FREE_TIER_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
                     raise ProviderError("CONFIG_BLOCKED", "Подтвердите Workers Free без billing.", provider="cloudflare")
                 provider = "cloudflare"
+            elif primary == "zai":
+                key = config.get("ZAI_API_KEY")
+                if not isinstance(key, str) or not key.strip():
+                    raise ProviderError("CONFIG_MISSING", "Ключ Z.ai не настроен.", provider="zai")
+                if str(config.get("ZAI_FREE_TIER_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
+                    raise ProviderError("CONFIG_BLOCKED", "Подтвердите бесплатный Standard API Z.ai без billing.", provider="zai")
+                model = config.get("ZAI_MODEL", "glm-4.7-flash")
+                if not isinstance(model, str) or model not in {"glm-4.7-flash", "glm-4.5-flash"}:
+                    raise ProviderError("CONFIG_BLOCKED", "Для Z.ai разрешены только Free Flash модели.", provider="zai")
+                provider = "zai"
             else:
                 provider = primary
             # No backup is selected by default. Only an explicitly configured,
@@ -435,14 +447,14 @@ class Harness:
             if provider == "openrouter" and router_ready and backup != selected and backup.endswith(":free") and re.fullmatch(r"[\w./:-]+", backup):
                 fallback = LLMGateway({**config, "LLM_PROVIDER": "openrouter", "OPENROUTER_MODEL": backup})
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
-        if provider in {"ollama", "groq", "cloudflare"}:
+        if provider in {"ollama", "groq", "cloudflare", "zai"}:
             # Keep local and tightly capped free providers to one generation;
             # a malformed answer does not trigger an immediate full-context repair.
             attempts = min(1, attempts)
         temporary = gateway is not self.llm
         attempt_meta: list[dict] = []
         try:
-            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq", "cloudflare"}:
+            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq", "cloudflare", "zai"}:
                 current_model = _requested_model(gateway, provider)
                 health = await self.store.model_availability(provider, current_model)
                 if not health["available"]:
@@ -464,6 +476,7 @@ class Harness:
                 # Only explicitly injected non-HTTP test adapters may use a test
                 # budget; the real gateway always has the production ceiling.
                 daily_limit = (min(500, self.settings.max_local_llm_calls_per_day) if provider == "ollama" else
+                    min(2000, self.settings.max_llm_calls_per_day) if provider == "zai" else
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
                 if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
                     raise ProviderError("MODEL_BUDGET_EXHAUSTED", "Дневной лимит вызовов LLM исчерпан.")

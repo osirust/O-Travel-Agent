@@ -24,7 +24,7 @@ import httpx
 from jsonschema import Draft202012Validator
 
 from .provider_facts import lite_rate_facts
-from .observability import groq_rate_facts, request_stats, usage_counts
+from .observability import groq_rate_facts, request_stats, seconds_hint, usage_counts
 
 
 _SECRETS: set[str] = set()
@@ -204,6 +204,11 @@ class _HTTPGateway:
                         details["rate_limits"] = facts
                         if "retry_after_seconds" in facts:
                             details["retry_after_seconds"] = facts["retry_after_seconds"]
+                elif ((provider == "zai" and url == "https://api.z.ai/api/paas/v4/chat/completions")
+                      or (provider == "cloudflare" and re.fullmatch(
+                          r"https://api\.cloudflare\.com/client/v4/accounts/[a-fA-F0-9]{32}/ai/v1/chat/completions", url))):
+                    if (retry := seconds_hint(response.headers.get("retry-after"))) is not None:
+                        details["retry_after_seconds"] = retry
                 details["limit_source"] = "unknown"
                 try:
                     blocked = response.json().get("error", {}).get("metadata", {})
@@ -354,7 +359,7 @@ class LLMGateway(_HTTPGateway):
         self._response_usage.set(None)
         self.last_call = {}
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
-        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare"}:
+        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         try:
             prompt = json.dumps(_safe({key: value for key, value in context.items() if key != "__response_schema"}), ensure_ascii=False, allow_nan=False)
@@ -440,6 +445,28 @@ class LLMGateway(_HTTPGateway):
                 headers={"Authorization": f"Bearer {key}"}, json={"model": model,
                     "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
                     "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens)})
+            try:
+                choice = body["choices"][0]
+                if choice.get("finish_reason") in {"length", "content_filter", "error"}:
+                    _fail("LLM не завершила структурированный ответ.", provider, "INVALID_LLM_RESPONSE")
+                content = choice["message"]["content"]
+            except (TypeError, KeyError, IndexError):
+                _fail("LLM не вернула текст ответа.", provider, "INVALID_LLM_RESPONSE")
+        elif provider == "zai":
+            model = str(_setting(self.settings, "ZAI_MODEL", "glm-4.7-flash"))
+            if model not in {"glm-4.7-flash", "glm-4.5-flash"}:
+                _fail("Z.ai допускает только явно выбранные бесплатные GLM Flash модели.", provider, "CONFIG_BLOCKED")
+            confirmed = _setting(self.settings, "ZAI_FREE_TIER_CONFIRMED")
+            if confirmed is None:
+                confirmed = os.getenv("ZAI_FREE_TIER_CONFIRMED", "false")
+            if not _truth(confirmed):
+                _fail("Подтвердите Standard API для бесплатных GLM Flash.", provider, "CONFIG_BLOCKED")
+            key = self._key("ZAI_API_KEY", provider)
+            body = await self._request(provider, "POST", "https://api.z.ai/api/paas/v4/chat/completions",
+                headers={"Authorization": f"Bearer {key}"}, json={"model": model,
+                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+                    "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens),
+                    "thinking": {"type": "disabled"}})
             try:
                 choice = body["choices"][0]
                 if choice.get("finish_reason") in {"length", "content_filter", "error"}:
