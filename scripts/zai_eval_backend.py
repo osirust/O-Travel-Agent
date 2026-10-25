@@ -20,7 +20,7 @@ from uuid import uuid4
 SOURCE = Path("/home/aegml/projects/otravel-zai-eval")
 DATABASE = "otravel_zai_eval"
 PORT = 8084
-MODEL = "glm-4.7-flash"
+MODEL = "glm-4.5-flash"
 CREATOR = "zai_eval_backend.py"
 ROOT = Path(__file__).resolve().parents[1]
 

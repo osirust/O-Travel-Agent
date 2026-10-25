@@ -66,7 +66,7 @@ def test_child_env_does_not_inherit_other_keys_or_old_database(engine, monkeypat
     monkeypatch.setenv("DATABASE_URL", "postgresql://forbidden-old-database")
     database = SimpleNamespace(password="test:#@pass", ip="172.18.0.2")
     env = manager.environment(engine, database, "synthetic-zai-key")
-    assert env["LLM_PROVIDER"] == "zai" and env["ZAI_MODEL"] == "glm-4.7-flash"
+    assert env["LLM_PROVIDER"] == "zai" and env["ZAI_MODEL"] == "glm-4.5-flash"
     assert env["ZAI_API_KEY"] == "synthetic-zai-key" and env["ZAI_FREE_TIER_CONFIRMED"] == "true"
     assert env["DATABASE_NAME"] == "otravel_zai_eval" and env["DATABASE_URL"].endswith("/otravel_zai_eval")
     assert "test%3A%23%40pass" in env["DATABASE_URL"]

@@ -1,0 +1,104 @@
+{
+  "started_at_utc": "2026-10-25T21:32:27.181334+00:00",
+  "base_url": "http://127.0.0.1:8084",
+  "code_commit": "85160effde07ff891295ba437754b328ebdf258a",
+  "scope": "one bounded actual API conversation; not full100 acceptance",
+  "turns": [
+    {
+      "user": "Из Москвы в Стамбул с 10 по 14 ноября 2026 года. Один взрослый, детей нет. Нужен один номер, общий бюджет 100 тысяч рублей, вылет рано утром.",
+      "run_id": "3749a1fc-3337-40b2-b6a0-2a1071001577",
+      "run_status": "failed",
+      "state_version_before": 0,
+      "state_version_after": 0,
+      "checks": {
+        "run_completed": false,
+        "origin_moscow": false,
+        "destination_istanbul": false,
+        "one_adult": false,
+        "no_children": true,
+        "budget_expected": false
+      },
+      "pending_question": null,
+      "waiting_reason": null,
+      "llm": {
+        "model": "glm-4.7-flash",
+        "attempts": [
+          {
+            "code": "REQUEST_TIMEOUT",
+            "model": "glm-4.7-flash",
+            "outcome": "failed",
+            "provider": "zai",
+            "latency_ms": 45001,
+            "request_metrics": {
+              "prompt_sha256": "0167ed4956e50b971a5c761b399058d594c17096e72cdf8def157e77ddbc7907",
+              "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+              "schema_utf8_bytes": 5573,
+              "system_utf8_bytes": 10074,
+              "context_utf8_bytes": 4186
+            }
+          }
+        ],
+        "provider": "zai"
+      },
+      "response_source": null,
+      "assistant_message": {
+        "id": "b52ffe4a-bfa0-4d77-a798-924ddf3e39f5",
+        "role": "assistant",
+        "text": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+        "run_id": "3749a1fc-3337-40b2-b6a0-2a1071001577",
+        "sequence": 2,
+        "created_at": "2026-10-25T21:33:11.767409+00:00",
+        "session_id": "b1d44326-e803-42c8-b87d-2eb9e289dec0",
+        "client_message_id": null
+      },
+      "error": {
+        "llm": {
+          "model": "glm-4.7-flash",
+          "attempts": [
+            {
+              "code": "REQUEST_TIMEOUT",
+              "model": "glm-4.7-flash",
+              "outcome": "failed",
+              "provider": "zai",
+              "latency_ms": 45001,
+              "request_metrics": {
+                "prompt_sha256": "0167ed4956e50b971a5c761b399058d594c17096e72cdf8def157e77ddbc7907",
+                "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+                "schema_utf8_bytes": 5573,
+                "system_utf8_bytes": 10074,
+                "context_utf8_bytes": 4186
+              }
+            }
+          ],
+          "provider": "zai"
+        },
+        "code": "REQUEST_TIMEOUT",
+        "details": {},
+        "message": "Превышено общее время ответа LLM.",
+        "retryable": true
+      },
+      "trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "3c899271-cac5-419e-a33d-1ad3fa4ff99d",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      }
+    }
+  ],
+  "session_id": "b1d44326-e803-42c8-b87d-2eb9e289dec0",
+  "repeated_get_same_trip": true,
+  "status": "NOT_ALL_BOUND_CHECKS_PASS"
+}
