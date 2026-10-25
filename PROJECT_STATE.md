@@ -4,6 +4,8 @@
 
 Настроить воспроизводимый backend/harness и разрешённые бесплатные/test API. Реализация разрешена владельцем; прежний запрет начинать отменён. Frontend делает сокомандник. Ближайший продуктовый этап: прогон незнакомых многошаговых запросов на доступной LLM, связка реального поиска с канонической поездкой, затем интеграция frontend. Настройка API не означает завершённый агент.
 
+Код отправлен в ветку `codex/backend-harness-foundation`; [Draft PR#1](https://github.com/ostrovok-hackathon-2026/aegml/pull/1), не merged. Кодовый commit `1d69467`; позднейшие изменения — отчёты/документация.
+
 ## Подтверждено
 
 - Канонический checkout `E:/work/aegml`, private repo `ostrovok-hackathon-2026/aegml`; базовый commit до реализации `0f528b6`. Старый checkout `E:/work/AegML О!дин запрос` и личный mirror не менялись.
@@ -19,7 +21,7 @@
 Ключи только в нативной `.env`0600, не в Git/ответах. Скрытый ввод — `py scripts/configure_keys.py`; запись под lock. OpenRouter через официальный PKCE, ключ активен, денежный cap$0.01 разрешён владельцем; при readback usage$0.00. Не покупались кредиты, не включались платные модели.
 
 - Gemma `google/gemma-4-31b-it:free`: HTTP429 с `upstream_provider_shared_pool`/Google AI Studio даже после cap$0.01. **Успешного ответа Gemma нет**.
-- NVIDIA `nvidia/nemotron-3.5-super-vl:free`: одна синтетическая extraction-проба прошла JSON+domain и извлекла Казань/140000руб. Это не оценка NLU на сложных диалогах. В native env включён явным backup; primary Gemma сохранён, actual model виден в audit/run.
+- NVIDIA `nvidia/nemotron-3.5-super-vl:free`: одна синтетическая extraction-проба прошла JSON+domain и извлекла Казань/140000руб. Также один реальный HTTP harness-turn прошёл: Москва→Казань, бюджет160000→140000руб., состав3гостей сохранён, версия увеличена, PostgreSQL/audit записаны. Gemma429→NVIDIA ответ24342мс; persisted2attempts. Evidence `docs/verification/llm-runtime-20261025.json`. Это не оценка NLU на сложных диалогах. В native env включён явным backup; primary Gemma сохранён, actual model виден в audit/run.
 - Gemini: ключа нет, вызовы не проверены. Нужен разрешённый регион и явно подтверждённый бесплатный проект; billing не включать.
 - LiteAPI sandbox: каталог+rates, **586 SANDBOX тарифов** на синтетический однономерный запрос.
 - Duffel test: **9 SANDBOX предложений** KZN→IST для2взрослых+ребёнка7лет. Supplier orders0.
@@ -33,7 +35,7 @@
 
 ## Findings и остающиеся работы
 
-- **OTR-001 / PARTIAL_OPEN_GEMMA_NLU:** OpenRouter подключён и один backup-case прошёл; Gemma429 и полноценная проверка новых многошаговых запросов остаются открытыми.
+- **OTR-001 / PARTIAL_OPEN_GEMMA_NLU:** OpenRouter подключён, direct extraction и один относительный HTTP harness-case прошли; Gemma429 и полноценная проверка новых многошаговых запросов остаются открытыми.
 - **OTR-002 / PRIMARY_SELECTED:** официальный repo выбран; личный mirror не настроен.
 - **OTR-003 / FOUNDATION_VERIFIED_PRODUCT_OPEN:** backend/Docker/DB/DEMO проверены; законченный интерфейс, живой многогородской план и конкурсная готовность не доказаны.
 - **OTR-004 / OPEN_PUBLICATION_RIGHTS:** лицензия/публичное CV-копирование/редакция правил требуют уточнения; private сохранён, submission-тег не создан.

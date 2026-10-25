@@ -6,7 +6,7 @@
 
 В [ограниченном прогоне](verification/travel-api-probes-20261025.json) выполнено семь HTTP-запросов: LiteAPI catalog+rates вернули586SANDBOXтарифов, Duffel9SANDBOXпредложений, SerpApi Free metadata подтвердили250остатка до проб, затем20hotel/4flight результатов, Open-Meteo7днейпрогноза. Транспорт ограничен allowlist и не более7запросами, повтор за эти сутки блокируется. Заказы у поставщиков0. Один номер/одно авиаплечо на синтетическую группу не доказывают живую сложную корзину или reprice.
 
-Gemma после активации ключа и разрешённого cap$0.01 остаётся заблокирована upstream429 Google AI Studio. NVIDIA `nvidia/nemotron-3.5-super-vl:free` прошла одну synthetic extraction JSON+domain и настроена как явный `OPENROUTER_BACKUP_MODEL`; это не PASS многошагового NLU. Платных запросов нет. Gemini не проверен: ключа пока нет. Hotelbeds/RateHawk/Travelpayouts проверены только на fixtures.
+Gemma после активации ключа и разрешённого cap$0.01 остаётся заблокирована upstream429 Google AI Studio. NVIDIA `nvidia/nemotron-3.5-super-vl:free` прошла одну synthetic extraction JSON+domain и настроена как явный `OPENROUTER_BACKUP_MODEL`; Ещё один [HTTP harness-turn](verification/llm-runtime-20261025.json) прошёл относительные правки origin/бюджета и сохранение3гостей; успешный backup ответилза24342мс послеGemma429. Это не PASS многошагового NLU. Платных запросов нет. Gemini не проверен: ключа пока нет. Hotelbeds/RateHawk/Travelpayouts проверены только на fixtures.
 
 Три travel-key были присланы владельцем в чат; рекомендовано перевыпустить и заменить локально. Их значения и содержимое ответов поставщиков в этом документе не сохраняются. Статус configured не равен успешному текущему запросу: API/квоты/срок действия ключа могут измениться.
 

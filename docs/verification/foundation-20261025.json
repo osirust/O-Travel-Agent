@@ -23,7 +23,9 @@
       "synthetic_extraction_cases_passed": 1,
       "expected_origin": "Казань",
       "expected_budget_minor": 14000000,
-      "currency": "RUB"
+      "currency": "RUB",
+      "http_harness_relative_edit_turns_passed": 1,
+      "observed_runtime_latency_ms": 24342
     },
     "full_quality_evaluation": "NOT_RUN",
     "gemini": "KEY_MISSING"
