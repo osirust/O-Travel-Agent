@@ -39,6 +39,25 @@ def forbidden(request):
     pytest.fail("Unexpected outbound HTTP attempt")
 
 
+def test_sandbox_lookup_normalizes_supported_city_and_keeps_request_small():
+    def handler(request):
+        assert request.url.path == "/v3.0/data/hotels"
+        assert request.url.params["countryCode"] == "TR"
+        assert request.url.params["cityName"] == "Istanbul"
+        assert request.url.params["limit"] == "3"
+        return httpx.Response(200, json={"data": [{"id": "lp-test", "name": "Synthetic hotel"}]})
+    gateway = TravelGateway(settings(handler, LITEAPI_API_KEY="sand_synthetic"))
+    rows = call(gateway, "resolve_hotels", "Стамбул")
+    assert rows == [{"id": "lp-test", "name": "Synthetic hotel", "city": "Стамбул"}]
+
+
+def test_lookup_rejects_production_key_before_http():
+    gateway = TravelGateway(settings(forbidden, LITEAPI_API_KEY="prod_synthetic"))
+    with pytest.raises(ProviderError) as error:
+        call(gateway, "resolve_hotels", "Стамбул")
+    assert error.value.code == "CONFIG_BLOCKED"
+
+
 @pytest.mark.parametrize("config,code", [
     ({"LLM_PROVIDER": "gemini", "GEMINI_API_KEY": "fake"}, "CONFIG_BLOCKED"),
     ({"LLM_PROVIDER": "gemini", "GEMINI_FREE_TIER_CONFIRMED": True, "GEMINI_API_KEY": ""}, "CONFIG_MISSING"),
@@ -77,7 +96,7 @@ def test_openrouter_zero_price_no_paid_fallback():
         assert body["provider"]["max_price"] == {"prompt": 0, "completion": 0, "request": 0}
         assert body["response_format"] == {"type": "json_object"}
         return httpx.Response(200, json={"choices": [{"message": {"content": json.dumps(RESULT)}}]})
-    gateway = LLMGateway(settings(handler, llm_provider="openrouter", openrouter_api_key="router-secret"))
+    gateway = LLMGateway(settings(handler, llm_provider="openrouter", openrouter_model="google/gemma-4-31b-it:free", openrouter_api_key="router-secret"))
     assert call(gateway, "extract_operations", {"message": "Бюджет 70000"}) == RESULT
 
 
@@ -137,6 +156,26 @@ def test_liteapi_does_not_sum_alternative_room_rates():
     with pytest.raises(ProviderError) as error:
         call(gateway, "search_hotels", HOTEL_REQUEST)
     assert error.value.code == "INVALID_RESPONSE"
+
+
+def test_liteapi_attaches_only_reported_multiroom_and_fee_evidence():
+    def handler(request):
+        rooms = json.loads(request.content)["occupancies"]
+        rates = [{"rateId": f"rate-{i}", "occupancyNumber": i + 1, "adultCount": room["adults"],
+                  "childCount": len(room["children"]), "childrenAges": room["children"],
+                  "maxOccupancy": room["adults"] + len(room["children"]), "boardType": "BI",
+                  "retailRate": {"taxesAndFees": None}} for i, room in enumerate(rooms)]
+        return httpx.Response(200, json={"data": [{"hotelId": "lp-fixture", "roomTypes": [{
+            "offerId": "native-fixture", "supplierId": "supplier-a", "supplier": "Synthetic supplier",
+            "offerRetailRate": {"amount": "100.00", "currency": "RUB"}, "rates": rates}]}]})
+    gateway = TravelGateway(settings(handler, LITEAPI_API_KEY="sand_synthetic"))
+    details = call(gateway, "search_hotels", HOTEL_REQUEST)[0]["details"]
+    assert details["allocation_verified"] is True
+    assert details["mandatory_fees_known"] is True
+    assert details["constraint_evidence"]["breakfast"] is True
+    assert details["availability_verified"] is False
+    assert details["supplier_name"] == "Synthetic supplier"
+    assert details["supplier_verified"] is False
 
 
 @pytest.mark.parametrize("key", ["prod_fake-key", "unknown-key", "SANDBOX_fake-key"])

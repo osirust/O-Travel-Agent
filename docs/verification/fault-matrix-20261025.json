@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-25",
+  "scope": "HARNESS-007 scoped fault evidence: isolated otravel_test, controlled MockTransport HTTP, and one Python subprocess created and killed by its own test.",
+  "command": "py scripts/run_tests.py tests/test_fault_matrix.py -q",
+  "initial_result": {
+    "passed": 3,
+    "failed": 1,
+    "pytest_duration_seconds": 1.48,
+    "finding_id": "FAULT-001",
+    "observed": "An actual refused localhost DB connection before intake returned HTTP 500 instead of 503. No run/message or model HTTP call was created."
+  },
+  "fix_owner": "Root runtime owner; this task did not edit api.py, harness.py or store.py.",
+  "fix": "ConnectionError and TimeoutError now use the existing SQLAlchemyError-safe database_unavailable HTTP 503 handler.",
+  "recheck_result": {
+    "passed": 4,
+    "failed": 0,
+    "exit_code": 0,
+    "pytest_duration_seconds": 1.49,
+    "finding_id": "FAULT-001",
+    "status": "CLOSED_FOR_TESTED_CONNECTION_REFUSAL_SCOPE"
+  },
+  "last_combined_recheck": {
+    "command": "py scripts/run_tests.py tests/test_fault_matrix.py tests/test_harness_review.py -q",
+    "passed": 13,
+    "failed": 0,
+    "fault_cases": 4,
+    "runtime_regression_cases": 9,
+    "exit_code": 0,
+    "pytest_duration_seconds": 3.36,
+    "scope": "Real isolated PostgreSQL with controlled adapters; no vendor network or live NLU qualification. Source hashes below apply to this recheck."
+  },
+  "cases": [
+    {
+      "test": "test_refused_database_connection_before_intake_is_503_and_writes_nothing",
+      "fault": "A private bound non-listening localhost TCP port replaces this test Store engine after application startup; no DB service is stopped.",
+      "confirmed": ["HTTP 503 with retryable structured error", "Zero new runs and messages", "Zero model HTTP calls"]
+    },
+    {
+      "test": "test_commit_failure_after_mock_http_rolls_back_entire_domain_revision",
+      "fault": "A task-local SQLAlchemy pre-COMMIT exception after one controlled MockTransport model response.",
+      "confirmed": ["No partial domain state or new revision", "No order", "Lease cleared and RECOVERABLE_ERROR", "A new explicit typed command succeeds after the one-shot fault"],
+      "limitation": "Known pre-commit rollback; not a real server commit followed by a lost acknowledgement."
+    },
+    {
+      "test": "test_order_commit_failure_after_controlled_price_http_has_no_partial_order",
+      "fault": "A task-local pre-COMMIT exception after a controlled MockTransport price response, injected around actual Store.confirm_quote.",
+      "confirmed": ["HTTP 503", "No partial order or revision/version advance", "Quote remains active because the transaction rolled back", "Explicit retry with the same idempotency key creates exactly one DEMO order"],
+      "limitation": "The extra price HTTP is a test wrapper, not a claim of live supplier checkout or an uncertain post-commit outcome."
+    },
+    {
+      "test": "test_owned_worker_sigkill_recovers_interrupted_without_http_replay",
+      "fault": "The test dispatcher claims its run before spawning scripts/probe_crash.py; the child re-reads and verifies running/current-version/active-ID/not-paused lease, emits a ready marker after one MockTransport HTTP response, then its exact owned PID is SIGKILLed on POSIX.",
+      "confirmed": ["Committed lease survives abrupt child death", "Recovery marks the run interrupted", "Recovered run is not pending and is not replayed", "Canonical state/version preserved", "Previously stale consent remains stale and cannot create an order"],
+      "expiry_setup": "Only the owned session_id plus active_run_id lease is aged to 121 seconds; recover_stale_runs retains its normal 120-second threshold to protect healthy parallel test sessions.",
+      "limitation": "Controlled lease expiry rather than a 120-second wall-clock monitoring qualification; stale quote existed before the crash and was not revived."
+    }
+  ],
+  "source_files": [
+    {"path": "tests/test_fault_matrix.py", "sha256": "DCC4CD5AC5E607AC61CFD33F27EC610F99A810C70782FBFBD12D152FDD45C4DA"},
+    {"path": "scripts/probe_crash.py", "sha256": "1903A803279D7E97B834E17291AD272E3F20B8E08DA7CBA66625A35EF2CAC361"},
+    {"path": "tests/test_harness_review.py", "sha256": "AC1C18E64E9CA0921FDFCE3CE6401AC588B926949F14BAA39FD0FC88D41D4490"}
+  ],
+  "runtime_review_regressions": {
+    "candidate_ids": ["RUNTIME-001", "RUNTIME-002"],
+    "status": "PASS_CONTROLLED_ADAPTERS_AFTER_ROOT_FIXES",
+    "covered": [
+      "Explicit wait survives rejected unknown-traveler patch",
+      "Declared and runtime-detected semantic conflicts preserve explicit pause without mutation",
+      "Missing age remains clarification; a later answer continues without resume",
+      "Cancel does not get replaced by a rejected invalid patch",
+      "Unknown target without pause intent remains clarification",
+      "Second API instance pause prevents the first worker's new tool call after model response",
+      "An already in-flight component may return but the next component call is fenced",
+      "Second API instance pause prevents another schema-repair model attempt"
+    ],
+    "limitation": "These fixtures validate deterministic execution guards; they do not establish universal semantic understanding or unsending an already dispatched request."
+  },
+  "not_performed": [
+    "No LLM or travel vendor network requests; all HTTP used MockTransport",
+    "No PostgreSQL server crash, Docker/service stop or kill, global WSL operation, AEGYX action or foreign process termination",
+    "No lost DB acknowledgement after a real successful COMMIT",
+    "No host reboot or global application-plus-database outage qualification",
+    "No closure of the complete 106-case corpus or general live NLU readiness"
+  ],
+  "remaining_status": "HOLD_GLOBAL_DATABASE_CRASH_AND_UNCERTAIN_POST_COMMIT_OUTCOME"
+}

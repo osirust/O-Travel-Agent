@@ -1,0 +1,59 @@
+{
+  "checked_at_utc": "2026-10-25T16:41:00.117386+00:00",
+  "finding_id": "HARNESS-004",
+  "status": "INITIAL_NOT_ALL_PASS",
+  "test_mode": "real isolated PostgreSQL otravel_test + ASGI + controlled wrong-output model + NoTravelHTTP",
+  "fixture": "E:\\work\\aegml\\fixtures\\evaluation\\frozen-owner-dialogues.json",
+  "fixture_sha256": "5b78429fdb2c4bdc806ac34bc508d6b74e3ddf09a0737b261f66e3652f54037d",
+  "tests_sha256": "54dca83d6527632af5d812b1d12ab834de4a789c2c1079973a5d0789f3d295cc",
+  "junit": "E:\\work\\aegml\\docs\\verification\\owner-dialogues-initial-20261025.xml",
+  "junit_sha256": "b136ddce14da199c06436d889d7650aafa0997057ffabfccd687a8145cadaf60",
+  "tests_total": 3,
+  "tests_failed": 3,
+  "tests_passed": 0,
+  "actual_llm_requests": 0,
+  "supplier_http_requests": 0,
+  "original_106_nlu_coverage_added": 0,
+  "cases": [
+    {
+      "case_id": "OWNER-DIALOGUE-01",
+      "status": "FAIL",
+      "first_failing_turn": 2,
+      "input": "стамбул?",
+      "finding": "Model-proposed set_origin changed Москва to Стамбул despite pending destination-country context RS.",
+      "prior_turn_checks_passed": 1,
+      "remaining_turns_not_executed": [
+        3
+      ]
+    },
+    {
+      "case_id": "OWNER-DIALOGUE-02",
+      "status": "FAIL",
+      "first_failing_turn": 2,
+      "input": "белгрод",
+      "finding": "Answer was a catalogue unsupported-city error; it did not recognize or ask confirmation of Белград.",
+      "prior_turn_checks_passed": 1,
+      "remaining_turns_not_executed": []
+    },
+    {
+      "case_id": "OWNER-DIALOGUE-03",
+      "status": "FAIL",
+      "first_failing_turn": 2,
+      "input": "я взрослый",
+      "finding": "Adult count stayed zero; the contextual answer did not save one adult.",
+      "prior_turn_checks_passed": 1,
+      "remaining_turns_not_executed": [
+        3
+      ]
+    }
+  ],
+  "limitations": [
+    "Wrong-model controlled outputs test harness guards, not model NLU quality.",
+    "The final numeric answer follows the actual human question; it must not duplicate the adult, and may answer a newly asked child-count question.",
+    "Freeze expectations unchanged for the subsequent corrected-code and actual local-model runs."
+  ],
+  "current_tests_sha256": "b853f61906c4fafcf55fdaafb7f7fd546c87cd9d0e70bf759e43af0b2fd4d00b",
+  "post_initial_nonsemantic_changes": [
+    "Explicit imported-fixture alias for pytest/ruff compatibility; sorted imports. Assertions and frozen fixture unchanged."
+  ]
+}

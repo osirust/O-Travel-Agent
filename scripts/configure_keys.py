@@ -24,7 +24,7 @@ KEYS = {
     "RATEHAWK_API_KEY": "RateHawk test API key, если выдан",
     "TRAVELPAYOUTS_API_TOKEN": "Travelpayouts token, если выдан",
 }
-ALLOWED = set(KEYS) | {"GEMINI_FREE_TIER_CONFIRMED", "SERPAPI_FREE_TIER_CONFIRMED", "HOTELBEDS_TEST_CONFIRMED", "RATEHAWK_TEST_CONFIRMED", "LLM_PROVIDER", "OPENROUTER_BACKUP_MODEL"}
+ALLOWED = set(KEYS) | {"GEMINI_FREE_TIER_CONFIRMED", "SERPAPI_FREE_TIER_CONFIRMED", "HOTELBEDS_TEST_CONFIRMED", "RATEHAWK_TEST_CONFIRMED", "LLM_PROVIDER", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL", "LLM_REASONING_ENABLED", "LLM_REQUEST_TIMEOUT"}
 
 
 def write_env(payload: dict) -> None:
@@ -37,9 +37,10 @@ def write_env(payload: dict) -> None:
             continue
         if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_.:/+=@-]{1,4096}", value):
             raise ValueError("Настройка содержит неподдерживаемые символы.")
-    backup = payload.get("OPENROUTER_BACKUP_MODEL", "")
-    if backup and not backup.endswith(":free"):
-        raise ValueError("Резервная модель должна быть явно бесплатной (:free).")
+    for name in ("OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL"):
+        model = payload.get(name, "")
+        if model and not model.endswith(":free"):
+            raise ValueError("Модель должна быть явно бесплатной (:free).")
     # Both the OAuth callback and masked entry may update this file. Hold the
     # lock across read/replace so a concurrent save cannot discard another key.
     import fcntl
@@ -59,9 +60,9 @@ def _replace_env(payload: dict) -> None:
                 values[k] = v
     values.setdefault("POSTGRES_PASSWORD", secrets.token_urlsafe(32))
     values.setdefault("APP_PORT", "8081")
-    values.setdefault("LLM_PROVIDER", "gemini")
+    values.setdefault("LLM_PROVIDER", "openrouter")
     values.setdefault("GEMINI_MODEL", "gemini-3.8-flash")
-    values.setdefault("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+    values.setdefault("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")
     values.setdefault("GEMINI_FREE_TIER_CONFIRMED", "false")
     values.setdefault("SERPAPI_FREE_TIER_CONFIRMED", "false")
     values.setdefault("LITEAPI_MODE", "sandbox")

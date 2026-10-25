@@ -1,0 +1,171 @@
+{
+  "checked_at_utc": "2026-10-25T16:14:47.990350+00:00",
+  "action": "status",
+  "source": "/home/aegml/projects/otravel",
+  "venv_python": "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+  "helper_sha256": "6391ce4e8ee7d1bc9a5aa222cea13022889bc09ca8d3663556896953609c3605",
+  "database": "otravel_local_eval",
+  "url": "http://127.0.0.1:8083",
+  "process": {
+    "pid": 175377,
+    "uid": 1000,
+    "start_ticks": 1505433,
+    "argv": [
+      "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+      "-m",
+      "uvicorn",
+      "otravel.api:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8083",
+      "--no-access-log"
+    ],
+    "cwd": "/home/aegml/projects/otravel",
+    "executable": "/usr/bin/python3.12"
+  },
+  "listeners": [
+    {
+      "address": "127.0.0.1:8083",
+      "pids": [
+        175377
+      ]
+    }
+  ],
+  "no_inference_requested": true,
+  "no_supplier_requests": true,
+  "provider_credentials_inherited": false,
+  "source_sha256": {
+    "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+    "providers.py": "0d883669a60caa8e073f04cea9ad5140c72a94071060705fa66d4ca327f40d73",
+    "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+    "harness.py": "ef43a14dc031d4059c155e06046bbd764362f8065ceba88b89d0a01353ef49b2",
+    "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+  },
+  "limits": {
+    "provider": "ollama",
+    "model": "qwen3.5:4b",
+    "request_timeout_seconds": 105,
+    "max_local_calls_per_day": 500,
+    "max_calls_per_run": 1,
+    "max_remote_calls_per_day": 0
+  },
+  "limitations": [
+    "Health/docs/debug are not a successful model turn or full acceptance suite.",
+    "No global service/autostart change; only the exact recorded process may be stopped.",
+    "Database and HBA rules are retained by stop; no DROP or runtime/test data mutation."
+  ],
+  "process_start_source_sha256": {
+    "api.py": "c98011ed90fae4a0d5dae21644fdb9352bb8be0fb50eb16e7b39d42bfe3f1fe6",
+    "providers.py": "0d883669a60caa8e073f04cea9ad5140c72a94071060705fa66d4ca327f40d73",
+    "config.py": "a623ba280d4635d3c38d8922c86b5c5622014297d2adf89f3996b3feebe7786b",
+    "harness.py": "ef43a14dc031d4059c155e06046bbd764362f8065ceba88b89d0a01353ef49b2",
+    "store.py": "81fdff317ba40d1c52b00e0b8e493c70643cfed1a22dba38df474f0c48b54c1d"
+  },
+  "http": {
+    "/health": {
+      "status": 200,
+      "database": "ready"
+    },
+    "/docs": {
+      "status": 200
+    },
+    "/debug": {
+      "status": 200
+    },
+    "/api/v1/providers/status": {
+      "status": 200,
+      "runtime": {
+        "llm_provider": "ollama",
+        "model": "qwen3.5:4b"
+      },
+      "configured_key_providers": [],
+      "ollama": {
+        "configured": true,
+        "model": "qwen3.5:4b",
+        "source": "LOCAL_MODEL",
+        "paid_fallback": false
+      }
+    }
+  },
+  "database_setup": {
+    "container_id": "1819611d2a68dbfeba2c922823376bda2fab170273893015d18b194922a42eef",
+    "verified_project": "otravel",
+    "verified_service": "db",
+    "bridge_subnet": "172.18.0.0/16",
+    "target_database": "otravel_local_eval",
+    "runtime_database_untouched": true,
+    "test_database_untouched": true,
+    "database_created": false,
+    "hba": {
+      "changed": false,
+      "before_sha256": "729804732f3693d05faf02fbb5202908b3e3307d1b59b26601d01492f5fef264",
+      "after_sha256": "729804732f3693d05faf02fbb5202908b3e3307d1b59b26601d01492f5fef264",
+      "rules": [
+        "host otravel_local_eval otravel 127.0.0.1/32 scram-sha-256",
+        "host otravel_local_eval otravel 172.18.0.0/16 scram-sha-256"
+      ],
+      "reload_acknowledged": true,
+      "postgres_restarted": false
+    },
+    "hba_original_before_snapshot": "/home/aegml/projects/otravel/.local/local-backend-8083/pg_hba-before-20261025T160556865114Z.conf",
+    "hba_original_before_sha256": "7c57eea64e402152a42d67244ae766bb5e34fad44f4cee5c30f018a92220a4d3",
+    "database_oid": 18958
+  },
+  "database_counts_before": {},
+  "database_counts_after": {
+    "agent_events": 0,
+    "agent_runs": 0,
+    "demo_orders": 0,
+    "messages": 0,
+    "quotes": 0,
+    "sessions": 0,
+    "pending_or_running": 0,
+    "model_call_started": 0
+  },
+  "import_check": {
+    "api_file": "/home/aegml/projects/otravel/otravel/api.py",
+    "provider": "ollama",
+    "local_limit": 500,
+    "run_limit": 1
+  },
+  "setup_corrections": [
+    {
+      "id": "LOCAL-SETUP-001",
+      "status": "VERIFIED_FIXED",
+      "problem": "Initial helper queried the isolated DB through a Unix socket although the authorized HBA additions cover TCP only.",
+      "action": "Use psql -h 127.0.0.1 for otravel_local_eval; retain the existing local postgres maintenance rule.",
+      "verification": "Successful isolated schema startup, zero model events, health/docs/debug 200; no additional local/trust HBA rule was added."
+    },
+    {
+      "id": "LOCAL-HELPER-002",
+      "status": "VERIFIED_GUARD_FIXED",
+      "action": "Open pidfd, recheck identity after acquisition, signal only through pidfd; no numeric-PID signal fallback.",
+      "verification": "Injected start_ticks mismatch refused while the newly created test child stayed alive; a valid pidfd SIGTERM reached only that test child. Real backend not stopped; PID reuse stress not performed."
+    },
+    {
+      "id": "LOCAL-HELPER-003",
+      "status": "VERIFIED_FIXED",
+      "action": "Repeated start requires health200/database ready before returning success.",
+      "verification": "Injected503 rejected without restart/save; injectedready accepted; actual ready backend reused without PID change."
+    }
+  ],
+  "windows_loopback_health": {
+    "status": 200,
+    "database": "ready",
+    "inference_requested": false
+  },
+  "helper_guard_checks": {
+    "checked_at_utc": "2026-10-25T16:14:20.720879+00:00",
+    "results": {
+      "pidfd_identity_mismatch_refused_child_unsignalled": true,
+      "pidfd_sigterm_reached_only_test_created_child": true,
+      "reuse_start_503_refused_without_save_or_restart": true,
+      "reuse_start_ready_accepted": true
+    },
+    "real_backend_stop_performed": false,
+    "signals_only_to_test_created_child": true,
+    "inference_requests": 0
+  },
+  "startup_observed_at_utc": "2026-10-25T16:07:41.556124+00:00"
+}

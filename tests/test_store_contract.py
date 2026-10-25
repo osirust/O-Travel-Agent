@@ -8,6 +8,7 @@ import asyncio
 import os
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
+from uuid import uuid4
 
 import pytest
 import pytest_asyncio
@@ -16,7 +17,7 @@ from sqlalchemy import func, select
 from sqlalchemy.schema import CreateTable
 
 from otravel.store import (
-    REAL_MODEL_PROVIDERS, Conflict, NotFound, StaleQuote, Store, StoreError,
+    REAL_MODEL_PROVIDERS, LOCAL_MODEL_PROVIDERS, Conflict, NotFound, StaleQuote, Store, StoreError,
     events, metadata,
 )
 
@@ -223,7 +224,7 @@ async def test_model_call_budget_is_atomic_global_and_survives_new_store(store):
         before = (await conn.execute(select(func.count()).select_from(events).where(
             events.c.event_type == "MODEL_CALL_STARTED", events.c.created_at >= start,
             events.c.created_at < start + timedelta(days=1),
-            events.c.payload["provider"].astext.not_in(sorted(REAL_MODEL_PROVIDERS)),
+            events.c.payload["provider"].astext.not_in(sorted(REAL_MODEL_PROVIDERS | LOCAL_MODEL_PROVIDERS)),
         ))).scalar_one()
         live_before = (await conn.execute(select(func.count()).select_from(events).where(
             events.c.event_type == "MODEL_CALL_STARTED", events.c.created_at >= start,
@@ -250,3 +251,122 @@ async def test_model_call_budget_is_atomic_global_and_survives_new_store(store):
     with pytest.raises(StoreError) as exc:
         await store.reserve_model_call(session["session_id"], run["id"], 40, "openrouter_typo")
     assert exc.value.code == "invalid_provider"
+
+
+async def _finish_edit(store, session, amount):
+    run, _ = await store.intake_message(session["session_id"], str(uuid4()), "Изменить бюджет", session["state_version"])
+    assert await store.claim_run(run["id"])
+    state = {**session["state"], "budget": amount}
+    return await store.finish_run(run["id"], session["state_version"], state, "TRIP_DRAFT", "Изменено",
+                                  changes=[{"operation": "set_budget", "field": "budget"}])
+
+
+async def _finish_undo(store, session):
+    prepared = await store.prepare_undo(session["session_id"], session["state_version"])
+    run, _ = await store.intake_message(session["session_id"], str(uuid4()), "Undo", session["state_version"])
+    assert await store.claim_run(run["id"])
+    result = await store.finish_run(run["id"], session["state_version"], prepared["state"], "TRIP_DRAFT", "Отменена правка",
+                                    changes=prepared["changes"], result={"undo": prepared["undo"]})
+    return result, run
+
+
+@pytest.mark.asyncio
+async def test_undo_without_domain_history_changes_nothing(store):
+    session = await new_session(store)
+    with pytest.raises(Conflict) as caught:
+        await store.prepare_undo(session["session_id"], 0)
+    assert caught.value.code == "nothing_to_undo"
+    assert (await store.get_session(session["session_id"]))["state"] == session["state"]
+
+
+@pytest.mark.asyncio
+async def test_repeated_undo_consumes_edits_without_toggling_or_reviving_quotes(store):
+    session = await new_session(store)
+    first = await _finish_edit(store, session, 140000)
+    second = await _finish_edit(store, first, 120000)
+    quote = await store.create_quote(session["session_id"], 2, {"total_rub": 120000})
+    undone, run = await _finish_undo(store, second)
+    assert undone["state_version"] == 3 and undone["state"]["budget"] == 140000
+    replay = await store.finish_run(run["id"], 2, {}, "TRIP_DRAFT", "Повтор")
+    assert replay["state_version"] == 3
+    again, _ = await _finish_undo(store, undone)
+    assert again["state_version"] == 4 and again["state"]["budget"] == 180000
+    assert (await store.get_quote(quote["id"]))["status"] == "stale"
+    with pytest.raises(StaleQuote):
+        await store.confirm_quote(session["session_id"], quote["id"], 1, "old-consent", True, 4)
+    with pytest.raises(Conflict) as caught:
+        await store.prepare_undo(session["session_id"], 4)
+    assert caught.value.code == "nothing_to_undo"
+    assert sum(event["event_type"] == "STATE_UNDONE" for event in await store.list_events(session["session_id"])) == 2
+
+
+@pytest.mark.asyncio
+async def test_undo_skips_control_order_and_failed_runs_without_changing_orders(store):
+    session = await new_session(store)
+    edited = await _finish_edit(store, session, 140000)
+    quote = await store.create_quote(session["session_id"], 1, {"total_rub": 140000})
+    order = await store.confirm_quote(session["session_id"], quote["id"], 1, "order-before-undo", True, 1)
+    await store.set_control(session["session_id"], "pause")
+    current = await store.set_control(session["session_id"], "resume")
+    failed, _ = await store.intake_message(session["session_id"], "failed-edit", "Ошибка", current["state_version"])
+    assert await store.claim_run(failed["id"])
+    await store.fail_run(failed["id"], {"code": "synthetic_failure"})
+    current = await store.get_session(session["session_id"])
+    undone, _ = await _finish_undo(store, current)
+    assert undone["state"]["budget"] == 180000
+    assert undone["result"]["undo"]["undone_revision"] == edited["state_version"]
+    assert (await store.list_orders(session["session_id"]))[0] == order
+
+
+@pytest.mark.asyncio
+async def test_prepared_undo_is_guarded_by_finish_cas(store):
+    session = await new_session(store)
+    first = await _finish_edit(store, session, 140000)
+    prepared = await store.prepare_undo(session["session_id"], 1)
+    undo_run, _ = await store.intake_message(session["session_id"], "stale-undo", "Undo", 1)
+    second = await _finish_edit(store, first, 120000)
+    assert await store.claim_run(undo_run["id"])
+    with pytest.raises(Conflict):
+        await store.finish_run(undo_run["id"], 1, prepared["state"], "TRIP_DRAFT", "Не применять", changes=prepared["changes"])
+    assert (await store.get_session(session["session_id"]))["state"]["budget"] == 120000
+    with pytest.raises(Conflict) as caught:
+        await store.prepare_undo(session["session_id"], 1)
+    assert caught.value.code == "stale_state"
+
+
+@pytest.mark.asyncio
+async def test_cancel_blocks_late_commit_and_is_not_undo_or_order_cancellation(store):
+    session = await new_session(store)
+    quote = await store.create_quote(session["session_id"], 0, {"total_rub": 180000})
+    run, _ = await store.intake_message(session["session_id"], "cancel-target", "Начать поиск", 0)
+    assert await store.claim_run(run["id"])
+    cancelled = await store.cancel_processing(session["session_id"], 0, target_run_id=run["id"])
+    current = cancelled["session"]
+    assert current["state_version"] == 1 and current["state"]["budget"] == 180000
+    assert current["waiting_reason"] is None
+    assert (await store.get_run(run["id"]))["status"] == "cancelled"
+    with pytest.raises(Conflict):
+        await store.finish_run(run["id"], 0, {"budget": 1}, "OPTIONS_READY", "Поздний ответ")
+    replay = await store.fail_run(run["id"], {"code": "late_model_error"}, preserve_session=False)
+    assert replay["run"]["status"] == "cancelled"
+    assert (await store.get_quote(quote["id"]))["status"] == "stale"
+    with pytest.raises(Conflict) as caught:
+        await store.prepare_undo(session["session_id"], 1)
+    assert caught.value.code == "nothing_to_undo"
+    assert await store.list_orders(session["session_id"]) == []
+
+
+@pytest.mark.asyncio
+async def test_cancel_pending_during_pause_preserves_pause_and_ignores_future_inputs(store):
+    session = await new_session(store)
+    await store.set_control(session["session_id"], "pause")
+    older, _ = await store.intake_message(session["session_id"], "older", "Дополнение", 1)
+    control, _ = await store.intake_message(session["session_id"], "cancel-control", "Cancel", 1)
+    newer, _ = await store.intake_message(session["session_id"], "newer", "Новое дополнение", 1)
+    result = await store.cancel_processing(session["session_id"], 1, control_run_id=control["id"])
+    assert result["cancelled_run_id"] == older["id"]
+    assert result["session"]["waiting_reason"] == "user_pause"
+    assert (await store.get_run(newer["id"]))["status"] == "pending"
+    no_target = await store.cancel_processing(session["session_id"], 2, control_run_id=control["id"])
+    assert no_target["cancelled_run_id"] is None
+    assert no_target["session"]["state_version"] == 2

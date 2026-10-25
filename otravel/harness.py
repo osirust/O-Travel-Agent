@@ -14,8 +14,14 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .config import Settings
-from .domain import DomainError, Operation, TripState, apply_operations, sample_trip, validate_trip
+from .domain import CITIES, DomainError, Operation, TripState, apply_operations, canonical_city, sample_trip, validate_trip
 from .inventory import DemoInventory
+from .orchestrator import TripSearch
+from .history import plan_history
+from .geography import parse_destination
+from .money import ground_budget_operations
+from .llm_contract import build_operation_schema
+from .clarifications import derive_pending_field, human_question, question_field, resolve_short_answer
 from .providers import LLMGateway, ProviderError
 from .store import Conflict, StoreError
 
@@ -23,16 +29,22 @@ from .store import Conflict, StoreError
 TYPED_PREFIX = "\x1eOTRAVEL_TYPED_V1:"
 PAUSE_PHRASES = {"подожди", "подожди, я ещё дополню", "подожди, я еще дополню", "подожди, я ещё допишу", "подожди, я еще допишу", "пауза"}
 RESUME_PHRASES = {"продолжай", "продолжить"}
+CANCEL_PHRASES = {"отмени обработку", "отмени текущий поиск", "останови поиск"}
 
 
 def exact_control(text: str) -> str | None:
     value = text.strip().casefold().rstrip(".! ")
-    return "pause" if value in PAUSE_PHRASES else "resume" if value in RESUME_PHRASES else None
+    return "pause" if value in PAUSE_PHRASES else "resume" if value in RESUME_PHRASES else "cancel" if value in CANCEL_PHRASES else None
 
 
 def state_fingerprint(state: dict) -> str:
     value = {key: item for key, item in state.items() if key != "state_version"}
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def explicit_pause_hint(text: str) -> bool:
+    value = text.casefold().replace("ё", "е")
+    return bool(re.search(r"\b(подожди|приостанови|пауза|поставь на паузу|допишу|дополню|не продолжай|не запускай поиск|ничего не ищи|пока не ищи|пока не подбирай|пока ничего не подбирай)\b", value))
 
 
 def encode_command(kind: str, session: dict, **fields: Any) -> str:
@@ -41,7 +53,7 @@ def encode_command(kind: str, session: dict, **fields: Any) -> str:
 
 class _Control(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    action: Literal["continue", "wait", "resume", "request_checkout", "confirm", "none"]
+    action: Literal["continue", "wait", "resume", "request_checkout", "confirm", "cancel", "none"]
 
 
 class ModelResult(BaseModel):
@@ -51,14 +63,18 @@ class ModelResult(BaseModel):
     reply: str
     unknowns: list[str]
     conflicts: list[str]
+    destination_request: dict[str, Any] | None = Field(default=None, exclude=True)
+    operation_normalizations: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
+    pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
+    response_source: str = Field(default="llm", exclude=True)
 
 
 OPERATION_GUIDE = {
-    "instruction": "Извлекай изменения только из current_message. История — контекст, её старые изменения повторно не применять. Ничего не бронировать. Отсутствующее поле не означает false. Все цены и бюджет в integer amount_minor (копейки RUB).",
+    "instruction": "Извлекай изменения только из current_message. История — контекст, её старые изменения повторно не применять. Ничего не бронировать. Не предлагай противоречивые значения одного поля: сообщи conflicts, тогда весь batch не применяется. Не спрашивай уже известный origin без явного намерения его изменить. Для существующего ребёнка используй его traveler.id, не создавай дубль. Отсутствующее поле не означает false. Все цены и бюджет в integer amount_minor (копейки RUB). Undo — отдельная единственная операция, отменяет последнюю успешную правку; cancel останавливает обработку, не откатывает поездку и не отменяет заказы.",
     "supported_operations": {
         "set_origin": {"value": {"city": "Казань"}},
         "set_budget": {"value": {"amount_minor": 50000000, "currency": "RUB", "scope": "whole_trip"}},
-        "add_traveler": {"value": {"type": "child", "age": 6, "group_id": "EXISTING_GROUP_ID"}},
+        "add_traveler": {"value": {"id": "new-traveler-1", "type": "child", "age": 6, "group_id": "EXISTING_GROUP_ID"}},
         "update_traveler": {"target_id": "EXISTING_TRAVELER_ID", "value": {"age": 7}},
         "remove_traveler": {"target_id": "EXISTING_TRAVELER_ID", "value": {}},
         "upsert_stay": {"target_id": "EXISTING_OR_NEW_STAY_ID", "value": {"city": "Стамбул", "check_in": "2026-11-06", "check_out": "2026-11-09"}},
@@ -67,15 +83,70 @@ OPERATION_GUIDE = {
         "shift_return": {"value": {"days": 2}},
         "set_constraint": {"value": {"key": "breakfast", "value": True, "hard": True}},
         "clear_constraint": {"value": {"key": "breakfast"}},
+        "undo": {"value": {}},
+        "set_search_policy": {"value": {"mode": "HYBRID", "hotel_provider": "liteapi", "flight_provider": "duffel", "demo_fallback": True}},
     },
     "room_shape": {"id": "STABLE_ROOM_ID", "traveler_ids": ["EXISTING_TRAVELER_ID"]},
     "known_hard_constraints": ["breakfast", "refundable", "pets_allowed", "pets"],
+    "supported_cities": list(CITIES),
+    "constraint_contract": {"breakfast": "boolean: включённый завтрак конкретного тарифа", "refundable": "boolean: возвратность конкретного тарифа", "pets_allowed": "boolean: свойство отеля", "pets": {"kind": "dog|cat", "weight_kg": "known positive number"}},
     "do_not_invent": ["city", "date", "age", "budget", "hotel_id", "consent"],
 }
 
 
 def _problem(code: str, message: str, retryable: bool = False) -> dict:
     return {"code": code, "message": message, "retryable": retryable}
+
+
+def operation_conflicts(state: TripState, operations: list[Operation]) -> list[str]:
+    """Preflight contradictory writes before any field can be committed."""
+    seen: dict[tuple, Any] = {}
+    conflicts: list[str] = []
+    items = [item if isinstance(item, Operation) else Operation.model_validate(item) for item in operations]
+    if any(item.type == "undo" for item in items):
+        if len(items) != 1 or items[0].value or items[0].target_id is not None:
+            return ["Undo должен быть отдельной операцией без дополнительных правок и произвольного target."]
+        return []
+
+    def write(key: tuple, value: Any) -> None:
+        normalized = json.dumps(value, sort_keys=True, ensure_ascii=False)
+        if key in seen and seen[key] != normalized:
+            conflicts.append("В одной реплике предложены разные значения поля «" + ".".join(str(part) for part in key) + "». Уточните итоговое значение.")
+        seen[key] = normalized
+
+    last_stay = state.stays[-1].id if state.stays else None
+    for item in items:
+        value, target = item.value, item.target_id or item.value.get("id")
+        if item.type == "set_origin":
+            for key in ("city", "origin"):
+                if key in value:
+                    write(("trip", "origin"), canonical_city(value[key]))
+        elif item.type == "set_budget":
+            for key, default in (("amount_minor", None), ("currency", "RUB"), ("scope", "whole_trip")):
+                write(("budget", key), value.get(key, default))
+        elif item.type == "set_search_policy":
+            for key, field in value.items():
+                write(("search_policy", key), field)
+        elif item.type in {"upsert_stay", "replace_hotel", "remove_stay"}:
+            write(("stay", target, "exists"), item.type != "remove_stay")
+            for key, field in value.items():
+                if key != "id":
+                    write(("stay", target, key), canonical_city(field) if key == "city" and field else field)
+                    if target == last_stay and key == "check_out":
+                        write(("trip", "return_edit_kind"), "absolute")
+        elif item.type in {"add_traveler", "update_traveler", "remove_traveler"}:
+            if target is not None:
+                write(("traveler", target, "exists"), item.type != "remove_traveler")
+                for key, field in value.items():
+                    if key != "id":
+                        write(("traveler", target, key), field)
+        elif item.type in {"set_constraint", "clear_constraint"}:
+            key = value.get("key") or target
+            write(("constraint", value.get("stay_id"), key), {"value": value.get("value"), "hard": value.get("hard", True)} if item.type == "set_constraint" else {"removed": True})
+        elif item.type == "shift_return":
+            write(("trip", "return_edit_kind"), "relative")
+            write(("trip", "return_shift_days"), value.get("days"))
+    return list(dict.fromkeys(conflicts))
 
 
 def _can_switch_model(error: Exception) -> bool:
@@ -98,6 +169,8 @@ def _can_switch_model(error: Exception) -> bool:
 
 def _requested_model(gateway: Any, provider: str) -> str:
     config = getattr(gateway, "settings", {})
+    if isinstance(config, dict) and provider == "ollama":
+        return str(config.get("OLLAMA_MODEL", "qwen3.5:4b"))
     if isinstance(config, dict) and provider in {"gemini", "openrouter"}:
         return str(config.get("GEMINI_MODEL" if provider == "gemini" else "OPENROUTER_MODEL", ""))
     return str(getattr(gateway, "last_call", {}).get("model", "controlled_test_adapter"))
@@ -108,6 +181,7 @@ class Harness:
         self.settings, self.store, self.llm, self.travel = settings, store, llm, travel
         self.inventory = DemoInventory()
         self.tasks: dict[str, asyncio.Task] = {}
+        self.active: dict[str, str] = {}
         self.maintenance: asyncio.Task | None = None
         self.closed = False
 
@@ -165,6 +239,8 @@ class Harness:
         return session
 
     async def control_message(self, run: dict, action: str) -> dict:
+        if action == "cancel":
+            return await self.cancel_control(run)
         session = await self.control(run["session_id"], action, schedule=False, write_reply=False)
         # A control message has already been durably accepted. It is not sent to NLU.
         result = await self.store.finish_run(run["run_id"], session["state_version"], None,
@@ -175,6 +251,66 @@ class Harness:
         if action == "resume":
             self.schedule(run["session_id"])
         return result
+
+    async def cancel_control(self, run: dict) -> dict:
+        session_id = run["session_id"]
+        session = await self.store.get_session(session_id)
+        expected = run.get("request_expected_version")
+        if expected is not None and expected != session["state_version"]:
+            await self.store.fail_run(run["run_id"], _problem("stale_state", "Поездка изменилась перед отменой.", True))
+            raise Conflict("Поездка изменилась перед отменой.", "stale_state")
+        cancellation = await self.store.cancel_processing(session_id, session["state_version"], control_run_id=run["run_id"])
+        target = cancellation["cancelled_run_id"]
+        task = self.tasks.get(session_id)
+        if target and self.active.get(session_id) == target and task and not task.done():
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
+        current = cancellation["session"]
+        result = await self.store.finish_run(run["run_id"], current["state_version"], None,
+            current["status"], "Текущая обработка отменена; поездка и заказы сохранены." if target else "Нет текущей обработки для отмены.",
+            waiting_reason=current.get("waiting_reason"), pending_question=current.get("pending_question"),
+            result={"cancelled_run_id": target, "orders_unchanged": True})
+        self.schedule(session_id)
+        return result
+
+    async def _search_trip(self, state: TripState, *, session: dict | None = None, run: dict | None = None) -> dict:
+        previous = None
+        if session is not None:
+            seen = set()
+            for message in reversed(await self.store.list_messages(session["session_id"])):
+                prior = message.get("run_id")
+                if not prior or prior in seen or run and prior == run["run_id"]:
+                    continue
+                seen.add(prior)
+                saved = await self.store.get_run(prior)
+                plans = ((saved.get("result") or {}).get("result") or {}).get("plans", [])
+                if plans:
+                    previous = plans[0]
+                    break
+
+        async def audit(kind: str, payload: dict) -> None:
+            if session is not None and run is not None:
+                if kind == "TOOL_CALL_STARTED":
+                    await self._ensure_current_run(session, run)
+                await self.store.save_event(session["session_id"], run["run_id"], kind, payload)
+
+        return await TripSearch(self.travel).search(state, previous_plan=previous, event_sink=audit)
+
+    async def _ensure_current_run(self, session: dict, run: dict) -> None:
+        latest = await self.store.get_session(session["session_id"])
+        current_run = await self.store.get_run(run["run_id"])
+        if (latest["state_version"] != session["state_version"] or
+                latest.get("waiting_reason") == "user_pause" or
+                latest.get("active_run_id") != run["run_id"] or current_run["status"] != "running"):
+            raise Conflict("Обработка остановлена: изменились версия или управление поездкой.", "processing_control_changed")
+
+    async def _apply_or_undo(self, session: dict, state: TripState, operations: list[Operation]) -> tuple[TripState, list[dict], dict | None]:
+        if len(operations) == 1 and operations[0].type == "undo":
+            prepared = await self.store.prepare_undo(session["session_id"], session["state_version"])
+            return TripState.model_validate(prepared["state"]), prepared["changes"], prepared["undo"]
+        candidate, changes = apply_operations(state, operations)
+        return candidate, changes, None
 
     async def _drain(self, session_id: str) -> None:
         while not self.closed:
@@ -187,6 +323,7 @@ class Harness:
             run_id = pending[0]["run_id"]
             if not await self.store.claim_run(run_id):
                 return
+            self.active[session_id] = run_id
             try:
                 await self._process(await self.store.get_run(run_id))
             except asyncio.CancelledError:
@@ -209,6 +346,9 @@ class Harness:
             except Exception:
                 with suppress(Exception):
                     await self.store.fail_run(run_id, _problem("processing_error", "Ошибка обработки; состояние сохранено.", True), "Состояние сохранено. Можно повторить действие или воспользоваться формой.", preserve_session=False)
+            finally:
+                if self.active.get(session_id) == run_id:
+                    self.active.pop(session_id, None)
 
     async def _extract(self, session: dict, run: dict) -> tuple[ModelResult, dict]:
         history = await self.store.list_messages(session["session_id"])
@@ -232,6 +372,9 @@ class Harness:
                 break
         history = [{"role": message["role"], "text": message["text"]} for message in preceding if not message["text"].startswith(TYPED_PREFIX)][-12:]
         context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": shown, "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": OPERATION_GUIDE}
+        archived = await plan_history(self.store, session["session_id"], session["state_version"])
+        context["first_shown_plan"] = archived["first_saved_plan"]
+        context["__response_schema"] = build_operation_schema(session["state"])
         gateway = self.llm
         provider = self.settings.llm_mode if isinstance(gateway, LLMGateway) else "injected_test_adapter"
         fallback = None
@@ -257,33 +400,122 @@ class Harness:
             if provider == "openrouter" and router_ready and backup != selected and backup.endswith(":free") and re.fullmatch(r"[\w./:-]+", backup):
                 fallback = LLMGateway({**config, "LLM_PROVIDER": "openrouter", "OPENROUTER_MODEL": backup})
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
+        if provider == "ollama":
+            attempts = min(1, attempts)  # A 105s cold call fits in the durable 120s lease.
         temporary = gateway is not self.llm
         attempt_meta: list[dict] = []
         try:
+            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter"}:
+                current_model = _requested_model(gateway, provider)
+                health = await self.store.model_availability(provider, current_model)
+                if not health["available"]:
+                    await self.store.save_event(session["session_id"], run["run_id"], "MODEL_SKIPPED_COOLDOWN",
+                        {"provider": provider, "model": current_model, "reason": health["reason"], "retry_after": health["retry_after"]})
+                    if not health["allow_fallback"] or fallback is None:
+                        raise ProviderError("MODEL_COOLDOWN", "Модель или квота временно недоступна. Состояние сохранено.",
+                            True, provider, {"retry_after": health["retry_after"], "scope": health["scope"]})
+                    backup_model = _requested_model(fallback, "openrouter")
+                    backup_health = await self.store.model_availability("openrouter", backup_model)
+                    if not backup_health["available"]:
+                        raise ProviderError("MODEL_COOLDOWN", "Обе бесплатные модели временно недоступны. Состояние сохранено.",
+                            True, "openrouter", {"retry_after": backup_health["retry_after"], "scope": backup_health["scope"]})
+                    if temporary:
+                        await gateway.close()
+                    gateway, provider, temporary, fallback = fallback, "openrouter", True, None
             for attempt in range(attempts):
+                await self._ensure_current_run(session, run)
                 # Only explicitly injected non-HTTP test adapters may use a test
                 # budget; the real gateway always has the production ceiling.
-                daily_limit = min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day
+                daily_limit = (min(500, self.settings.max_local_llm_calls_per_day) if provider == "ollama" else
+                    min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
                 if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
                     raise ProviderError("MODEL_BUDGET_EXHAUSTED", "Дневной лимит вызовов LLM исчерпан.")
                 requested_model = _requested_model(gateway, provider)
                 started = perf_counter()
                 try:
                     extracted = ModelResult.model_validate(await gateway.extract_operations(context))
+                    if not extracted.conflicts and extracted.control.action != "cancel":
+                        extracted.operations, extracted.operation_normalizations = ground_budget_operations(
+                            TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
+                    location = parse_destination(run["input_text"])
+                    requested = location["requested_destination"]
+                    country_context = requested if requested["kind"] == "country" else None
+                    if country_context is not None and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
+                        # This bounded parser matched a country-only request,
+                        # not dates/people or a confirmed city. City guesses are
+                        # suggestions and must not mutate a concrete route.
+                        extracted.operations = []
+                        extracted.unknowns = [location["clarification"]]
+                        extracted.destination_request = country_context
+                    if not extracted.conflicts and extracted.control.action != "cancel" and not any(op.type == "undo" for op in extracted.operations):
+                        try:
+                            domain_state = TripState.model_validate(session["state"])
+                            semantic_conflicts = operation_conflicts(domain_state, extracted.operations)
+                            if semantic_conflicts:
+                                action = "wait" if extracted.control.action == "wait" and explicit_pause_hint(run["input_text"]) else "none"
+                                extracted = ModelResult(operations=[], control={"action": action}, reply=semantic_conflicts[0],
+                                    unknowns=[], conflicts=semantic_conflicts)
+                            else:
+                                apply_operations(domain_state, extracted.operations)
+                        except DomainError as error:
+                            if error.code in {"unsupported_city", "unsupported_limit", "unsupported_operation", "missing_target", "unknown_target", "missing_hotel", "missing_return_date"}:
+                                action = "wait" if extracted.control.action == "wait" and explicit_pause_hint(run["input_text"]) else "none"
+                                if error.code == "unsupported_city" and country_context is None:
+                                    for operation in extracted.operations:
+                                        place = operation.value.get("city", operation.value.get("origin"))
+                                        if isinstance(place, str):
+                                            candidate_location = parse_destination(place)
+                                            if candidate_location["requested_destination"]["kind"] == "country":
+                                                country_context = candidate_location["requested_destination"]
+                                                location = candidate_location
+                                                break
+                                question = location["clarification"] if country_context is not None else error.message
+                                extracted = ModelResult(operations=[], control={"action": action}, reply=error.message,
+                                    unknowns=[question], conflicts=[], destination_request=country_context)
+                            else:
+                                context["validation_feedback"] = {"domain_code": error.code,
+                                    "message": error.message, "operation_shapes": [{"type": op.type, "fields": sorted(op.value)} for op in extracted.operations],
+                                    "note": "Исправь схему разрешённых операций, не придумывая факты. Если условия невалидны, верни один conflicts/unknowns вместо изменений."}
+                                if isinstance(error.details, list):
+                                    fields = {"key", "value", "hard", "stay_id", "amount_minor", "currency", "scope", "id", "type", "age", "birth_date", "group_id", "city", "check_in", "check_out", "rooms", "hotel_id"}
+                                    context["validation_feedback"]["errors"] = [{"type": entry.get("type"),
+                                        "loc": [part if isinstance(part, int) or part in fields else "<field>" for part in entry.get("loc", [])]}
+                                        for entry in error.details if isinstance(entry, dict) and "loc" in entry]
+                                raise ProviderError("INVALID_LLM_OPERATION", "Операции LLM не прошли проверку схемы.", provider=provider) from None
+                    if country_context is not None and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
+                        extracted.destination_request = country_context
+                        if not extracted.operations and not extracted.conflicts:
+                            extracted.unknowns = [location["clarification"]]
                     last_call = getattr(gateway, "last_call", {})
                     actual = {"provider": str(last_call.get("provider", provider)), "model": str(last_call.get("model", requested_model)), "latency_ms": max(0, int((perf_counter() - started) * 1000))}
                     attempt_meta.append({**actual, "outcome": "response"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_RESPONSE_RECEIVED", {**actual, "operations": len(extracted.operations), "attempt": attempt + 1})
                     return extracted, {**actual, "attempts": attempt_meta}
                 except (ProviderError, ValidationError) as exc:
+                    if isinstance(exc, ProviderError) and exc.code == "INVALID_LLM_OPERATION" and exc.details.get("schema_errors"):
+                        context["validation_feedback"] = {"errors": exc.details["schema_errors"],
+                            "note": "Выбери точный существующий target_id из enum и разрешённую структуру value. Не придумывай типы операций или имена полей."}
+                    if isinstance(exc, ValidationError):
+                        allowed_locations = {"operations", "control", "action", "type", "target_id", "value", "reply", "unknowns", "conflicts"}
+                        context["validation_feedback"] = {
+                            "errors": [{"loc": [part if isinstance(part, int) or part in allowed_locations else "<unknown_field>" for part in entry["loc"]], "type": entry["type"]}
+                                       for entry in exc.errors(include_input=False, include_context=False, include_url=False)],
+                            "expected_contract": {"required": ["operations", "control", "reply", "unknowns", "conflicts"], "note": "Верни весь корректный JSON-объект. Не повторяй невалидную структуру; не меняй известные поля без запроса."},
+                        }
                     details = exc.details if isinstance(exc, ProviderError) and isinstance(exc.details, dict) else {}
-                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("limit_source", "provider_name") if key in details}}
+                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name") if key in details}}
                     attempt_meta.append({**failed, "outcome": "failed"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_CALL_FAILED", failed)
                     exc.llm_meta = {"provider": provider, "model": requested_model, "attempts": attempt_meta}
                     if attempt + 1 >= attempts:
                         raise
+                    if isinstance(exc, ProviderError) and exc.code == "INVALID_LLM_OPERATION":
+                        continue
                     if fallback is not None and _can_switch_model(exc):
+                        backup_health = await self.store.model_availability("openrouter", _requested_model(fallback, "openrouter"))
+                        if not backup_health["available"]:
+                            raise ProviderError("MODEL_COOLDOWN", "Резервная модель временно недоступна. Состояние сохранено.",
+                                True, "openrouter", {"retry_after": backup_health["retry_after"], "scope": backup_health["scope"]}) from None
                         if temporary:
                             await gateway.close()
                         gateway, provider, temporary, fallback = fallback, "openrouter", True, None
@@ -301,6 +533,22 @@ class Harness:
             if fallback is not None:
                 await fallback.close()
 
+    async def _interpret(self, session: dict, run: dict) -> tuple[ModelResult, dict | None]:
+        pending = session.get("pending_question")
+        if pending and session.get("waiting_reason") == "clarification":
+            pending = dict(pending)
+            if not pending.get("field"):
+                binding = derive_pending_field(pending.get("questions") or [pending.get("text")], session["state"])
+                pending.update({key: value for key, value in binding.items() if value is not None})
+            resolved = resolve_short_answer(session["state"], pending, run["input_text"])
+            if resolved["handled"]:
+                question = resolved.get("question")
+                extracted = ModelResult(operations=[Operation.model_validate(op) for op in resolved["operations"]],
+                    control={"action": "none"}, reply=question or "Ответ сохранён.", unknowns=[question] if question else [], conflicts=[],
+                    pending_context=resolved.get("pending_context"), response_source="contextual_slot")
+                return extracted, None
+        return await self._extract(session, run)
+
     async def _process(self, run: dict) -> None:
         session = await self.store.get_session(run["session_id"])
         version = session["state_version"]
@@ -312,6 +560,8 @@ class Harness:
         questions: list[str] = []
         result: dict = {}
         model_meta: dict | None = None
+        undo_meta: dict | None = None
+        preserve_pending = False
         waiting_reason = None
         status = "TRIP_DRAFT"
         search = False
@@ -325,9 +575,21 @@ class Harness:
                 raise Conflict("Поездка изменилась после отправки формы.", "stale_state")
             kind = command["kind"]
             if kind == "commands":
-                candidate, changes = apply_operations(state, command["operations"])
+                operations = [Operation.model_validate(item) for item in command["operations"]]
+                conflicts = operation_conflicts(state, operations)
+                if conflicts:
+                    raise DomainError("conflicting_operations", conflicts[0], conflicts)
+                if any(operation.type == "undo" for operation in operations) and command["search"]:
+                    raise DomainError("undo_requires_separate_search", "После undo выполните отдельный новый поиск.")
+                candidate, changes, undo_meta = await self._apply_or_undo(session, state, operations)
                 new_state = candidate if changes else None
                 search = command["search"]
+            elif kind == "undo":
+                candidate, changes, undo_meta = await self._apply_or_undo(session, state, [Operation(type="undo")])
+                new_state = candidate
+            elif kind == "cancel":
+                await self.cancel_control(run)
+                return
             elif kind == "demo":
                 new_state = sample_trip()
                 new_state.trip_id = state.trip_id
@@ -343,41 +605,118 @@ class Harness:
             else:
                 raise DomainError("invalid_command", "Неизвестная структурированная команда.")
         else:
-            extracted, model_meta = await self._extract(session, run)
-            try:
-                candidate, changes = apply_operations(state, extracted.operations)
-            except DomainError as exc:
-                exc.llm_meta = model_meta
-                raise
-            new_state = candidate if changes else None
-            questions = extracted.conflicts + extracted.unknowns
-            if extracted.control.action == "wait" and not resumed_after_input:
-                status, waiting_reason = "WAITING_USER", "user_pause"
-            elif questions:
-                status, waiting_reason = "WAITING_USER", "clarification"
-            elif extracted.control.action in {"request_checkout", "confirm"}:
-                result["available_actions"] = ["checkout/preview", "checkout/confirm"]
-                result["notice"] = "Выбор и текстовое «да» не создают заказ. Нужны preview и явное подтверждение его версии."
+            extracted, model_meta = await self._interpret(session, run)
+            # Explicit conflicts block the *entire* batch, including otherwise
+            # valid edits. Unknown fields alone may retain unambiguous changes.
+            conflicts = extracted.conflicts or operation_conflicts(state, extracted.operations)
+            if conflicts:
+                questions = conflicts
+                status, waiting_reason = "WAITING_USER", ("user_pause" if extracted.control.action == "wait" and
+                    explicit_pause_hint(run["input_text"]) and not resumed_after_input else "clarification")
+            elif extracted.control.action == "cancel":
+                await self.store.cancel_processing(session["session_id"], version,
+                    target_run_id=run["run_id"], result={"llm": model_meta})
+                return
             else:
-                search = True
+                try:
+                    candidate, changes, undo_meta = await self._apply_or_undo(session, state, extracted.operations)
+                except DomainError as exc:
+                    exc.llm_meta = model_meta
+                    raise
+                new_state = candidate if changes else None
+                questions = extracted.unknowns
+                if extracted.control.action == "wait" and not resumed_after_input:
+                    missing = [issue["message"] for issue in validate_trip(candidate) if issue["code"].startswith("missing_")]
+                    if (questions or missing) and not explicit_pause_hint(run["input_text"]):
+                        questions = questions or missing
+                        status, waiting_reason = "WAITING_USER", "clarification"
+                    else:
+                        status, waiting_reason = "WAITING_USER", "user_pause"
+                elif questions:
+                    status, waiting_reason = "WAITING_USER", "clarification"
+                elif extracted.control.action in {"request_checkout", "confirm"}:
+                    result["available_actions"] = ["checkout/preview", "checkout/confirm"]
+                    result["notice"] = "Выбор и текстовое «да» не создают заказ. Нужны preview и явное подтверждение его версии."
+                else:
+                    search = undo_meta is None and (bool(changes) or extracted.control.action in {"continue", "resume"}
+                        or extracted.response_source == "contextual_slot")
+                    if undo_meta is None and not search:
+                        status = session["status"]
+                        waiting_reason = session.get("waiting_reason")
+                        preserve_pending = True
+                        result.update(no_changes=True, notice="Новых изменений нет. Сохранённая поездка и текущие варианты не изменены.")
+                        if not session.get("pending_question"):
+                            missing = [issue for issue in validate_trip(candidate) if issue["code"].startswith("missing_")]
+                            if missing:
+                                questions = [missing[0]["message"]]
+                                status, waiting_reason, preserve_pending = "WAITING_USER", "clarification", False
+                                result.clear()
         current = new_state or state
         if new_state is not None:
             current.state_version = version + 1
+        if undo_meta is not None:
+            search = False
+            result.update(undo=undo_meta, plans=[], notice="Последняя успешная правка отменена новой ревизией. Цены и согласия не восстановлены; нужен новый поиск. Существующие заказы не изменены.")
+        clarification_metadata = dict((session.get("pending_question") or {}).get("context") or {})
+        if not run["input_text"].startswith(TYPED_PREFIX):
+            if extracted.destination_request is not None:
+                clarification_metadata["requested_destination"] = extracted.destination_request
+            if extracted.pending_context is not None:
+                clarification_metadata.update(extracted.pending_context)
+            clarification_metadata.pop("field", None)
+            clarification_metadata.pop("target_id", None)
+            for stale_address in ("traveler_id", "stay_id", "leg_id"):
+                clarification_metadata.pop(stale_address, None)
+            if extracted.conflicts:
+                clarification_metadata["force_clarification"] = True
+            else:
+                clarification_metadata.pop("force_clarification", None)
+            if questions and waiting_reason != "user_pause":
+                normalized = []
+                for raw in questions:
+                    trusted = raw in extracted.unknowns and (
+                        extracted.response_source == "contextual_slot" or extracted.destination_request is not None)
+                    bound = derive_pending_field([{**clarification_metadata, "text": raw}], current)
+                    if question_field(raw) and bound["field"] is None and not trusted and not extracted.conflicts:
+                        continue  # This precise slot is already filled.
+                    normalized.append(raw if trusted else human_question({**clarification_metadata, "text": raw}, current, bound))
+                questions = list(dict.fromkeys(normalized))[:1]
+                if not questions:
+                    waiting_reason = None
+                    status = "TRIP_DRAFT"
+                    search = bool(changes)
         if search and waiting_reason != "user_pause" and not questions:
-            result = self.inventory.search_trip(current)
+            result = await self._search_trip(current, session=session, run=run)
             questions = result["questions"]
             status = "OPTIONS_READY" if result["plans"] else "WAITING_USER" if questions else "TRIP_DRAFT"
             waiting_reason = "clarification" if questions else None
         elif not result and waiting_reason != "user_pause":
-            questions = questions or [issue["message"] for issue in validate_trip(current) if issue["code"].startswith("missing_")]
+            if not questions:
+                missing = [issue for issue in validate_trip(current) if issue["code"].startswith("missing_")]
+                if missing:
+                    questions = [human_question(missing[0], current, clarification_metadata)]
+                    detail = missing[0].get("details") or {}
+                    if detail.get("traveler_id"):
+                        clarification_metadata["traveler_id"] = detail["traveler_id"]
             if questions:
                 status, waiting_reason = "WAITING_USER", "clarification"
+        # Search and typed commands can generate questions after the model/slot
+        # phase. Sanitize that path too; raw schema names never enter the chat.
+        if questions and waiting_reason != "user_pause":
+            trusted = not run["input_text"].startswith(TYPED_PREFIX) and questions[0] in extracted.unknowns and (
+                extracted.response_source == "contextual_slot" or extracted.destination_request is not None)
+            if not trusted:
+                questions = [human_question({**clarification_metadata, "text": questions[0]}, current, clarification_metadata)]
         if waiting_reason == "user_pause":
-            reply = "Изменения сохранены. Жду явного «продолжай»; поиск и оформление остановлены."
+            reply = "Запрос и текущее состояние сохранены. Жду явного «продолжай»; поиск и оформление остановлены."
+            if questions:
+                result["deferred_questions"] = questions
         elif questions:
             reply = questions[0]
         elif result.get("plans"):
-            reply = f"Подобрано DEMO-планов: {len(result['plans'])}. Все цены и наличие вымышлены; бронь не создана."
+            reply = (f"Подобрано DEMO-планов: {len(result['plans'])}. Все цены и наличие вымышлены; бронь не создана."
+                     if result.get("source_type") == "DEMO" else
+                     "Собрана оценочная поездка. Источник каждого компонента указан отдельно; оформление только имитируется.")
         elif result.get("live_offers"):
             reply = "Получены компоненты поставщика. Их статус указан отдельно; полная поездка и бронирование не подтверждены."
         elif result.get("weather"):
@@ -388,13 +727,45 @@ class Harness:
             reply = "В конечном DEMO-каталоге нет подходящих вариантов. Бюджет и обязательные условия не ослаблены."
         else:
             reply = result.get("notice") or "Изменения сохранены. Доступны структурированные формы и явный DEMO-поиск."
-        pending = {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions and waiting_reason != "user_pause" else None
+        pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions and waiting_reason != "user_pause" else None
+        if pending is not None and not preserve_pending:
+            if not run["input_text"].startswith(TYPED_PREFIX) and extracted.pending_context and extracted.pending_context.get("field"):
+                binding = {"field": extracted.pending_context["field"], "target_id": extracted.pending_context.get("target_id")}
+            else:
+                binding = derive_pending_field([{**clarification_metadata, "text": question} for question in questions], current)
+            if binding.get("field") == "traveler.age" and binding.get("target_id") is None:
+                # Choose whom to ASK, not whose age an ambiguous prior answer
+                # meant. The persisted question names its exact target first.
+                missing_children = [person for person in current.travelers if person.type == "child" and person.age is None and person.birth_date is None]
+                if missing_children:
+                    binding["target_id"] = missing_children[0].id
+                    clarification_metadata["traveler_id"] = missing_children[0].id
+                    text = human_question({"field": "traveler.age", "target_id": missing_children[0].id}, current)
+                    pending.update(text=text, questions=[text])
+                    reply = text
+            if binding.get("field", "") and binding["field"].startswith(("stay.", "leg.")) and binding.get("target_id") is None:
+                field_name = binding["field"].split(".", 1)[1]
+                collection = current.legs if binding["field"].startswith("leg.") else current.stays
+                candidates = [item for item in collection if not getattr(item, field_name, None)]
+                if candidates:
+                    binding["target_id"] = candidates[0].id
+                    text = human_question({"field": binding["field"], "target_id": candidates[0].id}, current)
+                    pending.update(text=text, questions=[text])
+                    reply = text
+            pending = {**pending, "field": binding.get("field"), "target_id": binding.get("target_id"), "context": clarification_metadata}
+            if clarification_metadata.get("requested_destination") is not None:
+                pending["requested_destination"] = clarification_metadata["requested_destination"]
+        if not run["input_text"].startswith(TYPED_PREFIX):
+            result["response_source"] = extracted.response_source
         if model_meta is not None:
             result["llm"] = model_meta
+            result["model_reply"] = extracted.reply
+            result["operation_normalizations"] = extracted.operation_normalizations
         await self.store.finish_run(run["run_id"], version, current.model_dump(mode="json") if new_state is not None else None, status, reply, pending_question=pending, waiting_reason=waiting_reason, changes=changes, result=result)
 
     async def _live_search(self, session: dict, run: dict, command: dict, state: TripState) -> dict:
         kind, provider, request = command["search_kind"], command["provider"], command["request"]
+        await self._ensure_current_run(session, run)
         await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_STARTED", {"kind": kind, "provider": provider})
         try:
             if kind == "hotels":

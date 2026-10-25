@@ -3,6 +3,38 @@ from datetime import date
 
 import pytest
 
+
+def test_source_policy_changes_are_versioned_domain_changes():
+    from otravel.domain import Operation, apply_operations, sample_trip
+    old = sample_trip()
+    changed, diff = apply_operations(old, [Operation(type="set_search_policy", value={"mode": "HYBRID", "guest_nationality": "RU"})])
+    assert changed.search_policy.mode == "HYBRID"
+    assert changed.search_policy.guest_nationality == "RU"
+    assert old.search_policy.mode == "DEMO"
+    assert changed.travelers == old.travelers
+    assert changed.stays == old.stays
+    assert [row["field"] for row in diff] == ["search_policy"]
+
+
+def test_updating_age_preserves_group_membership_and_member_order():
+    from otravel.domain import Operation, apply_operations, sample_trip
+    state = sample_trip()
+    child = next(p for p in state.travelers if p.type == "child")
+    changed, diff = apply_operations(state, [Operation(type="update_traveler", target_id=child.id, value={"age": 4})])
+    assert changed.groups == state.groups
+    assert changed.stays == state.stays
+    assert [row["field"] for row in diff] == ["travelers"]
+
+
+@pytest.mark.parametrize("policy", [{"mode": "PAID"}, {"hotel_provider": "unknown"}, {"guest_nationality": "Russia"}])
+def test_invalid_source_policy_does_not_mutate_the_trip(policy):
+    from otravel.domain import DomainError, Operation, apply_operations, sample_trip
+    state = sample_trip()
+    before = state.model_dump()
+    with pytest.raises(DomainError):
+        apply_operations(state, [Operation(type="set_search_policy", value=policy)])
+    assert state.model_dump() == before
+
 from otravel.domain import DomainError, Operation, TripState, apply_operations, canonical_city, sample_trip, validate_trip
 
 

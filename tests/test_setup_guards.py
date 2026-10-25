@@ -1,9 +1,65 @@
 import json
+import asyncio
 
 import httpx
 import pytest
 
 from otravel.providers import LLMGateway, ProviderError
+
+
+@pytest.mark.asyncio
+async def test_total_llm_deadline_is_bounded_independently_of_read_chunks():
+    async def handler(request):
+        await asyncio.sleep(.2)
+        raise AssertionError("Wall-clock timeout should have cancelled this transport")
+    gateway = LLMGateway({"LLM_PROVIDER": "openrouter", "OPENROUTER_API_KEY": "synthetic-key",
+                          "http_transport": httpx.MockTransport(handler)})
+    gateway.wall_timeout = .01
+    try:
+        with pytest.raises(ProviderError) as error:
+            await gateway.extract_operations({})
+        assert error.value.code == "REQUEST_TIMEOUT"
+        assert error.value.retryable is True
+    finally:
+        await gateway.close()
+
+
+@pytest.mark.asyncio
+async def test_nvidia_profile_disables_reasoning_without_removing_price_guard():
+    def handler(request):
+        body = json.loads(request.content)
+        assert body["model"] == "nvidia/nemotron-3.5-super-vl:free"
+        assert body["reasoning"] == {"enabled": False, "exclude": True}
+        assert body["provider"]["max_price"] == {"prompt": 0, "completion": 0, "request": 0}
+        return httpx.Response(200, json={"choices": [{"finish_reason": "stop", "message": {"content": json.dumps({
+            "operations": [], "control": {"action": "cancel"}, "reply": "Остановлено",
+            "unknowns": [], "conflicts": [],
+        })}}]})
+    gateway = LLMGateway({"LLM_PROVIDER": "openrouter", "OPENROUTER_API_KEY": "synthetic-key",
+                          "OPENROUTER_MODEL": "nvidia/nemotron-3.5-super-vl:free",
+                          "LLM_REASONING_ENABLED": "false", "http_transport": httpx.MockTransport(handler)})
+    try:
+        assert (await gateway.extract_operations({"current_message": "Отмени текущий поиск"}))["control"]["action"] == "cancel"
+    finally:
+        await gateway.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("finish_reason", ["length", "content_filter", "error"])
+async def test_incomplete_llm_answer_is_rejected_even_if_json_parses(finish_reason):
+    def handler(request):
+        return httpx.Response(200, json={"choices": [{"finish_reason": finish_reason, "message": {"content": json.dumps({
+            "operations": [], "control": {"action": "none"}, "reply": "Неполный ответ",
+            "unknowns": [], "conflicts": [],
+        })}}]})
+    gateway = LLMGateway({"LLM_PROVIDER": "openrouter", "OPENROUTER_API_KEY": "synthetic-key",
+                          "http_transport": httpx.MockTransport(handler)})
+    try:
+        with pytest.raises(ProviderError) as error:
+            await gateway.extract_operations({})
+        assert error.value.code == "INVALID_LLM_RESPONSE"
+    finally:
+        await gateway.close()
 
 
 def test_database_password_roundtrips_special_characters(monkeypatch):

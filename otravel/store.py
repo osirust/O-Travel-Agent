@@ -10,6 +10,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import math
 import re
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -26,6 +27,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 SCHEMA_VERSION = 1
 REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter"})
+LOCAL_MODEL_PROVIDERS = frozenset({"ollama"})
 metadata = MetaData()
 schema_versions = Table(
     "schema_versions", metadata,
@@ -275,11 +277,11 @@ class Store:
         return dict(row)
 
     async def _event(self, conn, session: dict, run_id: str | None,
-                     event_type: str, payload: dict) -> dict:
+                     event_type: str, payload: dict, *, timestamp: datetime | None = None) -> dict:
         row = (await conn.execute(insert(events).values(
             event_id=str(uuid4()), session_id=session["session_id"], run_id=run_id,
             event_type=event_type, state_version=session["state_version"],
-            payload=_safe_payload(_json(payload)), created_at=_now(),
+            payload=_safe_payload(_json(payload)), created_at=timestamp if timestamp is not None else _now(),
         ).returning(events))).mappings().one()
         return _public(row)
 
@@ -380,6 +382,111 @@ class Store:
         async with self.engine.connect() as conn:
             return _run(await self._run(conn, run_id))
 
+    async def prepare_undo(self, session_id: str, expected_version: int) -> dict:
+        """Read an undo candidate; finish_run CAS must commit it as a new revision.
+
+        Control/order revisions and already undone edits are skipped. Only the
+        domain snapshot is returned: session phase, quotes and orders never rewind.
+        """
+        _version(expected_version)
+        async with self.engine.connect() as conn:
+            session = await self._session(conn, session_id)
+            if session["state_version"] != expected_version:
+                raise Conflict("Поездка изменилась перед undo.", "stale_state")
+            rows = (await conn.execute(select(revisions).where(
+                revisions.c.session_id == session_id
+            ).order_by(revisions.c.state_version))).mappings().all()
+
+        def core(state: dict) -> dict:
+            return {key: value for key, value in state.items() if key not in {"state_version", "trip_id"}}
+
+        consumed = set()
+        for row in rows:
+            for change in row["changes"] or []:
+                if isinstance(change, dict) and change.get("operation") == "undo" and type(change.get("undone_revision")) is int:
+                    consumed.add(change["undone_revision"])
+        for index in range(len(rows) - 1, 0, -1):
+            row, previous = rows[index], rows[index - 1]
+            undo_row = any(isinstance(change, dict) and change.get("operation") == "undo" for change in row["changes"] or [])
+            if not row["run_id"] or undo_row or row["state_version"] in consumed or core(row["state"]) == core(previous["state"]):
+                continue
+            restored = copy.deepcopy(previous["state"])
+            # These are not domain wishes and must never revive consent/cache IDs.
+            for field in ("cart_quote_id", "quote_id", "quote_version", "consent", "confirmed", "selected_offer_ids"):
+                restored.pop(field, None)
+            restored.update(trip_id=session["trip_id"], state_version=expected_version)
+            marker = {"undone_revision": row["state_version"], "restored_from_revision": previous["state_version"]}
+            changes = [{"operation": "undo", "field": key, "before": copy.deepcopy(session["state"].get(key)), "after": copy.deepcopy(restored.get(key)), **marker}
+                       for key in sorted(set(session["state"]) | set(restored)) if key not in {"state_version", "trip_id"} and session["state"].get(key) != restored.get(key)]
+            if not changes:
+                changes = [{"operation": "undo", "field": "trip", "before": core(session["state"]), "after": core(restored), **marker}]
+            return {"state": restored, "changes": changes, "undo": marker}
+        raise Conflict("Нет успешной правки, которую можно отменить.", "nothing_to_undo")
+
+    async def cancel_processing(self, session_id: str, expected_version: int,
+                                control_run_id: str | None = None,
+                                target_run_id: str | None = None,
+                                result: dict | None = None) -> dict:
+        """Cancel one in-flight/oldest pending run; never delete state or orders."""
+        _version(expected_version)
+        async with self.engine.begin() as conn:
+            session = await self._session(conn, session_id, lock=True)
+            if session["state_version"] != expected_version:
+                raise Conflict("Поездка изменилась перед отменой обработки.", "stale_state")
+            if control_run_id:
+                control = await self._run(conn, control_run_id)
+                if control["session_id"] != session_id:
+                    raise NotFound("Команда этой сессии не найдена.")
+                control_sequence = (await conn.execute(select(messages.c.sequence).where(messages.c.id == control["input_message_id"]))).scalar_one()
+            else:
+                control_sequence = None
+            target_id = target_run_id or session["active_run_id"]
+            if target_id == control_run_id:
+                target_id = None
+            if target_id and control_sequence is not None:
+                target_row = await self._run(conn, target_id)
+                target_sequence = (await conn.execute(select(messages.c.sequence).where(messages.c.id == target_row["input_message_id"]))).scalar_one()
+                if target_sequence >= control_sequence:
+                    target_id = None
+            if target_id is None:
+                query = select(runs).join(messages, messages.c.id == runs.c.input_message_id).where(
+                    runs.c.session_id == session_id, runs.c.status == "pending"
+                )
+                if control_run_id:
+                    query = query.where(runs.c.id != control_run_id, messages.c.sequence < control_sequence)
+                candidate = (await conn.execute(query.order_by(messages.c.sequence).limit(1))).mappings().first()
+                target_id = candidate["id"] if candidate else None
+            if target_id is None:
+                await self._event(conn, session, control_run_id, "CANCEL_NO_ACTIVE_RUN", {})
+                return {"session": _public(session), "cancelled_run_id": None, "was_active": False}
+            target = await self._run(conn, target_id, lock=True)
+            if target["session_id"] != session_id:
+                raise NotFound("Обработка этой сессии не найдена.")
+            if target["status"] not in {"pending", "running"}:
+                return {"session": _public(session), "cancelled_run_id": None, "was_active": False}
+            was_active = session["active_run_id"] == target_id
+            version = session["state_version"] + 1
+            paused = session["waiting_reason"] == "user_pause"
+            values = dict(state_version=version, state=_stamped(session["state"], version),
+                          status="WAITING_USER" if paused else "TRIP_DRAFT",
+                          waiting_reason="user_pause" if paused else None,
+                          pending_question=None, updated_at=_now())
+            if was_active:
+                values.update(active_run_id=None, active_run_started_at=None)
+            await conn.execute(update(sessions).where(sessions.c.session_id == session_id).values(**values))
+            session.update(values)
+            await self._invalidate_quotes(conn, session_id)
+            await self._revision(conn, session, control_run_id, [{"op": "cancel_processing", "run_id": target_id}])
+            problem = {"code": "user_cancelled", "message": "Текущая обработка отменена; поездка и заказы сохранены.", "retryable": False}
+            message = await self._assistant(conn, session_id, target_id, problem["message"])
+            response = self._response(session, target_id, problem["message"], message, [], problem,
+                                      {"cancelled": True, **_json(result or {})})
+            response["run"] = {**_run(target), "status": "cancelled", "current_status": "cancelled", "result": None}
+            await conn.execute(update(runs).where(runs.c.id == target_id).values(
+                status="cancelled", error=problem, result=response, finished_at=_now()))
+            await self._event(conn, session, target_id, "RUN_CANCELLED", {"orders_unchanged": True})
+            return {"session": _public(session), "cancelled_run_id": target_id, "was_active": was_active}
+
     async def list_pending_runs(self) -> list[dict]:
         async with self.engine.connect() as conn:
             rows = (await conn.execute(select(runs).join(
@@ -467,6 +574,9 @@ class Store:
                 if state is not None:
                     await self._invalidate_quotes(conn, session["session_id"])
                     await self._revision(conn, session, run_id, changes)
+                    undo = next((change for change in changes or [] if isinstance(change, dict) and change.get("operation") == "undo"), None)
+                    if undo:
+                        await self._event(conn, session, run_id, "STATE_UNDONE", {key: undo[key] for key in ("undone_revision", "restored_from_revision")})
                 message = await self._assistant(conn, session["session_id"], run_id, reply)
                 clean_error = _safe_payload(_json(error))
                 response = self._response(session, run_id, reply, message, _json(changes), clean_error, _json(result))
@@ -490,7 +600,7 @@ class Store:
             run = await self._run(conn, run_id, lock=True)
             if run["status"] == "completed":
                 return copy.deepcopy(run["result"])
-            if run["status"] in {"failed", "interrupted", "conflict"} and run["result"]:
+            if run["status"] in {"failed", "interrupted", "conflict", "cancelled"} and run["result"]:
                 return copy.deepcopy(run["result"])
             values: dict = {"updated_at": _now()}
             if session["active_run_id"] == run_id:
@@ -503,7 +613,7 @@ class Store:
             session.update(values)
             message = await self._assistant(conn, session["session_id"], run_id, reply) if reply else None
             response = self._response(session, run_id, reply, message, [], clean_error, None)
-            status = run["status"] if run["status"] in {"interrupted", "conflict"} else "failed"
+            status = run["status"] if run["status"] in {"interrupted", "conflict", "cancelled"} else "failed"
             response["run"] = {**_run(run), "status": status, "current_status": status, "result": None}
             await conn.execute(update(runs).where(runs.c.id == run_id).values(
                 status=status, error=clean_error, result=response, finished_at=_now()
@@ -548,13 +658,45 @@ class Store:
             if session["waiting_reason"] == "user_pause":
                 raise Conflict("Поездка поставлена на паузу.", "user_paused")
             now = _now()
+            expires_at = now + timedelta(seconds=min(600, expires_seconds))
+            snapshots = plan.get("source_snapshots", [])
+            if not isinstance(snapshots, list):
+                raise StoreError("Некорректные снимки источников корзины.", "invalid_source_snapshots")
+            for snapshot in snapshots:
+                if not isinstance(snapshot, dict):
+                    raise StoreError("Некорректный снимок источника.", "invalid_source_snapshots")
+                if snapshot.get("source_type") == "DEMO":
+                    continue
+                try:
+                    external_expiry = datetime.fromisoformat(snapshot["expires_at"].replace("Z", "+00:00"))
+                    if external_expiry.tzinfo is None:
+                        raise ValueError
+                except (KeyError, ValueError, TypeError, AttributeError):
+                    raise StoreError("Для внешнего компонента нужен expires_at с timezone.", "invalid_source_expiry") from None
+                expires_at = min(expires_at, external_expiry.astimezone(timezone.utc))
+            if expires_at <= now:
+                raise StaleQuote("Источник корзины уже устарел; нужен новый поиск.")
+            # A later preview supersedes every prior active consent atomically.
+            await self._invalidate_quotes(conn, session_id)
             row = (await conn.execute(insert(quotes).values(
                 id=str(uuid4()), session_id=session_id, quote_version=1,
                 state_version=expected_version, plan=_json(plan), status="active",
-                expires_at=now + timedelta(seconds=expires_seconds), created_at=now,
+                expires_at=expires_at, created_at=now,
             ).returning(quotes))).mappings().one()
             await self._event(conn, session, None, "QUOTE_CREATED", {"quote_id": row["id"]})
             return _quote(row)
+
+    async def begin_quote_preview(self, session_id: str, expected_version: int) -> None:
+        """Revoke old consent before external reprice, including failed attempts."""
+        _version(expected_version)
+        async with self.engine.begin() as conn:
+            session = await self._session(conn, session_id, lock=True)
+            if session["state_version"] != expected_version:
+                raise Conflict("Состояние поездки изменилось.", "stale_state")
+            if session["waiting_reason"] == "user_pause":
+                raise Conflict("Поездка поставлена на паузу.", "user_paused")
+            await self._invalidate_quotes(conn, session_id)
+            await self._event(conn, session, None, "QUOTE_PREVIEW_STARTED", {"state_version": expected_version})
 
     async def get_quote(self, quote_id: str) -> dict:
         async with self.engine.connect() as conn:
@@ -653,19 +795,21 @@ class Store:
 
     async def reserve_model_call(self, session_id: str, run_id: str,
                                  limit: int, provider: str) -> bool:
-        """Reserve one attempt in a shared live/test UTC-day budget bucket.
+        """Reserve an actual attempt in remote/local/test durable budget buckets.
 
         This is an application budget, not a query of the provider's allowance.
-        Gemini and OpenRouter share one live bucket, including failed attempts.
-        Injected test adapters share a separate bucket and cannot consume live
-        allowance. Unknown provider names fail closed rather than bypassing it.
+        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Ollama has
+        an independent hard 500/day and 1/run local bucket; it is not a test
+        adapter. Caller limits can reduce but never increase these ceilings.
+        Injected test adapters share a third bucket excluding both actual buckets.
+        Unknown provider names fail closed rather than bypassing the limits.
         The canonical MODEL_CALL_STARTED event is written here exactly once per
         reservation; callers must not duplicate it in their normal event logging.
         """
         if type(limit) is not int or limit < 0:
             raise StoreError("Лимит должен быть целым неотрицательным.", "invalid_budget_limit")
         if not isinstance(provider, str) or not (
-            provider in REAL_MODEL_PROVIDERS or provider == "injected_test_adapter"
+            provider in REAL_MODEL_PROVIDERS or provider in LOCAL_MODEL_PROVIDERS or provider == "injected_test_adapter"
             or provider.startswith("test_")
         ):
             raise StoreError("Нужен разрешённый реальный или явно тестовый провайдер.", "invalid_provider")
@@ -676,20 +820,34 @@ class Store:
             run = await self._run(conn, run_id)
             if run["session_id"] != session_id:
                 raise Conflict("Run принадлежит другой сессии.", "session_mismatch")
-            day_start = _now().replace(hour=0, minute=0, second=0, microsecond=0)
+            reserved_at = _now().astimezone(timezone.utc)
+            day_start = reserved_at.replace(hour=0, minute=0, second=0, microsecond=0)
             event_provider = events.c.payload["provider"].astext
-            provider_scope = event_provider.in_(sorted(REAL_MODEL_PROVIDERS)) if (
-                provider in REAL_MODEL_PROVIDERS
-            ) else event_provider.not_in(sorted(REAL_MODEL_PROVIDERS))
+            if provider in REAL_MODEL_PROVIDERS:
+                provider_scope = event_provider.in_(sorted(REAL_MODEL_PROVIDERS))
+                effective_limit, per_run_limit = min(limit, 40), 2
+            elif provider in LOCAL_MODEL_PROVIDERS:
+                provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
+                effective_limit, per_run_limit = min(limit, 500), 1
+            else:
+                provider_scope = event_provider.not_in(sorted(REAL_MODEL_PROVIDERS | LOCAL_MODEL_PROVIDERS))
+                effective_limit, per_run_limit = limit, None
+            if per_run_limit is not None:
+                run_count = (await conn.execute(select(func.count()).select_from(events).where(
+                    events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
+                    provider_scope,
+                ))).scalar_one()
+                if run_count >= per_run_limit:
+                    return False
             count = (await conn.execute(select(func.count()).select_from(events).where(
                 events.c.event_type == "MODEL_CALL_STARTED",
                 events.c.created_at >= day_start,
                 events.c.created_at < day_start + timedelta(days=1),
                 provider_scope,
             ))).scalar_one()
-            if count >= limit:
+            if count >= effective_limit:
                 return False
-            await self._event(conn, session, run_id, "MODEL_CALL_STARTED", {"provider": provider})
+            await self._event(conn, session, run_id, "MODEL_CALL_STARTED", {"provider": provider}, timestamp=reserved_at)
             return True
 
     async def recover_stale_runs(self, timeout_seconds: int = 120) -> list[dict]:
@@ -716,3 +874,90 @@ class Store:
                 await self._event(conn, session, run["id"], "RUN_INTERRUPTED", problem)
                 recovered.append(_run(updated))
         return recovered
+
+    async def model_availability(self, provider: str, model: str,
+                                 now: datetime | None = None) -> dict:
+        """Durable routing evidence; this performs no call, reservation or write.
+
+        Known per-model upstream/network failures cool down for ten minutes.
+        Account/auth/credit/unknown-429 limits block the entire provider until
+        UTC midnight or a later confirmed MODEL_RESPONSE_RECEIVED. A metadata
+        GET is not such evidence. After rotating a key, explicitly verify it;
+        this method cannot infer account identity from a provider label.
+
+        All events are project-global rather than session-scoped. Existing
+        event_type/created_at indexes keep these short JSON-filtered reads small
+        under the bounded daily call budget. Test-provider namespaces use the
+        same classification, so fixtures do not contaminate real provider data.
+        """
+        if not isinstance(provider, str) or not (
+            provider in REAL_MODEL_PROVIDERS or provider in LOCAL_MODEL_PROVIDERS or provider == "injected_test_adapter"
+            or provider.startswith("test_")
+        ):
+            raise StoreError("Нужен разрешённый провайдер модели.", "invalid_provider")
+        if not isinstance(model, str) or not model.strip() or len(model) > 300:
+            raise StoreError("Нужен явный ID модели длиной до 300 символов.", "invalid_model")
+        instant = _now() if now is None else now
+        if not isinstance(instant, datetime) or instant.tzinfo is None or instant.utcoffset() is None:
+            raise StoreError("Для cooldown нужно время с часовым поясом.", "invalid_clock")
+        instant = instant.astimezone(timezone.utc)
+        day_start = instant.replace(hour=0, minute=0, second=0, microsecond=0)
+        next_day = day_start + timedelta(days=1)
+
+        def classify(payload: dict) -> tuple[str | None, str]:
+            code = payload.get("code")
+            status = payload.get("http_status")
+            source = payload.get("limit_source")
+            if source and source != "upstream_provider_shared_pool":
+                return "provider", "provider_limit_blocked"
+            if code == "RATE_LIMITED" or type(status) is int and status == 429:
+                return ("model", "upstream_pool_cooldown") if source == "upstream_provider_shared_pool" else ("provider", "provider_quota_or_unknown_429")
+            if type(status) is int and status in {401, 403}:
+                return "provider", "provider_auth_blocked"
+            if type(status) is int and status == 402:
+                return "provider", "provider_credit_blocked"
+            if code == "HTTP_ERROR":
+                if type(status) is not int:
+                    return "provider", "unclassified_http_error"
+                if 500 <= status < 600:
+                    return "model", "upstream_http_cooldown"
+            if code in {"NETWORK_ERROR", "REQUEST_TIMEOUT"}:
+                return "model", "network_cooldown" if code == "NETWORK_ERROR" else "timeout_cooldown"
+            return None, "not_an_availability_failure"
+
+        event_types = ("MODEL_CALL_FAILED", "MODEL_RESPONSE_RECEIVED")
+        columns = (events.c.event_type, events.c.payload, events.c.created_at, events.c.sequence)
+        common = (events.c.event_type.in_(event_types), events.c.payload["provider"].astext == provider,
+                  events.c.created_at <= instant)
+        async with self.engine.connect() as conn:
+            # One statement snapshot for model cooldown and provider-wide limits:
+            # a second query must not miss a concurrent account block seen by one.
+            rows = (await conn.execute(select(*columns).where(
+                *common, events.c.created_at >= min(day_start, instant - timedelta(minutes=10))
+            ).order_by(events.c.created_at.desc(), events.c.sequence.desc()))).mappings().all()
+        provider_rows = [row for row in rows if row["created_at"] >= day_start]
+        model_rows = [row for row in rows if row["payload"].get("model") == model and row["created_at"] >= instant - timedelta(minutes=10)]
+
+        def answer(available: bool, reason: str, scope: str, until: datetime | None = None,
+                   allow_fallback: bool = False) -> dict:
+            return {"available": available, "reason": reason, "scope": scope,
+                    "retry_after": max(0, math.ceil((until - instant).total_seconds())) if until else None,
+                    "retry_at": until.isoformat() if until else None,
+                    "allow_fallback": allow_fallback, "provider": provider, "model": model}
+
+        for row in provider_rows:
+            if row["event_type"] == "MODEL_RESPONSE_RECEIVED":
+                if isinstance(row["payload"].get("model"), str) and row["payload"]["model"].strip():
+                    break
+                continue
+            scope, reason = classify(row["payload"])
+            if scope == "provider":
+                return answer(False, reason, "provider", next_day)
+        for row in model_rows:
+            if row["event_type"] == "MODEL_RESPONSE_RECEIVED":
+                return answer(True, "confirmed_model_response", "model")
+            scope, reason = classify(row["payload"])
+            until = row["created_at"] + timedelta(minutes=10)
+            if scope == "model" and until > instant:
+                return answer(False, reason, "model", until, allow_fallback=True)
+        return answer(True, "no_active_cooldown", "model")

@@ -39,7 +39,7 @@ def canonical_city(value: str) -> str:
         raise DomainError("missing_city", "Укажите город.")
     key = " ".join(value.strip().casefold().replace("ё", "е").split())
     if key not in _ALIASES:
-        raise DomainError("unsupported_city", f"Город «{value}» вне текущей географии DEMO.", {"supported": list(CITIES)})
+        raise DomainError("unsupported_city", f"Направление «{value}» пока не входит в каталог поиска. Уточните город; доступные направления: {', '.join(CITIES)}.", {"supported": list(CITIES)})
     return _ALIASES[key]
 
 
@@ -117,6 +117,14 @@ class Preference(Model):
     weight: float = Field(default=1.0, ge=0, le=1)
 
 
+class SearchPolicy(Model):
+    mode: Literal["DEMO", "HYBRID"] = "DEMO"
+    hotel_provider: Literal["liteapi", "serpapi"] = "liteapi"
+    flight_provider: Literal["duffel", "serpapi"] = "serpapi"
+    demo_fallback: bool = True
+    guest_nationality: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
+
+
 class TripState(Model):
     trip_id: str = Field(default_factory=lambda: str(uuid4()))
     state_version: int = Field(default=0, ge=0, strict=True)
@@ -128,6 +136,7 @@ class TripState(Model):
     budget: Budget | None = None
     constraints: list[Constraint] = Field(default_factory=list)
     preferences: list[Preference] = Field(default_factory=list)
+    search_policy: SearchPolicy = Field(default_factory=SearchPolicy)
 
     @field_validator("origin")
     @classmethod
@@ -272,7 +281,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
     data = deepcopy(state.model_dump(mode="json"))
     changes: list[dict[str, Any]] = []
     route_changed = False
-    allowed = {"set_origin", "set_budget", "add_traveler", "remove_traveler", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
+    allowed = {"set_origin", "set_budget", "set_search_policy", "add_traveler", "remove_traveler", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
     for raw_operation in operations:
         try:
             operation = raw_operation if isinstance(raw_operation, Operation) else Operation.model_validate(raw_operation)
@@ -286,6 +295,9 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
             elif kind == "set_budget":
                 _keys(value, {"amount_minor", "currency", "scope"})
                 data["budget"] = Budget.model_validate(value).model_dump(mode="json")
+            elif kind == "set_search_policy":
+                _keys(value, set(SearchPolicy.model_fields))
+                data["search_policy"] = SearchPolicy.model_validate({**data["search_policy"], **value}).model_dump(mode="json")
             elif kind == "add_traveler":
                 _keys(value, {"id", "type", "age", "birth_date", "group_id"})
                 value.setdefault("id", "traveler-" + str(uuid4()))
@@ -311,12 +323,14 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                             room["traveler_ids"] = [item for item in room["traveler_ids"] if item != target]
                 else:
                     _keys(value, {"type", "age", "birth_date", "group_id"})
+                    prior_group = person["group_id"]
                     person.update(value)
-                    for group in data["groups"]:
-                        group["traveler_ids"] = [item for item in group["traveler_ids"] if item != target]
-                    if person["group_id"]:
-                        group = _target(data["groups"], person["group_id"], "группа")
-                        group["traveler_ids"].append(target)
+                    if person["group_id"] != prior_group:
+                        for group in data["groups"]:
+                            group["traveler_ids"] = [item for item in group["traveler_ids"] if item != target]
+                        if person["group_id"]:
+                            group = _target(data["groups"], person["group_id"], "группа")
+                            group["traveler_ids"].append(target)
             elif kind == "upsert_stay":
                 _keys(value, {"id", "city", "check_in", "check_out", "rooms", "hotel_id"})
                 identifier = target or value.get("id")

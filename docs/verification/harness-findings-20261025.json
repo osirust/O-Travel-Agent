@@ -1,0 +1,95 @@
+{
+  "updated_at": "2026-10-25T14:23:50.357337+00:00",
+  "findings": [
+    {
+      "id": "NLU-001",
+      "status": "FIXED_LOCAL_ACTUAL_RETEST_OPEN",
+      "fact": "Initial live series treated an unknown child age as explicit user_pause; next answer stayed queued.",
+      "action": "Distinguish missing data from explicit pause; preserve stop priority on invalid patch/conflicts.",
+      "evidence": [
+        "llm-acceptance-20261025-initial.json",
+        "../..//tests/test_api.py",
+        "../../tests/test_harness_review.py"
+      ],
+      "closure": "Relevant real-model clarification/answer turn passes after current fixes; blocked upstream does not close this."
+    },
+    {
+      "id": "NLU-002",
+      "status": "FIXED_LOCAL_ACTUAL_RETEST_OPEN",
+      "fact": "Initial live reminder of breakfast generated an invalid domain operation and recoverable error.",
+      "action": "Domain preflight with safe schema feedback and bounded same-model repair; no fabricated values.",
+      "closure": "Relevant actual turn passes after fix and state/constraints preserved."
+    },
+    {
+      "id": "NLU-003",
+      "status": "FIXED_LOCAL_ACTUAL_RETEST_OPEN",
+      "fact": "Unknown city was rejected as processing error instead of controlled clarification.",
+      "action": "Validate supported city before applying batch, return one question without mutation.",
+      "closure": "Actual unknown request completes with controlled question, no search/order."
+    },
+    {
+      "id": "DOMAIN-001",
+      "status": "FIXED_LOCAL_ACTUAL_RETEST_OPEN",
+      "fact": "update_traveler age removed and appended a group member, changing canonical group order.",
+      "action": "Only rewrite group membership when group_id actually changes.",
+      "closure": "Age-update regression and relevant actual dialogue preserve groups and member order."
+    },
+    {
+      "id": "MONEY-001",
+      "status": "OPEN_NUMBER_GROUNDING",
+      "fact": "Alternate live Xing turn preserved dates but returned wrong budget magnitude for Russian number words.",
+      "action": "Ground unambiguous scalar/relative RUB budget operations in deterministic Decimal/int parsing; keep original failed report.",
+      "closure": "Table edge cases and targeted actual mass-edit rerun pass without modifying frozen fixture."
+    },
+    {
+      "id": "RUNTIME-001",
+      "status": "CLOSED_TESTED_EXECUTION_CONTROL_SCOPE",
+      "fact": "Patch rejection/semantic conflict could lose explicit wait/cancel.",
+      "action": "Preserve execution control separately from rejected operations.",
+      "evidence": [
+        "../../tests/test_harness_review.py"
+      ],
+      "closure": "Nine controlled API/PG regressions passed; no claim of all natural language forms."
+    },
+    {
+      "id": "RUNTIME-002",
+      "status": "CLOSED_TESTED_BEFORE_DISPATCH_SCOPE",
+      "fact": "Cross-worker pause stopped late writes via CAS but could allow subsequent provider calls.",
+      "action": "Read-check current version, active run/status and pause before each model/tool dispatch; no long transaction.",
+      "evidence": [
+        "../../tests/test_harness_review.py"
+      ],
+      "limits": "A request already dispatched cannot be recalled atomically with a DB commit."
+    },
+    {
+      "id": "FAULT-001",
+      "status": "CLOSED_LOCAL_CONNECTION_REFUSAL_SCOPE",
+      "fact": "Actual localhost DB connection refusal before intake returned HTTP500.",
+      "action": "Handle raw connection/timeout errors as safe retryable503; no intake on failure.",
+      "evidence": [
+        "fault-matrix-20261025.json"
+      ],
+      "limits": "Global database crash is a separate unqualified boundary."
+    },
+    {
+      "id": "LLM-AVAIL-001",
+      "status": "OPEN_EXTERNAL_AVAILABILITY",
+      "fact": "NVIDIA free endpoint five-minute/30-minute instability and5xx; Gemma/Xing shared-pool429. Dots returned responses via another upstream.",
+      "action": "Free-only routing, circuit cooldown, stop acceptance suite on provider outage, no paid fallback.",
+      "evidence": [
+        "llm-endpoints-20261025.json",
+        "llm-acceptance-20261025-repaired.json",
+        "llm-acceptance-20261025-alternate.json"
+      ],
+      "closure": "Bounded actual turn passes on selected profile; no guarantee of future free-service uptime."
+    },
+    {
+      "id": "ENV-003",
+      "status": "ACCESS_RESTORED_STORAGE_EVENT_OPEN",
+      "fact": "Owner confirmed E SSD disconnect/reconnect; Windows readable while WSL drvfs returnedErrno19.",
+      "action": "Mounted verified E drvfs over stale/busy mount only in AegML-Hackathon, matched SHA and re-synced source. No forced umount/shutdown/AEGYX changes.",
+      "evidence": "304 tests passed after access restoration; extra alias and old mount remain busy.",
+      "closure": "Current access recovered; permanent hardware cause and safe stale mount cleanup remain outside code verification."
+    }
+  ]
+}

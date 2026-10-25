@@ -1,0 +1,117 @@
+{
+  "checked_at_utc": "2026-10-25T17:28:32.662087+00:00",
+  "scope": "SOURCE_AND_DATA_SCHEMA_ONLY_NOT_BEHAVIOR_EVALUATION",
+  "schema_valid_records": 106,
+  "unbound_cases": 106,
+  "unbound_checks": 185,
+  "bound_complete_cases": 0,
+  "application_cases_executed": 0,
+  "llm_requests": 0,
+  "supplier_requests": 0,
+  "negative_schema_controls": {
+    "PASS_default_rejected": true,
+    "empty_checks_rejected": true,
+    "original_behavior_cannot_be_optional": true,
+    "unprepared_BOUND_rejected": true,
+    "unknown_operator_rejected": true,
+    "eq_without_expected_rejected": true,
+    "empty_composite_rejected": true,
+    "missing_composite_children_rejected": true,
+    "unknown_nested_operator_rejected": true,
+    "BOUND_null_clock_ref_rejected": true,
+    "BOUND_null_seed_ref_rejected": true,
+    "BOUND_null_fault_ref_rejected": true,
+    "BOUND_null_target_slot_rejected": true,
+    "BOUND_null_required_confirmation_rejected": true
+  },
+  "hypothetical_BOUND_shape_valid": true,
+  "gaps_table_exact_match": 35,
+  "document_links_exist": true,
+  "protected_inputs_verified": [
+    {
+      "path": "docs/research/sources/ostrovok_agent_stress_tests_106.zip",
+      "bytes": 29520,
+      "sha256": "0d9e2dce388dd8b459a582252cf057dc470f8bfbc7df647dcb442df877e60fee"
+    },
+    {
+      "path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+      "bytes": 39195,
+      "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e"
+    },
+    {
+      "path": "docs/research/sources/ostrovok_stress_tests.md",
+      "bytes": 37127,
+      "sha256": "6214755a11de9fb838e4052e7e8f09a07ffb508797c1bbd84ee4d5af1c2822b8"
+    },
+    {
+      "path": "docs/research/sources/web-research-original.txt",
+      "bytes": 67304,
+      "sha256": "d71e651039254e06be223eff6edf02a415bd84f0c5f9efad8566d8be769a51dc"
+    },
+    {
+      "path": "docs/research/sources/agent-harness-plan-original.md",
+      "bytes": 38746,
+      "sha256": "cddd252a6e7888f508d23e951b2372121b4063c5ea52f24e489037e5dcebcccc"
+    },
+    {
+      "path": "docs/research/sources/agent-harness-discussion-original.txt",
+      "bytes": 32264,
+      "sha256": "3742a2ff4d54128b2fc51db6bc716a3ca9f78557e9110dad4851c753bf7f8c2c"
+    },
+    {
+      "path": "docs/research/sources/harness-foundation-review-20261025-original.txt",
+      "bytes": 11506,
+      "sha256": "3c4504b84cf01459b07b375eb7fb8f087d74eb25e51a82d7b38cad44a7f41cea"
+    },
+    {
+      "path": "docs/research/sources/acceptance-oracles-106-20261025-original.md",
+      "bytes": 49241,
+      "sha256": "0cbd5c275cb9ca8055d7e2d2db6b61ddf11c8a761f3cd8dd6ea93fdd4a438945"
+    },
+    {
+      "path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+      "bytes": 88656,
+      "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e"
+    },
+    {
+      "path": "docs/research/sources/acceptance-oracles-audit-20261025-original.txt",
+      "bytes": 39968,
+      "sha256": "36e69d80d17482fb1da4f4e597f95b472ac44f3b4f3c46b2ceee8fcf27446e8a"
+    },
+    {
+      "path": "fixtures/evaluation/llm-dialogues.json",
+      "bytes": 27904,
+      "sha256": "9b1de3ecb35a9a1b879b9206b0f88630ec8d5f0b2c63e00bed5f458313685075"
+    },
+    {
+      "path": "fixtures/evaluation/frozen-owner-dialogues.json",
+      "bytes": 8403,
+      "sha256": "5b78429fdb2c4bdc806ac34bc508d6b74e3ddf09a0737b261f66e3652f54037d"
+    }
+  ],
+  "format_findings": [
+    {
+      "id": "ORACLE-FORMAT-001",
+      "status": "CLOSED_SCHEMA_GUARD_SCOPE",
+      "action": "Recursive expressions require nonempty children; unknown/missing/empty predicates are rejected.",
+      "proof": [
+        "empty_composite_rejected",
+        "missing_composite_children_rejected",
+        "unknown_nested_operator_rejected"
+      ]
+    },
+    {
+      "id": "ORACLE-FORMAT-002",
+      "status": "CLOSED_SCHEMA_GUARD_SCOPE",
+      "action": "BOUND requires all setup refs and intent slot/confirmation explicitly; NA or unsupported still requires a reviewed policy reference.",
+      "proof": [
+        "BOUND_null_clock_ref_rejected",
+        "BOUND_null_seed_ref_rejected",
+        "BOUND_null_fault_ref_rejected",
+        "BOUND_null_target_slot_rejected",
+        "BOUND_null_required_confirmation_rejected"
+      ],
+      "remaining_limit": "Runner reference resolution and evaluator semantics are not implemented by this data package."
+    }
+  ]
+}

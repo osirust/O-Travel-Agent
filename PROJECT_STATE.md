@@ -1,51 +1,56 @@
-# O!Travel Agent — состояние на 25.10.2026
+# O!Travel Agent — текущий статус, 25.10.2026
 
-## Цель и ближайший шаг
+## Активная цель и ближайший шаг
 
-Настроить воспроизводимый backend/harness и разрешённые бесплатные/test API. Реализация разрешена владельцем; прежний запрет начинать отменён. Frontend делает сокомандник. Ближайший продуктовый этап: прогон незнакомых многошаговых запросов на доступной LLM, связка реального поиска с канонической поездкой, затем интеграция frontend. Настройка API не означает завершённый агент.
+Выполнять HARNESS001…008 из docs/research/harness-plan-review.md. Новый аудит/106oracle-proposals подтверждают приоритет: **HARNESS004, три диалога владельца → actual NLU106 → actual mixed flow001**. Не добавлять новые API/модели/таблицы/фреймворки вместо диалоговых исправлений. Финальный frontend делает сокомандник; минимальный debug-chat был отдельно запрошен владельцем и уже доступен.
 
-Код отправлен в ветку `codex/backend-harness-foundation`; [Draft PR#1](https://github.com/ostrovok-hackathon-2026/aegml/pull/1), не merged. Кодовый commit `1d69467`; позднейшие изменения — отчёты/документация.
+Сейчас строгий operation-schema и contextual clarifications ВСТРОЕНЫ в рабочее дерево. Последний общий прогон **713 PASS** (`docs/verification/full-suite-20261025.xml`), включая controlled owner3 и slot-continuation11. Это НЕ713пользовательскихNLUслучаев. Ближайший шаг: syncC → безопасноrestartmainapp/localbackend → actualТОТЖЕ frozenowner3 наQwen и доступнойAPIмодели; затемповторитьlocal7case/11turn и развивать106oracles. Не менять freeze послеFAIL.
 
-## Подтверждено
+## Код и развёртывание — различать
 
-- Канонический checkout `E:/work/aegml`, private repo `ostrovok-hackathon-2026/aegml`; базовый commit до реализации `0f528b6`. Старый checkout `E:/work/AegML О!дин запрос` и личный mirror не менялись.
-- WSL2 `AegML-Hackathon` перемещена на `C:/WSL/AegML-Hackathon`, readback registry/VHD выполнен. Docker29.9.1, Compose5.6.1. Native build tree `/home/aegml/projects/otravel`; venv `/home/aegml/venvs/otravel-harness-20261025`.
-- FastAPI backend и PostgreSQL17 работают в Compose. `http://localhost:8081/health` отвечает database=ready; `/docs` доступен. Порт8080 занят важным PEMHTTPD-x64, не освобождался. Windows PostgreSQL5432, Ubuntu-24.04 и AEGYX не менялись.
-- **152 автоматические проверки PASS** (`py scripts/run_tests.py -q`, отдельная БД `otravel_test`). Прежняя тестовая БД сохранена переименованием, рабочая `otravel` отделена. Полный106-корпус против приложения не запускался.
-- HTTP DEMO smoke: сложный маршрут,9гостей/2группы/3комнаты на остановку; preview, один BOOKED_DEMO, идемпотентность, stale quote и auth. Model/live вызовов в нём0.
-- После restart только app поездка, версия, токен и явная пауза сохранились. Отдельный временный Compose project стартовал с чистым volume и паролем со спецсимволами; собственные временные ресурсы удалены после проверки. Restart Windows и in-flight fault matrix не квалифицированы.
-- Сохранены sanitized evidence в `docs/verification/`; frontend-контракт — `docs/FRONTEND_CONTRACT.md`. `/events` сейчас JSON polling, **не SSE**.
+- Canonical source E:/work/aegml, private repo ostrovok-hackathon-2026/aegml, ветка codex/backend-harness-foundation, Draft PR1. Последний ранее запушенный cb4db37; текущий большой checkpoint готовится после713PASS/secret-scan0matches. Личный CVmirror не настроен.
+- Native build/runtime copy /home/aegml/projects/otravel в C:/WSL/AegML-Hackathon. Последние713изменения ещё нужно синхронизировать и перезапустить процессы: нельзя считать старые app8081/local8083 автоматически обновлёнными.
+- Main Docker backend http://localhost:8081/debug, /health; standalone local backend http://localhost:8083/debug. Local process managed scripts/local_backend.py, useraegml, separateDBotravel_local_eval, noAPIkeys; PID175377 — исторический runtime snapshot, перед сигналомобязательнаidentityпроверка.
 
-## Ключи и реальные пробы
+## Что проверено
 
-Ключи только в нативной `.env`0600, не в Git/ответах. Скрытый ввод — `py scripts/configure_keys.py`; запись под lock. OpenRouter через официальный PKCE, ключ активен, денежный cap$0.01 разрешён владельцем; при readback usage$0.00. Не покупались кредиты, не включались платные модели.
+- CanonicalTripState/whitelist operations, ID/group/room/date/budget checks, source policy versioned, compound edits/before→after.
+- PostgreSQL: sessions/messages/runs/events/revisions/quotes/demo_orders, bearer tokenHASH, per-session queue/CAS/idempotency/oneactive-run. Remote40/day+2/run; localOllama500/day+1/run; durable cooldown, knownupstream10min, unknown/accountlimitsfailclosed. Никаких networkcallsподSQLlock.
+- DEMOcomplex9people/2families/3roomsperstay/Kazan→Istanbul→Antalya→Kazan, demoquote/order/idempotency/staleconsent.
+- Undo monotonicnewrevision, cancel отдельно, historicalfirstplan notbookable, partialhotelrestore typedfixture. Publiclegmodesetterне добавлен.
+- MIXEDpureplanning/orchestrator/checkout16PGtests: exactbinding, fees/allocation/evidence, currencybasis, providerrefresh, sourceTTL, previousquotesrevoked, simulatedonlyorders.
+- RealPGSIGKILL в НОВОМ временномComposeproject:503JSON(DBDNSfailurefixed),WAL recovery, trip/version/pause/token/order/idempotencyсохранились,partialintake0. OldFAILattempts сохранены. ОсновнойPGне убивался. Это не все распределённыеfaultoutcomes.
+- DebugUIdesktop/mobile,DEMO/pause/resume/literalXSStext,0consoleerrors/0modelcalls. APIкнопка убрана. Swaggerdisableflagдлясдаваемогорежима ещё TODO; сессионнаяавторизациянеравнаглобальнойавторизациисайта.
 
-- Gemma `google/gemma-4-31b-it:free`: HTTP429 с `upstream_provider_shared_pool`/Google AI Studio даже после cap$0.01. **Успешного ответа Gemma нет**.
-- NVIDIA `nvidia/nemotron-3.5-super-vl:free`: одна синтетическая extraction-проба прошла JSON+domain и извлекла Казань/140000руб. Также один реальный HTTP harness-turn прошёл: Москва→Казань, бюджет160000→140000руб., состав3гостей сохранён, версия увеличена, PostgreSQL/audit записаны. Gemma429→NVIDIA ответ24342мс; persisted2attempts. Evidence `docs/verification/llm-runtime-20261025.json`. Это не оценка NLU на сложных диалогах. В native env включён явным backup; primary Gemma сохранён, actual model виден в audit/run.
-- Gemini: ключа нет, вызовы не проверены. Нужен разрешённый регион и явно подтверждённый бесплатный проект; billing не включать.
-- LiteAPI sandbox: каталог+rates, **586 SANDBOX тарифов** на синтетический однономерный запрос.
-- Duffel test: **9 SANDBOX предложений** KZN→IST для2взрослых+ребёнка7лет. Supplier orders0.
-- SerpApi: metadata подтвердили Free и250остатка до проб; два поиска вернули20hotel/4flight вариантов `LIVE_INDICATIVE`. Не подтверждают inventory/prebook.
-- Open-Meteo: 7дней прогноза Istanbul, attribution сохранена.
-- Hotelbeds/RateHawk/Travelpayouts: только guarded адаптеры и fixtures, ключей/реальных проверок нет; регистрация сейчас не требуется.
+## HARNESS004 — реальные дефекты и новые исправления
 
-## Принятые ограничения
+Владелец выявил country/city confusion, 'Стамбул?'→wrongorigin, rawdestination.city, 'я взрослый'loop/'1'invalidoperation. Initial frozenowner3=3FAIL, затем controlledowner3 PASS. Slot-continuationbaseline6FAIL/5PASS, послефиксов11PASS (нольдетей/ageID/post-searchrawdatefields).
 
-Семь направлений (Москва, СПб, Сочи, Казань, Стамбул, Анталья, Дубай); сразу multi-city/rooms/groups. Главное — массовые правки и «Было → Стало». Live в приоритете, смешанные источники допускаются с маркировкой компонентов. При отказе LLM — сохранённая поездка, формы/typed commands/demo. После явной паузы ждать явного «продолжай». Один агрегатор с различимыми поставщиками допустим. Все заказы имитированные. Не сокращать согласованный объём незаметно; численные guards10travelers/4stays/5rooms остаются implementation bounds, не согласованным финальным продуктовым периметром. Команда3: Глеб fullstack/frontend, роль/доступность Жени не определены.
+- llm_contract.py:47purepayloadtests,5-fieldenvelope,typedoneOf/valuefields,existingtargetIDenumrequired,newIDsbounded. ProviderпередаётschemaвnativeOllamaformat иsystemprompt; serverjsonschema4.23валидируетответ; schemaне sharedmutable acrosssessions. Countryнеcityenum.
+- clarifications.py:90purecases, pendingfield/target/context→shortanswerops, independentorigin/destinationcountries, hypothetical/countrychangeconfirmation, uniquefuzzyBelгрод→confirmБелград. unknown/placeackнеforcedhandled.
+- Geography28countries/9knowncities vs7searchcities; странаSerbiaRSраспознана, невыдумываемсербскийinventory.
+- Humanquestions sanitize model+typed/search paths, filledslotнеповторяется, выбраныйnextchild/стейимеетточныйtargetID. context-drivenanswerне называетсяrealLLMcall.
+- money.py54tests: scalar/relativeRUB groundingдляужеимеющегосяsetbudget, ambiguous/historical/pernightнеугадываются. updateageнепереставляетgroupmembers.
 
-## Findings и остающиеся работы
+ActualmodelПРОВЕРКИОТДЕЛЬНО: initialAPI10attempts NOT_ALL_PASS; repairedAPI12attemptsblockedNvidia5xx+Gemma429; alternateAPI11attemptsXing429/Dotsresponses+budget/groupfindings. OldlocalQwen7case/11actualcalls=5casePASS/2FAIL(targetNonehotel/age) ДОновойсхемы. CountryregressionactualDots2.7s иQwen20.5s PASS. Actualowner3после713integrationЕЩЁНЕВЫПОЛНЕНЫ.
 
-- **OTR-001 / PARTIAL_OPEN_GEMMA_NLU:** OpenRouter подключён, direct extraction и один относительный HTTP harness-case прошли; Gemma429 и полноценная проверка новых многошаговых запросов остаются открытыми.
-- **OTR-002 / PRIMARY_SELECTED:** официальный repo выбран; личный mirror не настроен.
-- **OTR-003 / FOUNDATION_VERIFIED_PRODUCT_OPEN:** backend/Docker/DB/DEMO проверены; законченный интерфейс, живой многогородской план и конкурсная готовность не доказаны.
-- **OTR-004 / OPEN_PUBLICATION_RIGHTS:** лицензия/публичное CV-копирование/редакция правил требуют уточнения; private сохранён, submission-тег не создан.
-- **OTR-005 / PARTIAL_SANDBOX_INDICATIVE:** реальные HTTP-пробы четырёхисточников успешны; `LIVE_BOOKABLE`, price/inventory validation и целая реальная групповая корзина ещё не реализованы.
-- **OTR-006 / OPEN_PRODUCT_LIMITS:** семь городов определены; численные пределы, API покрытие групп и задержки ещё не согласованы/не проверены.
-- **OTR-007 / OPEN_COMPARABLE_SUPPLIERS:** сведения SerpApi о ценах не доказывают сопоставимость одинакового room/rate/питания/отмены разных поставщиков. LiteAPI ToS требуют отдельной проверки выбранного сравнения.
-- **HARNESS-001…008:** основной учёт в `docs/research/harness-plan-review.md`; реализованные части проверены тестами, undo/SSE/UI/смешанная корзина/полная fault matrix/реальное NLU остаются открытыми.
-- **CORPUS-001…005 / OPEN_AUTOMATION**, **CORPUS-006 / DOCUMENTED**, **REVIEW-001…006 / OPEN:** исходные106случаев/129реплик/12категорий сохранены с прежними SHA; фикстуры, clocks и assertions ещё требуют адаптации. Mock-suite не закрывает весь корпус.
-- **ENV-001 / RESOLVED_LOCAL_PORT:** важный8080сохранён, app проверен на8081; default Compose8080 для чистого окружения.
-- **ENV-002 / VERIFIED_ISOLATED_DOCKER:** daemon/Compose/DB/app/fresh boot/restart проверены в собственной WSL. Автозапуск после Windows reboot не проверен.
-- **SETUP-001…006:** точные факты/исправления/условия закрытия в `docs/verification/setup-findings.md`. **SETUP-004 OPEN_ROTATE_CHAT_KEYS:** три travel-key владелец прислал в чат; после подключения перевыпустить и заменить через скрытый локальный ввод.
+## 106 исходных случаев и новые оракулы
 
-AEGYX INDEX81 остаётся paused передSOURCE3; ни AEGYX, ни следующий блок его плана не запускались. Не делать `wsl --shutdown`, `docker prune`, удаление существующих volume или остановку чужих сервисов. Метаданные собственного скрытого WSL keeper: `%LOCALAPPDATA%/OTravel/setup/wsl-keeper.json`; остановка допустима только после сверки PID/start/точной команды. Дополнительные вопросы о доступах теперь не нужны для уже подключённых четырёхисточников; реальное бронирование/платёж не разрешены.
+Все106/129messages прочитаны;71sourceIDимеетчастичныйexecutedassertion,35ещёнеисполнены,fulloriginal106NLUPASS0. corpus-maprev3 и separateevidence — fixtures/evaluation,docs/verification/corpus*. Не суммироватьpartialкакfullE2E.
+
+Новое25октября: aegml_acceptance_oracles_106.md/jsonl + auditTXTскопированыbyteexactвdocs/research/sources/manifest. Original106fields106/106совпали0diff;flagsестьу52/106(79предложений),setupnull90/106. Этоproposal,нетполныхexpectedstates. oracle_bindings106records/185checks покаUNBOUND/NOT_RUN, форматfailclosed. План docs/testing/ACCEPTANCE_PLAN.md; конкретныеclock/seed/init/fault/slot/consentорaкулыещёнужны. Originalsource и2LLMfreezeSHA сохранять.
+
+## LLM/поставщики
+
+- OpenRouterconfigured, только:free иmax_price0; cap$0.01разрешёнвладельцем,кредиты/платныемодели/платежине покупались. NativecurrentprofileDotsprimary/Xingbackup. Dotsотвечал;Xing/Gemmaupstreampool429,Nvidiaпозже5xx. Geminiнеподключён.
+- LiteAPIsandbox catalog/rates actualHTTP200,586initialoffers;9people/3roomresponseфактыoccupancyNumber/counts/ages/BI/taxesполучены. provider_facts83puretests+adapterintegration; sourceSANDBOX,availabilityFalse. Полныйactualmixedsearch/refresh/checkoutTODO. Prebookещёне вызывался,обычныйrepriceповторяетratesearch.
+- Duffeltestactual9offers,neverlive; SerpFreeactual20hotel/4flightindicative; OpenMeteo7dayforecast. Hotelbeds/RateHawk/Travelpayoutsтолькоguardedfixtures,ключей/actualprobesнет.
+- LocalOllama0.40.11/qwen3.5:4b(4.2B,Q4_K_M),Cnative,officialSHA,12711434,noCloud,parallel1,ctx16k,GPU5070Ti16GB. Modelmetadata3.324GB,totalruntime+archive+models≈7.3GB. Coldmicro48.69s,warmlocal7case1.1–2s;неSLA. LocalHTTP105s/1runвlease120. ВесаНЕвSQL/НЕвGit. MainAPIиlocalbenchнезависимы.
+
+## Сохранённые ограничения/IDs
+
+OTR001actualNLUOPEN;002primaryselected/CVmirrorOPEN;003foundationchecked/productOPEN;004publicationrightsOPEN;005sandboxindicativepartial/realbookableOPEN;006numericalboundsOPEN;007comparableactualsuppliersOPEN. HARNESSprimaryblocksобновляютсявharness-plan-review.md. CORPUS/REVIEWoriginalIDs не закрывать несвязаннымPASS.
+
+SETUP004: триtravelkeyвладелецприслалвчат,перевыпуск/заменавсёещёOPEN;ключи не повторять/не коммитить. JSON/env/логипроверятьsecret-scanпередпушем. Keyvaluesonlynativeignored.env0600. SQLданные/LLMevidenceразличатьотсамоймодели.
+
+ENV003: владелецподтвердилSSD Edisconnect/reconnect; drvfsErrno19accessrestoredoverlaymountсSHAWindows/WSL,безforceumount/shutdown. Extraalias/stalelayerбылиbusy;не делатьслучайныйkill. SourceEcanonical, runtimeCstable. AEGYX INDEX81pausedпередSOURCE3; source не запускать, Ubuntu24.04/WindowsPG/PEM не трогать. НашWSLkeepermetadata %LOCALAPPDATA%/OTravel/setup/wsl-keeper.json,сигналытолькопослепроверкиPID/start/argv.

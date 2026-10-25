@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from copy import deepcopy
+from datetime import datetime, timezone
 import hashlib
 import hmac
 import json
 import os
+import socket
+from pathlib import Path
 import secrets
 from typing import Any, Literal
 from uuid import uuid4
@@ -15,7 +19,7 @@ from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import text as sql_text
 from sqlalchemy.exc import SQLAlchemyError
@@ -24,6 +28,7 @@ from .config import Settings, provider_status
 from .domain import DomainError, Operation, TripState, validate_trip
 from .harness import Harness, TYPED_PREFIX, encode_command, exact_control
 from .inventory import reprice_plan, validate_plan
+from .planning import assemble_plan, validate_quote
 from .providers import LLMGateway, ProviderError, TravelGateway
 from .store import Conflict, NotFound, Store, StoreError
 
@@ -77,7 +82,9 @@ class Commands(Body):
 
 
 class Action(Body):
-    action: Literal["pause", "resume"]
+    action: Literal["pause", "resume", "undo", "cancel"]
+    client_message_id: str | None = Field(default=None, min_length=1, max_length=200)
+    expected_version: int | None = Field(default=None, ge=0, strict=True)
 
 
 class Search(Body):
@@ -165,6 +172,9 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         return error(exc.code, exc.message, 503, exc.retryable)
 
     @app.exception_handler(SQLAlchemyError)
+    @app.exception_handler(ConnectionError)
+    @app.exception_handler(TimeoutError)
+    @app.exception_handler(socket.gaierror)
     async def database_error(_request, _exc):
         return error("database_unavailable", "Хранилище недоступно; команда не считается долговременно принятой.", 503, True)
 
@@ -196,7 +206,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             for item in value:
                 no_credentials(item)
 
-    async def submit(session: dict, client_id: str, expected_version: int | None, kind: str, **fields: Any) -> dict:
+    async def submit(session: dict, client_id: str, expected_version: int | None, kind: str, *, schedule: bool = True, **fields: Any) -> dict:
         no_credentials(fields)
         # Reuse the original server-side fingerprint on an identical replay.
         incoming = {"kind": kind, **fields}
@@ -215,7 +225,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         if len(encoded) > max(16_000, settings.max_message_chars * 4):
             raise HTTPException(413, "Структурированная команда слишком велика.")
         run, duplicate = await repository.intake_message(session["session_id"], client_id, encoded, expected_version)
-        if not duplicate:
+        if not duplicate and schedule:
             harness.schedule(session["session_id"])
         return {"session_id": session["session_id"], "run_id": run["run_id"], "status": run["status"], "duplicate": duplicate, "poll_url": f"/api/v1/runs/{run['run_id']}"}
 
@@ -235,6 +245,18 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     @app.get("/api/v1/providers/status")
     async def providers_status():
         return _clean(provider_status())
+
+    @app.get("/debug", include_in_schema=False)
+    async def debug_chat():
+        return FileResponse(Path(__file__).parent / "static" / "debug.html", media_type="text/html",
+            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff",
+                     "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"})
+
+    @app.get("/debug/assets/{asset}", include_in_schema=False)
+    async def debug_asset(asset: Literal["chat.css", "chat.js"]):
+        return FileResponse(Path(__file__).parent / "static" / asset,
+            media_type="text/css" if asset.endswith(".css") else "text/javascript",
+            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
 
     @app.post("/api/v1/sessions", status_code=201)
     async def create_session(body: CreateSession | None = None):
@@ -294,7 +316,15 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
 
     @app.post("/api/v1/sessions/{session_id}/control")
     async def control(session_id: str, body: Action, authorization: str | None = Header(default=None)):
-        await owned(session_id, authorization)
+        session = await owned(session_id, authorization)
+        if body.action in {"undo", "cancel"}:
+            if body.client_message_id is None or body.expected_version is None:
+                raise HTTPException(422, "Для undo/cancel нужны client_message_id и expected_version.")
+            accepted = await submit(session, body.client_message_id, body.expected_version, body.action, schedule=body.action != "cancel")
+            if body.action == "cancel" and not accepted["duplicate"]:
+                await harness.cancel_control(await repository.get_run(accepted["run_id"]))
+                accepted["status"] = (await repository.get_run(accepted["run_id"]))["status"]
+            return JSONResponse(_clean(accepted), status_code=202)
         return _session_public(await harness.control(session_id, body.action))
 
     @app.post("/api/v1/sessions/{session_id}/demo", status_code=202)
@@ -339,10 +369,51 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         if body.state_version != session["state_version"]:
             raise Conflict("Версия поездки изменилась.", "stale_state")
         plan = await saved_plan(session, body.plan_id)
-        if plan.get("source_type") != "DEMO":
-            raise Conflict("Полная live-корзина не проверена. Поисковая цена не подтверждает бронирование.", "live_plan_not_validated")
-        updated = reprice_plan(plan)
-        issues = validate_plan(TripState.model_validate(session["state"]), updated)
+        state = TripState.model_validate(session["state"])
+        # Failed refresh also revokes any old preview; it must not leave reusable
+        # consent for a price/availability that could not be checked this time.
+        await repository.begin_quote_preview(session_id, body.state_version)
+        if isinstance(plan.get("components"), list):
+            issues = validate_quote(plan, state, now=datetime.now(timezone.utc))
+            if issues:
+                issue = next((item for item in issues if item["code"] in {"stale_source_snapshot", "invalid_source_lifetime"}), issues[0])
+                raise Conflict(issue["message"], issue["code"])
+            refreshed = []
+            for old in plan["offers"]:
+                if old.get("source_type") == "DEMO":
+                    refreshed.extend(reprice_plan({"source_type": "DEMO", "offers": [deepcopy(old)]})["offers"])
+                    continue
+                new = await gateway.reprice(deepcopy(old))
+                if (not isinstance(new, dict) or new.get("provider") != old.get("provider")
+                        or new.get("offer_id") != old.get("offer_id") or not isinstance(new.get("details"), dict)):
+                    raise Conflict("Перепроверка изменила идентичность предложения; нужен новый выбор.", "reprice_identity_changed")
+                prior_details, details = old.get("details", {}), deepcopy(new["details"])
+                if details.get("kind") != prior_details.get("kind"):
+                    raise Conflict("Перепроверка изменила тип компонента.", "reprice_identity_changed")
+                for key in ("native_offer_id", "hotel_id"):
+                    if key in prior_details and details.get(key) != prior_details[key]:
+                        raise Conflict("Перепроверка не подтвердила исходный provider ID.", "reprice_identity_changed")
+                if ("search_request" not in prior_details or details.get("search_request") != prior_details["search_request"]):
+                    raise Conflict("Перепроверка не связана с исходным поисковым запросом.", "reprice_request_changed")
+                if "binding" in details and details["binding"] != prior_details.get("binding"):
+                    raise Conflict("Перепроверка относится к другим компонентам поездки.", "reprice_binding_changed")
+                # Reattach only the verified request association. Economic facts
+                # such as fees/allocation/constraints MUST come from the new reply.
+                details["binding"] = deepcopy(prior_details["binding"])
+                new = deepcopy(new)
+                new["details"] = details
+                refreshed.append(new)
+            updated = assemble_plan(state, refreshed, previous_plan=plan, now=datetime.now(timezone.utc))
+            issues = validate_quote(updated, state, current_offers=refreshed, now=datetime.now(timezone.utc))
+            if not issues and not updated["ready_for_simulated_checkout"]:
+                issues = updated["blockers"] or [{"code": "checkout_not_ready", "message": "Корзина не готова к имитации оформления."}]
+            updated["repriced"] = True
+            updated["reprice_kind"] = "component_refresh_simulated_not_supplier_booking"
+        else:
+            if plan.get("source_type") != "DEMO":
+                raise Conflict("Полная live-корзина не проверена. Поисковая цена не подтверждает бронирование.", "live_plan_not_validated")
+            updated = reprice_plan(plan)
+            issues = validate_plan(state, updated)
         if issues:
             raise DomainError(issues[0]["code"], issues[0]["message"])
         return _clean(await repository.create_quote(session_id, body.state_version, updated))

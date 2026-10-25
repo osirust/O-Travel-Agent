@@ -1,0 +1,103 @@
+{
+  "checked_at_utc": "2026-10-25T14:15:15.945881+00:00",
+  "artifacts": {
+    "history": {
+      "path": "docs/verification/corpus-history-20261025.xml",
+      "sha256": "491a70fc11783bf5c6b5e2eecdcda9d9afcc9a0fca7b440e167b6930c94911f1",
+      "tests": [
+        {
+          "name": "test_corpus_STATE_09_restore_historical_hotel_preserves_new_transport",
+          "status": "PASS",
+          "seconds": 0.575
+        },
+        {
+          "name": "test_history_projection_is_readonly_and_excludes_foreign_future_data",
+          "status": "PASS",
+          "seconds": 0.001
+        }
+      ]
+    },
+    "source_faults": {
+      "path": "docs/verification/corpus-source-faults-20261025.xml",
+      "sha256": "ceecee075b45e0cc15db870f044be5b8138a423515c9d91e6f67fd6b990e018d",
+      "tests": [
+        {
+          "name": "test_new_preview_price_change_stales_previous_active_quote",
+          "status": "PASS",
+          "seconds": 0.563
+        },
+        {
+          "name": "test_ux08_disappeared_selected_hotel_requires_alternative_search_and_new_consent",
+          "status": "PASS",
+          "seconds": 0.404
+        }
+      ]
+    }
+  },
+  "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+  "mode": "controlled/typed ASGI + real PostgreSQL otravel_test; authoritative fake sources",
+  "source_case_ids_qualified": 4,
+  "scenario_test_methods": 3,
+  "history_helper_unit_methods": 1,
+  "actual_model_calls": 0,
+  "vendor_http_calls": 0,
+  "full_original_106_nlu_passes": 0,
+  "initial_report_preserved": {
+    "path": "docs/verification/corpus-evaluation-20261025.json",
+    "sha256": "c9fe1a1d2e1601bdcba12a654628a13575ea50bc28a10bd06fba6f83fd6dea19"
+  },
+  "code_sha256": {
+    "otravel/history.py": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb",
+    "tests/test_corpus_harness.py": "32e762533d2dd08d6ad8c122cfe745733e763ac7bf13ed7f33348ebb9cbc45dd",
+    "tests/test_mixed_checkout.py": "047330a67d8db58d9c32d707a340e02b3de9ea6f502f1d15e1386017e990ce8e"
+  },
+  "cases": [
+    {
+      "case_id": "MONEY-07",
+      "test": "tests/test_mixed_checkout.py::test_new_preview_price_change_stales_previous_active_quote",
+      "execution_status": "ASSERTIONS_PASS",
+      "case_status": "PARTIAL_HARNESS_VERIFIED_NLU_PENDING",
+      "full_nlu_evaluated": false,
+      "scope": "Authoritative fake-source tariff growth changes snapshot/quote and total; old consent409, new consent200. Variation uses source+15%, not literal82000/91000; no NLU/vendor call.",
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "gap_id": "C106-MONEY-07"
+    },
+    {
+      "case_id": "BOOK-03",
+      "test": "tests/test_mixed_checkout.py::test_new_preview_price_change_stales_previous_active_quote",
+      "execution_status": "ASSERTIONS_PASS",
+      "case_status": "PARTIAL_HARNESS_VERIFIED_NLU_PENDING",
+      "full_nlu_evaluated": false,
+      "scope": "Authoritative fake-source tariffs increase15%; new snapshot/quote; old quote staled, stale confirmation409, only new consent accepted. Not live inventory.",
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "gap_id": "C106-BOOK-03"
+    },
+    {
+      "case_id": "UX-08",
+      "test": "tests/test_mixed_checkout.py::test_ux08_disappeared_selected_hotel_requires_alternative_search_and_new_consent",
+      "execution_status": "ASSERTIONS_PASS",
+      "case_status": "PARTIAL_HARNESS_VERIFIED_NLU_PENDING",
+      "full_nlu_evaluated": false,
+      "scope": "Selected fake-source hotel becomes unavailable afterpreview; previousconsent stale; explicit re-search returns different hotelID and preserves trip/version; newpreview/consent creates one simulated order. No automatic unsolicited re-search or language/UI claim.",
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "gap_id": "C106-UX-08"
+    },
+    {
+      "case_id": "STATE-09",
+      "test": "tests/test_corpus_harness.py::test_corpus_STATE_09_restore_historical_hotel_preserves_new_transport",
+      "execution_status": "ASSERTIONS_PASS",
+      "case_status": "PARTIAL_HARNESS_VERIFIED_NLU_PENDING",
+      "full_nlu_evaluated": false,
+      "scope": "Actual saved-plan history provides firsthotelA; laterhotelB+typedStorefixture changes legs totrain; existingAPIreplace_hotel restoresA only. Latesttrain legs/people/budget preserved, rebuiltDEMOvalidate_plan passes, oldquote409/noorder. Transport setup is typedStorecommit becausepublicleg-mode setter is absent; no NLU claim.",
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "gap_id": "C106-STATE-09"
+    }
+  ],
+  "remaining_of_original_14_stateful_cases": 0,
+  "limitations": [
+    "Partial typed/controlled-intent qualification does not prove original-language understanding",
+    "Sources are controlled fakes; SANDBOX/LIVE_INDICATIVE are not LIVE_BOOKABLE",
+    "Read-only history helper requires caller to authorize session_id first",
+    "History prices are historical-only and cannot restore consent"
+  ]
+}

@@ -25,7 +25,7 @@ def main() -> int:
         if src.is_file():
             shutil.copyfile(src, dest / name)
     count = 0
-    for name in ("otravel", "scripts", "tests", "migrations", "docs"):
+    for name in ("otravel", "scripts", "tests", "migrations", "docs", "fixtures"):
         for src in (source / name).rglob("*"):
             if not src.is_file() or src.is_symlink() or any(p in {"__pycache__", ".pytest_cache", ".local", ".venv"} for p in src.parts):
                 continue

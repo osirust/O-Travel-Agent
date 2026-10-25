@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>O!Travel Agent — чат</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/debug/assets/chat.css">
+  <script src="/debug/assets/chat.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/debug" aria-label="O!Travel Agent"><span class="brand-mark">O!</span><span>Travel Agent<small>Интеллектуальный конструктор путешествий</small></span></a>
+      <div class="top-actions"><span id="connection" role="status">Подключаемся…</span><button id="new-session" class="secondary">Новая поездка</button></div>
+    </header>
+    <main>
+      <section class="chat-panel" aria-labelledby="chat-title">
+        <div class="section-heading"><div><h1 id="chat-title">Куда отправимся?</h1><p>Опиши поездку. Можно уточнять и менять условия по ходу разговора.</p></div><span class="lab-label">Локальный стенд</span></div>
+        <div class="toolbar" aria-label="Управление поездкой">
+          <button id="demo" class="secondary">Загрузить сложный пример</button>
+          <button id="pause" class="quiet">Пауза</button>
+          <button id="resume" class="quiet" disabled>Продолжить</button>
+          <button id="undo" class="quiet">Отменить правку</button>
+        </div>
+        <div id="messages" class="messages" aria-live="polite" aria-relevant="additions text"></div>
+        <div id="notice" class="notice" role="status" hidden></div>
+        <form id="composer" class="composer">
+          <label class="sr-only" for="prompt">Сообщение агенту</label>
+          <textarea id="prompt" rows="2" maxlength="8000" placeholder="Из Казани в Стамбул, двое взрослых и ребёнок 7 лет…" required></textarea>
+          <div class="composer-footer"><span id="activity">Enter — отправить · Shift + Enter — новая строка</span><button id="send" class="primary" type="submit">Отправить <span aria-hidden="true">↗</span></button></div>
+        </form>
+      </section>
+      <aside class="trip-panel" aria-labelledby="trip-title">
+        <div class="trip-heading"><h2 id="trip-title">Ваша поездка</h2><span id="version">Черновик</span></div>
+        <div id="trip-summary" class="trip-summary"></div>
+        <div class="divider"></div>
+        <h3>Предложения</h3><div id="plans" class="plans"><p class="muted">Здесь появятся варианты после поиска.</p></div>
+        <div class="model-info"><span class="status-dot" aria-hidden="true"></span><div><strong id="model">Модель ещё не отвечала</strong><p id="model-detail">Источник и время настоящего ответа появятся здесь.</p></div></div>
+        <p class="footnote">Демо и тестовые тарифы отмечены отдельно. Настоящие бронирования и платежи не выполняются.</p>
+        <details><summary>Состояние JSON</summary><pre id="state-json">{}</pre></details>
+      </aside>
+    </main>
+    <footer>Команда AegML · Стенд проверки harness <span id="runtime"></span></footer>
+  </div>
+</body>
+</html>
