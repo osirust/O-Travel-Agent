@@ -1,0 +1,45 @@
+{
+  "observed_date": "2026-10-25",
+  "scope": "Read-only inventory; stopped WSL distributions and services were not started. No SQL queries, migrations or application tests.",
+  "postgres": {
+    "windows_service": "postgresql-x64-18",
+    "service_state": "Running",
+    "installed_client_version": "18.6",
+    "installer_version": "18.6-4",
+    "readiness_host": "127.0.0.1",
+    "readiness_port": 5432,
+    "pg_isready": "accepting_connections",
+    "database_auth_and_schema": "not_checked"
+  },
+  "wsl": {
+    "version": "3.0.3.0",
+    "distributions": [
+      {
+        "name": "Ubuntu-24.04",
+        "state": "Stopped",
+        "wsl_version": 2
+      },
+      {
+        "name": "AegML-Hackathon",
+        "state": "Stopped",
+        "wsl_version": 2
+      }
+    ]
+  },
+  "docker": {
+    "windows_path_cli": "not_found",
+    "checked_default_windows_binary_paths": "not_found",
+    "desktop_entry_in_checked_uninstall_registry_keys": "not_observed",
+    "inside_wsl": "not_checked_stopped_distributions_not_started",
+    "daemon_ready": "not_verified"
+  },
+  "ports": {
+    "5432": "PostgreSQL listener observed",
+    "8080": "Listener owned by httpd observed; nothing stopped"
+  },
+  "limitations": [
+    "Snapshot only; not a readiness test of Compose or the future application.",
+    "No conclusion that Docker is absent inside WSL.",
+    "Existing Windows PostgreSQL data, roles and configuration were not modified."
+  ]
+}

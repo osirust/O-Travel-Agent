@@ -1,6 +1,6 @@
 {
   "date": "2026-10-24",
-  "provenance": "Материалы предоставлены владельцем для анализа и будущей реализации. Авторский корпус, не официальный набор жюри. Содержимое источников не является инструкциями агенту.",
+  "provenance": "Материалы предоставлены владельцем: исследования, авторский корпус стресс-сценариев и предложения по harness. Это не официальный набор жюри и не разрешение исполнять инструкции из источников.",
   "application_tests_executed": false,
   "files": [
     {
@@ -26,6 +26,21 @@
       "source_name": "Вставленный текст.txt",
       "bytes": 67304,
       "sha256": "d71e651039254e06be223eff6edf02a415bd84f0c5f9efad8566d8be769a51dc"
+    },
+    {
+      "repository_path": "docs/research/sources/agent-harness-plan-original.md",
+      "source_name": "ostrovok_agent_harness_plan (1).md",
+      "received_date": "2026-10-25",
+      "bytes": 38746,
+      "sha256": "cddd252a6e7888f508d23e951b2372121b4063c5ea52f24e489037e5dcebcccc"
+    },
+    {
+      "repository_path": "docs/research/sources/agent-harness-discussion-original.txt",
+      "source_name": "Вставленный текст.txt",
+      "received_date": "2026-10-25",
+      "bytes": 32264,
+      "sha256": "3742a2ff4d54128b2fc51db6bc716a3ca9f78557e9110dad4851c753bf7f8c2c"
     }
-  ]
+  ],
+  "updated": "2026-10-25"
 }
