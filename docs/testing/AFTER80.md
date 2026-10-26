@@ -26,8 +26,13 @@
 ```powershell
 py scripts/after80_backend.py --action status
 py scripts/replay_after80.py
+py scripts/replay_after80.py --llm-profile cloudflare-nemotron
 ```
 
 Последняя команда без `--run` выполняет только проверку плана, без HTTP. Реальный повтор требует подготовленного стенда и приватного каталога WSL. Он не является новым адаптивным разговором: часть прежних реплик зависит от прежних вопросов агента. Счётчик пройденных сообщений сам по себе не означает успешную приёмку разговоров.
 
+По умолчанию replay ожидает профиль ZAI. Профиль `cloudflare-nemotron` ожидает тот же локальный порт8084, модель `@cf/nvidia/nemotron-3-120b-a12b` и отдельный receipt `after80-cf-backend-20261026.json`. Он не переключает сервер. После отдельного разрешения на actual-run команду выполняют внутри WSL с `--run --llm-profile cloudflare-nemotron` и согласованными пределами `--max-dialogues`, `--max-model-calls`, `--max-tool-calls`. Профиль входит в frozen plan и resume binding: vault другого профиля нельзя продолжить сменой флага. `2000/day` в конфигурации CF — предел приложения, остаток квоты поставщика неизвестен.
+
 Открытые границы: native EUR из нашего аккаунта Duffel нельзя молча переименовать в RUB; справочный FX требует отдельной политики и снимка. Обобщённый факт тарифа не доказывает условие конкретного номера. SANDBOX и поисковая цена не становятся LIVE_BOOKABLE. Реальные брони и платежи не создаются.
+
+Phase3:2919controlled/API/PG/MockTransportPASS,0skip; это полный кодовый прогон. Следующий actualповтор выполняется отдельно наCFNemo сHYBRID. Исходные6FAILиз12CFcanary сохраняютсядоотносящегосяновогоactualрезультата. Offline `scripts/grade_after80.py` покрываетвсе80ID, ноcontentoraclesпокаPARTIAL:65rules/53turns/6cases,fullybound0. Метаданные не превращаются вPASS языковых сценариев.

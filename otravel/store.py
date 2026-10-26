@@ -838,10 +838,11 @@ class Store:
         """Reserve an actual attempt in remote/local/test durable budget buckets.
 
         This is an application budget, not a query of the provider's allowance.
-        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Groq and
-        Cloudflare have separate hard 40/day pools. Z.ai has a separate default
-        40/day caller limit; dedicated evaluation may explicitly raise it up to
-        2000/day. Cloudflare and Z.ai are 1/run, with no other remote attempt
+        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Groq has
+        an independent hard 40/day pool. Cloudflare and Z.ai have separate
+        default 40/day caller limits; dedicated evaluation may explicitly raise
+        them up to 2000/day. Cloudflare uses its own explicit setting, so raising
+        the generic Z.ai limit does not expand it. Both are 1/run, with no remote attempt
         allowed before or after them in that run. Ollama has
         an independent hard 500/day and 1/run local bucket; it is not a test
         adapter. Caller limits can reduce but never increase these ceilings.
@@ -872,7 +873,7 @@ class Store:
                 # Gemini/OpenRouter continue sharing the original remote cap.
                 provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
                     event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
-                effective_limit = min(limit, 2000 if provider == "zai" else 40)
+                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 40)
                 per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
@@ -1020,6 +1021,30 @@ class Store:
                 continue
             payload = row["payload"]
             hint = payload.get("retry_after_seconds")
+            if (provider in {"zai", "cloudflare"} and payload.get("code") == "RATE_LIMITED"
+                    and type(payload.get("http_status")) is int and payload["http_status"] == 429):
+                from .rate_failures import classify_rate_failure
+                business = payload.get("business_code")
+                facts = classify_rate_failure(provider, 429, {"error": {"code": business}})
+                if facts["daily_quota_confirmed"]:
+                    until = row["created_at"].replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+                    if until > instant:
+                        return answer(False, "confirmed_daily_quota", "provider", until)
+                    continue
+                if facts["failure_kind"] in {"billing", "usage_quota"}:
+                    if row["created_at"] >= day_start:
+                        return answer(False, "provider_billing_or_usage_limit_reset_unconfirmed", "provider", next_day)
+                    continue
+                if facts["failure_kind"] in {"unknown", "request_rate", "capacity"}:
+                    # Unknown429 is not evidence of a daily quota. This is a
+                    # server wait interval, never a vendor-reset prediction or
+                    # an automatic HTTP retry. It also handles legacy rows.
+                    has_hint = type(hint) is int and 1 <= hint <= 86400
+                    wait = hint if has_hint else 300
+                    until = row["created_at"] + timedelta(seconds=wait)
+                    if until > instant:
+                        return answer(False, "provider_retry_after" if has_hint else "unconfirmed_429_engineering_wait", "provider", until)
+                    continue
             if (provider in INDEPENDENT_REMOTE_PROVIDERS and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
                     and type(hint) is int and 1 <= hint <= 86400):
                 until = row["created_at"] + timedelta(seconds=hint)

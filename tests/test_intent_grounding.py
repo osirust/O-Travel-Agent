@@ -305,7 +305,6 @@ def test_model_terminal_hotel_proposal_is_suppressed_without_blocking_authorised
 @pytest.mark.parametrize("city,text", [
     ("Виндхук", "Добавь Виндхук, если он поддерживается"),
     ("Лима", "Пожалуйста, добавь город Лима, если этот город поддерживается."),
-    ("Тбилиси", "Включи направление Тбилиси, если оно поддерживается"),
     ("Виндхук", "Добавь Виндхук"),
 ])
 def test_declared_unknown_destination_asks_without_changing_trip(city, text):

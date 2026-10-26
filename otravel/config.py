@@ -22,6 +22,7 @@ class Settings:
     default_search_mode: str = "DEMO"
     default_hotel_provider: str = "liteapi"
     default_flight_provider: str = "serpapi"
+    max_cloudflare_llm_calls_per_day: int = 40
 
     def __post_init__(self):
         for value, allowed in (
@@ -31,6 +32,8 @@ class Settings:
         ):
             if value not in allowed:
                 raise ValueError("Unsupported default travel search configuration")
+        if type(self.max_cloudflare_llm_calls_per_day) is not int or not 0 <= self.max_cloudflare_llm_calls_per_day <= 2000:
+            raise ValueError("Cloudflare application call budget must be an integer from 0 to 2000")
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -50,6 +53,7 @@ class Settings:
             default_search_mode=os.getenv("DEFAULT_SEARCH_MODE", "DEMO"),
             default_hotel_provider=os.getenv("DEFAULT_HOTEL_PROVIDER", "liteapi"),
             default_flight_provider=os.getenv("DEFAULT_FLIGHT_PROVIDER", "serpapi"),
+            max_cloudflare_llm_calls_per_day=int(os.getenv("MAX_CLOUDFLARE_LLM_CALLS_PER_DAY", "40")),
         )
 
     def provider_settings(self) -> dict[str, Any]:

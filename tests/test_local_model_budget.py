@@ -273,8 +273,8 @@ async def test_bad_local_provider_or_limit_fails_closed(ledger, provider, limit)
 @pytest.mark.asyncio
 async def test_cloudflare_40_day_pool_is_independent_of_all_other_pools(ledger):
     await seed(ledger, ["gemini"] * 20 + ["openrouter"] * 20 + ["groq"] * 40 + ["cloudflare"] * 39)
-    assert await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=500)
-    assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=500)
+    assert await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
+    assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
     assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=500)
     assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
@@ -287,7 +287,7 @@ async def test_cloudflare_boundary_is_atomic_across_concurrent_reservations(ledg
     run_ids = [await new_run(ledger) for _ in range(3)]
     repository, sid, day = ledger
     with patch("otravel.store._now", return_value=day):
-        results = await asyncio.gather(*(repository.reserve_model_call(sid, run, 500, "cloudflare") for run in run_ids))
+        results = await asyncio.gather(*(repository.reserve_model_call(sid, run, 40, "cloudflare") for run in run_ids))
     assert results.count(True) == 1 and results.count(False) == 2
 
 
@@ -375,10 +375,27 @@ async def test_zai_explicit_eval_cap_is_hard_2000_and_does_not_raise_other_remot
     await seed(ledger, ["zai"] * 1999 + ["groq"] * 40 + ["cloudflare"] * 40 + ["openrouter"] * 40)
     assert await reserve(ledger, await new_run(ledger), provider="zai", limit=100_000)
     assert not await reserve(ledger, await new_run(ledger), provider="zai", limit=100_000)
-    for provider in ("groq", "cloudflare", "gemini", "openrouter"):
+    for provider in ("groq", "gemini", "openrouter"):
         assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=100_000)
+    assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
     assert await reserve(ledger, await new_run(ledger), provider="injected_test_adapter", limit=1)
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_explicit_evaluation_cap_is_atomic_and_survives_new_store(ledger):
+    await seed(ledger, ["cloudflare"] * 1999)
+    repository, sid, day = ledger
+    run_ids = [await new_run(ledger) for _ in range(3)]
+    with patch("otravel.store._now", return_value=day):
+        results = await asyncio.gather(*(repository.reserve_model_call(sid, run, 100_000, "cloudflare") for run in run_ids))
+    assert results.count(True) == 1 and results.count(False) == 2
+    another = Store(os.environ["TEST_DATABASE_URL"])
+    try:
+        with patch("otravel.store._now", return_value=day):
+            assert not await another.reserve_model_call(sid, await new_run(ledger), 2000, "cloudflare")
+    finally:
+        await another.close()
 
 
 @pytest.mark.asyncio

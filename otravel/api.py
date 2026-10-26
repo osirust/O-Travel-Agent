@@ -90,7 +90,7 @@ class Action(Body):
 class Search(Body):
     client_message_id: str = Field(default_factory=lambda: str(uuid4()), min_length=1, max_length=200)
     expected_version: int | None = Field(default=None, ge=0, strict=True)
-    mode: Literal["DEMO"] = "DEMO"
+    mode: Literal["DEMO", "HYBRID"] | None = None
 
 
 class LiveSearch(Body):
@@ -340,6 +340,8 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def search(session_id: str, body: Search | None = None, authorization: str | None = Header(default=None)):
         session = await owned(session_id, authorization)
         body = body or Search()
+        if body.mode is not None and body.mode != session["state"].get("search_policy", {}).get("mode", "DEMO"):
+            raise Conflict("Режим поиска отличается от сохранённой политики поездки. Сначала измените политику поиска.", "search_policy_mismatch")
         return await submit(session, body.client_message_id, body.expected_version, "search")
 
     @app.post("/api/v1/sessions/{session_id}/live/search", status_code=202)

@@ -11,8 +11,8 @@ import re
 from copy import deepcopy
 from typing import Any
 
-from .domain import DomainError, canonical_city
-from .geography import _COUNTRY_ALIASES, parse_destination
+from .domain import CITIES, DomainError, canonical_city
+from .geography import _AMBIGUOUS, _COUNTRY_ALIASES, parse_destination
 from .route_intake import _FORMS as _BASE_FORMS
 
 
@@ -25,6 +25,7 @@ for _city, _aliases in {
     "Москва": ("moskva", "moskvy"), "Казань": ("kazani",),
     "Стамбул": ("stambul", "stambula"), "Анталья": ("antaliyu", "antalyu"),
     "Санкт-Петербург": ("peterburga", "petersburg", "sankt-peterburga"),
+    "Тбилиси": ("тбилиси", "tbilisi"),
 }.items():
     for _alias in _aliases:
         _FORMS[_key(_alias)] = canonical_city(_city)
@@ -38,10 +39,14 @@ _START = re.compile(rf"\b{_START_CUE}\s+(?:в|с|из|in|from)\s+(?P<city>{_NAME
 _START_BEFORE = re.compile(rf"\b{_START_CUE}\s*$")
 _END_BEFORE = re.compile(r"\b(?:заканчива\w*|заверша\w*|финиширу\w*|конец поездки|ends?|ending)\s*$")
 _TO = re.compile(rf"\b(?:в|во|to|v|vo)\s+(?:город\s+)?(?P<city>{_NAMES})(?![\w-])")
+_NEXT_DESTINATION = re.compile(rf"\b(?:затем|потом|далее)\s+(?:(?:в|во)\s+)?(?P<city>{_NAMES})(?![\w-])")
+_NO_LODGING_IN_CITY = re.compile(rf"\b(?:отел\w*|гостиниц\w*|проживан\w*)\s+(?:в|во)\s+(?P<city>{_NAMES})(?![\w-]).{{0,25}}\bне\s+(?:нуж\w*|требу\w*)")
 _ONTO = re.compile(rf"\bна\s+(?P<city>{_NAMES})(?![\w-])")
 _CHOICE = re.compile(rf"\b(?:выбираю|выбираем|выбрали|назначение|направление|город назначения)\s*[:=-]?\s*(?:именно\s+)?(?P<city>{_NAMES})(?![\w-])")
 _ORIGIN_FIELD = re.compile(rf"\b(?:отправление|город отправления|город вылета)\s*(?:теперь\s*)?[:=-]?\s*(?P<city>{_NAMES})(?![\w-])")
-_COUNTRY_TO = re.compile(rf"\b(?:в|во|to|v|vo)\s+(?P<country>{_COUNTRY_NAMES})(?![\w-])")
+_COUNTRY_TO = re.compile(rf"\b(?:в|во|to|v|vo)\s+(?P<qualifier>страну\s+)?(?P<country>{_COUNTRY_NAMES})(?![\w-])")
+_AMBIGUOUS_NAMES = "|".join(re.escape(name) for name in sorted(_AMBIGUOUS, key=len, reverse=True))
+_AMBIGUOUS_TO = re.compile(rf"\b(?:в|во|to|in|направление|назначение|выбираю)\s+(?P<name>{_AMBIGUOUS_NAMES})(?![\w-])")
 _REPLACE = re.compile(rf"\b(?:замени|заменяем|меняем|поменяй)\s+(?P<old>{_NAMES})\s+на\s+(?P<new>{_NAMES})(?![\w-])")
 _INSTEAD = re.compile(rf"(?P<new>{_NAMES})\s+вместо\s+(?P<old>{_NAMES})(?![\w-])")
 _OLD = re.compile(rf"\bвместо\s+(?P<city>{_NAMES})(?![\w-])")
@@ -120,7 +125,7 @@ def resolve_country_destination_answer(before_state: Any, pending_context: dict 
             "pending_context_clear": list(_CLEAR_GEO)}
 
 
-def _declared_unknown_destination(text: str, operations: list[dict]) -> str | None:
+def _declared_unknown_destination(text: str, operations: list[dict], *, outside_catalogue: bool = False) -> str | None:
     """An unsupported literal command asks; it never authorizes a city edit.
 
     Only an exact current imperative, optionally conditional on catalogue
@@ -132,8 +137,12 @@ def _declared_unknown_destination(text: str, operations: list[dict]) -> str | No
         value = operation.get("value")
         name = value.get("city") if isinstance(value, dict) else None
         if (operation.get("type") != "upsert_stay" or not isinstance(name, str)
-                or not 1 <= len(name.strip()) <= 120 or _city(name) is not None
-                or parse_destination(name)["requested_destination"]["kind"] != "unknown"):
+                or not 1 <= len(name.strip()) <= 120):
+            continue
+        city = _city(name)
+        if (outside_catalogue and (city is None or city in CITIES)
+                or not outside_catalogue and (city is not None
+                    or parse_destination(name)["requested_destination"]["kind"] != "unknown")):
             continue
         literal = re.escape(_key(name))
         pattern = (r"(?:пожалуйста\s*,?\s*)?(?:добавь(?:те)?|включи(?:те)?|выбираю|выбираем)\s+"
@@ -163,15 +172,20 @@ def _replacement_role(old: str, new: str, clause: str, data: dict, pending: dict
 
 
 def _facts(data: dict, text: str, pending: dict) -> dict:
-    result = {"origin": set(), "destination": set(), "country": set(), "old": set(),
+    result = {"origin": set(), "destination": set(), "country": set(), "ambiguous": set(), "old": set(),
               "targets": set(), "replace": False, "choice": False, "alternative": False, "multicity": False, "current": False}
     hypothetical = False
     bare_origins, bare_destinations = set(), set()
-    for match in re.finditer(r"[^,;.!?\n]+(?:[,;.!?\n]|$)", _unquote(text)):
+    normalized = _unquote(text)
+    no_lodging = {_FORMS[m["city"]] for m in _NO_LODGING_IN_CITY.finditer(normalized)}
+    policy = data.get("route_policy") if isinstance(data.get("route_policy"), dict) else {}
+    terminal = _city(policy.get("end_city")) if policy.get("kind") == "open_jaw" else None
+    for match in re.finditer(r"[^,;.!?\n]+(?:[,;.!?\n]|$)", normalized):
         raw = match.group().strip()
         stop = raw[-1:] in {";", ".", "!", "?", "\n"}
         clause = raw.rstrip(",;.!?\n ")
-        if _HYPOTHETICAL.search(clause):
+        if (_HYPOTHETICAL.search(clause) or _HISTORY.search(clause) or _NEGATIVE.search(clause)
+                or _NEGATIVE_START.search(clause)):
             hypothetical = True
         skip = (hypothetical or _HISTORY.search(clause) or _QUESTION.search(clause) or raw.endswith("?")
             or _NEGATIVE.search(clause) or _NEGATIVE_START.search(clause) or _NO_LODGING.search(clause))
@@ -201,17 +215,30 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
                 for found in _TO.finditer(clause):
                     prefix = clause[:found.start()]
                     if (not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", prefix)
-                            and not _RETURN.search(prefix) and not _START_BEFORE.search(prefix) and not _END_BEFORE.search(prefix)):
+                            and not _RETURN.search(prefix) and not _START_BEFORE.search(prefix) and not _END_BEFORE.search(prefix)
+                            and _FORMS[found["city"]] not in no_lodging
+                            and not (terminal == _FORMS[found["city"]] and _RETURN_OR_LATER.search(prefix))):
                         result["destination"].add(_FORMS[found["city"]])
                         if re.search(r"\b(?:потом|затем|далее|после|через)\b", prefix):
                             result["multicity"] = True
+                for found in _NEXT_DESTINATION.finditer(clause):
+                    city = _FORMS[found["city"]]
+                    if city not in no_lodging and city != terminal and not _RETURN.search(clause[:found.start()]):
+                        result["destination"].add(city)
+                        result["multicity"] = True
                 for found in _CHOICE.finditer(clause):
                     result["choice"] = True
                     role = "origin" if (pending.get("field") == "origin.city" or re.search(r"отправлен|город вылета", clause)) and not re.search(r"направлен|назначен", clause) else "destination"
                     result[role].add(_FORMS[found["city"]])
                 for found in _COUNTRY_TO.finditer(clause):
                     if not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", clause[:found.start()]):
-                        result["country"].add(_COUNTRIES[found["country"]])
+                        if not found["qualifier"] and parse_destination(found["country"])["requested_destination"]["kind"] == "ambiguous":
+                            result["ambiguous"].add(found["country"])
+                        else:
+                            result["country"].add(_COUNTRIES[found["country"]])
+                for found in _AMBIGUOUS_TO.finditer(clause):
+                    if not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", clause[:found.start()]):
+                        result["ambiguous"].add(found["name"])
                 # Destination-before-origin compound: 'Белград в Сербии из Москвы'.
                 leading = _CITY.match(clause)
                 if leading and (_FROM.search(clause[leading.end():]) or pending.get("field") == "destination.city" and _COUNTRY_TO.search(clause[leading.end():])):
@@ -239,7 +266,12 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
                 if bare in _FORMS and pending.get("field") in {"origin.city", "destination.city"}:
                     (bare_origins if pending["field"] == "origin.city" else bare_destinations).add(_FORMS[bare])
                 if bare in _COUNTRIES and pending.get("field") == "destination.city":
-                    result["country"].add(_COUNTRIES[bare])
+                    if parse_destination(bare)["requested_destination"]["kind"] == "ambiguous":
+                        result["ambiguous"].add(bare)
+                    else:
+                        result["country"].add(_COUNTRIES[bare])
+                if bare in _AMBIGUOUS and pending.get("field") == "destination.city":
+                    result["ambiguous"].add(bare)
                 if re.search(r"\b(?:вместо|замен\w*|меняем|отменяем)\b", clause):
                     result["replace"] = True
         if stop:
@@ -250,7 +282,7 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
         result["destination"].update(bare_destinations)
         if len(bare_destinations) > 1:
             result["alternative"] = True
-    result["current"] = bool(result["origin"] or result["destination"] or result["country"] or result["alternative"])
+    result["current"] = bool(result["origin"] or result["destination"] or result["country"] or result["ambiguous"] or result["alternative"])
     return result
 
 
@@ -338,6 +370,14 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             "destination.city", {"requested_destination": parse_destination(unsupported)["requested_destination"]})
         meta["pending_context_clear"] = list(_CLEAR_GEO)
         note("declared_unknown_destination_requires_clarification", city=unsupported)
+    catalogue_limited = _declared_unknown_destination(text, copied, outside_catalogue=True)
+    if catalogue_limited:
+        place = parse_destination(catalogue_limited)["requested_destination"]
+        country_name = parse_destination(place["country_code"])["requested_destination"]["name"]
+        ask(f"{place['name']} — город в стране «{country_name}». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
+            "destination.city", {"requested_destination": place})
+        meta["pending_context_clear"] = list(_CLEAR_GEO)
+        note("known_destination_outside_search_catalogue", city=place["name"])
     if len(origins) > 1:
         ask("Из какого одного города вы отправляетесь? Уточните город отправления.", "origin.city")
     if facts["alternative"] or len(destinations) > 1 and not facts["multicity"]:
@@ -345,7 +385,21 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     expected = pending.get("requested_destination")
     expected_country = expected.get("country_code") if isinstance(expected, dict) else None
     blocked = False
-    if destination:
+    if facts["ambiguous"]:
+        blocked = True
+        if len(facts["ambiguous"]) == 1:
+            location = parse_destination(next(iter(facts["ambiguous"])))
+            ask(location["clarification"], "destination.city", {"requested_destination": location["requested_destination"]})
+        else:
+            ask("Уточните, какую страну или регион и какой город назначения вы имеете в виду.", "destination.city")
+        meta["pending_context_clear"] = list(_CLEAR_GEO)
+        note("ambiguous_destination_requires_clarification")
+    elif catalogue_limited and _HYPOTHETICAL.search(_key(text)):
+        # The exact declared command may say "only if supported". Knowing the
+        # city's identity is not proof of search coverage and is not permission
+        # to apply that conditional addition when coverage is absent.
+        blocked = True
+    elif destination:
         place = parse_destination(destination)["requested_destination"]
         actual_country = place["country_code"]
         mismatched_country = country and country != actual_country
@@ -367,6 +421,11 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             meta["pending_context"] = {**(meta["pending_context"] or {}), "requested_destination": place}
             meta["pending_context_clear"] = list(_CLEAR_GEO)
             meta["replace_geo_unknowns"] = True
+            if destination not in CITIES:
+                country_name = parse_destination(actual_country)["requested_destination"]["name"]
+                ask(f"{destination} — город в стране «{country_name}». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
+                    "destination.city", {"requested_destination": place}, target)
+                note("known_destination_outside_search_catalogue", city=destination)
     elif country and facts["current"]:
         blocked = True
         place = parse_destination(country)["requested_destination"]

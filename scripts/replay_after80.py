@@ -29,6 +29,12 @@ SOURCE = ROOT / ".local/evaluation/zai-full100-20261026/dialogues.jsonl"
 SOURCE_SHA = "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca"
 RUNTIME_EVIDENCE = ROOT / "docs/verification/after80-backend-20261026.json"
 BASE = "http://127.0.0.1:8084"
+LLM_PROFILES = {
+    "zai": {"provider": "zai", "model": "glm-4.5-flash", "manager": "after80_backend.py",
+        "evidence": "docs/verification/after80-backend-20261026.json"},
+    "cloudflare-nemotron": {"provider": "cloudflare", "model": "@cf/nvidia/nemotron-3-120b-a12b",
+        "manager": "after80_cf_backend.py", "evidence": "docs/verification/after80-cf-backend-20261026.json"},
+}
 TOOL_RESERVATION = 16  # The verified TripSearch per-run bound, not vendor HTTP requests.
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
 BLOCKS = {"RATE_LIMITED", "SOURCE_COOLDOWN", "MODEL_COOLDOWN", "MODEL_BUDGET_EXHAUSTED", "REQUEST_TIMEOUT", "NETWORK_ERROR", "HTTP_ERROR"}
@@ -70,7 +76,9 @@ def validate_limits(dialogues, parallel, models, tools, start):
     require(start + dialogues - 1 <= 80, "selection_exceeds_original_080")
 
 
-def plan(rows, *, dialogues=2, parallel=1, models=40, tools=100, start=1, actions=False):
+def plan(rows, *, dialogues=2, parallel=1, models=40, tools=100, start=1, actions=False, llm_profile="zai"):
+    require(llm_profile in LLM_PROFILES, "unsupported_fixed_llm_profile")
+    profile = LLM_PROFILES[llm_profile]
     validate_limits(dialogues, parallel, models, tools, start)
     selected = rows[start - 1:start - 1 + dialogues]
     require(len(selected) == dialogues, "selection_missing_source_cases")
@@ -78,6 +86,8 @@ def plan(rows, *, dialogues=2, parallel=1, models=40, tools=100, start=1, action
     return {"format": "otravel.after80.replay.v1", "source_sha256": SOURCE_SHA,
         "selected_ids": [row["id"] for row in selected], "selected_user_turns": sum(len(row["turns"]) for row in selected),
         "source_dialogues": 80, "source_user_turns": 697, "base_url": BASE, "parallel": parallel,
+        "llm_profile": llm_profile, "expected_runtime": {"llm_provider": profile["provider"], "model": profile["model"]},
+        "runtime_evidence": profile["evidence"],
         "max_model_calls": models, "max_tool_calls": tools, "tool_reservation_per_message": TOOL_RESERVATION,
         "include_simulated_checkout": actions, "synthetic_initial_trip": deepcopy(INITIAL_TRIP),
         "nationality_provenance": "EXPLICIT_SYNTHETIC_TEST_FIXTURE_NOT_INFERRED_FROM_LANGUAGE_OR_ORIGIN",
@@ -267,24 +277,41 @@ def provider_block(run, events):
     return None
 
 
-def check_profile(health, status, evidence):
+def check_profile(health, status, evidence, llm_profile="zai"):
+    require(llm_profile in LLM_PROFILES, "unsupported_fixed_llm_profile")
+    profile = LLM_PROFILES[llm_profile]
+    require(all(isinstance(value, dict) for value in (health, status, evidence)), "runtime_metadata_malformed")
+    require(all(isinstance(value, dict) for value in status.values()), "runtime_provider_metadata_malformed")
+    require(isinstance(evidence.get("limits"), dict) and isinstance(evidence.get("loaded_manifest"), dict),
+        "runtime_evidence_metadata_malformed")
     require(health.get("database") == "ready" and health.get("supplier_booking") is False, "backend_health_or_booking_guard_failed")
-    require(status.get("_runtime") == {"llm_provider": "zai", "model": "glm-4.5-flash"}, "replay_requires_zai_45_no_other_model")
-    require(status.get("zai", {}).get("configured") is True and status.get("zai", {}).get("free_tier_confirmed") is True,
-        "zai_free_profile_not_confirmed")
+    require(status.get("_runtime") == {"llm_provider": profile["provider"], "model": profile["model"]}, "fixed_llm_runtime_profile_mismatch")
+    selected = status.get(profile["provider"], {})
+    require(selected.get("configured") is True and selected.get("free_tier_confirmed") is True
+        and selected.get("paid_fallback") is False, "selected_free_llm_profile_not_confirmed")
     require(not any(value.get("paid_fallback") is True for value in status.values()), "paid_fallback_forbidden")
     require(status.get("liteapi", {}).get("configured") is True and status["liteapi"].get("mode") == "sandbox"
         and status.get("duffel", {}).get("configured") is True and status["duffel"].get("mode") == "sandbox"
-        and status.get("serpapi", {}).get("configured") is True and status["serpapi"].get("free_tier_confirmed") is True,
+        and status.get("serpapi", {}).get("configured") is True and status["serpapi"].get("free_tier_confirmed") is True
+        and status["serpapi"].get("source_type") == "LIVE_INDICATIVE",
         "hybrid_test_provider_profile_required")
-    allowed = {"_runtime", "zai", "liteapi", "duffel", "serpapi", "open_meteo"}
-    require(all(not value.get("configured") for name, value in status.items() if name not in allowed), "unexpected_other_provider")
-    require(evidence.get("manager") == "after80_backend.py" and evidence.get("status") == "RUNNING"
+    allowed = {"_runtime", profile["provider"], "liteapi", "duffel", "serpapi", "open_meteo"}
+    others = {"gemini", "openrouter", "groq", "zai", "cloudflare", "ollama", "hotelbeds", "ratehawk", "travelpayouts"} - {profile["provider"]}
+    require(all(isinstance(status.get(name), dict) and status[name].get("configured") is False
+        for name in others), "other_provider_not_explicitly_disabled")
+    require(all(not value.get("configured") and not value.get("free_tier_confirmed")
+        for name, value in status.items() if name not in allowed), "unexpected_other_provider")
+    require(evidence.get("manager") == profile["manager"] and evidence.get("status") == "RUNNING"
         and evidence.get("source") == "/home/aegml/projects/otravel-after80-20261026"
         and evidence.get("database") == "otravel_zai_eval" and evidence.get("url") == BASE
         and evidence.get("loaded_manifest", {}).get("matches_current") is True, "owned_after80_runtime_evidence_required")
-    require(evidence.get("limits", {}).get("calls_per_run") == 1
-        and evidence.get("limits", {}).get("fallback") is False, "single_attempt_runtime_required")
+    require(type(evidence.get("limits", {}).get("calls_per_run")) is int and evidence["limits"]["calls_per_run"] == 1
+        and evidence.get("limits", {}).get("fallback") is False
+        and type(evidence.get("limits", {}).get("local_calls")) is int and evidence["limits"]["local_calls"] == 0,
+        "single_attempt_runtime_required")
+    if llm_profile == "cloudflare-nemotron":
+        require(evidence.get("limits", {}).get("cloudflare_daily_engineering_bound") == 2000,
+            "explicit_cf_evaluation_limit_required")
 
 
 def code_manifest():
@@ -386,8 +413,12 @@ class Replay:
                     observation["before"] = before
                     paused = before.get("waiting_reason") == "user_pause"
                     resume = original["user"].strip().casefold().rstrip(".! ") in {"продолжай", "продолжить"}
-                    require(not (resume and secret["queued_runs"]), "QUEUED_RESUME_REQUIRES_SEPARATE_OPERATOR_CONTROL")
-                    self.budget.reserve(ticket, 0 if paused else 1, 0 if paused else TOOL_RESERVATION)
+                    resumed_queue = list(secret["queued_runs"]) if paused and resume else []
+                    # The original transcript itself explicitly resumes these
+                    # own queued messages. Reserve their full work before POST;
+                    # never invent a resume merely to advance a test.
+                    allowance = len(resumed_queue) + 1 if resume else 0 if paused else 1
+                    self.budget.reserve(ticket, allowance, allowance * TOOL_RESERVATION)
                     secret["inflight"] = {"turn": index, "before": before, "baseline_events": sorted(baseline),
                         "client_message_id": self.vault["run_id"] + ":" + ticket, "run_id": None}
                     self.save(record)
@@ -407,6 +438,12 @@ class Replay:
                         self.save(record)
                         continue
                 run = http.wait(run_id, token)
+                resumed_queue = (list(secret["queued_runs"])
+                    if before.get("waiting_reason") == "user_pause"
+                    and original["user"].strip().casefold().rstrip(".! ") in {"продолжай", "продолжить"} else [])
+                if resumed_queue:
+                    observation["explicitly_resumed_queued_runs"] = [http.wait(queued_id, token) for queued_id in resumed_queue]
+                    secret["queued_runs"] = []
                 after = http.get(route, token)
                 messages = http.get(route + "/messages", token)["messages"]
                 events = [event for event in http.get(route + "/events", token)["events"] if event["event_id"] not in baseline]
@@ -420,6 +457,9 @@ class Replay:
                 record["turns"].append(observation)
                 secret.update(next_turn=index + 1, inflight=None)
                 block = provider_block(run, events)
+                if block is None:
+                    block = next((value for queued in observation.get("explicitly_resumed_queued_runs", [])
+                        if (value := provider_block(queued, []))), None)
                 if any(check["status"] == "FAIL" and check["id"] in {"own_session_identity", "trip_identity_stable"}
                         for check in observation["typed_checks"]):
                     self.halt({"case": cid, "turn": original["turn"], "code": "IDENTITY_INVARIANT_FAILED"})
@@ -523,6 +563,8 @@ class Replay:
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", action="store_true")
+    parser.add_argument("--llm-profile", choices=tuple(LLM_PROFILES), default="zai",
+        help="Fixed8084 runtime profile; --llm-profile cloudflare-nemotron alone remains a zero-HTTP dry run.")
     parser.add_argument("--max-dialogues", type=int, default=2)
     parser.add_argument("--start-case", type=int, default=1)
     parser.add_argument("--parallel", type=int, default=1)
@@ -534,7 +576,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     rows = load_source()
     frozen = plan(rows, dialogues=args.max_dialogues, parallel=args.parallel, models=args.max_model_calls,
-        tools=args.max_tool_calls, start=args.start_case, actions=args.include_simulated_checkout)
+        tools=args.max_tool_calls, start=args.start_case, actions=args.include_simulated_checkout, llm_profile=args.llm_profile)
     if not args.run:
         print(json.dumps({"status": "DRY_RUN_ZERO_REQUESTS", "plan": frozen}, ensure_ascii=False))
         return 0
@@ -551,20 +593,23 @@ def main(argv=None):
     folder.mkdir(mode=0o700, parents=True, exist_ok=bool(saved))
     replay = Replay(rows, frozen, folder, saved=saved)
     replay.save()  # Private output is proven before the first HTTP request.
-    evidence = json.loads(RUNTIME_EVIDENCE.read_text(encoding="utf-8"))
+    evidence_path = ROOT / frozen["runtime_evidence"]
+    require(evidence_path.is_file() and not evidence_path.is_symlink(), "fixed_runtime_evidence_missing_or_symlinked")
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
     http = HTTP()
     health, providers = http.get("/health"), http.get("/api/v1/providers/status")
-    check_profile(health, providers, evidence)
+    check_profile(health, providers, evidence, args.llm_profile)
     client = code_manifest()
     runtime_files = evidence["current_source_manifest"]["files"]
     orchestrator = next((row for row in runtime_files if row["path"].endswith("otravel/orchestrator.py")), None)
     require(orchestrator is not None and orchestrator["sha256"] == client["files"]["otravel/orchestrator.py"], "verified_tool_bound_source_mismatch")
     binding = {"runner_sha256": digest(Path(__file__).read_bytes()), "runtime_model": providers["_runtime"],
+        "llm_profile": frozen["llm_profile"], "runtime_evidence": frozen["runtime_evidence"],
         "runtime_source_sha256": evidence["current_source_manifest"]["sha256"],
         "client_source_sha256": digest(json.dumps(client["files"], sort_keys=True).encode())}
     require(not replay.vault.get("run_binding") or replay.vault["run_binding"] == binding, "resume_code_or_runtime_changed_new_run_required")
     replay.vault["run_binding"] = binding
-    replay.report.update(runtime_profile=providers, runtime_evidence_sha256=digest(RUNTIME_EVIDENCE.read_bytes()),
+    replay.report.update(runtime_profile=providers, runtime_evidence_sha256=digest(evidence_path.read_bytes()),
         runtime_source_manifest=evidence["current_source_manifest"], client_code=client, run_binding=binding)
     replay.save()
     selected = [row for row in rows if row["id"] in frozen["selected_ids"]]

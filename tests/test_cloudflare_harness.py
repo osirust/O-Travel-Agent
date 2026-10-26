@@ -1,5 +1,6 @@
 """Cloudflare configuration/routing with a controlled gateway; no HTTP or keys."""
 import json
+from dataclasses import replace
 
 import httpx
 import pytest
@@ -142,3 +143,31 @@ async def test_cloudflare_durable_cooldown_is_consulted_before_budget():
     assert checked == [("cloudflare", MODEL)]
     assert error.value.code == "MODEL_COOLDOWN"
     assert store.reservations == [] and gateway.calls == []
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_large_evaluation_requires_its_separate_explicit_setting():
+    gateway, store, harness, session, run = setup()
+    harness.settings = replace(harness.settings, max_cloudflare_llm_calls_per_day=2000)
+    async def reserve_explicit(session_id, run_id, limit, provider):
+        assert limit == 2000 and provider == "cloudflare"
+        store.reservations.append({"provider": provider, "limit": limit})
+        return True
+    store.reserve_model_call = reserve_explicit
+    try:
+        await harness._extract(session, run)
+    finally:
+        await gateway.close()
+    assert len(gateway.calls) == 1
+    assert store.reservations == [{"provider": "cloudflare", "limit": 2000}]
+
+
+def test_cloudflare_default_budget_and_explicit_env_override_are_distinct(monkeypatch):
+    monkeypatch.setenv("MAX_LLM_CALLS_PER_DAY", "2000")
+    monkeypatch.delenv("MAX_CLOUDFLARE_LLM_CALLS_PER_DAY", raising=False)
+    assert Settings.from_env().max_cloudflare_llm_calls_per_day == 40
+    monkeypatch.setenv("MAX_CLOUDFLARE_LLM_CALLS_PER_DAY", "2000")
+    assert Settings.from_env().max_cloudflare_llm_calls_per_day == 2000
+    monkeypatch.setenv("MAX_CLOUDFLARE_LLM_CALLS_PER_DAY", "2001")
+    with pytest.raises(ValueError):
+        Settings.from_env()

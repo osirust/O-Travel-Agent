@@ -218,7 +218,31 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
                 return expanded(definitions[node["$ref"].removeprefix("#/$defs/")])
             return {key: expanded(value) for key, value in node.items() if key != "$defs"}
         return [expanded(value) for value in node] if isinstance(node, list) else node
-    group_room_scope = expanded(schema)
+    # Historical wire comparisons keep the historical geographic feature set.
+    # Only the newly curated city enum member is projected out; real schema
+    # validation and the full current serialization keep accepting Тбилиси.
+    geographic_projection = expanded(schema)
+    removed_city_members = []
+    def historical_city_enums(node):
+        if isinstance(node, dict):
+            values = node.get("enum")
+            if (node.get("type") == "string" and isinstance(values, list) and "Тбилиси" in values
+                    and {"Москва", "Стамбул"}.issubset(values)):
+                node["enum"] = [value for value in values if value != "Тбилиси"]
+                removed_city_members.append("Тбилиси")
+            for value in node.values():
+                historical_city_enums(value)
+        elif isinstance(node, list):
+            for value in node:
+                historical_city_enums(value)
+    historical_city_enums(geographic_projection)
+    assert removed_city_members and set(removed_city_members) == {"Тбилиси"}
+    from otravel.llm_contract import _local_definitions
+    historical_geography_raw = json.dumps(_local_definitions(geographic_projection), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    new_curated_geography_bytes = len(raw) - len(historical_geography_raw)
+    assert new_curated_geography_bytes == 17  # UTF-8 JSON bytes, not model tokens.
+    assert accepts(response(op("set_origin", {"city": "Тбилиси"})), schema)
+    group_room_scope = deepcopy(geographic_projection)
     for variant in group_room_scope["properties"]["operations"]["items"]["oneOf"]:
         kind = variant["properties"]["type"]["const"]
         if kind in {"set_constraint", "clear_constraint"}:
@@ -250,7 +274,6 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
     # Preserve the historical performance contract on the SAME legacy feature
     # set. Added operations/scopes have explicit separate engineering budgets;
     # the full schema is no longer advertised as 25% smaller than old a93.
-    from otravel.llm_contract import _local_definitions
     legacy = _local_definitions(legacy)
     legacy_raw = json.dumps(legacy, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     assert len(legacy_raw) <= _FROZEN_BASELINE_SCHEMAS[name]["bytes"] * 0.75
@@ -262,8 +285,9 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
     group_room_raw = json.dumps(_local_definitions(group_room_scope), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     assert 0 < len(group_room_raw) - len(route_raw) <= 900
     assert len(group_room_raw) == {"empty": 7125, "sample": 8281}[name]
-    assert 0 < len(raw) - len(group_room_raw) <= 250  # Nonstop scope bytes, not tokens/product limits.
-    assert len(raw) == {"empty": 7332, "sample": 8488}[name]
+    assert 0 < len(historical_geography_raw) - len(group_room_raw) <= 250  # Nonstop scope bytes, not tokens/product limits.
+    assert len(historical_geography_raw) == {"empty": 7332, "sample": 8488}[name]
+    assert len(raw) == {"empty": 7349, "sample": 8505}[name]
     assert json.dumps(build_operation_schema(state), ensure_ascii=False, separators=(",", ":")).encode() == raw
 
 

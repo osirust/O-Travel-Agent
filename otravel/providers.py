@@ -210,7 +210,17 @@ class _HTTPGateway:
                     if (retry := seconds_hint(response.headers.get("retry-after"))) is not None:
                         details["retry_after_seconds"] = retry
                 details["limit_source"] = "unknown"
+                from .rate_failures import classify_rate_failure
                 try:
+                    rate_body = response.json() if len(response.content) <= 1_000_000 else None
+                except (ValueError, UnicodeError):
+                    rate_body = None
+                classified = classify_rate_failure(provider, status, rate_body)
+                if classified is not None:
+                    details.update(classified)
+                try:
+                    if provider != "openrouter" or url != "https://openrouter.ai/api/v1/chat/completions":
+                        raise ValueError("Router quota metadata is not authoritative for a direct provider")
                     blocked = response.json().get("error", {}).get("metadata", {})
                     details["limit_source"] = _limit_source(blocked.get("limit_source"))
                     provider_name = blocked.get("provider_name")

@@ -185,7 +185,13 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
                     if key != "id":
                         write(("traveler", target, key), field)
                         if key == "group_id":
-                            write(("group_membership", target), field)
+                            # A new person's nullable default is not an explicit
+                            # unlink; a later full group setter supplies it.
+                            # Existing updates still make an asserted clear.
+                            creating_unassigned = (item.type == "add_traveler" and field is None
+                                and target not in {person.id for person in state.travelers})
+                            if not creating_unassigned:
+                                write(("group_membership", target), field)
         elif item.type in {"set_constraint", "clear_constraint"}:
             key = value.get("key") or target
             write(("constraint", value.get("stay_id"), value.get("room_id"), key), {"value": value.get("value"), "hard": value.get("hard", True)} if item.type == "set_constraint" else {"removed": True})
@@ -200,6 +206,8 @@ def _can_switch_model(error: Exception) -> bool:
     if isinstance(error, ValidationError):
         return True
     if not isinstance(error, ProviderError):
+        return False
+    if error.provider in {"cloudflare", "zai"}:
         return False
     details = error.details if isinstance(error.details, dict) else {}
     limit_source = details.get("limit_source")
@@ -520,6 +528,7 @@ class Harness:
                 # Only explicitly injected non-HTTP test adapters may use a test
                 # budget; the real gateway always has the production ceiling.
                 daily_limit = (min(500, self.settings.max_local_llm_calls_per_day) if provider == "ollama" else
+                    min(2000, self.settings.max_cloudflare_llm_calls_per_day) if provider == "cloudflare" else
                     min(2000, self.settings.max_llm_calls_per_day) if provider == "zai" else
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
                 if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
@@ -550,20 +559,49 @@ class Harness:
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_EXTRACTION_VALIDATED", {
                         "based_state_version": session["state_version"], "provider": provider,
                         "model": requested_model, "structured_contract": validated_snapshot})
+                    if not readonly and not extracted.conflicts:
+                        from .operation_aliases import normalize_equivalent_return_ops
+                        aliases, alias_notes = normalize_equivalent_return_ops(session["state"], extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in aliases]
+                        extracted.operation_normalizations.extend(alias_notes)
+                        alias_questions = [note["question"] for note in alias_notes
+                            if note.get("status") == "clarification_required" and isinstance(note.get("question"), str)]
+                        if alias_questions:
+                            extracted.conflicts = alias_questions
+                            extracted.server_questions.extend(alias_questions)
+                    if (not readonly and not extracted.conflicts
+                            and extracted.control.action in {"none", "continue", "wait"}):
+                        from .preference_intake import ground_lowest_cost, price_preference_operation
+                        grounded, notes = ground_lowest_cost(extracted.operations, run["input_text"])
+                        if notes:
+                            if extracted.speech_act != "CHANGE":
+                                extracted.candidate_operations = extracted.operations
+                                grounded = [price_preference_operation()]
+                                extracted.speech_act = "CHANGE"
+                            extracted.operations = [Operation.model_validate(op) for op in grounded]
+                            extracted.operation_normalizations.extend(notes)
                     if extracted.speech_act in {"ASK", "PROPOSE"} and extracted.control.action == "none" and not extracted.conflicts:
                         # Questions/suggestions are not permission to change a
                         # trip. Keep proposed edits as audit data, never execute.
                         extracted.candidate_operations = extracted.operations
                         extracted.operations = []
                         extracted.unknowns = []
+                    if not readonly and not extracted.conflicts and extracted.control.action != "cancel":
+                        from .budget_intent import guard_budget_prohibitions
+                        budget_ops, budget_meta = guard_budget_prohibitions(extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in budget_ops]
+                        extracted.operation_normalizations.extend(budget_meta["notes"])
+                        extracted.conflicts.extend(budget_meta["conflicts"])
+                        extracted.server_questions.extend(budget_meta["conflicts"])
                     if not extracted.conflicts and extracted.control.action != "cancel":
                         try:
                             extracted.conflicts = operation_conflicts(TripState.model_validate(session["state"]), extracted.operations)
                         except DomainError:
                             pass  # The normal domain-to-clarification path handles invalid place values below.
                     if not extracted.conflicts and extracted.control.action != "cancel":
-                        extracted.operations, extracted.operation_normalizations = ground_budget_operations(
+                        extracted.operations, money_notes = ground_budget_operations(
                             TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
+                        extracted.operation_normalizations.extend(money_notes)
                         if any(note.get("status") == "clarification_required" for note in extracted.operation_normalizations):
                             question = next((note["question"] for note in extracted.operation_normalizations
                                 if note.get("status") == "clarification_required" and isinstance(note.get("question"), str)),
@@ -571,7 +609,8 @@ class Harness:
                             extracted.unknowns = [question]
                             extracted.server_questions = [question]
                             extracted.pending_context = {**(extracted.pending_context or {}), "field": "budget.amount_minor", "budget_scope_ambiguous": True}
-                    if (extracted.speech_act == "CHANGE" and not extracted.conflicts
+                    if ((extracted.speech_act == "CHANGE" or extracted.speech_act == "ASK"
+                            and extracted.control.action == "continue" and extracted.operations) and not extracted.conflicts
                             and extracted.control.action in {"none", "continue", "wait", "resume"}):
                         grounded_route, route_notes = ground_initial_route(
                             TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
@@ -592,6 +631,15 @@ class Harness:
                         auxiliary, auxiliary_notes = ground_auxiliary_operations(session["state"], extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in auxiliary]
                         extracted.operation_normalizations.extend(auxiliary_notes)
+                        from .room_intent import ground_room_count_operations
+                        room_ops, room_meta = ground_room_count_operations(session["state"], extracted.operations,
+                            run["input_text"], session.get("pending_question"))
+                        extracted.operations = [Operation.model_validate(op) for op in room_ops]
+                        extracted.operation_normalizations.extend(room_meta["notes"])
+                        if room_meta["unknowns"]:
+                            extracted.unknowns = list(dict.fromkeys(room_meta["unknowns"] + extracted.unknowns))
+                            extracted.server_questions.extend(room_meta["unknowns"])
+                            extracted.pending_context = {**(extracted.pending_context or {}), **(room_meta["pending_context"] or {})}
                         from .group_semantics import guard_group_separation, guard_unapplied_traveler_removal
                         separation = guard_group_separation(session["state"], extracted.operations, run["input_text"],
                             {**((session.get("pending_question") or {}).get("context") or {}),
@@ -690,7 +738,7 @@ class Harness:
                             "expected_contract": {"required": ["operations", "control", "reply", "unknowns", "conflicts"], "note": "Верни весь корректный JSON-объект. Не повторяй невалидную структуру; не меняй известные поля без запроса."},
                         }
                     details = exc.details if isinstance(exc, ProviderError) and isinstance(exc.details, dict) else {}
-                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits") if key in details}}
+                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits", "business_code", "failure_kind", "daily_quota_confirmed", "reset_basis", "engineering_wait_seconds") if key in details}}
                     if isinstance(gateway, LLMGateway):
                         failed.update(gateway.call_metadata_for_current_call())
                     attempt_meta.append({**failed, "outcome": "failed"})
@@ -824,8 +872,15 @@ class Harness:
         resolved = {"handled": False}
         if kind is None and not readonly:
             if pending and session.get("waiting_reason") == "clarification":
+                context = pending.get("context") or {}
+                if (pending.get("field") == "stay.rooms" and context.get("room_reallocation_required") is True
+                        and re.fullmatch(r"\s*(?:\d{1,2}|один|одна|два|две|три|четыре|пять|да|нет)\s*[.!]?\s*", run["input_text"], re.IGNORECASE)):
+                    question = "Укажите, кто должен жить в каждом из запрошенных номеров. Одного числа недостаточно для изменения сохранённого расселения."
+                    resolved = {"handled": True, "operations": [], "question": question,
+                        "pending_context": {**context, "field": "stay.rooms", "target_id": pending.get("target_id")}}
                 from .intent_grounding import resolve_country_destination_answer
-                resolved = resolve_country_destination_answer(session["state"], pending, run["input_text"])
+                if not resolved["handled"]:
+                    resolved = resolve_country_destination_answer(session["state"], pending, run["input_text"])
             if not resolved["handled"]:
                 resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
             if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
@@ -1068,7 +1123,7 @@ class Harness:
                 clarification_metadata.pop("target_selection_required", None)
             if any(op.type == "set_budget" for op in extracted.operations):
                 clarification_metadata.pop("budget_scope_ambiguous", None)
-            if extracted.speech_act == "CHANGE" and not any(person.type == "child" for person in current.travelers) and explicit_no_children(run["input_text"]):
+            if (extracted.speech_act == "CHANGE" or changes) and not any(person.type == "child" for person in current.travelers) and explicit_no_children(run["input_text"]):
                 clarification_metadata.update(children_known=True, children_count=0)
             clarification_metadata.pop("field", None)
             clarification_metadata.pop("target_id", None)
@@ -1176,7 +1231,8 @@ class Harness:
                 and not extracted.conflicts and not result.get("available_actions")):
             from .answering import changed_trip_receipt, wants_saved_facts
             subject = (result.get("conversation") or {}).get("subject") or {}
-            if (changes and wants_saved_facts(run["input_text"])
+            literal_preference = any(note.get("finding_id") == "AFTER80-PRICE-INTAKE-001" for note in extracted.operation_normalizations)
+            if ((changes or literal_preference) and wants_saved_facts(run["input_text"])
                     and subject.get("kind") not in {"country", "city"}):
                 shown = result.get("plans") if "plans" in result else await self._latest_current_plans(session, run)
                 receipt, sections = changed_trip_receipt(run["input_text"], current.model_dump(mode="json"),
@@ -1187,6 +1243,14 @@ class Harness:
                     reply += "\n\n" + questions[0]
                 result["answer_sections"] = sections
                 result["conversational_response"] = {"facts_source": "canonical_changed_state_and_shown_plans", "kinds": ["receipt"]}
+        if ("plans" in result and not result.get("plans_preserved")
+                and (result.get("tool_calls_used", 0) > 0 or result.get("component_errors"))):
+            from .search_explanation import render_search_explanation
+            explanation = render_search_explanation(current, result)
+            if explanation["summary"]["applicable"]:
+                result["search_explanation"] = explanation
+                if explanation["text"]:
+                    reply += "\n\n" + explanation["text"]
         pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions and waiting_reason != "user_pause" else None
         if pending is not None and not preserve_pending:
             if not run["input_text"].startswith(TYPED_PREFIX) and extracted.pending_context and extracted.pending_context.get("field"):
@@ -1201,6 +1265,11 @@ class Harness:
                 # unrelated slot. This cleanup commits with the new question.
                 clarification_metadata.pop("date_proposal", None)
                 clarification_metadata.pop("target_selection_required", None)
+            if binding.get("field") != "stay.rooms":
+                for key in ("room_target_selection_required", "room_reallocation_required", "requested_room_count"):
+                    clarification_metadata.pop(key, None)
+            elif binding.get("target_id") is not None:
+                clarification_metadata.pop("room_target_selection_required", None)
             if binding.get("field") == "traveler.age" and binding.get("target_id") is None:
                 # Choose whom to ASK, not whose age an ambiguous prior answer
                 # meant. The persisted question names its exact target first.
@@ -1212,7 +1281,8 @@ class Harness:
                     pending.update(text=text, questions=[text])
                     reply = text
             if (binding.get("field", "") and binding["field"].startswith(("stay.", "leg.")) and binding.get("target_id") is None
-                    and not clarification_metadata.get("target_selection_required")):
+                    and not clarification_metadata.get("target_selection_required")
+                    and not clarification_metadata.get("room_target_selection_required")):
                 field_name = binding["field"].split(".", 1)[1]
                 collection = current.legs if binding["field"].startswith("leg.") else current.stays
                 candidates = [item for item in collection if not getattr(item, field_name, None)]

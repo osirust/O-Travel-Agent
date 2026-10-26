@@ -80,3 +80,22 @@ async def test_saved_facts_remain_visible_before_required_room_question(api_fact
         assert "номер" in text and after["pending_question"]["field"] == "stay.rooms"
         assert after["trip"]["budget"]["amount_minor"] == 9_000_000
         assert len(model.calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_actual_cf_omitted_price_preference_is_grounded_and_answered(api_factory):
+    # CF6009644 case11: model omitted the explicit edit while answering a question.
+    raw = {"operations": [], "control": {"action": "continue"}, "speech_act": "ASK",
+           "reply": "Сейчас выбран город Казань, едет 1 взрослый.", "unknowns": [], "conflicts": []}
+    model = StubLLM([raw])
+    async with api_factory(model) as (client, _):
+        sid, token, before = await _session(client, known_trip())
+        run, after = await _message(client, sid, token,
+            'Ищи минимум стоимсти. Напомни, какой город сейчас выбран и сколько нас едет.')
+        assert after['trip']['origin'] == before['trip']['origin'] == 'Москва'
+        assert after['trip']['preferences'][0]['value'] == 'lowest_total'
+        text = await _reply(client, sid, token, run)
+        assert 'Казань' in text and '1 взросл' in text and '75 000' in text
+        notes = run['result']['result']['operation_normalizations']
+        assert any(n.get('finding_id') == 'AFTER80-PRICE-INTAKE-001' for n in notes)
+        assert len(model.calls) == 1

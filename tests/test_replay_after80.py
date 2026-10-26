@@ -301,13 +301,44 @@ def test_paused_input_is_queued_without_poll_or_synthetic_resume(tmp_path):
 
     http.request = paused_request
     http.wait = Mock(side_effect=AssertionError("Paused work is not polled or resumed automatically"))
-    replay, source = setup_replay(tmp_path, http, texts=["additional source fact", "продолжай"])
+    replay, source = setup_replay(tmp_path, http, texts=["additional source fact"])
     replay.case(source[0])
-    assert len(http.posts) == 2  # Source resume cannot drain an unreserved queue automatically.
-    assert replay.stop.is_set() and replay.budget.snapshot() == {"models": 0, "tools": 0, "held": {}}
+    assert len(http.posts) == 2  # No source resume was provided.
+    assert not replay.stop.is_set() and replay.budget.snapshot() == {"models": 0, "tools": 0, "held": {}}
     http.wait.assert_not_called()
     report = json.loads((replay.folder / "ZAI100-001.json").read_text())
     assert report["turns"][0]["execution_status"] == "QUEUED_WHILE_USER_PAUSED_NO_AUTO_RESUME"
+
+
+def test_explicit_source_resume_reserves_and_observes_the_owned_queue(tmp_path):
+    http = FakeHTTP()
+    http.snap["waiting_reason"], http.snap["status"] = "user_pause", "WAITING_USER"
+    ordinary = http.request
+    runs = {}
+
+    def request(method, path, token=None, body=None):
+        if not path.endswith("/messages"):
+            return ordinary(method, path, token, body)
+        http.posts.append((path, deepcopy(body)))
+        if body["text"] != "продолжай":
+            runs["queued-own"] = {"run_id": "queued-own", "session_id": "session-own", "status": "completed"}
+            return {"status": 202, "body": {"run_id": "queued-own"}, "retry_after": None}
+        http.snap["waiting_reason"] = None
+        http.snap["status"] = "TRIP_DRAFT"
+        http.events.append({"event_id": "queue-call", "run_id": "queued-own", "event_type": "MODEL_CALL_STARTED", "payload": {}})
+        runs["resume-own"] = {"run_id": "resume-own", "session_id": "session-own", "status": "completed"}
+        return {"status": 202, "body": {"run_id": "resume-own"}, "retry_after": None}
+
+    http.request = request
+    http.wait = Mock(side_effect=lambda rid, token: deepcopy(runs[rid]))
+    replay, source = setup_replay(tmp_path, http, texts=["additional source fact", "продолжай"])
+    replay.case(source[0])
+    assert len(http.posts) == 3 and not replay.stop.is_set()
+    assert replay.budget.snapshot() == {"models": 1, "tools": 0, "held": {}}
+    assert [call.args[0] for call in http.wait.call_args_list] == ["resume-own", "queued-own"]
+    report = json.loads((replay.folder / "ZAI100-001.json").read_text())
+    assert report["execution_status"] == "COMPLETED_FIXED_TRANSCRIPT"
+    assert report["turns"][1]["explicitly_resumed_queued_runs"][0]["run_id"] == "queued-own"
 
 
 def test_simulated_checkout_is_opt_in_and_exact_retry_returns_one_owned_order(tmp_path):

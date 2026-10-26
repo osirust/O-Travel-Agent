@@ -102,6 +102,38 @@ def _budget_part_in_transaction(text: str) -> str | bool | None:
     return " ".join(selected) if selected else False
 
 
+def _budget_guard_context(text: str) -> tuple[str, bool]:
+    """Bind ambiguity/prohibitions to the financial clause, not other edits.
+
+    CF10-10 explicitly reduces the budget while forbidding hotel/person edits.
+    An affirmative budget command can stand beside unrelated history, ranges or
+    'не меняй'. Its own negative/historical wording still blocks grounding.
+    """
+    clauses = re.split(r"(?<=[;.!?])\s+|[;\n]|,\s+(?!\d)", text)
+    financial, positive = [], []
+    for clause in clauses:
+        markers = list(_MARKER.finditer(clause)) or list(_TOTAL_SCOPE.finditer(clause))
+        if not markers:
+            continue
+        marker = markers[-1]
+        affirmative = any(not _negated_literal(clause, command.start()) and re.fullmatch(
+            r"\s*(?:(?:общий|общему|новый|текущий|мой|наш|именно|только|к)\s*)*",
+            clause[command.end():marker.start()]) for command in _BUDGET_COMMAND.finditer(clause[:marker.start()]))
+        if affirmative:
+            # Do not split competing budget verbs ('уменьши и увеличь бюджет').
+            # Only a clearly different object/action ends this budget clause.
+            clause = re.split(r"\s+(?:и|а|но)\s+(?=(?:продли|перенеси|пересели)\b|"
+                r"(?:(?:первое|последнее|всех|остальных|других)\s+)*(?:отел|проживан|участник|дет|дат|город|маршрут)\w*\b)",
+                clause, maxsplit=1)[0]
+            positive.append(clause)
+        financial.append(clause)
+    # A second current budget declaration can contradict the command. Retain
+    # it for amount/range conflict checks; only unrelated historical budgets
+    # yield to an affirmative current command.
+    selected = [clause for clause in financial if not _HISTORY.search(clause) or clause in positive] if positive else financial
+    return (" ".join(selected), bool(positive)) if selected else (text, False)
+
+
 def _suppressed(result: list, *, reason: str, question: str | None = None, noop: bool = False) -> tuple[list, list[dict]]:
     note = {"field": "budget.amount_minor", "status": "no_op" if noop else "clarification_required",
             "code": "retained_budget" if noop else "budget_amount_ambiguous",
@@ -345,10 +377,13 @@ def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[l
         return suppress_scope("mixed_scope" if _TOTAL_SCOPE.search(normalized) or len(unit_scopes) > 1 else "unit_price_scope")
     if _retained_increment(normalized):
         return _suppressed(result, reason="retained_previous_delta", noop=True)
-    if (_HISTORY.search(normalized) or _RANGE.search(normalized)
+    guard_context, affirmative_budget = _budget_guard_context(normalized)
+    if (_HISTORY.search(guard_context) or _RANGE.search(guard_context)
             or re.search(r"\b(?:если|например|допустим|предположим)\b", normalized)
-            or re.search(r"\bне\s+(?:меняй|меняю|изменяй|трогай|увеличивай|уменьшай|уменьшать|уменьш|сокращай|снижай)\b", normalized)):
+            or re.search(r"\bне\s+(?:меняй|меняю|изменяй|трогай|увеличивай|уменьшай|уменьшать|уменьш|сокращай|снижай)\b", guard_context)):
         return result, []
+    if affirmative_budget:
+        normalized = guard_context
     if value.get("currency", "RUB").upper() == "USD":
         # No FX: only repair an explicitly requested, already proposed USD sum.
         matches = list(_USD_MONEY.finditer(normalized))
