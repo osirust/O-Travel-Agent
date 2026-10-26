@@ -19,7 +19,7 @@ async def fail(ledger, provider, *, at=None, **facts):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize('provider', ['zai', 'cloudflare'])
+@pytest.mark.parametrize('provider', ['zai', 'cloudflare', 'groq'])
 @pytest.mark.parametrize('hint', [None, True, 300.0, '300', -1])
 async def test_unknown429_does_not_claim_a_daily_quota_and_requires_new_explicit_request(ledger, provider, hint):
     store, at = await fail(ledger, provider, retry_after_seconds=hint)
@@ -57,3 +57,33 @@ async def test_unknown_wait_persists_across_midnight_and_uses_valid_provider_hin
     assert not blocked['available'] and blocked['retry_after'] == 30
     assert blocked['reason'] == 'provider_retry_after'
     assert (await store.model_availability('zai', 'synthetic-rate-test', now=at + timedelta(seconds=60)))['available']
+
+
+@pytest.mark.asyncio
+async def test_groq_token_minute_size_error_does_not_claim_daily_quota(ledger):
+    store, at = await fail(ledger, 'groq', rate_limits={
+        'token_window': 'TPM', 'token_limit_from_error': 8000, 'tokens_requested_from_error': 10000,
+        'tokens_remaining': 8000, 'requests_remaining': 1000})
+    early = await store.model_availability('groq', 'synthetic-rate-test', now=at + timedelta(seconds=60))
+    assert not early['available'] and early['retry_after'] == 240 and not early['allow_fallback']
+    late = await store.model_availability('groq', 'synthetic-rate-test', now=at + timedelta(seconds=300))
+    assert late['available']
+    assert not any(e['event_type'] == 'MODEL_CALL_STARTED' for e in await store.list_events(ledger[1]))
+
+
+@pytest.mark.asyncio
+async def test_groq_explicit_daily_token_limit_remains_blocked_and_reset_is_unconfirmed(ledger):
+    store, at = await fail(ledger, 'groq', retry_after_seconds=1, rate_limits={
+        'token_window': 'TPD', 'token_limit_from_error': 200000,
+        'tokens_used_from_error': 199000, 'tokens_requested_from_error': 2000})
+    status = await store.model_availability('groq', 'synthetic-rate-test', now=at + timedelta(minutes=10))
+    assert not status['available'] and not status['allow_fallback']
+    assert status['reason'] == 'provider_usage_limit_reset_unconfirmed'
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('source', ['account_quota', 'key_rate_limit', 'workspace_credit_limit'])
+async def test_groq_explicit_account_restriction_cannot_be_downgraded_to_short_wait(ledger, source):
+    store, at = await fail(ledger, 'groq', limit_source=source, retry_after_seconds=1)
+    status = await store.model_availability('groq', 'synthetic-rate-test', now=at + timedelta(minutes=10))
+    assert not status['available'] and status['scope'] == 'provider' and not status['allow_fallback']

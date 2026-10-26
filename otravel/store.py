@@ -1053,7 +1053,32 @@ class Store:
                     if until > instant:
                         return answer(False, "provider_retry_after" if has_hint else "unconfirmed_429_engineering_wait", "provider", until)
                     continue
+            if (provider == "groq" and payload.get("code") == "RATE_LIMITED"
+                    and type(payload.get("http_status")) is int and payload["http_status"] == 429
+                    and payload.get("limit_source") in {None, "unknown"}):
+                facts = payload.get("rate_limits")
+                facts = facts if isinstance(facts, dict) else {}
+                limit, requested = facts.get("token_limit_from_error"), facts.get("tokens_requested_from_error")
+                consumed = facts.get("tokens_used_from_error", 0)
+                confirmed_day_limit = (facts.get("token_window") == "TPD"
+                    and type(limit) is int and 0 <= limit <= 10**12
+                    and type(requested) is int and 0 < requested <= 10**12
+                    and type(consumed) is int and 0 <= consumed <= 10**12
+                    and consumed + requested > limit)
+                if confirmed_day_limit:
+                    if row["created_at"] >= day_start:
+                        return answer(False, "provider_usage_limit_reset_unconfirmed", "provider", next_day)
+                    continue
+                # Unknown/token-minute 429 is not evidence of an exhausted
+                # daily quota. This is a durable engineering wait only. A new
+                # explicit request still faces the provider's own limits.
+                has_hint = type(hint) is int and 1 <= hint <= 86400
+                until = row["created_at"] + timedelta(seconds=hint if has_hint else 300)
+                if until > instant:
+                    return answer(False, "provider_retry_after" if has_hint else "unconfirmed_429_engineering_wait", "provider", until)
+                continue
             if (provider in INDEPENDENT_REMOTE_PROVIDERS and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
+                    and payload.get("limit_source") in {None, "unknown"}
                     and type(hint) is int and 1 <= hint <= 86400):
                 until = row["created_at"] + timedelta(seconds=hint)
                 if until > instant:
