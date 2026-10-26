@@ -277,8 +277,11 @@ class _HTTPGateway:
                         details["provider_name"] = _safe_text(provider_name)
                 except (ValueError, TypeError, AttributeError):
                     pass
-            raise ProviderError("RATE_LIMITED" if status == 429 else "HTTP_ERROR",
-                                "Провайдер ограничил запросы (HTTP 429)." if status == 429 else "Провайдер отклонил запрос.",
+            travel_names = {"liteapi": "LiteAPI", "duffel": "Duffel", "serpapi": "SerpApi", "travelpayouts": "Travelpayouts", "hotelbeds": "Hotelbeds", "ratehawk": "RateHawk"}
+            message = ("Провайдер ограничил запросы (HTTP 429)." if status == 429 else
+                       f"{travel_names[provider]} не подтвердил доступ. Проверьте ключ и права аккаунта или выберите другой источник." if status in {401, 403} and provider in travel_names else
+                       "Провайдер отклонил запрос.")
+            raise ProviderError("RATE_LIMITED" if status == 429 else "HTTP_ERROR", message,
                                 status == 429 or status >= 500, provider, details)
         if len(response.content) > 5_000_000:
             raise ProviderError("INVALID_RESPONSE", "Ответ провайдера слишком большой.", provider=provider)

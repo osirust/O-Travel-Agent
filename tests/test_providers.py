@@ -58,6 +58,16 @@ def test_lookup_rejects_production_key_before_http():
     assert error.value.code == "CONFIG_BLOCKED"
 
 
+def test_liteapi_unauthorized_response_explains_access_without_exposing_key():
+    gateway = TravelGateway(settings(lambda request: httpx.Response(401), LITEAPI_API_KEY="sand_private_test_value"))
+    with pytest.raises(ProviderError) as error:
+        call(gateway, "resolve_hotels", "Стамбул")
+    assert error.value.code == "HTTP_ERROR"
+    assert error.value.details["http_status"] == 401
+    assert "LiteAPI" in error.value.message and "доступ" in error.value.message
+    assert "sand_private_test_value" not in str(error.value.as_dict())
+
+
 @pytest.mark.parametrize("config,code", [
     ({"LLM_PROVIDER": "gemini", "GEMINI_API_KEY": "fake"}, "CONFIG_BLOCKED"),
     ({"LLM_PROVIDER": "gemini", "GEMINI_FREE_TIER_CONFIRMED": True, "GEMINI_API_KEY": ""}, "CONFIG_MISSING"),

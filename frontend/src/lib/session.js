@@ -99,11 +99,11 @@ export class TravelSession {
       const selectedId = plans.some(plan => plan.plan_id === this.state.selectedId) ? this.state.selectedId : plans[0]?.plan_id || null;
       const paused = snapshot.waiting_reason === 'user_pause';
       let notice = this.state.notice;
-      for (const run of this.runs.values()) {
-        if (!this.reported?.has(run.run_id) && !isPending(run) && (run.error || ['conflict', 'interrupted', 'failed'].includes(run.status))) {
-          this.reported ||= new Set(); this.reported.add(run.run_id);
-          notice = { type: 'error', text: run.error?.message || 'Обработка не завершена. Поездка сохранена — проверьте её параметры.' };
-        }
+      const lastRunId = [...messages].reverse().find(message => message.run_id && this.runs.has(message.run_id))?.run_id;
+      const lastRun = this.runs.get(lastRunId);
+      if (lastRun && !this.reported?.has(lastRun.run_id) && !isPending(lastRun) && (lastRun.error || ['conflict', 'interrupted', 'failed'].includes(lastRun.status))) {
+        this.reported ||= new Set(); this.reported.add(lastRun.run_id);
+        notice = { type: 'error', text: lastRun.error?.message || 'Обработка не завершена. Поездка сохранена — проверьте её параметры.' };
       }
       const orders = orderData.orders || [];
       if (this.confirmDelivery && orders.some(order => order.quote_id === this.confirmDelivery.quote_id)) this.confirmDelivery = null;

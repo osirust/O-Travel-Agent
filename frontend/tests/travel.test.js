@@ -145,6 +145,20 @@ test('an older snapshot cannot undo a newer control revision', async () => {
   client.destroy();
 });
 
+test('an old provider failure is not shown after a newer successful search', async () => {
+  const client = new TravelSession({ request: async path => {
+    if (path.endsWith('/messages')) return { messages: [{ sequence: 1, run_id: 'failed' }, { sequence: 2, run_id: 'success' }] };
+    if (path.endsWith('/orders')) return { orders: [] };
+    if (path.endsWith('/failed')) return { run_id: 'failed', session_id: 's', status: 'failed', error: { message: 'Старая ошибка' } };
+    if (path.endsWith('/success')) return { run_id: 'success', session_id: 's', status: 'completed', result: { state_version: 4, result: { live_offers: [] } } };
+    return snapshot;
+  } }, { get: () => ({}), set: () => {} });
+  client.access = { session_id: 's', session_token: 'test-session' };
+  await client.sync();
+  assert.equal(client.state.notice, null);
+  client.destroy();
+});
+
 test('standalone API results never replace the whole-trip plan with their empty plans field', () => {
   const runs = new Map([['search', run('search', { plans: [plan] })], ['components', run('components', { plans: [], live_offers: [] })]]);
   assert.deepEqual(currentPlans([{ run_id: 'search' }, { run_id: 'components' }], runs, snapshot), [plan]);
