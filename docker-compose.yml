@@ -68,7 +68,7 @@ services:
       LLM_MAX_OUTPUT_TOKENS: ${LLM_MAX_OUTPUT_TOKENS:-4096}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000,http://localhost:8080,http://localhost:8081}
     ports:
-      - "127.0.0.1:${APP_PORT:-8080}:8080"
+      - "127.0.0.1:${BACKEND_PORT:-8081}:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -78,6 +78,15 @@ services:
       timeout: 4s
       retries: 15
       start_period: 15s
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:80"
+    depends_on:
+      app:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

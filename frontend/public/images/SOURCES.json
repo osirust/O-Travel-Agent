@@ -1,0 +1,19 @@
+{
+  "created": "2026-10-26",
+  "tool": "built-in image_gen",
+  "purpose": "Original destination illustrations, not photos of particular hotel properties",
+  "assets": [
+    {
+      "id": "istanbul",
+      "prompt": "Use case: photorealistic-natural. Generate one original clean editorial travel photograph for an AI travel website hero: Istanbul, the Bosphorus waterfront, elegant Ottoman mosque at Ortakoy on the left edge, suspension bridge across background, clear deep blue water, a small ferry, warm late afternoon sun, soft golden clouds. Authentic sophisticated vacation photography, naturally rich ultramarine and warm beige palette, wide 3:2 landscape, full bleed. Excellent composition for a right-side hero image and destination card. No text, no typography, no logos, no user interface, no border, no collages. This is a destination illustration, not a hotel property photograph."
+    },
+    {
+      "id": "antalya",
+      "prompt": "Use case: photorealistic-natural. Generate one original high-end editorial travel photograph of Antalya Mediterranean coastline, turquoise sea beneath steep sunlit limestone cliffs, charming old town architecture and distant blue mountains, warm Mediterranean afternoon. Authentic, inviting, natural proportions, realistic water and vegetation, editorial color grading with deep blue sea and cream architecture. Wide 3:2 landscape, full bleed, no text, no logos, no people portraits, no UI, no borders. Destination illustration, not a photo of a particular hotel."
+    },
+    {
+      "id": "sochi",
+      "prompt": "Use case: photorealistic-natural. Generate one original polished editorial travel photograph of lush green Caucasus foothills near Sochi with a view towards the blue Black Sea, graceful modern terraces amid subtropical greenery, warm sunny late afternoon, distant mountains, subtle vacation atmosphere. Photorealistic natural travel photography, tasteful deep green and blue color palette, wide 3:2 landscape, full bleed. No text, no typography, no logos, no identifiable hotel branding, no UI, no border. This is a general destination illustration, not a specific hotel property photo."
+    }
+  ]
+}

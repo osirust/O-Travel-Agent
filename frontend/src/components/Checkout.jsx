@@ -1,0 +1,13 @@
+import { useEffect, useState } from 'react';
+import { ArrowRight, Check, Clock3, LoaderCircle, ShieldCheck } from 'lucide-react';
+import { dateLabel, money } from '../lib/travel.js';
+import { Modal, SourceBadge } from './Ui.jsx';
+
+export default function Checkout({ quote, previousPlan, confirming, onClose, onConfirm }) {
+  const [consent, setConsent] = useState(false), [now, setNow] = useState(Date.now());
+  useEffect(() => { setConsent(false); }, [quote.quote_id, quote.quote_version]);
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
+  const expiry = Date.parse(quote.expires_at), expired = !Number.isFinite(expiry) || expiry <= now;
+  const changedPrice = previousPlan?.currency === quote.plan.currency && previousPlan?.total_minor !== quote.plan.total_minor;
+  return <Modal title="Проверим детали поездки" subtitle="Стоимость и состав получены после повторной проверки." onClose={onClose}><div className="checkout-content"><div className="checkout-total"><span>Итого за всю поездку</span><strong>{money(quote.plan.total_minor, quote.plan.currency)}</strong><SourceBadge source={quote.plan.source_type} /></div>{changedPrice && <div className="price-change-notice">Стоимость обновилась: {money(previousPlan.total_minor, previousPlan.currency)} → {money(quote.plan.total_minor, quote.plan.currency)}. Подтвердите новую сумму.</div>}<div className="checkout-components">{(quote.plan.offers || []).map(offer => <div key={offer.offer_id}><span>{offer.name || offer.description || 'Компонент поездки'}</span><SourceBadge source={offer.source_type} small /></div>)}</div><p className={`quote-expiry ${expired ? 'expired' : ''}`}><Clock3 size={16} />{expired ? 'Срок проверки истёк. Закройте корзину и проверьте её снова.' : `Действует до ${new Date(expiry).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`}</p><div className="test-booking-notice"><ShieldCheck size={23} /><div><strong>Это тестовое оформление</strong><p>Бронь у поставщика и списание денег не создаются. Данные банковской карты не нужны.</p></div></div><label className="checkbox-row consent"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} disabled={expired || confirming} /><span>Подтверждаю состав и сумму этой тестовой корзины</span></label></div><footer className="modal-footer"><button className="secondary-button" disabled={confirming} onClick={onClose}>Вернуться</button><button className="primary-button" disabled={!consent || expired || confirming} onClick={onConfirm}>{confirming ? <LoaderCircle className="spin" size={17} /> : <Check size={17} />}Подтвердить тестовое оформление</button></footer></Modal>;
+}

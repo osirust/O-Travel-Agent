@@ -6,7 +6,7 @@
 
 ## Текущая версия
 
-Есть backend, хранение поездок в PostgreSQL и простой чат для проверки. Основной frontend разрабатывается отдельно.
+Есть backend, хранение поездок в PostgreSQL и React/JavaScript frontend Travel Studio: стартовый экран, чат, формы поездки, предложения отелей и перелётов, фотографии, сравнение изменений и тестовое оформление. Простой диагностический чат также сохранён.
 
 После разбора 80 разговоров обновили денежные правки, маршруты, семьи, условия номеров и ответы по сохранённой поездке. Код прошёл 2964 проверки. Реальные API-прогоны учитываются отдельно: [результаты и границы проверки](docs/testing/AFTER80.md).
 
@@ -27,11 +27,13 @@
 docker compose up --build -d
 ```
 
-Чат откроется на [localhost:8080/debug](http://localhost:8080/debug), описание API — на [localhost:8080/docs](http://localhost:8080/docs).
+Travel Studio откроется на [localhost:8080](http://localhost:8080), диагностический чат — на [localhost:8080/debug](http://localhost:8080/debug), описание API — на [localhost:8080/docs](http://localhost:8080/docs). Прямой backend для разработки доступен на порту8081 (`BACKEND_PORT`).
 
 Для демопримера ключи не нужны. Чтобы подключить модель и внешние источники, скопируйте `.env.example` в `.env` и заполните настройки. Если порт8080 занят, укажите `APP_PORT=8081`. Ключи остаются в локальном `.env` и не попадают в репозиторий.
 
 ## Разработка
+
+[React frontend: запуск, API и режимы](docs/FRONTEND_REACT.md). Исходники интерфейса — в `frontend/`; `npm ci` и `npm run dev` запускают его с proxy к backend.
 
 Python, FastAPI, PostgreSQL, Docker Compose.
 
