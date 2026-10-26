@@ -22,15 +22,16 @@ export class TravelSession {
     this.deliveries = saved.deliveries || [];
     this.confirmDelivery = saved.confirmDelivery || null;
     this.liveKinds = saved.liveKinds || {};
+    this.autoAttempts = saved.autoAttempts || {};
     this.listeners = new Set(); this.runs = new Map(); this.cursor = 0;
     this.state = { snapshot: null, messages: [], plans: [], selectedId: null, changes: [], media: {}, providers: null,
       online: null, restoring: false, sending: false, busy: false, progress: '', notice: null, quote: null,
-      previewing: false, confirming: false, orders: [], external: { hotels: null, flights: null }, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery };
+      previewing: false, confirming: false, orders: [], external: { hotels: null, flights: null }, autoAttempts: this.autoAttempts, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery };
   }
   getSnapshot = () => this.state;
   subscribe = listener => { this.listeners.add(listener); return () => this.listeners.delete(listener); };
   patch(values) { this.state = { ...this.state, ...values }; this.listeners.forEach(listener => listener()); }
-  persist() { this.persistence.set(KEY, { access: this.access, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery, liveKinds: this.liveKinds }); }
+  persist() { this.persistence.set(KEY, { access: this.access, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery, liveKinds: this.liveKinds, autoAttempts: this.autoAttempts }); }
   journal() { this.persist(); this.patch({ deliveries: [...this.deliveries], confirmDelivery: this.confirmDelivery }); }
   path(suffix = '') { return `/api/v1/sessions/${encodeURIComponent(this.access.session_id)}${suffix}`; }
   request(path, options = {}) { return this.api.request(path, { token: this.access?.session_token, ...options }); }
@@ -59,9 +60,9 @@ export class TravelSession {
       if (!snapshot.session_id || !snapshot.session_token) throw new Error('Не удалось создать поездку. Попробуйте ещё раз.');
       clearTimeout(this.timer); this.mediaController?.abort(); this.runs.clear(); this.cursor = 0;
       this.access = { session_id: snapshot.session_id, session_token: snapshot.session_token };
-      this.deliveries = []; this.confirmDelivery = null; this.liveKinds = {}; this.persist();
+      this.deliveries = []; this.confirmDelivery = null; this.liveKinds = {}; this.autoAttempts = {}; this.persist();
       this.patch({ snapshot, messages: [], plans: [], selectedId: null, changes: [], media: {}, quote: null, orders: [], busy: false,
-        deliveries: [], confirmDelivery: null, external: { hotels: null, flights: null }, notice: null, online: true });
+        deliveries: [], confirmDelivery: null, external: { hotels: null, flights: null }, autoAttempts: {}, notice: null, online: true });
     })();
     try { await this.opening; return true; } catch (error) { this.handleError(error); return false; }
     finally { this.opening = null; }
@@ -172,7 +173,25 @@ export class TravelSession {
     try { return this.submit('live/search', componentRequest(this.state.snapshot?.trip, kind, provider)); }
     catch (error) { this.notice(error.message); return Promise.resolve(false); }
   }
+  autoSearchKey(kind) {
+    const snapshot = this.state.snapshot;
+    return snapshot ? `${snapshot.session_id}:${snapshot.state_version}:${kind}` : null;
+  }
+  async ensureAutomaticSearch(kind, { retry = false } = {}) {
+    const { snapshot, busy, sending, restoring, providers, online, external } = this.state;
+    if (!snapshot || !this.access || busy || sending || restoring || online !== true || snapshot.waiting_reason || !providers?.serpapi?.configured || !providers?.serpapi?.free_tier_confirmed) return false;
+    if (!retry && external[kind] !== null) return false;
+    const key = this.autoSearchKey(kind);
+    if (!retry && this.autoAttempts[key]) return false;
+    if (this.deliveries.some(entry => entry.kind === 'live/search' && entry.body.kind === kind && entry.body.expected_version === snapshot.state_version)) return false;
+    let request;
+    try { request = componentRequest(snapshot.trip, kind); } catch { return false; }
+    this.autoAttempts = Object.fromEntries([...Object.entries(this.autoAttempts), [key, true]].slice(-40));
+    this.persist(); this.patch({ autoAttempts: { ...this.autoAttempts } });
+    return this.submit('live/search', request);
+  }
   hotelReviews = offerId => this.request(this.path(`/hotel-reviews?offer_id=${encodeURIComponent(offerId)}`), { timeout: 30000 });
+  destinationPhotos = cities => this.api.request(`/api/v1/destination-photos?${cities.map(city => `city=${encodeURIComponent(city)}`).join('&')}`, { timeout: 20000 });
   async retryDelivery(id) {
     const entry = this.deliveries.find(item => item.id === id);
     if (!entry) return;

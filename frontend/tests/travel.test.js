@@ -4,6 +4,7 @@ import { checkoutAllowed, componentRequest, currentPlans, mentionedCity, minorUn
 import { TravelApi, ApiError } from '../src/lib/api.js';
 import { friendlyError, TravelSession } from '../src/lib/session.js';
 import { buildTripOperations, createTripDraft } from '../src/lib/tripDraft.js';
+import { EMPTY_HOTEL_FILTERS, filterHotels, parseHotelFilters } from '../src/lib/hotelFilters.js';
 
 const emptyTrip = { origin: null, travelers: [], groups: [], stays: [], budget: null, constraints: [], route_policy: { kind: 'round_trip', end_city: null }, search_policy: { mode: 'DEMO', hotel_provider: 'liteapi', flight_provider: 'serpapi', demo_fallback: true, guest_nationality: null } };
 
@@ -18,6 +19,20 @@ test('city suggestions require one explicitly mentioned supported city', () => {
   assert.equal(mentionedCity('Из Казани в Анталью'), null);
   assert.equal(mentionedCity('Хочу к морю'), null);
   assert.equal(mentionedCity('Стамбулец'), null);
+});
+
+test('hotel filters compare ratings and the whole-stay price without guessing missing values', () => {
+  const offers = [
+    { offer_id: 'a', currency: 'RUB', price_kind: 'INDICATIVE_STAY_TOTAL', amount_minor: 2000000, details: { provider_data: { rating: 4.5 } } },
+    { offer_id: 'b', currency: 'RUB', price_kind: 'INDICATIVE_STAY_TOTAL', amount_minor: 4000000, details: { provider_data: { rating: 3.8 } } },
+    { offer_id: 'nightly', currency: 'RUB', price_kind: 'INDICATIVE_NIGHTLY', amount_minor: 200000, details: { provider_data: { rating: 4.8 } } },
+    { offer_id: 'unrated', currency: 'RUB', price_kind: 'INDICATIVE_STAY_TOTAL', amount_minor: 1800000, details: { provider_data: {} } },
+  ];
+  assert.equal(filterHotels(offers, EMPTY_HOTEL_FILTERS).offers.length, 4);
+  const bounds = { ...EMPTY_HOTEL_FILTERS, ratingFrom: '4', ratingTo: '5', priceFrom: '10000', priceTo: '30000' };
+  assert.deepEqual(filterHotels(offers, bounds).offers.map(offer => offer.offer_id), ['a']);
+  assert.ok(parseHotelFilters({ ...bounds, ratingFrom: '5', ratingTo: '2' }).error);
+  assert.ok(parseHotelFilters({ ...bounds, priceFrom: '30001', priceTo: '30000' }).error);
 });
 
 test('saving a partial draft does not invent travelers, places or dates', () => {
@@ -93,6 +108,23 @@ function controller(api) {
   client.patch({ snapshot }); client.sync = async () => {}; client.schedule = () => {};
   return { client, saved };
 }
+
+test('automatic search starts only once for a version and allows an explicit retry', async () => {
+  let posts = 0;
+  const { client } = controller({ request: async () => { posts++; return { run_id: `run-${posts}` }; } });
+  const trip = { origin: 'Казань', budget: { currency: 'RUB' }, travelers: [{ id: 'a', type: 'adult' }], legs: [{ origin: 'Казань', destination: 'Стамбул', departure_date: '2026-11-09' }], stays: [{ city: 'Стамбул', check_in: '2026-11-09', check_out: '2026-11-16', rooms: [{ id: 'r', traveler_ids: ['a'] }] }] };
+  client.patch({ snapshot: { ...snapshot, trip }, providers: { serpapi: { configured: true, free_tier_confirmed: true } }, online: true });
+  assert.equal(await client.ensureAutomaticSearch('hotels'), true);
+  assert.equal(await client.ensureAutomaticSearch('hotels'), false);
+  assert.equal(posts, 1);
+  client.deliveries = [];
+  assert.equal(await client.ensureAutomaticSearch('hotels', { retry: true }), true);
+  assert.equal(posts, 2);
+  client.patch({ snapshot: { ...snapshot, trip, waiting_reason: 'user_pause' } });
+  client.deliveries = [];
+  assert.equal(await client.ensureAutomaticSearch('flights'), false);
+  assert.equal(posts, 2);
+});
 
 test('an accepted request remains accepted when reading its result fails', async () => {
   const { client } = controller({ request: async () => ({ run_id: 'accepted-run' }) });

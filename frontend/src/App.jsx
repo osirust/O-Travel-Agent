@@ -2,6 +2,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import { AlertCircle, CalendarDays, CheckCircle2, Compass, Info, LoaderCircle, MessageCircle, Plane, Plus, RefreshCw, ShieldCheck, UsersRound, Wallet, X } from 'lucide-react';
 import { session } from './lib/session.js';
 import { dateLabel, money, partyLabel } from './lib/travel.js';
+import { EMPTY_HOTEL_FILTERS } from './lib/hotelFilters.js';
 import { Logo, Modal } from './components/Ui.jsx';
 import Landing from './components/Landing.jsx';
 import Chat from './components/Chat.jsx';
@@ -15,6 +16,7 @@ export default function App() {
   const [screen, setScreen] = useState(() => location.hash === '#studio' ? 'studio' : 'home');
   const [draft, setDraft] = useState(() => { try { return sessionStorage.getItem('otravel.draft') || ''; } catch { return ''; } });
   const [offerTab, setOfferTab] = useState('flights');
+  const [hotelFilters, setHotelFilters] = useState(EMPTY_HOTEL_FILTERS);
   const [mobileTab, setMobileTab] = useState('agent'), [editor, setEditor] = useState(null), [details, setDetails] = useState(null), [newConfirm, setNewConfirm] = useState(false);
   useEffect(() => {
     void session.initialize();
@@ -25,6 +27,9 @@ export default function App() {
   }, []);
   useEffect(() => { try { sessionStorage.setItem('otravel.draft', draft); } catch { /* keep the in-memory draft */ } }, [draft]);
   useEffect(() => { if (screen === 'studio') void session.open(); }, [screen]);
+  useEffect(() => {
+    if (screen === 'studio' && !editor && !details && !data.quote && !newConfirm) void session.ensureAutomaticSearch(offerTab);
+  }, [screen, offerTab, editor, details, newConfirm, data.quote, data.snapshot?.session_id, data.snapshot?.state_version, data.snapshot?.waiting_reason, data.busy, data.sending, data.restoring, data.online, data.providers?.serpapi?.configured, data.providers?.serpapi?.free_tier_confirmed, data.external[offerTab], data.deliveries]);
   async function start(city) { location.hash = 'studio'; setScreen('studio'); if (city) setDraft(`Хочу в ${city}. Помоги спланировать поездку.`); window.scrollTo(0, 0); await session.open(); }
   function home() { location.hash = ''; setScreen('home'); window.scrollTo(0, 0); }
   const edit = async (tab, suggestedCity = null) => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor({ tab: tab || 'route', suggestedCity }); };
@@ -42,9 +47,9 @@ export default function App() {
     {data.confirmDelivery && <div className="delivery-bar"><ShieldCheck size={16} /><span>Проверим, сохранился ли ваш пример поездки.</span><button onClick={() => session.sync().catch(error => session.handleError(error))}>Проверить</button><button onClick={() => session.retryConfirmation()} disabled={data.confirming}>Повторить подтверждение</button></div>}
     <main className={`workspace mobile-${mobileTab}`}><Chat data={data} draft={draft} setDraft={setDraft} onSend={send} onEdit={edit} onSelect={id => { session.selectPlan(id); const plan = data.plans.find(item => item.plan_id === id); if (plan) setDetails(plan); }} /><section className="options-panel"><div className="options-heading"><div><p className="eyebrow">ВАШЕ ПУТЕШЕСТВИЕ</p><h1>Варианты поездки</h1><p className="muted">Найдите перелёт и отель для вашего путешествия</p></div></div>
       {data.orders.length > 0 && <div className="order-success"><CheckCircle2 size={23} /><div><strong>Пример поездки сохранён</strong><p>Бронирование не создано.</p></div></div>}
-      <div className="offer-tabs" role="tablist" aria-label="Предложения">{[['flights', 'Перелёты'], ['hotels', 'Отели']].map(([id, title]) => <button key={id} role="tab" aria-selected={offerTab === id} className={offerTab === id ? 'active' : ''} onClick={() => setOfferTab(id)}>{title}</button>)}</div><ExternalCatalog key={offerTab} kind={offerTab} data={data} onSearch={provider => session.liveSearch(offerTab, provider)} onEdit={() => edit('route')} loadReviews={session.hotelReviews} />
+      <div className="offer-tabs" role="tablist" aria-label="Предложения">{[['flights', 'Перелёты'], ['hotels', 'Отели']].map(([id, title]) => <button key={id} role="tab" aria-selected={offerTab === id} className={offerTab === id ? 'active' : ''} onClick={() => setOfferTab(id)}>{title}</button>)}</div><ExternalCatalog key={offerTab} kind={offerTab} data={data} filters={hotelFilters} setFilters={setHotelFilters} retry={() => session.ensureAutomaticSearch(offerTab, { retry: true })} loadReviews={session.hotelReviews} />
       <div className="workspace-bottom-note"><ShieldCheck size={14} />Ваша поездка сохраняется. Цены могут измениться.</div>
-    </section><TripSummary data={data} onEdit={edit} onPreview={() => session.preview()} onSearch={() => session.liveSearch(offerTab)} onDetails={setDetails} /></main>
+    </section><TripSummary data={data} onEdit={edit} onPreview={() => session.preview()} onDetails={setDetails} /></main>
     <nav className="mobile-navigation" aria-label="Разделы поездки">{[['agent', MessageCircle, 'Агент'], ['options', Compass, 'Варианты'], ['trip', Plane, 'Поездка']].map(([id, Icon, title]) => <button key={id} className={mobileTab === id ? 'active' : ''} onClick={() => setMobileTab(id)}><Icon size={20} /><span>{title}</span>{id === 'options' && data.plans.length > 0 && <i />}</button>)}</nav>
     {editor && <TripEditor snapshot={data.snapshot} initialTab={editor.tab} suggestedCity={editor.suggestedCity} onSave={save} onClose={() => setEditor(null)} />}
     {data.quote && <Checkout key={`${data.quote.quote_id}:${data.quote.quote_version}`} quote={data.quote} previousPlan={selected} confirming={data.confirming} onClose={() => { if (!data.confirming) session.closeQuote(); }} onConfirm={() => session.confirm()} />}

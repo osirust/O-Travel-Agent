@@ -32,6 +32,7 @@ from .planning import assemble_plan, validate_quote
 from .providers import LLMGateway, ProviderError, TravelGateway
 from .fx import CBRFxClient, FxUnavailable
 from .media import MEDIA_CSP_SOURCES, MediaResolver
+from .destination_photos import CITY_PAGES, DestinationPhotos
 from .store import Conflict, NotFound, Store, StoreError
 
 
@@ -124,6 +125,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     gateway = travel if travel is not None else TravelGateway(settings.provider_settings())
     rates = fx if fx is not None else CBRFxClient() if settings.reference_fx_enabled else None
     pictures = media if media is not None else MediaResolver(gateway)
+    destination_pictures = DestinationPhotos()
     harness = Harness(settings, repository, model, gateway, fx=rates)
 
     @asynccontextmanager
@@ -135,6 +137,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await repository.close()
             await model.close()
             await gateway.close()
+            await destination_pictures.close()
             if rates is not None:
                 await rates.close()
             raise RuntimeError("Backend startup failed: PostgreSQL initialization unavailable; connection details redacted.") from None
@@ -144,6 +147,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await harness.close()
             await model.close()
             await gateway.close()
+            await destination_pictures.close()
             if rates is not None:
                 await rates.close()
             await repository.close()
@@ -364,6 +368,12 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         if body.kind == "weather" and not {"city", "latitude", "longitude"}.issubset(body.request):
             raise HTTPException(422, "Для погоды нужны city, latitude и longitude.")
         return await submit(session, body.client_message_id, body.expected_version, "live_search", search_kind=body.kind, provider=body.provider, request=body.request, demo_fallback=body.demo_fallback)
+
+    @app.get("/api/v1/destination-photos")
+    async def get_destination_photos(city: list[str] = Query(default=[])):
+        if len(city) > 7 or any(value not in CITY_PAGES for value in city):
+            raise HTTPException(422, "Для фотографий выберите поддерживаемые города.")
+        return {"photos": await destination_pictures.resolve(city)}
 
     @app.get("/api/v1/sessions/{session_id}/hotel-reviews")
     async def hotel_reviews(session_id: str, offer_id: str = Query(min_length=1, max_length=128),

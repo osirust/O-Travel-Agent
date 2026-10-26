@@ -90,7 +90,8 @@ export function componentRequest(trip, kind, provider = 'serpapi') {
   if (!trip?.travelers?.length || !trip.stays?.length) throw new Error('Сначала заполните маршрут, даты и гостей в параметрах поездки.');
   const currency = trip.budget?.currency || 'RUB';
   if (kind === 'flights') {
-    if (!trip.legs.length || trip.legs.some(leg => !iata[leg.origin] || !iata[leg.destination] || !leg.departure_date)) throw new Error('Для поиска перелётов нужны известные города и даты каждого участка.');
+    if (!Array.isArray(trip.legs) || !trip.legs.length || trip.legs.some(leg => !iata[leg.origin] || !iata[leg.destination] || !leg.departure_date)) throw new Error('Для поиска перелётов укажите города и даты поездки.');
+    if (!trip.travelers.some(person => person.type === 'adult')) throw new Error('Добавьте хотя бы одного взрослого путешественника.');
     const slices = trip.legs.map(leg => ({ origin: iata[leg.origin], destination: iata[leg.destination], departure_date: leg.departure_date }));
     if (provider === 'travelpayouts') return { kind, provider, demo_fallback: false, request: { currency, slices: slices.slice(0, 1) } };
     if (provider === 'duffel') {

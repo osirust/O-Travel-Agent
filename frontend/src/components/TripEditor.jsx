@@ -16,11 +16,10 @@ export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'ro
 
   async function save(event) {
     event.preventDefault();
-    const search = event.nativeEvent.submitter?.value === 'search';
     setError(''); setSaving(true);
     try {
       const operations = buildTripOperations(snapshot?.trip, draft);
-      if (await onSave(operations, search)) onClose();
+      if (await onSave(operations, false)) onClose();
     } catch (failure) { setError(failure.message); }
     finally { setSaving(false); }
   }
@@ -63,11 +62,10 @@ export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'ro
           <p className="hint">Для поиска можно сначала сохранить неполные данные — агент уточнит недостающие параметры.</p>
         </>}
         {tab === 'budget' && <><h3>На какую сумму рассчитываете?</h3><div className="form-grid"><label>Бюджет на всю поездку<input inputMode="decimal" placeholder="Можно указать позже" value={draft.budget} onChange={e => update('budget', e.target.value)} /></label><label>Валюта<select value={draft.currency} onChange={e => update('currency', e.target.value)}><option value="RUB">Рубли · RUB</option><option value="USD">Доллары · USD</option><option value="EUR">Евро · EUR</option></select></label></div><h3 className="mt-24">Обязательные условия</h3>{[['breakfast', 'Завтрак включён'], ['refundable', 'Возвратный тариф'], ['nonstop', 'Только прямые перелёты']].map(([key, label]) => <label className="checkbox-row" key={key}><input type="checkbox" checked={draft[key]} onChange={e => update(key, e.target.checked)} /><span>{label}</span></label>)}<p className="hint">Дополнительные условия отдельных номеров сохраняются. Неподтверждённые свойства не выдаются за гарантию.</p></>}
-        {tab === 'sources' && <><h3>Где искать предложения?</h3><div className="mode-options">{[['HYBRID', 'Подключённые API', 'Отели и перелёты из источников backend'], ['DEMO', 'Демонстрационный каталог', 'Вымышленные цены для проверки сценария']].map(([mode, title, description]) => <button type="button" className={`mode-option ${draft.mode === mode ? 'active' : ''}`} key={mode} onClick={() => update('mode', mode)}><span className="radio-dot" /><span><strong>{title}</strong><small>{description}</small></span>{draft.mode === mode && <Check size={19} />}</button>)}</div>{draft.mode === 'HYBRID' && <><div className="form-grid"><label>Отели<select value={draft.hotelProvider} onChange={e => update('hotelProvider', e.target.value)}><option value="liteapi">LiteAPI · sandbox</option><option value="serpapi">SerpApi · ориентировочные цены</option></select></label><label>Перелёты<select value={draft.flightProvider} onChange={e => update('flightProvider', e.target.value)}><option value="duffel">Duffel · test</option><option value="serpapi">SerpApi · ориентировочные цены</option></select></label></div><label>Гражданство гостей · двухбуквенный код<input placeholder="Например, RU" maxLength={2} value={draft.nationality} onChange={e => update('nationality', e.target.value.toUpperCase())} /></label><label className="checkbox-row"><input type="checkbox" checked={draft.fallback} onChange={e => update('fallback', e.target.checked)} /><span>Разрешить явно помеченные демокомпоненты, если источник недоступен</span></label><div className="provider-status-list">{[draft.hotelProvider, draft.flightProvider].map((provider, i) => <div key={`${provider}-${i}`}><span className={`status-dot ${providers?.[provider]?.configured ? 'good' : 'warn'}`} /><span>{provider}</span><small>{providers?.[provider]?.configured ? 'Настроен на сервере · квота не проверена' : 'Доступ на сервере пока не настроен'}</small></div>)}</div></>}<p className="hint">Тестовые и ориентировочные предложения всегда отмечены. Реальное бронирование не выполняется.</p></>}
         <datalist id="cities">{CITIES.map(city => <option key={city} value={city} />)}</datalist>
         {error && <p className="form-error" role="alert">{error}</p>}
       </div>
-      <footer className="modal-footer"><button className="secondary-button" disabled={saving} type="submit" value="save">Сохранить</button><button className="primary-button" disabled={saving} type="submit" value="search">{saving && <LoaderCircle className="spin" size={18} />}Сохранить и подобрать <ArrowRight size={17} /></button></footer>
+      <footer className="modal-footer"><span className="muted">Предложения обновятся после сохранения.</span><button className="primary-button" disabled={saving} type="submit">{saving && <LoaderCircle className="spin" size={18} />}Сохранить <ArrowRight size={17} /></button></footer>
     </form>
   </Modal>;
 }
