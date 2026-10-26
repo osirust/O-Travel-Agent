@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-26T17:37:59.494702+00:00",
+  "status": "ACTUAL_MEDIA_API_OK",
+  "scope": "Actual LiteAPI hotel JSON via owner-bound ASGI GET; price/plan fixture, not actual pricing or persistent DB integration",
+  "http_status": 200,
+  "response": {
+    "session_id": "media-qualification",
+    "state_version": 1,
+    "plan_id": "content-binding-fixture",
+    "items": [
+      {
+        "offer_id": "liteapi:content-identity-lp1b30d1",
+        "component_id": "dubai",
+        "media": {
+          "url": "https://static.cupid.travel/hotels/210194244.jpg",
+          "thumbnailUrl": "https://static.cupid.travel/hotels/thumbnail/210194244.jpg",
+          "alt": "Фотография отеля «Millennium Atria Business Bay»",
+          "kind": "HOTEL",
+          "source": "LITEAPI",
+          "hotelId": "lp1b30d1",
+          "sourceHotelId": "lp1b30d1",
+          "isActualPropertyPhoto": true,
+          "caption": null,
+          "gallery": [
+            {
+              "url": "https://static.cupid.travel/hotels/210194244.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/193806701.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/220326577.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/220317518.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/223513455.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            }
+          ]
+        }
+      }
+    ],
+    "warnings": []
+  },
+  "cached_response_equal": true,
+  "priced_snapshot_unchanged": true,
+  "model_calls": 0,
+  "price_search_calls": 0,
+  "supplier_order_calls": 0,
+  "image_downloads_by_backend": 0
+}

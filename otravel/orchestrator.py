@@ -17,6 +17,7 @@ from .domain import CITIES, TripState, validate_trip
 from .inventory import DemoInventory, _allocation
 from .planning import assemble_plan, compare_plans
 from .providers import ProviderError
+from .fx import FxUnavailable, convert_minor
 
 
 _IATA = {"Москва": "MOW", "Санкт-Петербург": "LED", "Сочи": "AER", "Казань": "KZN",
@@ -61,17 +62,54 @@ def _comparison_input(plan: dict) -> dict:
 
 
 class TripSearch:
-    def __init__(self, travel: Any, *, max_tool_calls: int = 16, clock: Callable | None = None):
+    def __init__(self, travel: Any, *, max_tool_calls: int = 16, clock: Callable | None = None, fx: Any = None):
         self.travel = travel
+        self.fx = fx
         self.inventory = DemoInventory()
         self.max_tool_calls = min(30, max(0, int(max_tool_calls)))
         self.clock = clock or (lambda: datetime.now(timezone.utc))
+
+    async def _reference_fx(self, event_sink: Callable | None, *, used: int = 0) -> tuple[dict | None, dict | None, int]:
+        if self.fx is None:
+            return None, None, 0
+        if used >= self.max_tool_calls:
+            return None, _issue("fx_tool_limit", "Курс не запрошен: предел обращений исчерпан."), 0
+        event = {"provider": "cbr", "component_id": "reference_fx", "method": "fetch_snapshot", "attempt": used + 1}
+        async def emit(kind, payload):
+            if event_sink is not None:
+                result = event_sink(kind, deepcopy(payload))
+                if inspect.isawaitable(result):
+                    await result
+        await emit("TOOL_CALL_STARTED", event)
+        try:
+            snapshot = await self.fx.fetch_snapshot(now=self.clock())
+        except FxUnavailable as error:
+            await emit("TOOL_CALL_FAILED", {**event, "code": error.code})
+            return None, _issue(error.code, error.message), 1
+        except Exception:
+            await emit("TOOL_CALL_FAILED", {**event, "code": "fx_unavailable"})
+            return None, _issue("fx_unavailable", "Не удалось получить проверяемый справочный курс; исходные предложения сохраняются."), 1
+        await emit("TOOL_CALL_COMPLETED", {**event, "snapshot_id": snapshot["snapshot_id"], "as_of": snapshot["as_of"]})
+        return snapshot, None, 1
 
     async def search(self, state: TripState | dict, previous_plan: dict | None = None,
                      event_sink: Callable | None = None) -> dict:
         state = TripState.model_validate(state).model_copy(deep=True)
         policy = state.search_policy
         if policy.mode == "DEMO":
+            if self.fx is not None and state.budget and state.budget.currency.upper() != "RUB":
+                native = self.inventory.search_trip(state, catalogue_only=True)
+                if not native["plans"]:
+                    return {**native, "tool_calls_used": 0, "max_tool_calls": self.max_tool_calls}
+                snapshot, fx_error, used = await self._reference_fx(event_sink)
+                assembled = [assemble_plan(state, plan["offers"], fx_snapshot=snapshot,
+                    previous_plan=_comparison_input(previous_plan) if previous_plan else None, now=self.clock())
+                    for plan in native["plans"]]
+                return {"plans": [plan for plan in assembled if plan["ready_for_simulated_checkout"]],
+                    "partial_plan": next((p for p in assembled if not p["ready_for_simulated_checkout"]), None),
+                    "questions": [], "violations": assembled[0]["blockers"], "warnings": assembled[0]["warnings"],
+                    "source_type": "DEMO", "tool_calls_used": used, "max_tool_calls": self.max_tool_calls,
+                    "fx_error": fx_error, "ready_for_real_booking": False}
             result = self.inventory.search_trip(state)
             if previous_plan is not None:
                 for plan in result["plans"]:
@@ -99,7 +137,7 @@ class TripSearch:
         component_errors: list[dict] = []
         selected: list[dict] = []
         rejected: dict[str, set[str]] = {}
-        used = 0
+        fx_snapshot, fx_error, used, fx_attempted = None, None, 0, False
         currency = state.budget.currency.upper() if state.budget else "RUB"
 
         async def emit(event_type: str, payload: dict) -> None:
@@ -138,7 +176,19 @@ class TripSearch:
             suffix = " Будет рассмотрен явно обозначенный DEMO-компонент." if policy.demo_fallback else " DEMO fallback запрещён политикой."
             warnings.append(f"{component_id}: {message}{suffix}")
 
-        def choose(rows: Any, kind: str, component_id: str, provider: str, binding: dict, report: bool = True) -> dict | None:
+        def rank(offer: dict) -> tuple:
+            if offer["currency"] == currency:
+                return (0, offer["amount_minor"], offer["offer_id"])
+            if fx_snapshot is not None:
+                try:
+                    return (0, convert_minor(offer["amount_minor"], offer["currency"], currency, fx_snapshot, current_time()), offer["offer_id"])
+                except FxUnavailable:
+                    pass
+            # An unconverted partial candidate never outranks a comparable quote.
+            return (1, 0, offer["offer_id"])
+
+        async def choose(rows: Any, kind: str, component_id: str, provider: str, binding: dict, report: bool = True) -> dict | None:
+            nonlocal fx_snapshot, fx_error, used, fx_attempted
             if not isinstance(rows, list):
                 unavailable(component_id, "INVALID_RESPONSE", "Gateway не вернул список предложений.")
                 return None
@@ -155,7 +205,8 @@ class TripSearch:
                 if offer.get("source_type") not in {"SANDBOX", "LIVE_INDICATIVE", "LIVE_BOOKABLE"}:
                     reasons.add("unknown_source_type")
                     continue
-                if offer.get("currency") != currency or type(offer.get("amount_minor")) is not int or offer["amount_minor"] < 0:
+                if (not isinstance(offer.get("currency"), str) or type(offer.get("amount_minor")) is not int or offer["amount_minor"] < 0
+                        or offer["currency"] != currency and self.fx is None):
                     reasons.add("unpriced_or_fx_required")
                     continue
                 if offer.get("price_kind") not in _TOTALS[kind]:
@@ -167,7 +218,9 @@ class TripSearch:
                 if kind == "hotel" and details.get("allocation_verified") is not True:
                     reasons.add("allocation_unverified")
                     continue
-                if kind == "flight" and (details.get("group_quote") is False or details.get("passengers_count", len(state.travelers)) != len(state.travelers)):
+                if kind == "flight" and (details.get("group_quote") is not True
+                        or type(details.get("passengers_count")) is not int
+                        or details["passengers_count"] != len(state.travelers)):
                     reasons.add("group_quote_unverified")
                     continue
                 retrieved, expiry = _timestamp(offer.get("retrieved_at")), _timestamp(offer.get("expires_at"))
@@ -200,7 +253,13 @@ class TripSearch:
                 if report:
                     unavailable(component_id, "NO_VERIFIED_COMPONENT", "Нет пригодного тарифа: " + ", ".join(sorted(reasons) or ["no_matches"]))
                 return None
-            return min(eligible, key=lambda offer: (offer["amount_minor"], offer["offer_id"]))
+            if self.fx is not None and not fx_attempted and any(offer["currency"] != currency for offer in eligible):
+                # Spend a bounded source call only after a foreign candidate
+                # passed fees/allocation/identity/hard-condition/time guards.
+                fx_attempted = True
+                fx_snapshot, fx_error, consumed = await self._reference_fx(event_sink, used=used)
+                used += consumed
+            return min(eligible, key=rank)
 
         common = {"trip_id": state.trip_id, "state_version": state.state_version}
         for stay in state.stays:
@@ -262,11 +321,11 @@ class TripSearch:
                     binding = {**common, "stay_id": stay.id, "room_ids": [room["room_id"] for room in assignments],
                                "room_assignments": assignments, "city": stay.city, "checkin": request["checkin"],
                                "checkout": request["checkout"], "hotel_id": hotel_id}
-                    candidate = choose([row], "hotel", stay.id, provider, binding, False)
+                    candidate = await choose([row], "hotel", stay.id, provider, binding, False)
                     if candidate:
                         bound_rows.append(candidate)
                 if bound_rows:
-                    selected.append(min(bound_rows, key=lambda item: (item["amount_minor"], item["offer_id"])))
+                    selected.append(min(bound_rows, key=rank))
                 elif not rows:
                     unavailable(stay.id, "NO_MATCHES", "Поставщик не вернул гостиничных предложений.")
                 elif not any(issue["details"]["component_id"] == stay.id for issue in component_errors):
@@ -298,7 +357,7 @@ class TripSearch:
                        "departure_date": leg.departure_date.isoformat(), "traveler_ids": [p.id for p in state.travelers]}
             try:
                 rows = await call("search_flights", leg.id, provider, request, provider=provider)
-                chosen = choose(rows, "flight", leg.id, provider, binding)
+                chosen = await choose(rows, "flight", leg.id, provider, binding)
                 if chosen:
                     selected.append(chosen)
             except ProviderError as exc:
@@ -306,7 +365,8 @@ class TripSearch:
         if state.stays:
             warnings.append("Live transfer gateway не подключён; трансферы могут быть только явно обозначенными DEMO fallback-компонентами.")
         plan = assemble_plan(state, selected, demo_fallback=policy.demo_fallback,
-                             previous_plan=_comparison_input(previous_plan) if previous_plan is not None else None, now=current_time())
+                             previous_plan=_comparison_input(previous_plan) if previous_plan is not None else None, now=current_time(),
+                             fx_snapshot=fx_snapshot)
         warnings.extend(plan["warnings"])
         ready = plan["ready_for_simulated_checkout"]
         result = {"plans": [plan] if ready else [], "questions": list(dict.fromkeys(questions)),
@@ -316,6 +376,8 @@ class TripSearch:
                   "comparison_scope": "first_30_offers_per_component_not_global_market_minimum",
                   "price_kind": "simulated_estimate", "ready_for_real_booking": False,
                   "search_policy": policy.model_dump(mode="json")}
+        if self.fx is not None:
+            result["fx_error"] = fx_error
         await emit("TRIP_SEARCH_COMPLETED", {"source_type": plan["source_type"], "ready_for_simulated_checkout": ready,
                     "tool_calls_used": used, "blocker_count": len(plan["blockers"])})
         return result

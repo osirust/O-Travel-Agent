@@ -671,6 +671,13 @@ class Store:
             _require_checkout_ready(session)
             now = _now()
             expires_at = now + timedelta(seconds=min(600, expires_seconds))
+            if plan.get("fx_snapshot") is not None:
+                from .fx import FxUnavailable, validate_snapshot
+                try:
+                    pinned_fx = validate_snapshot(plan["fx_snapshot"], now)
+                    expires_at = min(expires_at, datetime.fromisoformat(pinned_fx["expires_at"]).astimezone(timezone.utc))
+                except FxUnavailable as error:
+                    raise StoreError(error.message, error.code) from None
             snapshots = plan.get("source_snapshots", [])
             if not isinstance(snapshots, list):
                 raise StoreError("Некорректные снимки источников корзины.", "invalid_source_snapshots")
@@ -839,7 +846,8 @@ class Store:
 
         This is an application budget, not a query of the provider's allowance.
         Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Groq has
-        an independent hard 40/day pool. Cloudflare and Z.ai have separate
+        an independent default40/day pool, explicitly raisable up to1000/day.
+        These are engineering ceilings, not vendor quota promises. Cloudflare and Z.ai have separate
         default 40/day caller limits; dedicated evaluation may explicitly raise
         them up to 2000/day. Cloudflare uses its own explicit setting, so raising
         the generic Z.ai limit does not expand it. Both are 1/run, with no remote attempt
@@ -873,7 +881,7 @@ class Store:
                 # Gemini/OpenRouter continue sharing the original remote cap.
                 provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
                     event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
-                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 40)
+                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 1000 if provider == "groq" else 40)
                 per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))

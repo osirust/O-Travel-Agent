@@ -30,6 +30,8 @@ from .harness import Harness, TYPED_PREFIX, encode_command, exact_control
 from .inventory import reprice_plan, validate_plan
 from .planning import assemble_plan, validate_quote
 from .providers import LLMGateway, ProviderError, TravelGateway
+from .fx import CBRFxClient, FxUnavailable
+from .media import MEDIA_CSP_SOURCES, MediaResolver
 from .store import Conflict, NotFound, Store, StoreError
 
 
@@ -115,12 +117,14 @@ class Confirm(Body):
     confirmed: StrictBool
 
 
-def create_app(settings: Settings | None = None, store: Any = None, llm: Any = None, travel: Any = None) -> FastAPI:
+def create_app(settings: Settings | None = None, store: Any = None, llm: Any = None, travel: Any = None, fx: Any = None, media: Any = None) -> FastAPI:
     settings = settings or Settings.from_env()
     repository = store if store is not None else Store(settings.database_url)
     model = llm if llm is not None else LLMGateway(settings.provider_settings())
     gateway = travel if travel is not None else TravelGateway(settings.provider_settings())
-    harness = Harness(settings, repository, model, gateway)
+    rates = fx if fx is not None else CBRFxClient() if settings.reference_fx_enabled else None
+    pictures = media if media is not None else MediaResolver(gateway)
+    harness = Harness(settings, repository, model, gateway, fx=rates)
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
@@ -131,6 +135,8 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await repository.close()
             await model.close()
             await gateway.close()
+            if rates is not None:
+                await rates.close()
             raise RuntimeError("Backend startup failed: PostgreSQL initialization unavailable; connection details redacted.") from None
         try:
             yield
@@ -138,12 +144,16 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await harness.close()
             await model.close()
             await gateway.close()
+            if rates is not None:
+                await rates.close()
             await repository.close()
 
     app = FastAPI(title="O!Travel Agent Backend", version="0.1.0", lifespan=lifespan,
                   description="Сессии защищены Bearer-токеном, возвращаемым один раз при создании. DEMO не создаёт реальную бронь. POST сообщения возвращает run_id для polling.")
     app.state.store, app.state.harness = repository, harness
     app.state.llm, app.state.travel, app.state.settings = model, gateway, settings
+    app.state.fx = rates
+    app.state.media = pictures
     origins = [value.strip().rstrip("/") for value in os.getenv("CORS_ORIGINS", "").split(",") if value.strip() and value.strip() != "*"]
     if origins:
         app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type"], allow_credentials=False)
@@ -170,6 +180,10 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     @app.exception_handler(ProviderError)
     async def provider_error(_request, exc):
         return error(exc.code, exc.message, 503, exc.retryable)
+
+    @app.exception_handler(FxUnavailable)
+    async def fx_error(_request, exc):
+        return error(exc.code, exc.message, 503, True)
 
     @app.exception_handler(SQLAlchemyError)
     @app.exception_handler(ConnectionError)
@@ -250,7 +264,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def debug_chat():
         return FileResponse(Path(__file__).parent / "static" / "debug.html", media_type="text/html",
             headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff",
-                     "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"})
+                     "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: " + " ".join(MEDIA_CSP_SOURCES) + "; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"})
 
     @app.get("/debug/assets/{asset}", include_in_schema=False)
     async def debug_asset(asset: Literal["chat.css", "chat.js"]):
@@ -351,7 +365,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             raise HTTPException(422, "Для погоды нужны city, latitude и longitude.")
         return await submit(session, body.client_message_id, body.expected_version, "live_search", search_kind=body.kind, provider=body.provider, request=body.request, demo_fallback=body.demo_fallback)
 
-    async def saved_plan(session: dict, plan_id: str) -> dict:
+    async def saved_plan(session: dict, plan_id: str, *, include_partial: bool = False) -> dict:
         checked = set()
         for message in reversed(await repository.list_messages(session["session_id"])):
             run_id = message.get("run_id")
@@ -361,12 +375,32 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             run = await repository.get_run(run_id)
             response = run.get("result") or {}
             inventory = response.get("result") or {}
-            for plan in inventory.get("plans", []):
+            candidates = list(inventory.get("plans", []))
+            if include_partial and isinstance(inventory.get("partial_plan"), dict):
+                candidates.append(inventory["partial_plan"])
+            for plan in candidates:
                 if plan.get("plan_id") == plan_id:
                     if plan.get("trip_id") != session["trip_id"] or plan.get("state_version") != session["state_version"]:
                         raise Conflict("Выбранный план устарел; нужен новый поиск.", "stale_plan")
                     return plan
         raise NotFound("План этой сессии не найден.")
+
+    @app.get("/api/v1/sessions/{session_id}/media")
+    async def get_plan_media(session_id: str, plan_id: str = Query(min_length=1, max_length=120),
+                             state_version: int | None = Query(default=None, ge=0),
+                             authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if state_version is not None and state_version != session["state_version"]:
+            raise Conflict("Версия поездки изменилась; обновите карточки.", "stale_state")
+        plan = await saved_plan(session, plan_id, include_partial=True)
+        # Static presentation is deliberately outside the priced snapshot. The
+        # resolver only sees hotel identities already saved in this own plan.
+        presentation = await pictures.resolve_plan(deepcopy(plan))
+        latest = await repository.get_session(session_id)
+        if latest["state_version"] != session["state_version"]:
+            raise Conflict("Поездка изменилась во время загрузки фотографий.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"],
+                       "plan_id": plan_id, **presentation})
 
     @app.post("/api/v1/sessions/{session_id}/checkout/preview")
     async def preview(session_id: str, body: Preview, authorization: str | None = Header(default=None)):
@@ -383,6 +417,12 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             if issues:
                 issue = next((item for item in issues if item["code"] in {"stale_source_snapshot", "invalid_source_lifetime"}), issues[0])
                 raise Conflict(issue["message"], issue["code"])
+            fresh_fx = None
+            if plan.get("fx_snapshot") is not None:
+                if rates is None:
+                    raise Conflict("Источник курса недоступен; старая корзина отозвана, исходные предложения сохранены.", "fx_unavailable")
+                # Refresh rates before creating a new consent, never in confirm.
+                fresh_fx = await rates.fetch_snapshot(now=datetime.now(timezone.utc))
             refreshed = []
             for old in plan["offers"]:
                 if old.get("source_type") == "DEMO":
@@ -408,7 +448,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                 new = deepcopy(new)
                 new["details"] = details
                 refreshed.append(new)
-            updated = assemble_plan(state, refreshed, previous_plan=plan, now=datetime.now(timezone.utc))
+            updated = assemble_plan(state, refreshed, previous_plan=plan, now=datetime.now(timezone.utc), fx_snapshot=fresh_fx)
             issues = validate_quote(updated, state, current_offers=refreshed, now=datetime.now(timezone.utc))
             if not issues and not updated["ready_for_simulated_checkout"]:
                 issues = updated["blockers"] or [{"code": "checkout_not_ready", "message": "Корзина не готова к имитации оформления."}]

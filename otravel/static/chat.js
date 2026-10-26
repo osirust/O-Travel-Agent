@@ -3,6 +3,8 @@ const $ = id => document.getElementById(id);
 const savedKey = `otravel.debug.session.${location.origin}`;
 let access = null, snapshot = null, busy = false, tracked = new Set(), messages = new Set();
 let epoch = 0;
+let mediaEpoch = 0, mediaController = null;
+const mediaCache = new Map();
 const uuid = () => crypto.randomUUID();
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 function node(tag, text, cls) { const n = document.createElement(tag); if (text != null) n.textContent = String(text); if (cls) n.className = cls; return n; }
@@ -32,6 +34,10 @@ async function api(path, method = "GET", body, token = true) {
 function sessionPath(suffix = "") { if (!access) throw new Error("Сначала создайте поездку"); return `/api/v1/sessions/${access.id}${suffix}`; }
 function field(label, value) { const block = node("div", null, "trip-item"); block.append(node("span", label, "trip-label"), node("div", value, "trip-value")); return block; }
 function renderTrip(data) {
+  if (snapshot && snapshot.state_version !== data.state_version) {
+    cancelMedia();
+    document.querySelectorAll(".plan-media").forEach(host => host.replaceChildren(node("p", "Фото обновятся после нового поиска.", "photo-placeholder")));
+  }
   snapshot = data; const t = data.trip; const box = $("trip-summary"); box.replaceChildren();
   const paused = data.waiting_reason === "user_pause";
   $("pause").disabled = paused; $("resume").disabled = !paused;
@@ -52,12 +58,77 @@ function renderTrip(data) {
   $("state-json").textContent = JSON.stringify(t,null,2);
   if (paused) showNotice("Пауза сохранена. Дополнения можно отправлять; агент продолжит только после кнопки «Продолжить» или команды «продолжай».");
 }
+function cancelMedia() {
+  mediaEpoch++;
+  mediaController?.abort(); mediaController = null;
+}
+function safeImageUrl(value) {
+  if (typeof value !== "string" || value.length > 2048) return null;
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol !== "https:" || url.username || url.password || url.port && url.port !== "443"
+      || host === "localhost" || host.endsWith(".localhost") || host.endsWith(".local")
+      || !host.includes(".") || /^[\d.]+$/.test(host) || host.includes(":")) return null;
+    for (const key of url.searchParams.keys()) if (/^(api[-_]?key|token|access[-_]?token|authorization|secret)$/i.test(key)) return null;
+    return url.href;
+  } catch { return null; }
+}
+function showMedia(host, plan, data) {
+  const items = Array.isArray(data.items) ? data.items : [];
+  const hotelOffers = new Set((plan.offers || []).filter(o => (o.kind || o.details?.kind) === "hotel").map(o => o.offer_id));
+  host.replaceChildren();
+  for (const item of items.slice(0, 5)) {
+    const media = item.media;
+    if (!hotelOffers.has(item.offer_id) || !media || media.kind !== "HOTEL" || media.isActualPropertyPhoto !== true) continue;
+    const src = safeImageUrl(media.thumbnailUrl) || safeImageUrl(media.url);
+    if (!src) continue;
+    const figure = node("figure", null, "hotel-photo"), image = document.createElement("img");
+    image.alt = typeof media.alt === "string" ? media.alt : "Фотография отеля";
+    image.loading = "lazy"; image.decoding = "async"; image.referrerPolicy = "no-referrer";
+    image.addEventListener("error", () => {
+      image.remove(); figure.classList.add("photo-unavailable");
+      figure.replaceChildren(node("span", "Фото отеля не загрузилось", "photo-placeholder"));
+    }, {once:true});
+    const label = media.caption ? String(media.caption) : "Фото отеля · LiteAPI";
+    figure.append(image, node("figcaption", label)); image.src = src; host.append(figure);
+  }
+  if (!host.childElementCount) host.append(node("p", "Фото этого отеля пока нет", "photo-placeholder"));
+}
+async function loadMedia(plan, host) {
+  const session = access?.id, version = snapshot?.state_version, ownEpoch = mediaEpoch;
+  if (!session || !plan.plan_id || plan.state_version !== version) {
+    host.textContent = "Фотографии появятся после актуального поиска."; return;
+  }
+  const key = `${session}:${version}:${plan.plan_id}`;
+  if (mediaCache.has(key)) { showMedia(host, plan, mediaCache.get(key)); return; }
+  const controller = new AbortController(); mediaController = controller;
+  try {
+    const response = await fetch(sessionPath(`/media?plan_id=${encodeURIComponent(plan.plan_id)}`), {
+      headers:{Authorization:`Bearer ${access.token}`}, cache:"no-store", signal:controller.signal
+    });
+    if (!response.ok) throw new Error("media unavailable");
+    const data = await response.json();
+    if (ownEpoch !== mediaEpoch || access?.id !== session || snapshot?.state_version !== version || !host.isConnected) return;
+    if (data.session_id !== session || data.state_version !== version || data.plan_id !== plan.plan_id) throw new Error("stale media");
+    if (mediaCache.size >= 8) mediaCache.delete(mediaCache.keys().next().value);
+    mediaCache.set(key, data); showMedia(host, plan, data);
+  } catch(error) {
+    if (error.name !== "AbortError" && ownEpoch === mediaEpoch && host.isConnected) host.textContent = "Фото временно недоступно. Данные поездки сохранены.";
+  } finally { if (mediaController === controller) mediaController = null; }
+}
 function renderPlans(plans) {
   if (!plans?.length) return;
+  cancelMedia();
   const box = $("plans"); box.replaceChildren();
   plans.forEach((p,i) => { const card = node("div", null, "plan"), top = node("div", null, "plan-top");
     top.append(node("strong", p.total_minor == null ? "Нужна проверка суммы" : money(p.total_minor,p.currency)),node("span",p.source_type || "Не проверено","source"));
-    card.append(top,node("p",`Вариант ${i + 1} · ${p.offers?.length || 0} компонентов · ${p.source_type === "DEMO" ? "вымышленные цены" : "оценочная стоимость"}`)); box.append(card); });
+    card.append(top,node("p",`Вариант ${i + 1} · ${p.offers?.length || 0} компонентов · ${p.source_type === "DEMO" ? "вымышленные цены" : "оценочная стоимость"}`));
+    if (i === 0 && p.offers?.some(o => (o.kind || o.details?.kind) === "hotel")) {
+      const photos = node("div", "Загружаем фото отеля…", "plan-media"); photos.setAttribute("aria-live", "polite");
+      card.append(photos); box.append(card); void loadMedia(p, photos);
+    } else box.append(card);
+  });
 }
 async function refresh() {
   if (!access) return;
@@ -99,6 +170,7 @@ async function poll(runId, runEpoch) {
   } finally { if (runEpoch === epoch) setBusy(false); }
 }
 async function createSession() {
+  cancelMedia(); mediaCache.clear();
   epoch++; tracked = new Set(); messages = new Set(); $("messages").replaceChildren(); $("plans").replaceChildren(node("p","После поиска здесь появятся варианты.","muted"));
   const data = await api("/api/v1/sessions","POST",{},false);
   access = {id:data.session_id,token:data.session_token}; localStorage.setItem(savedKey,JSON.stringify(access)); renderTrip(data); showNotice("");

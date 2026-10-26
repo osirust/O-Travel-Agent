@@ -387,8 +387,9 @@ def _fact_sections(
                         "route_policy": "Условия завершения маршрута обновлены.",
                     }[field]
                 )
+    from .clarifications import human_question
     missing = [
-        issue["message"]
+        human_question(issue, state)
         for issue in validate_trip(TripState.model_validate(state))
         if issue["code"].startswith("missing_")
     ]
@@ -492,6 +493,21 @@ def checked_reply(reply: str, facts: dict, text: str) -> tuple[str, list[str]]:
             ]
         ), ["invalid_fact_selector"]
     return "\n\n".join(facts["sections"][section] for section in dict.fromkeys(selected)), []
+
+
+def canonical_source_answer(text: str, state: dict, plans: list[dict]) -> str | None:
+    """A bounded source/procedure question never grants a source-policy change."""
+    from .conversational import _selected_plan, request_kinds
+    if "source" not in request_kinds(text) or not readonly_question(text):
+        return None
+    selected = _selected_plan(text, current_plans(state, plans))
+    shown = [selected] if selected is not None else plans
+    reply = facts_projection(state, shown, [], [], [], question=text)["sections"]["source"]
+    if re.search(r"тестов\w*\s+оформлен|имитац|как\s+перейти|без\s+покупки", text.casefold()):
+        reply += (" Для тестового оформления выберите актуальный план, запросите предварительную корзину "
+                  "и отдельно подтвердите показанные сумму и версии. Настоящая бронь и оплата не создаются; "
+                  "для этого не нужно подменять источники поездки демонстрационными.")
+    return reply
 
 
 def wants_saved_facts(text: str) -> bool:

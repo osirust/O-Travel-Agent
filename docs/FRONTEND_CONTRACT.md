@@ -278,7 +278,7 @@ POST S/live/search
 
 Поиск всей поездки выполняется через `/search` по `trip.search_policy`: `mode:"HYBRID"`, выбранные `hotel_provider`/`flight_provider`, `guest_nationality` для LiteAPI и явный `demo_fallback`. Сборщик связывает компоненты с остановками, номерами, участниками и версией. Проверенный смешанный путь включает два проживания SANDBOX и маркированные DEMO-компоненты транспорта; это не полностью live/bookable-поездка. В каждом плане читать `components`, `coverage`, `room_assignments`, `blockers` и `ready_for_simulated_checkout`, если они присутствуют. Флаг `ready_for_real_booking` текущая сборка не подтверждает.
 
-Отдельный photo API и обязательное поле `photos`/галерея отеля не реализованы. Наличие случайных данных провайдера не является контрактом на фотографии.
+Фото загружаются отдельным owner-auth `GET S/media?plan_id=<id>&state_version=<version>`. Ответ привязан к сессии, текущей версии и сохранённому плану; медиа не входит в стоимость/offer hash. Полный DTO, ограничения и обработка отсутствующих фото: [HOTEL_MEDIA.md](HOTEL_MEDIA.md). Не добавлять `photos` в экономический снимок.
 
 При `demo_fallback:false` ошибка поставщика сохраняется в failed run, состояние поездки остаётся. При явно заданном `true` доступна маркированная DEMO-замена с `provider_error`; она не превращается в реальные данные.
 

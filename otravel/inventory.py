@@ -205,10 +205,14 @@ def _transport_offers(state: TripState, pets: list[dict[str, Any]]) -> list[dict
     return offers
 
 
-def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]]:
+def validate_plan(state: TripState, plan: dict[str, Any], *, check_budget: bool = True) -> list[dict[str, Any]]:
     violations = validate_trip(state)
+    if not check_budget:
+        violations = [issue for issue in violations if issue["code"] not in {"missing_budget", "unsupported_budget"}]
     if not isinstance(plan, dict):
         return violations + [_error("invalid_plan", "План должен быть объектом.")]
+    if check_budget and plan.get("catalogue_only") is True:
+        return [_error("catalogue_not_checkout", "Каталог исходных DEMO-компонентов не является готовой корзиной.")]
     offers = plan.get("offers", [])
     if not isinstance(offers, list) or not offers:
         return violations + [_error("missing_offers", "В плане отсутствуют компоненты.")]
@@ -235,7 +239,7 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
             violations.append(_error("invalid_source", "DEMO-предложение не может объявляться реальным."))
     if type(plan.get("total_minor")) is not int or plan["total_minor"] != total or plan.get("currency") != "RUB":
         violations.append(_error("invalid_total", "Сумма плана не совпадает с компонентами."))
-    if state.budget and total > state.budget.amount_minor:
+    if check_budget and state.budget and total > state.budget.amount_minor:
         violations.append(_error("budget_exceeded", "План превышает общий бюджет.", total_minor=total, budget_minor=state.budget.amount_minor))
     people = {person.id: person for person in state.travelers}
     separate = {group.id for group in state.groups if group.keep_separate}
@@ -338,8 +342,12 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
 
 
 class DemoInventory:
-    def search_trip(self, state: TripState) -> dict[str, Any]:
+    def search_trip(self, state: TripState, *, catalogue_only: bool = False) -> dict[str, Any]:
         issues = validate_trip(state)
+        if catalogue_only:
+            # Discover native RUB components, then enforce the user's actual
+            # currency/budget only after all selected sources are assembled.
+            issues = [issue for issue in issues if issue["code"] not in {"missing_budget", "unsupported_budget"}]
         pets, pet_questions = _pet_request(state)
         questions = [item["message"] for item in issues if item["code"].startswith("missing_")] + pet_questions
         blocking = [item for item in issues if not item["code"].startswith("missing_")]
@@ -381,7 +389,9 @@ class DemoInventory:
             offers += _transport_offers(state, pets)
             total = sum(offer["total_minor"] for offer in offers)
             plan = {"plan_id": "demo-plan-" + _digest([state.trip_id, state.state_version, [offer["offer_id"] for offer in offers]]), "trip_id": state.trip_id, "state_version": state.state_version, "offers": offers, "total_minor": total, "currency": "RUB", "violations": [], "warnings": [NOTICE, "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."], "room_assignments": {offer["component_id"]: offer["room_assignments"] for offer in offers if offer["kind"] == "hotel"}, "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras", "source_type": "DEMO", "price_kind": "synthetic", "booking_created": False}
-            violations = validate_plan(state, plan)
+            if catalogue_only:
+                plan["catalogue_only"] = True
+            violations = validate_plan(state, plan, check_budget=not catalogue_only)
             if not violations:
                 base["plans"].append(plan)
         base["plans"].sort(key=lambda plan: (plan["total_minor"], plan["plan_id"]))

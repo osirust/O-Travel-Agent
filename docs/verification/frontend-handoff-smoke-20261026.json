@@ -1,0 +1,236 @@
+{
+  "status": "PASS",
+  "source_commit": "54cdd31c4d6e3c1136b59a66215ee5fe5f6a730a",
+  "project": "otravel-frontend-handoff-20261026",
+  "port": 18086,
+  "started_at_utc": "2026-10-26T16:26:24.701759+00:00",
+  "checks": [
+    {
+      "name": "fresh_isolation_preflight",
+      "passed": true,
+      "blank_key_fields": 18,
+      "false_confirmation_flags": 9,
+      "all_model_caps": 0,
+      "default_search": "DEMO",
+      "host_env_inherited": false
+    },
+    {
+      "name": "typed_demo_search_preview_simconfirm_budget_question",
+      "passed": true,
+      "plans": 3,
+      "plan_totals_minor": [
+        3415000,
+        3922500,
+        4454060
+      ],
+      "currency": "RUB",
+      "simulated_orders": 1,
+      "exact_confirm_repeated": true,
+      "saved_budget_reply_zero_model": true,
+      "state_version": 2,
+      "database_counts_before_restart": {
+        "sessions": 1,
+        "runs": 2,
+        "orders": 1,
+        "model_events": 0,
+        "tool_events": 0,
+        "nonterminal_runs": 0
+      }
+    },
+    {
+      "name": "same_token_state_and_order_after_app_restart",
+      "passed": true,
+      "baseline": {
+        "trip_sha256": "02e495da1d82c497b31a22ef2ae5df2e76899704a6ea8e87122ca468a2b59b96",
+        "state_version": 2,
+        "status": "BOOKED_DEMO",
+        "orders_sha256": "1ff50972816ad69092f23cf6fb570ad2e739e265fc6527030462085b821e8a38",
+        "order_id": "0d4fb74d-0dd8-4b85-8f68-b9a5402f9eec"
+      },
+      "after": {
+        "trip_sha256": "02e495da1d82c497b31a22ef2ae5df2e76899704a6ea8e87122ca468a2b59b96",
+        "state_version": 2,
+        "status": "BOOKED_DEMO",
+        "orders_sha256": "1ff50972816ad69092f23cf6fb570ad2e739e265fc6527030462085b821e8a38",
+        "order_id": "0d4fb74d-0dd8-4b85-8f68-b9a5402f9eec"
+      },
+      "database_counts_after_restart": {
+        "sessions": 1,
+        "runs": 2,
+        "orders": 1,
+        "model_events": 0,
+        "tool_events": 0,
+        "nonterminal_runs": 0
+      },
+      "same_token_authorized": true,
+      "exact_confirm_after_restart_same_order": true,
+      "audited_events": 11,
+      "external_call_events": 0
+    }
+  ],
+  "scope": "fresh_archive_isolated_docker_demo_typed_frontend_handoff",
+  "personal_env_or_keys_read": false,
+  "supplier_booking": false,
+  "frontend_ux_qualified": false,
+  "limitations": [
+    "Не проверяет LLM/NLU, реальные API и supplier booking.",
+    "DEMO reprice синтетический; 3 варианта не являются рыночным ранжированием.",
+    "Проверен один Docker/Linux engine и один app restart; не все машины жюри."
+  ],
+  "old_identity_before": {
+    "containers": {
+      "503688e38779": {
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "pid": 303918,
+        "started_at": "2026-10-25T18:57:34.437471914Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "project": "otravel",
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "1819611d2a68": {
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "pid": 25351,
+        "started_at": "2026-10-25T12:41:50.396283284Z",
+        "ports": {},
+        "project": "otravel",
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "protected_listeners": {
+      "8080": [],
+      "8081": [
+        {
+          "pid": 303980,
+          "start_ticks": 2525327,
+          "cwd": "/",
+          "exe": "/usr/bin/docker-proxy",
+          "argv_sha256": "a4f84b7bd7d8d550088e91cf4be8a7b274dd7ce94035895a287b8b04a1fdaa53"
+        }
+      ],
+      "8083": [
+        {
+          "pid": 304542,
+          "start_ticks": 2525877,
+          "cwd": "/home/aegml/projects/otravel",
+          "exe": "/usr/bin/python3.12",
+          "argv_sha256": "27bfab7d71599a1b3f155e647ce7e7da83825b0f7d77618172bc9eb6d1afa95c"
+        }
+      ],
+      "8084": [
+        {
+          "pid": 1181045,
+          "start_ticks": 10107700,
+          "cwd": "/home/aegml/projects/otravel-after80-20261026",
+          "exe": "/usr/bin/python3.12",
+          "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+        }
+      ]
+    }
+  },
+  "engine_id": "7286b49d-87ad-4ae3-a753-2400a6c6b651",
+  "stage": "own_cleanup_preserve_volume",
+  "source": {
+    "commit": "54cdd31c4d6e3c1136b59a66215ee5fe5f6a730a",
+    "tree": "36da1e579c68586eecb9771c33df37d0057175ee",
+    "archive_sha256": "96f88def7c895b8b1904bb87e8ff986fd64287119e31a467440cdef0b94c725f",
+    "manifest_sha256": "001241bac64298abc5639fa6b206fe37244341ed478293a8ac865da5b4e97ad4",
+    "files": 407,
+    "context": "/home/aegml/checks/frontend-handoff-20261026/source"
+  },
+  "build": {
+    "exit_code": 0,
+    "seconds": 48.44,
+    "single_compose_up_build_command": true,
+    "cached_layers_allowed": true,
+    "image_tag": "otravel-frontend-handoff:54cdd31c"
+  },
+  "owned_containers": {
+    "app": "ecd2b1c09652643facd5f50c8c13e6527cea9b0355efa2bac46477c6ee488dec",
+    "db": "a5e1d9510949a03baade01d244b924c7584ca0ea2266012dd3ac78d54de666c9"
+  },
+  "images": {
+    "app": "sha256:57baf2c75f1273cf8941bf422a0e1c0b4c94876278866d0b4a29a6b46dc5ef85",
+    "postgres": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe"
+  },
+  "local_http_requests": 24,
+  "model_calls": 0,
+  "supplier_tool_calls": 0,
+  "supplier_orders": 0,
+  "exported_examples": {
+    "path": "docs/examples/frontend-docker-smoke-54cdd31c.json",
+    "sha256": "4dee89b8c258011923666c07f00f4632b2c3e4901cace6fd59fd9b1b4ab7811d",
+    "tokens_headers_owner_hashes_idempotency_values_omitted": true
+  },
+  "cleanup": {
+    "own_project_down": true,
+    "volumes_deleted": false,
+    "own_pg_volume_retained": true,
+    "own_image_retained": true,
+    "other_projects_touched": false
+  },
+  "old_identity_after": {
+    "containers": {
+      "503688e38779": {
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "pid": 303918,
+        "started_at": "2026-10-25T18:57:34.437471914Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "project": "otravel",
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "1819611d2a68": {
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "pid": 25351,
+        "started_at": "2026-10-25T12:41:50.396283284Z",
+        "ports": {},
+        "project": "otravel",
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "protected_listeners": {
+      "8080": [],
+      "8081": [
+        {
+          "pid": 303980,
+          "start_ticks": 2525327,
+          "cwd": "/",
+          "exe": "/usr/bin/docker-proxy",
+          "argv_sha256": "a4f84b7bd7d8d550088e91cf4be8a7b274dd7ce94035895a287b8b04a1fdaa53"
+        }
+      ],
+      "8083": [
+        {
+          "pid": 304542,
+          "start_ticks": 2525877,
+          "cwd": "/home/aegml/projects/otravel",
+          "exe": "/usr/bin/python3.12",
+          "argv_sha256": "27bfab7d71599a1b3f155e647ce7e7da83825b0f7d77618172bc9eb6d1afa95c"
+        }
+      ],
+      "8084": [
+        {
+          "pid": 1181045,
+          "start_ticks": 10107700,
+          "cwd": "/home/aegml/projects/otravel-after80-20261026",
+          "exe": "/usr/bin/python3.12",
+          "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+        }
+      ]
+    }
+  },
+  "finished_at_utc": "2026-10-26T16:27:20.068735+00:00"
+}

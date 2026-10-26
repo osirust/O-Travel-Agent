@@ -231,7 +231,12 @@ def test_duffel_multicity_group_search_only_test_and_no_order():
     offer = call(gateway, "search_flights", FLIGHT_REQUEST)[0]
     assert offer["amount_minor"] == 10050
     assert offer["source_type"] == "SANDBOX"
-    assert offer["details"]["passengers_count"] == 2
+    # The response omits passengers. Request quantity remains diagnostic only;
+    # it must not be promoted to a verified group size or priced group quote.
+    assert offer["details"]["passengers_count"] is None
+    assert offer["details"]["requested_passengers_count"] == 2
+    assert offer["details"]["group_quote"] is False
+    assert offer["details"]["passenger_evidence"]["status"] == "unknown"
 
 
 def test_serpapi_indicative_stable_ids_not_nightly_as_trip_total():

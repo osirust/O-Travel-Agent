@@ -134,8 +134,8 @@ async def test_remote_shared_40_cap_does_not_consume_local_or_test_bucket(ledger
 @pytest.mark.asyncio
 async def test_groq_independent_40_day_pool_does_not_reset_or_consume_other_provider_caps(ledger):
     await seed(ledger, ["groq"] * 39)
-    assert await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
-    assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
+    assert await reserve(ledger, await new_run(ledger), provider="groq", limit=40)
+    assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=40)
     assert await reserve(ledger, await new_run(ledger), provider="openrouter", limit=1)
     assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=1)
 
@@ -276,7 +276,7 @@ async def test_cloudflare_40_day_pool_is_independent_of_all_other_pools(ledger):
     assert await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
     assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
     assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=500)
-    assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
+    assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=40)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
     assert await reserve(ledger, await new_run(ledger), provider="test_cloudflare_ledger", limit=1)
 
@@ -376,7 +376,7 @@ async def test_zai_explicit_eval_cap_is_hard_2000_and_does_not_raise_other_remot
     assert await reserve(ledger, await new_run(ledger), provider="zai", limit=100_000)
     assert not await reserve(ledger, await new_run(ledger), provider="zai", limit=100_000)
     for provider in ("groq", "gemini", "openrouter"):
-        assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=100_000)
+        assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=40 if provider == "groq" else 100_000)
     assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
     assert await reserve(ledger, await new_run(ledger), provider="injected_test_adapter", limit=1)

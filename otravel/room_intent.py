@@ -170,3 +170,26 @@ def ground_room_count_operations(state: TripState | dict, operations: list, text
     meta["notes"].append({"code": "explicit_room_count_grounded", "requested_room_count": count,
                           "occupants_inferred": False})
     return copied, meta
+
+
+def resolve_room_count_answer(state: dict, pending: dict | None, text: str) -> dict:
+    """Resolve only a short count addressed to a fresh owned room question."""
+    no = {"handled": False, "operations": []}
+    if not isinstance(pending, dict) or pending.get("field") != "stay.rooms":
+        return no
+    if type(pending.get("state_version")) is not int or pending["state_version"] != state.get("state_version"):
+        return no
+    target = pending.get("target_id")
+    if not isinstance(target, str) or sum(stay.get("id") == target for stay in state.get("stays", [])) != 1:
+        return no
+    key = _key(text).strip(" .!")
+    match = re.fullmatch(r"(?:(?:нужен|нужна|нужно|мне|нам)\s+)?(?P<count>\d{1,2}|один|одна|два|две|три|четыре|пять)"
+        r"(?:\s+(?:номер(?:а|ов)?|комнат(?:а|ы)?))?(?:,?\s+(?P<self>для меня|живу один|живу одна)|,?\s+для нас)?", key)
+    if not match:
+        return no
+    if match["self"] and len(state.get("travelers", [])) != 1:
+        return no
+    count = int(match["count"]) if match["count"].isdigit() else _COUNTS[match["count"]]
+    ops, meta = ground_room_count_operations(state, [], f"Нужны {count} номера.", pending)
+    context = {**(pending.get("context") or {}), **(meta["pending_context"] or {}), "field": "stay.rooms", "target_id": target}
+    return {"handled": True, "operations": ops, "question": next(iter(meta["unknowns"]), None), "pending_context": context}

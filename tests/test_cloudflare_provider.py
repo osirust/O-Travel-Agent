@@ -69,7 +69,8 @@ async def test_cloudflare_fixed_account_endpoint_auth_and_json_mode_contract(mod
         assert body["model"] == model
         assert body["response_format"] == {"type": "json_object"}
         assert [message["role"] for message in body["messages"]] == ["system", "user"]
-        assert json.dumps(schema, ensure_ascii=False) in body["messages"][0]["content"]
+        wire_schema = body["messages"][0]["content"].split("Required output JSON Schema:\n", 1)[1]
+        assert json.loads(wire_schema) == schema
         assert "__response_schema" not in body["messages"][1]["content"]
         assert SECRET not in request.content.decode()
         assert "separate-synthetic-context-token" not in request.content.decode()

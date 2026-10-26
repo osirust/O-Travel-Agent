@@ -59,7 +59,8 @@ async def test_zai_standard_endpoint_free_model_json_schema_and_disabled_thinkin
         assert body["response_format"] == {"type": "json_object"}
         assert body["thinking"] == {"type": "disabled"}
         assert [message["role"] for message in body["messages"]] == ["system", "user"]
-        assert json.dumps(schema, ensure_ascii=False) in body["messages"][0]["content"]
+        wire_schema = body["messages"][0]["content"].split("Required output JSON Schema:\n", 1)[1]
+        assert json.loads(wire_schema) == schema
         assert "__response_schema" not in body["messages"][1]["content"]
         assert SECRET not in request.content.decode()
         assert "separate-synthetic-zai-context-key" not in request.content.decode()

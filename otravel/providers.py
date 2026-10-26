@@ -451,7 +451,7 @@ class LLMGateway(_HTTPGateway):
             max_tokens = min(max_tokens, 512)
         # JSON mode alone does not tell a model which envelope fields to emit.
         # OpenRouter free endpoints need this contract in the prompt as well.
-        system += "\nRequired output JSON Schema:\n" + json.dumps(output_schema, ensure_ascii=False)
+        system += "\nRequired output JSON Schema:\n" + json.dumps(output_schema, ensure_ascii=False, separators=(",", ":"))
         metrics = request_stats(system, prompt, output_schema)
         self._request_metrics.set(metrics)
         if provider == "gemini":
@@ -881,13 +881,94 @@ class TravelGateway(_HTTPGateway):
         provider = "duffel"
         if not isinstance(offer, dict) or not offer.get("id") or "total_amount" not in offer:
             _fail("Некорректное авиапредложение.", provider, "INVALID_RESPONSE")
+        request = request if isinstance(request, dict) else {}
         currency = _currency(offer.get("total_currency"), provider)
         nonstop = self._duffel_nonstop(offer.get("slices"), request.get("slices"))
+        received, requested = offer.get("passengers"), request.get("passengers")
+        received_count = len(received) if isinstance(received, list) else None
+        requested_count = len(requested) if isinstance(requested, list) else None
+        # A request describes the group we asked for, not the passengers the
+        # airline actually priced. Export only response identity/type/age facts,
+        # excluding names, documents and other personal supplier fields.
+        passenger_facts = [{key: row[key] for key in ("id", "type", "age")
+                            if key in row and (row[key] is None or type(row[key]) in {str, int, bool})}
+                           for row in received if isinstance(row, dict)] if isinstance(received, list) else []
+        evidence = {"source": "response.passengers", "status": "unknown",
+                    "reason": "response_passengers_missing", "passengers": passenger_facts}
+
+        def group_evidence() -> tuple[str, str]:
+            if not isinstance(received, list):
+                return "unknown", "response_passengers_missing"
+            if not isinstance(requested, list) or not requested or len(requested) > 20:
+                return "unknown", "request_passenger_signature_unknown"
+            if received_count != requested_count:
+                return "mismatch", "passengers_count_mismatch"
+            if any(not isinstance(row, dict) for row in received):
+                return "unknown", "response_passenger_malformed"
+            ids = [row.get("id") for row in received]
+            if (any(not isinstance(identifier, str) or not identifier.strip() or identifier != identifier.strip() for identifier in ids)
+                    or len(set(ids)) != len(ids)):
+                return "unknown", "response_passenger_ids_ambiguous"
+            for row in received:
+                if ("age" in row and row["age"] is not None
+                        and (type(row["age"]) is not int or not 0 <= row["age"] <= 120)):
+                    return "unknown", "response_passenger_age_invalid"
+                if "type" in row and row["type"] is not None and (not isinstance(row["type"], str) or not row["type"]):
+                    return "unknown", "response_passenger_type_invalid"
+            ages = []
+            adults = 0
+            for wanted in requested:
+                if not isinstance(wanted, dict):
+                    return "unknown", "request_passenger_signature_unknown"
+                if "age" in wanted:
+                    if type(wanted["age"]) is not int or not 0 <= wanted["age"] <= 120:
+                        return "unknown", "request_passenger_signature_unknown"
+                    ages.append(wanted["age"])
+                elif wanted.get("type") == "adult":
+                    adults += 1
+                else:
+                    return "unknown", "request_passenger_signature_unknown"
+            signatures = [("age", age) for age in ages] + [("type", "adult")] * adults
+
+            def matches_group(allow_missing: bool) -> bool:
+                # Small bipartite multiset match (the request is bounded to20):
+                # age14 may be reported as airline-adult without consuming the
+                # only passenger that can satisfy a different adult signature.
+                assigned: dict[int, int] = {}
+
+                def place(index: int, seen: set[int]) -> bool:
+                    key, value = signatures[index]
+                    for passenger_index, row in enumerate(received):
+                        actual = row.get(key)
+                        matches = (actual is None and allow_missing or actual == value
+                                   and (key != "age" or type(actual) is int))
+                        if passenger_index in seen or not matches:
+                            continue
+                        seen.add(passenger_index)
+                        if passenger_index not in assigned or place(assigned[passenger_index], seen):
+                            assigned[passenger_index] = index
+                            return True
+                    return False
+
+                return all(place(index, set()) for index in range(len(signatures)))
+
+            if not matches_group(False):
+                if matches_group(True):
+                    reason = "response_passenger_age_missing" if ages and any(row.get("age") is None for row in received) else "response_passenger_type_missing"
+                    return "unknown", reason
+                return "mismatch", "passenger_type_age_mismatch"
+            # Duffel can classify e.g. age14 as adult. Exact requested age is
+            # matched above; our canonical child<18 threshold is not evidence
+            # of an airline's passenger type and must not rewrite its response.
+            return "verified", "type_age_multiset_match"
+
+        evidence["status"], evidence["reason"] = group_evidence()
         return self._offer(provider, offer["id"], offer["total_amount"], currency,
             "Тестовый авиатариф Duffel", {"kind": "flight", "native_offer_id": offer["id"],
-                "slices": offer.get("slices", []), "passengers_count": len(request.get("passengers", [])),
+                "slices": offer.get("slices", []), "passengers_count": received_count,
                 "mandatory_fees_known": True, "fees_scope": "base_fare_including_taxes_excluding_optional_services",
-                "received_passengers_count": len(offer["passengers"]) if isinstance(offer.get("passengers"), list) else None,
+                "received_passengers_count": received_count, "requested_passengers_count": requested_count,
+                "group_quote": evidence["status"] == "verified", "passenger_evidence": evidence,
                 "availability_verified": False, "search_request": request,
                 "constraint_evidence": {} if nonstop is None else {"nonstop": nonstop},
                 "nonstop_evidence_source": "response.slices.segments.stops" if nonstop is not None else None},

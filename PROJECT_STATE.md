@@ -1,5 +1,21 @@
 # O!Travel Agent — состояние, 26.10.2026
 
+## Актуальный снимок после 17:25 UTC
+
+- Последний запрос: подключить фотографии из туристических API по новому frontend-ТЗ. Добавляем отдельный owner-auth `GET /api/v1/sessions/{id}/media` и небольшие фото в `/debug`; полный frontend остаётся сокоманднику. Медиа не входит в тарифный snapshot/hash и не меняет цену.
+- В обеих приватных репозиториях опубликован `54cdd31c4d6e3c1136b59a66215ee5fe5f6a730a`, ветка `backend/harness-foundation`. Передача: `docs/FRONTEND_HANDOFF.md`, `docs/FRONTEND_CONTRACT.md`, OpenAPI и JSON-примеры в `docs/frontend/`.
+- Последний полный контролируемый прогон: **3434 PASS / 0 skip**, `fx-media-full-final.xml`, 103.95 с. Первый прогон 3411 PASS / 11 FAIL сохранён; исправлены open-jaw guard, schema-format assertions и недостающий passenger count в предметной nonstop-фикстуре. Portable Docker на `54cdd31`: новая БД, запуск одной командой, DEMO поиск → preview → один идемпотентный BOOKED_DEMO → restart, 0 model/supplier HTTP; `docs/verification/frontend-handoff-smoke-20261026.json`.
+- Native8084: C-backed `/home/aegml/projects/otravel-after80-20261026`, пакет `5b5097ac3525644d602a1d39bd9234a5e4b32cb1c802579b809618f37979261f`, код `0aba3a6`. Работает controller `scripts/after80_router_backend.py`, Dots Free / HYBRID / LiteAPI sandbox / Duffel test / SerpApi Free. Новый WIP ещё не развёрнут.
+- Новый actual replay: план первых8, фактически43 сообщения / 39 model calls / 16 durable tool starts, четыре диалога полностью исполнены, пятый частично. Остановился перед POST на локальном лимите39, не на vendor429. Это **не полный80 и не четыре приёмочных PASS**. Все43 хода перечитаны: `.local/evaluation/after80-20261026/router8-review.md`.
+- Найдены постоянные IDs: ROUTER8-ASK-POLICY-001, ROUTER8-ROUTE-ASSUMPTION-001, ROUTER8-DATE-LABEL-001, ROUTER8-ROOM-CONTRACT-001, ROUTER8-ASK-REPLY-001, ROUTER8-RAW-FIELD-001. Написаны guards для первых четырёх и human renderer для последнего; целевые проверки идут, новая actual приёмка нужна. Nightly-cap reply остаётся открытым.
+- WIP FX: точный reference RUB/USD/EUR, native-суммы сохранены, snapshot курса/TTL/источник, refresh перед новым preview; пересчёт не объявляется банковским курсом. FX checkout **6/6 PG+ASGI PASS**, planning/fx pure и связанные наборы прошли отдельно. Один настоящий публичный запрос ЦБ вернул `fx_source_unavailable`; успешный actual курс пока не подтверждён, выдумывать его нельзя.
+- WIP Duffel: group coverage проверяется по ответу с ID/type/age, а не request echo. Курс сам по себе не доказывает наличие/room allocation/тарифы.
+- Groq Free minimal extraction200 подтверждён; full-context/2048 output ещё нужно проверить. Подготовлен `after80_groq_backend.py`, отдельный explicit engineering cap1000/day (default40), paced replay. Groq8084 пока НЕ запущен. Z.ai1113 — balance/resource unavailable, CF known usage lower bound6804.49 neurons, OpenRouter app40/day уже использованы; vendor remaining неизвестен. Локальную Qwen не вызывали.
+- Фото: настоящий LiteAPI content для lp1b30d1 / Millennium Atria Business Bay, 55 фото. Через owner-bound ASGI endpoint получена галерея5, кэш и неизменность тарифа проверены; цена/план в этой конкретной проверке — fixture. Один настоящий CDN GET200/JPEG3000×2000 показан на desktop/mobile. Начальные timeout/неразрешённый CDN сохранены; фотографии не подтверждают тариф или наличие. `docs/verification/hotel-media-api-actual-20261026-attempt2.json`.
+- Ближайшее: сохранить изменения/развернуть точный пакет. Затем actual Groq canary, туристический поиск с фото и полный80 с ограничением скорости. Счётчик отправленных сообщений не заменяет предметную оценку диалогов.
+
+Ниже сохранён исторический снимок предыдущих этапов. При расхождениях текущие runtime/profile и открытые условия берутся из блока выше и соответствующих отчётов.
+
 ## Цель владельца
 
 Сегодня исправить и проверить harness по всем80диалогам, использовать сильные LLM API и туристические API. Завтра интегрируем frontend/фотографии от сокомандника; сегодня frontend не переделываем. Локальную Qwen не использовать, пока доступны лимиты сильных API. Не обещать отсутствие любых будущих ошибок и не выдавать controlledPASS за actualNLU.

@@ -17,11 +17,16 @@ from .geography import parse_destination
 
 _ISO = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
 _DOT = re.compile(r"([0-9]{2})\.([0-9]{2})\.([0-9]{4})")
+_MONTHS = {"января": 1, "февраля": 2, "марта": 3, "апреля": 4,
+           "мая": 5, "июня": 6, "июля": 7, "августа": 8,
+           "сентября": 9, "октября": 10, "ноября": 11, "декабря": 12}
+_MONTH_TOKEN = r"[0-9]{1,2}\s+(?:" + "|".join(_MONTHS) + r")(?:\s+[0-9]{4}(?:\s+года)?)?"
+_MONTH = re.compile(r"([0-9]{1,2})\s+(" + "|".join(_MONTHS) + r")(?:\s+([0-9]{4})(?:\s+года)?)?")
 _RELATIVE = {"сегодня": 0, "завтра": 1, "послезавтра": 2}
 _EXPLICIT = re.compile(
     r"(?P<label>заезд|выезд)(?:(?:\s+|\s*:\s*)(?P<token>"
-    + "|".join((_ISO.pattern, _DOT.pattern, *_RELATIVE))
-    + r")|(?P<attached>" + _ISO.pattern + "|" + _DOT.pattern + r"))"
+    + "|".join((_ISO.pattern, _DOT.pattern, _MONTH_TOKEN, *_RELATIVE))
+    + r")|(?P<attached>" + _ISO.pattern + "|" + _DOT.pattern + "|" + _MONTH_TOKEN + r"))"
 )
 _PROPOSAL_OWNER = "date_slots.v1"
 _ORDINALS = {"первая": 1, "первую": 1, "первой": 1, "вторая": 2, "вторую": 2,
@@ -38,6 +43,9 @@ def _calendar(token: str, today: date) -> date:
     if dotted:
         day, month, year = map(int, dotted.groups())
         return date(year, month, day)
+    month = _MONTH.fullmatch(token)
+    if month and month[3] is not None:
+        return date(int(month[3]), _MONTHS[month[2]], int(month[1]))
     raise ValueError("Not an exact date token")
 
 
@@ -108,7 +116,7 @@ def _deferred_answer(data: dict, pending: dict, context: dict, text: str,
     except (KeyError, ValueError, TypeError, OverflowError, ZoneInfoNotFoundError):
         return ask("Поездка или адрес даты изменились. Укажите заново дату заезда или выезда и нужную остановку.", discard=True)
     key = text.strip().casefold().rstrip(".!").strip()
-    if key in _RELATIVE or _ISO.fullmatch(key) or _DOT.fullmatch(key):
+    if key in _RELATIVE or _ISO.fullmatch(key) or _DOT.fullmatch(key) or _MONTH.fullmatch(key):
         # A new exact date replaces the saved date; it never silently chooses a
         # target. Keep the original bare input distinguishable in provenance.
         fresh_context = {k: v for k, v in context.items() if k != "date_proposal"}
@@ -119,6 +127,8 @@ def _deferred_answer(data: dict, pending: dict, context: dict, text: str,
         new_proposal = replacement.get("pending_context", {}).get("date_proposal")
         if new_proposal:
             new_proposal.update(source_kind="date_answer", source_text=text.strip())
+        elif replacement.get("handled"):
+            replacement["pending_context_clear"] = ["date_proposal"]
         return replacement
     if re.match(r"^(?:добавь|добавить|удали|убери|измени|замени|поменяй|установи|бюджет|хочу)\b", key):
         return {"handled": False, "operations": []}
@@ -213,9 +223,15 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
         key = explicit.group("token") or explicit.group("attached")
     if field not in {"stay.check_in", "stay.check_out"}:
         return unhandled
-    iso, dotted = _ISO.fullmatch(key), _DOT.fullmatch(key)
-    if key not in _RELATIVE and not iso and not dotted:
+    iso, dotted, month = _ISO.fullmatch(key), _DOT.fullmatch(key), _MONTH.fullmatch(key)
+    if key not in _RELATIVE and not iso and not dotted and not month:
         return unhandled
+    if month and not explicit:
+        # Month words without a label are answers only to the current addressed
+        # hotel-date slot, never evidence for an unrelated/stale question.
+        for version in (pending.get("state_version"), context.get("based_state_version")):
+            if version is not None and (type(version) is not int or version != data.get("state_version")):
+                return unhandled
     stays = data.get("stays")
     if not isinstance(stays, list) or not stays:
         return unhandled
@@ -249,6 +265,19 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
         target = stay["id"]
     elif not explicit:
         return unhandled
+    if month and month[3] is None:
+        # Even if another date is known, do not infer a year or roll a past
+        # month into next year. The follow-up must supply an absolute date.
+        bound = {**context, "field": field, "target_id": target, "stay_id": target,
+                 "target_selection_required": target is None and len(stays) > 1}
+        bound.pop("date_proposal", None)
+        answer = {"handled": True, "operations": [],
+                  "question": (f"Укажите дату {label} полностью: день, месяц и год."
+                               if target else _selection_question(stays, field) + " Укажите также год поездки."),
+                  "pending_context": bound}
+        if "date_proposal" in context:
+            answer["pending_context_clear"] = ["date_proposal"]
+        return answer
     try:
         resolved = _calendar(key, today)
     except (ValueError, OverflowError):

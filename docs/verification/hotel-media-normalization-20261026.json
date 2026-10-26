@@ -1,0 +1,184 @@
+{
+  "checked_at_utc": "2026-10-26T17:35:25.766199+00:00",
+  "status": "NORMALIZER_AND_ACTUAL_CONTENT_ASGI_TESTED_NATIVE_DEPLOY_PENDING",
+  "scope": "Optional read-only hotel photo view data, independent of prices, inventory and booking.",
+  "implementation": {
+    "module": "otravel/media.py",
+    "resolver": "MediaResolver(gateway).resolve_plan(plan)",
+    "helper_contracts": {
+      "hotel_content": "strict fixed LiteAPI sandbox JSON GET with exact response ID",
+      "hotel_media": "safe HOTEL/PLACEHOLDER DTO"
+    },
+    "cdn_allowlist": [
+      "https://snaphotelapi.com",
+      "https://static.cupid.travel",
+      "https://liteapi-travel-static-data.s3.amazonaws.com"
+    ],
+    "csp_constant": "MEDIA_CSP_SOURCES",
+    "unique_hotels_per_plan_max": 5,
+    "gallery_max": 5,
+    "candidate_images_max": 100,
+    "offer_scan_max": 32,
+    "positive_cache_seconds": 21600,
+    "negative_cache_seconds": 60,
+    "cached_hotels_max": 32,
+    "per_lookup_wall_timeout_seconds": 15,
+    "gateway_reused": true,
+    "server_image_download_or_proxy": false,
+    "economic_offers_or_digest_modified": false,
+    "serpapi_photo_fallback_enabled": false
+  },
+  "actual_source_evidence": {
+    "first_probe_report_sha256": "f8d0e3118fedf4ca0fbf46687ec63816f18d3cdcd3c956afbab4ae3afc2b8991",
+    "first_probe_results": {
+      "Istanbul": "hotel ID lookup timed out; no hotel content/photo association invented",
+      "Dubai": "lookup/content returned Millennium Atria Business Bay lp1b30d1; first media normalization safely returned placeholder because CDN was not yet allowlisted"
+    },
+    "shape_report_sha256": "20700eab263d34b27e52879fde4899f9e6d1626fff0004e0f0608f1864c21bd3",
+    "shape_status": "CONTENT_200",
+    "requested_hotel_id": "lp1b30d1",
+    "response_hotel_id": "lp1b30d1",
+    "reported_hotel_images_count": 55,
+    "observed_CDN": "static.cupid.travel",
+    "observed_first_path": "/hotels/210194244.jpg",
+    "actual_CDN_extension_authorized_by_parent": true,
+    "photo_browser_probe": {
+      "reported_by": "parent/root after delegated photo_debug observation",
+      "reported_http_status": 200,
+      "reported_type": "JPEG",
+      "reported_dimensions": [
+        3000,
+        2000
+      ],
+      "reported_image_GETs": 1,
+      "independent_artifact_read_by_this_actor": false
+    },
+    "fresh_resolver_and_owned_plan_API_result": "PENDING_PARENT_RESULT",
+    "models": 0,
+    "price_search_calls": 0,
+    "supplier_orders": 0
+  },
+  "controlled_validation": {
+    "passed": 68,
+    "skipped": 0,
+    "failed": 0,
+    "ruff": "PASS",
+    "final_xml": ".local/evaluation/after80-20261026/media-actual-CDN-final.xml",
+    "final_xml_sha256": "4457b76827e642ba30c76f2c575f761b61a04aae02e2699da666ea5f439801cc",
+    "initial_failure_preserved": ".local/evaluation/after80-20261026/media-initial.xml",
+    "checks": [
+      "exact hotel identity/source binding; no DEMO/Serp/UNKNOWN association",
+      "HTTPS only; exact host/path allowlist; userinfo/private IP/localhost/credential or arbitrary query/unsafe schemes rejected",
+      "positive/negative cache, concurrent lookup dedupe, source429 cooldown reuse and sequential5hotel limit",
+      "gallery/default/order/plain captions/key echo redaction; no own HTTP client/DNS/image fetch",
+      "input plan and all economic fields unchanged"
+    ]
+  },
+  "public_fixture": {
+    "path": "fixtures/regression/liteapi-hotel-media-lp1b30d1-20261026.json",
+    "sha256": "929dcb71965c6cbde3885d0686b4387daa2f4fc11549eb672b805612ddbd963b",
+    "kind": "redacted authenticated response-field projection, not full raw response",
+    "expected_projection_DTO": {
+      "url": "https://static.cupid.travel/hotels/210194244.jpg",
+      "thumbnailUrl": null,
+      "alt": "Фотография отеля",
+      "kind": "HOTEL",
+      "source": "LITEAPI",
+      "hotelId": "lp1b30d1",
+      "sourceHotelId": "lp1b30d1",
+      "isActualPropertyPhoto": true,
+      "caption": null,
+      "gallery": [
+        {
+          "url": "https://static.cupid.travel/hotels/210194244.jpg",
+          "alt": "Фотография отеля",
+          "caption": null
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/193806701.jpg",
+          "alt": "Фотография отеля",
+          "caption": null
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/220326577.jpg",
+          "alt": "Фотография отеля",
+          "caption": null
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/220317518.jpg",
+          "alt": "Фотография отеля",
+          "caption": null
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/223513455.jpg",
+          "alt": "Фотография отеля",
+          "caption": null
+        }
+      ]
+    },
+    "not_invented": [
+      "caption",
+      "order",
+      "defaultImage",
+      "name",
+      "thumbnail values absent from shape projection"
+    ]
+  },
+  "code_hashes": {
+    "otravel/media.py": "1b3a9f581970c91f8a05b6b7ac0ffbafb8a120803e05ea3fe442f9b80eada018",
+    "tests/test_media.py": "ce66218bc848a3975c5d3eb638a66178c3fb61a75eda37e530c1c4f9f0769fa4",
+    "tests/test_media_api.py": "b9f12a9fe2ace5aecda764602bbb0a2513d2b969484cbb9dd6776e9490da6a6b"
+  },
+  "official_references": [
+    "https://docs.liteapi.travel/reference/get_data-hotel",
+    "https://docs.liteapi.travel/docs/displaying-hotel-details",
+    "https://serpapi.com/google-hotels-api"
+  ],
+  "limits": [
+    "Content/photo association is not room, fee, availability or booking evidence.",
+    "A returned URL is not proof of image ownership, display rights, successful future loading or no remote CDN redirect.",
+    "No arbitrary media proxy; no source or native changes outside the new media module/tests/fixture were made by this actor.",
+    "Actual source requests and browser image probe were performed centrally by parent/delegate, not repeated here."
+  ],
+  "actual_endpoint_attempt2": {
+    "path": "docs\\verification\\hotel-media-api-actual-20261026-attempt2.json",
+    "sha256": "79afb8a8296aa8a7836311996e04b30ae59fd0cdbd6aa3739ed510cbec8076c3",
+    "http_status": 200,
+    "actual_photo_count": 5,
+    "cached_response_equal": true,
+    "priced_snapshot_unchanged": true,
+    "price_plan_fixture": true,
+    "persistent_database_tested_here": false,
+    "model_calls": 0,
+    "price_search_calls": 0
+  },
+  "browser_actual_photo": {
+    "status": "PASS",
+    "image_url": "https://static.cupid.travel/hotels/210194244.jpg",
+    "source_hotel_id": "lp1b30d1",
+    "image_responses": [
+      {
+        "status": 200,
+        "url": "https://static.cupid.travel/hotels/210194244.jpg",
+        "content_type": "image/jpeg"
+      }
+    ],
+    "page_errors": [],
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 1000
+      },
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "image_dimensions": {
+      "width": 3000,
+      "height": 2000
+    },
+    "source_report_sha256": "ca7d8343873969145dabe1e6a43418921d98fbc76e667ede4c58f6fd27509964",
+    "backend_price_was_fixture": true
+  }
+}

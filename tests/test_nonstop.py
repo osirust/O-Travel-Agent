@@ -130,7 +130,8 @@ def test_missing_or_nontrue_external_flight_fact_blocks_quote_even_when_request_
     flight = next(o for o in DemoInventory().search_trip(state)["plans"][0]["offers"] if o["kind"] == "flight")
     offer = {"offer_id": "fixture-external-flight", "provider": "duffel", "source_type": "SANDBOX", "price_kind": "COMPONENT_TOTAL",
         "currency": "RUB", "amount_minor": flight["total_minor"], "retrieved_at": NOW.isoformat(), "expires_at": (NOW + timedelta(hours=1)).isoformat(),
-        "details": {"kind": "flight", "fees_included": True, "group_quote": True, "search_request": {"nonstop": True, "max_connections": 0},
+        "details": {"kind": "flight", "fees_included": True, "group_quote": True,
+            "passengers_count": len(state.travelers), "search_request": {"nonstop": True, "max_connections": 0},
             "constraint_evidence": {} if fact is None else {"nonstop": fact},
             "binding": {"trip_id": state.trip_id, "state_version": state.state_version, "leg_ids": [flight["component_id"]],
                 "traveler_ids": flight["traveler_ids"], "origin": flight["origin"], "destination": flight["destination"], "departure_date": flight["departure_date"]}}}

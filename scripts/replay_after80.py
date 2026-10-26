@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import stat
@@ -36,6 +37,8 @@ LLM_PROFILES = {
         "manager": "after80_cf_backend.py", "evidence": "docs/verification/after80-cf-backend-20261026.json"},
     "openrouter-dots": {"provider": "openrouter", "model": "dots-studio/dots-3-note-preview:free",
         "manager": "after80_router_backend.py", "evidence": "docs/verification/after80-router-backend-20261026.json"},
+    "groq-qwen": {"provider": "groq", "model": "qwen/qwen3.8-27b",
+        "manager": "after80_groq_backend.py", "evidence": "docs/verification/after80-groq-backend-20261026.json"},
 }
 TOOL_RESERVATION = 16  # The verified TripSearch per-run bound, not vendor HTTP requests.
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
@@ -78,10 +81,17 @@ def validate_limits(dialogues, parallel, models, tools, start):
     require(start + dialogues - 1 <= 80, "selection_exceeds_original_080")
 
 
-def plan(rows, *, dialogues=2, parallel=1, models=40, tools=100, start=1, actions=False, llm_profile="zai"):
+def validate_message_interval(value):
+    require(type(value) in {int, float} and math.isfinite(value) and 0 <= value <= 120,
+        "message_interval_out_of_range")
+
+
+def plan(rows, *, dialogues=2, parallel=1, models=40, tools=100, start=1, actions=False, llm_profile="zai",
+         message_interval_seconds=0):
     require(llm_profile in LLM_PROFILES, "unsupported_fixed_llm_profile")
     profile = LLM_PROFILES[llm_profile]
     validate_limits(dialogues, parallel, models, tools, start)
+    validate_message_interval(message_interval_seconds)
     selected = rows[start - 1:start - 1 + dialogues]
     require(len(selected) == dialogues, "selection_missing_source_cases")
     require(all(row["id"] == f"ZAI100-{start + index:03d}" for index, row in enumerate(selected)), "source_selection_id_mismatch")
@@ -90,6 +100,7 @@ def plan(rows, *, dialogues=2, parallel=1, models=40, tools=100, start=1, action
         "source_dialogues": 80, "source_user_turns": 697, "base_url": BASE, "parallel": parallel,
         "llm_profile": llm_profile, "expected_runtime": {"llm_provider": profile["provider"], "model": profile["model"]},
         "runtime_evidence": profile["evidence"],
+        "message_interval_seconds": message_interval_seconds,
         "max_model_calls": models, "max_tool_calls": tools, "tool_reservation_per_message": TOOL_RESERVATION,
         "include_simulated_checkout": actions, "synthetic_initial_trip": deepcopy(INITIAL_TRIP),
         "nationality_provenance": "EXPLICIT_SYNTHETIC_TEST_FIXTURE_NOT_INFERRED_FROM_LANGUAGE_OR_ORIGIN",
@@ -183,6 +194,33 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
+class PostPacer:
+    """One process-wide POST schedule, not a claim about vendor token quota.
+
+    GET/poll has no delay. All POSTs, including local zero-model slot answers,
+    use the same spacing; stopped/unknown runs are never automatically resent.
+    """
+    def __init__(self, interval=0, *, clock=None, sleep=None, stop=None, resume=False):
+        validate_message_interval(interval)
+        self.interval, self.clock, self.sleep = interval, clock or time.monotonic, sleep or time.sleep
+        self.stop, self.lock = stop, threading.Lock()
+        self.last_post = self.clock() if resume and interval else None
+
+    def before_post(self):
+        with self.lock:
+            while True:
+                if self.stop is not None and self.stop.is_set():
+                    raise RuntimeError("REPLAY_STOPPED_BEFORE_WRITE")
+                remaining = 0 if self.last_post is None else self.last_post + self.interval - self.clock()
+                if remaining <= 0:
+                    self.last_post = self.clock()
+                    return self.last_post
+                self.sleep(min(10, remaining))
+
+
+_POST_PACER = PostPacer()
+
+
 class HTTP:
     def __init__(self, base=BASE):
         parsed = urlsplit(base)
@@ -200,6 +238,8 @@ class HTTP:
             headers["Authorization"] = "Bearer " + token
         encoded = None if body is None else json.dumps(body, ensure_ascii=False, allow_nan=False).encode()
         request = Request(self.base + path, data=encoded, headers=headers, method=method)
+        if method == "POST":
+            _POST_PACER.before_post()
         started = time.monotonic()
         try:
             with self.opener.open(request, timeout=15) as response:
@@ -322,6 +362,10 @@ def check_profile(health, status, evidence, llm_profile="zai"):
     elif llm_profile == "openrouter-dots":
         require(evidence.get("limits", {}).get("daily_engineering_bound") == 40,
             "router_shared40_application_limit_required")
+    elif llm_profile == "groq-qwen":
+        require(type(evidence.get("limits", {}).get("groq_daily_engineering_bound")) is int
+            and evidence["limits"]["groq_daily_engineering_bound"] == 1000,
+            "explicit_groq_evaluation_limit_required")
 
 
 def code_manifest():
@@ -571,6 +615,7 @@ class Replay:
 
 
 def main(argv=None):
+    global _POST_PACER
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--llm-profile", choices=tuple(LLM_PROFILES), default="zai",
@@ -581,12 +626,15 @@ def main(argv=None):
     parser.add_argument("--max-model-calls", type=int, default=40)
     parser.add_argument("--max-tool-calls", type=int, default=100)
     parser.add_argument("--include-simulated-checkout", action="store_true")
+    parser.add_argument("--message-interval-seconds", type=float, default=0,
+        help="Global gap between all POST starts (0..120s); no vendor quota guarantee or automatic429 retry.")
     parser.add_argument("--output-root", type=Path, default=Path("/home/aegml/.local/evaluation"))
     parser.add_argument("--resume", type=Path)
     args = parser.parse_args(argv)
     rows = load_source()
     frozen = plan(rows, dialogues=args.max_dialogues, parallel=args.parallel, models=args.max_model_calls,
-        tools=args.max_tool_calls, start=args.start_case, actions=args.include_simulated_checkout, llm_profile=args.llm_profile)
+        tools=args.max_tool_calls, start=args.start_case, actions=args.include_simulated_checkout, llm_profile=args.llm_profile,
+        message_interval_seconds=args.message_interval_seconds)
     if not args.run:
         print(json.dumps({"status": "DRY_RUN_ZERO_REQUESTS", "plan": frozen}, ensure_ascii=False))
         return 0
@@ -623,6 +671,7 @@ def main(argv=None):
         runtime_source_manifest=evidence["current_source_manifest"], client_code=client, run_binding=binding)
     replay.save()
     selected = [row for row in rows if row["id"] in frozen["selected_ids"]]
+    _POST_PACER = PostPacer(frozen["message_interval_seconds"], stop=replay.stop, resume=bool(saved))
     with ThreadPoolExecutor(max_workers=args.parallel) as executor:
         list(executor.map(replay.case, selected))
     replay.report.update(status="STOPPED_PARTIAL" if replay.stop.is_set() else "EXECUTION_FINISHED_BEHAVIOR_UNASSESSED", finished_at_utc=utcnow())

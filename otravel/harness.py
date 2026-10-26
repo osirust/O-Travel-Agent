@@ -237,8 +237,9 @@ def _requested_model(gateway: Any, provider: str) -> str:
 
 
 class Harness:
-    def __init__(self, settings: Settings, store: Any, llm: Any, travel: Any):
+    def __init__(self, settings: Settings, store: Any, llm: Any, travel: Any, fx: Any = None):
         self.settings, self.store, self.llm, self.travel = settings, store, llm, travel
+        self.fx = fx
         self.inventory = DemoInventory()
         self.tasks: dict[str, asyncio.Task] = {}
         self.active: dict[str, str] = {}
@@ -355,7 +356,7 @@ class Harness:
                     await self._ensure_current_run(session, run)
                 await self.store.save_event(session["session_id"], run["run_id"], kind, payload)
 
-        return await TripSearch(self.travel).search(state, previous_plan=previous, event_sink=audit)
+        return await TripSearch(self.travel, fx=self.fx).search(state, previous_plan=previous, event_sink=audit)
 
     async def _ensure_current_run(self, session: dict, run: dict) -> None:
         latest = await self.store.get_session(session["session_id"])
@@ -435,7 +436,9 @@ class Harness:
             if len(shown) >= 2:
                 break
         history = [{"role": message["role"], "text": message["text"]} for message in preceding if not message["text"].startswith(TYPED_PREFIX)][-12:]
-        context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": shown, "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": OPERATION_GUIDE}
+        guide = {key: value for key, value in OPERATION_GUIDE.items() if key not in {"supported_operations", "room_shape", "known_geographic_cities"}}
+        guide["schema_authoritative"] = "Точные типы операций, поля value и допустимые ID заданы обязательной JSON Schema в system; не придумывай другие."
+        context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": shown, "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": guide}
         archived = await plan_history(self.store, session["session_id"], session["state_version"])
         context["first_shown_plan"] = archived["first_saved_plan"]
         context["__response_schema"] = build_operation_schema(session["state"])
@@ -529,6 +532,7 @@ class Harness:
                 # budget; the real gateway always has the production ceiling.
                 daily_limit = (min(500, self.settings.max_local_llm_calls_per_day) if provider == "ollama" else
                     min(2000, self.settings.max_cloudflare_llm_calls_per_day) if provider == "cloudflare" else
+                    min(1000, self.settings.max_groq_llm_calls_per_day) if provider == "groq" else
                     min(2000, self.settings.max_llm_calls_per_day) if provider == "zai" else
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
                 if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
@@ -593,6 +597,20 @@ class Harness:
                         extracted.operation_normalizations.extend(budget_meta["notes"])
                         extracted.conflicts.extend(budget_meta["conflicts"])
                         extracted.server_questions.extend(budget_meta["conflicts"])
+                    if not readonly and not extracted.conflicts and extracted.control.action != "cancel":
+                        from .route_policy_intent import guard_route_policy_operations
+                        from .search_policy_intent import guard_search_policy_operations
+                        for guard in (guard_route_policy_operations, guard_search_policy_operations):
+                            policy_ops, policy_meta = guard(session["state"], extracted.operations, run["input_text"])
+                            extracted.operations = [Operation.model_validate(op) for op in policy_ops]
+                            extracted.operation_normalizations.extend(policy_meta["notes"])
+                            extracted.conflicts.extend(policy_meta["conflicts"])
+                            extracted.unknowns = list(dict.fromkeys(policy_meta["unknowns"] + extracted.unknowns))
+                            extracted.server_questions.extend(policy_meta["unknowns"] + policy_meta["conflicts"])
+                        if (not extracted.operations and any(note.get("code") == "search_policy_change_not_requested"
+                                for note in extracted.operation_normalizations)):
+                            extracted.speech_act = "ASK"
+                            extracted.control.action = "none"
                     if not extracted.conflicts and extracted.control.action != "cancel":
                         try:
                             extracted.conflicts = operation_conflicts(TripState.model_validate(session["state"]), extracted.operations)
@@ -832,7 +850,7 @@ class Harness:
                 "__response_mode": READONLY_MODE, "__response_schema": READONLY_SCHEMA}
 
     async def _interpret(self, session: dict, run: dict) -> tuple[ModelResult, dict | None]:
-        from .answering import checked_reply, readonly_question, short_place_inquiry
+        from .answering import canonical_source_answer, checked_reply, readonly_question, short_place_inquiry
         from .conversational import request_kinds
         from .trip_answers import classify_saved_question, render_saved_answer
 
@@ -846,6 +864,13 @@ class Harness:
                     and not short_place_inquiry(run["input_text"])
                     and parse_destination(run["input_text"])["requested_destination"]["kind"] not in {"city", "country"})
         kinds = request_kinds(run["input_text"])
+        if "source" in kinds and readonly and kind is None:
+            plans = await self._latest_current_plans(session, run)
+            reply = canonical_source_answer(run["input_text"], session["state"], plans)
+            if reply is not None:
+                await self._ensure_current_run(session, run)
+                return ModelResult(operations=[], control={"action": "none"}, reply=reply,
+                    unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
         secondary = re.search(r"бюджет|лимит|сумм|дат|ноч|вылет|город|маршрут|изменен|цен|стоим|заказ|валют|отел|стран", run["input_text"].casefold())
         if (kinds.intersection({"missing_data", "hypothetical_child", "source", "cart"})
                 or kinds == {"party"} and not secondary):
@@ -883,6 +908,9 @@ class Harness:
                     resolved = resolve_country_destination_answer(session["state"], pending, run["input_text"])
             if not resolved["handled"]:
                 resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
+            if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
+                from .room_intent import resolve_room_count_answer
+                resolved = resolve_room_count_answer(session["state"], pending, run["input_text"])
             if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
                 resolved = resolve_short_answer(session["state"], pending, run["input_text"])
         if resolved["handled"]:

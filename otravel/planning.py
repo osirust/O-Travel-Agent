@@ -6,16 +6,16 @@ fees or inventory verification. Existing DemoInventory snapshots stay intact.
 """
 from __future__ import annotations
 
+import json
 from collections import Counter
 from copy import deepcopy
 from datetime import datetime, timezone
 from hashlib import sha256
-import json
 from typing import Any
 
 from .domain import TripState, route_edges, validate_trip
+from .fx import FxUnavailable, convert_minor, validate_snapshot
 from .inventory import DemoInventory
-
 
 _PINNED_SOURCE = {"liteapi": "SANDBOX", "duffel": "SANDBOX", "hotelbeds": "SANDBOX",
                   "ratehawk": "SANDBOX", "serpapi": "LIVE_INDICATIVE", "travelpayouts": "LIVE_INDICATIVE"}
@@ -138,7 +138,8 @@ def _covers(state: TripState, offer: dict, binding: dict, errors: list[dict]) ->
 
 
 def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback: bool = False,
-                  previous_plan: dict | None = None, now: datetime | None = None) -> dict:
+                  previous_plan: dict | None = None, now: datetime | None = None,
+                  fx_snapshot: dict | None = None) -> dict:
     state = TripState.model_validate(state)
     errors = [item for item in validate_trip(state) if not (item["code"] == "unsupported_budget" and state.budget and state.budget.scope == "whole_trip")]
     for condition in state.constraints:
@@ -148,7 +149,7 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
     required = required_components(state)
     selected: list[dict] = []
     components: list[dict] = []
-    demo = DemoInventory().search_trip(state)
+    demo = DemoInventory().search_trip(state, catalogue_only=True)
     catalog = {offer["offer_id"]: offer for plan in demo["plans"] for offer in plan["offers"]}
     clock = now.astimezone(timezone.utc) if isinstance(now, datetime) and now.tzinfo is not None else None
 
@@ -222,7 +223,9 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
             requested_rooms = details.get("occupancies", request.get("occupancies", request.get("guests"))) if isinstance(request, dict) else None
             if kind == "hotel" and isinstance(requested_rooms, list) and len(requested_rooms) != len(binding.get("room_ids", [])):
                 errors.append(_issue("room_quote_scope_mismatch", "Сумма получена для другого количества комнат.", offer_id=offer["offer_id"]))
-            if kind in {"flight", "train"} and details.get("group_quote") is False:
+            if kind in {"flight", "train"} and (details.get("group_quote") is not True
+                    or type(details.get("passengers_count")) is not int
+                    or details["passengers_count"] != len(state.travelers)):
                 errors.append(_issue("group_quote_unknown", "Справочная цена не покрывает всю группу.", offer_id=offer["offer_id"]))
             if kind in {"flight", "train"} and details.get("itinerary_complete") is False and len(binding.get("leg_ids", [])) > 1:
                 errors.append(_issue("incomplete_itinerary", "Поисковая выдача не подтверждает все заявленные плечи.", offer_id=offer["offer_id"]))
@@ -290,36 +293,66 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
         if component["amount_minor"] is not None:
             totals[component["currency"]] = totals.get(component["currency"], 0) + component["amount_minor"]
     currency = state.budget.currency.upper() if state.budget else next(iter(totals), "RUB")
-    if len(totals) > 1 or (totals and currency not in totals):
-        errors.append(_issue("fx_required", "Разные валюты не складываются без явного подтверждённого FX.", currencies=sorted(totals), target_currency=currency))
-    total = totals.get(currency, 0) if not errors else None
+    needs_fx = any(native != currency for native in totals)
+    pinned_fx = None
+    if needs_fx:
+        if fx_snapshot is None:
+            errors.append(_issue("fx_required", "Разные валюты не складываются без явного подтверждённого FX.", currencies=sorted(totals), target_currency=currency))
+        else:
+            try:
+                pinned_fx = validate_snapshot(fx_snapshot, clock)
+                # Preserve source-native offers/components. Only these separate
+                # reference projections participate in the budget comparison.
+                for component in components:
+                    amount = component["amount_minor"]
+                    component["budget_amount_minor"] = (convert_minor(amount, component["currency"], currency, pinned_fx, clock)
+                                                        if amount is not None else None)
+                    component["budget_currency"] = currency
+            except FxUnavailable as exc:
+                pinned_fx = None
+                errors.append(_issue(exc.code, exc.message, target_currency=currency))
+    for component in components:
+        if pinned_fx is None:
+            component["budget_amount_minor"] = component["amount_minor"] if component["currency"] == currency else None
+            component["budget_currency"] = currency
+    projected_subtotal = (sum(component["budget_amount_minor"] or 0 for component in components)
+                          if pinned_fx is not None else totals.get(currency, 0))
+    total = projected_subtotal if not errors else None
     if total is not None and state.budget and total > state.budget.amount_minor:
         errors.append(_issue("budget_exceeded", "Корзина превышает общий бюджет.", total_minor=total, budget_minor=state.budget.amount_minor))
     sources = sorted({component["source_type"] for component in components})
     source = sources[0] if len(sources) == 1 else "MIXED" if sources else "INCOMPLETE"
     if source in {"DEMO", "MIXED", "SANDBOX"}:
         warnings.append("Сумма является simulated estimate; DEMO/SANDBOX не подтверждают реальные цены и наличие.")
+    if pinned_fx is not None:
+        warnings.append(f"Справочный пересчёт ЦБ на {pinned_fx['as_of']}; банковские комиссии и курс оплаты неизвестны. Это reference estimate для simulated checkout, не цена покупки.")
     snapshots = [{"offer_id": offer["offer_id"], "source_type": offer["source_type"],
                   "retrieved_at": offer.get("retrieved_at"), "expires_at": offer.get("expires_at"),
                   "snapshot_hash": component["snapshot_hash"]} for offer, component in zip(selected, components)]
     identity = {"trip_id": state.trip_id, "state_version": state.state_version,
                 "state_hash": _digest(state.model_dump(mode="json")), "source_snapshots": snapshots}
+    if pinned_fx is not None:
+        identity["fx_snapshot_id"] = pinned_fx["snapshot_id"]
     plan = {"plan_id": "assembled-" + _digest(identity)[:24], **identity, "offers": selected,
             "components": components, "source_type": source, "price_kind": "simulated_estimate",
-            "total_minor": total, "known_subtotal_minor": totals.get(currency, 0), "currency": currency,
+            "total_minor": total, "known_subtotal_minor": projected_subtotal, "currency": currency,
             "currency_totals": totals, "coverage": {"required": required, "covered": sorted(counts), "missing": missing,
                 "overlapping": repeated, "complete": not missing and not repeated}, "room_assignments": assignments,
             "blockers": errors, "violations": errors, "warnings": list(dict.fromkeys(warnings)),
             "ready_for_simulated_checkout": not errors and total is not None,
             "ready_for_real_booking": False, "booking_created": False, "checkout_mode": "SIMULATED",
             "snapshot_hash": _digest(identity)}
+    if pinned_fx is not None:
+        plan["fx_snapshot"] = pinned_fx
+        plan["fx_reference_only"] = True
+        plan["fx_fees_unknown"] = True
     if previous_plan is not None:
         plan["comparison"] = compare_plans(previous_plan, plan)
     return plan
 
 
 def validate_quote(plan: dict, state: TripState | dict, *, current_offers: list[dict] | None = None,
-                   now: datetime | None = None) -> list[dict]:
+                   now: datetime | None = None, fx_snapshot: dict | None = None) -> list[dict]:
     state = TripState.model_validate(state)
     if not isinstance(plan, dict):
         return [_issue("invalid_quote", "Корзина должна быть объектом.")]
@@ -327,17 +360,32 @@ def validate_quote(plan: dict, state: TripState | dict, *, current_offers: list[
     if (plan.get("trip_id") != state.trip_id or plan.get("state_version") != state.state_version
             or plan.get("state_hash") != _digest(state.model_dump(mode="json"))):
         issues.append(_issue("stale_quote_state", "Корзина относится к другой ревизии или содержимому поездки."))
-    rebuilt = assemble_plan(state, plan.get("offers", []), now=now)
+    rebuilt = assemble_plan(state, plan.get("offers", []), now=now, fx_snapshot=plan.get("fx_snapshot"))
     integrity_fields = ("snapshot_hash", "total_minor", "currency", "coverage", "room_assignments",
                         "source_type", "source_snapshots", "ready_for_simulated_checkout", "ready_for_real_booking",
-                        "checkout_mode", "booking_created")
+                        "checkout_mode", "booking_created", "known_subtotal_minor", "currency_totals",
+                        "fx_snapshot_id", "fx_snapshot", "fx_reference_only", "fx_fees_unknown")
     def economic_components(value: dict) -> list:
         rows = value.get("components", [])
         return [{k: v for k, v in item.items() if k != "demo_fallback"} for item in rows if isinstance(item, dict)] if isinstance(rows, list) else []
-    if (any(rebuilt.get(key) != plan.get(key) for key in integrity_fields)
-            or economic_components(rebuilt) != economic_components(plan)):
+    try:
+        # JSON economics distinguish true/1/1.0; Python dictionary equality
+        # would let a changed projection type compare equal to canonical money.
+        economics_match = (_digest({key: rebuilt.get(key) for key in integrity_fields})
+                           == _digest({key: plan.get(key) for key in integrity_fields})
+                           and _digest(economic_components(rebuilt)) == _digest(economic_components(plan)))
+    except (TypeError, ValueError):
+        economics_match = False
+    if not economics_match:
         issues.append(_issue("quote_snapshot_changed", "Снимки источников, покрытие или итог корзины изменены."))
     issues.extend(rebuilt["blockers"])
+    if fx_snapshot is not None and plan.get("fx_snapshot_id") is not None:
+        try:
+            current_fx = validate_snapshot(fx_snapshot, now)
+            if current_fx["snapshot_id"] != plan["fx_snapshot_id"]:
+                issues.append(_issue("fx_snapshot_changed", "Справочный курс изменился; нужны новый preview и согласие."))
+        except FxUnavailable as exc:
+            issues.append(_issue(exc.code, exc.message))
     if current_offers is not None:
         current = {o.get("offer_id"): o for o in current_offers if isinstance(o, dict)}
         for snapshot in rebuilt["source_snapshots"]:
@@ -354,6 +402,7 @@ def validate_quote(plan: dict, state: TripState | dict, *, current_offers: list[
 def compare_plans(before: dict, after: dict) -> dict:
     def index(plan: dict) -> dict:
         return {key: {"offer_id": c["component_id"], "amount_minor": c["amount_minor"], "currency": c["currency"],
+                      "budget_amount_minor": c.get("budget_amount_minor"), "budget_currency": c.get("budget_currency"),
                       "source_type": c["source_type"], "snapshot_hash": c["snapshot_hash"]}
                 for c in plan.get("components", []) for key in c["covers"]}
     old, new = index(before), index(after)
