@@ -1,64 +1,84 @@
 # Настройка API
 
-Ключи храните в локальном `.env`. Для демонстрационного поиска они не нужны. После изменения настроек нужно пересоздать контейнер приложения:
+Редакция: 26 октября 2026. Это настройки реализованных адаптеров и переносимого backend, без личных ключей и обещаний vendor-квоты. HTTP-контракт — [FRONTEND_CONTRACT.md](FRONTEND_CONTRACT.md), карта для frontend — [FRONTEND_HANDOFF.md](FRONTEND_HANDOFF.md).
+
+## Запуск на другом компьютере
+
+Нужны доступ к репозиторию и работающий Docker с Compose. Из корня своего checkout:
+
+```bash
+docker compose up --build -d
+```
+
+Backend: `http://localhost:8080`; `/health` проверяет PostgreSQL, `/docs` и `/openapi.json` описывают API, `/debug` — временный тестовый чат. Compose поднимает свою PostgreSQL 17; отдельный сервер БД и персональные WSL-скрипты владельца не требуются. Если порт занят, задайте `APP_PORT` в своём `.env`.
+
+Для настроек скопируйте [.env.example](../.env.example) в собственный `.env`. Задайте локальный `POSTGRES_PASSWORD` до первого запуска БД и добавьте нужные ключи. `.env` игнорируется Git. Изменение этой переменной позже само по себе не ротирует пароль уже созданной БД. Ключи остаются на backend: не переносите их во frontend, Vite-переменные, URL или сообщения.
+
+После изменения env-конфигурации приложения:
 
 ```bash
 docker compose up -d app
 ```
 
+Если изменился код или зависимости, нужна пересборка `docker compose up --build -d app`. Не удаляйте volume ради применения настроек. Для другого frontend-origin задайте `CORS_ORIGINS`; обычные localhost 5173/3000 уже предусмотрены.
+
+Переносимые defaults: `LLM_PROVIDER=openrouter`, `OPENROUTER_MODEL=dots-studio/dots-3-note-preview:free`, `DEFAULT_SEARCH_MODE=DEMO`, hotel LiteAPI / flight SerpApi. Пустой ключ не имитирует NLU: без него работают формы, control, DEMO и ограниченные ответы по сохранённым фактам. Произвольный свободный диалог требует доступной модели.
+
+`configure_keys.py` и lifecycle-скрипты `after80_*` относятся к личному стенду владельца; запускать их другу для настройки своего Docker-приложения не требуется.
+
 ## Модель
 
-Основной провайдер выбирается через `LLM_PROVIDER`.
+Основной провайдер выбирается через `LLM_PROVIDER`. В таблице — поддержанные кодом ID и поля конфигурации; это не гарантия доступности модели у конкретного аккаунта.
 
 | Провайдер | Настройки |
-| --- | --- |
-| Groq | `LLM_PROVIDER=groq`, `GROQ_API_KEY`, `GROQ_MODEL=qwen/qwen3.8-27b`, `GROQ_FREE_TIER_CONFIRMED=true` |
-| OpenRouter | `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` с окончанием `:free` |
-| Gemini | `LLM_PROVIDER=gemini`, `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.8-flash`, `GEMINI_FREE_TIER_CONFIRMED=true` |
-| Cloudflare | `LLM_PROVIDER=cloudflare`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_MODEL=@cf/meta/llama-3.3-70b-instruct-fp8-fast`, `CLOUDFLARE_FREE_TIER_CONFIRMED=true` |
-| Z.ai | `LLM_PROVIDER=zai`, `ZAI_API_KEY`, `ZAI_MODEL=glm-4.7-flash`, `ZAI_FREE_TIER_CONFIRMED=true` |
+|---|---|
+| OpenRouter | `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL=dots-studio/dots-3-note-preview:free` или другой явно выбранный `:free` ID. |
+| Groq | `LLM_PROVIDER=groq`, `GROQ_API_KEY`, `GROQ_MODEL=qwen/qwen3.8-27b`, `GROQ_FREE_TIER_CONFIRMED=true`. |
+| Gemini | `LLM_PROVIDER=gemini`, `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.8-flash`, `GEMINI_FREE_TIER_CONFIRMED=true`. |
+| Cloudflare | `LLM_PROVIDER=cloudflare`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_MODEL`, `CLOUDFLARE_FREE_TIER_CONFIRMED=true`. |
+| Z.ai | `LLM_PROVIDER=zai`, `ZAI_API_KEY`, `ZAI_MODEL=glm-4.7-flash` или `glm-4.5-flash`, `ZAI_FREE_TIER_CONFIRMED=true`. |
 
-Флаги Free ставятся после проверки тарифа в кабинете провайдера. Приложение не подключает оплату. У OpenRouter дополнительно запрещены ненулевые цены и неявный выбор платной модели.
+Free-флаги ставятся человеком после проверки тарифа своего аккаунта. Приложение не включает billing. OpenRouter допускает только `:free`, отправляет ограничения `max_price=0` и отключает неявный paid fallback. `OPENROUTER_BACKUP_MODEL` по умолчанию пуст: резерв должен быть выбран явно и тоже иметь `:free` ID. Account/key/credit и неизвестные 429 переключением модели не обходятся.
 
-[Ключи Groq](https://console.groq.com/keys) · [Ключи OpenRouter](https://openrouter.ai/settings/keys) · [Ключи Gemini](https://aistudio.google.com/api-keys)
+Разрешённые профили Cloudflare: default `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, а также `@cf/google/gemma-4-26b-a4b-it` и `@cf/nvidia/nemotron-3-120b-a12b`. Для двух последних thinking отключён. Их наличие в конфигурации не означает, что фактическая бесплатная квота ещё доступна.
 
-Для дополнительных провайдеров: [регистрация и бесплатные квоты Z.ai, Cohere, Cloudflare и NVIDIA](LLM_ACCOUNTS.md). Их доступ и подключение к проекту проверяются отдельно.
+Z.ai работает через Standard API с отдельным ключом. Наблюдавшийся 1113 означает отсутствие баланса/ресурса у текущего аккаунта. Это не доказательство постоянной недоступности Z.ai или другой учётной записи. Cohere/NVIDIA пока не являются подключёнными runtime-провайдерами; запись ключа сама по себе адаптер не добавляет.
 
-В настроенной WSL-среде ключи можно ввести без отображения в терминале:
+[Ключи OpenRouter](https://openrouter.ai/settings/keys) · [Groq](https://console.groq.com/keys) · [Gemini](https://aistudio.google.com/api-keys) · [дополнительные аккаунты и условия доступа](LLM_ACCOUNTS.md)
 
-```powershell
-py scripts/configure_keys.py
-```
+## Лимиты и ошибки модели
 
-Enter пропускает отсутствующий ключ. Эта команда сохраняет ключи, но не меняет основной провайдер.
+| Настройка | Реализованный предел приложения |
+|---|---|
+| `MAX_LLM_CALLS_PER_DAY` | Default 40; для Z.ai может быть явно увеличен до 2000. Остальные обычные удалённые пулы ограничены 40. |
+| `MAX_CLOUDFLARE_LLM_CALLS_PER_DAY` | Отдельный Cloudflare-пул: default 40, максимум 2000; переменная передаётся и через Compose. |
+| `MAX_LLM_CALLS_PER_RUN` | Default 2 для Gemini/OpenRouter; Groq/Cloudflare/Z.ai ограничены одной попыткой без автоматического fallback. Readonly-ответ — не более одного вызова. |
 
-Для Cloudflare разрешены указанный default Llama3.3-70B и два явно выбираемых Free-профиля: `@cf/google/gemma-4-26b-a4b-it`, `@cf/nvidia/nemotron-3-120b-a12b`. Для новых профилей thinking отключён. Одна попытка на сообщение и отдельный предел 40 вызовов в сутки — ограничения приложения; фактическая квота Cloudflare измеряется в neurons. Автоматического переключения на другой источник нет.
+Эти числа не увеличивают vendor-квоту. Cloudflare учитывает neurons, а не количество сообщений. Для подтверждённой 3036 известен суточный сброс 00:00 UTC; для неизвестного 429 инженерное ожидание не является обещанием vendor-reset. Z.ai billing/usage без подтверждённого reset не получает выдуманное время восстановления. Не повторяйте автоматически сообщения с новыми UUID после 429: сначала прочитайте результат run и его журнал.
 
-Для Z.ai разрешены только `glm-4.7-flash` и `glm-4.5-flash` через Standard API. Одна попытка на сообщение, без fallback. Обычный дневной предел 40; для отдельного eval можно явно задать `MAX_LLM_CALLS_PER_DAY` до 2000. Это внутренний предел, не обещание такой квоты от поставщика.
+`GET /api/v1/providers/status` показывает конфигурацию, а не авторизацию, баланс или доступность модели. Фактический провайдер/модель и известный расход находятся в metadata конкретного run. Неизвестный расход не равен нулю. При отказе LLM остаются сохранённое состояние, формы и DEMO.
 
-Ключи Cohere и NVIDIA пока можно сохранить для следующих сравнений. Сохранённый ключ не означает готового runtime-адаптера. У Cloudflare единичная проба извлечения выявила пропущенное направление — полная приёмка открыта.
+## Текущий стенд владельца
 
-Бесплатные квоты ограничивают и число запросов, и объём токенов. При429 не отправляйте сообщение многократно. Поездка сохраняется; причина отказа и доступное время повтора записываются в журнал, если их сообщил поставщик.
+На момент этой редакции `http://localhost:8084` — отдельный профиль OpenRouter Dots `:free` с HYBRID, LiteAPI Sandbox, Duffel test и SerpApi Free. Туристические ключи переданы его процессу. Это не старый DEMO-only стенд 85160ef и не переносимый default. `localhost` другого компьютера означает другой сервер; фронтендер запускает свой backend по инструкции выше.
 
-При недоступной модели остаются демосценарий и структурированные команды. Свободный диалог требует работающей LLM.
-
-## Стенд 100 диалогов
-
-`localhost:8084` — отдельный зафиксированный стенд Z.ai / GLM 4.5 Flash с DEMO-каталогом. Туристические ключи в его процесс не переданы: он проверяет диалог и изменения состояния, не актуальные рыночные цены. Во время прогона код, модель и конфигурацию этого стенда не менять.
-
-Наличие туристического ключа само по себе не переключает сохранённую поездку на внешние источники. В `trip.search_policy.mode` различаются `DEMO` и `HYBRID`; после подключения данных нужно отдельно проверить выбранный режим и весь путь поиска, перепроверки и тестового оформления. Пока сквозной actual-source многогородской поиск остаётся отдельной задачей.
+Для каждого прогона отдельно фиксируются версия, профиль и состояние квот. Текущий provider проверяется через `/api/v1/providers/status` и metadata run; исторический отчёт Z.ai/DEMO не описывает более позднее развёртывание. Менять параметры чужого активного прогона не следует.
 
 ## Туристические данные
 
-| Источник | Настройки | Данные |
-| --- | --- | --- |
-| LiteAPI | `LITEAPI_API_KEY`, `LITEAPI_MODE=sandbox` | Тестовые отели и тарифы |
-| Duffel | `DUFFEL_ACCESS_TOKEN` с префиксом `duffel_test_` | Тестовые перелёты |
-| SerpApi | `SERPAPI_API_KEY`, `SERPAPI_FREE_TIER_CONFIRMED=true` | Цены из поиска, без гарантии покупки |
-| Open-Meteo | Ключ не нужен | Прогноз погоды |
+| Источник | Настройки | Что реально означает ответ |
+|---|---|---|
+| LiteAPI | `LITEAPI_API_KEY` с префиксом `sand_`/`sandbox_`, `LITEAPI_MODE=sandbox` | Тестовые гостиницы и тарифы SANDBOX. |
+| Duffel | `DUFFEL_ACCESS_TOKEN` с префиксом `duffel_test_` | Тестовые авиационные предложения. Валюта ответа может отличаться от запрошенной. |
+| SerpApi | `SERPAPI_API_KEY`, `SERPAPI_FREE_TIER_CONFIRMED=true` | Поисковые цены LIVE_INDICATIVE; multiroom allocation этим источником не подтверждается. |
+| Open-Meteo | Ключ не нужен | Прогноз на ближайшие дни с attribution; не гарантия погоды на даты будущей поездки. |
 
-Для Hotelbeds, RateHawk и Travelpayouts есть адаптеры, но доступ к аккаунтам пока не проверен. Настройки для них перечислены в `.env.example`.
+Hotelbeds, RateHawk и Travelpayouts имеют ограниченные read-only адаптеры; доступ к их аккаунтам и production-покрытие не подтверждены. Не считайте пустое поле в `.env.example` подключённым источником.
 
-Каждое предложение хранит источник, время получения и тип данных: `DEMO`, `SANDBOX`, `LIVE_INDICATIVE` или `LIVE_BOOKABLE`. Смешанная поездка не становится подтверждённой рыночной корзиной только из-за успешного поиска.
+Ключ сам по себе не меняет существующую поездку. Для общего поиска задаётся `trip.search_policy.mode=HYBRID`, выбранные providers, `guest_nationality` для LiteAPI и явный `demo_fallback`; затем используется `POST /api/v1/sessions/{id}/search`. `/live/search` возвращает отдельные компоненты, а не целую автоматически проверенную корзину. Default-параметры сервера применяются только к новым сессиям без явной `initial_trip.search_policy`.
 
-Перед тестовым оформлением цена и наличие перепроверяются. Настоящие заказы у поставщиков и платежи приложение не создаёт.
+Проверен ограниченный смешанный путь: два проживания SANDBOX с отдельными семьями/четырьмя номерами, перепроверка и один идемпотентный `BOOKED_DEMO`; часть транспорта остаётся DEMO. Это не полностью live/bookable-поездка и не приёмка всех языковых диалогов.
+
+Предложения различают `DEMO`, `SANDBOX`, `LIVE_INDICATIVE` и нормализованный source type; название API не подтверждает наличие мест. Preview обновляет доступные внешние компоненты, но sandbox rate-refresh и indicative search-refresh не равны supplier prebook. Сборы, распределение, вместимость и доступность читаются по фактическим флагам ответа. Подтверждение создаёт только локальный тестовый заказ; реальной оплаты и брони нет.
+
+Валютный переключатель, проверяемая FX-конвертация и отдельный photo API ещё не реализованы. Поле `Budget.currency` само по себе не создаёт сквозной RUB/USD/EUR-поиск. DEMO-каталог рублёвый; несовместимая валюта поставщика отклоняется без выдуманного курса. SSE отсутствует, результаты и события читаются JSON-polling.

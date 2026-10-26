@@ -34,6 +34,8 @@ LLM_PROFILES = {
         "evidence": "docs/verification/after80-backend-20261026.json"},
     "cloudflare-nemotron": {"provider": "cloudflare", "model": "@cf/nvidia/nemotron-3-120b-a12b",
         "manager": "after80_cf_backend.py", "evidence": "docs/verification/after80-cf-backend-20261026.json"},
+    "openrouter-dots": {"provider": "openrouter", "model": "dots-studio/dots-3-note-preview:free",
+        "manager": "after80_router_backend.py", "evidence": "docs/verification/after80-router-backend-20261026.json"},
 }
 TOOL_RESERVATION = 16  # The verified TripSearch per-run bound, not vendor HTTP requests.
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
@@ -287,8 +289,13 @@ def check_profile(health, status, evidence, llm_profile="zai"):
     require(health.get("database") == "ready" and health.get("supplier_booking") is False, "backend_health_or_booking_guard_failed")
     require(status.get("_runtime") == {"llm_provider": profile["provider"], "model": profile["model"]}, "fixed_llm_runtime_profile_mismatch")
     selected = status.get(profile["provider"], {})
-    require(selected.get("configured") is True and selected.get("free_tier_confirmed") is True
-        and selected.get("paid_fallback") is False, "selected_free_llm_profile_not_confirmed")
+    require(selected.get("configured") is True and selected.get("paid_fallback") is False,
+        "selected_free_llm_profile_not_confirmed")
+    if llm_profile == "openrouter-dots":
+        require(selected.get("model") == profile["model"] and profile["model"].endswith(":free")
+            and selected.get("backup_model") == "", "fixed_router_free_no_backup_required")
+    else:
+        require(selected.get("free_tier_confirmed") is True, "selected_free_llm_profile_not_confirmed")
     require(not any(value.get("paid_fallback") is True for value in status.values()), "paid_fallback_forbidden")
     require(status.get("liteapi", {}).get("configured") is True and status["liteapi"].get("mode") == "sandbox"
         and status.get("duffel", {}).get("configured") is True and status["duffel"].get("mode") == "sandbox"
@@ -312,6 +319,9 @@ def check_profile(health, status, evidence, llm_profile="zai"):
     if llm_profile == "cloudflare-nemotron":
         require(evidence.get("limits", {}).get("cloudflare_daily_engineering_bound") == 2000,
             "explicit_cf_evaluation_limit_required")
+    elif llm_profile == "openrouter-dots":
+        require(evidence.get("limits", {}).get("daily_engineering_bound") == 40,
+            "router_shared40_application_limit_required")
 
 
 def code_manifest():

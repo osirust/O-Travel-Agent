@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-26",
+  "status": "STOPPED_AFTER_HTTP429_BUSINESS1113_NO_RETRY",
+  "scope": "Actual full extraction context: budget-only PASS, next condition removal blocked by upstream billing/resource response; thirdprobe notsent",
+  "source_sha": "0aba3a65cef49e3a434c6a4ae4e8ed610733aee2",
+  "source_manifest_sha256": "5b5097ac3525644d602a1d39bd9234a5e4b32cb1c802579b809618f37979261f",
+  "actual_model_calls": 2,
+  "actual_http_requests": 2,
+  "tools": 0,
+  "orders": 0,
+  "automatic_retries": 0,
+  "native_identity_unchanged": true,
+  "private_evidence_sha256": "ff851b7826fc67784f2b7afceda7a80772cf8278733db5b742fcf5fc9f2add44",
+  "cases": [
+    {
+      "id": "ZEX3-01",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "completed": true,
+        "one_model_call": true,
+        "one_http_request": true,
+        "zero_tools": true,
+        "zero_orders": true,
+        "extraction_role_not_readonly": true,
+        "actual_context_constraint_keys": true,
+        "actual_context_preference_keys": true,
+        "actual_guide_semantic_key": true,
+        "configured_values_absent": true,
+        "budget_only_correct": true,
+        "other_domain_fields_exact": true
+      },
+      "elapsed_ms": 6727,
+      "request_proofs": [
+        {
+          "request_body_sha256": "08f3decc9d2a3e3ce64b36d005da1f7487018c125424ac745b8c461f1f3a5a94",
+          "request_bytes": 25352,
+          "model": "glm-4.5-flash",
+          "trip_constraint_rows": [
+            {
+              "key": "breakfast",
+              "value": true,
+              "stay_id": null,
+              "room_id": null
+            },
+            {
+              "key": "refundable",
+              "value": true,
+              "stay_id": null,
+              "room_id": null
+            }
+          ],
+          "trip_preference_rows": [
+            {
+              "key": "departure_time",
+              "value": "early_morning"
+            },
+            {
+              "key": "price_priority",
+              "value": "lowest_total"
+            }
+          ],
+          "operation_guide_clear_constraint_has_semantic_key": true,
+          "configured_values_absent": true,
+          "is_extraction_trip_context": true
+        }
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "error": null,
+          "usage": {
+            "completion_tokens": 127,
+            "prompt_tokens": 6364,
+            "total_tokens": 6491
+          }
+        }
+      ],
+      "provider_classification": null,
+      "state_preserved_on_failure": null
+    },
+    {
+      "id": "ZEX3-02",
+      "status": "FAIL",
+      "failed_checks": [
+        "completed",
+        "clear_refundable_only"
+      ],
+      "checks": {
+        "completed": false,
+        "one_model_call": true,
+        "one_http_request": true,
+        "zero_tools": true,
+        "zero_orders": true,
+        "extraction_role_not_readonly": true,
+        "actual_context_constraint_keys": true,
+        "actual_context_preference_keys": true,
+        "actual_guide_semantic_key": true,
+        "configured_values_absent": true,
+        "clear_refundable_only": false,
+        "other_domain_fields_exact": true
+      },
+      "elapsed_ms": 397,
+      "request_proofs": [
+        {
+          "request_body_sha256": "57e643d32e68a65162ce50f50d8f7d3f07fb8ef3f38a6a0b540eee5f2ea3a068",
+          "request_bytes": 25468,
+          "model": "glm-4.5-flash",
+          "trip_constraint_rows": [
+            {
+              "key": "breakfast",
+              "value": true,
+              "stay_id": null,
+              "room_id": null
+            },
+            {
+              "key": "refundable",
+              "value": true,
+              "stay_id": null,
+              "room_id": null
+            }
+          ],
+          "trip_preference_rows": [
+            {
+              "key": "departure_time",
+              "value": "early_morning"
+            },
+            {
+              "key": "price_priority",
+              "value": "lowest_total"
+            }
+          ],
+          "operation_guide_clear_constraint_has_semantic_key": true,
+          "configured_values_absent": true,
+          "is_extraction_trip_context": true
+        }
+      ],
+      "responses": [
+        {
+          "status": 429,
+          "error": {
+            "code": "1113",
+            "message": "Insufficient balance or no resource package. Please recharge."
+          },
+          "usage": null
+        }
+      ],
+      "provider_classification": {
+        "code": "RATE_LIMITED",
+        "type": "ProviderError",
+        "message": "Провайдер ограничил запросы (HTTP 429).",
+        "details": {
+          "http_status": 429,
+          "limit_source": "unknown",
+          "business_code": 1113,
+          "failure_kind": "billing",
+          "daily_quota_confirmed": false,
+          "reset_basis": null,
+          "engineering_wait_seconds": null,
+          "automatic_retry": false,
+          "requires_explicit_new_request": true
+        }
+      },
+      "state_preserved_on_failure": true
+    }
+  ],
+  "third_probe_status": "NOT_SENT_STOP_ON429",
+  "conclusion": "Semantic key fields and guide keys are present in actual extraction wire context, configured values absent. One6364-input-token extraction succeeded. Next upstream429code1113 says insufficient balance or no resource package; daily quota/reset were not established. No billing/account action or automatic retry."
+}

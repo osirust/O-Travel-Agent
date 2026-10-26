@@ -30,8 +30,11 @@ def metadata(profile='zai'):
         'open_meteo': {'configured': True, 'requires_key': False}})
     evidence = {'manager': selected['manager'], 'status': 'RUNNING', 'source': '/home/aegml/projects/otravel-after80-20261026',
         'database': 'otravel_zai_eval', 'url': runner.BASE, 'loaded_manifest': {'matches_current': True},
-        'limits': {'calls_per_run': 1, 'local_calls': 0, 'fallback': False, 'cloudflare_daily_engineering_bound': 2000},
+        'limits': {'calls_per_run': 1, 'local_calls': 0, 'fallback': False, 'cloudflare_daily_engineering_bound': 2000, 'daily_engineering_bound': 40},
         'current_source_manifest': {'sha256': 'synthetic-manifest', 'files': [{'path': 'otravel/orchestrator.py', 'sha256': 'synthetic-orchestrator'}]}}
+    if profile == 'openrouter-dots':
+        status['openrouter'].pop('free_tier_confirmed')
+        status['openrouter'].update(model=selected['model'], backup_model='')
     return health, status, evidence
 
 
@@ -47,7 +50,7 @@ def test_default_zai_and_explicit_cf_profiles_are_frozen_and_not_interchangeable
     assert cf['synthetic_initial_trip'] == zai['synthetic_initial_trip']
 
 
-@pytest.mark.parametrize('profile', ['zai', 'cloudflare-nemotron'])
+@pytest.mark.parametrize('profile', ['zai', 'cloudflare-nemotron', 'openrouter-dots'])
 def test_exact_profile_metadata_passes_and_dry_run_does_not_read_runtime_or_http(profile, monkeypatch, capsys):
     runner.check_profile(*metadata(profile), profile)
     monkeypatch.setattr(runner, 'load_source', rows)
@@ -112,8 +115,28 @@ def test_default_zai_profile_does_not_implicitly_switch_to_cf():
         runner.check_profile(*metadata('cloudflare-nemotron'))
 
 
+def test_router_fixed_free_profile_plan_and_exact_metadata_without_invented_free_flag():
+    frozen = runner.plan(rows(), llm_profile='openrouter-dots')
+    assert frozen['runtime_evidence'] == 'docs/verification/after80-router-backend-20261026.json'
+    assert frozen['expected_runtime'] == {'llm_provider': 'openrouter', 'model': 'dots-studio/dots-3-note-preview:free'}
+    assert frozen['base_url'] == 'http://127.0.0.1:8084'
+    runner.check_profile(*metadata('openrouter-dots'), 'openrouter-dots')
+
+
+@pytest.mark.parametrize('bad', ['paid_model', 'backup', 'cf_key', 'evidence', 'daily2000'])
+def test_router_profile_cannot_gain_paid_backup_other_provider_or_larger_shared_pool(bad):
+    health, status, evidence = metadata('openrouter-dots')
+    if bad == 'paid_model': status['openrouter']['model'] = 'paid/model'
+    elif bad == 'backup': status['openrouter']['backup_model'] = 'another:free'
+    elif bad == 'cf_key': status['cloudflare']['configured'] = True
+    elif bad == 'evidence': evidence['manager'] = 'after80_cf_backend.py'
+    elif bad == 'daily2000': evidence['limits']['daily_engineering_bound'] = 2000
+    with pytest.raises(ValueError): runner.check_profile(health, status, evidence, 'openrouter-dots')
+
+
 @pytest.mark.skipif(os.name != 'posix', reason='Private actual resume output is POSIX-only by contract')
-def test_resume_zai_plan_cannot_switch_to_cf_before_any_request_or_case(monkeypatch, tmp_path):
+@pytest.mark.parametrize('target_profile', ['cloudflare-nemotron', 'openrouter-dots'])
+def test_resume_zai_plan_cannot_switch_to_cf_before_any_request_or_case(monkeypatch, tmp_path, target_profile):
     saved = {'source_sha256': runner.SOURCE_SHA, 'plan': runner.plan(rows()), 'sessions': {}}
     vault = tmp_path / 'resume-vault.json'
     vault.write_text(json.dumps(saved)); vault.chmod(0o600)
@@ -122,7 +145,7 @@ def test_resume_zai_plan_cannot_switch_to_cf_before_any_request_or_case(monkeypa
     monkeypatch.setattr(runner, 'HTTP', forbidden)
     monkeypatch.setattr(runner, 'Replay', forbidden)
     with pytest.raises(ValueError, match='resume_source_or_plan_mismatch'):
-        runner.main(['--run', '--llm-profile', 'cloudflare-nemotron', '--resume', str(vault)])
+        runner.main(['--run', '--llm-profile', target_profile, '--resume', str(vault)])
     forbidden.assert_not_called()
 
 
