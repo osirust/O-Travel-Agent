@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ArrowRight, Check, LoaderCircle, Plus, Trash2 } from 'lucide-react';
+import { ArrowRight, LoaderCircle, Plus, Trash2 } from 'lucide-react';
 import { CITIES, uuid } from '../lib/travel.js';
 import { buildTripOperations, createTripDraft } from '../lib/tripDraft.js';
 import { Modal } from './Ui.jsx';
 
-export default function TripEditor({ snapshot, providers, onSave, onClose, initialTab = 'route' }) {
+export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'route' }) {
   const [draft, setDraft] = useState(() => createTripDraft(snapshot?.trip));
   const [tab, setTab] = useState(initialTab);
   const [error, setError] = useState('');
@@ -28,7 +28,7 @@ export default function TripEditor({ snapshot, providers, onSave, onClose, initi
   return <Modal title="Соберём вашу поездку" subtitle="Добавляйте только то, что уже знаете. Параметры можно менять в любой момент." onClose={onClose} wide>
     <form onSubmit={save}>
       <div className="editor-tabs" role="tablist" aria-label="Параметры поездки">
-        {[['route', 'Маршрут'], ['party', 'Гости и номера'], ['budget', 'Бюджет и условия'], ['sources', 'Источники']].map(([id, title]) => <button key={id} type="button" role="tab" aria-selected={tab === id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>{title}</button>)}
+        {[['route', 'Маршрут'], ['party', 'Гости и номера'], ['budget', 'Бюджет и условия']].map(([id, title]) => <button key={id} type="button" role="tab" aria-selected={tab === id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>{title}</button>)}
       </div>
       <div className="editor-content">
         {tab === 'route' && <>

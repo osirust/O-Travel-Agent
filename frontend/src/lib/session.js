@@ -8,6 +8,12 @@ const storage = {
 const origin = typeof location === 'undefined' ? 'test' : location.origin;
 const KEY = `otravel.studio.v1:${origin}`;
 
+export function friendlyError(message) {
+  if (!message) return 'Что-то пошло не так. Попробуйте ещё раз.';
+  if (/liteapi|duffel|serpapi|travelpayouts|ratehawk|hotelbeds|провайдер|backend|api\b|http\s*\d/i.test(message)) return 'Не удалось получить предложения. Попробуйте ещё раз или измените параметры поездки.';
+  return message;
+}
+
 export class TravelSession {
   constructor(api = new TravelApi(), persistence = storage) {
     this.api = api; this.persistence = persistence;
@@ -50,7 +56,7 @@ export class TravelSession {
     this.opening = (async () => {
       if (!fresh && this.access) { await this.sync(); return; }
       const snapshot = await this.api.request('/api/v1/sessions', { method: 'POST', body: {} });
-      if (!snapshot.session_id || !snapshot.session_token) throw new Error('Backend не вернул доступ к новой поездке.');
+      if (!snapshot.session_id || !snapshot.session_token) throw new Error('Не удалось создать поездку. Попробуйте ещё раз.');
       clearTimeout(this.timer); this.mediaController?.abort(); this.runs.clear(); this.cursor = 0;
       this.access = { session_id: snapshot.session_id, session_token: snapshot.session_token };
       this.deliveries = []; this.confirmDelivery = null; this.liveKinds = {}; this.persist();
@@ -103,7 +109,7 @@ export class TravelSession {
       const lastRun = this.runs.get(lastRunId);
       if (lastRun && !this.reported?.has(lastRun.run_id) && !isPending(lastRun) && (lastRun.error || ['conflict', 'interrupted', 'failed'].includes(lastRun.status))) {
         this.reported ||= new Set(); this.reported.add(lastRun.run_id);
-        notice = { type: 'error', text: lastRun.error?.message || 'Обработка не завершена. Поездка сохранена — проверьте её параметры.' };
+        notice = { type: 'error', text: friendlyError(lastRun.error?.message || 'Не удалось закончить поиск. Проверьте параметры поездки.') };
       }
       const orders = orderData.orders || [];
       if (this.confirmDelivery && orders.some(order => order.quote_id === this.confirmDelivery.quote_id)) this.confirmDelivery = null;
@@ -222,7 +228,7 @@ export class TravelSession {
     try {
       await this.request(this.path('/checkout/confirm'), { method: 'POST', body: this.confirmDelivery });
       this.confirmDelivery = null; this.journal(); this.patch({ quote: null }); await this.sync();
-      this.notice('Тестовое оформление завершено. Реальная бронь не создана.', 'success');
+      this.notice('Пример поездки сохранён. Бронирование не создано.', 'success');
     } catch (error) {
       if (error.status >= 400 && error.status < 500) { this.confirmDelivery = null; this.journal(); this.patch({ quote: null }); }
       this.handleError(error); await this.sync().catch(() => {});
@@ -230,7 +236,7 @@ export class TravelSession {
   }
   handleError(error) {
     if (!error.status) this.patch({ online: false });
-    this.notice(error.message || 'Не удалось выполнить действие. Поездка сохранена.');
+    this.notice(friendlyError(error.message || 'Не удалось выполнить действие. Поездка сохранена.'));
   }
   destroy() { clearTimeout(this.timer); this.mediaController?.abort(); }
 }

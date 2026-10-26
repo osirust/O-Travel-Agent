@@ -7,7 +7,7 @@ export function Logo({ onClick, compact = false }) {
 }
 
 export function SourceBadge({ source, small = false }) {
-  return <span className={`source-badge source-${source?.toLowerCase() || 'unknown'} ${small ? 'small' : ''}`} title={source === 'DEMO' ? 'Вымышленные цена и наличие' : source === 'SANDBOX' ? 'Тестовая среда поставщика, реальная цена не подтверждена' : source === 'LIVE_INDICATIVE' ? 'Наличие и возможность бронирования не подтверждены' : undefined}>{SOURCE_LABELS[source] || 'Источник уточняется'}</span>;
+  return <span className={`source-badge source-${source?.toLowerCase() || 'unknown'} ${small ? 'small' : ''}`} title={source === 'DEMO' || source === 'SANDBOX' ? 'Это пример. Цена и наличие не подтверждены.' : source === 'LIVE_INDICATIVE' ? 'Наличие мест и окончательную цену нужно уточнить.' : undefined}>{SOURCE_LABELS[source] || 'Условия уточняются'}</span>;
 }
 
 export function TravelImage({ city, media, className = '', caption = true, eager = false }) {
@@ -18,7 +18,7 @@ export function TravelImage({ city, media, className = '', caption = true, eager
   const showingActual = valid && src === actual?.url;
   return <div className={`travel-image ${className}`}>
     {valid ? <img src={src} alt={showingActual ? actual.alt || 'Фото отеля' : `${city || 'Путешествие'} — иллюстрация направления`} referrerPolicy="no-referrer" loading={eager ? 'eager' : 'lazy'} onError={() => setFailedSources(sources => [...sources, src])} /> : <div className="image-placeholder"><ImageOff size={30} strokeWidth={1.3} /><span>{city || 'Ваше путешествие'}</span></div>}
-    {caption && <span className="image-caption">{showingActual ? `Фото отеля · ${actual.source === 'SERPAPI' ? 'Google Hotels' : 'LiteAPI'}` : valid ? 'Иллюстрация направления' : 'Фото пока недоступно'}</span>}
+    {caption && <span className="image-caption">{showingActual ? 'Фото отеля' : valid ? 'Иллюстрация направления' : 'Фото пока недоступно'}</span>}
   </div>;
 }
 

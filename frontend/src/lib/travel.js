@@ -1,7 +1,7 @@
 export const CITIES = ['Москва', 'Санкт-Петербург', 'Сочи', 'Казань', 'Стамбул', 'Анталья', 'Дубай'];
 export const SOURCE_LABELS = {
-  DEMO: 'Демоданные', SANDBOX: 'Тестовые данные', LIVE_INDICATIVE: 'Ориентировочная цена',
-  LIVE_BOOKABLE: 'Данные поставщика', MIXED: 'Смешанный расчёт', INCOMPLETE: 'Неполный расчёт',
+  DEMO: 'Пример расчёта', SANDBOX: 'Пример расчёта', LIVE_INDICATIVE: 'Цена ориентировочная',
+  LIVE_BOOKABLE: 'Цена предложения', MIXED: 'Расчёт с примерами', INCOMPLETE: 'Расчёт не завершён',
 };
 export const isPending = run => ['pending', 'running'].includes(run?.status);
 export const payloadOf = run => run?.result?.result || {};
@@ -84,7 +84,7 @@ export function componentRequest(trip, kind, provider = 'serpapi') {
     return { kind, provider: 'serpapi', demo_fallback: false, request: { currency, slices, adults: trip.travelers.filter(person => person.type === 'adult').length, children: trip.travelers.filter(person => person.type === 'child').length } };
   }
   const stay = trip.stays[0];
-  if (!stay.check_in || !stay.check_out || !stay.city || !stay.rooms.length || (provider === 'serpapi' && stay.rooms.length !== 1)) throw new Error('Укажите город, даты и распределение гостей. SerpApi поддерживает поиск одного номера.');
+  if (!stay.check_in || !stay.check_out || !stay.city || !stay.rooms.length || (provider === 'serpapi' && stay.rooms.length !== 1)) throw new Error('Укажите город, даты и гостей. Пока можно искать отели только для одного номера.');
   const guests = trip.travelers.filter(person => stay.rooms.some(room => room.traveler_ids.includes(person.id)));
   if (guests.some(person => person.type === 'child' && person.age == null)) throw new Error('Укажите возраст детей для поиска отелей.');
   const occupancies = stay.rooms.map(room => { const people = guests.filter(person => room.traveler_ids.includes(person.id)); return { adults: people.filter(person => person.type === 'adult').length, children: people.filter(person => person.type === 'child').map(person => person.age) }; });

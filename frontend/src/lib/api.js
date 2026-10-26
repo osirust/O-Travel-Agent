@@ -18,13 +18,13 @@ export class TravelApi {
       });
       let data;
       try { data = await response.json(); }
-      catch { throw new ApiError('Сервер вернул неожиданный ответ. Проверьте подключение к backend.', response.status, 'invalid_response'); }
+      catch { throw new ApiError('Не удалось получить ответ. Попробуйте ещё раз.', response.status, 'invalid_response'); }
       if (!response.ok) throw new ApiError(data.error?.message || `Запрос не выполнен (${response.status}).`, response.status, data.error?.code);
       return data;
     } catch (error) {
       if (error instanceof ApiError) throw error;
       if (signal?.aborted) throw error;
-      throw new ApiError(error.name === 'AbortError' ? 'Ожидание затянулось. Проверьте результат сохранённого запроса.' : 'Не удалось связаться с сервером. Введённые данные сохранены.');
+      throw new ApiError(error.name === 'AbortError' ? 'Ожидание затянулось. Проверьте результат запроса.' : 'Не удалось подключиться. Ваши данные сохранены.');
     } finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); }
   }
 }
