@@ -27,7 +27,7 @@ export default function App() {
   useEffect(() => { if (screen === 'studio') void session.open(); }, [screen]);
   async function start(city) { location.hash = 'studio'; setScreen('studio'); if (city) setDraft(`Хочу в ${city}. Помоги спланировать поездку.`); window.scrollTo(0, 0); await session.open(); }
   function home() { location.hash = ''; setScreen('home'); window.scrollTo(0, 0); }
-  const edit = async tab => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor(tab || 'route'); };
+  const edit = async (tab, suggestedCity = null) => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor({ tab: tab || 'route', suggestedCity }); };
   const selected = data.plans.find(plan => plan.plan_id === data.selectedId), trip = data.snapshot?.trip;
   async function send() { if (await session.send(draft.trim())) setDraft(''); }
   async function save(operations, search) { const success = operations.length ? await session.commands(operations, search) : search ? await session.search() : true; if (success && search) setMobileTab('options'); return success; }
@@ -46,7 +46,7 @@ export default function App() {
       <div className="workspace-bottom-note"><ShieldCheck size={14} />Ваша поездка сохраняется. Цены могут измениться.</div>
     </section><TripSummary data={data} onEdit={edit} onPreview={() => session.preview()} onSearch={() => session.liveSearch(offerTab)} onDetails={setDetails} /></main>
     <nav className="mobile-navigation" aria-label="Разделы поездки">{[['agent', MessageCircle, 'Агент'], ['options', Compass, 'Варианты'], ['trip', Plane, 'Поездка']].map(([id, Icon, title]) => <button key={id} className={mobileTab === id ? 'active' : ''} onClick={() => setMobileTab(id)}><Icon size={20} /><span>{title}</span>{id === 'options' && data.plans.length > 0 && <i />}</button>)}</nav>
-    {editor && <TripEditor snapshot={data.snapshot} initialTab={editor} onSave={save} onClose={() => setEditor(null)} />}
+    {editor && <TripEditor snapshot={data.snapshot} initialTab={editor.tab} suggestedCity={editor.suggestedCity} onSave={save} onClose={() => setEditor(null)} />}
     {data.quote && <Checkout key={`${data.quote.quote_id}:${data.quote.quote_version}`} quote={data.quote} previousPlan={selected} confirming={data.confirming} onClose={() => { if (!data.confirming) session.closeQuote(); }} onConfirm={() => session.confirm()} />}
     {details && <Modal title="Состав и условия" onClose={() => setDetails(null)} wide><PlanDetails plan={details} trip={trip} /></Modal>}
     {newConfirm && <Modal title="Начнём новую поездку?" subtitle="Откроется новый пустой маршрут. Текущая поездка останется сохранённой, но в этом браузере откроется новая." onClose={() => setNewConfirm(false)}><footer className="modal-footer"><button className="secondary-button" onClick={() => setNewConfirm(false)}>Вернуться</button><button className="primary-button" onClick={async () => { if (await session.open({ fresh: true })) { setNewConfirm(false); setDraft(''); setMobileTab('agent'); } }}>Создать поездку <Plus size={16} /></button></footer></Modal>}

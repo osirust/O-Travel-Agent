@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { checkoutAllowed, componentRequest, currentPlans, minorUnits, money, safeHotelMedia } from '../src/lib/travel.js';
+import { checkoutAllowed, componentRequest, currentPlans, mentionedCity, minorUnits, money, safeHotelMedia } from '../src/lib/travel.js';
 import { TravelApi, ApiError } from '../src/lib/api.js';
 import { friendlyError, TravelSession } from '../src/lib/session.js';
 import { buildTripOperations, createTripDraft } from '../src/lib/tripDraft.js';
@@ -10,6 +10,14 @@ const emptyTrip = { origin: null, travelers: [], groups: [], stays: [], budget: 
 test('provider errors are explained without implementation jargon', () => {
   assert.match(friendlyError('LiteAPI не подтвердил доступ. Проверьте ключ.'), /Не удалось получить предложения/);
   assert.equal(friendlyError('Укажите даты поездки.'), 'Укажите даты поездки.');
+});
+
+test('city suggestions require one explicitly mentioned supported city', () => {
+  assert.equal(mentionedCity('Хочу в Анталью. Помоги спланировать поездку.'), 'Анталья');
+  assert.equal(mentionedCity('Хочу в Анталья.'), 'Анталья');
+  assert.equal(mentionedCity('Из Казани в Анталью'), null);
+  assert.equal(mentionedCity('Хочу к морю'), null);
+  assert.equal(mentionedCity('Стамбулец'), null);
 });
 
 test('saving a partial draft does not invent travelers, places or dates', () => {

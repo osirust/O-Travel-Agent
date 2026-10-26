@@ -11,6 +11,23 @@ export const offerStayId = offer => offer?.details?.binding?.stay_id || offer?.c
 export const offerName = offer => offer?.name || offer?.details?.hotel_name || offer?.description || (offerKind(offer) === 'hotel' ? 'Проживание' : 'Транспорт');
 export const uuid = () => crypto.randomUUID();
 
+// Only offer a suggestion when one supported city is explicitly named.
+// This never changes the itinerary; the traveler chooses what to do in the form.
+export function mentionedCity(text) {
+  if (typeof text !== 'string') return null;
+  const cities = [
+    ['Москва', /(?:^|[^а-яё])москв(?:а|у|е|ы|ой|ою)?(?=$|[^а-яё])/iu],
+    ['Санкт-Петербург', /(?:^|[^а-яё])(?:санкт[ -]?петербург(?:а|е|у)?|питер(?:а|е|у)?)(?=$|[^а-яё])/iu],
+    ['Сочи', /(?:^|[^а-яё])сочи(?=$|[^а-яё])/iu],
+    ['Казань', /(?:^|[^а-яё])казан(?:ь|и|ью)(?=$|[^а-яё])/iu],
+    ['Стамбул', /(?:^|[^а-яё])стамбул(?:а|е|у)?(?=$|[^а-яё])/iu],
+    ['Анталья', /(?:^|[^а-яё])анталь(?:я|ю|е|и|ей)(?=$|[^а-яё])/iu],
+    ['Дубай', /(?:^|[^а-яё])дуба(?:й|я|е|ю)(?=$|[^а-яё])/iu],
+  ];
+  const matches = cities.filter(([, pattern]) => pattern.test(text));
+  return matches.length === 1 ? matches[0][0] : null;
+}
+
 export function money(amount, currency = 'RUB') {
   if (!Number.isSafeInteger(amount)) return 'Уточняем стоимость';
   try {

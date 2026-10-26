@@ -4,7 +4,7 @@ import { CITIES, uuid } from '../lib/travel.js';
 import { buildTripOperations, createTripDraft } from '../lib/tripDraft.js';
 import { Modal } from './Ui.jsx';
 
-export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'route' }) {
+export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'route', suggestedCity = null }) {
   const [draft, setDraft] = useState(() => createTripDraft(snapshot?.trip));
   const [tab, setTab] = useState(initialTab);
   const [error, setError] = useState('');
@@ -32,6 +32,7 @@ export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'ro
       </div>
       <div className="editor-content">
         {tab === 'route' && <>
+          {suggestedCity && !draft.stays.some(stay => stay.city === suggestedCity) && <div className="city-suggestion"><div><strong>Вы упомянули город: {suggestedCity}</strong><p>Выберите, как изменить маршрут. Сохраните изменения, когда всё будет готово.</p></div><div className="city-suggestion-actions">{draft.stays.length === 1 && <button type="button" className="secondary-button" onClick={() => updateStay(draft.stays[0].id, { city: suggestedCity, hotel_id: null })}>Заменить {draft.stays[0].city || 'город'}</button>}<button type="button" className="secondary-button" disabled={draft.stays.length >= 4} onClick={() => update('stays', [...draft.stays, { id: `stay-${uuid()}`, city: suggestedCity, check_in: null, check_out: null, rooms: [], hotel_id: null }])}>Добавить город</button></div></div>}
           <label>Город отправления<input list="cities" placeholder="Например, Казань" value={draft.origin} onChange={e => update('origin', e.target.value)} /></label>
           <div className="stays-editor">{draft.stays.map((stay, index) => <div className="stay-editor" key={stay.id}>
             <div className="section-title"><span className="step-number">{index + 1}</span><h3>Остановка {index + 1}</h3><button className="icon-button" type="button" onClick={() => update('stays', draft.stays.filter(item => item.id !== stay.id))} aria-label={`Удалить остановку ${index + 1}`}><Trash2 size={17} /></button></div>
