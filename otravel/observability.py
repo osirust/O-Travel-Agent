@@ -86,6 +86,48 @@ def groq_rate_facts(headers: Mapping, body: Any) -> dict:
         retry = result.get("tokens_reset_seconds" if result["quota_kind"] == "tokens" else "requests_reset_seconds")
     if retry is not None:
         result["retry_after_seconds"] = retry
+    # Error counters are diagnostics only. The documented token window must
+    # be explicit; neither arbitrary numbers nor an organisation/model name
+    # infer a quota, reset time, retry policy, or provider allowance.
+    message = error.get("message") if isinstance(error, Mapping) else None
+    if isinstance(message, str) and len(message) <= 4096 and error.get("type") != "requests":
+        windows = list(re.finditer(r"\btokens(?:\s+per\s+(minute|day))?\s*\(\s*(TPM|TPD)\s*\)\s*:",
+                                  message, re.IGNORECASE))
+        if len(windows) == 1:
+            window = windows[0]
+            period, unit = window[1], window[2].upper()
+            consistent_window = period is None or period.casefold() == {"TPM": "minute", "TPD": "day"}[unit]
+            values = {}
+            valid = consistent_window
+            counters = message[window.end():]
+            fields = list(re.finditer(r"\b(Limit|Requested|Used)\b(?:\s*:\s*|\s+)([^\s,;]+)",
+                                      counters, re.IGNORECASE))
+            if len(fields) != len(re.findall(r"\b(?:Limit|Requested|Used)\b", counters, re.IGNORECASE)):
+                valid = False
+            for match in fields:
+                label, raw = match[1].casefold(), match[2]
+                if match.end() + 1 < len(counters) and counters[match.end()] in {",", ";"} and counters[match.end() + 1].isdigit():
+                    valid = False
+                    break
+                if re.match(r"\s+[0-9]", counters[match.end():]):
+                    valid = False
+                    break
+                # A sentence-ending dot is punctuation; fractional/exponent/
+                # signed values still fail the full bounded integer match.
+                raw = raw.removesuffix(".")
+                if re.fullmatch(r"[0-9]{1,12}", raw) is None:
+                    valid = False
+                    break
+                number = int(raw)
+                if label in values and values[label] != number:
+                    valid = False
+                    break
+                values[label] = number
+            if valid and {"limit", "requested"}.issubset(values):
+                result.update(token_window=unit, token_limit_from_error=values["limit"],
+                              tokens_requested_from_error=values["requested"])
+                if "used" in values:
+                    result["tokens_used_from_error"] = values["used"]
     return result
 
 

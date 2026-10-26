@@ -123,6 +123,7 @@ def environment(engine, database, profile):
         'MAX_CLOUDFLARE_LLM_CALLS_PER_DAY': '2000', 'MAX_LLM_CALLS_PER_DAY': '2000',
         'MAX_LLM_CALLS_PER_RUN': '1', 'MAX_LOCAL_LLM_CALLS_PER_DAY': '0',
         'LLM_REQUEST_TIMEOUT': '45', 'LLM_MAX_OUTPUT_TOKENS': '2048', 'LLM_REASONING_ENABLED': 'false',
+        'REFERENCE_FX_ENABLED': 'true',
         'OPENROUTER_BACKUP_MODEL': '', 'GEMINI_FREE_TIER_CONFIRMED': 'false', 'GROQ_FREE_TIER_CONFIRMED': 'false',
         'HOTELBEDS_TEST_CONFIRMED': 'false', 'RATEHAWK_TEST_CONFIRMED': 'false',
         'LITEAPI_MODE': 'sandbox', 'SERPAPI_FREE_TIER_CONFIRMED': 'true',

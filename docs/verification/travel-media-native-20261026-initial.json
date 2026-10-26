@@ -1,0 +1,138 @@
+{
+  "status": "ACTUAL_SEARCH_FX_PHOTOS_PASS_PARTIAL_CART_MISSING_TRANSFER",
+  "source_commit": "71887d2997e845121dc109a76f72c4fbdabf6caf",
+  "manifest": "6cdd9c3ea5ead60bc226c8bcf9653f40d21597e99a26759bcb9c074667b7dce9",
+  "search_run_status": "completed",
+  "model_calls": 0,
+  "durable_tool_starts": 4,
+  "supplier_orders": 0,
+  "fixture_price": false,
+  "source_type": "SANDBOX",
+  "offers": [
+    {
+      "offer_id": "liteapi:4864993267df9bebe86a896b",
+      "provider": "liteapi",
+      "source_type": "SANDBOX",
+      "amount_minor": 2482372,
+      "currency": "RUB"
+    },
+    {
+      "offer_id": "duffel:4fe2ea28136243b4d031bd7f",
+      "provider": "duffel",
+      "source_type": "SANDBOX",
+      "amount_minor": 16240,
+      "currency": "EUR"
+    },
+    {
+      "offer_id": "duffel:6ae868002e61f7793b355147",
+      "provider": "duffel",
+      "source_type": "SANDBOX",
+      "amount_minor": 15723,
+      "currency": "EUR"
+    }
+  ],
+  "fx_snapshot": {
+    "as_of": "2026-10-24",
+    "provider": "cbr",
+    "expires_at": "2026-10-26T23:48:31.336592+00:00",
+    "source_url": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=26%2F10%2F2026",
+    "snapshot_id": "cbr-d0eb2302e49cbf2304e8173e8e0065add9edf67321e5b9745c19ab57a49fbf58",
+    "ttl_seconds": 21600,
+    "fees_unknown": true,
+    "requested_on": "2026-10-26",
+    "retrieved_at": "2026-10-26T17:48:31.336592+00:00",
+    "source_quotes": {
+      "EUR": {
+        "nominal": 1,
+        "value_rub": "90.2429"
+      },
+      "RUB": {
+        "nominal": 1,
+        "value_rub": "1"
+      },
+      "USD": {
+        "nominal": 1,
+        "value_rub": "80.5381"
+      }
+    },
+    "reference_only": true,
+    "schema_version": 1,
+    "raw_source_sha256": "955d2e9e4cd5467af67079f1558adf16da1130b801e0ae6ed36c510156057dc4",
+    "rates_rub_per_unit": {
+      "EUR": "90.2429",
+      "RUB": "1",
+      "USD": "80.5381"
+    },
+    "max_source_age_days": 7,
+    "real_booking_supported": false
+  },
+  "known_subtotal_minor": 5366806,
+  "budget_currency": "RUB",
+  "total_minor": null,
+  "blockers": [
+    {
+      "code": "missing_components",
+      "details": {
+        "components": [
+          "transfer:dubai"
+        ]
+      },
+      "message": "Корзина покрывает не все комнаты, плечи и трансферы."
+    }
+  ],
+  "ready_for_simulated_checkout": false,
+  "media_status": 200,
+  "media": {
+    "session_id": "8a332c50-ad15-4dc4-8a50-5ac2cda3bc43",
+    "state_version": 0,
+    "plan_id": "assembled-030fdb5a16ddbc12efd88838",
+    "items": [
+      {
+        "offer_id": "liteapi:4864993267df9bebe86a896b",
+        "component_id": "dubai",
+        "media": {
+          "url": "https://static.cupid.travel/hotels/210194244.jpg",
+          "thumbnailUrl": "https://static.cupid.travel/hotels/thumbnail/210194244.jpg",
+          "alt": "Фотография отеля «Millennium Atria Business Bay»",
+          "kind": "HOTEL",
+          "source": "LITEAPI",
+          "hotelId": "lp1b30d1",
+          "sourceHotelId": "lp1b30d1",
+          "isActualPropertyPhoto": true,
+          "caption": null,
+          "gallery": [
+            {
+              "url": "https://static.cupid.travel/hotels/210194244.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/193806701.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/220326577.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/220317518.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            },
+            {
+              "url": "https://static.cupid.travel/hotels/223513455.jpg",
+              "alt": "Фотография отеля «Millennium Atria Business Bay»",
+              "caption": null
+            }
+          ]
+        }
+      }
+    ],
+    "warnings": []
+  },
+  "priced_snapshot_unchanged": true,
+  "finding_id": "TOUR-PINNED-HOTEL-TRANSFER-001",
+  "next": "Supply independent permitted DEMO transport components without changing the pinned external hotel; repeat search/refresh/simulated checkout."
+}

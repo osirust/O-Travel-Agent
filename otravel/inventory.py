@@ -205,6 +205,50 @@ def _transport_offers(state: TripState, pets: list[dict[str, Any]]) -> list[dict
     return offers
 
 
+def bounded_transport_catalog(state: TripState | dict) -> dict[str, Any]:
+    """Independent native-RUB DEMO transport, never a hotel/pin substitution.
+
+    It is a catalogue of canonical snapshots, not a complete checkout plan.
+    Hotel availability/rates/pins cannot remove valid transport components;
+    route/domain/coverage and transport constraints still fail closed.
+    """
+    state = TripState.model_validate(state)
+    issues = [item for item in validate_trip(state)
+              if item["code"] not in {"missing_budget", "unsupported_budget"}]
+    pets, pet_questions = _pet_request(state)
+    questions = [item["message"] for item in issues if item["code"].startswith("missing_")] + pet_questions
+    blocking = [item for item in issues if not item["code"].startswith("missing_")]
+    cities = [state.origin, state.route_policy.end_city, *[stay.city for stay in state.stays],
+              *[city for leg in state.legs for city in (leg.origin, leg.destination)]]
+    outside = list(dict.fromkeys(city for city in cities if city and city not in CITIES))
+    if outside:
+        blocking.append(_error("unsupported_city", "Текущее покрытие DEMO-транспорта не включает это направление.", cities=outside))
+    for constraint in state.constraints:
+        if not constraint.hard:
+            continue
+        if constraint.key not in SUPPORTED_CONSTRAINTS:
+            blocking.append(_error("unsupported_constraint", "DEMO-транспорт не подтверждает неизвестное обязательное условие.", key=constraint.key))
+        elif constraint.key in {"breakfast", "refundable", "pets_allowed", "nonstop"} and type(constraint.value) is not bool:
+            blocking.append(_error("invalid_constraint", "Для обязательного условия нужно true/false.", key=constraint.key))
+    if any(pet["weight_kg"] > 20 for pet in pets):
+        blocking.append(_error("transport_pets", "Животное не соответствует пределу DEMO-транспорта 20 кг."))
+    base = {"offers": [], "questions": list(dict.fromkeys(questions)), "violations": blocking,
+            "source_type": "DEMO", "price_kind": "synthetic", "scope": "transport_only", "warnings": [NOTICE]}
+    if questions or blocking:
+        return base
+    domestic = set(CITIES[:4])
+    if any(mode == "train" and (origin not in domestic or destination not in domestic) for origin, destination, _, mode in _route(state)):
+        base["violations"].append(_error("unsupported_transport", "DEMO-поезда поддерживаются только между четырьмя российскими городами."))
+        return base
+    offers = _transport_offers(state, pets)
+    if any(offer["kind"] == "flight" and (offer.get("nonstop") is not True or offer.get("segment_count") != 1
+            or offer.get("stops_count") != 0 or offer.get("route_facts_source") != "synthetic_demo_catalogue") for offer in offers):
+        base["violations"].append(_error("flight_facts_mismatch", "Не подтверждены свойства конечного DEMO-перелёта."))
+        return base
+    base["offers"] = offers
+    return base
+
+
 def validate_plan(state: TripState, plan: dict[str, Any], *, check_budget: bool = True) -> list[dict[str, Any]]:
     violations = validate_trip(state)
     if not check_budget:

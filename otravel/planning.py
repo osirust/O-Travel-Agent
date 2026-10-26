@@ -15,7 +15,7 @@ from typing import Any
 
 from .domain import TripState, route_edges, validate_trip
 from .fx import FxUnavailable, convert_minor, validate_snapshot
-from .inventory import DemoInventory
+from .inventory import DemoInventory, bounded_transport_catalog
 
 _PINNED_SOURCE = {"liteapi": "SANDBOX", "duffel": "SANDBOX", "hotelbeds": "SANDBOX",
                   "ratehawk": "SANDBOX", "serpapi": "LIVE_INDICATIVE", "travelpayouts": "LIVE_INDICATIVE"}
@@ -150,7 +150,9 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
     selected: list[dict] = []
     components: list[dict] = []
     demo = DemoInventory().search_trip(state, catalogue_only=True)
+    transport = bounded_transport_catalog(state)
     catalog = {offer["offer_id"]: offer for plan in demo["plans"] for offer in plan["offers"]}
+    catalog.update({offer["offer_id"]: offer for offer in transport["offers"]})
     clock = now.astimezone(timezone.utc) if isinstance(now, datetime) and now.tzinfo is not None else None
 
     def add(raw: Any, fallback: bool = False) -> None:
@@ -254,7 +256,9 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
             errors.append(_issue("invalid_offer_data", "Предложение не является конечным JSON-снимком."))
     covered = {key for component in components for key in component["covers"]}
     if demo_fallback and set(required) - covered:
-        candidates = demo["plans"][0]["offers"] if demo["plans"] else []
+        candidates = list(demo["plans"][0]["offers"]) if demo["plans"] else []
+        candidate_ids = {offer["offer_id"] for offer in candidates}
+        candidates.extend(offer for offer in transport["offers"] if offer["offer_id"] not in candidate_ids)
         for offer in candidates:
             binding = _demo_binding(state, offer)
             local_errors: list[dict] = []
@@ -266,6 +270,7 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
                 warnings.append("Частично покрытая остановка не дополняется вторым отелем молча; требуется полный согласованный набор комнат.")
         if not candidates:
             warnings.extend(demo["questions"] + [v["message"] for v in demo["violations"]])
+            warnings.extend(transport["questions"] + [v["message"] for v in transport["violations"]])
     counts = Counter(key for component in components for key in component["covers"])
     missing = [key for key in required if counts[key] == 0]
     repeated = [key for key, count in counts.items() if count > 1]

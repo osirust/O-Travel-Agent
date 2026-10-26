@@ -1,0 +1,47 @@
+{
+  "status": "ACTUAL_429_CAUSE_NOT_PROVEN",
+  "source_commit": "71887d2997e845121dc109a76f72c4fbdabf6caf",
+  "manifest": "6cdd9c3ea5ead60bc226c8bcf9653f40d21597e99a26759bcb9c074667b7dce9",
+  "actual_calls": 1,
+  "travel_tools": 0,
+  "model": "qwen/qwen3.8-27b",
+  "error": {
+    "llm": {
+      "model": "qwen/qwen3.8-27b",
+      "attempts": [
+        {
+          "code": "RATE_LIMITED",
+          "model": "qwen/qwen3.8-27b",
+          "outcome": "failed",
+          "provider": "groq",
+          "latency_ms": 294,
+          "http_status": 429,
+          "rate_limits": {
+            "quota_kind": "tokens",
+            "token_limit": 8000,
+            "request_limit": 1000,
+            "tokens_remaining": 8000,
+            "requests_remaining": 1000
+          },
+          "limit_source": "unknown",
+          "request_metrics": {
+            "prompt_sha256": "5bcfe1fdd8d84772c270446db3fffef4946d8a39b157ec8eb95b58cde8f9d13c",
+            "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+            "schema_utf8_bytes": 7349,
+            "system_utf8_bytes": 11313,
+            "context_utf8_bytes": 5473
+          }
+        }
+      ],
+      "provider": "groq"
+    },
+    "code": "RATE_LIMITED",
+    "details": {
+      "http_status": 429,
+      "limit_source": "unknown"
+    },
+    "message": "Провайдер ограничил запросы (HTTP 429).",
+    "retryable": true
+  },
+  "note": "Remaining TPM/RPD headers are not a TPD counter. Full remaining does not prove payload admission or all free quotas exhausted; no retry or model fallback performed."
+}

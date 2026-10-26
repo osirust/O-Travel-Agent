@@ -433,7 +433,8 @@ class LLMGateway(_HTTPGateway):
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         try:
             prompt = json.dumps(safe_model_context({key: value for key, value in context.items()
-                if key not in {"__response_schema", "__response_mode"}}), ensure_ascii=False, allow_nan=False)
+                if key not in {"__response_schema", "__response_mode"}}), ensure_ascii=False, allow_nan=False,
+                separators=(",", ":"))
         except (TypeError, ValueError):
             _fail("Контекст LLM должен быть JSON-совместимым.", provider)
         if len(prompt) > 100_000:

@@ -197,6 +197,7 @@ def environment_with_base(engine, database, key, profile, base):
     env = base(engine, database, key)
     env.update({name: profile[name] for name in TRAVEL_KEYS})
     env.update({"LITEAPI_MODE": "sandbox", "SERPAPI_FREE_TIER_CONFIRMED": "true",
+        "REFERENCE_FX_ENABLED": "true",
         "DEFAULT_SEARCH_MODE": "HYBRID", "DEFAULT_HOTEL_PROVIDER": "liteapi", "DEFAULT_FLIGHT_PROVIDER": "duffel"})
     return env
 
