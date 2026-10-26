@@ -261,6 +261,9 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     @app.post("/api/v1/sessions", status_code=201)
     async def create_session(body: CreateSession | None = None):
         state = body.initial_trip if body and body.initial_trip else TripState()
+        if "search_policy" not in state.model_fields_set and settings.default_search_mode == "HYBRID":
+            state.search_policy = type(state.search_policy)(mode="HYBRID",
+                hotel_provider=settings.default_hotel_provider, flight_provider=settings.default_flight_provider)
         issues = validate_trip(state, final=False)
         if issues:
             raise DomainError(issues[0]["code"], issues[0]["message"])

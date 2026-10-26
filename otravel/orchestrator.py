@@ -84,6 +84,8 @@ class TripSearch:
             return moment.astimezone(timezone.utc)
         current_time()
         errors = [issue for issue in validate_trip(state) if not (issue["code"] == "unsupported_budget" and state.budget and state.budget.scope == "whole_trip")]
+        if state.stays and policy.hotel_provider == "liteapi" and not policy.guest_nationality:
+            errors.append(_issue("missing_nationality", "Гражданство какой страны использовать для поиска отеля?"))
         outside = list(dict.fromkeys(city for city in [state.origin, *[stay.city for stay in state.stays],
             *[city for leg in state.legs for city in (leg.origin, leg.destination)]] if city and city not in CITIES))
         if outside:
@@ -179,7 +181,8 @@ class TripSearch:
                 evidence = details.get("constraint_evidence", {})
                 supported = True
                 for condition in state.constraints:
-                    relevant = condition.key == "pets" or kind == "hotel" and condition.key in {"breakfast", "refundable", "pets_allowed"}
+                    relevant = (condition.key == "pets" or kind == "hotel" and condition.key in {"breakfast", "refundable", "pets_allowed"}
+                                or kind == "flight" and condition.key == "nonstop" and condition.value is True)
                     if (not condition.hard or not relevant or condition.stay_id is not None and condition.stay_id != binding.get("stay_id")):
                         continue
                     fact = evidence.get(condition.key) if isinstance(evidence, dict) else None
@@ -203,7 +206,7 @@ class TripSearch:
         for stay in state.stays:
             provider = policy.hotel_provider
             if provider == "liteapi" and not policy.guest_nationality:
-                message = "Для живого LiteAPI-поиска нужно явно указать guest_nationality ISO-2."
+                message = "Гражданство какой страны использовать для поиска отеля?"
                 unavailable(stay.id, "MISSING_NATIONALITY", message)
                 if not policy.demo_fallback:
                     questions.append(message)
@@ -289,6 +292,8 @@ class TripSearch:
                        "passengers": [{"type": "adult"} if person.type == "adult" else {"age": person.age_on(leg.departure_date)} for person in state.travelers],
                        "adults": sum(person.type == "adult" for person in state.travelers),
                        "children": sum(person.type == "child" for person in state.travelers)}
+            if any(condition.hard and condition.key == "nonstop" and condition.value is True for condition in state.constraints):
+                request["nonstop"] = True
             binding = {**common, "leg_ids": [leg.id], "origin": leg.origin, "destination": leg.destination,
                        "departure_date": leg.departure_date.isoformat(), "traveler_ids": [p.id for p in state.travelers]}
             try:

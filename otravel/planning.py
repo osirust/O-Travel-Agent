@@ -13,7 +13,7 @@ from hashlib import sha256
 import json
 from typing import Any
 
-from .domain import TripState, validate_trip
+from .domain import TripState, route_edges, validate_trip
 from .inventory import DemoInventory
 
 
@@ -21,7 +21,7 @@ _PINNED_SOURCE = {"liteapi": "SANDBOX", "duffel": "SANDBOX", "hotelbeds": "SANDB
                   "ratehawk": "SANDBOX", "serpapi": "LIVE_INDICATIVE", "travelpayouts": "LIVE_INDICATIVE"}
 _TOTAL_KINDS = {"PROVIDER_ROOMS_STAY_TOTAL", "GROUP_ITINERARY_TOTAL", "INDICATIVE_STAY_TOTAL",
                 "INDICATIVE_ITINERARY_TOTAL", "PROVIDER_DISPLAY_RATE_TOTAL", "COMPONENT_TOTAL"}
-_KNOWN_HARD_CONSTRAINTS = {"breakfast", "refundable", "pets_allowed", "pets"}
+_KNOWN_HARD_CONSTRAINTS = {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}
 
 
 def _digest(value: Any) -> str:
@@ -45,7 +45,7 @@ def _stamp(value: Any) -> datetime | None:
 def required_components(state: TripState | dict) -> list[str]:
     state = TripState.model_validate(state)
     rooms = [f"hotel:{stay.id}:{room.id}" for stay in state.stays for room in stay.rooms]
-    legs = [f"leg:{leg.id}" for leg in state.legs] if state.legs else [f"leg:leg-{i}" for i in range(len(state.stays) + 1)]
+    legs = [f"leg:{leg.id}" for leg in state.legs] if state.legs else [f"leg:leg-{i}" for i in range(len(route_edges(state)))]
     return rooms + legs + [f"transfer:{stay.id}" for stay in state.stays]
 
 
@@ -115,7 +115,7 @@ def _covers(state: TripState, offer: dict, binding: dict, errors: list[dict]) ->
         covered = [f"transfer:{stay.id}"]
     elif kind in {"flight", "train"}:
         ids = binding.get("leg_ids", [binding["leg_id"]] if "leg_id" in binding else None)
-        valid_ids = {leg.id for leg in state.legs} if state.legs else {f"leg-{i}" for i in range(len(state.stays) + 1)}
+        valid_ids = {leg.id for leg in state.legs} if state.legs else {f"leg-{i}" for i in range(len(route_edges(state)))}
         if not isinstance(ids, list) or not ids or any(not isinstance(i, str) or i not in valid_ids for i in ids) or len(set(ids)) != len(ids):
             errors.append(_issue("invalid_leg_binding", "Нужны точные ID всех оплаченных плеч.", offer_id=oid))
             return []
@@ -198,13 +198,24 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
             kind = details.get("kind", offer.get("kind"))
             evidence = details.get("constraint_evidence", {})
             for condition in state.constraints:
-                relevant = condition.key == "pets" or kind == "hotel" and condition.key in {"breakfast", "refundable", "pets_allowed"}
+                relevant = (condition.key == "pets" or kind == "hotel" and condition.key in {"breakfast", "refundable", "pets_allowed"}
+                            or kind == "flight" and condition.key == "nonstop" and condition.value is True)
                 if (not condition.hard or not relevant or condition.key not in _KNOWN_HARD_CONSTRAINTS
                         or condition.stay_id is not None and condition.stay_id != binding.get("stay_id")):
                     continue
-                actual = evidence.get(condition.key) if isinstance(evidence, dict) else None
+                if condition.room_id is not None:
+                    # A hotel/aggregate true does not prove the chosen rate of
+                    # one canonical room. Another component covers other rooms.
+                    bound_rooms = binding.get("room_ids")
+                    if not isinstance(bound_rooms, list) or condition.room_id not in bound_rooms:
+                        continue
+                    per_room = details.get("room_constraint_evidence")
+                    room_evidence = per_room.get(condition.room_id) if isinstance(per_room, dict) else None
+                    actual = room_evidence.get(condition.key) if isinstance(room_evidence, dict) else None
+                else:
+                    actual = evidence.get(condition.key) if isinstance(evidence, dict) else None
                 if (actual != condition.value or type(actual) is not type(condition.value)):
-                    errors.append(_issue("hard_constraint_unverified", "Источник не подтвердил обязательное условие; предупреждение не делает его выполненным.", offer_id=offer["offer_id"], key=condition.key))
+                    errors.append(_issue("hard_constraint_unverified", "Источник не подтвердил обязательное условие; предупреждение не делает его выполненным.", offer_id=offer["offer_id"], key=condition.key, stay_id=condition.stay_id, room_id=condition.room_id))
             if kind == "hotel" and details.get("allocation_verified") is not True:
                 errors.append(_issue("allocation_unverified", "Provider не подтвердил распределение комнат/гостей.", offer_id=offer["offer_id"]))
             request = details.get("search_request", {})

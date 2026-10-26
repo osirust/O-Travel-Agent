@@ -359,10 +359,14 @@ class LLMGateway(_HTTPGateway):
         self._response_usage.set(None)
         self.last_call = {}
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
+        mode = context.get("__response_mode")
+        if mode not in {None, "readonly_answer_v1"}:
+            _fail("Неизвестная серверная роль модели.", provider, "CONFIG_BLOCKED")
         if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         try:
-            prompt = json.dumps(_safe({key: value for key, value in context.items() if key != "__response_schema"}), ensure_ascii=False, allow_nan=False)
+            prompt = json.dumps(_safe({key: value for key, value in context.items()
+                if key not in {"__response_schema", "__response_mode"}}), ensure_ascii=False, allow_nan=False)
         except (TypeError, ValueError):
             _fail("Контекст LLM должен быть JSON-совместимым.", provider)
         if len(prompt) > 100_000:
@@ -373,6 +377,11 @@ class LLMGateway(_HTTPGateway):
             max_tokens = 4096
         output_schema = context.get("__response_schema") or _setting(self.settings, "LLM_RESPONSE_SCHEMA", _LLM_SCHEMA)
         system = str(_setting(self.settings, "LLM_SYSTEM_PROMPT", _EXTRACT_PROMPT))
+        if context.get("__response_mode") == "readonly_answer_v1":
+            from .answering import READONLY_SCHEMA, READONLY_SYSTEM
+            output_schema = READONLY_SCHEMA
+            system = READONLY_SYSTEM
+            max_tokens = min(max_tokens, 512)
         # JSON mode alone does not tell a model which envelope fields to emit.
         # OpenRouter free endpoints need this contract in the prompt as well.
         system += "\nRequired output JSON Schema:\n" + json.dumps(output_schema, ensure_ascii=False)
@@ -556,7 +565,7 @@ class LLMGateway(_HTTPGateway):
                     or not isinstance(operation.get("value"), dict) or set(operation) - {"type", "target_id", "value"}
                     or (operation.get("target_id") is not None and not isinstance(operation["target_id"], str))):
                 _fail("LLM вернула некорректную операцию.", provider, "INVALID_LLM_RESPONSE")
-        if "__response_schema" in context:
+        if "__response_schema" in context or mode == "readonly_answer_v1":
             violations = []
             for violation in Draft202012Validator(output_schema).iter_errors(result):
                 violations.append({"path": list(violation.absolute_path), "rule": violation.validator})
@@ -573,6 +582,46 @@ class LLMGateway(_HTTPGateway):
 
 
 class TravelGateway(_HTTPGateway):
+    def __init__(self, settings: dict):
+        from .travel_runtime import TravelRuntime
+
+        super().__init__(settings)
+        self._travel_runtime = TravelRuntime(clock=self.settings.get("clock"),
+            monotonic=self.settings.get("monotonic_clock"))
+        self._travel_retry_after = ContextVar("travel_retry_after", default=None)
+
+        async def capture_retry_after(response):
+            if response.status_code == 429:
+                self._travel_retry_after.set(self._travel_runtime.retry_after(response.headers.get("retry-after")))
+
+        self.client.event_hooks["response"].append(capture_retry_after)
+
+    async def _request(self, provider: str, method: str, url: str, **kwargs: Any) -> dict:
+        from .travel_runtime import TRAVEL_PROVIDERS, TravelClockError
+
+        if provider not in TRAVEL_PROVIDERS:
+            return await super()._request(provider, method, url, **kwargs)
+        try:
+            remaining = self._travel_runtime.remaining(provider)
+            if remaining:
+                raise ProviderError("SOURCE_COOLDOWN", "Источник временно ограничил запросы; состояние сохранено.",
+                                    True, provider, remaining)
+            token = self._travel_retry_after.set(None)
+            try:
+                return await super()._request(provider, method, url, **kwargs)
+            except ProviderError as error:
+                if error.code == "RATE_LIMITED":
+                    delay = self._travel_runtime.retry_after(error.details.get("retry_after_seconds"))
+                    source = "provider_error"
+                    if delay is None:
+                        delay, source = self._travel_retry_after.get(), "retry_after_header"
+                    error.details.update(self._travel_runtime.block(provider, delay, source))
+                raise
+            finally:
+                self._travel_retry_after.reset(token)
+        except TravelClockError:
+            raise ProviderError("INVALID_CLOCK", "Источник требует явного времени с часовым поясом.", provider=provider) from None
+
     def _now(self) -> datetime:
         clock = self.settings.get("clock")
         return clock().astimezone(timezone.utc) if callable(clock) else datetime.now(timezone.utc)
@@ -586,17 +635,30 @@ class TravelGateway(_HTTPGateway):
         normalized = canonical_city(city)
         if type(limit) is not int or not 1 <= limit <= 10:
             _fail("Допустимо от 1 до 10 отелей в одном lookup.", "liteapi")
+        if normalized not in names:
+            _fail("Город пока не поддержан справочным sandbox lookup.", "liteapi", "UNSUPPORTED_CITY")
         key = self._key("LITEAPI_API_KEY", "liteapi")
         if str(_setting(self.settings, "LITEAPI_MODE", "sandbox")).lower() != "sandbox" or not key.startswith(("sand_", "sandbox_")):
             _fail("Разрешён только LiteAPI sandbox key.", "liteapi", "CONFIG_BLOCKED")
-        country, query = names[normalized]
-        body = await self._request("liteapi", "GET", "https://api.liteapi.travel/v3.0/data/hotels",
-            headers={"X-API-Key": key}, params={"countryCode": country, "cityName": query, "limit": limit})
-        rows = body.get("data")
-        if not isinstance(rows, list):
-            _fail("Нет списка гостиниц sandbox-каталога.", "liteapi", "INVALID_RESPONSE")
-        return [{"id": row["id"], "name": _safe_text(row.get("name", "")), "city": normalized}
-                for row in rows[:limit] if isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]]
+        from .travel_runtime import TravelClockError
+
+        try:
+            async with self._travel_runtime.lookup_lock(normalized):
+                cached = self._travel_runtime.get_hotels(normalized, limit)
+                if cached is not None:
+                    return cached
+                country, query = names[normalized]
+                body = await self._request("liteapi", "GET", "https://api.liteapi.travel/v3.0/data/hotels",
+                    headers={"X-API-Key": key}, params={"countryCode": country, "cityName": query, "limit": limit})
+                rows = body.get("data")
+                if not isinstance(rows, list):
+                    _fail("Нет списка гостиниц sandbox-каталога.", "liteapi", "INVALID_RESPONSE")
+                result = [{"id": row["id"], "name": _safe_text(row.get("name", "")), "city": normalized}
+                    for row in rows[:limit] if isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]]
+                self._travel_runtime.put_hotels(normalized, limit, result)
+                return result
+        except TravelClockError:
+            raise ProviderError("INVALID_CLOCK", "Источник требует явного времени с часовым поясом.", provider="liteapi") from None
 
     def _offer(self, provider: str, identity: Any, amount: Any, currency: str,
                description: str, details: dict, source_type: str, price_kind: str,
@@ -689,6 +751,8 @@ class TravelGateway(_HTTPGateway):
     async def search_flights(self, request: dict, provider: str = "duffel") -> list[dict]:
         if not isinstance(request, dict):
             _fail("Поиск должен быть объектом.", provider)
+        if "nonstop" in request and type(request["nonstop"]) is not bool:
+            _fail("nonstop задаётся только true/false.", provider)
         if provider == "travelpayouts":
             return await self._travelpayouts(request)
         if provider == "serpapi":
@@ -715,6 +779,8 @@ class TravelGateway(_HTTPGateway):
             else:
                 _fail("Для ребёнка нужен точный возраст; для взрослого type=adult.", provider)
         data = {"slices": slices, "passengers": clean}
+        if request.get("nonstop") is True:
+            data["max_connections"] = 0
         if request.get("cabin_class"):
             if request["cabin_class"] not in {"economy", "premium_economy", "business", "first"}:
                 _fail("Неподдерживаемый класс обслуживания.", provider)
@@ -749,13 +815,58 @@ class TravelGateway(_HTTPGateway):
         if not isinstance(offer, dict) or not offer.get("id") or "total_amount" not in offer:
             _fail("Некорректное авиапредложение.", provider, "INVALID_RESPONSE")
         currency = _currency(offer.get("total_currency"), provider)
+        nonstop = self._duffel_nonstop(offer.get("slices"), request.get("slices"))
         return self._offer(provider, offer["id"], offer["total_amount"], currency,
             "Тестовый авиатариф Duffel", {"kind": "flight", "native_offer_id": offer["id"],
                 "slices": offer.get("slices", []), "passengers_count": len(request.get("passengers", [])),
                 "mandatory_fees_known": True, "fees_scope": "base_fare_including_taxes_excluding_optional_services",
                 "received_passengers_count": len(offer["passengers"]) if isinstance(offer.get("passengers"), list) else None,
-                "availability_verified": False, "search_request": request},
+                "availability_verified": False, "search_request": request,
+                "constraint_evidence": {} if nonstop is None else {"nonstop": nonstop},
+                "nonstop_evidence_source": "response.slices.segments.stops" if nonstop is not None else None},
             "SANDBOX", "GROUP_ITINERARY_TOTAL", offer.get("expires_at"))
+
+    @staticmethod
+    def _duffel_nonstop(slices: Any, requested: Any) -> bool | None:
+        """Response facts only; max_connections/request echo never prove them.
+
+        Duffel offer-requests documents max_connections=0 as one segment/slice.
+        For the stricter no-stop requirement we also require explicit stops=[],
+        response route/date and full slice-count agreement. Missing facts stay
+        unknown. Reprice calls the same parser on its newly received response.
+        """
+        if not isinstance(slices, list) or not slices or not isinstance(requested, list) or len(slices) != len(requested):
+            return None
+
+        def matches(place: Any, code: str) -> bool:
+            if not isinstance(place, dict) or not isinstance(code, str) or not re.fullmatch(r"[A-Z]{3}", code):
+                return False
+            city = place.get("city")
+            return code in [place.get("iata_code"), place.get("iata_city_code"), city.get("iata_code") if isinstance(city, dict) else None]
+
+        flags = []
+        for actual, wanted in zip(slices, requested):
+            if not isinstance(actual, dict) or not isinstance(wanted, dict):
+                return None
+            segments = actual.get("segments")
+            if not isinstance(segments, list) or not segments or any(not isinstance(s, dict) for s in segments):
+                return None
+            if any(name in actual and not matches(actual[name], wanted.get(name)) for name in ("origin", "destination")):
+                return None
+            if (not matches(segments[0].get("origin"), wanted.get("origin"))
+                    or not matches(segments[-1].get("destination"), wanted.get("destination"))
+                    or not isinstance(segments[0].get("departing_at"), str)
+                    or segments[0]["departing_at"][:10] != wanted.get("departure_date")):
+                return None
+            for previous, following in zip(segments, segments[1:]):
+                destination = previous.get("destination")
+                code = destination.get("iata_code") if isinstance(destination, dict) else None
+                if not isinstance(code, str) or not matches(following.get("origin"), code):
+                    return None
+            if any(not isinstance(segment.get("stops"), list) for segment in segments):
+                return None
+            flags.append(len(segments) == 1 and not segments[0]["stops"])
+        return all(flags)
 
     def _test_confirmation(self, setting: str, provider: str) -> None:
         confirmed = _setting(self.settings, setting)

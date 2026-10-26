@@ -86,6 +86,19 @@ def _unanswered(field: str, target: str | None, data: dict, context: dict) -> bo
         return not data.get("stays") or any(not stay.get("city") for stay in data["stays"])
     if field == "budget.amount_minor":
         return data.get("budget") is None
+    if field == "search.guest_nationality":
+        return not data.get("search_policy", {}).get("guest_nationality")
+    if field == "route.kind":
+        return data.get("route_policy", {}).get("kind") == "undecided"
+    if field == "route.end_city":
+        route = data.get("route_policy", {})
+        return route.get("kind") == "open_jaw" and not route.get("end_city")
+    if field == "party.removal":
+        return context.get("force_clarification") is True
+    if field == "group.membership":
+        return (context.get("force_clarification") is True and context.get("family_separation_required") is True
+                or any(group.get("keep_separate") and not group.get("traveler_ids")
+                       and (target is None or group.get("id") == target) for group in data.get("groups", [])))
     if field.startswith(("stay.", "leg.")):
         collection = data.get("stays" if field.startswith("stay.") else "legs") or []
         key = field.split(".", 1)[1]

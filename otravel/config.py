@@ -19,6 +19,18 @@ class Settings:
     max_llm_calls_per_day: int
     max_llm_calls_per_run: int
     max_local_llm_calls_per_day: int = 500
+    default_search_mode: str = "DEMO"
+    default_hotel_provider: str = "liteapi"
+    default_flight_provider: str = "serpapi"
+
+    def __post_init__(self):
+        for value, allowed in (
+            (self.default_search_mode, {"DEMO", "HYBRID"}),
+            (self.default_hotel_provider, {"liteapi", "serpapi"}),
+            (self.default_flight_provider, {"duffel", "serpapi"}),
+        ):
+            if value not in allowed:
+                raise ValueError("Unsupported default travel search configuration")
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -35,6 +47,9 @@ class Settings:
             max_llm_calls_per_day=int(os.getenv("MAX_LLM_CALLS_PER_DAY", "40")),
             max_llm_calls_per_run=int(os.getenv("MAX_LLM_CALLS_PER_RUN", "2")),
             max_local_llm_calls_per_day=int(os.getenv("MAX_LOCAL_LLM_CALLS_PER_DAY", "500")),
+            default_search_mode=os.getenv("DEFAULT_SEARCH_MODE", "DEMO"),
+            default_hotel_provider=os.getenv("DEFAULT_HOTEL_PROVIDER", "liteapi"),
+            default_flight_provider=os.getenv("DEFAULT_FLIGHT_PROVIDER", "serpapi"),
         )
 
     def provider_settings(self) -> dict[str, Any]:

@@ -1,0 +1,4935 @@
+{
+  "scope": "READ_ONLY_FULL_DIALOGUE_AUDIT_ZAI100_021_040",
+  "source_path": "E:\\work\\aegml\\.local\\evaluation\\zai-full100-20261026\\dialogues.jsonl",
+  "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "source_size_bytes": 10798957,
+  "source_runtime_commit": "85160effde07ff891295ba437754b328ebdf258a",
+  "comparison_E_commit": "e71875b",
+  "new_API_calls": 0,
+  "new_LLM_calls": 0,
+  "original_corpus_changed": false,
+  "source_case_count": 80,
+  "audited_case_count": 20,
+  "audited_turn_count": 170,
+  "method": "Каждая реплика/ответ/expected, все before/after/current и actions прочитаны. Повторяющиеся снимки читались через полные field deltas и exact SHA references; экономические plan facts дополнительно проверены программно. Исходные issue summaries не использованы вместо диалогов.",
+  "raw_attribution_limit": "В этом экспорте нет raw LLM reply/operations/information_subject. Events дают только speech_act/count/usage/status. Нельзя реконструировать отсутствующий JSON из afterstate и назвать его raw.",
+  "recorded_model_calls": 127,
+  "recorded_response_sources": {
+    "llm": 114,
+    "contextual_slot": 43,
+    "model": 13
+  },
+  "recorded_error_codes": {
+    "INVALID_LLM_OPERATION": 10,
+    "REQUEST_TIMEOUT": 1,
+    "INVALID_LLM_RESPONSE": 2
+  },
+  "finding_classes": [
+    {
+      "id": "A80-021-040-R01",
+      "severity": "medium",
+      "layer": "reply_or_information_grounding",
+      "title": "Предметный вопрос заменяется DEMO-summary, общей заглушкой или сообщением об отсутствии правок",
+      "cause": "В runtime85160ef формирование финального ответа/поискового результата часто вытесняет информационную часть. Raw reply отсутствует, поэтому нельзя доказать, что модель дала нужный ответ в каждом конкретном случае.",
+      "general_fix": "Отделять answer obligations от операций; отвечать по каноническим facts и поддерживаемой справке, сохранять содержательный ответ модели, не перезапускать поиск на NOOP. Для нескольких тем не выдавать ответ только на одну.",
+      "E_e71875_status": "PARTIAL_CODE_PRESENT_NOT_REPLAYED",
+      "E_refs": [
+        "otravel/conversational.py",
+        "otravel/trip_answers.py",
+        "otravel/harness.py"
+      ],
+      "remaining": "E уже содержит reply-loss repair и4 bounded saved topics. Географические сравнения, mixed multi-topic, история изменений и точные фразы всего шарда отдельно не квалифицированы."
+    },
+    {
+      "id": "A80-021-040-R02",
+      "severity": "medium",
+      "layer": "model_omission_plus_missing_literal_grounding",
+      "title": "Начальный однозначный русский город потерян, требуется повтор",
+      "cause": "В after сохранены origin/party, но stays пуст; metadata даёт только число model operations, их raw нет.",
+      "general_fix": "Bounded explicit initial route grounding без дат/номеров; сохранять другие факты и не обходить conflicts/hypotheses.",
+      "E_e71875_status": "BOUNDED_CLASS_FIX_PRESENT_NOT_ACTUAL_REPLAYED",
+      "E_refs": [
+        "otravel/route_intake.py",
+        "tests/test_route_intake.py"
+      ],
+      "remaining": "Не объявлять полный языковой PASS; exact proposed model batch отсутствует."
+    },
+    {
+      "id": "A80-021-040-R03",
+      "severity": "medium",
+      "layer": "multilingual_extraction",
+      "title": "From Kazan to Istanbul теряет destination в первой реплике",
+      "cause": "Known English alias распознан только отдельным ответом Istanbul; русский literal helper не покрывает From...to.",
+      "general_fix": "Адресный intent/extraction oracle и проверяемый multilingual route profile, без глобального fuzzy guessing.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/route_intake.py",
+        "otravel/geography.py"
+      ]
+    },
+    {
+      "id": "A80-021-040-R04",
+      "severity": "high",
+      "layer": "missing_feature_or_capability_contract",
+      "title": "Обязательный nonstop нельзя сохранить или предметно отклонить",
+      "cause": "Новая transport constraint не выражается whitelist схемы; repeated requests дают INVALID_LLM_OPERATION. Полные malformed operations не экспортированы.",
+      "general_fix": "Пока нет верифицируемого supplier nonstop evidence, возвращать конкретное unsupported/ASK с сохранением требования, не выдавать обычный flight за nonstop. Поддержку проверяемого фильтра делать отдельным контрактом.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/llm_contract.py",
+        "otravel/domain.py",
+        "otravel/planning.py"
+      ],
+      "remaining": "Не расширять hard constraint whitelist без её проверки в inventory/search/quote."
+    },
+    {
+      "id": "A80-021-040-R05",
+      "severity": "high",
+      "layer": "clarification_schema_contract",
+      "title": "leg.departure_date спрашивается без существующего leg/target и оба ответа датой падают",
+      "cause": "В pending field=leg.departure_date,target=null при legs=[]; схема не предоставляет адресный setter такой даты. Hotel-date rephrase позднее срабатывает.",
+      "general_fix": "Запрашивать только адресуемый supported slot либо создавать явный typed route/departure intent. Не принуждать модель кодировать недоступную операцию.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/clarifications.py",
+        "otravel/llm_contract.py",
+        "otravel/domain.py"
+      ]
+    },
+    {
+      "id": "A80-021-040-R06",
+      "severity": "high",
+      "layer": "model_contract_uncertain_exact_field",
+      "title": "Явная смена города/добавление остановки даёт schema/envelope failure",
+      "cause": "Есть INVALID_LLM_OPERATION/INVALID_LLM_RESPONSE с сохранённым state, но error.details={} и raw operations отсутствуют. Точную malformed type/target нельзя приписать модели или серверу по этому экспорту.",
+      "general_fix": "Сохранять safe schema paths/raw checked contract, проверять полноту explicit intents и стабильные targets; concrete clarification вместо повторяемой общей ошибки. Ретест на exact source/state.",
+      "E_e71875_status": "OPEN_EXACT_REPLAY",
+      "E_refs": [
+        "otravel/llm_contract.py",
+        "otravel/providers.py",
+        "otravel/harness.py"
+      ]
+    },
+    {
+      "id": "A80-021-040-R07",
+      "severity": "high",
+      "layer": "domain_route_topology",
+      "title": "Явный no-return/open-jaw принудительно становится round-trip и лишним hotelstay",
+      "cause": "TripState не имеет отдельного route kind/end city; _synchronize_route и validate_trip привязывают последний leg к origin. Модель пытается представить конечный город через stay; invented room/date admission остаётся отдельной проблемой grounding.",
+      "general_fix": "Typed route intent round_trip/one_way/open_jaw/undecided с отдельным end_city; guard авто-синтеза, устойчивые leg IDs и отсутствие hotelstay у transit/end-only города. Backward-compatible defaults.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/domain.py",
+        "otravel/clarifications.py",
+        "otravel/llm_contract.py"
+      ],
+      "related_owner_id": "ZAI-F010"
+    },
+    {
+      "id": "A80-021-040-R08",
+      "severity": "high",
+      "layer": "ungrounded_persistent_operations",
+      "title": "Незапрошенный breakfast/refundable/hotel pin попадает в state",
+      "cause": "Есть metadata CHANGE с operations>0 и точный unrelated after mutation; raw ops/reply отсутствуют. Штатная схема разрешает эти поля, но не доказывает пользовательское основание.",
+      "general_fix": "Проверять operation-to-explicit-intent coverage и scope отрицаний/гипотез; не превращать return travel в refundable rate; unsupported/unknown не заменять false/default.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/domain.py",
+        "otravel/harness.py"
+      ],
+      "remaining": "Мягкий breakfast=false в021 не доказан как реально отфильтровавший предложения; hard refundable/hotel pin035 реально ограничили plan count. Room constraints F016 отдельно."
+    },
+    {
+      "id": "A80-021-040-R09",
+      "severity": "high",
+      "layer": "incomplete_compound_clear_operation",
+      "title": "Просьба снять hotel pin и refundable снимает лишь refundable",
+      "cause": "After constraints=[] при прежнем hotel_id; raw batch отсутствует, поэтому известно лишь неполное выполнение.",
+      "general_fix": "Полнота адресных clear intents, явное hotel_id=null/typed clear без удаления других параметров; подтверждать фактический before→after.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/domain.py",
+        "otravel/llm_contract.py"
+      ]
+    },
+    {
+      "id": "A80-021-040-R10",
+      "severity": "high",
+      "layer": "money_extraction_and_grounding",
+      "title": "145 тыщ превращается в1.45млн",
+      "cause": "Ожидание14500000minor,after145000000; текущий slang parser не имеет явного тыщ token. Точная raw величина LLM неизвестна.",
+      "general_fix": "Расширить bounded money literals и exact integer minor oracle; не принимать неподтверждённый масштаб из модели.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/money.py"
+      ],
+      "related_owner_id": "ZAI-F011"
+    },
+    {
+      "id": "A80-021-040-R11",
+      "severity": "high",
+      "layer": "relative_money_grounding",
+      "title": "Добавить десять тысяч к75000 даёт76000 вместо85000",
+      "cause": "After7600000minor вместо8500000; semantic increase добавь к не покрыт текущим _INCREASE.",
+      "general_fix": "Ground relative add/subtract from canonical whole-trip budget; распознавать direction/literal и не повторять прежнюю относительную команду из history.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/money.py"
+      ],
+      "related_owner_id": "ZAI-F011"
+    },
+    {
+      "id": "A80-021-040-R12",
+      "severity": "medium",
+      "layer": "mixed_intent_and_ambiguous_geography",
+      "title": "Georgia без уточнения превращается в справку о Грузии, известные origin/party теряются",
+      "cause": "Первая реплика сочетает CHANGE+ASK; metadata ASK/ops0. Ответ выбирает GE в тексте, state остаётся пуст. Raw information_subject отсутствует, поэтому нельзя доказать, где потерялась исходная неоднозначность.",
+      "general_fix": "Сохранять unambiguous safe facts из mixed input и уточнять ровно ambiguous destination; grounding предмета FAQ по исходному Georgia не должен молча выбирать GE.",
+      "E_e71875_status": "OPEN_EXACT_MULTITOPIC",
+      "E_refs": [
+        "otravel/geography.py",
+        "otravel/harness.py"
+      ]
+    },
+    {
+      "id": "A80-021-040-R13",
+      "severity": "high",
+      "layer": "explicit_edit_intent_omission",
+      "title": "Явное удалить вторую остановку сначала даёт ops0/пустое уточнение",
+      "cause": "023t7 сохраняет оба stays и generic force_clarification; t8 с коротким повтором remove succeeds. Raw model reason неизвестен.",
+      "general_fix": "Intent coverage для explicit remove/replace/clear на current stable IDs; если нужны уточнения — назвать неразрешённый target, а не пустую анкету.",
+      "E_e71875_status": "OPEN_EXACT_REPLAY",
+      "E_refs": [
+        "otravel/harness.py",
+        "otravel/llm_contract.py"
+      ]
+    },
+    {
+      "id": "A80-021-040-R14",
+      "severity": "high",
+      "layer": "compound_money_correction_coverage",
+      "title": "Явная исправленная сумма в compound edit не применяется",
+      "cause": "037t7 меняет checkout21→20, но сохраняет ошибочные145000000minor несмотря на145000₽ и отрицание1.45млн. Нет raw ops — неизвестно, предложена ли budget op.",
+      "general_fix": "Исключать явно отвергнутую сумму из literal candidates; проверять каждую unambiguous change в batch. При семантическом конфликте объяснять его без молчаливого пропуска.",
+      "E_e71875_status": "OPEN",
+      "E_refs": [
+        "otravel/money.py",
+        "otravel/harness.py"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "ZAI100-021",
+      "title": "Сравнение другой страны без разрешения заменить поездку",
+      "source_line": 21,
+      "turn_count": 9,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "snapshots_reviewed": 19,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 7,
+          "state_version_after": 7,
+          "evidence_ref": "dialogues.jsonl#line21 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            5,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line21 /turns/4/after",
+            "dialogues.jsonl#line21 /turns/7/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R06",
+          "severity": "high",
+          "turns": [
+            6
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line21 /turns/5/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R08",
+          "severity": "high",
+          "turns": [
+            7
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line21 /turns/6/after"
+          ]
+        }
+      ],
+      "successes": [
+        "origin/party/явное отсутствие детей сохранены",
+        "FAQt5 не заменил Анталью",
+        "повторt7 заменил один stay на Дубай с датами и IDs",
+        "t8 lowest_total не уменьшил100000RUB",
+        "t9 снял breakfast без обратного навязывания",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Pure geography comparison не изменилstate, но ответ отсутствует.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R06"
+          ],
+          "observed": "Schemafailure после явной замены; state и бюджет сохранены.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line21 /turns/5",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R08"
+          ],
+          "observed": "Смена города успешна; добавлен unrelated softbreakfast=false.",
+          "changed_trip_fields": [
+            "constraints",
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Предпочтение цены сохранено, country/city reminder потерян.",
+          "changed_trip_fields": [
+            "preferences"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "constraints"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line21 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "cf7ea754fa215bd3d4e8d0bad3b3febc0fb61c031026f1af05920b50065b6ca5"
+    },
+    {
+      "case_id": "ZAI100-022",
+      "title": "Транзитный город и обязательный прямой рейс",
+      "source_line": 22,
+      "turn_count": 9,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "snapshots_reviewed": 19,
+      "actions_reviewed": [],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            5,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line22 /turns/4/after",
+            "dialogues.jsonl#line22 /turns/7/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R04",
+          "severity": "high",
+          "turns": [
+            6,
+            7,
+            8,
+            9
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line22 /turns/5/after",
+            "dialogues.jsonl#line22 /turns/6/after",
+            "dialogues.jsonl#line22 /turns/7/after",
+            "dialogues.jsonl#line22 /turns/8/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Дубай ни разу не стал отельной остановкой",
+        "Москва/Стамбул9–14ноября/1adult/90000сохранены",
+        "повторные schemafail не разрушилиstate",
+        "lowest_total применён отдельно"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line22 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line22 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line22 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line22 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line22 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R04"
+          ],
+          "observed": "nonstop отсутствует; generic schemafailure.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line22 /turns/5",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R04"
+          ],
+          "observed": "Явное обязательное условие повторено, снова schemafailure.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line22 /turns/6",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01",
+            "A80-021-040-R04"
+          ],
+          "observed": "lowest_total добавлен, nonstop не сохранён и вопрос проигнорирован.",
+          "changed_trip_fields": [
+            "preferences"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line22 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R04"
+          ],
+          "observed": "Прямой запрос поддержки снова schemafailure без конкретной причины.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 5,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line22 /turns/8",
+          "model_event_semantics": []
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "a920eb5ffb73d206d0cd67f844c862c69998c6508f1e8a99973438d33043e933"
+    },
+    {
+      "case_id": "ZAI100-023",
+      "title": "Добавление и удаление второй остановки",
+      "source_line": 23,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line23 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            5
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line23 /turns/4/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R13",
+          "severity": "high",
+          "turns": [
+            7
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line23 /turns/6/after"
+          ]
+        }
+      ],
+      "successes": [
+        "2adult/Стамбул10–14/120000/одинномер",
+        "t6 добавил Анталью14–18 и правильные последовательныеlegs",
+        "t8 удалил только вторую остановку после короткого повторения",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R13"
+          ],
+          "observed": "ops0/force_clarification без адресной причины, обе остановки остались.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Успешное естественное восстановление послеt7.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line23 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "5615c56add3f3f574ca5eda0cb0150389135948af9ae857bcc8fd02a42687dbd"
+    },
+    {
+      "case_id": "ZAI100-024",
+      "title": "Выезд раньше, затем позже: относительная арифметика",
+      "source_line": 24,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 7,
+          "state_version_after": 7,
+          "evidence_ref": "dialogues.jsonl#line24 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R02",
+          "severity": "medium",
+          "turns": [
+            1
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line24 /turns/0/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            6,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line24 /turns/5/after",
+            "dialogues.jsonl#line24 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "короткий ответ Казань сохранилoriginМосква",
+        "checkout20→18→19 точно, checkin15 и75000неизменны",
+        "одно размещение и тот же travelerID",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R02"
+          ],
+          "observed": "Из явной первой реплики потеряна Казань.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Уменьшение checkout на2 правильно.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сдвиг +1 от актуального18 правильно; даты в ответе отсутствуют.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line24 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "dd1d1849a6cfd27123a2de3d3fc514a1a1c5520512509e351d2e2d5f8f6c675d"
+    },
+    {
+      "case_id": "ZAI100-025",
+      "title": "Неясное «нас четверо» и уточнение детских возрастов",
+      "source_line": 25,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 7,
+          "state_version_after": 7,
+          "evidence_ref": "dialogues.jsonl#line25 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R02",
+          "severity": "medium",
+          "turns": [
+            1
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line25 /turns/0/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            2,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line25 /turns/1/after",
+            "dialogues.jsonl#line25 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Насчетверо не превратилось в4adults",
+        "точно2adults+child4/12",
+        "child12→13 меняется по тому жеID, child4/родители сохранены",
+        "семейныйroom4места и130000/12–18декабря",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R02"
+          ],
+          "observed": "Сочи потерян, состав не угадан — корректная часть.",
+          "changed_trip_fields": [
+            "origin"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Статус неизвестного состава не объяснён, pendingвзрослых сохранён.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/5",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Возрастная правка верна, состав словами не выдан.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line25 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "e86de031a823540987a1e2953b2306adbd8d4de578fa31a223417015397501c2"
+    },
+    {
+      "case_id": "ZAI100-026",
+      "title": "Сербия как справочный вопрос, затем сохранение Белграда без вымышленного поиска",
+      "source_line": 26,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            1,
+            6,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line26 /turns/0/after",
+            "dialogues.jsonl#line26 /turns/5/after",
+            "dialogues.jsonl#line26 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "FAQt1 не изменилплан",
+        "Белград известен как город и сохранён отдельно отcatalogcoverage",
+        "Казань/2adult/100000/4–8→4–9ноября сохранены",
+        "гипотетические200000неприменены",
+        "вне каталога не выдуманы отели/офферы"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Ответ только оСербии; вопрос Белградгород/границыпоиска раскрыт не полностью.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 0,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "State защищён отhypothesis, предметный ответ оcataloglimit отсутствует.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Не дан полный сохранённый draft, лишь повторено ограничение поиска.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line26 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "c39a4b399619fbcbcf4de3ebf069ca4107d699bda5670a363f04567388802e0a"
+    },
+    {
+      "case_id": "ZAI100-027",
+      "title": "Явный Белгород в России, запасная Казань и поздняя смена отправления",
+      "source_line": 27,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line27 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            2,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line27 /turns/1/after",
+            "dialogues.jsonl#line27 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Явный БелгородRU не заменён БелградомRS",
+        "замена наКазань сохранена, originСПб потомтолькоМосква",
+        "2adult/90000/12–16ноября сохранены",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Pendingleg.departure_dateбезleg/target: fragile observation; прямого ответа датой в этом случае не было, отдельныйFAIL не присвоен.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "origin"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line27 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "d39522d1bf4b23a713752f98efb0959a6b17b606aab352b4a9059826133431fd"
+    },
+    {
+      "case_id": "ZAI100-028",
+      "title": "Нови-Сад, ребёнок и осознанная смена страны",
+      "source_line": 28,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line28 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            2,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line28 /turns/1/after",
+            "dialogues.jsonl#line28 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "НовиСад/Казань/2adult+child9сохранены",
+        "Явная смена наСтамбулTR не добавила вторую остановку",
+        "адресная age9→10 без дублей",
+        "18–24ноября/150000/1room",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 5,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Объяснение ageband/сохранённых изменений не получено; state остаётся корректным.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line28 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "cc4db1cd9d4a6176b4836d57d577e7db36f4b2ae6dacb4c4097d45c5d3e94f41"
+    },
+    {
+      "case_id": "ZAI100-029",
+      "title": "Georgia: неоднозначность страны/штата и последующий выбор",
+      "source_line": 29,
+      "turn_count": 10,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "snapshots_reviewed": 21,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line29 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R12",
+          "severity": "medium",
+          "turns": [
+            1,
+            2
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line29 /turns/0/after",
+            "dialogues.jsonl#line29 /turns/1/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Не выбран ложный город/маршрут США",
+        "short origin/adults/children answers правильно адресованы",
+        "явныйДубайAE/Москва/1adult/0child/130000/2–7декабря",
+        "t10 корректныйFAQДубайгородОАЭ безchanges",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R12"
+          ],
+          "observed": "ASK/ops0: известныеМосква/1adult не сохранены; GEвыбран только в справочном тексте без раскрытия ambiguity.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 0,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R12"
+          ],
+          "observed": "Уточнённая countryGE также не записана вpendingcontext; повторно спрашивается уже названныйorigin.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 0,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/6",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 8,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/7",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 9,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 10,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line29 /turns/9",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "9b3508e698b767508aba96c2ea89eb9dfd7e2e6a2701ac69df80bd4fd68073f6"
+    },
+    {
+      "case_id": "ZAI100-030",
+      "title": "Турция без автоматического выбора города, затем Анталья",
+      "source_line": 30,
+      "turn_count": 9,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "snapshots_reviewed": 19,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line30 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            2,
+            7,
+            9
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line30 /turns/1/after",
+            "dialogues.jsonl#line30 /turns/6/after",
+            "dialogues.jsonl#line30 /turns/8/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Турция не записанакакгород и Стамбул не выбран автоматически",
+        "явнаяАнталья не спутана с отрицательнымСтамбулом",
+        "2adult+child6→7 по одномуID",
+        "145000/5–12ноября/1room",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "countryTR нет вpendingcontext — наблюдение неполнотыcontext, без доказанной неправильной смены страны в этом диалоге.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "State не изменён повторно, возраст/бюджет/почемуцена не объяснены.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line30 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "5f170c4a08c8e41ce2f775935ddeffbf293e5bd55bd1f31174f3f5377649b409"
+    },
+    {
+      "case_id": "ZAI100-031",
+      "title": "ОАЭ, выбор Дубая и смена отправления после гипотезы",
+      "source_line": 31,
+      "turn_count": 9,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "snapshots_reviewed": 19,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line31 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            1,
+            6,
+            9
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line31 /turns/0/after",
+            "dialogues.jsonl#line31 /turns/5/after",
+            "dialogues.jsonl#line31 /turns/8/after"
+          ]
+        }
+      ],
+      "successes": [
+        "2adult/Дубай/160000/10–16декабря",
+        "гипотезаМосква не сменилаКазань",
+        "явноеoriginКазань→Москва сохранилодаты/партия",
+        "timeoutt8сохранилstate",
+        "последующая обработка восстановилась",
+        "DEMOpreview200 на сохранённых данных"
+      ],
+      "observations": [
+        {
+          "kind": "provider_availability",
+          "turn": 8,
+          "code": "REQUEST_TIMEOUT",
+          "severity": "not_NLU_failure"
+        },
+        {
+          "kind": "quote_lifetime",
+          "text": "К завершению preview мог истечь; исходный exporter это явно отмечает. Нельзя считать quote активным наfinish."
+        }
+      ],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "origin"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "PROVIDER_FAILURE_STATE_PRESERVED",
+          "finding_ids": [],
+          "observed": "PROVIDER_REQUEST_TIMEOUT: не ошибкаNLU по этому evidence. Послеошибки данные сохранены.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": "REQUEST_TIMEOUT",
+          "evidence_ref": "dialogues.jsonl#line31 /turns/7",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 9,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "После восстановления ответ оcurrentorigin заменёнplanssummary.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line31 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "a800619c9acd6deb9c00f5e207b9ed2ba550f26b1ee3b3be02e26e362b541e2c"
+    },
+    {
+      "case_id": "ZAI100-032",
+      "title": "Страна Россия, выбор Сочи и возраст ребёнка",
+      "source_line": 32,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line32 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            2,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line32 /turns/1/after",
+            "dialogues.jsonl#line32 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Россия не сталагородом",
+        "Москва/1adult+child4сохранены",
+        "Сочи9–14ноября/85000/1room",
+        "child4→5 безповторного изменения",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Вместо списка поддерживаемыхRUгородов только факт Россиястрана.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/1",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сохранённыеchild5/5ночей не озвучены, no-opstateкорректен.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line32 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "c8f767574058683356137bec5b691de55f097665e8e531f96e76741a4ed73c64"
+    },
+    {
+      "case_id": "ZAI100-033",
+      "title": "Пересадка без проживания и предложение альтернативы",
+      "source_line": 33,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            5,
+            7
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line33 /turns/4/after",
+            "dialogues.jsonl#line33 /turns/6/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R04",
+          "severity": "high",
+          "turns": [
+            6,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line33 /turns/5/after",
+            "dialogues.jsonl#line33 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "ТранзитныйДубайНЕпревращёнвstay",
+        "Москва/Стамбул20–25ноября/1adult/105000",
+        "Гипотезаальтернативыt7 не меняетroute"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line33 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line33 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line33 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line33 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line33 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R04"
+          ],
+          "observed": "Прямой рейс: schemafail, не сохранён.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line33 /turns/5",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line33 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R04"
+          ],
+          "observed": "Повтор hardnonstop или объяснение — сноваschemafail.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 4,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line33 /turns/7",
+          "model_event_semantics": []
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "03310040df881447f7b9cabe9f5724228a9241a865f10d94c570c6ef5ac40a11"
+    },
+    {
+      "case_id": "ZAI100-034",
+      "title": "Два города Турции с явным отказом от обратного перелёта",
+      "source_line": 34,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [],
+      "defects": [
+        {
+          "id": "A80-021-040-R05",
+          "severity": "high",
+          "turns": [
+            1,
+            2,
+            3
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line34 /turns/0/after",
+            "dialogues.jsonl#line34 /turns/1/after",
+            "dialogues.jsonl#line34 /turns/2/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R07",
+          "severity": "high",
+          "turns": [
+            1,
+            4,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line34 /turns/0/after",
+            "dialogues.jsonl#line34 /turns/3/after",
+            "dialogues.jsonl#line34 /turns/7/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R06",
+          "severity": "high",
+          "turns": [
+            5,
+            6,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line34 /turns/4/after",
+            "dialogues.jsonl#line34 /turns/5/after",
+            "dialogues.jsonl#line34 /turns/7/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            7
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line34 /turns/6/after"
+          ]
+        }
+      ],
+      "successes": [
+        "2adult/Казань/Стамбул10–13/150000сохранены",
+        "hotel-rephrase послеdatefail позволилсохранитьинтервал",
+        "приschemafail дополнительные данные не разрушены",
+        "Анталья не выдавалась как реально созданная вstate"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R05",
+            "A80-021-040-R07"
+          ],
+          "observed": "Явное не планироватьобратнуюдорогу не представлено; недоступныйlegdatepending.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line34 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R05"
+          ],
+          "observed": "Датаотправления/заезда10.11 schemafail.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line34 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R05"
+          ],
+          "observed": "Более простой exactdate тожеschemafail.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 1,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line34 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07"
+          ],
+          "observed": "Послеуспешногосохраненияstayавтоматическипостроен запрещённыйreturn13.11.",
+          "changed_trip_fields": [
+            "budget",
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line34 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R06"
+          ],
+          "observed": "ДобавлениеАнтальи+no-return: malformedopresponse; stateнеизменён.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 2,
+          "error_code": "INVALID_LLM_RESPONSE",
+          "evidence_ref": "dialogues.jsonl#line34 /turns/4",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R06"
+          ],
+          "observed": "Даже упрощённыйaddstop: тотжеINVALID_LLM_RESPONSE.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 2,
+          "error_code": "INVALID_LLM_RESPONSE",
+          "evidence_ref": "dialogues.jsonl#line34 /turns/5",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line34 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07",
+            "A80-021-040-R06"
+          ],
+          "observed": "Удаление конкретногоreturn schemafail; нежелательнаяногаосталась.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 2,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line34 /turns/7",
+          "model_event_semantics": []
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "fc49c24c10e62732a1476cd15eedeb7a2c51bc36be5f15be3ed08e6188ccddc0"
+    },
+    {
+      "case_id": "ZAI100-035",
+      "title": "Разные города начала и окончания поездки",
+      "source_line": 35,
+      "turn_count": 10,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "snapshots_reviewed": 21,
+      "actions_reviewed": [],
+      "defects": [
+        {
+          "id": "A80-021-040-R07",
+          "severity": "high",
+          "turns": [
+            1,
+            3,
+            7,
+            9,
+            10
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line35 /turns/0/after",
+            "dialogues.jsonl#line35 /turns/2/after",
+            "dialogues.jsonl#line35 /turns/6/after",
+            "dialogues.jsonl#line35 /turns/8/after",
+            "dialogues.jsonl#line35 /turns/9/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R08",
+          "severity": "high",
+          "turns": [
+            6,
+            7,
+            9
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line35 /turns/5/after",
+            "dialogues.jsonl#line35 /turns/6/after",
+            "dialogues.jsonl#line35 /turns/8/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R09",
+          "severity": "high",
+          "turns": [
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line35 /turns/7/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R06",
+          "severity": "high",
+          "turns": [
+            10
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line35 /turns/9/after"
+          ]
+        }
+      ],
+      "successes": [
+        "originСПб→Казань выполнен безсменыДубая/3–9декабря/125000/1adult",
+        "послеt8hardrefundableудалён",
+        "лишнийпланнебылподтверждён/заказовнет"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07"
+          ],
+          "observed": "Конечныйгородещёнеопределён, но отдельногоrouteintentвstateнет.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07"
+          ],
+          "observed": "Синтезroundtripвoriginпринеопределённомконце.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "origin"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R08"
+          ],
+          "observed": "Явнаяhypothesisдобавляетhotel_id=demo-hotel-dubai-central(CHANGE/1op).",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07",
+            "A80-021-040-R08"
+          ],
+          "observed": "ПодтверждениеконцаМосква не меняетendleg;добавляетhardrefundable=true(CHANGE/2ops).",
+          "changed_trip_fields": [
+            "constraints"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R09"
+          ],
+          "observed": "Отмена2ограниченийубираеттолькоrefundable,hotelpinостаётся.",
+          "changed_trip_fields": [
+            "constraints"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 7,
+          "state_version_after": 8,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07",
+            "A80-021-040-R08"
+          ],
+          "observed": "Дубай→МосквавконцесоздаётstayМосква9–10сroomиreturnМосква→Казань10.12.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 8,
+          "state_version_after": 9,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line35 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 10,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R07",
+            "A80-021-040-R06"
+          ],
+          "observed": "Явнаяотменаphantomstayout/return schemafail,неправильныйrouteсохранён.",
+          "changed_trip_fields": [],
+          "response_source": "model",
+          "model_calls": 1,
+          "state_version_before": 9,
+          "state_version_after": 9,
+          "error_code": "INVALID_LLM_OPERATION",
+          "evidence_ref": "dialogues.jsonl#line35 /turns/9",
+          "model_event_semantics": []
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "1cf09e0ace7649a2f76597b9aa1fd3f2a4dca06f1d123fbc6cf65081e8e28f7b"
+    },
+    {
+      "case_id": "ZAI100-036",
+      "title": "Завтра, повторное завтра в выезде и восстановление интервала",
+      "source_line": 36,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "evidence_ref": "dialogues.jsonl#line36 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            6,
+            7,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line36 /turns/5/after",
+            "dialogues.jsonl#line36 /turns/6/after",
+            "dialogues.jsonl#line36 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "EuropeMoscowзавтра=27.10 издня26.10",
+        "checkoutзавтра=checkinвежливоотклонён,нетzero-nightcommit",
+        "послезавтра28,затемcheckout29:checkin27сохранён",
+        "45000/1adult/1room",
+        "DEMOpreview200"
+      ],
+      "observations": [
+        {
+          "kind": "test_expectation",
+          "turn": 5,
+          "text": "Не требовать обязательный budget slot без продуктового решения; unknown budget не равно0."
+        }
+      ],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "stays",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "TEST_EXPECTATION: бюджет optional в текущем продукте/domain; построение DEMO без него не является само по себе дефектом.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Бюджет45000сохранён,dates/nightscountнеответили.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Dates27–29верны, просьба подтвердить2ночи проигнорирована.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line36 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "ea5854ca0fef8286a1e01e493e72ae67d06d5cf60c7a04959a0300e364377f22"
+    },
+    {
+      "case_id": "ZAI100-037",
+      "title": "Опечатка Антальи, вопрос о другом городе и сокращение отпуска",
+      "source_line": 37,
+      "turn_count": 9,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "snapshots_reviewed": 19,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 8,
+          "state_version_after": 8,
+          "evidence_ref": "dialogues.jsonl#line37 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R10",
+          "severity": "high",
+          "turns": [
+            6
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line37 /turns/5/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R14",
+          "severity": "high",
+          "turns": [
+            7
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line37 /turns/6/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            6,
+            9
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line37 /turns/5/after",
+            "dialogues.jsonl#line37 /turns/8/after"
+          ]
+        }
+      ],
+      "successes": [
+        "НеизвестнаяопечаткаАнтлаьюполучилауточнениевместовымышленногогорода",
+        "shortАнтальяcorrect;2adult+child8/14–21→14–20/1room",
+        "ВопросСтамбулнеизменилdestination",
+        "отдельная145000t8корректноисправиламасштаб",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "ACCEPTABLE_CLARIFICATION: исходноеexpectedразрешалоуточнитьопечатку;неотдельныйFAIL.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 4,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/3",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R10",
+            "A80-021-040-R01"
+          ],
+          "observed": "145тыщ→145000000minor вместо14500000;×10.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R14"
+          ],
+          "observed": "Checkoutисправлен20,explicit145000₽неприменены,wrongbudgetсохранён.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Naturalrecoveryотдельнойабсолютнойсуммой.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 7,
+          "state_version_after": 8,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 8,
+          "state_version_after": 8,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line37 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "e6645c644daabaf792bda2dbf63b6718995575bdc9771139277453b1b3a8a3e5"
+    },
+    {
+      "case_id": "ZAI100-038",
+      "title": "Питер как алиас и продление одной остановки",
+      "source_line": 38,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 7,
+          "state_version_after": 7,
+          "evidence_ref": "dialogues.jsonl#line38 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R02",
+          "severity": "medium",
+          "turns": [
+            1
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line38 /turns/0/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            6,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line38 /turns/5/after",
+            "dialogues.jsonl#line38 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "Piterотдельнымslotнормализованв1СанктПетербург",
+        "Russianworddates5–8→5–9.12/1adult/1room",
+        "65000RUBнепревращёнвnightlybudget",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R02"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "ASK"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Риторическое«не за ночь» не испортилоmoney, но4ночииscopeнеобъяснены.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 7,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line38 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "2b79070e4db410a92dc460f665a3219fe87ddf3177214e7e3820df24ddc0c6e4"
+    },
+    {
+      "case_id": "ZAI100-039",
+      "title": "Смешанный язык и изменение только отправления",
+      "source_line": 39,
+      "turn_count": 8,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "snapshots_reviewed": 17,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 8,
+          "state_version_after": 8,
+          "evidence_ref": "dialogues.jsonl#line39 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R03",
+          "severity": "medium",
+          "turns": [
+            1
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line39 /turns/0/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            6,
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line39 /turns/5/after",
+            "dialogues.jsonl#line39 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "EnglishIstanbulslot сохраняетКазаньorigin",
+        "EnglishNovember27/dateandOneRoomправильны",
+        "100000RUBнапоездку",
+        "Englishdeparture-onlyMoscowсохраняетIstanbul/dates/party",
+        "Englishcheaperlowest_totalнеуменьшаетbudget",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R03"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 2,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/2",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "origin"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "preferences"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 7,
+          "state_version_after": 8,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line39 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "0553607cc5494f7382a13e124f78dac98d54f8000e28d3b5096bb24ddb7e27c7"
+    },
+    {
+      "case_id": "ZAI100-040",
+      "title": "Отрицание нежелательного города и увеличение бюджета",
+      "source_line": 40,
+      "turn_count": 9,
+      "reviewed_turn_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "snapshots_reviewed": 19,
+      "actions_reviewed": [
+        {
+          "action_id": "A1",
+          "kind": "checkout/preview",
+          "http": 200,
+          "state_version_before": 8,
+          "state_version_after": 8,
+          "evidence_ref": "dialogues.jsonl#line40 /actions/0"
+        }
+      ],
+      "defects": [
+        {
+          "id": "A80-021-040-R02",
+          "severity": "medium",
+          "turns": [
+            1
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line40 /turns/0/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R01",
+          "severity": "medium",
+          "turns": [
+            7
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line40 /turns/6/after"
+          ]
+        },
+        {
+          "id": "A80-021-040-R11",
+          "severity": "high",
+          "turns": [
+            8
+          ],
+          "evidence_refs": [
+            "dialogues.jsonl#line40 /turns/7/after"
+          ]
+        }
+      ],
+      "successes": [
+        "2adult/СПб/shortКазаньcorrect",
+        "ОтрицательныйСочи невыбран",
+        "2–6.11/1room/75000",
+        "абсолютные85000t9восстановилиbudget",
+        "DEMOpreview200"
+      ],
+      "observations": [],
+      "turn_reviews": [
+        {
+          "turn": 1,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R02"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/0",
+          "model_event_semantics": [
+            {
+              "operations_count": 3,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/1",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 3,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "contextual_slot",
+          "model_calls": 0,
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/2",
+          "model_event_semantics": []
+        },
+        {
+          "turn": 4,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "legs",
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/3",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/4",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 6,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 5,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/5",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 7,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R01"
+          ],
+          "observed": "Сверены фактический ответ, before/after, pending и errors; положительные части перечислены в successes.",
+          "changed_trip_fields": [],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 6,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/6",
+          "model_event_semantics": [
+            {
+              "operations_count": 0,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 8,
+          "classification": "DEFECT_OR_PARTIAL",
+          "finding_ids": [
+            "A80-021-040-R11"
+          ],
+          "observed": "Добавить10000к75000дало76000,арифметическиожидалось85000.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 6,
+          "state_version_after": 7,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/7",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        },
+        {
+          "turn": 9,
+          "classification": "POSITIVE_CHECK",
+          "finding_ids": [],
+          "observed": "Naturalrecoveryчерезабсолютнуюсумму.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "response_source": "llm",
+          "model_calls": 1,
+          "state_version_before": 7,
+          "state_version_after": 8,
+          "error_code": null,
+          "evidence_ref": "dialogues.jsonl#line40 /turns/8",
+          "model_event_semantics": [
+            {
+              "operations_count": 1,
+              "speech_act": "CHANGE"
+            }
+          ]
+        }
+      ],
+      "raw_model_contract_available": false,
+      "full_record_sha256": "a4a35e44da2d2413dba519f292aa137c9c1843096d11668504e8a08e315890a4"
+    }
+  ],
+  "not_closed": [
+    "full_NLU",
+    "actual_api_replay_of_80",
+    "general_operation_grounding",
+    "open_jaw_one_way_topology",
+    "unsupported_nonstop_capability",
+    "mixed_multi_topic_answer_coverage"
+  ],
+  "non_scored_contract_observations": [
+    {
+      "severity": "medium_review_needed",
+      "case_id": "ZAI100-021",
+      "turn": 4,
+      "evidence": [
+        "/turns/2/plans/1/total_minor=5377000",
+        "/turns/3/plans/1/comparison/before_total_minor=4660000",
+        "/turns/3/plans/1/comparison/after_total_minor=5377000"
+      ],
+      "observation": "Variant2comparison uses prior first plan as baseline, though its own prior economic total unchanged. Numeric difference is correct for that different baseline; whether UI implies same-variant change needs explicit baseline identity. Not scored as observed user-visible arithmetic failure.",
+      "general_fix": "Expose baseline_plan_id/profile and label comparison scope, or compare matched selected profiles."
+    }
+  ],
+  "programmatic_fact_checks": {
+    "state_snapshots_loaded_and_compared": 360,
+    "events_reviewed": 424,
+    "actions_reviewed": 15,
+    "distinct_plan_snapshots_economic_checks": 201,
+    "checks": [
+      "component sums",
+      "every offer breakdown sum",
+      "unit_minor*quantity",
+      "DEMO/RUB provenance"
+    ],
+    "violations": [],
+    "raw_model_contracts_present": 0,
+    "source_sha256_unchanged": true
+  }
+}

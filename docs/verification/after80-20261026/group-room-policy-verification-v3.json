@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-26",
+  "scope": "F016/F018 room-specific rate requirements and family memberships; F017 omitted explicit adult removal guard",
+  "status": "CONTROLLED_PURE_CONTRACTS_PASS_ACTUAL_NLU_OPEN",
+  "initial_failures_preserved": {
+    "tests": "tests/test_group_room_scope.py initial 5-case run",
+    "failed": 5,
+    "causes": [
+      "upsert_group unsupported",
+      "room_id unknown in constraint operations",
+      "schema rejected group/room requirements"
+    ]
+  },
+  "intermediate_failure": {
+    "passed": 447,
+    "failed": 2,
+    "cause": "historical schema byte comparison included newly added group/room functionality",
+    "repair": "Keep immutable a93 baseline and exact legacy projection; measure added feature cost separately"
+  },
+  "final": {
+    "junit": ".local/evaluation/after80-20261026/group-room-policy-pure-canary.xml",
+    "passed": 529,
+    "failed": 0,
+    "skipped": 0,
+    "new_cases": 105,
+    "ruff_new_files": "PASS",
+    "real_model_calls": 0,
+    "real_provider_http": 0,
+    "runtime_mutations": 0,
+    "database_calls": 0
+  },
+  "contracts": {
+    "upsert_group": "Full stable-ID setter: traveler_ids plus strict keep_separate; atomic old memberships/traveler.group_id synchronization. Known membership IDs only, no invented family partition.",
+    "empty_separate_group": "Valid draft; final missing_group_membership with exact group_id, group.membership pending slot. Legacy empty non-separate groups remain valid.",
+    "room_constraint": "room_id requires stay_id, only breakfast/refundable; identity key/stay_id/room_id; clear exact scope; room existence checked within own stay.",
+    "demo_room_rate": "When room-scoped requirements exist, explicit room_rates row per canonical room; finite catalogue facts and independent per-room price. Mixed overall rate flags are null rather than universal true.",
+    "external_room_rate": "Only details.room_constraint_evidence[room_id][key] for exact covered canonical room; aggregate true, other room, wrong type, absent data do not prove the room requirement.",
+    "removal_guard": "guard_unapplied_traveler_removal returns precise ASK for explicit adult-not-travelling missing remove_traveler; caller blocks batch before apply. Does not pick identity/remove/reallocate; hypotheses/history/questions/room-only moves remain unhandled.",
+    "separation_guard": "guard_group_separation preserves typed intake and grounds explicit no-mix policy. Known count creates exact empty keep-separate groups; known memberships are preserved. Unknown count persists trusted pending family_separation_required/membership_unknown; bound count resolves it. Caller must wait on ASK, never search. Hypotheses/history/allow-mix/count alternatives/conflicting writes unchanged; block_batch true on count conflict or >30-op engineering cap.",
+    "saved_flag_protection": "protect_group_separation restores only an existing exact group previously true when proposed setter says false without asserted allow-mix. Preserves proposed membership/other ops, adds no groups. Pure FAQ/hypothesis/contradictory allow-mix do not revoke saved policy.",
+    "question_clause_gate": "Sentence-bounded asserted clauses preserve explicit no-mix/adult-removal before separate information question; lone question sentence stays outside grounding. No general dialogue interpretation claimed."
+  },
+  "evidence": [
+    "tests/test_group_room_scope.py: pure memberships, atomic rollback/idempotence, no-mix allocator, pending slots, exact scope clears, room-rate arithmetic and quote",
+    "tests/test_group_semantics.py: exact ZAI100-079 turn3 input plus conservative negative controls",
+    "tests/test_llm_contract.py: historical extensional acceptance and immutable frozen baseline still pass"
+  ],
+  "schema_bytes": {
+    "encoding": "compact UTF-8 JSON bytes, not model tokens",
+    "frozen_a93": {
+      "empty": 7776,
+      "sample": 9107
+    },
+    "legacy_same_scope": {
+      "empty": 5573,
+      "sample": 6712,
+      "strict_reduction_percent": 25
+    },
+    "route_and_clear_preference": {
+      "empty": 6289,
+      "sample": 7429,
+      "engineering_added_bytes_cap": 800
+    },
+    "full_group_room": {
+      "empty": 7125,
+      "sample": 8281,
+      "engineering_added_bytes_cap_over_route_scope": 900
+    },
+    "full_schema_25_percent_claim": false
+  },
+  "limitations": [
+    "This is typed/domain/mock evidence, not actual LLM extraction or full 80-dialogue replay.",
+    "Root integrates operation guide/conflicts, F017 helper and conversational pending behavior separately.",
+    "Current actual providers have not been qualified to emit room_constraint_evidence; missing precise room facts block simulated quote honestly.",
+    "No real booking, current availability, vendor tariff or full live-room-rate claim.",
+    "No application keys read, runtime restarted, original dialogue corpus modified, staging or commit performed."
+  ],
+  "previous_report_preserved": ".local/evaluation/after80-20261026/group-room-policy-verification-v2.json",
+  "no_mix_initial_failure": "First new helper run 44PASS/1FAIL: alternative two-or-three families accidentally selected3; fixed by count-alternative exclusion under unchanged negative oracle.",
+  "canary_initial_failure": "52PASS/10FAIL before implementation: saved true separation dropped by unrelated false setter, explicit no-mix/removal before separate FAQ swallowed by global question gate."
+}

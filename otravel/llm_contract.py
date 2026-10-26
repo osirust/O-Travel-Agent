@@ -20,7 +20,7 @@ CONTROL_ACTIONS = ("continue", "wait", "resume", "cancel", "request_checkout", "
 OPERATION_TYPES = frozenset({
     "set_origin", "set_budget", "set_search_policy", "add_traveler",
     "update_traveler", "remove_traveler", "upsert_stay", "remove_stay",
-    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference",
+    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference", "clear_preference", "set_route_policy", "upsert_group",
 })
 
 
@@ -160,7 +160,7 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     group_ids = [group.id for group in state.groups]
     new_people = _candidates("traveler", set(traveler_ids), max(0, MVP_LIMITS["travelers"] - len(traveler_ids)))
     new_stays = _candidates("stay", set(stay_ids), max(0, MVP_LIMITS["stays"] - len(stay_ids)))
-    new_groups = _candidates("group", set(group_ids), len(new_people))
+    new_groups = _candidates("group", set(group_ids), max(1, len(new_people)))
     all_people, all_stays = traveler_ids + new_people, stay_ids + new_stays
     all_groups = group_ids + new_groups
     # A room ID is local to its stay. Existing IDs are retained; new aliases can
@@ -188,6 +188,12 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
         "weight": {"type": "number", "minimum": 0, "maximum": 1}}, ("key", "value"),
         oneOf=[{"properties": {"key": {"const": key}, "value": {"const": value}}}
             for key, value in (("price_priority", "lowest_total"), ("departure_time", "early_morning"))]))
+    clear_keys = list(dict.fromkeys(["price_priority", "departure_time", *[p.key for p in state.preferences]]))
+    operation("clear_preference", _object({"key": _enum(clear_keys)}, ("key",)))
+    operation("set_route_policy", _object({"kind": _enum(("round_trip", "one_way", "open_jaw", "undecided")),
+        "end_city": _nullable(city)}, ("kind",), oneOf=[
+            {"properties": {"kind": {"const": "open_jaw"}}},
+            {"properties": {"kind": _enum(("round_trip", "one_way", "undecided")), "end_city": {"type": "null"}}}]))
     operation("set_search_policy", _object({
         "mode": _enum(("DEMO", "HYBRID")), "hotel_provider": _enum(("liteapi", "serpapi")),
         "flight_provider": _enum(("duffel", "serpapi")), "demo_fallback": {"type": "boolean"},
@@ -207,10 +213,13 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
             "birth_date": date, "group_id": group}, minProperties=1), traveler_ids)
         operation("remove_traveler", _object({}), traveler_ids)
 
+    members = {"type": "array", "items": _enum(all_people), "uniqueItems": True,
+               "maxItems": MVP_LIMITS["travelers"]} if all_people else {"type": "array", "maxItems": 0}
+    operation("upsert_group", _object({"traveler_ids": members, "keep_separate": {"type": "boolean"}},
+        ("traveler_ids", "keep_separate")), all_groups)
+
     if all_stays:
         # Arrays refer only to existing or server-issued same-batch aliases.
-        members = {"type": "array", "items": _enum(all_people), "uniqueItems": True,
-                   "maxItems": MVP_LIMITS["travelers"]} if all_people else {"type": "array", "maxItems": 0}
         room = _object({"id": _enum(room_ids), "traveler_ids": members}, ("id", "traveler_ids"))
         operation("upsert_stay", _object({"city": _nullable(city), "check_in": date, "check_out": date,
             "rooms": {"type": "array", "items": room, "maxItems": MVP_LIMITS["rooms_per_stay"]},
@@ -223,8 +232,8 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     # Existing unsupported conditions can still be edited as typed scalar values.
     # A new unsupported key belongs in unknowns, not an invented operation. No
     # arbitrary object is permitted: the only structured value is a known pet.
-    existing_unknown_keys = [c.key for c in state.constraints if c.key not in {"breakfast", "refundable", "pets_allowed", "pets"}]
-    condition_values = [{"properties": {"key": _enum(("breakfast", "refundable", "pets_allowed")),
+    existing_unknown_keys = [c.key for c in state.constraints if c.key not in {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}]
+    condition_values = [{"properties": {"key": _enum(("breakfast", "refundable", "pets_allowed", "nonstop")),
         "value": {"type": "boolean"}}},
         {"properties": {"key": {"const": "pets"},
             "value": _object({"kind": _enum(("dog", "cat")),
@@ -232,9 +241,16 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     if existing_unknown_keys:
         condition_values.append({"properties": {"key": _enum(list(dict.fromkeys(existing_unknown_keys))),
             "value": {"type": ["boolean", "string", "number", "null"]}}})
+    room_scope = {"if": {"required": ["room_id"], "properties": {"room_id": {"type": "string"}}},
+        "then": {"required": ["stay_id"], "properties": {"key": _enum(("breakfast", "refundable")),
+            "stay_id": _enum(all_stays)}}}
+    flight_scope = {"if": {"required": ["key"], "properties": {"key": {"const": "nonstop"}}},
+        "then": {"properties": {"stay_id": {"type": "null"}, "room_id": {"type": "null"}}}}
     operation("set_constraint", _object({"key": {}, "value": {}, "hard": {"type": "boolean"},
-        "stay_id": stay_reference}, ("key", "value"), oneOf=condition_values))
-    operation("clear_constraint", _object({"key": _text(), "stay_id": stay_reference}, ("key",)))
+        "stay_id": stay_reference, "room_id": _nullable(_enum(room_ids))}, ("key", "value"),
+        oneOf=condition_values, allOf=[room_scope, flight_scope]))
+    operation("clear_constraint", _object({"key": _text(), "stay_id": stay_reference,
+        "room_id": _nullable(_enum(room_ids))}, ("key",), allOf=[room_scope, flight_scope]))
     operation("undo", _object({}))
 
     schema = _object({

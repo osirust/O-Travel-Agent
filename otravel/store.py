@@ -242,6 +242,15 @@ def _stamped(state: dict, version: int) -> dict:
     return result
 
 
+def _require_checkout_ready(session: dict) -> None:
+    if session.get("active_run_id") is not None:
+        raise Conflict("Дождитесь завершения обработки поездки.", "processing_in_progress")
+    if session.get("waiting_reason") == "clarification" and session.get("pending_question") is not None:
+        raise Conflict("Сначала уточните условия поездки.", "clarification_required")
+    if session.get("status") == "RECOVERABLE_ERROR":
+        raise Conflict("После ошибки проверьте условия и получите новый план.", "trip_requires_recovery")
+
+
 class Store:
     def __init__(self, database_url: str):
         if database_url.startswith("postgres://"):
@@ -659,6 +668,7 @@ class Store:
                 raise Conflict("Состояние поездки изменилось.", "stale_state")
             if session["waiting_reason"] == "user_pause":
                 raise Conflict("Поездка поставлена на паузу.", "user_paused")
+            _require_checkout_ready(session)
             now = _now()
             expires_at = now + timedelta(seconds=min(600, expires_seconds))
             snapshots = plan.get("source_snapshots", [])
@@ -697,6 +707,7 @@ class Store:
                 raise Conflict("Состояние поездки изменилось.", "stale_state")
             if session["waiting_reason"] == "user_pause":
                 raise Conflict("Поездка поставлена на паузу.", "user_paused")
+            _require_checkout_ready(session)
             await self._invalidate_quotes(conn, session_id)
             await self._event(conn, session, None, "QUOTE_PREVIEW_STARTED", {"state_version": expected_version})
 
@@ -729,6 +740,7 @@ class Store:
                 if previous["request_hash"] != request_hash:
                     raise Conflict("Ключ подтверждения использован с другими параметрами.", "idempotency_mismatch")
                 return _order(previous)
+            _require_checkout_ready(session)
             quote = (await conn.execute(select(quotes).where(
                 quotes.c.id == quote_id, quotes.c.session_id == session_id
             ).with_for_update())).mappings().first()
@@ -795,6 +807,32 @@ class Store:
                     raise Conflict("Run принадлежит другой сессии.", "session_mismatch")
             return await self._event(conn, session, run_id, event_type, payload)
 
+    async def select_model_role(self, session_id: str, run_id: str, expected_version: int, role: str) -> None:
+        """Fix a server-owned role before inference, without a network lock."""
+        _version(expected_version)
+        if role != "readonly_answer_v1":
+            raise StoreError("Неизвестная серверная роль модели.", "invalid_model_role")
+        async with self.engine.begin() as conn:
+            await conn.execute(select(func.pg_advisory_xact_lock(0x4F545241)))
+            session = await self._session(conn, session_id, lock=True)
+            run = await self._run(conn, run_id, lock=True)
+            if (run["session_id"] != session_id or run["status"] != "running"
+                    or session["active_run_id"] != run_id or session["state_version"] != expected_version
+                    or run["based_version"] != expected_version or session["waiting_reason"] == "user_pause"):
+                raise Conflict("Изменились версия или управление поездкой.", "processing_control_changed")
+            previous = (await conn.execute(select(events.c.payload).where(
+                events.c.run_id == run_id, events.c.event_type == "MODEL_ROLE_SELECTED"))).scalars().all()
+            if previous:
+                if any(value.get("role") != role or value.get("based_state_version") != expected_version for value in previous):
+                    raise Conflict("Роль этого запуска уже выбрана.", "model_role_changed")
+                return
+            started = (await conn.execute(select(func.count()).select_from(events).where(
+                events.c.run_id == run_id, events.c.event_type == "MODEL_CALL_STARTED"))).scalar_one()
+            if started:
+                raise Conflict("Нельзя менять роль после вызова модели.", "model_role_changed")
+            await self._event(conn, session, run_id, "MODEL_ROLE_SELECTED", {
+                "role": role, "based_state_version": expected_version, "max_calls": 1})
+
     async def reserve_model_call(self, session_id: str, run_id: str,
                                  limit: int, provider: str) -> bool:
         """Reserve an actual attempt in remote/local/test durable budget buckets.
@@ -842,8 +880,19 @@ class Store:
             else:
                 provider_scope = event_provider.not_in(sorted(REAL_MODEL_PROVIDERS | LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = limit, None
+            roles = (await conn.execute(select(events.c.payload).where(
+                events.c.run_id == run_id, events.c.event_type == "MODEL_ROLE_SELECTED"))).scalars().all()
+            readonly = any(value.get("role") == "readonly_answer_v1" for value in roles)
+            if readonly:
+                if (run["status"] != "running" or session.get("active_run_id") != run_id
+                        or session.get("waiting_reason") == "user_pause"
+                        or any(value.get("based_state_version") != session["state_version"] for value in roles)
+                        or run["based_version"] != session["state_version"]):
+                    raise Conflict("Изменились версия или управление поездкой.", "processing_control_changed")
+                per_run_limit = 1
             if per_run_limit is not None:
-                run_scope = event_provider.in_(sorted(REAL_MODEL_PROVIDERS)) if provider in REAL_MODEL_PROVIDERS else provider_scope
+                run_scope = (True if readonly else event_provider.in_(sorted(REAL_MODEL_PROVIDERS))
+                             if provider in REAL_MODEL_PROVIDERS else provider_scope)
                 run_count = (await conn.execute(select(func.count()).select_from(events).where(
                     events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
                     run_scope,

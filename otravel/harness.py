@@ -83,6 +83,7 @@ class ModelResult(BaseModel):
     pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
     pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field", "date_proposal"]] = Field(default_factory=list, max_length=6, exclude=True)
     response_source: str = Field(default="llm", exclude=True)
+    server_questions: list[str] = Field(default_factory=list, exclude=True)
 
 
 OPERATION_GUIDE = {
@@ -102,13 +103,30 @@ OPERATION_GUIDE = {
         "clear_constraint": {"value": {"key": "breakfast"}},
         "undo": {"value": {}},
         "set_search_policy": {"value": {"mode": "HYBRID", "hotel_provider": "liteapi", "flight_provider": "duffel", "demo_fallback": True}},
+        "set_route_policy": {"value": {"kind": "one_way"}},
+        "clear_preference": {"value": {"key": "departure_time"}},
+        "upsert_group": {"target_id": "EXISTING_OR_NEW_GROUP_ID", "value": {
+            "traveler_ids": ["EXISTING_TRAVELER_ID"], "keep_separate": True}},
     },
     "room_shape": {"id": "STABLE_ROOM_ID", "traveler_ids": ["EXISTING_TRAVELER_ID"]},
-    "known_hard_constraints": ["breakfast", "refundable", "pets_allowed", "pets"],
+    "group_contract": "Создай людей перед upsert_group, затем комнаты. Полный setter связывает traveler_ids и group_id атомарно. Не угадывай семьи: неизвестный состав при явном запрете смешивать — пустая keep_separate=true группа и точный вопрос.",
+    "room_constraint_contract": "Разные условия номеров сохраняй отдельно: set_constraint.value {key,value,hard,stay_id,room_id}. Для room_id обязателен stay_id; только breakfast/refundable. Не объединяй условия двух номеров в общее условие проживания.",
+    "known_hard_constraints": ["breakfast", "refundable", "pets_allowed", "pets", "nonstop"],
     "supported_cities": list(CITIES),
     "known_geographic_cities": list(known_cities()),
-    "constraint_contract": {"breakfast": "boolean: включённый завтрак конкретного тарифа", "refundable": "boolean: возвратность конкретного тарифа", "pets_allowed": "boolean: свойство отеля", "pets": {"kind": "dog|cat", "weight_kg": "known positive number"}},
+    "constraint_contract": {"breakfast": "boolean: включённый завтрак конкретного тарифа", "refundable": "boolean: возвратность конкретного тарифа", "pets_allowed": "boolean: свойство отеля", "pets": {"kind": "dog|cat", "weight_kg": "known positive number"},
+        "nonstop": "boolean: true — прямой рейс без пересадок/техпосадок для всех flight legs. Trip-wide, без stay_id/room_id. false разрешает пересадки; отмена предпочтительно clear_constraint nonstop."},
     "do_not_invent": ["city", "date", "age", "budget", "hotel_id", "consent"],
+    "route_contract": {"round_trip": "Возврат к исходному городу.",
+        "one_way": "Обратный перелёт не нужен; не создавай его автоматически.",
+        "open_jaw": "Завершение в другом городе: kind=open_jaw,end_city. Город последнего рейса не становится hotel stay.",
+        "undecided": "Конец маршрута пока не определён: уточнить, не придумывать возврат.",
+        "transit": "Пересадка без ночёвки не создаёт проживание."},
+    "coverage_rules": ["Все изменения извлекай только из current_message; сохранённые условия не выполняй повторно.",
+        "Не добавляй завтрак, возвратность, другой отель или город отправления по умолчанию.",
+        "clear_preference удаляет пожелание по key; слово любое не означает сохранить прежнее утро.",
+        "Если требование не выражается разрешёнными операциями, верни точный человеческий вопрос в unknowns, а не новую операцию.",
+        "guest_nationality в set_search_policy — только явно сообщённое гражданство, ISO-2; язык и направление его не определяют."],
 }
 
 
@@ -145,6 +163,14 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
         elif item.type == "set_search_policy":
             for key, field in value.items():
                 write(("search_policy", key), field)
+        elif item.type == "set_route_policy":
+            write(("route_policy",), {"kind": value.get("kind"), "end_city": value.get("end_city")})
+        elif item.type in {"set_preference", "clear_preference"}:
+            write(("preference", value.get("key") or target), value if item.type == "set_preference" else {"removed": True})
+        elif item.type == "upsert_group":
+            write(("group", target), value)
+            for identifier in value.get("traveler_ids", []):
+                write(("group_membership", identifier), target)
         elif item.type in {"upsert_stay", "replace_hotel", "remove_stay"}:
             write(("stay", target, "exists"), item.type != "remove_stay")
             for key, field in value.items():
@@ -158,9 +184,11 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
                 for key, field in value.items():
                     if key != "id":
                         write(("traveler", target, key), field)
+                        if key == "group_id":
+                            write(("group_membership", target), field)
         elif item.type in {"set_constraint", "clear_constraint"}:
             key = value.get("key") or target
-            write(("constraint", value.get("stay_id"), key), {"value": value.get("value"), "hard": value.get("hard", True)} if item.type == "set_constraint" else {"removed": True})
+            write(("constraint", value.get("stay_id"), value.get("room_id"), key), {"value": value.get("value"), "hard": value.get("hard", True)} if item.type == "set_constraint" else {"removed": True})
         elif item.type == "shift_return":
             write(("trip", "return_edit_kind"), "relative")
             write(("trip", "return_shift_days"), value.get("days"))
@@ -366,7 +394,11 @@ class Harness:
                 if isinstance(exc, ProviderError) and isinstance(exc.details, dict):
                     problem["details"] = {key: exc.details[key] for key in ("limit_source", "provider_name", "http_status") if key in exc.details}
                 with suppress(Exception):
-                    await self.store.fail_run(run_id, problem, "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.", preserve_session=False)
+                    readonly_failed = getattr(exc, "readonly_answer", False)
+                    reply = ("Не удалось получить объяснение. Поездка и текущий вопрос сохранены."
+                             if readonly_failed else
+                             "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.")
+                    await self.store.fail_run(run_id, problem, reply, preserve_session=readonly_failed)
             except Exception:
                 with suppress(Exception):
                     await self.store.fail_run(run_id, _problem("processing_error", "Ошибка обработки; состояние сохранено.", True), "Состояние сохранено. Можно повторить действие или воспользоваться формой.", preserve_session=False)
@@ -374,7 +406,7 @@ class Harness:
                 if self.active.get(session_id) == run_id:
                     self.active.pop(session_id, None)
 
-    async def _extract(self, session: dict, run: dict) -> tuple[ModelResult, dict]:
+    async def _extraction_context(self, session: dict, run: dict) -> dict:
         history = await self.store.list_messages(session["session_id"])
         input_row = next((message for message in history if message["id"] == run["input_message_id"]), None)
         sequence = input_row["sequence"] if input_row else float("inf")
@@ -399,6 +431,13 @@ class Harness:
         archived = await plan_history(self.store, session["session_id"], session["state_version"])
         context["first_shown_plan"] = archived["first_saved_plan"]
         context["__response_schema"] = build_operation_schema(session["state"])
+        return context
+
+    async def _extract(self, session: dict, run: dict, context_override: dict | None = None) -> tuple[ModelResult, dict]:
+        context = context_override if context_override is not None else await self._extraction_context(session, run)
+        readonly = context.get("__response_mode") == "readonly_answer_v1"
+        if readonly:
+            await self.store.select_model_role(session["session_id"], run["run_id"], session["state_version"], "readonly_answer_v1")
         gateway = self.llm
         provider = self.settings.llm_mode if isinstance(gateway, LLMGateway) else "injected_test_adapter"
         fallback = None
@@ -450,6 +489,8 @@ class Harness:
             if provider == "openrouter" and router_ready and backup != selected and backup.endswith(":free") and re.fullmatch(r"[\w./:-]+", backup):
                 fallback = LLMGateway({**config, "LLM_PROVIDER": "openrouter", "OPENROUTER_MODEL": backup})
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
+        if readonly:
+            attempts = min(1, attempts)
         if provider in {"ollama", "groq", "cloudflare", "zai"}:
             # Keep local and tightly capped free providers to one generation;
             # a malformed answer does not trigger an immediate full-context repair.
@@ -483,6 +524,7 @@ class Harness:
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
                 if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
                     raise ProviderError("MODEL_BUDGET_EXHAUSTED", "Дневной лимит вызовов LLM исчерпан.")
+                await self._ensure_current_run(session, run)
                 requested_model = _requested_model(gateway, provider)
                 started = perf_counter()
                 try:
@@ -500,6 +542,11 @@ class Harness:
                     # Runtime origin is server-owned, including for injected
                     # adapters. A response cannot label itself a no-model path.
                     extracted.response_source = "llm"
+                    extracted.server_questions = []
+                    if readonly:
+                        from .answering import valid_readonly_contract
+                        if not valid_readonly_contract(validated_snapshot["value"]):
+                            raise ProviderError("INVALID_LLM_OPERATION", "Ответ объяснения нарушает read-only контракт.", provider=provider)
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_EXTRACTION_VALIDATED", {
                         "based_state_version": session["state_version"], "provider": provider,
                         "model": requested_model, "structured_contract": validated_snapshot})
@@ -510,10 +557,19 @@ class Harness:
                         extracted.operations = []
                         extracted.unknowns = []
                     if not extracted.conflicts and extracted.control.action != "cancel":
+                        try:
+                            extracted.conflicts = operation_conflicts(TripState.model_validate(session["state"]), extracted.operations)
+                        except DomainError:
+                            pass  # The normal domain-to-clarification path handles invalid place values below.
+                    if not extracted.conflicts and extracted.control.action != "cancel":
                         extracted.operations, extracted.operation_normalizations = ground_budget_operations(
                             TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
                         if any(note.get("status") == "clarification_required" for note in extracted.operation_normalizations):
-                            extracted.unknowns = ["Вы указали стоимость за ночь или за человека. Какой общий бюджет всей поездки нужно установить?"]
+                            question = next((note["question"] for note in extracted.operation_normalizations
+                                if note.get("status") == "clarification_required" and isinstance(note.get("question"), str)),
+                                "Вы указали стоимость за ночь или за человека. Какой общий бюджет всей поездки нужно установить?")
+                            extracted.unknowns = [question]
+                            extracted.server_questions = [question]
                             extracted.pending_context = {**(extracted.pending_context or {}), "field": "budget.amount_minor", "budget_scope_ambiguous": True}
                     if (extracted.speech_act == "CHANGE" and not extracted.conflicts
                             and extracted.control.action in {"none", "continue", "wait", "resume"}):
@@ -521,6 +577,43 @@ class Harness:
                             TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in grounded_route]
                         extracted.operation_normalizations.extend(route_notes)
+                        from .intent_grounding import ground_auxiliary_operations, ground_intent_operations
+                        grounded_geo, geo = ground_intent_operations(session["state"], extracted.operations,
+                            run["input_text"], session.get("pending_question"))
+                        extracted.operations = [Operation.model_validate(op) for op in grounded_geo]
+                        extracted.operation_normalizations.extend(geo["notes"])
+                        if geo["replace_geo_unknowns"]:
+                            extracted.unknowns = [q for q in extracted.unknowns if question_field(q) not in {"origin.city", "destination.city"}]
+                        extracted.unknowns = list(dict.fromkeys(geo["unknowns"] + extracted.unknowns))
+                        extracted.server_questions.extend(geo["unknowns"])
+                        if geo["pending_context"] is not None:
+                            extracted.pending_context = {**(extracted.pending_context or {}), **geo["pending_context"]}
+                        extracted.pending_context_clear = list(dict.fromkeys(extracted.pending_context_clear + geo["pending_context_clear"]))
+                        auxiliary, auxiliary_notes = ground_auxiliary_operations(session["state"], extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in auxiliary]
+                        extracted.operation_normalizations.extend(auxiliary_notes)
+                        from .group_semantics import guard_group_separation, guard_unapplied_traveler_removal
+                        separation = guard_group_separation(session["state"], extracted.operations, run["input_text"],
+                            {**((session.get("pending_question") or {}).get("context") or {}),
+                             **(extracted.pending_context or {}),
+                             "field": (extracted.pending_context or session.get("pending_question") or {}).get("field")})
+                        if separation["handled"]:
+                            extracted.operation_normalizations.extend(separation.get("notes", []))
+                            if separation.get("block_batch"):
+                                extracted.operations = []
+                            else:
+                                extracted.operations = [Operation.model_validate(op) for op in separation["operations"]]
+                            if separation.get("question"):
+                                extracted.unknowns = [separation["question"], *[q for q in extracted.unknowns if q != separation["question"]]]
+                                extracted.server_questions.append(separation["question"])
+                                extracted.pending_context = {**(extracted.pending_context or {}), **separation["context"]}
+                        removal = guard_unapplied_traveler_removal(session["state"], extracted.operations, run["input_text"])
+                        if removal["handled"]:
+                            extracted.operations = []
+                            extracted.unknowns = [removal["question"]]
+                            extracted.server_questions = [removal["question"]]
+                            extracted.pending_context = removal["context"]
+                            extracted.operation_normalizations.extend(removal["notes"])
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None
@@ -542,7 +635,7 @@ class Harness:
                             else:
                                 apply_operations(domain_state, extracted.operations)
                         except DomainError as error:
-                            if error.code in {"unsupported_city", "unsupported_limit", "unsupported_operation", "missing_target", "unknown_target", "missing_hotel", "missing_return_date"}:
+                            if error.code in {"unsupported_city", "unsupported_limit", "unsupported_operation", "missing_target", "unknown_target", "missing_hotel", "missing_return_date", "unknown_preference", "invalid_dates", "overlapping_stays"}:
                                 action = "wait" if extracted.control.action == "wait" and explicit_pause_hint(run["input_text"]) else "none"
                                 if error.code == "unsupported_city" and country_context is None:
                                     for operation in extracted.operations:
@@ -555,7 +648,7 @@ class Harness:
                                                 break
                                 question = location["clarification"] if country_context is not None else error.message
                                 extracted = ModelResult(operations=[], control={"action": action}, reply=error.message,
-                                    unknowns=[question], conflicts=[], destination_request=country_context)
+                                    unknowns=[question], conflicts=[], destination_request=country_context, server_questions=[question])
                             else:
                                 context["validation_feedback"] = {"domain_code": error.code,
                                     "message": error.message, "operation_shapes": [{"type": op.type, "fields": sorted(op.value)} for op in extracted.operations],
@@ -583,7 +676,8 @@ class Harness:
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_RESPONSE_RECEIVED", {
                         **actual, "operations": len(extracted.operations), "attempt": attempt + 1,
                         "speech_act": model_speech_act, "speech_act_explicit": "speech_act" in raw_extraction})
-                    return extracted, {**actual, "attempts": attempt_meta}
+                    return extracted, {**actual, "attempts": attempt_meta,
+                        **({"response_role": "readonly_answer_v1"} if readonly else {})}
                 except (ProviderError, ValidationError) as exc:
                     if isinstance(exc, ProviderError) and exc.code == "INVALID_LLM_OPERATION" and exc.details.get("schema_errors"):
                         context["validation_feedback"] = {"errors": exc.details["schema_errors"],
@@ -656,7 +750,42 @@ class Harness:
                 return current_plans(session["state"], payload["plans"])
         return []
 
+    async def _readonly_context(self, session: dict, run: dict) -> dict:
+        from .answering import READONLY_MODE, READONLY_SCHEMA, facts_projection
+
+        messages = await self.store.list_messages(session["session_id"])
+        input_row = next(message for message in messages if message["id"] == run["input_message_id"])
+        preceding = [message for message in messages if message["sequence"] <= input_row["sequence"]]
+        recent = [{"role": message["role"], "text": message["text"]}
+                  for message in preceding if not message["text"].startswith(TYPED_PREFIX)][-6:]
+        history, seen = [], set()
+        for message in reversed(preceding):
+            prior_id = message.get("run_id")
+            if message["role"] != "assistant" or not prior_id or prior_id in seen:
+                continue
+            seen.add(prior_id)
+            prior = await self.store.get_run(prior_id)
+            response = prior.get("result") or {}
+            if (prior.get("session_id") != session["session_id"] or prior.get("status") != "completed"
+                    or response.get("state_version", session["state_version"] + 1) > session["state_version"]):
+                continue
+            if response.get("changes"):
+                history.append({"state_version": response["state_version"], "changes": response["changes"], "historical": True})
+            if len(history) == 3:
+                break
+        facts = facts_projection(session["state"], await self._latest_current_plans(session, run),
+            await self.store.list_orders(session["session_id"]), recent, list(reversed(history)), question=run["input_text"])
+        await self._ensure_current_run(session, run)
+        await self.store.save_event(session["session_id"], run["run_id"], "READONLY_FACTS_PROPOSED", {
+            "based_state_version": session["state_version"],
+            "facts_sha256": hashlib.sha256(json.dumps(facts, sort_keys=True, ensure_ascii=False,
+                separators=(",", ":")).encode()).hexdigest()})
+        return {"current_message": run["input_text"], "facts": facts,
+                "__response_mode": READONLY_MODE, "__response_schema": READONLY_SCHEMA}
+
     async def _interpret(self, session: dict, run: dict) -> tuple[ModelResult, dict | None]:
+        from .answering import checked_reply, readonly_question, short_place_inquiry
+        from .conversational import request_kinds
         from .trip_answers import classify_saved_question, render_saved_answer
 
         # A narrow, complete saved-fact question is not a reply to a date target.
@@ -664,14 +793,36 @@ class Harness:
         # calling it first would swallow a budget/route question while pending.
         # Short answers and all mixed/uncertain input retain the original path.
         kind = classify_saved_question(run["input_text"])
+        readonly = (kind is None and readonly_question(run["input_text"])
+                    and not explicit_pause_hint(run["input_text"])
+                    and not short_place_inquiry(run["input_text"])
+                    and parse_destination(run["input_text"])["requested_destination"]["kind"] not in {"city", "country"})
+        kinds = request_kinds(run["input_text"])
+        secondary = re.search(r"бюджет|лимит|сумм|дат|ноч|вылет|город|маршрут|изменен|цен|отел|стран", run["input_text"].casefold())
+        if (kinds.intersection({"missing_data", "hypothetical_child", "source", "cart"})
+                or kinds == {"party"} and not secondary):
+            # Keep the existing canonical capabilities and addressed intake.
+            # A combined roster/budget/date question uses the richer role.
+            readonly = False
         pending = session.get("pending_question")
+        if (pending and pending.get("field") == "group.membership" and not session["state"].get("groups")
+                and (pending.get("context") or {}).get("membership_unknown") is True):
+            from .group_semantics import guard_group_separation
+            count = guard_group_separation(session["state"], [], run["input_text"],
+                {**pending["context"], "field": "group.membership"})
+            if count["handled"]:
+                question = count.get("question")
+                return ModelResult(operations=[Operation.model_validate(op) for op in count["operations"]],
+                    control={"action": "none"}, reply=question or "Число групп сохранено.",
+                    unknowns=[question] if question else [], conflicts=[],
+                    pending_context=count.get("context"), response_source="contextual_slot"), None
         if pending and session.get("waiting_reason") == "clarification":
             pending = dict(pending)
             if not pending.get("field"):
                 binding = derive_pending_field(pending.get("questions") or [pending.get("text")], session["state"])
                 pending.update({key: value for key, value in binding.items() if value is not None})
         resolved = {"handled": False}
-        if kind is None:
+        if kind is None and not readonly:
             resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
             if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
                 resolved = resolve_short_answer(session["state"], pending, run["input_text"])
@@ -700,6 +851,17 @@ class Harness:
                     separators=(",", ":")).encode()).hexdigest(), "model_calls": 0})
             return ModelResult(operations=[], control={"action": "none"}, reply=reply,
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+        if readonly:
+            context = await self._readonly_context(session, run)
+            try:
+                extracted, metadata = await self._extract(session, run, context_override=context)
+            except (DomainError, ProviderError, ValidationError) as exc:
+                exc.readonly_answer = True
+                raise
+            extracted.reply, reasons = checked_reply(extracted.reply, context["facts"], run["input_text"])
+            extracted.response_source = "readonly_answer"
+            metadata["reply_checks"] = {"rejected_reasons": reasons, "facts_source": "canonical_projection"}
+            return extracted, metadata
         return await self._extract(session, run)
 
     async def _process(self, run: dict) -> None:
@@ -769,6 +931,18 @@ class Harness:
                 raise DomainError("invalid_command", "Неизвестная структурированная команда.")
         else:
             extracted, model_meta = await self._interpret(session, run)
+            if (model_meta is not None and model_meta.get("response_role") == "readonly_answer_v1"
+                    and extracted.response_source == "readonly_answer"):
+                result.update(no_changes=True, response_source="readonly_answer", llm=model_meta,
+                    conversational_response={"facts_source": "canonical_projection", "model_calls_max": 1},
+                    reply_checks=model_meta["reply_checks"])
+                shown = await self._latest_current_plans(session, run)
+                if shown:
+                    result.update(plans=shown, plans_preserved=True, source_type=shown[0].get("source_type"))
+                await self.store.finish_run(run["run_id"], version, None, session["status"], extracted.reply,
+                    pending_question=session.get("pending_question"), waiting_reason=session.get("waiting_reason"),
+                    changes=[], result=result)
+                return
             # Explicit conflicts block the *entire* batch, including otherwise
             # valid edits. Unknown fields alone may retain unambiguous changes.
             conflicts = extracted.conflicts or operation_conflicts(state, extracted.operations)
@@ -898,7 +1072,8 @@ class Harness:
                 clarification_metadata.pop(stale_address, None)
             if extracted.conflicts:
                 clarification_metadata["force_clarification"] = True
-            elif clarification_metadata.get("budget_scope_ambiguous"):
+            elif (clarification_metadata.get("budget_scope_ambiguous")
+                    or extracted.pending_context and extracted.pending_context.get("force_clarification")):
                 clarification_metadata["force_clarification"] = True
             else:
                 clarification_metadata.pop("force_clarification", None)
@@ -906,7 +1081,8 @@ class Harness:
                 normalized = []
                 for raw in questions:
                     trusted = raw in extracted.unknowns and (
-                        extracted.response_source == "contextual_slot" or extracted.destination_request is not None)
+                        extracted.response_source == "contextual_slot" or extracted.destination_request is not None
+                        or raw in extracted.server_questions)
                     bound = derive_pending_field([{**clarification_metadata, "text": raw}], current)
                     if question_field(raw) and bound["field"] is None and not trusted and not extracted.conflicts:
                         continue  # This precise slot is already filled.
@@ -948,7 +1124,8 @@ class Harness:
         # phase. Sanitize that path too; raw schema names never enter the chat.
         if questions and waiting_reason != "user_pause":
             trusted = not run["input_text"].startswith(TYPED_PREFIX) and questions[0] in extracted.unknowns and (
-                extracted.response_source == "contextual_slot" or extracted.destination_request is not None)
+                extracted.response_source == "contextual_slot" or extracted.destination_request is not None
+                or questions[0] in extracted.server_questions)
             if not trusted:
                 questions = [human_question({**clarification_metadata, "text": questions[0]}, current, clarification_metadata)]
         if waiting_reason == "user_pause":
