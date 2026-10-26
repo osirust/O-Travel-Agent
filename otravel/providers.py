@@ -29,6 +29,7 @@ from .observability import groq_rate_facts, request_stats, seconds_hint, usage_c
 
 _SECRETS: set[str] = set()
 _SENSITIVE_FIELDS = {"api_key", "apikey", "api_token", "key", "authorization", "access_token", "password", "secret"}
+_LLM_CREDENTIAL_FIELDS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "CLOUDFLARE_API_TOKEN", "ZAI_API_KEY")
 _LIMIT_SOURCES = {
     "upstream_provider_shared_pool", "account_quota", "key_rate_limit",
     "workspace_credit_limit", "exhausted_global_quota", "unknown",
@@ -58,6 +59,53 @@ def _safe(value: Any) -> Any:
     if isinstance(value, (list, tuple)):
         return [_safe(item) for item in value]
     return _safe_text(value) if isinstance(value, str) else value
+
+
+def safe_model_context(value: Any) -> Any:
+    """Keep code-known domain ``key`` fields, never generic credential keys.
+
+    This is intentionally separate from log/error sanitization. The exception
+    requires both a controller-owned structural path and a public semantic enum;
+    an arbitrary metadata object cannot opt in merely by saying ``breakfast``.
+    """
+    preferences = frozenset({"price_priority", "departure_time"})
+    constraints = frozenset({"breakfast", "refundable", "pets", "pets_allowed", "nonstop"})
+    operations = {"set_preference": preferences, "clear_preference": preferences,
+                  "set_constraint": constraints, "clear_constraint": constraints}
+
+    def semantic_key(path: tuple, node: dict) -> bool:
+        candidate = node.get("key")
+        if not isinstance(candidate, str):
+            return False
+        if (len(path) == 3 and path[0] in {"trip", "current_state", "facts"}
+                and type(path[2]) is int and "value" in node):
+            allowed = preferences if path[1] == "preferences" else constraints if path[1] == "constraints" else ()
+            return candidate in allowed
+        guide = path[1:] if path and path[0] == "operation_contract" else ()
+        if guide[:1] == ("supported_operations",):
+            guide = guide[1:]
+        return (len(guide) == 2 and guide[1] == "value"
+                and guide[0] in operations and candidate in operations[guide[0]])
+
+    def clean(node: Any, path: tuple = ()) -> Any:
+        if isinstance(node, dict):
+            result = {}
+            for field, item in node.items():
+                name = str(field).lower().replace("-", "_")
+                sensitive = (name in _SENSITIVE_FIELDS or name in {"token", "refresh_token", "headers", "client_secret"}
+                    or name.endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_key_id")))
+                if sensitive:
+                    if field == "key" and semantic_key(path, node):
+                        # This enum value is code-known, not a provider secret.
+                        result["key"] = item
+                    continue
+                result[str(field)] = clean(item, (*path, str(field)))
+            return result
+        if isinstance(node, (list, tuple)):
+            return [clean(item, (*path, index)) for index, item in enumerate(node)]
+        return _safe_text(node) if isinstance(node, str) else node
+
+    return clean(value)
 
 
 class _SecretFilter(logging.Filter):
@@ -328,6 +376,15 @@ class ExtractionOutput(dict):
 class LLMGateway(_HTTPGateway):
     def __init__(self, settings: dict):
         super().__init__(settings)
+        # Register configured credentials BEFORE serializing the very first
+        # prompt. Only these known fields/named env lookups are read; arbitrary
+        # settings/user values never become credential-registration candidates.
+        for field in _LLM_CREDENTIAL_FIELDS:
+            credential = _setting(self.settings, field)
+            if credential is None:
+                credential = os.getenv(field)
+            if isinstance(credential, str) and credential.strip():
+                _SECRETS.add(credential.strip())
         try:
             local = str(_setting(settings, "LLM_PROVIDER", "gemini")).lower() == "ollama"
             default_timeout = 105 if local else 45
@@ -375,7 +432,7 @@ class LLMGateway(_HTTPGateway):
         if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         try:
-            prompt = json.dumps(_safe({key: value for key, value in context.items()
+            prompt = json.dumps(safe_model_context({key: value for key, value in context.items()
                 if key not in {"__response_schema", "__response_mode"}}), ensure_ascii=False, allow_nan=False)
         except (TypeError, ValueError):
             _fail("Контекст LLM должен быть JSON-совместимым.", provider)

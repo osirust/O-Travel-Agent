@@ -1,0 +1,690 @@
+{
+  "date": "2026-10-26",
+  "status": "11_AUTOMATIC_PASS_1_SEMANTIC_PASS_TEXT_PREDICATE_MISS",
+  "source_sha": "4a4c7011ab783d7938331ab41ac4e451e2019e18",
+  "source_manifest_sha256": "cf1d61627aafe4a3dc06fad2a74fb9390c10ddd743a3773c64ddc0c04349f421",
+  "scope": "Same12 bounded fresh-session inputs/oracles, native CF Harness and persistent PG; DEMO fixtures prohibit travel tools, not full80 HYBRID acceptance",
+  "automated_summary": {
+    "cases_executed": 12,
+    "pass": 11,
+    "actual_cf_pass": 11,
+    "canonical_no_model_pass": 0,
+    "fail": 1,
+    "not_all80_acceptance": true
+  },
+  "original_inputs_and_oracles_ast_identical": true,
+  "old_attempt_preserved_sha256": "87bc431f0af0fe2a4684a245a6e2a5173a246791b077658d83ae5ed7752d5033",
+  "private_new_attempt_sha256": "e38967938a7cf77edd89437082116fa640323bfacb63ba849abc27a881554278",
+  "actual_model_calls": 12,
+  "supplier_tools": 0,
+  "orders": 0,
+  "automatic_retries": 0,
+  "provider_errors": 0,
+  "native_identity_unchanged": true,
+  "application_usage_before": {
+    "utc_day_start": "2026-10-26T00:00:00+00:00",
+    "hard_application_cap": 2000,
+    "actual_ledger_calls": 13,
+    "remaining_application_reservations": 1987,
+    "vendor_quota_remaining": "UNKNOWN"
+  },
+  "application_usage_at_attempt_end": {
+    "utc_day_start": "2026-10-26T00:00:00+00:00",
+    "hard_application_cap": 2000,
+    "actual_ledger_calls": 25,
+    "remaining_application_reservations": 1975,
+    "vendor_quota_remaining": "UNKNOWN"
+  },
+  "vendor_remaining": "UNKNOWN;2000isapplicationengineeringcap",
+  "cases": [
+    {
+      "id": "CF10-01",
+      "kind": "ZAI100-009",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "origin_moscow": true,
+        "adult_one": true,
+        "no_invented_child": true,
+        "no_invented_dates": true,
+        "no_invented_budget": true,
+        "destination_kazan": true,
+        "children_known_zero": true,
+        "asks_missing_date_or_rooms": true,
+        "no_repeated_known_party_question": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 4336,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5233,
+        "total_tokens": 5457,
+        "output_tokens": 224
+      },
+      "request_metrics": {
+        "prompt_sha256": "55caf91e738f133861cafaeecb6a69a44052bea0eeec4c2cee72aa26979ab27c",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 6907
+      },
+      "raw_contract_sha256": "3c2f1229075b5bd151d293150f6dd70ae25dedd7d49269c8573e979167db1f85",
+      "checked_contract_sha256": "36f6046901d1744ed7db8277daa7f6ddbf6584c16df67407eaaaa30f4d03de68",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 3,
+      "checked_conflicts_count": 0,
+      "normalizations": []
+    },
+    {
+      "id": "CF10-02",
+      "kind": "ZAI100-029",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "origin_moscow": true,
+        "adult_one": true,
+        "no_invented_child": true,
+        "no_invented_dates": true,
+        "no_invented_budget": true,
+        "no_guessed_georgia_city": true,
+        "explicit_ambiguity_question": true,
+        "not_generic_city_loop": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 3872,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5227,
+        "total_tokens": 5414,
+        "output_tokens": 187
+      },
+      "request_metrics": {
+        "prompt_sha256": "f52e32148c19ce2f17eed108afb543f520f7873cb76508dd6907220455d6eae8",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 6783
+      },
+      "raw_contract_sha256": "628fc2d996cc04abea92695050e1b4b700904f3ecc34664217675ace68dd359f",
+      "checked_contract_sha256": "998507cb0217f53b253e996fd8f50d71346ca468d6ec39c91bb19cd78ed8ccb4",
+      "raw_speech_act": "ASK",
+      "raw_ops_count": 2,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "code": "ambiguous_destination_requires_clarification"
+        }
+      ]
+    },
+    {
+      "id": "CF10-03",
+      "kind": "ZAI100-043",
+      "automated_status": "FAIL",
+      "failed_checks": [
+        "explicit_tbilisi_coverage"
+      ],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "origin_moscow": true,
+        "adult_one": true,
+        "no_invented_child": true,
+        "no_invented_dates": true,
+        "no_invented_budget": true,
+        "explicit_tbilisi_coverage": false,
+        "no_fabricated_tbilisi_offers": true,
+        "no_silent_different_city": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 4530,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5239,
+        "total_tokens": 5489,
+        "output_tokens": 250
+      },
+      "request_metrics": {
+        "prompt_sha256": "23b7819cd95f0f8f31554d04108572387839bc80fb77cea59dc94b07855ad872",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 6869
+      },
+      "raw_contract_sha256": "429c42019f66b1a2e1ef56a2a77e16050654c8c283fc30c3de1e8cc88482dff1",
+      "checked_contract_sha256": "b4cf84b4e885e107dc7dbc40cb083b526f851e8ee92fc67989f4a1664eb19865",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 3,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "city": "Тбилиси",
+          "code": "known_destination_outside_search_catalogue"
+        }
+      ]
+    },
+    {
+      "id": "CF10-04",
+      "kind": "readonly_party_budget",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "exact_state_and_pending": true,
+        "adults_answer": true,
+        "children_answer": true,
+        "ages_answer": true,
+        "budget_answer": true,
+        "canonical_facts": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 1166,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 2391,
+        "total_tokens": 2452,
+        "output_tokens": 61
+      },
+      "request_metrics": {
+        "prompt_sha256": "40ca2299c627eddc67eef3e4dedacd941f87629d645b1204f1ecf05b5685b5ae",
+        "schema_sha256": "73ebe6e8aa6683d4dfba88fe749f0dc857fd968db998aa2bcc24954177f007b4",
+        "schema_utf8_bytes": 894,
+        "system_utf8_bytes": 2368,
+        "context_utf8_bytes": 6393
+      },
+      "raw_contract_sha256": "7905bc40dd9a9570f365037e47e105781a0f83a0c4fcc3a187c48e9bc41bc579",
+      "checked_contract_sha256": "7905bc40dd9a9570f365037e47e105781a0f83a0c4fcc3a187c48e9bc41bc579",
+      "raw_speech_act": "ASK",
+      "raw_ops_count": 0,
+      "checked_conflicts_count": 0,
+      "normalizations": []
+    },
+    {
+      "id": "CF10-05",
+      "kind": "missing_known_input",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "exact_trip_state": true,
+        "no_repeated_known_field": true,
+        "real_missing_question": true,
+        "no_invented_budget": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 3244,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5730,
+        "total_tokens": 5892,
+        "output_tokens": 162
+      },
+      "request_metrics": {
+        "prompt_sha256": "a0e1caf0a360ca1831638ea5b7445571ffa928fecdfca0c9fcc65c1c0f4f3792",
+        "schema_sha256": "27b2667374188d525cd86c87c6ad1ef23423d612b04487d1aab655cae3f76775",
+        "schema_utf8_bytes": 8469,
+        "system_utf8_bytes": 13242,
+        "context_utf8_bytes": 7155
+      },
+      "raw_contract_sha256": "4986f1bf0f0338c3080a56b85cb74330878f54b622b4f4170c92ab17609f8a7e",
+      "checked_contract_sha256": "4986f1bf0f0338c3080a56b85cb74330878f54b622b4f4170c92ab17609f8a7e",
+      "raw_speech_act": "ASK",
+      "raw_ops_count": 0,
+      "checked_conflicts_count": 0,
+      "normalizations": []
+    },
+    {
+      "id": "CF10-06",
+      "kind": "two_families_two_cities_four_rooms",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "adults_four": true,
+        "children_exact": true,
+        "origin_moscow": true,
+        "groups_two": true,
+        "no_mix_preserved": true,
+        "cities_exact": true,
+        "rooms_four": true,
+        "dates_not_invented": true,
+        "budget_exact": true,
+        "explicit_family_composition_preserved": true,
+        "ask_missing_dates_not_known_counts": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 23486,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5412,
+        "total_tokens": 6443,
+        "output_tokens": 1031
+      },
+      "request_metrics": {
+        "prompt_sha256": "bd5b3794372f1361dbfe8cfa1b268e46250bc2b7b770474fa00c348e8c298f5f",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 7793
+      },
+      "raw_contract_sha256": "10689b45dae7bc94aee0def8b17f127cfe1ad65f66fa43c94c77bea2da13f06f",
+      "checked_contract_sha256": "12b2a8c6513852411352dba28fb07cf1d05c4fdfe5ed633725935f35d6140b89",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 12,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "code": "family_separation_grounded",
+          "field": "groups.keep_separate",
+          "source": "explicit_user_no_mix",
+          "group_ids": [
+            "new-group-1",
+            "new-group-2"
+          ],
+          "membership_inferred": false
+        }
+      ]
+    },
+    {
+      "id": "CF10-07",
+      "kind": "room_constraints",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "exact_room_scopes": true,
+        "old_roster_rooms_budget": true,
+        "no_invented_dates": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 4929,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5920,
+        "total_tokens": 6140,
+        "output_tokens": 220
+      },
+      "request_metrics": {
+        "prompt_sha256": "6a5b8d9e5d8967f0335029e7da5a98f3488693c98b29698251d9d4a9fe8ffc6f",
+        "schema_sha256": "7c9e97cb11030e7d55ba260809c5fd1feddd553f02f87fc37928ee5fa620684a",
+        "schema_utf8_bytes": 8380,
+        "system_utf8_bytes": 13155,
+        "context_utf8_bytes": 7743
+      },
+      "raw_contract_sha256": "1655163dcef92e12abf867a82b0aeb1656c467b842782b3b3101c303fc6a2653",
+      "checked_contract_sha256": "1b74d496c2e0581cdd8129cebc6ef527b3c25fd6229fda908f1b1a25069d44de",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 2,
+      "checked_conflicts_count": 0,
+      "normalizations": []
+    },
+    {
+      "id": "CF10-08",
+      "kind": "unresolved_no_mix",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "adults_four": true,
+        "children_exact": true,
+        "origin_moscow": true,
+        "groups_two": true,
+        "no_mix_preserved": true,
+        "memberships_not_guessed": true,
+        "rooms_two": true,
+        "exact_membership_question": true,
+        "budget_exact": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 12406,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5319,
+        "total_tokens": 5907,
+        "output_tokens": 588
+      },
+      "request_metrics": {
+        "prompt_sha256": "6785a589c81ffdc6b2e717fc46ffa583c5521d7d872c5c24d036b109cbd825d2",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 7279
+      },
+      "raw_contract_sha256": "f1bb2c6e25b196e8b7eff8170765e033040859b4d10c5ce5d7fd168fc85097fa",
+      "checked_contract_sha256": "4a2c9b38e3c8e18cc3aa1934f7593c381b06195c3c810894de69db553d2015ce",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 8,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "code": "destination_grounded_from_current_literal",
+          "after": "Казань",
+          "target_id": "new-stay-1"
+        },
+        {
+          "code": "explicit_room_count_grounded",
+          "occupants_inferred": false,
+          "requested_room_count": 2
+        },
+        {
+          "code": "family_separation_grounded",
+          "field": "groups.keep_separate",
+          "source": "explicit_user_no_mix",
+          "group_ids": [
+            "new-group-1",
+            "new-group-2"
+          ],
+          "membership_inferred": false
+        }
+      ]
+    },
+    {
+      "id": "CF10-09",
+      "kind": "add_adult_073",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "adults_two": true,
+        "children_zero": true,
+        "old_adult_preserved": true,
+        "one_new_id": true,
+        "budget_exact": true,
+        "dates_exact": true,
+        "rooms_one": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 3466,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 6013,
+        "total_tokens": 6172,
+        "output_tokens": 159
+      },
+      "request_metrics": {
+        "prompt_sha256": "cb5b6095b4281cca676a798b8685e810fe3b325162601e61b8d587238590c74b",
+        "schema_sha256": "489ebf114d3ac2a019b1b591d0d9e8d3cc913f12156c037a7f6eecd8beb612db",
+        "schema_utf8_bytes": 8552,
+        "system_utf8_bytes": 13326,
+        "context_utf8_bytes": 7582
+      },
+      "raw_contract_sha256": "7bb110069e22b8458178cf504f6e105c482a60ef18b650e71be8ba8a9eed1e01",
+      "checked_contract_sha256": "76fc83e6d43ad89562153ee7ef4ed61ca2c4368ff33a920d34564d799538db3e",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 1,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "code": "existing_room_allocation_preserved",
+          "requested_room_count": 1
+        }
+      ]
+    },
+    {
+      "id": "CF10-10",
+      "kind": "compound_sample_edit",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "adults_six": true,
+        "children_exact": true,
+        "exactly_one_new_child": true,
+        "family_binding": true,
+        "old_people_exact": true,
+        "budget_exact": true,
+        "first_stay_exact": true,
+        "final_date": true,
+        "return_date": true,
+        "old_constraints_preserved": true,
+        "old_hotel_choices": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 9262,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 6755,
+        "total_tokens": 7245,
+        "output_tokens": 490
+      },
+      "request_metrics": {
+        "prompt_sha256": "0605326058a3ac2e5c6025bc0a2196919eb4b5b1ab3b2966386aa93387be197c",
+        "schema_sha256": "0cd07b2a4309e79059198ec8f6f9fc2f58050149a59efb20076f5f68f8b6762d",
+        "schema_utf8_bytes": 8505,
+        "system_utf8_bytes": 13281,
+        "context_utf8_bytes": 9699
+      },
+      "raw_contract_sha256": "207a7de1da76a1e6142987ec0422ca9c21fa5d8d3489e899aa551a67e003e006",
+      "checked_contract_sha256": "131fdc3abd784ee998b329454f9b9d7e4aa047dc5ae23b9443c66fd4155c92b4",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 4,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "code": "equivalent_return_checkout_alias_removed",
+          "field": "stay.check_out",
+          "source": "explicit_current_relative_return",
+          "target_id": "stay-antalya",
+          "kept_shift_days": 2,
+          "before_check_out": "2026-11-13",
+          "removed_absolute_check_out": "2026-11-15"
+        },
+        {
+          "mode": "relative_decrease",
+          "after": 78000000,
+          "field": "budget.amount_minor",
+          "before": 60000000,
+          "source": "explicit_rub_literal",
+          "literal": "20000",
+          "currency": "RUB"
+        }
+      ]
+    },
+    {
+      "id": "CF10-11",
+      "kind": "exact_edit_and_question",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "price_preference": true,
+        "city_answer": true,
+        "party_answer": true,
+        "no_unrelated_edits": true,
+        "budget_80k": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 1671,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5787,
+        "total_tokens": 5864,
+        "output_tokens": 77
+      },
+      "request_metrics": {
+        "prompt_sha256": "49b36bc6caef20659ae6e0f590a8e2c271b1b87a5bf2b33bcf11f6896abfd76e",
+        "schema_sha256": "b467fa1ee58b286c4afeb27c1861f7c80d39a4727de1a7c66f457297d2a6ae60",
+        "schema_utf8_bytes": 8474,
+        "system_utf8_bytes": 13248,
+        "context_utf8_bytes": 7145
+      },
+      "raw_contract_sha256": "213862e401e5f9ab6ef61a3a339dee6cfbbb2fd9036339acd60e5c0bc7d808b4",
+      "checked_contract_sha256": "fdb857e8e023f6108ea46cb12a23df409b427544ca56c71714eeff79bc8f2a63",
+      "raw_speech_act": "ASK",
+      "raw_ops_count": 0,
+      "checked_conflicts_count": 0,
+      "normalizations": [
+        {
+          "field": "preferences.price_priority",
+          "source": "current_message_literal",
+          "status": "explicit_lowest_cost",
+          "finding_id": "AFTER80-PRICE-INTAKE-001"
+        }
+      ]
+    },
+    {
+      "id": "CF10-12",
+      "kind": "confirmation_not_budget",
+      "automated_status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "valid_roster_ids": true,
+        "policy_not_silently_changed": true,
+        "budget_130k_not_offer_price": true,
+        "no_trip_edits": true,
+        "no_claimed_created_booking": true,
+        "run_completed": true,
+        "max_one_attempt": true,
+        "actual_provider_cloudflare": true,
+        "zero_tools": true,
+        "zero_orders": true
+      },
+      "elapsed_ms": 2344,
+      "model_calls": 1,
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "usage": {
+        "input_tokens": 5824,
+        "total_tokens": 5975,
+        "output_tokens": 151
+      },
+      "request_metrics": {
+        "prompt_sha256": "157e4a05072b7fc0785182a96ed87a34fe818637c06be4515f93a58cecd47fe8",
+        "schema_sha256": "b467fa1ee58b286c4afeb27c1861f7c80d39a4727de1a7c66f457297d2a6ae60",
+        "schema_utf8_bytes": 8474,
+        "system_utf8_bytes": 13248,
+        "context_utf8_bytes": 7191
+      },
+      "raw_contract_sha256": "9434678b55afdfb4d29b9b2cfdac4cb6ebd71a35cdd5590f2246adc988c740ec",
+      "checked_contract_sha256": "e292783fe143081712f8e1f0765322f51dd743300ff6ca5b201cc8ae53e8eccc",
+      "raw_speech_act": "CHANGE",
+      "raw_ops_count": 1,
+      "checked_conflicts_count": 0,
+      "normalizations": []
+    }
+  ],
+  "total_usage": {
+    "input_tokens": 64850,
+    "output_tokens": 3600,
+    "total_tokens": 68450
+  },
+  "elapsed": {
+    "total_harness_ms": 74712,
+    "median_case_ms": 4104.0,
+    "max_case_ms": 23486,
+    "per_case_ms": [
+      4336,
+      3872,
+      4530,
+      1166,
+      3244,
+      23486,
+      4929,
+      12406,
+      3466,
+      9262,
+      1671,
+      2344
+    ]
+  },
+  "manual_adjudications": [
+    {
+      "case": "CF10-03",
+      "verdict": "SEMANTIC_PASS_WITH_UNCHANGED_AUTOMATED_FAIL",
+      "original_predicate_unchanged": true,
+      "observed_quote": "Тбилиси — город в стране «Грузия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают.",
+      "reason": "Original text predicate recognized other negative-coverage phrases but omitted 'его нет/не покрывают'. Required behavior is present directly: knowncity+country preserved, explicit unsupportedcoverage, no inventedoffers, offersourcechoicequestion. No product fix or model retry was applied.",
+      "state_evidence": {
+        "origin": "Москва",
+        "adults": 1,
+        "saved_city": "Тбилиси",
+        "pending_country_code": "GE",
+        "no_plan_offers": true
+      }
+    }
+  ],
+  "limitations": [
+    "Only12 single-turn probes, not12full adaptive dialogues or full80 acceptance.",
+    "The original automated CF10-03 predicate remains FAIL; semantic adjudication is separate and explicit.",
+    "No actual travel APIs were called by this probe; full HYBRID qualification remains separate.",
+    "Provider response variation prevents treating before/after rates as a model benchmark.",
+    "Old6009644 failures and source corpus were not modified."
+  ]
+}
