@@ -629,7 +629,7 @@ class TravelGateway(_HTTPGateway):
     async def resolve_hotels(self, city: str, limit: int = 3) -> list[dict]:
         """Small transient sandbox lookup for the supported cities; no catalogue import."""
         from .domain import canonical_city
-        names = {"Москва": ("RU", "Moscow"), "Санкт-Петербург": ("RU", "Saint Petersburg"),
+        names = {"Москва": ("RU", "Moscow"), "Санкт-Петербург": ("RU", "St. Petersburg"),
                  "Сочи": ("RU", "Sochi"), "Казань": ("RU", "Kazan"),
                  "Стамбул": ("TR", "Istanbul"), "Анталья": ("TR", "Antalya"), "Дубай": ("AE", "Dubai")}
         normalized = canonical_city(city)

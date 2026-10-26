@@ -78,6 +78,48 @@ def _unquote(text: str) -> str:
     return re.sub(r"[«“\"]([^»”\"]*)[»”\"]", literal, _key(text))
 
 
+def resolve_country_destination_answer(before_state: Any, pending_context: dict | None, text: str) -> dict:
+    """Bind an explicit country answer to an owned destination slot, no model.
+
+    Intended before generic geography QA: answering the active destination
+    question is not the same as asking whether a country exists. No city,
+    inventory coverage or other change is inferred from the country.
+    """
+    unhandled = {"handled": False, "operations": []}
+    data = before_state.model_dump(mode="json") if hasattr(before_state, "model_dump") else before_state
+    if not isinstance(data, dict) or not isinstance(text, str) or not 0 < len(text) <= 20_000:
+        return unhandled
+    pending = _pending(pending_context)
+    if pending.get("field") != "destination.city":
+        return unhandled
+    if "state_version" in pending and (type(pending["state_version"]) is not int
+            or pending["state_version"] != data.get("state_version")):
+        return unhandled
+    target = pending.get("target_id") or pending.get("stay_id")
+    if target is not None and (not isinstance(target, str)
+            or sum(stay.get("id") == target for stay in data.get("stays", [])) != 1):
+        return unhandled
+    normalized = _key(text)
+    match = re.fullmatch(r"(?:(?:это\s+)?страна(?: назначения)?|(?:я\s+|мы\s+)?"
+        r"(?:имею|имел|имела|имели|имеем)\s+в\s+виду\s+страну|(?:я\s+|мы\s+)?выбираю\s+страну)"
+        rf"\s*[:=-]?\s+(?P<country>{_COUNTRY_NAMES})(?![\w-])(?P<tail>.*)", normalized)
+    if match is None:
+        return unhandled
+    # A bounded disambiguation / coverage disclaimer is not another edit. All
+    # other compound tails return to the normal interpreter rather than vanish.
+    tail = match["tail"].strip(" ,.!\n")
+    tail = re.sub(r"^не американский штат(?:\s*[,.;!]\s*|$)", "", tail).strip(" ,.!\n")
+    if tail and not re.fullmatch(r"(?:если (?:ее|его|их) нет в поиске,? (?:так и скажи|скажи об этом)"
+            r"(?:,? город за меня не выбирай)?|город за меня не выбирай|город пока не (?:выбрал|выбрала|выбрали|выбирай))", tail):
+        return unhandled
+    code = _COUNTRIES[match["country"]]
+    place = parse_destination(code)["requested_destination"]
+    return {"handled": True, "operations": [],
+            "question": f"Понял: страна «{place['name']}». Какой город в этой стране вы выбираете для поездки?",
+            "pending_context": {"field": "destination.city", "target_id": target, "requested_destination": place},
+            "pending_context_clear": list(_CLEAR_GEO)}
+
+
 def _declared_unknown_destination(text: str, operations: list[dict]) -> str | None:
     """An unsupported literal command asks; it never authorizes a city edit.
 
@@ -264,6 +306,10 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
         or pending["state_version"] != data.get("state_version")))
     facts_pending = {} if stale_pending else pending
     facts = _facts(data, text, facts_pending)
+    country_answer = resolve_country_destination_answer(data, facts_pending, text)
+    if country_answer["handled"]:
+        facts["country"].add(country_answer["pending_context"]["requested_destination"]["country_code"])
+        facts["current"] = True
     affirmative = _key(text).rstrip(".!") in {"да", "верно", "подтверждаю", "да меняем", "да выбираем"}
     proposal = pending.get("proposed_destination")
     if (affirmative and not stale_pending and pending.get("field") == "destination.city"

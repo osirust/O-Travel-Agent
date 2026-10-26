@@ -129,7 +129,7 @@ def readonly_question(text: str) -> bool:
 
 def short_place_inquiry(text: str) -> bool:
     """Keep the existing canonical single-place speech-act path."""
-    key = " ".join(text.casefold().replace("ё", "е").split()).strip(" ?!. ")
+    key = " ".join(text.casefold().replace("ё", "е").split()).strip(" ?!.")
     if len(key.split()) > 6:
         return False
     trimmed = re.sub(r"^(?:а|и)\s+", "", key)
@@ -492,3 +492,30 @@ def checked_reply(reply: str, facts: dict, text: str) -> tuple[str, list[str]]:
             ]
         ), ["invalid_fact_selector"]
     return "\n\n".join(facts["sections"][section] for section in dict.fromkeys(selected)), []
+
+
+def wants_saved_facts(text: str) -> bool:
+    return "?" in text or bool(re.search(
+        r"\b(?:напомни|скажи|назови|объясни|поясни|сверь|перечисли|сколько|что изменилось|what|which|remind|explain|tell me)\b",
+        text.casefold().replace("ё", "е")))
+
+
+def changed_trip_receipt(text: str, state: dict, plans: list[dict], changes: list[dict], orders: list[dict]) -> tuple[str, list[str]]:
+    """Answer information requested alongside an edit, without a second call."""
+    chosen = ["route", "dates", "party", "budget"]
+    key = text.casefold().replace("ё", "е")
+    for pattern, section in (
+        (r"номер|комнат|семь|групп|размест|расселен", "rooms"),
+        (r"пожелан|предпочт|вылет|утр|завтрак|отмен|пересад|стоим", "preferences"),
+        (r"что измен|было|стало|сравн|прежн|before|after", "changes"),
+        (r"завтрак|возврат|тариф", "rates"),
+        (r"источник|демо|реальн.*цен|настоящ.*цен", "source"),
+        (r"заказ|order", "orders"),
+        (r"стран|питер.*санкт|столиц", "geography"),
+    ):
+        if re.search(pattern, key):
+            chosen.append(section)
+    if plans and "source" not in chosen:
+        chosen.append("source")
+    facts = facts_projection(state, plans, orders, [], [{"changes": changes}] if changes else [], question=text)
+    return "\n\n".join(facts["sections"][section] for section in chosen), chosen

@@ -798,7 +798,7 @@ class Harness:
                     and not short_place_inquiry(run["input_text"])
                     and parse_destination(run["input_text"])["requested_destination"]["kind"] not in {"city", "country"})
         kinds = request_kinds(run["input_text"])
-        secondary = re.search(r"бюджет|лимит|сумм|дат|ноч|вылет|город|маршрут|изменен|цен|отел|стран", run["input_text"].casefold())
+        secondary = re.search(r"бюджет|лимит|сумм|дат|ноч|вылет|город|маршрут|изменен|цен|стоим|заказ|валют|отел|стран", run["input_text"].casefold())
         if (kinds.intersection({"missing_data", "hypothetical_child", "source", "cart"})
                 or kinds == {"party"} and not secondary):
             # Keep the existing canonical capabilities and addressed intake.
@@ -823,7 +823,11 @@ class Harness:
                 pending.update({key: value for key, value in binding.items() if value is not None})
         resolved = {"handled": False}
         if kind is None and not readonly:
-            resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
+            if pending and session.get("waiting_reason") == "clarification":
+                from .intent_grounding import resolve_country_destination_answer
+                resolved = resolve_country_destination_answer(session["state"], pending, run["input_text"])
+            if not resolved["handled"]:
+                resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
             if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
                 resolved = resolve_short_answer(session["state"], pending, run["input_text"])
         if resolved["handled"]:
@@ -1168,6 +1172,21 @@ class Harness:
                     result["conversational_response"] = {"kinds": rendered["kinds"], "facts_source": "canonical_state_and_shown_plans"}
                     if rendered.get("suggested_action") and waiting_reason is None and not questions:
                         result["suggested_action"] = rendered["suggested_action"]
+        if (not run["input_text"].startswith(TYPED_PREFIX) and waiting_reason != "user_pause"
+                and not extracted.conflicts and not result.get("available_actions")):
+            from .answering import changed_trip_receipt, wants_saved_facts
+            subject = (result.get("conversation") or {}).get("subject") or {}
+            if (changes and wants_saved_facts(run["input_text"])
+                    and subject.get("kind") not in {"country", "city"}):
+                shown = result.get("plans") if "plans" in result else await self._latest_current_plans(session, run)
+                receipt, sections = changed_trip_receipt(run["input_text"], current.model_dump(mode="json"),
+                    current_plans(current, shown), changes, await self.store.list_orders(session["session_id"]))
+                lead = reply if result.get("violations") or extracted.candidate_operations else ""
+                reply = (lead + "\n\n" if lead and not questions else "") + receipt
+                if questions:
+                    reply += "\n\n" + questions[0]
+                result["answer_sections"] = sections
+                result["conversational_response"] = {"facts_source": "canonical_changed_state_and_shown_plans", "kinds": ["receipt"]}
         pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions and waiting_reason != "user_pause" else None
         if pending is not None and not preserve_pending:
             if not run["input_text"].startswith(TYPED_PREFIX) and extracted.pending_context and extracted.pending_context.get("field"):

@@ -4,7 +4,7 @@ from copy import deepcopy
 import pytest
 
 from otravel.domain import Operation, TripState, apply_operations, sample_trip
-from otravel.intent_grounding import ground_intent_operations
+from otravel.intent_grounding import ground_intent_operations, resolve_country_destination_answer
 
 
 def draft(city="Белград", origin="Москва"):
@@ -346,3 +346,53 @@ def test_new_unknown_destination_question_retires_old_geo_confirmation():
     assert apply(before, ops) == before
     assert {"proposed_destination", "confirmation_required", "proposal_field"} <= set(meta["pending_context_clear"])
     assert meta["pending_context"]["requested_destination"]["name"] == "Виндхук"
+
+
+def test_explicit_country_slot_answer_does_not_become_a_city_or_only_a_geography_fact():
+    before = TripState(origin="Москва", travelers=[{"id": "adult", "type": "adult"}])
+    ops, meta = ground_intent_operations(before, [], "страна Грузия",
+        {"field": "destination.city", "state_version": before.state_version})
+    assert apply(before, ops) == before
+    assert meta["pending_context"] is not None
+    assert meta["pending_context"]["requested_destination"]["country_code"] == "GE"
+    assert "город" in meta["unknowns"][0].lower()
+
+
+@pytest.mark.parametrize("text,code", [
+    ("страна Грузия", "GE"), ("Это страна Грузия.", "GE"), ("Страна назначения: Грузия", "GE"),
+    ("Я имел в виду страну Грузию, не американский штат. Если её нет в поиске, так и скажи, город за меня не выбирай.", "GE"),
+    ("Я имею в виду страну Georgia, не американский штат.", "GE"),
+    ("Я имел в виду страну Сербию", "RS"), ("Страна Турция", "TR"),
+])
+def test_contextual_country_answer_preserves_trip_and_asks_for_city_without_catalogue_claim(text, code):
+    before = TripState(origin="Москва", travelers=[{"id": "adult", "type": "adult"}])
+    snapshot = before.model_dump(mode="json")
+    result = resolve_country_destination_answer(before, {"field": "destination.city", "state_version": before.state_version,
+        "context": {"requested_destination": {"kind": "ambiguous", "name": "Georgia", "country_code": None},
+        "proposed_destination": {"kind": "city", "name": "Стамбул", "country_code": "TR"}, "confirmation_required": True}}, text)
+    assert result["handled"] and result["operations"] == []
+    assert result["pending_context"]["requested_destination"]["kind"] == "country"
+    assert result["pending_context"]["requested_destination"]["country_code"] == code
+    assert result["pending_context"]["field"] == "destination.city" and "город" in result["question"].lower()
+    assert "proposed_destination" in result["pending_context_clear"]
+    assert all(word not in result["question"].lower() for word in ("доступен", "доступны", "отсутствует", "тбилиси"))
+    assert before.model_dump(mode="json") == snapshot
+
+
+@pytest.mark.parametrize("text", [
+    "А если страна Грузия?", "Страна Грузия?", "Не страна Грузия", "Раньше я имел в виду страну Грузию",
+    "Цитата «Я имел в виду страну Грузию»", "У меня гражданство Грузии", "Страна моего гражданства Грузия",
+    "Я имел в виду страну Грузию, добавь ребёнка 8 лет", "Я имел в виду страну Грузию. Бюджет 100 тысяч",
+    "Я имел в виду страну Грузию, но выбираю Дубай", "Я имел в виду штат Джорджия", "Страна Неизвестния",
+])
+def test_country_slot_hypothesis_faq_citizenship_and_other_edits_do_not_get_swallowed(text):
+    assert resolve_country_destination_answer(TripState(), {"field": "destination.city"}, text) == {
+        "handled": False, "operations": []}
+
+
+@pytest.mark.parametrize("pending", [None, {"field": "origin.city"}, {"field": "party.adults"},
+    {"field": "destination.city", "state_version": 100},
+    {"field": "destination.city", "state_version": True},
+    {"field": "destination.city", "target_id": "not-owned"}])
+def test_country_slot_requires_fresh_owned_destination_binding(pending):
+    assert not resolve_country_destination_answer(TripState(), pending, "страна Грузия")["handled"]

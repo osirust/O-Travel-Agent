@@ -35,6 +35,27 @@ def gateway(handler, clock=None, **settings):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("city,canonical,country,supplier_city", [
+    ("Санкт-Петербург", "Санкт-Петербург", "RU", "St. Petersburg"),
+    ("СПб", "Санкт-Петербург", "RU", "St. Petersburg"),
+    ("Москва", "Москва", "RU", "Moscow"), ("Сочи", "Сочи", "RU", "Sochi"),
+    ("Казань", "Казань", "RU", "Kazan"), ("Стамбул", "Стамбул", "TR", "Istanbul"),
+    ("Анталья", "Анталья", "TR", "Antalya"), ("Дубай", "Дубай", "AE", "Dubai"),
+])
+async def test_canonical_city_uses_supplier_dictionary_label_without_renaming_user_city(city, canonical, country, supplier_city):
+    def handler(request):
+        assert request.url.params["countryCode"] == country
+        assert request.url.params["cityName"] == supplier_city
+        return httpx.Response(200, json={"data": [{"id": "fixture-1", "name": "Supplier Hotel"}]})
+
+    adapter = gateway(handler)
+    try:
+        assert await adapter.resolve_hotels(city) == [{"id": "fixture-1", "name": "Supplier Hotel", "city": canonical}]
+    finally:
+        await adapter.close()
+
+
+@pytest.mark.asyncio
 async def test_thirty_city_lookups_share_one_http_and_return_independent_static_rows():
     calls = []
 

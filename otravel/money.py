@@ -45,6 +45,61 @@ _RANGE = re.compile(rf"\b(?:от|между)\s*{_SEQUENCE}\s*(?:до|и)\s*{_SEQ
 _PERCENT = re.compile(rf"(?<!\w)(?P<number>{_SEQUENCE})\s*(?:%|процент(?:а|ов)?\b)", re.IGNORECASE)
 _KOPEKS = re.compile(rf"\s+(?:и\s+)?(?P<number>{_SEQUENCE})\s*коп(?:еек|ейки|ейка|\.)?(?!\w)", re.IGNORECASE)
 _USD_MONEY = re.compile(rf"(?<!\w)(?P<number>{_SEQUENCE})\s*(?:usd|доллар(?:ов|а|ы)?)(?!\w)", re.IGNORECASE)
+_TRANSACTION_PURPOSE = re.compile(
+    r"\b(?:оплат\w*|оплач\w*|запла[тч]\w*|платеж\w*|платить|предоплат\w*|депозит\w*|залог\w*|аванс\w*|"
+    r"оформл\w*|бронирован\w*|бронь|брони|покуп\w*|купить|куплю|счет\w*)\b|"
+    r"\b(?:цена|стоимость)\b.{0,65}\b(?:вариант\w*|предложен\w*|тариф\w*|корзин\w*|отел\w*)\b", re.IGNORECASE)
+_CURRENT_OFFER = re.compile(r"\b(?:выбранн\w*|текущ\w*|перв\w*|втор\w*|этот|этого)\s+(?:\w+\s+){0,2}"
+    r"(?:вариант\w*|предложен\w*|тариф\w*|отел\w*)\b", re.IGNORECASE)
+_BUDGET_COMMAND = re.compile(r"\b(?:подтвержда\w*|установ\w*|постав\w*|зада\w*|измени\w*|меняю|"
+    r"увелич\w*|уменьш\w*|сократ\w*|сниз\w*|повы\w*|добав\w*|прибав\w*|верни)\b", re.IGNORECASE)
+
+
+def _purpose_spans(text: str) -> list[re.Match]:
+    matches = list(_TRANSACTION_PURPOSE.finditer(text))
+    for offer in _CURRENT_OFFER.finditer(text):
+        tail = re.split(r"[;.!?\n]", text[offer.end():], maxsplit=1)[0][:100]
+        # A bare mention of a 'second hotel' is not a quoted price (037:T6).
+        if _MONEY.search(tail) or any(_scaled(run["number"]) and run["number"] not in {"к", "k"}
+                                     for run in _RUNS.finditer(tail)):
+            matches.append(offer)
+    return sorted(matches, key=lambda match: match.start())
+
+
+def _budget_part_in_transaction(text: str) -> str | bool | None:
+    """Separate an explicit budget clause from quote/payment/deposit statements.
+
+    AFTER80-MONEY-QUOTE-001: a proposed set_budget is not permission to turn a
+    selected price into a spending limit. Confirmation alone is not a reason
+    to reject a genuine 'подтверждаю бюджет' instruction. No money intent is made.
+    """
+    if not _purpose_spans(text):
+        return None
+    selected = []
+    for clause in re.split(r"(?<=[;.!?])\s+|[;\n]|,\s+(?!\d)", text):
+        markers = list(_MARKER.finditer(clause)) or list(_TOTAL_SCOPE.finditer(clause))
+        if not markers or "?" in clause:
+            continue
+        if (re.search(r"\b(?:не\s+(?:меняй|меняю|изменяй|трогай)|оставь|сохрани|сохранен\w*|записан\w*|"
+                      r"остается|остаются|прежн\w*|в рамках|в пределах|если|например)\b", clause)
+                or _HISTORY.search(clause)):
+            continue
+        marker = markers[-1]
+        # Only values following this budget marker qualify. A prior offer price
+        # elsewhere in the clause cannot supply an omitted budget amount.
+        tail = clause[marker.end():]
+        if not any(run.start() >= marker.end() and _number(run["number"]) is not None
+                   for run in _RUNS.finditer(clause)):
+            continue
+        start = marker.start()
+        for command in _BUDGET_COMMAND.finditer(clause[:marker.start()]):
+            if re.fullmatch(r"\s*(?:(?:общий|общему|новый|текущий|мой|наш|именно|только|к)\s*)*",
+                            clause[command.end():marker.start()]):
+                start = command.start()
+        other_purposes = _purpose_spans(tail)
+        end = marker.end() + other_purposes[0].start() if other_purposes else len(clause)
+        selected.append(clause[start:end].strip())
+    return " ".join(selected) if selected else False
 
 
 def _suppressed(result: list, *, reason: str, question: str | None = None, noop: bool = False) -> tuple[list, list[dict]]:
@@ -261,15 +316,24 @@ def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[l
     if not isinstance(text, str) or len(text) > 20_000 or not isinstance(result, list):
         return result, []
     proposed = [op for op in result if _get(op, "type") == "set_budget"]
+    if not proposed:
+        return result, []
+    normalized = text.lower().replace("ё", "е").replace("\u00a0", " ").replace("\u202f", " ").replace("пол миллиона", "полмиллиона")
+    normalized = re.sub(r"\b(тыс|млн)\.(?=\s|\d|руб|$)", r"\1", normalized)
+    normalized = re.sub(r"\b(на|до)(?=[0-9])", r"\1 ", normalized)
+    budget_part = _budget_part_in_transaction(normalized)
+    if budget_part is False:
+        unchanged, notes = _suppressed(result, reason="quote_payment_or_deposit_not_budget", noop=True)
+        notes[0].update(code="budget_not_requested", finding_id="AFTER80-MONEY-QUOTE-001")
+        return unchanged, notes
+    if isinstance(budget_part, str):
+        normalized = budget_part
     if len(proposed) != 1:
         return result, []
     value = _get(proposed[0], "value")
     if (not isinstance(value, dict) or not isinstance(value.get("currency", "RUB"), str)
             or value.get("currency", "RUB").upper() not in {"RUB", "RUR", "USD"} or value.get("scope", "whole_trip") != "whole_trip"):
         return result, []
-    normalized = text.lower().replace("ё", "е").replace("\u00a0", " ").replace("\u202f", " ").replace("пол миллиона", "полмиллиона")
-    normalized = re.sub(r"\b(тыс|млн)\.(?=\s|\d|руб|$)", r"\1", normalized)
-    normalized = re.sub(r"\b(на|до)(?=[0-9])", r"\1 ", normalized)
     def suppress_scope(reason: str) -> tuple[list, list[dict]]:
         return [op for op in result if _get(op, "type") != "set_budget"], [{
             "field": "budget.amount_minor", "status": "clarification_required",
