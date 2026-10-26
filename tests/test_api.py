@@ -589,7 +589,9 @@ async def test_model_context_has_only_preceding_dialogue_and_saved_offer_ids(api
     async with api_factory() as (client, model):
         session_id, token, _ = await _session(client)
         _, plans = await _demo(client, session_id, token)
-        text = "Объясни второй вариант"
+        # A pure saved-plan explanation now bypasses the model. Keep this
+        # context-isolation oracle on an explicit edit that needs extraction.
+        text = "Замени отель во втором варианте, сохрани остальные условия"
         response = await client.post(f"/api/v1/sessions/{session_id}/messages", json={"client_message_id": "context-references", "text": text}, headers=_headers(token))
         run = await _wait(client, response.json()["run_id"], token)
         context = model.calls[0]

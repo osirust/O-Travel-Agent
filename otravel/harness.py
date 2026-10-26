@@ -497,6 +497,9 @@ class Harness:
                     # Known configured credentials must not reach either stored
                     # replies or state values, even if a provider echoes them.
                     extracted = ModelResult.model_validate(validated_snapshot["value"])
+                    # Runtime origin is server-owned, including for injected
+                    # adapters. A response cannot label itself a no-model path.
+                    extracted.response_source = "llm"
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_EXTRACTION_VALIDATED", {
                         "based_state_version": session["state_version"], "provider": provider,
                         "model": requested_model, "structured_contract": validated_snapshot})
@@ -625,16 +628,53 @@ class Harness:
             if fallback is not None:
                 await fallback.close()
 
+    async def _latest_current_plans(self, session: dict, run: dict) -> list[dict]:
+        """Read the latest explicit batch, including an empty/invalid barrier.
+
+        A saved answer may only cite options shown in this session before its
+        input. Historical or foreign batches never become current evidence.
+        """
+        from .conversational import current_plans
+
+        messages = await self.store.list_messages(session["session_id"])
+        input_row = next((message for message in messages if message.get("id") == run["input_message_id"]), None)
+        if input_row is None:
+            return []
+        cutoff, seen = input_row["sequence"], set()
+        for message in reversed(messages):
+            prior_id = message.get("run_id")
+            if (message.get("role") != "assistant" or message.get("session_id") != session["session_id"]
+                    or message.get("sequence", cutoff) >= cutoff or not prior_id or prior_id in seen):
+                continue
+            seen.add(prior_id)
+            prior = await self.store.get_run(prior_id)
+            if prior.get("session_id") != session["session_id"] or prior.get("status") != "completed":
+                continue
+            response = prior.get("result")
+            payload = response.get("result") if isinstance(response, dict) else None
+            if isinstance(payload, dict) and "plans" in payload:
+                return current_plans(session["state"], payload["plans"])
+        return []
+
     async def _interpret(self, session: dict, run: dict) -> tuple[ModelResult, dict | None]:
+        from .trip_answers import classify_saved_question, render_saved_answer
+
+        # A narrow, complete saved-fact question is not a reply to a date target.
+        # The date resolver deliberately re-asks on any unrecognised selector;
+        # calling it first would swallow a budget/route question while pending.
+        # Short answers and all mixed/uncertain input retain the original path.
+        kind = classify_saved_question(run["input_text"])
         pending = session.get("pending_question")
         if pending and session.get("waiting_reason") == "clarification":
             pending = dict(pending)
             if not pending.get("field"):
                 binding = derive_pending_field(pending.get("questions") or [pending.get("text")], session["state"])
                 pending.update({key: value for key, value in binding.items() if value is not None})
-        resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
-        if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
-            resolved = resolve_short_answer(session["state"], pending, run["input_text"])
+        resolved = {"handled": False}
+        if kind is None:
+            resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
+            if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
+                resolved = resolve_short_answer(session["state"], pending, run["input_text"])
         if resolved["handled"]:
             question = resolved.get("question")
             extracted = ModelResult(operations=[Operation.model_validate(op) for op in resolved["operations"]],
@@ -646,6 +686,20 @@ class Harness:
                 "target_id": (pending or {}).get("target_id"), "context_clear": extracted.pending_context_clear,
                 "operations": [op.model_dump(mode="json") for op in extracted.operations]})
             return extracted, None
+        if kind is not None:
+            plans = await self._latest_current_plans(session, run)
+            reply = render_saved_answer(kind, run["input_text"], session["state"], plans,
+                (session.get("pending_question") or {}).get("context") or {})
+            if reply is None:
+                reply = "Не удалось прочитать сохранённые сведения. Поездка и текущий вопрос не изменены."
+            await self._ensure_current_run(session, run)
+            facts = {"state": session["state"], "plans": plans}
+            await self.store.save_event(session["session_id"], run["run_id"], "SAVED_FACTS_ANSWER_PROPOSED", {
+                "based_state_version": session["state_version"], "kind": kind,
+                "facts_sha256": hashlib.sha256(json.dumps(facts, sort_keys=True, ensure_ascii=False,
+                    separators=(",", ":")).encode()).hexdigest(), "model_calls": 0})
+            return ModelResult(operations=[], control={"action": "none"}, reply=reply,
+                unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
         return await self._extract(session, run)
 
     async def _process(self, run: dict) -> None:
@@ -718,6 +772,19 @@ class Harness:
             # Explicit conflicts block the *entire* batch, including otherwise
             # valid edits. Unknown fields alone may retain unambiguous changes.
             conflicts = extracted.conflicts or operation_conflicts(state, extracted.operations)
+            if model_meta is None and extracted.response_source == "canonical_saved_answer":
+                # Only the server's pre-model path can enter this branch. A
+                # model-supplied marker always has model_meta and grants no role.
+                shown = await self._latest_current_plans(session, run)
+                result.update(no_changes=True, notice=extracted.reply,
+                    response_source="canonical_saved_answer",
+                    conversational_response={"facts_source": "canonical_state_and_shown_plans", "model_calls": 0})
+                if shown:
+                    result.update(plans=shown, plans_preserved=True, source_type=shown[0].get("source_type"))
+                await self.store.finish_run(run["run_id"], version, None, session["status"], extracted.reply,
+                    pending_question=session.get("pending_question"), waiting_reason=session.get("waiting_reason"),
+                    changes=[], result=result)
+                return
             if conflicts:
                 questions = conflicts
                 status, waiting_reason = "WAITING_USER", ("user_pause" if extracted.control.action == "wait" and
@@ -913,20 +980,7 @@ class Harness:
             if kinds or party_changed:
                 shown = result.get("plans", [])
                 if "plans" not in result and kinds:
-                    seen = set()
-                    for message in reversed(await self.store.list_messages(session["session_id"])):
-                        prior_id = message.get("run_id")
-                        if (message.get("role") != "assistant" or message.get("session_id") != session["session_id"]
-                                or not prior_id or prior_id in seen):
-                            continue
-                        seen.add(prior_id)
-                        prior = await self.store.get_run(prior_id)
-                        if prior.get("session_id") != session["session_id"] or prior.get("status") != "completed":
-                            continue
-                        payload = (prior.get("result") or {}).get("result") or {}
-                        if "plans" in payload:
-                            shown = payload["plans"]
-                            break  # A latest empty/invalid batch never revives older options.
+                    shown = await self._latest_current_plans(session, run)
                 preserved = current_plans(current, shown)
                 if not changes and not questions and preserved and "plans" not in result:
                     result.update(plans=preserved, plans_preserved=True, source_type=preserved[0].get("source_type"))
