@@ -68,19 +68,32 @@ export function currentPlans(messages, runs, snapshot) {
   return [];
 }
 
-export function componentRequest(trip, kind) {
+export function componentRequest(trip, kind, provider = 'serpapi') {
   const iata = { 'Москва': 'MOW', 'Санкт-Петербург': 'LED', 'Сочи': 'AER', 'Казань': 'KZN', 'Стамбул': 'IST', 'Анталья': 'AYT', 'Дубай': 'DXB' };
   if (!trip?.travelers?.length || !trip.stays?.length) throw new Error('Сначала заполните маршрут, даты и гостей в параметрах поездки.');
   const currency = trip.budget?.currency || 'RUB';
   if (kind === 'flights') {
     if (!trip.legs.length || trip.legs.some(leg => !iata[leg.origin] || !iata[leg.destination] || !leg.departure_date)) throw new Error('Для поиска перелётов нужны известные города и даты каждого участка.');
-    return { kind, provider: 'serpapi', demo_fallback: false, request: { currency, slices: trip.legs.map(leg => ({ origin: iata[leg.origin], destination: iata[leg.destination], departure_date: leg.departure_date })), adults: trip.travelers.filter(person => person.type === 'adult').length, children: trip.travelers.filter(person => person.type === 'child').length } };
+    const slices = trip.legs.map(leg => ({ origin: iata[leg.origin], destination: iata[leg.destination], departure_date: leg.departure_date }));
+    if (provider === 'travelpayouts') return { kind, provider, demo_fallback: false, request: { currency, slices: slices.slice(0, 1) } };
+    if (provider === 'duffel') {
+      const passengers = trip.travelers.map(person => person.type === 'adult' ? { type: 'adult' } : { age: person.age });
+      if (passengers.some(person => person.age === null || person.age === undefined && !person.type)) throw new Error('Укажите возраст детей для поиска перелётов Duffel.');
+      return { kind, provider, demo_fallback: false, request: { currency, slices, passengers } };
+    }
+    return { kind, provider: 'serpapi', demo_fallback: false, request: { currency, slices, adults: trip.travelers.filter(person => person.type === 'adult').length, children: trip.travelers.filter(person => person.type === 'child').length } };
   }
   const stay = trip.stays[0];
-  if (!stay.check_in || !stay.check_out || !stay.city || stay.rooms.length !== 1) throw new Error('Справочный поиск отелей доступен для первой остановки с одним номером. Для нескольких номеров используйте подбор всей поездки.');
-  const guests = trip.travelers.filter(person => stay.rooms[0].traveler_ids.includes(person.id));
+  if (!stay.check_in || !stay.check_out || !stay.city || !stay.rooms.length || (provider === 'serpapi' && stay.rooms.length !== 1)) throw new Error('Укажите город, даты и распределение гостей. SerpApi поддерживает поиск одного номера.');
+  const guests = trip.travelers.filter(person => stay.rooms.some(room => room.traveler_ids.includes(person.id)));
   if (guests.some(person => person.type === 'child' && person.age == null)) throw new Error('Укажите возраст детей для поиска отелей.');
-  return { kind: 'hotels', provider: 'serpapi', demo_fallback: false, request: { q: stay.city, checkin: stay.check_in, checkout: stay.check_out, currency, occupancies: [{ adults: guests.filter(person => person.type === 'adult').length, children: guests.filter(person => person.type === 'child').map(person => person.age) }] } };
+  const occupancies = stay.rooms.map(room => { const people = guests.filter(person => room.traveler_ids.includes(person.id)); return { adults: people.filter(person => person.type === 'adult').length, children: people.filter(person => person.type === 'child').map(person => person.age) }; });
+  if (occupancies.some(room => room.adults < 1)) throw new Error('Укажите хотя бы одного взрослого в каждом номере.');
+  if (provider === 'liteapi') {
+    if (!trip.search_policy?.guest_nationality) throw new Error('Укажите гражданство гостей во вкладке «Источники».');
+    return { kind: 'hotels', provider, demo_fallback: false, request: { city: stay.city, checkin: stay.check_in, checkout: stay.check_out, currency, occupancies, guestNationality: trip.search_policy.guest_nationality } };
+  }
+  return { kind: 'hotels', provider: 'serpapi', demo_fallback: false, request: { q: stay.city, checkin: stay.check_in, checkout: stay.check_out, currency, occupancies } };
 }
 
 export function latestChanges(messages, runs) {
@@ -102,8 +115,10 @@ export function safeHotelMedia(media) {
   if (!media?.isActualPropertyPhoto || media.kind !== 'HOTEL' || !media.url) return null;
   try {
     const url = new URL(media.url);
-    const domains = ['static.cupid.travel', 'snaphotelapi.com', 'liteapi-travel-static-data.s3.amazonaws.com'];
-    return url.protocol === 'https:' && !url.username && !url.password && (!url.port || url.port === '443') && domains.includes(url.hostname) ? media : null;
+    const domains = ['static.cupid.travel', 'snaphotelapi.com', 'liteapi-travel-static-data.s3.amazonaws.com', 'lh3.googleusercontent.com', 'lh4.googleusercontent.com', 'lh5.googleusercontent.com', 'lh6.googleusercontent.com'];
+    const google = /^lh[3-6]\.googleusercontent\.com$/.test(url.hostname);
+    const allowedPath = !google || (!url.search && !url.hash && /^\/[A-Za-z0-9_./=-]+$/.test(url.pathname));
+    return url.protocol === 'https:' && !url.username && !url.password && (!url.port || url.port === '443') && domains.includes(url.hostname) && allowedPath ? media : null;
   } catch { return null; }
 }
 

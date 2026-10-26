@@ -60,6 +60,8 @@ test('a property photo requires a validated source and identity flags', () => {
   assert.equal(safeHotelMedia(media), media);
   assert.equal(safeHotelMedia({ ...media, isActualPropertyPhoto: false }), null);
   for (const url of ['javascript:alert(1)', 'https://static.cupid.travel.evil.test/hotels/1.jpg', 'https://user:secret@static.cupid.travel/hotels/1.jpg', 'http://static.cupid.travel/hotels/1.jpg']) assert.equal(safeHotelMedia({ ...media, url }), null);
+  assert.ok(safeHotelMedia({ ...media, url: 'https://lh3.googleusercontent.com/gps-cs-s/abc=s287' }));
+  assert.equal(safeHotelMedia({ ...media, url: 'https://lh3.googleusercontent.com/abc?api_key=bad' }), null);
 });
 
 test('API authorization is request-scoped and HTTP failures are not accepted runs', async () => {
@@ -156,5 +158,9 @@ test('component requests preserve itinerary scope and reject unsupported room al
   const flights = componentRequest(trip, 'flights');
   assert.deepEqual(flights.request.slices, [{ origin: 'KZN', destination: 'IST', departure_date: '2026-11-09' }]);
   assert.equal(flights.request.children, 1);
+  assert.deepEqual(componentRequest(trip, 'flights', 'duffel').request.passengers, [{ type: 'adult' }, { age: 7 }]);
+  assert.equal(componentRequest(trip, 'flights', 'travelpayouts').request.slices.length, 1);
+  assert.throws(() => componentRequest(trip, 'hotels', 'liteapi'), /гражданство/i);
+  assert.equal(componentRequest({ ...trip, search_policy: { guest_nationality: 'RU' } }, 'hotels', 'liteapi').request.city, 'Стамбул');
   assert.throws(() => componentRequest({ ...trip, stays: [{ ...trip.stays[0], rooms: [{}, {}] }] }, 'hotels'));
 });

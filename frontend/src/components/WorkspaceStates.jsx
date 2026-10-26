@@ -11,6 +11,6 @@ export function EmptyPlans({ busy, onEdit, onFocus, onDemo, hasTrip }) {
 }
 
 export function Providers({ data }) {
-  const entries = [['liteapi', 'LiteAPI', 'Отели · тестовый каталог'], ['duffel', 'Duffel', 'Перелёты · тестовая среда'], ['serpapi', 'SerpApi', 'Ориентировочные поисковые цены']];
+  const entries = [['liteapi', 'LiteAPI', 'Отели · тестовый каталог'], ['duffel', 'Duffel', 'Перелёты · тестовая среда'], ['serpapi', 'SerpApi', 'Ориентировочные поисковые цены и отзывы'], ['travelpayouts', 'Travelpayouts', 'Aviasales · архивные справочные цены']];
   return <div className="providers-content"><p className="muted">Источник туристических данных и модель диалога работают независимо. Наличие настройки ещё не подтверждает доступную квоту.</p>{entries.map(([id, title, description]) => <section key={id} className="provider-card"><span className={`status-dot ${data.providers?.[id]?.configured ? 'good' : 'warn'}`} /><div><strong>{title}</strong><p>{description}</p></div><span>{data.providers?.[id]?.configured ? 'Настроен' : 'Не настроен'}</span></section>)}<section className="provider-card"><MessageCircle size={18} /><div><strong>Модель диалога</strong><p>{data.providers?._runtime?.model || 'Данные пока недоступны'}</p></div></section><p className="hint">Ключи задаются в серверном .env. В браузер они не передаются. Подробности запуска находятся в README проекта.</p></div>;
 }

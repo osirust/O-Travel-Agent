@@ -25,6 +25,7 @@ from jsonschema import Draft202012Validator
 
 from .provider_facts import lite_rate_facts
 from .observability import groq_rate_facts, request_stats, seconds_hint, usage_counts
+from .hotel_presentation import google_hotel_presentation
 
 
 _SECRETS: set[str] = set()
@@ -1240,6 +1241,7 @@ class TravelGateway(_HTTPGateway):
                 identity = [row.get("property_token"), row.get("name"), request]
                 description = row.get("name", "Гостиничная поисковая выдача")
                 selected = {k: row[k] for k in ("property_token", "prices", "total_rate", "rate_per_night", "gps_coordinates", "hotel_class") if k in row}
+                selected.update(google_hotel_presentation(row))
             else:
                 amount, price_kind = row.get("price"), "INDICATIVE_ITINERARY_TOTAL"
                 identity = [row.get("flights"), request]
@@ -1255,6 +1257,32 @@ class TravelGateway(_HTTPGateway):
         if rows and not result:
             _fail("В поисковой выдаче нет проверяемой числовой цены.", provider, "INVALID_RESPONSE")
         return result
+
+    async def hotel_reviews(self, property_token: str) -> list[dict]:
+        """Fetch reviews only for a saved SerpApi hotel identity."""
+        provider = "serpapi"
+        if not isinstance(property_token, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,1024}", property_token):
+            _fail("Отель не содержит идентификатор для поиска отзывов.", provider, "INVALID_REQUEST")
+        if not _truth(_setting(self.settings, "SERPAPI_FREE_TIER_CONFIRMED", os.getenv("SERPAPI_FREE_TIER_CONFIRMED", "false"))):
+            _fail("Нужно подтверждение квоты SerpApi.", provider, "CONFIG_BLOCKED")
+        key = self._key("SERPAPI_API_KEY", provider)
+        body = await self._request(provider, "GET", "https://serpapi.com/search.json", params={"engine": "google_hotels_reviews", "property_token": property_token, "api_key": key, "hl": "ru", "no_cache": "false"})
+        if not isinstance(body.get("reviews"), list):
+            _fail("Источник не вернул список отзывов.", provider, "INVALID_RESPONSE")
+        reviews = []
+        for row in body["reviews"][:10]:
+            if not isinstance(row, dict):
+                continue
+            user = row.get("user") if isinstance(row.get("user"), dict) else {}
+            def text(value, limit):
+                return _safe_text(value).replace(key, "[REDACTED]")[:limit] if isinstance(value, str) else ""
+            rating = row.get("rating")
+            best = row.get("best_rating", 5)
+            reviews.append({"author": text(user.get("name"), 120), "date": text(row.get("date"), 80),
+                            "source": text(row.get("source"), 80), "text": text(row.get("snippet"), 3000),
+                            "rating": rating if type(rating) in {int, float} and 0 <= rating <= 10 else None,
+                            "best_rating": best if type(best) in {int, float} and 0 < best <= 10 else None})
+        return reviews
 
     async def reprice(self, offer: dict) -> dict:
         if not isinstance(offer, dict) or not isinstance(offer.get("details"), dict):

@@ -260,6 +260,34 @@ def test_serpapi_indicative_stable_ids_not_nightly_as_trip_total():
     asyncio.run(run())
 
 
+def test_serp_hotel_presentation_keeps_only_trusted_images_and_real_rating():
+    def handler(request):
+        return httpx.Response(200, json={"properties": [{"name": "Hotel", "property_token": "property1", "overall_rating": 4.7, "reviews": 321,
+            "images": [{"thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/abc=s287"},
+                       {"thumbnail": "https://lh3.googleusercontent.com.evil.test/abc"},
+                       {"thumbnail": "https://lh3.googleusercontent.com/abc?api_key=bad"}],
+            "total_rate": {"extracted_lowest": 1500}}]})
+    request = {**HOTEL_REQUEST, "city": "Казань", "occupancies": [{"adults": 2, "children": []}]}
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    presentation = call(gateway, "search_hotels", request, "serpapi")[0]["details"]["provider_data"]
+    assert presentation["photos"] == ["https://lh3.googleusercontent.com/gps-cs-s/abc=s287"]
+    assert presentation["rating"] == 4.7
+    assert presentation["review_count"] == 321
+
+
+def test_serp_hotel_reviews_are_bounded_and_never_return_private_urls():
+    def handler(request):
+        assert request.url.params["engine"] == "google_hotels_reviews"
+        assert request.url.params["property_token"] == "property1"
+        return httpx.Response(200, json={"reviews": [{"user": {"name": "Гость", "link": "https://private.example"},
+            "snippet": "Удобно", "rating": 5, "best_rating": 5, "date": "2026-01-01", "source": "Google"}]})
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    reviews = call(gateway, "hotel_reviews", "property1")
+    assert reviews[0]["text"] == "Удобно"
+    assert reviews[0]["rating"] == 5
+    assert "link" not in json.dumps(reviews)
+
+
 def test_serpapi_multicity_params_and_indicative_segments():
     def handler(request):
         assert request.url.params["type"] == "3"

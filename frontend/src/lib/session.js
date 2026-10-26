@@ -162,10 +162,11 @@ export class TravelSession {
   commands(operations, search = false) { return this.submit('commands', { operations, search }); }
   search() { return this.submit('search', { mode: this.state.snapshot.trip.search_policy.mode }); }
   demo() { return this.submit('demo', {}); }
-  liveSearch(kind) {
-    try { return this.submit('live/search', componentRequest(this.state.snapshot?.trip, kind)); }
+  liveSearch(kind, provider = 'serpapi') {
+    try { return this.submit('live/search', componentRequest(this.state.snapshot?.trip, kind, provider)); }
     catch (error) { this.notice(error.message); return Promise.resolve(false); }
   }
+  hotelReviews = offerId => this.request(this.path(`/hotel-reviews?offer_id=${encodeURIComponent(offerId)}`), { timeout: 30000 });
   async retryDelivery(id) {
     const entry = this.deliveries.find(item => item.id === id);
     if (!entry) return;

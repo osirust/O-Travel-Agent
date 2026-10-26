@@ -1336,7 +1336,18 @@ class Harness:
         await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_STARTED", {"kind": kind, "provider": provider})
         try:
             if kind == "hotels":
+                hotel_names = {}
+                if provider == "liteapi" and not request.get("hotelIds") and request.get("city"):
+                    matches = await self.travel.resolve_hotels(request["city"], limit=10)
+                    request = {**request, "hotelIds": [hotel["id"] for hotel in matches if hotel.get("id")]}
+                    hotel_names = {hotel["id"]: hotel["name"] for hotel in matches if hotel.get("id") and hotel.get("name")}
+                    if not request["hotelIds"]:
+                        raise ProviderError("NO_MATCHES", "В тестовом каталоге не нашлось отелей этого города.", provider="liteapi")
                 offers = await self.travel.search_hotels(request, provider)
+                for offer in offers:
+                    hotel_id = offer.get("details", {}).get("hotel_id")
+                    if hotel_id in hotel_names:
+                        offer["description"] = hotel_names[hotel_id]
             elif kind == "flights":
                 offers = await self.travel.search_flights(request, provider)
             else:

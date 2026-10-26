@@ -365,6 +365,37 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             raise HTTPException(422, "Для погоды нужны city, latitude и longitude.")
         return await submit(session, body.client_message_id, body.expected_version, "live_search", search_kind=body.kind, provider=body.provider, request=body.request, demo_fallback=body.demo_fallback)
 
+    @app.get("/api/v1/sessions/{session_id}/hotel-reviews")
+    async def hotel_reviews(session_id: str, offer_id: str = Query(min_length=1, max_length=128),
+                            authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        token = None
+        seen = set()
+        for message in reversed(await repository.list_messages(session_id)):
+            run_id = message.get("run_id")
+            if not run_id or run_id in seen:
+                continue
+            seen.add(run_id)
+            run = await repository.get_run(run_id)
+            response = run.get("result") or {}
+            if run.get("status") != "completed" or response.get("state_version") != session["state_version"]:
+                continue
+            inventory = response.get("result") or {}
+            for offer in inventory.get("live_offers", []):
+                details = offer.get("details") or {}
+                if offer.get("offer_id") == offer_id and offer.get("provider") == "serpapi" and details.get("kind") == "hotel":
+                    token = (details.get("provider_data") or {}).get("property_token")
+                    break
+            if token:
+                break
+        if not token:
+            raise NotFound("Отзывы доступны только для найденного отеля текущей поездки.")
+        reviews = await gateway.hotel_reviews(token)
+        latest = await repository.get_session(session_id)
+        if latest["state_version"] != session["state_version"]:
+            raise Conflict("Поездка изменилась во время загрузки отзывов.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"], "offer_id": offer_id, "source": "SerpApi / Google Hotels", "reviews": reviews})
+
     async def saved_plan(session: dict, plan_id: str, *, include_partial: bool = False) -> dict:
         checked = set()
         for message in reversed(await repository.list_messages(session["session_id"])):

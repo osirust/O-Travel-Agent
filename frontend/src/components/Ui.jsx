@@ -17,8 +17,8 @@ export function TravelImage({ city, media, className = '', caption = true, eager
   const valid = Boolean(src);
   const showingActual = valid && src === actual?.url;
   return <div className={`travel-image ${className}`}>
-    {valid ? <img src={src} alt={showingActual ? actual.alt || 'Фото отеля' : `${city || 'Путешествие'} — иллюстрация направления`} loading={eager ? 'eager' : 'lazy'} onError={() => setFailedSources(sources => [...sources, src])} /> : <div className="image-placeholder"><ImageOff size={30} strokeWidth={1.3} /><span>{city || 'Ваше путешествие'}</span></div>}
-    {caption && <span className="image-caption">{showingActual ? 'Фото отеля · LiteAPI' : valid ? 'Иллюстрация направления' : 'Фото пока недоступно'}</span>}
+    {valid ? <img src={src} alt={showingActual ? actual.alt || 'Фото отеля' : `${city || 'Путешествие'} — иллюстрация направления`} referrerPolicy="no-referrer" loading={eager ? 'eager' : 'lazy'} onError={() => setFailedSources(sources => [...sources, src])} /> : <div className="image-placeholder"><ImageOff size={30} strokeWidth={1.3} /><span>{city || 'Ваше путешествие'}</span></div>}
+    {caption && <span className="image-caption">{showingActual ? `Фото отеля · ${actual.source === 'SERPAPI' ? 'Google Hotels' : 'LiteAPI'}` : valid ? 'Иллюстрация направления' : 'Фото пока недоступно'}</span>}
   </div>;
 }
 
