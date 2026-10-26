@@ -1,0 +1,10 @@
+{
+  "scope": "limited automated pattern check of tracked text, not full prompt-injection or compliance audit",
+  "base_commit": "cb0eadc198ecd03e35bee244d0203197341a9d86",
+  "text_files_scanned": 219,
+  "strong_pattern_match_count": 0,
+  "matches": [],
+  "untrusted_test_payloads_are_not_instructions": true,
+  "full_manual_review_complete": false,
+  "official_acceptance_confirmed": false
+}

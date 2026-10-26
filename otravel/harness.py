@@ -20,6 +20,7 @@ from .orchestrator import TripSearch
 from .history import plan_history
 from .geography import known_cities, parse_destination
 from .money import ground_budget_operations
+from .route_intake import ground_initial_route
 from .llm_contract import build_operation_schema
 from .clarifications import PENDING_CONTEXT_CLEAR_KEYS, derive_pending_field, human_question, question_field, resolve_short_answer
 from .date_slots import resolve_date_answer
@@ -53,7 +54,9 @@ def explicit_no_children(text: str) -> bool:
     # A complete explicit clause can establish zero children inside a compound
     # request. Broader/negated/conditional language still belongs to the model.
     clauses = re.split(r"[,;.!\n]", text.casefold().replace("ё", "е"))
-    return any(" ".join(part.split()) in {"детей нет", "без детей", "дети не едут"} for part in clauses)
+    return any(" ".join(part.split()) in {
+        "детей нет", "без детей", "дети не едут", "детей не будет", "детей пока не будет", "детей пока нет",
+    } for part in clauses)
 
 
 def encode_command(kind: str, session: dict, **fields: Any) -> str:
@@ -509,6 +512,12 @@ class Harness:
                         if any(note.get("status") == "clarification_required" for note in extracted.operation_normalizations):
                             extracted.unknowns = ["Вы указали стоимость за ночь или за человека. Какой общий бюджет всей поездки нужно установить?"]
                             extracted.pending_context = {**(extracted.pending_context or {}), "field": "budget.amount_minor", "budget_scope_ambiguous": True}
+                    if (extracted.speech_act == "CHANGE" and not extracted.conflicts
+                            and extracted.control.action in {"none", "continue", "wait", "resume"}):
+                        grounded_route, route_notes = ground_initial_route(
+                            TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in grounded_route]
+                        extracted.operation_normalizations.extend(route_notes)
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None
@@ -640,6 +649,16 @@ class Harness:
         return await self._extract(session, run)
 
     async def _process(self, run: dict) -> None:
+        from .conversational import (
+            current_plans,
+            explicit_search_request,
+            information_noop,
+            information_question,
+            render_response,
+            request_kinds,
+            should_search,
+        )
+
         session = await self.store.get_session(run["session_id"])
         version = session["state_version"]
         if session.get("waiting_reason") == "user_pause":
@@ -707,7 +726,9 @@ class Harness:
                 await self.store.cancel_processing(session["session_id"], version,
                     target_run_id=run["run_id"], result={"llm": model_meta})
                 return
-            elif (extracted.speech_act == "ASK" or extracted.speech_act == "PROPOSE" and extracted.destination_request is None) and extracted.control.action == "none":
+            elif ((extracted.speech_act == "ASK" or extracted.speech_act == "PROPOSE" and extracted.destination_request is None)
+                    and extracted.control.action == "none" and extracted.pending_context is None
+                    and not explicit_search_request(run["input_text"])):
                 # No intake questionnaire or search is started merely because
                 # someone asked about a place. Preserve any previous exact slot.
                 preserve_pending = True
@@ -732,7 +753,27 @@ class Harness:
                     raise
                 new_state = candidate if changes else None
                 questions = extracted.unknowns
-                if extracted.control.action == "wait" and not resumed_after_input:
+                informational = (not changes and undo_meta is None
+                    and extracted.control.action in {"none", "continue"}
+                    and extracted.response_source != "contextual_slot"
+                    and extracted.destination_request is None and extracted.pending_context is None
+                    and information_noop(run["input_text"], extracted.speech_act)
+                    and not explicit_search_request(run["input_text"]))
+                if informational:
+                    # A provider's generic 'continue' is not a new search request
+                    # when the user only asks about an unchanged saved trip.
+                    bound_question = information_question(run["input_text"], candidate, questions,
+                        (session.get("pending_question") or {}).get("context"))
+                    questions = [bound_question["question"]] if bound_question else []
+                    if bound_question:
+                        extracted.pending_context = {**bound_question["context"],
+                            "field": bound_question["field"], "target_id": bound_question["target_id"]}
+                        status, waiting_reason = "WAITING_USER", "clarification"
+                    else:
+                        status, waiting_reason = session["status"], session.get("waiting_reason")
+                        preserve_pending = True
+                    result.update(no_changes=True, notice="Поездка и показанные варианты не изменены.")
+                elif extracted.control.action == "wait" and not resumed_after_input:
                     missing = [issue["message"] for issue in validate_trip(candidate) if issue["code"].startswith("missing_")]
                     if (questions or missing) and not explicit_pause_hint(run["input_text"]):
                         questions = questions or missing
@@ -745,8 +786,8 @@ class Harness:
                     result["available_actions"] = ["checkout/preview", "checkout/confirm"]
                     result["notice"] = "Выбор и текстовое «да» не создают заказ. Нужны preview и явное подтверждение его версии."
                 else:
-                    search = undo_meta is None and (bool(changes) or extracted.control.action in {"continue", "resume"}
-                        or extracted.response_source == "contextual_slot")
+                    search = should_search(run["input_text"], changed=bool(changes), action=extracted.control.action,
+                        response_source=extracted.response_source, speech_act=extracted.speech_act, undo=undo_meta is not None)
                     if undo_meta is None and not search:
                         status = session["status"]
                         waiting_reason = session.get("waiting_reason")
@@ -865,6 +906,37 @@ class Harness:
             reply = "В конечном DEMO-каталоге нет подходящих вариантов. Бюджет и обязательные условия не ослаблены."
         else:
             reply = result.get("notice") or "Изменения сохранены. Доступны структурированные формы и явный DEMO-поиск."
+        if (not run["input_text"].startswith(TYPED_PREFIX) and waiting_reason != "user_pause"
+                and not extracted.conflicts):
+            kinds = request_kinds(run["input_text"])
+            party_changed = any(change.get("field") == "travelers" for change in changes)
+            if kinds or party_changed:
+                shown = result.get("plans", [])
+                if "plans" not in result and kinds:
+                    seen = set()
+                    for message in reversed(await self.store.list_messages(session["session_id"])):
+                        prior_id = message.get("run_id")
+                        if (message.get("role") != "assistant" or message.get("session_id") != session["session_id"]
+                                or not prior_id or prior_id in seen):
+                            continue
+                        seen.add(prior_id)
+                        prior = await self.store.get_run(prior_id)
+                        if prior.get("session_id") != session["session_id"] or prior.get("status") != "completed":
+                            continue
+                        payload = (prior.get("result") or {}).get("result") or {}
+                        if "plans" in payload:
+                            shown = payload["plans"]
+                            break  # A latest empty/invalid batch never revives older options.
+                preserved = current_plans(current, shown)
+                if not changes and not questions and preserved and "plans" not in result:
+                    result.update(plans=preserved, plans_preserved=True, source_type=preserved[0].get("source_type"))
+                rendered = render_response(run["input_text"], current, shown,
+                    changed=bool(changes), party_changed=party_changed)
+                if rendered is not None:
+                    reply = rendered["reply"] + (" " + reply if questions else "")
+                    result["conversational_response"] = {"kinds": rendered["kinds"], "facts_source": "canonical_state_and_shown_plans"}
+                    if rendered.get("suggested_action") and waiting_reason is None and not questions:
+                        result["suggested_action"] = rendered["suggested_action"]
         pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions and waiting_reason != "user_pause" else None
         if pending is not None and not preserve_pending:
             if not run["input_text"].startswith(TYPED_PREFIX) and extracted.pending_context and extracted.pending_context.get("field"):

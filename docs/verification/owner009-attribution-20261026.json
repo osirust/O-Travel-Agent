@@ -1,0 +1,28 @@
+{
+  "source": "Only owner-supplied ZAI100-009; no other ongoing dialogues inspected",
+  "source_api_commit": "85160effde07ff891295ba437754b328ebdf258a",
+  "source_model": "glm-4.5-flash",
+  "source_fixture_sha256": "afb9d52e446a333b21210acaad0688af120b04f72aaa2e262af4cc628e313ebe",
+  "findings": [
+    {
+      "id": "HARNESS-004-INITIAL-ROUTE-002",
+      "fact": "Turn1 raw reply mentions Казань, operations omit destination; backend asks destination again",
+      "raw_reply_has_city": true,
+      "raw_has_stay_operation": false,
+      "current_fix_scope": "bounded explicit initial-route grounding with raw/checked provenance; no dates/rooms guessed"
+    },
+    {
+      "id": "HARNESS-004-REPLY-LOSS-001",
+      "fact": "Turns6/8/9 receive generic DEMO-plan summary despite useful model reply; controlcontinue with noop also repeats search",
+      "raw_turn8_roster_reply": "Текущий состав поездки: 1 взрослый (new-traveler-1) и 1 ребенок 8 лет (new-traveler-2). Поездка из Москвы в Казань с 13 по 18 ноября 2026 года. Бюджет 75 000 рублей.",
+      "raw_turn9_demo_cart_reply": "Да, все представленные планы являются демонстрационными. Цены и наличие вымышлены, бронирование не создано. Вы можете просматривать эти тестовые планы без каких-либо обязательств или оплаты.",
+      "current_fix_scope": "canonical party/source/cart responses, no-op search suppression, safe preview suggestion; not full general NLU"
+    }
+  ],
+  "cached_replay": "tests/test_owner009_cached_replay.py uses saved pre-turn6 domain facts and exact cached turns6-9; API isolates trip/session IDs/version",
+  "initial_route_replay": "tests/test_harness_initial_route.py uses exact cached turn1",
+  "new_model_calls": 0,
+  "runtime_changed": false,
+  "tourism_api_absence_in_8084": "Intentional LLM-only DEMO test profile; API key presence elsewhere does not improve final response rendering",
+  "full100_analyzed": false
+}

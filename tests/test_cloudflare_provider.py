@@ -14,6 +14,8 @@ from otravel.providers import LLMGateway, ProviderError
 
 ACCOUNT = "0123456789abcdef0123456789abcdef"
 MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+REASONING_MODELS = ("@cf/google/gemma-4-26b-a4b-it", "@cf/nvidia/nemotron-3-120b-a12b")
+APPROVED_MODELS = (MODEL, *REASONING_MODELS)
 SECRET = "synthetic-cloudflare-token-never-a-real-key"
 ENDPOINT = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT}/ai/v1/chat/completions"
 RESULT = {"operations": [{"type": "update_traveler", "target_id": "child-1", "value": {"age": 4}}],
@@ -31,8 +33,8 @@ def forbidden(request):
     pytest.fail("Configuration must block before an HTTP attempt")
 
 
-def completion(payload=RESULT, *, finish="stop", usage=None):
-    body = {"model": MODEL, "choices": [{"finish_reason": finish,
+def completion(payload=RESULT, *, finish="stop", usage=None, model=MODEL):
+    body = {"model": model, "choices": [{"finish_reason": finish,
         "message": {"content": json.dumps(payload, ensure_ascii=False)}}]}
     if usage is not None:
         body["usage"] = usage
@@ -47,7 +49,8 @@ async def extract(gateway, context=None):
 
 
 @pytest.mark.asyncio
-async def test_cloudflare_fixed_account_endpoint_auth_and_json_mode_contract():
+@pytest.mark.parametrize("model", APPROVED_MODELS)
+async def test_cloudflare_fixed_account_endpoint_auth_and_json_mode_contract(model):
     calls = []
     schema = build_operation_schema(sample_trip())
     def handler(request):
@@ -55,23 +58,30 @@ async def test_cloudflare_fixed_account_endpoint_auth_and_json_mode_contract():
         assert request.method == "POST" and str(request.url) == ENDPOINT
         assert request.headers["authorization"] == "Bearer " + SECRET
         body = json.loads(request.content)
-        assert set(body) == {"model", "messages", "response_format", "max_tokens"}
-        assert body["model"] == MODEL and body["max_tokens"] == 2048
+        if model in REASONING_MODELS:
+            assert set(body) == {"model", "messages", "response_format", "max_completion_tokens", "chat_template_kwargs"}
+            assert body["max_completion_tokens"] == 2048
+            assert body["chat_template_kwargs"] == {"enable_thinking": False}
+            assert not {"max_tokens", "reasoning_effort", "thinking", "reasoning"} & set(body)
+        else:
+            assert set(body) == {"model", "messages", "response_format", "max_tokens"}
+            assert body["max_tokens"] == 2048
+        assert body["model"] == model
         assert body["response_format"] == {"type": "json_object"}
         assert [message["role"] for message in body["messages"]] == ["system", "user"]
         assert json.dumps(schema, ensure_ascii=False) in body["messages"][0]["content"]
         assert "__response_schema" not in body["messages"][1]["content"]
         assert SECRET not in request.content.decode()
         assert "separate-synthetic-context-token" not in request.content.decode()
-        return completion(usage={"prompt_tokens": 17, "completion_tokens": 5, "total_tokens": 22})
-    settings = config(handler, LLM_MAX_OUTPUT_TOKENS=8192, LLM_REASONING_ENABLED=True,
+        return completion(model=model, usage={"prompt_tokens": 17, "completion_tokens": 5, "total_tokens": 22})
+    settings = config(handler, CLOUDFLARE_MODEL=model, LLM_MAX_OUTPUT_TOKENS=8192, LLM_REASONING_ENABLED=True,
         CLOUDFLARE_BASE_URL="https://untrusted.invalid", OPENROUTER_BACKUP_MODEL="synthetic/paid")
     untouched = dict(settings)
     gateway = LLMGateway(settings)
     output = await extract(gateway, {"current_message": "Ему четыре года", "__response_schema": schema,
         "CLOUDFLARE_API_TOKEN": "separate-synthetic-context-token"})
     assert output == RESULT and settings == untouched and len(calls) == 1
-    assert output.call_metadata["provider"] == "cloudflare" and output.call_metadata["model"] == MODEL
+    assert output.call_metadata["provider"] == "cloudflare" and output.call_metadata["model"] == model
     assert output.call_metadata["usage"] == {"input_tokens": 17, "output_tokens": 5, "total_tokens": 22}
     assert output.call_metadata["request_metrics"]["schema_utf8_bytes"] > 0
     assert len(output.call_metadata["request_metrics"]["prompt_sha256"]) == 64
@@ -115,30 +125,37 @@ async def test_cloudflare_missing_token_does_not_reach_http(monkeypatch):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("model", ["", "other/model", MODEL + ":free", "@cf/zai-org/glm-5.2",
-    "@cf/deepseek-ai/deepseek-v4.1-flash-1017", "@cf/zai-org/glm-4.7-flash"])
-async def test_cloudflare_only_approved_first_model_no_paid_or_unqualified_fallback(model):
+    "@cf/deepseek-ai/deepseek-v4.1-flash-1017", "@cf/zai-org/glm-4.7-flash",
+    REASONING_MODELS[0] + ":paid", REASONING_MODELS[1] + ":free", "@cf/google/gemma-4-31b-it"])
+async def test_cloudflare_only_approved_models_no_paid_or_unqualified_fallback(model):
     with pytest.raises(ProviderError) as failure:
         await extract(LLMGateway(config(forbidden, CLOUDFLARE_MODEL=model)))
     assert failure.value.code == "CONFIG_BLOCKED"
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("model", APPROVED_MODELS)
 @pytest.mark.parametrize("tokens", [8192, 2048, 512, 1, -100, "bad", None])
-async def test_cloudflare_output_is_bounded_and_does_not_enable_extra_features(tokens):
+async def test_cloudflare_output_is_bounded_and_does_not_enable_extra_features(tokens, model):
     def handler(request):
         body = json.loads(request.content)
-        assert 256 <= body["max_tokens"] <= 2048
-        assert not {"reasoning", "tools", "models", "provider", "stream", "gateway"} & set(body)
-        return completion()
-    assert await extract(LLMGateway(config(handler, LLM_MAX_OUTPUT_TOKENS=tokens))) == RESULT
+        field = "max_completion_tokens" if model in REASONING_MODELS else "max_tokens"
+        assert 256 <= body[field] <= 2048
+        assert not {"reasoning", "reasoning_effort", "thinking", "tools", "models", "provider", "stream", "gateway"} & set(body)
+        if model in REASONING_MODELS:
+            assert "max_tokens" not in body
+            assert body["chat_template_kwargs"] == {"enable_thinking": False}
+        return completion(model=model)
+    assert await extract(LLMGateway(config(handler, CLOUDFLARE_MODEL=model, LLM_MAX_OUTPUT_TOKENS=tokens))) == RESULT
 
 
 @pytest.mark.asyncio
-async def test_cloudflare_json_mode_does_not_bypass_dynamic_target_schema():
+@pytest.mark.parametrize("model", APPROVED_MODELS)
+async def test_cloudflare_json_mode_does_not_bypass_dynamic_target_schema(model):
     bad = deepcopy(RESULT)
     bad["operations"][0]["target_id"] = None
-    gateway = LLMGateway(config(lambda request: completion(bad,
-        usage={"prompt_tokens": 17, "completion_tokens": 5, "private_message": SECRET})))
+    gateway = LLMGateway(config(lambda request: completion(bad, model=model,
+        usage={"prompt_tokens": 17, "completion_tokens": 5, "private_message": SECRET}), CLOUDFLARE_MODEL=model))
     try:
         with pytest.raises(ProviderError) as failure:
             await gateway.extract_operations({"__response_schema": build_operation_schema(sample_trip())})
@@ -152,10 +169,11 @@ async def test_cloudflare_json_mode_does_not_bypass_dynamic_target_schema():
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("model", APPROVED_MODELS)
 @pytest.mark.parametrize("kind", ["json", "shape", "truncated", "missing_choice"])
-async def test_cloudflare_invalid_output_keeps_consumed_usage_without_fabricating_success(kind):
+async def test_cloudflare_invalid_output_keeps_consumed_usage_without_fabricating_success(kind, model):
     def handler(request):
-        body = json.loads(completion(usage={"prompt_tokens": 11, "completion_tokens": 3}).content)
+        body = json.loads(completion(model=model, usage={"prompt_tokens": 11, "completion_tokens": 3}).content)
         if kind == "json":
             body["choices"][0]["message"]["content"] = "{"
         elif kind == "shape":
@@ -165,7 +183,7 @@ async def test_cloudflare_invalid_output_keeps_consumed_usage_without_fabricatin
         else:
             body["choices"] = []
         return httpx.Response(200, json=body)
-    gateway = LLMGateway(config(handler))
+    gateway = LLMGateway(config(handler, CLOUDFLARE_MODEL=model))
     try:
         with pytest.raises(ProviderError) as failure:
             await gateway.extract_operations({"current_message": "Сохрани возраст"})
@@ -177,8 +195,9 @@ async def test_cloudflare_invalid_output_keeps_consumed_usage_without_fabricatin
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("model", APPROVED_MODELS)
 @pytest.mark.parametrize("status", [401, 403, 429, 500, 503])
-async def test_cloudflare_http_error_is_one_attempt_without_secret_or_raw_body(status, caplog):
+async def test_cloudflare_http_error_is_one_attempt_without_secret_or_raw_body(status, model, caplog):
     calls = []
     caplog.set_level(logging.INFO, logger="httpx")
     def handler(request):
@@ -187,7 +206,7 @@ async def test_cloudflare_http_error_is_one_attempt_without_secret_or_raw_body(s
         return httpx.Response(status, headers={"X-Private-Header": SECRET},
             json={"errors": [{"message": SECRET}], "usage": {"prompt_tokens": 999},
                 "CLOUDFLARE_API_TOKEN": SECRET})
-    gateway = LLMGateway(config(handler, OPENROUTER_API_KEY="synthetic-unused-backup",
+    gateway = LLMGateway(config(handler, CLOUDFLARE_MODEL=model, OPENROUTER_API_KEY="synthetic-unused-backup",
         OPENROUTER_BACKUP_MODEL="synthetic/model:free"))
     try:
         with pytest.raises(ProviderError) as failure:
@@ -200,6 +219,36 @@ async def test_cloudflare_http_error_is_one_attempt_without_secret_or_raw_body(s
         assert "[REDACTED]" in caplog.text
     finally:
         await gateway.close()
+
+
+@pytest.mark.asyncio
+async def test_cloudflare_default_model_remains_llama(monkeypatch):
+    monkeypatch.delenv("CLOUDFLARE_MODEL", raising=False)
+    calls = []
+    def handler(request):
+        calls.append(request)
+        body = json.loads(request.content)
+        assert body["model"] == MODEL and "max_tokens" in body
+        assert "max_completion_tokens" not in body and "chat_template_kwargs" not in body
+        return completion()
+    settings = config(handler)
+    del settings["CLOUDFLARE_MODEL"]
+    assert await extract(LLMGateway(settings)) == RESULT
+    assert len(calls) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("model", REASONING_MODELS)
+@pytest.mark.parametrize("missing", ["confirmation", "token"])
+async def test_cloudflare_new_profiles_do_not_bypass_free_or_credential_guards(model, missing, monkeypatch):
+    monkeypatch.delenv("CLOUDFLARE_FREE_TIER_CONFIRMED", raising=False)
+    monkeypatch.delenv("CLOUDFLARE_API_TOKEN", raising=False)
+    overrides = {"CLOUDFLARE_MODEL": model,
+        "CLOUDFLARE_FREE_TIER_CONFIRMED": False if missing == "confirmation" else True,
+        "CLOUDFLARE_API_TOKEN": "" if missing == "token" else SECRET}
+    with pytest.raises(ProviderError) as failure:
+        await extract(LLMGateway(config(forbidden, **overrides)))
+    assert failure.value.code == ("CONFIG_BLOCKED" if missing == "confirmation" else "CONFIG_MISSING")
 
 
 @pytest.mark.asyncio

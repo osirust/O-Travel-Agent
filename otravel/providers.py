@@ -476,8 +476,9 @@ class LLMGateway(_HTTPGateway):
                 _fail("LLM не вернула текст ответа.", provider, "INVALID_LLM_RESPONSE")
         elif provider == "cloudflare":
             model = str(_setting(self.settings, "CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
-            if model != "@cf/meta/llama-3.3-70b-instruct-fp8-fast":
-                _fail("Для Cloudflare разрешена только выбранная модель Workers Free.", provider, "CONFIG_BLOCKED")
+            reasoning_models = {"@cf/google/gemma-4-26b-a4b-it", "@cf/nvidia/nemotron-3-120b-a12b"}
+            if model not in {"@cf/meta/llama-3.3-70b-instruct-fp8-fast", *reasoning_models}:
+                _fail("Для Cloudflare разрешены только выбранные модели Workers Free.", provider, "CONFIG_BLOCKED")
             confirmed = _setting(self.settings, "CLOUDFLARE_FREE_TIER_CONFIRMED")
             if confirmed is None:
                 confirmed = os.getenv("CLOUDFLARE_FREE_TIER_CONFIRMED", "false")
@@ -491,11 +492,16 @@ class LLMGateway(_HTTPGateway):
             if not isinstance(account, str) or not re.fullmatch(r"[a-fA-F0-9]{32}", account):
                 _fail("Cloudflare Account ID должен содержать 32 hex-символа.", provider, "CONFIG_BLOCKED")
             key = self._key("CLOUDFLARE_API_TOKEN", provider)
+            # These newer serving profiles use the completion limit and an
+            # explicit chat-template switch, not top-level reasoning_effort.
+            profile = ({"max_completion_tokens": min(2048, max_tokens),
+                        "chat_template_kwargs": {"enable_thinking": False}} if model in reasoning_models
+                       else {"max_tokens": min(2048, max_tokens)})
             body = await self._request(provider, "POST",
                 f"https://api.cloudflare.com/client/v4/accounts/{account}/ai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {key}"}, json={"model": model,
                     "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
-                    "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens)})
+                    "response_format": {"type": "json_object"}, **profile})
             try:
                 choice = body["choices"][0]
                 if choice.get("finish_reason") in {"length", "content_filter", "error"}:

@@ -40,6 +40,6 @@ python -m pytest -q
 
 Для интеграционных тестов нужна отдельная БД через `TEST_DATABASE_URL`. Тесты не должны работать с базой приложения.
 
-[Контракт frontend](docs/FRONTEND_CONTRACT.md) · [Настройка API](docs/API_SETUP.md) · [План работ](docs/research/harness-plan-review.md)
+[Контракт frontend](docs/FRONTEND_CONTRACT.md) · [Настройка API](docs/API_SETUP.md) · [Проверка запуска](docs/testing/CLEAN_START.md) · [План работ](docs/research/harness-plan-review.md)
 
 [Задание](https://docs.ostrovok.tech/s/0ee4d8b2-ae50-4dda-a2b5-112fcdb5398d) · [Технические правила](https://docs.ostrovok.tech/s/b9e6ec5e-5ad6-4091-9c85-a48eee9b21cc)

@@ -1,0 +1,255 @@
+{
+  "provenance": "One dialogue explicitly supplied by owner during ongoing full100; only that dialogue inspected read-only. No other100 dialogues imported.",
+  "source_api_commit": "85160effde07ff891295ba437754b328ebdf258a",
+  "source_provider": "zai",
+  "source_model": "glm-4.5-flash",
+  "scope": "cached extraction regressions, no actual new model calls",
+  "turns": [
+    {
+      "turn": 1,
+      "input_text": "Один взрослый из Москвы в Казань, детей пока не будет. Хочу сначала собрать простой вариант поездки.",
+      "cached_extraction": {
+        "reply": "Я понимаю, вы хотите поездку для одного взрослого из Москвы в Казань. Добавляю эту информацию в вашу поездку.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Москва"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      }
+    },
+    {
+      "turn": 2,
+      "input_text": "Казань",
+      "cached_extraction": null
+    },
+    {
+      "turn": 3,
+      "input_text": "13.11.2026",
+      "cached_extraction": null
+    },
+    {
+      "turn": 4,
+      "input_text": "18.11.2026",
+      "cached_extraction": null
+    },
+    {
+      "turn": 5,
+      "input_text": "Один номер для меня. Общий бюджет 75 тысяч рублей на всю поездку.",
+      "cached_extraction": {
+        "reply": "Установлен бюджет 75 000 рублей на всю поездку. Добавлен один номер для вас в Казань с заездом 13 ноября и выездом 18 ноября.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 7500000
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Казань",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-18"
+            },
+            "target_id": "stay-1"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      }
+    },
+    {
+      "turn": 6,
+      "input_text": "А если взять ребёнка семи лет, сможешь пересобрать поездку? Пока не добавляй его.",
+      "cached_extraction": {
+        "reply": "Да, я могу пересобрать поездку с учетом ребенка 7 лет. Сейчас я не буду добавлять его в поездку, но учту этот факт при пересчете стоимости и предложении вариантов размещения.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      }
+    },
+    {
+      "turn": 7,
+      "input_text": "Теперь действительно добавь одного ребёнка семи лет. Я, существующий взрослый, остаюсь.",
+      "cached_extraction": {
+        "reply": "Добавлен ребёнок 7 лет. Номер в Казани теперь рассчитан на двоих.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-2",
+              "age": 7,
+              "type": "child"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Казань",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-18"
+            },
+            "target_id": "stay-1"
+          }
+        ],
+        "speech_act": "CHANGE"
+      }
+    },
+    {
+      "turn": 8,
+      "input_text": "Ребёнку всёже восемь, не семь. Напомни наш текущий состав.",
+      "cached_extraction": {
+        "reply": "Текущий состав поездки: 1 взрослый (new-traveler-1) и 1 ребенок 8 лет (new-traveler-2). Поездка из Москвы в Казань с 13 по 18 ноября 2026 года. Бюджет 75 000 рублей.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 8
+            },
+            "target_id": "new-traveler-2"
+          }
+        ],
+        "speech_act": "CHANGE"
+      }
+    },
+    {
+      "turn": 9,
+      "input_text": "Первый план доступен только как демонстрационный? Можно посмотреть тестовую корзину без покупки?",
+      "cached_extraction": {
+        "reply": "Да, все представленные планы являются демонстрационными. Цены и наличие вымышлены, бронирование не создано. Вы можете просматривать эти тестовые планы без каких-либо обязательств или оплаты.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      }
+    }
+  ],
+  "initial_for_turn6": {
+    "legs": [
+      {
+        "id": "leg-7c58bf91-be1d-4b15-8f7d-dbe7c607697d",
+        "mode": "flight",
+        "origin": "Москва",
+        "destination": "Казань",
+        "departure_date": "2026-11-13"
+      },
+      {
+        "id": "leg-9c2d0581-8973-4beb-a3a9-34c7ebe5f53f",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Москва",
+        "departure_date": "2026-11-18"
+      }
+    ],
+    "stays": [
+      {
+        "id": "stay-1",
+        "city": "Казань",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": null,
+        "check_out": "2026-11-18"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 7500000
+    },
+    "groups": [],
+    "origin": "Москва",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "search_policy": {
+      "mode": "DEMO",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "serpapi",
+      "guest_nationality": null
+    },
+    "state_version": 5
+  },
+  "initial_state_note": "Actual saved revision before turn6; trip_id omitted. Test API assigns isolated trip_id/version, keeping traveler/stay/room IDs and all domain facts."
+}
