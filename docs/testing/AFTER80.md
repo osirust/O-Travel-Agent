@@ -6,7 +6,7 @@
 
 ## Текущий checkpoint
 
-Core **b9343c0c6459c6d34e8605371c955de95da2f73d** опубликован в обоих private remotes и установлен в Native, package **12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11**. [Полный controlled/domain/API/PG/MockTransport набор](../verification/hotel-clarification-core-20261027.json): **4530PASS/0fail/0skip**. Это не4530языковых сценариев и не сумма targeted-наборов.
+Core **26c76431f5980c35647f4acf2eb7f23a62f70adc** опубликован в обоих private remotes и установлен в Native, package **0407b2d51c5e93213d5fb566e7cad3221ab7120bb1beee7f8ad76d2abbef890e**. [Полный controlled/domain/API/PG/MockTransport набор](../verification/liteapi-prebook2001-repair-20261027.json): **4606PASS/0fail/0skip**. Это кодовые проверки, не4606языковых сценариев.
 
 [Два actual OpenRouter перехода](../verification/actual-selected-hotels-wow-20261027.json) прошли21предметную проверку: WOW-правка с сохранением выбранного первого отеля и ссылка на выбранный UI plan3, отличный от первой карточки. Оба имеют явную типизированную подготовку; это не два новых полных natural диалога. Реальных броней/оплат, paid fallback и local inference нет.
 
@@ -67,3 +67,5 @@ Default application cap40; Router50 требует явного согласов
 Первоначальные FAIL, budget-stops и source/model отказы не переписываются новым результатом. Полный106не имеет language PASS; D250=50диалогов/300ходов импортирован отдельно. Это acceptance pending, а не отмена доказанных узких scope.
 
 Frontend делает сокомандник. В handoff нужны scoped rooms, optional темы как необязательные, текущий выбранный preview, раздельные источники/валюты/quote lifecycle. [Fresh Docker](../verification/prefrontend-coldstart-20261027.json) без ключей проверен на прежнем committed archive; сдаваемый новый архив требует относящегося smoke. Интеграция интерфейса проверяется отдельно; без LLM-ключа работают формы/DEMO, не свободный NLU.
+
+Текущие частичные contentoracles: [v3](../../fixtures/evaluation/after80-oracles-v3.json),781rule/80cases/657из697turns,194oldrulesexact,fullybound0. Переписанные вопросы требуютadaptiveветви;077T8/079T3–T4—ручнойalternativeoutcome review. Грейдер запускается сявным `--manifest fixtures/evaluation/after80-oracles-v3.json`, defaultv1не менялся; исходныеgradeфайлы не перезаписывать.
