@@ -20,7 +20,7 @@ CONTROL_ACTIONS = ("continue", "wait", "resume", "cancel", "request_checkout", "
 OPERATION_TYPES = frozenset({
     "set_origin", "set_budget", "set_search_policy", "add_traveler",
     "update_traveler", "remove_traveler", "upsert_stay", "remove_stay",
-    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference", "clear_preference", "set_route_policy", "upsert_group",
+    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference", "clear_preference", "set_route_policy", "set_leg_mode", "upsert_group",
 })
 
 
@@ -158,6 +158,7 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     traveler_ids = [person.id for person in state.travelers]
     stay_ids = [stay.id for stay in state.stays]
     group_ids = [group.id for group in state.groups]
+    leg_ids = [leg.id for leg in state.legs]
     new_people = _candidates("traveler", set(traveler_ids), max(0, MVP_LIMITS["travelers"] - len(traveler_ids)))
     new_stays = _candidates("stay", set(stay_ids), max(0, MVP_LIMITS["stays"] - len(stay_ids)))
     new_groups = _candidates("group", set(group_ids), max(1, len(new_people)))
@@ -194,6 +195,8 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
         "end_city": _nullable(city)}, ("kind",), oneOf=[
             {"properties": {"kind": {"const": "open_jaw"}}},
             {"properties": {"kind": _enum(("round_trip", "one_way", "undecided")), "end_city": {"type": "null"}}}]))
+    if leg_ids:
+        operation("set_leg_mode", _object({"mode": _enum(("flight", "train"))}, ("mode",)), leg_ids)
     operation("set_search_policy", _object({
         "mode": _enum(("DEMO", "HYBRID")), "hotel_provider": _enum(("liteapi", "serpapi")),
         "flight_provider": _enum(("duffel", "serpapi")), "demo_fallback": {"type": "boolean"},
@@ -222,6 +225,7 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
         # Arrays refer only to existing or server-issued same-batch aliases.
         room = _object({"id": _enum(room_ids), "traveler_ids": members}, ("id", "traveler_ids"))
         operation("upsert_stay", _object({"city": _nullable(city), "check_in": date, "check_out": date,
+            "requested_nights": _nullable({"type": "integer", "minimum": 1, "maximum": 365}),
             "rooms": {"type": "array", "items": room, "maxItems": MVP_LIMITS["rooms_per_stay"]},
             "hotel_id": _nullable(_text())}, minProperties=1), all_stays)
     if stay_ids:

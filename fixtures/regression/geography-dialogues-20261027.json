@@ -1,0 +1,105 @@
+{
+  "scope": "Five connected regression conversations; cached PG acceptance, real NLU qualification separate",
+  "date": "2026-10-27",
+  "original80_source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "dialogues": [
+    {
+      "id": "GEO27-01",
+      "seed": "Own partial trip Moscow/1adult/Belgrade/80000RUB and fresh destination-city question for Serbia",
+      "turns": [
+        "Стамбул",
+        "нет",
+        "да",
+        "Белгород.",
+        "Стамбул в Сербии",
+        "Нет, добавь ребёнка семи лет. Взрослый остаётся.",
+        "да",
+        "Стамбул",
+        "Да, исправь возраст ребёнка на восемь лет.",
+        "подожди",
+        "Теперь установи общий бюджет 70000 рублей.",
+        "продолжай"
+      ],
+      "oracle": [
+        "No city is accepted after a rejected proposal/late yes",
+        "Bare Belgorod in Serbia has visible Belgrade correction",
+        "Independent child/age operations survive no/yes and leave original adult intact",
+        "Only a new owned confirmation chooses Istanbul/TR",
+        "Queued budget is processed only after explicit resume",
+        "Final Moscow/1adult+child8/Istanbul/70000RUB; no tools/orders"
+      ]
+    },
+    {
+      "id": "GEO27-02",
+      "seed": "Own partial Kazan/1adult+child7/90000RUB, fresh destination-country Turkey",
+      "turns": [
+        "Антальа",
+        "нет",
+        "да",
+        "Анталья",
+        "Анталья и Стамбул в одной стране? Ничего менять не надо.",
+        "Измени только отправление: теперь из Москвы. Анталья и бюджет прежние.",
+        "Ребёнку восемь лет, не семь. Исправь только возраст ребёнка.",
+        "В какой стране Анталья? Это наше действующее направление?"
+      ],
+      "oracle": [
+        "Typo needs confirmation, rejected proposal cannot be restored by late yes",
+        "Geographic FAQ says Turkey without mutation",
+        "Final Moscow/Antalya/1adult+child8/90000RUB; no tools/orders"
+      ]
+    },
+    {
+      "id": "GEO27-03",
+      "seed": "Fresh empty trip",
+      "turns": [
+        "Стамбул в Сербии. Из Москвы. Нас двое взрослых, общий бюджет 100000 рублей.",
+        "Да, добавь ребёнка семи лет.",
+        "Стамбул в Турции? Это вопрос, ничего не меняй.",
+        "подожди",
+        "Общий бюджет установи 95000 рублей.",
+        "продолжай"
+      ],
+      "oracle": [
+        "First conflict keeps two adults/origin/budget and asks Istanbul/TR vs Serbia",
+        "Compound accept owns newly generated first stay target",
+        "FAQ does not change requirements",
+        "Final Moscow/Istanbul/2adults+child7/95000RUB; no tools/orders"
+      ]
+    },
+    {
+      "id": "GEO27-04",
+      "seed": "Fresh empty trip",
+      "turns": [
+        "Из Мосвкы в Анталью хочу. Один взрослый без детей, общий бюджет 90000 рублей.",
+        "да",
+        "Анталья в Турции? Это вопрос, ничего не меняй.",
+        "подожди",
+        "Установи общий бюджет 85000 рублей.",
+        "продолжай"
+      ],
+      "oracle": [
+        "Origin typo proposes Moscow/RU with correct field; destination and party/budget persist",
+        "Final Moscow/Antalya/1adult/85000RUB; no tools/orders"
+      ]
+    },
+    {
+      "id": "GEO27-05",
+      "seed": "Fresh empty trip",
+      "turns": [
+        "Из Казани в Санкт-Петербрг хочу. Один взрослый без детей, общий бюджет 90000 рублей.",
+        "да",
+        "Питер и Санкт-Петербург один город? Ничего не меняй.",
+        "подожди",
+        "Установи общий бюджет 85000 рублей.",
+        "продолжай"
+      ],
+      "oracle": [
+        "Destination typo proposes SPb/RU, origin/party/budget persist",
+        "Alias question says same city and does not mutate",
+        "Final Kazan/SPb/1adult/85000RUB; no tools/orders"
+      ]
+    }
+  ],
+  "dialogue_count": 5,
+  "user_turn_count": 38
+}

@@ -32,6 +32,11 @@ _PROPOSAL_OWNER = "date_slots.v1"
 _ORDINALS = {"первая": 1, "первую": 1, "первой": 1, "вторая": 2, "вторую": 2,
              "второй": 2, "третья": 3, "третью": 3, "третьей": 3}
 _CONTROLS = {"пауза", "стоп", "отмена", "отмени", "продолжай", "продолжить", "resume", "pause", "cancel"}
+_DURATION_OWNER = "date_slots.duration.v1"
+_DURATION_COUNTS = {"одна": 1, "одну": 1, "один": 1, "две": 2, "два": 2, "три": 3,
+    "четыре": 4, "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10}
+_DURATION_TOKEN = r"[0-9]{1,3}|" + "|".join(_DURATION_COUNTS)
+_DURATION = re.compile(r"(?:на\s*)?(?P<count>" + _DURATION_TOKEN + r")\s*(?P<unit>ночь|ночи|ночей|день|дня|дней|nights?|days?)")
 
 
 def _calendar(token: str, today: date) -> date:
@@ -154,6 +159,9 @@ def _deferred_answer(data: dict, pending: dict, context: dict, text: str,
         return ask(_selection_question(stays, field))
     selected_pending = {"field": field, "target_id": target}
     answer = resolve_date_answer(data, selected_pending, proposal["resolved_date"], now, timezone)
+    if isinstance(answer.get("pending_context", {}).get("duration_proposal"), dict):
+        answer["pending_context_clear"] = ["date_proposal"]
+        return answer
     if not answer["handled"] or not answer["operations"]:
         return ask((answer.get("question") or "Эта дата не подходит выбранной остановке.")
                    + " Укажите другую остановку или новую дату заезда/выезда.")
@@ -178,6 +186,156 @@ def _stored_date(value: Any) -> date | None:
         except ValueError:
             pass
     return None
+
+
+def _duration_question(data: dict, context: dict, text: str, target: str | None = None, packet: dict | None = None) -> dict:
+    bound = {key: value for key, value in context.items() if key != "duration_proposal"}
+    bound.update(field="stay.requested_nights", target_id=target, stay_id=target)
+    if packet is not None:
+        bound["duration_proposal"] = packet
+    return {"handled": True, "operations": [], "question": text, "pending_context": bound,
+            "pending_context_clear": [] if packet is not None else ["duration_proposal"]}
+
+
+def _duration_packet(data: dict, kind: str, **extra: Any) -> dict:
+    return {"owner": _DURATION_OWNER, "trip_id": data.get("trip_id"),
+            "based_state_version": data.get("state_version"), "kind": kind, **extra}
+
+
+def _duration_before(stay: dict) -> dict:
+    return {key: stay.get(key) for key in ("check_in", "check_out", "requested_nights")}
+
+
+def _duration_edit_question(data: dict, stay: dict, context: dict, value: dict, question: str) -> dict:
+    packet = _duration_packet(data, "edit_dates", target_id=stay["id"], before=_duration_before(stay), value=value)
+    return _duration_question(data, context, question, stay["id"], packet)
+
+
+def _duration_apply(data: dict, stay: dict, nights: int, context: dict) -> dict:
+    from .domain import DomainError, TripState, apply_operations
+
+    start, end = _stored_date(stay.get("check_in")), _stored_date(stay.get("check_out"))
+    if start is not None and end is not None and (end - start).days != nights:
+        try:
+            proposed_end = start + timedelta(days=nights)
+        except OverflowError:
+            return _duration_question(data, context, "Длительность выходит за пределы календаря. Укажите другую дату или число ночей.", stay["id"])
+        return _duration_edit_question(data, stay, context,
+            {"check_in": start.isoformat(), "check_out": proposed_end.isoformat(), "requested_nights": nights},
+            f"Сейчас указаны даты до {end.strftime('%d.%m.%Y')}. Сохранить {nights} ночей "
+            f"и изменить выезд на {proposed_end.strftime('%d.%m.%Y')}?")
+    operations = [{"type": "upsert_stay", "target_id": stay["id"], "value": {"requested_nights": nights}}]
+    try:
+        apply_operations(TripState.model_validate(data), operations)
+    except (DomainError, ValueError, OverflowError):
+        return _duration_question(data, context, "Эта длительность не подходит датам или другим остановкам. Укажите другое число ночей или уточните даты.", stay["id"])
+    return {"handled": True, "operations": operations, "pending_context_clear": ["duration_proposal", "duration_days"]}
+
+
+def resolve_duration_answer(state: Any, pending: Any, text: Any, now: datetime | None = None,
+                            timezone: str = "Europe/Moscow") -> dict[str, Any]:
+    """Address explicit nights, a fresh nights slot or a code-owned proposal."""
+    from .domain import MAX_REQUESTED_NIGHTS
+
+    no = {"handled": False, "operations": []}
+    data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state if isinstance(state, dict) else {}
+    if not isinstance(text, str) or not isinstance(data.get("stays"), list) or not data["stays"]:
+        return no
+    stays, ids = data["stays"], _candidate_ids(data["stays"])
+    if ids is None:
+        return no
+    pending = pending if isinstance(pending, dict) else {}
+    context = deepcopy(pending.get("context")) if isinstance(pending.get("context"), dict) else {}
+    key = text.strip().casefold().replace("ё", "е").rstrip(".!").strip()
+    token = _DURATION.fullmatch(key)
+    packet = context.get("duration_proposal")
+    fresh = (type(pending.get("state_version")) is int and pending["state_version"] == data.get("state_version"))
+    if isinstance(packet, dict) and token is None:
+        valid = (packet.get("owner") == _DURATION_OWNER and packet.get("trip_id") == data.get("trip_id")
+            and type(packet.get("based_state_version")) is int
+            and packet["based_state_version"] == data.get("state_version") and fresh)
+        if not valid:
+            return _duration_question(data, context, "Поездка изменилась. Укажите заново длительность в ночах и нужную остановку.")
+        if key in _CONTROLS or re.match(r"^(?:добавь|удали|убери|измени|замени|поменяй|установи|бюджет|хочу)\b", key):
+            return no
+        if packet.get("kind") == "selection":
+            if (set(packet) != {"owner", "trip_id", "based_state_version", "kind", "nights", "candidate_stay_ids"}
+                    or packet.get("candidate_stay_ids") != ids or type(packet.get("nights")) is not int
+                    or not 1 <= packet["nights"] <= MAX_REQUESTED_NIGHTS):
+                return _duration_question(data, context, "Укажите заново длительность в ночах и нужную остановку.")
+            target = text.strip() if text.strip() in ids else None
+            ordinal = _ORDINALS.get(key)
+            number = re.fullmatch(r"(?:остановка\s+)?([1-9][0-9]*)", key)
+            ordinal = int(number[1]) if number else ordinal
+            if ordinal is not None and 1 <= ordinal <= len(ids):
+                target = ids[ordinal - 1] if target in (None, ids[ordinal - 1]) else None
+            if target is None and len(text) <= 80 and not re.search(r"[?;,\n\r]|\b(?:не|нет|если|или|может)\b", key):
+                place = parse_destination(text)["requested_destination"]
+                matched = [stay["id"] for stay in stays if place.get("kind") == "city" and stay.get("city") == place["name"]]
+                target = matched[0] if len(matched) == 1 else None
+            if target is None:
+                return _duration_question(data, context, "К какой остановке относится длительность? Укажите один город или номер остановки.", packet=packet)
+            return _duration_apply(data, next(stay for stay in stays if stay["id"] == target), packet["nights"], context)
+        if packet.get("kind") == "edit_dates":
+            from .domain import DomainError, TripState, apply_operations
+
+            stay = next((stay for stay in stays if stay["id"] == packet.get("target_id")), None)
+            value = packet.get("value")
+            before = packet.get("before")
+            expected_before = _duration_before(stay) if stay else {}
+            if (set(packet) != {"owner", "trip_id", "based_state_version", "kind", "target_id", "before", "value"}
+                    or stay is None or not isinstance(before, dict) or set(before) != set(expected_before)
+                    or any(type(before[key]) is not type(expected) or before[key] != expected
+                           for key, expected in expected_before.items()) or not isinstance(value, dict)
+                    or set(value) != {"check_in", "check_out", "requested_nights"}
+                    or type(value.get("requested_nights")) is not int or not 1 <= value["requested_nights"] <= MAX_REQUESTED_NIGHTS
+                    or _stored_date(value.get("check_in")) is None or _stored_date(value.get("check_out")) is None
+                    or (_stored_date(value["check_out"]) - _stored_date(value["check_in"])).days != value["requested_nights"]):
+                return _duration_question(data, context, "Даты или длительность изменились. Укажите их заново.")
+            if key in {"нет", "не надо", "оставь как было"}:
+                return _duration_question(data, context, "Прежние даты и длительность сохранены. Какую длительность в ночах выбираете?", stay["id"])
+            if key not in {"да", "подтверждаю", "согласен", "согласна"}:
+                return _duration_question(data, context, "Подтвердите предложенное изменение дат: да или нет.", stay["id"], packet)
+            try:
+                if not isinstance(now, datetime) or now.utcoffset() is None:
+                    raise ValueError("Missing explicit aware clock")
+                today = now.astimezone(ZoneInfo(timezone)).date()
+                if _stored_date(value["check_in"]) < today:
+                    return _duration_question(data, context, "Предложенный заезд уже в прошлом. Укажите новую дату заезда.", stay["id"])
+            except (TypeError, ValueError, ZoneInfoNotFoundError):
+                return _duration_question(data, context, "Не удалось проверить актуальность даты. Укажите дату заезда заново.", stay["id"])
+            operations = [{"type": "upsert_stay", "target_id": stay["id"], "value": deepcopy(value)}]
+            try:
+                apply_operations(TripState.model_validate(data), operations)
+            except (DomainError, ValueError, OverflowError):
+                return _duration_question(data, context, "Предложенные даты не подходят маршруту. Укажите другие даты или длительность.", stay["id"])
+            return {"handled": True, "operations": operations, "pending_context_clear": ["duration_proposal", "duration_days"]}
+        return _duration_question(data, context, "Укажите заново длительность в ночах и нужную остановку.")
+    field = pending.get("field") or context.get("field")
+    target = (pending.get("target_id") or context.get("target_id")) if fresh and isinstance(field, str) and field.startswith("stay.") else None
+    if token is None:
+        if field == "stay.requested_nights" and fresh and key in {"да", "нет", "согласен", "согласна", "подтверждаю"}:
+            return _duration_question(data, context, "Укажите число ночей и нужную остановку. Одного подтверждения недостаточно.", target if target in ids else None)
+        if field != "stay.requested_nights" or not fresh or target not in ids:
+            return no
+        if re.fullmatch(_DURATION_TOKEN, key) is None:
+            return no
+        raw, unit = key, "ночи"
+    else:
+        raw, unit = token["count"], token["unit"]
+    count = int(raw) if raw.isdecimal() else _DURATION_COUNTS[raw]
+    if not 1 <= count <= MAX_REQUESTED_NIGHTS:
+        return _duration_question(data, context, f"Для текущего стенда укажите от 1 до {MAX_REQUESTED_NIGHTS} ночей.", target if target in ids else None)
+    if target not in ids:
+        target = ids[0] if len(ids) == 1 and token is not None else None
+    if not unit.startswith(("ноч", "night")):
+        answer = _duration_question(data, context, f"Вы указали {count} дней. Сколько именно ночей проживания планируете?", target)
+        answer["pending_context"]["duration_days"] = count
+        return answer
+    if target is None:
+        packet = _duration_packet(data, "selection", nights=count, candidate_stay_ids=ids)
+        return _duration_question(data, context, f"К какой остановке относятся {count} ночей? Укажите один город или номер остановки.", packet=packet)
+    return _duration_apply(data, next(stay for stay in stays if stay["id"] == target), count, context)
 
 
 def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
@@ -331,6 +489,27 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
             return question(prefix + f"Дата выезда должна быть позже даты заезда {start.strftime('%d.%m.%Y')}. На какую более позднюю дату планируете выезд?", resolved)
         if resolved <= today:
             return question(prefix + f"Дата выезда должна быть позже сегодняшней даты {today.strftime('%d.%m.%Y')}. На какую более позднюю дату планируете выезд?", resolved)
+    nights = stay.get("requested_nights")
+    if type(nights) is int and nights > 0:
+        if field == "stay.check_in" and end is not None and (end - resolved).days != nights:
+            try:
+                proposed_end = resolved + timedelta(days=nights)
+            except OverflowError:
+                return question("Длительность выходит за пределы календаря. Укажите другую дату заезда.")
+            return _duration_edit_question(data, stay, context,
+                {"check_in": resolved.isoformat(), "check_out": proposed_end.isoformat(), "requested_nights": nights},
+                f"С новым заездом прежний выезд даёт {(end - resolved).days} ночей вместо {nights}. "
+                f"Сохранить {nights} ночей и изменить выезд на {proposed_end.strftime('%d.%m.%Y')}?")
+        if field == "stay.check_out" and start is not None and (resolved - start).days != nights:
+            from .domain import MAX_REQUESTED_NIGHTS
+
+            actual_nights = (resolved - start).days
+            if actual_nights > MAX_REQUESTED_NIGHTS:
+                return question("Новый выезд противоречит выбранной длительности. Уточните число ночей или снимите прежнее пожелание.")
+            return _duration_edit_question(data, stay, context,
+                {"check_in": start.isoformat(), "check_out": resolved.isoformat(), "requested_nights": actual_nights},
+                f"Новый выезд означает {actual_nights} ночей вместо {nights}. "
+                f"Изменить длительность и сохранить выезд {resolved.strftime('%d.%m.%Y')}?")
     answer = {"handled": True, "operations": [{"type": "upsert_stay", "target_id": target,
         "value": {field.split(".", 1)[1]: resolved.isoformat()}}]}
     if "date_proposal" in context:

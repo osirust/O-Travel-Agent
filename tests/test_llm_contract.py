@@ -242,6 +242,24 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
     new_curated_geography_bytes = len(raw) - len(historical_geography_raw)
     assert new_curated_geography_bytes == 17  # UTF-8 JSON bytes, not model tokens.
     assert accepts(response(op("set_origin", {"city": "Тбилиси"})), schema)
+    # The older wire contract predates durable nights and the owned leg-mode
+    # setter. Remove exactly these new features for the historical comparison;
+    # keep a separate bounded cost and semantic acceptance assertion for them.
+    duration_mode_projection = deepcopy(geographic_projection)
+    duration_variants = duration_mode_projection["properties"]["operations"]["items"]["oneOf"]
+    for variant in duration_variants:
+        if variant["properties"]["type"]["const"] == "upsert_stay":
+            assert "requested_nights" in variant["properties"]["value"]["properties"]
+            variant["properties"]["value"]["properties"].pop("requested_nights")
+    duration_mode_projection["properties"]["operations"]["items"]["oneOf"] = [
+        variant for variant in duration_variants if variant["properties"]["type"]["const"] != "set_leg_mode"]
+    old_feature_raw = json.dumps(_local_definitions(duration_mode_projection), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    new_duration_mode_bytes = len(historical_geography_raw) - len(old_feature_raw)
+    assert 0 < new_duration_mode_bytes <= 450  # Separate engineering budget, not a vendor token count.
+    assert accepts(response(op("upsert_stay", {"requested_nights": 5}, state.stays[0].id if state.stays else "new-stay-1")), schema)
+    if state.legs:
+        assert accepts(response(op("set_leg_mode", {"mode": "train"}, state.legs[0].id)), schema)
+    geographic_projection, historical_geography_raw = duration_mode_projection, old_feature_raw
     group_room_scope = deepcopy(geographic_projection)
     for variant in group_room_scope["properties"]["operations"]["items"]["oneOf"]:
         kind = variant["properties"]["type"]["const"]
@@ -287,7 +305,7 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
     assert len(group_room_raw) == {"empty": 7125, "sample": 8281}[name]
     assert 0 < len(historical_geography_raw) - len(group_room_raw) <= 250  # Nonstop scope bytes, not tokens/product limits.
     assert len(historical_geography_raw) == {"empty": 7332, "sample": 8488}[name]
-    assert len(raw) == {"empty": 7349, "sample": 8505}[name]
+    assert len(raw) == {"empty": 7349, "sample": 8505}[name] + new_duration_mode_bytes
     assert json.dumps(build_operation_schema(state), ensure_ascii=False, separators=(",", ":")).encode() == raw
 
 

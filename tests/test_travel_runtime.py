@@ -285,6 +285,13 @@ async def test_hotel_rates_and_reprice_always_make_fresh_http_requests():
         calls.append(request)
         if request.method == "GET":
             return httpx.Response(200, json={"data": [{"id": "hotel-1"}]})
+        if request.url.host == "book.liteapi.travel":
+            price = next(prices)
+            return httpx.Response(200, json={"data": {"offerId": "offer-1", "prebookId": "fixture-prebook",
+                "hotelId": "hotel-1", "checkin": "2026-11-10", "checkout": "2026-11-13", "currency": "RUB",
+                "price": price, "sellingPriceToUser": price, "roomTypes": [{"rates": [{"rateId": "fresh-room-1",
+                    "occupancyNumber": 1, "adultCount": 1, "childCount": 0, "childrenAges": [], "maxOccupancy": 1,
+                    "retailRate": {"total": [{"amount": price, "currency": "RUB"}], "taxesAndFees": None}}]}]}})
         return httpx.Response(200, json={"data": [{"hotelId": "hotel-1", "roomTypes": [{
             "offerId": "offer-1", "offerRetailRate": {"amount": next(prices), "currency": "RUB"},
             "rates": [{"rateId": "room-1"}],
@@ -299,9 +306,10 @@ async def test_hotel_rates_and_reprice_always_make_fresh_http_requests():
         second = (await adapter.search_hotels(request))[0]
         third = await adapter.reprice(first)
         assert [first["amount_minor"], second["amount_minor"], third["amount_minor"]] == [10000, 11000, 12500]
-        assert third["details"]["reprice_kind"] == "sandbox_rate_search_refresh"
+        assert third["details"]["reprice_kind"] == "sandbox_selected_offer_prebook"
         await adapter.resolve_hotels("Стамбул")
         assert [item.method for item in calls] == ["GET", "POST", "POST", "POST"]
+        assert [item.url.host for item in calls] == ["api.liteapi.travel"] * 3 + ["book.liteapi.travel"]
         assert all(set(row) == {"id", "name", "city"} for row in adapter._travel_runtime.get_hotels("Стамбул", 3))
     finally:
         await adapter.close()

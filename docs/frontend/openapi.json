@@ -1718,6 +1718,19 @@
               }
             ],
             "title": "Hotel Id"
+          },
+          "requested_nights": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested Nights"
           }
         },
         "additionalProperties": false,

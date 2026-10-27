@@ -242,9 +242,34 @@ def _stamped(state: dict, version: int) -> dict:
     return result
 
 
+def _pending_after_control(session: dict, version: int) -> dict | None:
+    """Carry a fresh clarification across a control-only revision, not an edit."""
+    pending = copy.deepcopy(session.get("pending_question"))
+    before = session["state_version"]
+    if (not isinstance(pending, dict) or type(pending.get("state_version")) is not int
+            or pending["state_version"] != before):
+        return None
+    pending["state_version"] = version
+    context = pending.get("context")
+    if isinstance(context, dict):
+        owners = {"date_proposal": "date_slots.v1", "duration_proposal": "date_slots.duration.v1",
+                  "leg_mode_proposal": "leg_mode_intent_v1"}
+        for name, owner in owners.items():
+            packet = context.get(name)
+            if (isinstance(packet, dict) and packet.get("owner") == owner
+                    and packet.get("trip_id") == session["trip_id"]
+                    and type(packet.get("based_state_version")) is int and packet["based_state_version"] == before):
+                packet["based_state_version"] = version
+        if type(context.get("based_state_version")) is int and context["based_state_version"] == before:
+            context["based_state_version"] = version
+    return pending
+
+
 def _require_checkout_ready(session: dict) -> None:
     if session.get("active_run_id") is not None:
         raise Conflict("Дождитесь завершения обработки поездки.", "processing_in_progress")
+    if session.get("waiting_reason") == "user_pause":
+        raise Conflict("Поездка на паузе. Сначала явно продолжите работу с поездкой.", "user_paused")
     if session.get("waiting_reason") == "clarification" and session.get("pending_question") is not None:
         raise Conflict("Сначала уточните условия поездки.", "clarification_required")
     if session.get("status") == "RECOVERABLE_ERROR":
@@ -638,11 +663,12 @@ class Store:
         async with self.engine.begin() as conn:
             session = await self._session(conn, session_id, lock=True)
             version = session["state_version"] + 1
+            pending = _pending_after_control(session, version)
             values = dict(
                 state_version=version, state=_stamped(session["state"], version),
-                status="WAITING_USER" if action == "pause" else "TRIP_DRAFT",
-                waiting_reason="user_pause" if action == "pause" else None,
-                pending_question=None, updated_at=_now(),
+                status="WAITING_USER" if action == "pause" or pending else "TRIP_DRAFT",
+                waiting_reason="user_pause" if action == "pause" else "clarification" if pending else None,
+                pending_question=pending, updated_at=_now(),
             )
             await conn.execute(update(sessions).where(
                 sessions.c.session_id == session_id
@@ -652,6 +678,8 @@ class Store:
             await self._revision(conn, session, None, [{"op": action}])
             await self._event(conn, session, None, "USER_PAUSED" if action == "pause" else "USER_RESUMED", {})
             if reply:
+                if action == "resume" and pending and isinstance(pending.get("text"), str):
+                    reply += " " + pending["text"]
                 await self._assistant(conn, session_id, None, reply)
             return _public(session)
 

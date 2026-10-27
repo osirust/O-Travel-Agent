@@ -463,7 +463,7 @@ def _geography_text(question: str, state: dict) -> str:
     text = [f"{city} — {_COUNTRIES[country][0]}." for city, country in dict.fromkeys(cities)]
     if len(cities) > 1:
         text.append(
-            "Это разные города."
+            "Это разные города, они находятся в разных странах."
             if len({country for _, country in cities}) > 1
             else "Они находятся в одной стране."
         )
@@ -477,6 +477,48 @@ def _geography_text(question: str, state: dict) -> str:
     if "питер" in key and "санкт" in key:
         text.append("Питер и Санкт-Петербург — названия одного города.")
     return " ".join(text) or "Этого названия нет в проверенном справочнике. Уточните страну и город."
+
+
+def canonical_geography_answer(text: str, state: dict) -> str | None:
+    """Answer a complete known-place FAQ; never accept destination consent."""
+    key = " ".join(text.casefold().replace("ё", "е").split())
+    if not key or len(key) > 700 or "?" not in key or any(char.isdigit() for char in key):
+        return None
+    clean = _NO_CHANGE.sub("", key)
+    if _EDIT.search(clean) or _POLITE_EDIT.search(clean) or explicit_search_request(text):
+        return None
+    alias_question = bool(re.search(r"\b(?:один\s+город|одного\s+города|одно\s+название)\b", key))
+    if not alias_question and not re.search(r"стран|столиц|находит|турци|серби|росси|оаэ|эмират", key):
+        return None
+    rest, cities, city_mentions = clean, set(), 0
+    aliases = []
+    for name, (_, forms) in _CITIES.items():
+        aliases.extend((alias, name) for alias in (name, *forms))
+    aliases.extend((alias, None) for forms in _COUNTRIES.values() for alias in forms)
+    for alias, city in sorted(aliases, key=lambda pair: len(pair[0]), reverse=True):
+        pattern = r"(?<!\w)" + re.escape(alias.casefold().replace("ё", "е")) + r"(?!\w)"
+        matches = re.findall(pattern, rest)
+        if matches:
+            if city is not None:
+                cities.add(city)
+                city_mentions += len(matches)
+            rest = re.sub(pattern, " ", rest)
+    words = set(re.findall(r"\w+", rest))
+    grammar = {"и", "в", "во", "одной", "одна", "страна", "стране", "странах", "находятся", "находится",
+        "это", "вопрос", "ничего", "менять", "не", "надо", "ли", "разных", "городах", "город", "города",
+        "правда", "ведь", "а", "разве", "на", "или", "тот", "же", "столица", "столицей", "какой", "где",
+        "так", "они", "знаешь", "знаете", "пожалуйста", "расскажи", "объясни", "скажи", "ты", "можешь",
+        "сказать", "мы", "только", "обсуждаем", "действительно", "является", "верно", "уточнение",
+        "наше", "наш", "наша", "действующее", "текущее", "сохраненное", "направление", "маршрут",
+        "один", "одного", "одно", "название", "названия"}
+    if not cities or words - grammar or alias_question and city_mentions < 2:
+        return None
+    reply = _geography_text(text, state)
+    if alias_question:
+        reply += " Это названия одного города." if len(cities) == 1 else " Это разные города."
+    if re.search(r"\b(?:наш\w*|действующ\w*|текущ\w*|сохраненн\w*)\b", key):
+        reply += " " + _route(state)
+    return reply
 
 
 def checked_reply(reply: str, facts: dict, text: str) -> tuple[str, list[str]]:
@@ -508,6 +550,34 @@ def canonical_source_answer(text: str, state: dict, plans: list[dict]) -> str | 
                   "и отдельно подтвердите показанные сумму и версии. Настоящая бронь и оплата не создаются; "
                   "для этого не нужно подменять источники поездки демонстрационными.")
     return reply
+
+
+def canonical_unit_capability_answer(text: str, state: dict) -> str | None:
+    """Answer a scoped capability question without inventing a unit-price filter.
+
+    This does not consume mixed edits or rewrite the saved whole-trip budget.
+    New travel facts and ordinary price-search requests retain the model path.
+    """
+    key = " ".join(text.casefold().replace("ё", "е").split())
+    if not key or len(key) > 2500 or not re.search(r"гостин\w*|отел\w*|номер\w*", key):
+        return None
+    if not re.search(r"\b(?:за\s+(?:одну\s+)?ночь|в\s+сутки|за\s+сутки)\b", key):
+        return None
+    if not re.search(r"лимит|огранич|не\s+(?:больше|выше|дороже)|максимум", key):
+        return None
+    capability = re.search(r"\b(?:если\s+(?:такой\s+лимит\s+)?не\s+(?:умеешь|поддерживаешь)|"
+                           r"умеешь\s+ли|поддерживаешь\s+ли|поддерживается\s+ли)\b", key)
+    if not capability:
+        return None
+    clean = _NO_CHANGE.sub("", key)
+    if (_EDIT.search(clean) or _POLITE_EDIT.search(clean)
+            or re.search(r"\b(?:ребен\w*|взросл\w*|заезд|выезд|летим|едем)\b", clean)
+            or re.search(r"\b(?:бюджет\s+(?:теперь|становится)|новый\s+бюджет)\b", clean)):
+        return None
+    if any(re.search(r"(?<!\w)" + re.escape(name.casefold()) + r"(?!\w)", key) for name in _CITIES):
+        return None
+    return ("Жёсткий лимит цены гостиницы за ночь сейчас не поддерживается как отдельный фильтр. "
+            "Этот лимит не применён; общий бюджет поездки не заменён ценой за ночь. " + _budget(state))
 
 
 def wants_saved_facts(text: str) -> bool:

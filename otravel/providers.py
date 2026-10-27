@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import asyncio
+from copy import deepcopy
 from contextvars import ContextVar
 import hashlib
 import json
@@ -15,7 +16,7 @@ import logging
 import math
 import os
 import re
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Any
 from urllib.parse import urlparse
@@ -287,6 +288,15 @@ class _HTTPGateway:
             raise ProviderError("INVALID_RESPONSE", "Провайдер вернул не JSON.", provider=provider) from None
         if not isinstance(body, dict):
             raise ProviderError("INVALID_RESPONSE", "Ожидался объект ответа провайдера.", provider=provider)
+        params = kwargs.get("params")
+        if (provider == "serpapi" and method == "GET" and response.status_code == 200
+                and url == "https://serpapi.com/search.json" and isinstance(params, dict)
+                and params.get("engine") == "google_flights"
+                and body.get("error") == "Google Flights hasn't returned any results for this query."
+                and not body.get("errors")
+                and all(body.get(field) in (None, []) for field in ("best_flights", "other_flights"))):
+            raise ProviderError("NO_MATCHES", "Google Flights не вернул предложений для запрошенного маршрута и дат; отсутствие рейсов этим не доказано.",
+                                provider=provider)
         if body.get("error") or body.get("errors"):
             raise ProviderError("PROVIDER_RESPONSE_ERROR", "Провайдер сообщил об ошибке.", provider=provider)
         return body
@@ -1256,6 +1266,102 @@ class TravelGateway(_HTTPGateway):
             _fail("В поисковой выдаче нет проверяемой числовой цены.", provider, "INVALID_RESPONSE")
         return result
 
+    async def _liteapi_prebook(self, offer: dict) -> dict:
+        """Recheck the selected sandbox offer; never create a supplier booking.
+
+        Search offer IDs are opaque rate-session identities. A fresh hotel
+        search may legitimately return different IDs for equivalent rooms and
+        cannot confirm the selected offer. The fixed prebook endpoint accepts
+        that exact selection and returns fresh room/rate evidence.
+        """
+        provider, details = "liteapi", offer["details"]
+        key = self._key("LITEAPI_API_KEY", provider)
+        if (str(_setting(self.settings, "LITEAPI_MODE", "sandbox")).lower() != "sandbox"
+                or not key.startswith(("sand_", "sandbox_"))):
+            _fail("Для LiteAPI prebook разрешён только sandbox key.", provider, "CONFIG_BLOCKED")
+        request = details.get("search_request")
+        native = details.get("native_offer_id")
+        public_id, hotel_id = offer.get("offer_id"), details.get("hotel_id")
+        if (not isinstance(request, dict) or not isinstance(native, str)
+                or not re.fullmatch(r"[A-Za-z0-9+/=_-]{1,16384}", native)
+                or not isinstance(public_id, str) or not 0 < len(public_id) <= 200
+                or not isinstance(hotel_id, str) or not hotel_id
+                or details.get("kind") != "hotel" or offer.get("source_type") != "SANDBOX"):
+            _fail("Нужно исходное sandbox-предложение конкретного отеля.", provider)
+        checkin, checkout = _stay(request, provider)
+        rooms = _occupancies(request.get("occupancies"), provider)
+        currency = _currency(request.get("currency"), provider)
+        hotels = request.get("hotelIds", request.get("hotel_ids"))
+        if (not isinstance(hotels, list) or hotel_id not in hotels or offer.get("currency") != currency
+                or details.get("checkin") != checkin or details.get("checkout") != checkout):
+            _fail("Выбор не соответствует сохранённому гостиничному запросу.", provider)
+        try:
+            prior_expiry = datetime.fromisoformat(offer["expires_at"])
+            now = self._now()
+            if prior_expiry.utcoffset() is None or prior_expiry <= now:
+                raise ValueError
+        except (KeyError, AttributeError, TypeError, ValueError):
+            _fail("Срок исходного предложения истёк или не подтверждён; нужен новый поиск.", provider, "OFFER_UNAVAILABLE")
+        body = await self._request(provider, "POST", "https://book.liteapi.travel/v3.0/rates/prebook",
+            headers={"X-API-Key": key}, json={"offerId": native, "usePaymentSdk": False})
+        data = body.get("data")
+        if (not isinstance(data, dict) or data.get("offerId") != native
+                or data.get("hotelId") != hotel_id or data.get("checkin") != checkin
+                or data.get("checkout") != checkout or data.get("currency") != currency):
+            _fail("Prebook не подтвердил исходный отель, даты, валюту и выбранный offerId.", provider, "REPRICE_IDENTITY_MISMATCH")
+        prebook_id = data.get("prebookId")
+        if not isinstance(prebook_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,512}", prebook_id):
+            _fail("Prebook не вернул проверяемую идентичность котировки.", provider, "INVALID_RESPONSE")
+        bundles = data.get("roomTypes")
+        if (not isinstance(bundles, list) or not bundles or len(bundles) > len(rooms)
+                or any(not isinstance(bundle, dict) or not isinstance(bundle.get("rates"), list)
+                       or len(bundle["rates"]) > len(rooms) for bundle in bundles)):
+            _fail("Prebook не вернул точный набор комнат выбранного предложения.", provider, "INVALID_RESPONSE")
+        rates = [rate for bundle in bundles for rate in bundle["rates"]]
+        if len(rates) != len(rooms) or any(not isinstance(rate, dict) for rate in rates):
+            _fail("Prebook вернул иной набор комнат; цена не подтверждена.", provider, "INVALID_RESPONSE")
+        facts = lite_rate_facts(rates, rooms, self._now())
+        if facts.get("allocation_verified") is not True:
+            _fail("Prebook не подтвердил запрошенный состав каждой комнаты.", provider, "REPRICE_ALLOCATION_MISMATCH")
+        total_minor = 0
+        for rate in rates:
+            retail = rate.get("retailRate")
+            totals = retail.get("total") if isinstance(retail, dict) else None
+            if (not isinstance(totals, list) or len(totals) != 1 or not isinstance(totals[0], dict)
+                    or totals[0].get("currency") != currency or "amount" not in totals[0]):
+                _fail("Prebook не подтвердил полную цену каждой комнаты в исходной валюте.", provider, "INVALID_RESPONSE")
+            total_minor += _minor(totals[0]["amount"], currency, provider)
+        # The prebook response contains one selected set of rooms, unlike the
+        # search alternatives. Its aggregate must agree with each disclosed
+        # customer total; do not silently turn a net/markup price into retail.
+        for field in ("price", "sellingPriceToUser"):
+            if field not in data or _minor(data[field], currency, provider) != total_minor:
+                _fail("Итог Prebook расходится с полной стоимостью выбранных комнат.", provider, "PREBOOK_PRICE_AMBIGUOUS")
+        supplier = data.get("supplier")
+        supplier_name = supplier if isinstance(supplier, str) else supplier.get("name") if isinstance(supplier, dict) else None
+        supplier_report = {}
+        if isinstance(supplier_name, str) and 0 < len(supplier_name) <= 200:
+            supplier_report["supplier_name"] = _safe_text(supplier_name)
+        supplier_id = data.get("supplierId")
+        if isinstance(supplier_id, (str, int)) and not isinstance(supplier_id, bool) and len(str(supplier_id)) <= 200:
+            supplier_report["supplier_id"] = str(supplier_id)
+        expiry = min(prior_expiry.astimezone(UTC), self._now() + timedelta(minutes=5))
+        if expiry <= self._now():
+            _fail("Исходное предложение истекло во время проверки; нужен новый поиск.", provider, "OFFER_UNAVAILABLE")
+        exponent = 0 if currency in {"JPY", "KRW", "VND", "CLP", "ISK"} else 3 if currency in {"BHD", "JOD", "KWD", "OMR", "TND"} else 2
+        refreshed = self._offer(provider, [native, request], Decimal(total_minor).scaleb(-exponent), currency,
+            offer.get("description", "Проверенный sandbox-тариф гостиницы"),
+            {"kind": "hotel", "native_offer_id": native, "hotel_id": hotel_id,
+             "checkin": checkin, "checkout": checkout, "occupancies": rooms, "rates": rates,
+             **facts, **supplier_report, "prebook_id": prebook_id, "sandbox_prebook_verified": True,
+             "prebook_validity_verified": False, "booking_created_at_supplier": False,
+             "reprice_kind": "sandbox_selected_offer_prebook", "search_request": deepcopy(request),
+             "conditions_changed": {field: data.get(field) for field in ("boardChanged", "cancellationChanged")
+                 if type(data.get(field)) is bool}},
+            "SANDBOX", "PROVIDER_ROOMS_STAY_TOTAL", expiry.isoformat())
+        refreshed["offer_id"] = public_id
+        return refreshed
+
     async def reprice(self, offer: dict) -> dict:
         if not isinstance(offer, dict) or not isinstance(offer.get("details"), dict):
             _fail("Нужно сохранённое предложение с происхождением.", "travel")
@@ -1291,14 +1397,7 @@ class TravelGateway(_HTTPGateway):
                     return candidate
             _fail("Выбранное предложение больше не найдено; нужен новый выбор.", provider, "OFFER_UNAVAILABLE")
         if provider == "liteapi":
-            # Sandbox price refresh searches the same known hotel/rates. It does
-            # not silently call production prebook or assert supplier inventory.
-            candidates = await self.search_hotels(details.get("search_request", {}), provider)
-            for candidate in candidates:
-                if candidate["details"].get("native_offer_id") == details.get("native_offer_id"):
-                    candidate["details"]["reprice_kind"] = "sandbox_rate_search_refresh"
-                    return candidate
-            _fail("Sandbox-тариф больше не найден; нужен новый выбор.", provider, "OFFER_UNAVAILABLE")
+            return await self._liteapi_prebook(offer)
         _fail("Перепроверка этого источника не реализована.", str(provider), "UNSUPPORTED_REPRICE")
 
     async def weather(self, city: str, latitude: float, longitude: float) -> dict:

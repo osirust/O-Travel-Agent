@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 # Proposed implementation guards, not approved product limits. Rooms are per stay.
 MVP_LIMITS = {"travelers": 10, "stays": 4, "rooms_per_stay": 5}
+MAX_REQUESTED_NIGHTS = 365  # Engineering bound, not an approved product maximum.
 CITIES = ("Москва", "Санкт-Петербург", "Сочи", "Казань", "Стамбул", "Анталья", "Дубай")
 _ALIASES = {
     "москва": "Москва", "мск": "Москва", "moscow": "Москва",
@@ -82,6 +83,18 @@ class Stay(Model):
     check_out: date | None = None
     rooms: list[RoomAllocation] = Field(default_factory=list)
     hotel_id: str | None = None
+    requested_nights: int | None = Field(default=None, ge=1, le=MAX_REQUESTED_NIGHTS, strict=True,
+        exclude_if=lambda value: value is None)
+
+    @model_validator(mode="after")
+    def derive_missing_checkout(self) -> Stay:
+        if self.requested_nights is not None and self.check_in is not None and self.check_out is None:
+            try:
+                end = self.check_in + timedelta(days=self.requested_nights)
+            except OverflowError:
+                raise ValueError("Длительность выходит за пределы календаря; укажите другую дату или число ночей.") from None
+            object.__setattr__(self, "check_out", end)
+        return self
 
     @field_validator("city")
     @classmethod
@@ -269,6 +282,12 @@ def validate_trip(state: TripState, *, final: bool = True) -> list[dict[str, Any
             issues.append(_issue("unknown_traveler", "В размещении указан неизвестный участник.", stay_id=stay.id))
         if stay.check_in and stay.check_out and stay.check_out <= stay.check_in:
             issues.append(_issue("invalid_dates", "Выезд должен быть позже заезда.", stay_id=stay.id))
+        if (stay.requested_nights is not None and stay.check_in and stay.check_out
+                and stay.check_out > stay.check_in and (stay.check_out - stay.check_in).days != stay.requested_nights):
+            actual_nights = (stay.check_out - stay.check_in).days
+            issues.append(_issue("duration_mismatch",
+                f"Указанные даты дают {actual_nights} ночей, а ранее выбрано {stay.requested_nights}. "
+                "Сохранить выбранное число ночей и изменить выезд или оставить указанные даты?", stay_id=stay.id))
         if previous and previous.check_out and stay.check_in and stay.check_in < previous.check_out:
             issues.append(_issue("overlapping_stays", "Последовательные остановки пересекаются по датам.", stay_id=stay.id))
         if final and previous and previous.check_out and stay.check_in and stay.check_in > previous.check_out:
@@ -343,7 +362,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
     data = deepcopy(state.model_dump(mode="json"))
     changes: list[dict[str, Any]] = []
     route_changed = False
-    allowed = {"set_origin", "set_budget", "set_search_policy", "set_route_policy", "set_preference", "clear_preference", "add_traveler", "remove_traveler", "upsert_group", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
+    allowed = {"set_origin", "set_budget", "set_search_policy", "set_route_policy", "set_leg_mode", "set_preference", "clear_preference", "add_traveler", "remove_traveler", "upsert_group", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
     for raw_operation in operations:
         try:
             operation = raw_operation if isinstance(raw_operation, Operation) else Operation.model_validate(raw_operation)
@@ -442,7 +461,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                             group = _target(data["groups"], person["group_id"], "группа")
                             group["traveler_ids"].append(target)
             elif kind == "upsert_stay":
-                _keys(value, {"id", "city", "check_in", "check_out", "rooms", "hotel_id"})
+                _keys(value, {"id", "city", "check_in", "check_out", "rooms", "hotel_id", "requested_nights"})
                 identifier = target or value.get("id")
                 if not identifier:
                     raise DomainError("missing_target", "Для остановки нужен стабильный ID.")
@@ -453,6 +472,11 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                     data["stays"].append({"id": identifier, **value})
                 else:
                     existing.update(value)
+            elif kind == "set_leg_mode":
+                _keys(value, {"mode"})
+                if not isinstance(value.get("mode"), str) or value["mode"] not in {"flight", "train"}:
+                    raise DomainError("invalid_leg_mode", "Для существующего плеча выберите самолёт или поезд.")
+                _target(data["legs"], target, "плечо маршрута")["mode"] = value["mode"]
             elif kind == "remove_stay":
                 _keys(value, set())
                 stay = _target(data["stays"], target, "остановка")
@@ -474,6 +498,8 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                     raise DomainError("missing_return_date", "Сначала укажите дату возвращения.")
                 last = data["stays"][-1]
                 last["check_out"] = (date.fromisoformat(last["check_out"]) + timedelta(days=days)).isoformat()
+                if last.get("requested_nights") is not None and last.get("check_in"):
+                    last["requested_nights"] = (date.fromisoformat(last["check_out"]) - date.fromisoformat(last["check_in"])).days
                 if data["legs"]:
                     data["legs"][-1]["departure_date"] = last["check_out"]
             elif kind == "set_constraint":

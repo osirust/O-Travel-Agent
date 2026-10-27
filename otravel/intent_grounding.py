@@ -241,7 +241,7 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
                         result["ambiguous"].add(found["name"])
                 # Destination-before-origin compound: 'Белград в Сербии из Москвы'.
                 leading = _CITY.match(clause)
-                if leading and (_FROM.search(clause[leading.end():]) or pending.get("field") == "destination.city" and _COUNTRY_TO.search(clause[leading.end():])):
+                if leading and (_FROM.search(clause[leading.end():]) or _COUNTRY_TO.search(clause[leading.end():])):
                     result["destination"].add(_FORMS[leading["city"]])
                 chain = re.fullmatch(rf"(?P<a>{_NAMES})\s*(?:→|->|-)\s*(?P<b>{_NAMES})", clause)
                 if chain:
@@ -293,7 +293,10 @@ def _target(data: dict, operations: list[dict], facts: dict, pending: dict) -> s
     if pending.get("field") in {"destination.city", "stay.city"}:
         target = pending.get("target_id") or pending.get("stay_id")
         if target is not None:
-            return target if isinstance(target, str) and sum(s.get("id") == target for s in stays) == 1 else None
+            existing = isinstance(target, str) and sum(s.get("id") == target for s in stays) == 1
+            pending_new = (not stays and isinstance(target, str)
+                and re.fullmatch(r"(?:new-)?stay-(?:[1-9]|[12][0-9]|30)", target) is not None)
+            return target if existing or pending_new else None
     matches = [stay["id"] for stay in stays if _city(stay.get("city")) in facts["old"]]
     if len(matches) == 1:
         return matches[0]
@@ -319,6 +322,79 @@ def _target(data: dict, operations: list[dict], facts: dict, pending: dict) -> s
     return None
 
 
+def _compound_proposal_answer(text: str) -> int:
+    """Only a direct yes/no followed by an independent non-geographic edit.
+
+    This never chooses a proposal or parses the other edit. The caller still
+    requires a fresh, owned destination proposal and validates all operations.
+    A geographic observation, veto, question or hypothetical is not consent.
+    """
+    normalized = _key(text)
+    match = re.fullmatch(r"(?P<answer>да меняем|да выбираем|подтверждаю|не меняем|не надо|да|нет)"
+        r"(?:\s*[,;.!]\s*|\s+)(?P<tail>.+)", normalized)
+    if not match:
+        return 0
+    tail = match["tail"]
+    if ("?" in tail or _HYPOTHETICAL.search(tail) or _HISTORY.search(tail) or _NEGATIVE.search(tail)
+            or _CITY.search(tail) or re.search(rf"(?<![\w-])(?:{_COUNTRY_NAMES})(?![\w-])", tail)
+            or re.search(r"\b(?:стран\w*|город\w*|назначен\w*|маршрут\w*)\b", tail)
+            or re.match(r"(?:(?:и|но|а)\s+)?(?:добавь|убери|удали|измени|исправь|сократи|увеличь|уменьши|установи|оставь|перенеси|поменяй)\b", tail) is None):
+        return 0
+    return -1 if match["answer"] in {"нет", "не меняем", "не надо"} else 1
+
+
+def _one_typo(left: str, right: str) -> bool:
+    """One insertion/deletion/substitution or adjacent transposition only."""
+    if abs(len(left) - len(right)) > 1:
+        return False
+    if len(left) == len(right):
+        different = [index for index, pair in enumerate(zip(left, right)) if pair[0] != pair[1]]
+        if len(different) == 1:
+            return True
+        return (len(different) == 2 and different[1] == different[0] + 1
+                and left[different[0]] == right[different[1]] and left[different[1]] == right[different[0]])
+    shorter, longer = (left, right) if len(left) < len(right) else (right, left)
+    return any(longer[:index] + longer[index + 1:] == shorter for index in range(len(longer)))
+
+
+def _typo_place_proposals(text: str) -> list[dict]:
+    """Suggest a unique curated place from an explicit role cue; never commit.
+
+    Unknown places remain unknown. Country names, residence/transit, quoted
+    material, questions and non-current clauses cannot authorise a suggestion.
+    """
+    proposals = []
+    hypothetical = False
+    pattern = re.compile(r"(?<![\w-])(?P<cue>из|from|iz|в|во|to|v|vo)\s+(?:город[ау]?\s+)?"
+                         r"(?P<literal>[а-яa-z][а-яa-z-]{3,59})(?![\w-])")
+    for item in re.finditer(r"[^,;.!?\n]+(?:[,;.!?\n]|$)", _unquote(text)):
+        raw = item.group().strip()
+        stop = raw[-1:] in {";", ".", "!", "?", "\n"}
+        clause = raw.rstrip(",;.!?\n ")
+        if _HYPOTHETICAL.search(clause) or _HISTORY.search(clause) or _NEGATIVE.search(clause):
+            hypothetical = True
+        skip = (hypothetical or _QUESTION.search(clause) or raw.endswith("?") or _NO_LODGING.search(clause)
+                or re.search(r"\b(?:пересад\w*|транзит\w*|проездом)\b", clause))
+        if not skip:
+            for match in pattern.finditer(clause):
+                literal = match["literal"]
+                prefix = clause[:match.start()]
+                if (literal in _FORMS or literal in _COUNTRIES or literal in _AMBIGUOUS
+                        or re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", prefix)
+                        or _RETURN.search(prefix) or _END_BEFORE.search(prefix)):
+                    continue
+                candidates = {city for alias, city in _FORMS.items() if len(alias) >= 4 and _one_typo(literal, alias)}
+                if len(candidates) == 1:
+                    place = parse_destination(next(iter(candidates)))["requested_destination"]
+                    proposal = {"field": "origin.city" if match["cue"] in {"из", "from", "iz"} else "destination.city",
+                                "literal": literal, "place": place}
+                    if proposal not in proposals:
+                        proposals.append(proposal)
+        if stop:
+            hypothetical = False
+    return proposals
+
+
 def ground_intent_operations(before_state: Any, operations: list, text: str,
                              pending_context: dict | None = None) -> tuple[list[dict], dict]:
     """Return copied operations and owned notes/questions/context, never commit.
@@ -342,11 +418,14 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     if country_answer["handled"]:
         facts["country"].add(country_answer["pending_context"]["requested_destination"]["country_code"])
         facts["current"] = True
+    compound_answer = _compound_proposal_answer(text)
     affirmative = _key(text).rstrip(".!") in {"да", "верно", "подтверждаю", "да меняем", "да выбираем"}
     proposal = pending.get("proposed_destination")
-    if (affirmative and not stale_pending and pending.get("field") == "destination.city"
+    owned_proposal = (not stale_pending and pending.get("field") == "destination.city"
             and pending.get("confirmation_required") is True and pending.get("proposal_field") == "destination.city"
-            and isinstance(proposal, dict) and proposal.get("kind") == "city" and _city(proposal.get("name"))):
+            and isinstance(proposal, dict) and proposal.get("kind") == "city" and _city(proposal.get("name")))
+    declined_proposal = owned_proposal and compound_answer == -1
+    if owned_proposal and (affirmative or compound_answer == 1):
         facts["destination"].add(_city(proposal["name"])); facts.update(replace=True, choice=True, current=True)
     origins, destinations, countries = facts["origin"], facts["destination"], facts["country"]
     origin = next(iter(origins)) if len(origins) == 1 else None
@@ -385,7 +464,30 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     expected = pending.get("requested_destination")
     expected_country = expected.get("country_code") if isinstance(expected, dict) else None
     blocked = False
-    if facts["ambiguous"]:
+    typo_proposals = _typo_place_proposals(text)
+    typo = typo_proposals[0] if len(typo_proposals) == 1 else None
+    if typo is not None:
+        field, place = typo["field"], typo["place"]
+        alias_facts = {**facts, "destination": {place["name"]}}
+        proposal_target = _target(data, copied, alias_facts, facts_pending) if field == "destination.city" else None
+        direction = "отправления" if field == "origin.city" else "назначения"
+        actual_name = parse_destination(place["country_code"])["requested_destination"]["name"]
+        ask(f"Похоже, в названии города {direction} опечатка. Вы имеете в виду город «{place['name']}», {actual_name}?",
+            field, {"proposed_destination": place, "confirmation_required": True, "proposal_field": field}, proposal_target)
+        meta["pending_context_clear"] = list(_CLEAR_GEO)
+        note("geographic_typo_confirmation_required", field=field, original=typo["literal"], city=place["name"])
+    if declined_proposal:
+        requested = pending.get("requested_destination")
+        country_name = requested.get("name") if isinstance(requested, dict) and requested.get("kind") == "country" else None
+        ask(f"Какой город в стране «{country_name}» вы выбираете для поездки?" if country_name else
+            "Какой город назначения вы выбираете? Предложенный город отклонён.", "destination.city",
+            {"requested_destination": requested} if isinstance(requested, dict) else None,
+            pending.get("target_id"))
+        meta["pending_context_clear"] = list(_CLEAR_GEO)
+        note("destination_proposal_declined_with_independent_edit")
+    elif typo is not None and typo["field"] == "destination.city":
+        blocked = True
+    elif facts["ambiguous"]:
         blocked = True
         if len(facts["ambiguous"]) == 1:
             location = parse_destination(next(iter(facts["ambiguous"])))

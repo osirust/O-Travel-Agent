@@ -6,13 +6,12 @@ the search catalogue, or applies operations. Unsupported places stay metadata.
 
 from __future__ import annotations
 
-from copy import deepcopy
 import re
+from copy import deepcopy
 from typing import Any
 
 from .domain import CITIES, MVP_LIMITS
 from .geography import parse_destination
-
 
 _ALIASES = {
     "origin": "origin.city", "origin_city": "origin.city", "origin.city": "origin.city",
@@ -30,8 +29,11 @@ _ALIASES = {
     "check_out": "stay.check_out", "checkout": "stay.check_out", "stay.check_out": "stay.check_out",
     "missing_check_out": "stay.check_out", "дата выезда": "stay.check_out",
     "departure_date": "leg.departure_date", "leg.departure_date": "leg.departure_date",
+    "leg.mode": "leg.mode", "transport.mode": "leg.mode",
     "дата вылета": "leg.departure_date", "дата отправления": "leg.departure_date",
     "rooms": "stay.rooms", "stay.rooms": "stay.rooms", "missing_rooms": "stay.rooms",
+    "requested_nights": "stay.requested_nights", "stay.requested_nights": "stay.requested_nights",
+    "nights": "stay.requested_nights", "сколько ночей": "stay.requested_nights",
     "budget": "budget.amount_minor", "budget.amount_minor": "budget.amount_minor",
     "budget_amount": "budget.amount_minor", "бюджет": "budget.amount_minor",
     "search.guest_nationality": "search.guest_nationality", "search_policy.guest_nationality": "search.guest_nationality",
@@ -52,7 +54,7 @@ _NO = {"нет", "не надо", "не меняем"}
 # party facts are deliberately outside this allowlist.
 _GEOGRAPHY_CLEAR_KEYS = ("proposed_destination", "confirmation_required", "suggested_cities",
                          "contextual_correction", "proposal_field")
-PENDING_CONTEXT_CLEAR_KEYS = (*_GEOGRAPHY_CLEAR_KEYS, "date_proposal")
+PENDING_CONTEXT_CLEAR_KEYS = (*_GEOGRAPHY_CLEAR_KEYS, "date_proposal", "duration_proposal", "duration_days", "leg_mode_proposal")
 _AGE_WORDS = {
     "ноль": 0, "нуль": 0, "один": 1, "два": 2, "три": 3, "четыре": 4,
     "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10,
@@ -161,7 +163,7 @@ def _context(raw: Any, extra: dict | None = None) -> dict:
 def _target(field: str | None, state: dict, context: dict) -> str | None:
     if field in {"search.guest_nationality", "route.kind", "route.end_city", "party.removal"}:
         return None
-    explicit = context.get("target_id") or context.get("group_id" if field == "group.membership" else "traveler_id" if field == "traveler.age" else "leg_id" if field == "leg.departure_date" else "stay_id")
+    explicit = context.get("target_id") or context.get("group_id" if field == "group.membership" else "traveler_id" if field == "traveler.age" else "leg_id" if field in {"leg.departure_date", "leg.mode"} else "stay_id")
     if explicit:
         return str(explicit)
     if field == "group.membership":
@@ -172,6 +174,8 @@ def _target(field: str | None, state: dict, context: dict) -> str | None:
         candidates = [person for person in state.get("travelers", []) if person.get("type") == "child" and person.get("age") is None and not person.get("birth_date")]
     elif field == "leg.departure_date":
         candidates = [leg for leg in state.get("legs", []) if not leg.get("departure_date")]
+    elif field == "leg.mode":
+        candidates = state.get("legs", [])
     elif field == "destination.city":
         candidates = [stay for stay in state.get("stays", []) if not stay.get("city")]
         if not candidates and len(state.get("stays", [])) == 1:
@@ -189,6 +193,15 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
     data, field = _data(state), _field(rawfield)
     ctx = _context(rawfield, context)
     target = _target(field, data, ctx)
+    if field in {"origin.city", "destination.city"} and _active_proposal(ctx, field):
+        proposed = ctx["proposed_destination"]
+        known = parse_destination(proposed.get("name", ""))["requested_destination"]
+        if known.get("kind") == "city" and known.get("country_code") == proposed.get("country_code"):
+            previous = ctx.get("requested_origin" if field == "origin.city" else "requested_destination") or {}
+            if previous.get("country_code") and previous["country_code"] != known["country_code"]:
+                return _country_change_question(known, field, ctx)
+            country = _COUNTRY_NAMES.get(known["country_code"], known["country_code"])
+            return f"Вы имели в виду город «{known['name']}» в стране «{country}»? Подтвердите выбор."
     if field == "origin.city":
         return "Из какого города вы отправляетесь?"
     if field == "destination.city":
@@ -219,12 +232,13 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
             if index:
                 return f"Сколько лет будет ребёнку №{index} на дату поездки?"
         return "Сколько лет будет ребёнку на дату поездки?"
-    if field in {"stay.check_in", "stay.check_out", "stay.rooms"}:
+    if field in {"stay.check_in", "stay.check_out", "stay.rooms", "stay.requested_nights"}:
         stay = next((s for s in data.get("stays", []) if s["id"] == target), {})
         place = f" в городе «{stay['city']}»" if stay.get("city") else ""
         return {"stay.check_in": f"На какую дату планируете заезд{place}?",
                 "stay.check_out": f"На какую дату планируете выезд{place}?",
-                "stay.rooms": f"Сколько гостиничных номеров вам нужно{place}?"}[field]
+                "stay.rooms": f"Сколько гостиничных номеров вам нужно{place}?",
+                "stay.requested_nights": f"Сколько ночей планируете провести{place}?"}[field]
     if field == "leg.departure_date":
         if not data.get("legs"):
             missing = [stay for stay in data.get("stays", []) if not stay.get("check_in")]
@@ -233,6 +247,8 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
         leg = next((x for x in data.get("legs", []) if x["id"] == target), {})
         route = f" по маршруту «{leg['origin']} — {leg['destination']}»" if leg.get("origin") and leg.get("destination") else ""
         return f"На какую дату планируете отправление{route}?"
+    if field == "leg.mode":
+        return "Какой участок маршрута изменить и какой транспорт выбрать: самолёт или поезд?"
     if field == "budget.amount_minor":
         return "Какой общий бюджет поездки в рублях вы хотите установить?"
     if field == "search.guest_nationality":
@@ -415,6 +431,13 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
             place = _answer_place(text, field)
             if place["kind"] == "unknown":
                 return {"handled": False, "operations": []}
+    elif (field == "destination.city" and not isinstance(ctx.get("proposed_destination"), dict)
+            and _key(text) in _YES | _NO):
+        # A late acknowledgement after a rejected/consumed city proposal does
+        # not introduce a new city and need not spend another model request.
+        clean = _without_proposal(ctx)
+        return _answer(question=human_question(field, data, clean),
+            context={**clean, "field": field, "target_id": target}, clear_pending=True)
     else:
         place = _answer_place(text, field)
     requested = ctx.get(requested_key)
@@ -424,7 +447,7 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
     contextual_correction = (field == "destination.city" and isinstance(requested, dict)
                              and requested.get("country_code") == "RS"
                              and requested.get("kind") in {"country", "city"}
-                             and text.strip().casefold() == "белгород")
+                             and _key(text) == "белгород" and "?" not in text)
     if contextual_correction:
         place = parse_destination("Белград")["requested_destination"]
         ctx = {**ctx, "contextual_correction": {"original_text": text, "interpreted_city": "Белград",

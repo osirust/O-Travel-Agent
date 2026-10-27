@@ -29,6 +29,7 @@ _DATE_QUESTIONS = (
     re.compile(rf"на какие даты\s+{_MODIFIERS}(?:поездка|путешествие)"),
     re.compile(r"когда\s+(?:у нас\s+)?(?:заезд и выезд|заезд|выезд|начало и конец поездки)"),
     re.compile(r"когда (?:мы )?(?:едем|поедем|возвращаемся|уезжаем)"),
+    re.compile(r"(?:на )?сколько ночей(?: у нас| мы выбрали| выбрали| поездка| планируем)?"),
 )
 _ROUTE_QUESTIONS = (
     re.compile(rf"какой\s+{_MODIFIERS}маршрут{_TRIP}"),
@@ -177,6 +178,8 @@ def _dates(data: dict) -> str:
             line += "; " + _plural((end - start).days, ("ночь", "ночи", "ночей"))
         elif start and end:
             line += "; порядок дат требует уточнения"
+        elif type(stay.get("requested_nights")) is int and stay["requested_nights"] > 0:
+            line += "; запрошено " + _plural(stay["requested_nights"], ("ночь", "ночи", "ночей"))
         if children:
             line += ". Дети на дату заезда: " + ", ".join(_child_age(p, start) for p in children)
         parts.append(line + ".")

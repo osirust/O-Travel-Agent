@@ -81,7 +81,7 @@ class ModelResult(BaseModel):
     destination_request: dict[str, Any] | None = Field(default=None, exclude=True)
     operation_normalizations: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
     pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
-    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field", "date_proposal"]] = Field(default_factory=list, max_length=6, exclude=True)
+    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field", "date_proposal", "duration_proposal", "duration_days", "leg_mode_proposal"]] = Field(default_factory=list, max_length=9, exclude=True)
     response_source: str = Field(default="llm", exclude=True)
     server_questions: list[str] = Field(default_factory=list, exclude=True)
 
@@ -109,6 +109,8 @@ OPERATION_GUIDE = {
             "traveler_ids": ["EXISTING_TRAVELER_ID"], "keep_separate": True}},
     },
     "room_shape": {"id": "STABLE_ROOM_ID", "traveler_ids": ["EXISTING_TRAVELER_ID"]},
+    "duration_contract": "Сохраняй явно указанное число ночей в upsert_stay.value.requested_nights, даже если заезд неизвестен. Дни не равны ночам: уточни. Не переписывай явно заданные даты без согласования.",
+    "leg_mode_contract": "Изменение вида транспорта: set_leg_mode с target_id существующего плеча и value.mode=flight|train. Это не меняет города, даты или маршрут.",
     "group_contract": "Создай людей перед upsert_group, затем комнаты. Полный setter связывает traveler_ids и group_id атомарно. Не угадывай семьи: неизвестный состав при явном запрете смешивать — пустая keep_separate=true группа и точный вопрос.",
     "room_constraint_contract": "Разные условия номеров сохраняй отдельно: set_constraint.value {key,value,hard,stay_id,room_id}. Для room_id обязателен stay_id; только breakfast/refundable. Не объединяй условия двух номеров в общее условие проживания.",
     "known_hard_constraints": ["breakfast", "refundable", "pets_allowed", "pets", "nonstop"],
@@ -165,6 +167,8 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
                 write(("search_policy", key), field)
         elif item.type == "set_route_policy":
             write(("route_policy",), {"kind": value.get("kind"), "end_city": value.get("end_city")})
+        elif item.type == "set_leg_mode":
+            write(("leg", target, "mode"), value.get("mode"))
         elif item.type in {"set_preference", "clear_preference"}:
             write(("preference", value.get("key") or target), value if item.type == "set_preference" else {"removed": True})
         elif item.type == "upsert_group":
@@ -305,9 +309,9 @@ class Harness:
         session = await self.control(run["session_id"], action, schedule=False, write_reply=False)
         # A control message has already been durably accepted. It is not sent to NLU.
         result = await self.store.finish_run(run["run_id"], session["state_version"], None,
-            "WAITING_USER" if action == "pause" else "TRIP_DRAFT",
-            "Жду явного «продолжай»." if action == "pause" else "Продолжаю.",
-            waiting_reason="user_pause" if action == "pause" else None,
+            session["status"],
+            "Жду явного «продолжай»." if action == "pause" else "Продолжаю. " + ((session.get("pending_question") or {}).get("text") or ""),
+            waiting_reason=session.get("waiting_reason"), pending_question=session.get("pending_question"),
             result={"control": action, "available_actions": ["commands", "demo", "resume"]})
         if action == "resume":
             self.schedule(run["session_id"])
@@ -600,13 +604,16 @@ class Harness:
                     if not readonly and not extracted.conflicts and extracted.control.action != "cancel":
                         from .route_policy_intent import guard_route_policy_operations
                         from .search_policy_intent import guard_search_policy_operations
-                        for guard in (guard_route_policy_operations, guard_search_policy_operations):
+                        from .leg_mode_intent import guard_leg_mode_operations
+                        for guard in (guard_route_policy_operations, guard_search_policy_operations, guard_leg_mode_operations):
                             policy_ops, policy_meta = guard(session["state"], extracted.operations, run["input_text"])
                             extracted.operations = [Operation.model_validate(op) for op in policy_ops]
                             extracted.operation_normalizations.extend(policy_meta["notes"])
                             extracted.conflicts.extend(policy_meta["conflicts"])
                             extracted.unknowns = list(dict.fromkeys(policy_meta["unknowns"] + extracted.unknowns))
                             extracted.server_questions.extend(policy_meta["unknowns"] + policy_meta["conflicts"])
+                            if policy_meta.get("pending_context") is not None:
+                                extracted.pending_context = {**(extracted.pending_context or {}), **policy_meta["pending_context"]}
                         if (not extracted.operations and any(note.get("code") == "search_policy_change_not_requested"
                                 for note in extracted.operation_normalizations)):
                             extracted.speech_act = "ASK"
@@ -713,14 +720,19 @@ class Harness:
                                                 location = candidate_location
                                                 break
                                 question = location["clarification"] if country_context is not None else error.message
-                                extracted = ModelResult(operations=[], control={"action": action}, reply=error.message,
+                                if error.code == "unknown_target":
+                                    kinds = {op.type for op in extracted.operations}
+                                    question = ("Какого участника поездки нужно изменить? Уточните взрослого или ребёнка."
+                                        if kinds.intersection({"update_traveler", "remove_traveler"}) else
+                                        "К какой части поездки относится изменение? Уточните город, проживание или участок маршрута.")
+                                extracted = ModelResult(operations=[], control={"action": action}, reply=question,
                                     unknowns=[question], conflicts=[], destination_request=country_context, server_questions=[question])
                             else:
                                 context["validation_feedback"] = {"domain_code": error.code,
                                     "message": error.message, "operation_shapes": [{"type": op.type, "fields": sorted(op.value)} for op in extracted.operations],
                                     "note": "Исправь схему разрешённых операций, не придумывая факты. Если условия невалидны, верни один conflicts/unknowns вместо изменений."}
                                 if isinstance(error.details, list):
-                                    fields = {"key", "value", "hard", "stay_id", "amount_minor", "currency", "scope", "id", "type", "age", "birth_date", "group_id", "city", "check_in", "check_out", "rooms", "hotel_id"}
+                                    fields = {"key", "value", "hard", "stay_id", "amount_minor", "currency", "scope", "id", "type", "age", "birth_date", "group_id", "city", "check_in", "check_out", "rooms", "hotel_id", "requested_nights", "mode"}
                                     context["validation_feedback"]["errors"] = [{"type": entry.get("type"),
                                         "loc": [part if isinstance(part, int) or part in fields else "<field>" for part in entry.get("loc", [])]}
                                         for entry in error.details if isinstance(entry, dict) and "loc" in entry]
@@ -850,7 +862,7 @@ class Harness:
                 "__response_mode": READONLY_MODE, "__response_schema": READONLY_SCHEMA}
 
     async def _interpret(self, session: dict, run: dict) -> tuple[ModelResult, dict | None]:
-        from .answering import canonical_source_answer, checked_reply, readonly_question, short_place_inquiry
+        from .answering import canonical_geography_answer, canonical_source_answer, canonical_unit_capability_answer, checked_reply, readonly_question, short_place_inquiry
         from .conversational import request_kinds
         from .trip_answers import classify_saved_question, render_saved_answer
 
@@ -864,6 +876,12 @@ class Harness:
                     and not short_place_inquiry(run["input_text"])
                     and parse_destination(run["input_text"])["requested_destination"]["kind"] not in {"city", "country"})
         kinds = request_kinds(run["input_text"])
+        capability = (canonical_geography_answer(run["input_text"], session["state"])
+                      or canonical_unit_capability_answer(run["input_text"], session["state"]))
+        if capability is not None and not explicit_pause_hint(run["input_text"]):
+            await self._ensure_current_run(session, run)
+            return ModelResult(operations=[], control={"action": "none"}, reply=capability,
+                unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
         if "source" in kinds and readonly and kind is None:
             plans = await self._latest_current_plans(session, run)
             reply = canonical_source_answer(run["input_text"], session["state"], plans)
@@ -906,6 +924,12 @@ class Harness:
                 from .intent_grounding import resolve_country_destination_answer
                 if not resolved["handled"]:
                     resolved = resolve_country_destination_answer(session["state"], pending, run["input_text"])
+            if not resolved["handled"]:
+                from .leg_mode_intent import resolve_leg_mode_answer
+                resolved = resolve_leg_mode_answer(session["state"], pending, run["input_text"])
+            if not resolved["handled"]:
+                from .date_slots import resolve_duration_answer
+                resolved = resolve_duration_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
             if not resolved["handled"]:
                 resolved = resolve_date_answer(session["state"], pending, run["input_text"], datetime.now(timezone.utc))
             if not resolved["handled"] and pending and session.get("waiting_reason") == "clarification":
@@ -1135,6 +1159,16 @@ class Harness:
             result.update(undo=undo_meta, plans=[], notice="Последняя успешная правка отменена новой ревизией. Цены и согласия не восстановлены; нужен новый поиск. Существующие заказы не изменены.")
         clarification_metadata = dict((session.get("pending_question") or {}).get("context") or {})
         if not run["input_text"].startswith(TYPED_PREFIX):
+            new_mode_packet = (extracted.pending_context or {}).get("leg_mode_proposal")
+            if (isinstance(new_mode_packet, dict)
+                    and any(note.get("code") == "leg_mode_proposal_created"
+                            and note.get("based_state_version") == version for note in extracted.operation_normalizations)
+                    and new_mode_packet.get("based_state_version") == version
+                    and current.legs == state.legs):
+                # Only a newly issued server packet may follow an unrelated
+                # same-batch budget/party revision. Never refresh an old answer.
+                from .leg_mode_intent import make_leg_mode_pending_context
+                extracted.pending_context.update(make_leg_mode_pending_context(current, new_mode_packet["mode"]))
             if extracted.destination_request is not None:
                 clarification_metadata["requested_destination"] = extracted.destination_request
             for key in extracted.pending_context_clear:
@@ -1164,7 +1198,7 @@ class Harness:
                 clarification_metadata["force_clarification"] = True
             else:
                 clarification_metadata.pop("force_clarification", None)
-            if questions and waiting_reason != "user_pause":
+            if questions:
                 normalized = []
                 for raw in questions:
                     trusted = raw in extracted.unknowns and (
@@ -1188,7 +1222,7 @@ class Harness:
                                 break
                     normalized.append(rendered)
                 questions = list(dict.fromkeys(normalized))[:1]
-                if not questions:
+                if not questions and waiting_reason != "user_pause":
                     waiting_reason = None
                     status = "TRIP_DRAFT"
                     search = bool(changes)
@@ -1279,13 +1313,15 @@ class Harness:
                 result["search_explanation"] = explanation
                 if explanation["text"]:
                     reply += "\n\n" + explanation["text"]
-        pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions and waiting_reason != "user_pause" else None
+        pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions else None
         if pending is not None and not preserve_pending:
             if not run["input_text"].startswith(TYPED_PREFIX) and extracted.pending_context and extracted.pending_context.get("field"):
                 binding = {"field": extracted.pending_context["field"], "target_id": extracted.pending_context.get("target_id")}
             else:
                 binding = derive_pending_field([{**clarification_metadata, "text": question} for question in questions], current)
             date_packet = clarification_metadata.get("date_proposal")
+            if binding.get("field") != "leg.mode":
+                clarification_metadata.pop("leg_mode_proposal", None)
             if (binding.get("field") not in {"stay.check_in", "stay.check_out"}
                     or isinstance(date_packet, dict) and (date_packet.get("field") != binding.get("field")
                         or binding.get("target_id") is not None)):

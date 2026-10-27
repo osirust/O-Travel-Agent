@@ -68,7 +68,7 @@ async def test_pause_before_date_finish_cas_rejects_result_without_resurrecting_
     model = StubLLM()
     async with api_factory(model) as (client, _):
         sid, token, initial = await _session(client, sample_trip().model_dump(mode="json"))
-        await _message(client, sid, token, "Выезд 14.11.2026")
+        _, proposed = await _message(client, sid, token, "Выезд 14.11.2026")
         repository = client._transport.app.state.store
         finish = repository.finish_run
         paused = False
@@ -91,7 +91,12 @@ async def test_pause_before_date_finish_cas_rejects_result_without_resurrecting_
         expected["state_version"] += 1  # Pause intentionally invalidates stale work.
         assert after["trip"] == expected
         assert after["waiting_reason"] == "user_pause"
-        assert after["pending_question"] is None
+        expected_pending = deepcopy(proposed["pending_question"])
+        expected_pending["state_version"] = after["state_version"]
+        expected_pending["context"]["date_proposal"]["based_state_version"] = after["state_version"]
+        if "based_state_version" in expected_pending["context"]:
+            expected_pending["context"]["based_state_version"] = after["state_version"]
+        assert after["pending_question"] == expected_pending  # Retain only the pre-pause question, not late output.
         assert (await repository.get_session(sid))["active_run_id"] is None
         assert not model.calls
 
