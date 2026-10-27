@@ -1,0 +1,1002 @@
+{
+  "date": "2026-10-27",
+  "status": "ACTUAL_GEO15_PASS_GROUP_INTAKE_PASS_COMPOUND_HTTP413_STOP",
+  "source_commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+  "package_sha256": "15158e2655681f16c967b14515a73ad72b135f62088e02bad811105759f61cd5",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "mode": "strict canonical operation transport, low effort, no returned reasoning",
+  "private_report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-081701-e7a5669c/report.json",
+  "report_sha256": "ab84df6c4fa23f87ac7417178e55add4c8ba2b1c837278c5e8aeb37de5c4f99c",
+  "model_calls": 6,
+  "tool_calls": 0,
+  "cases": [
+    {
+      "id": "PF-GEO-01",
+      "status": "PASS",
+      "steps": [
+        {
+          "id": "01",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/origin",
+                "value": "Москва"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "party",
+                "adults": 1,
+                "ages": []
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 8000000
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination/country_code",
+                "value": "RS"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": false
+        },
+        {
+          "id": "02",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/confirmation_required",
+                "value": true
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination/country_code",
+                "value": "RS"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "03",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination/country_code",
+                "value": "RS"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "absent",
+                "path": "/pending_question/context/proposed_destination"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "04",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination/country_code",
+                "value": "RS"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "absent",
+                "path": "/pending_question/context/proposed_destination"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "05",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/origin",
+                "value": "Москва"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "party",
+                "adults": 1,
+                "ages": []
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 8000000
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination",
+                "value": {
+                  "kind": "city",
+                  "name": "Белград",
+                  "country_code": "RS"
+                }
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/stays",
+                "value": []
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_contains",
+                "parts": [
+                  "Белград"
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "06",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/confirmation_required",
+                "value": true
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_contains",
+                "parts": [
+                  "Турц"
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "07",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "party",
+                "adults": 1,
+                "ages": [
+                  7
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination",
+                "value": {
+                  "kind": "city",
+                  "name": "Белград",
+                  "country_code": "RS"
+                }
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/stays",
+                "value": []
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 8000000
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination/country_code",
+                "value": "RS"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "absent",
+                "path": "/pending_question/context/proposed_destination"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": false
+        },
+        {
+          "id": "08",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/requested_destination/country_code",
+                "value": "RS"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "absent",
+                "path": "/pending_question/context/proposed_destination"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "09",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question/context/confirmation_required",
+                "value": true
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "10",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "party",
+                "adults": 1,
+                "ages": [
+                  8
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "stay",
+                "city": "Стамбул"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/origin",
+                "value": "Москва"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 8000000
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": false
+        },
+        {
+          "id": "11",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_contains",
+                "parts": [
+                  "Турц"
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "12",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "trip_unchanged_except_version"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "state_version_delta",
+                "value": 1
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/waiting_reason",
+                "value": "user_pause"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": false
+        },
+        {
+          "id": "13",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/waiting_reason",
+                "value": "user_pause"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "pending"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "pending",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "14",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "party",
+                "adults": 1,
+                "ages": [
+                  8
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "stay",
+                "city": "Стамбул"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 7000000
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/origin",
+                "value": "Москва"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "drained_run_completed",
+                "run_id": "f85f8d04-7ac6-4ecc-896c-85b398ce6e60"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": false
+        },
+        {
+          "id": "15",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_contains",
+                "parts": [
+                  "Москва",
+                  "Стамбул"
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        }
+      ]
+    },
+    {
+      "id": "PF-GROUP-04",
+      "status": "STOPPED",
+      "steps": [
+        {
+          "id": "01",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/origin",
+                "value": "Казань"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "party",
+                "adults": 2,
+                "ages": [
+                  7
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 40000000
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/search_policy/mode",
+                "value": "DEMO"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "stay",
+                "city": "Стамбул",
+                "check_in": "2026-11-10",
+                "check_out": "2026-11-13",
+                "rooms": 2
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "stay",
+                "city": "Анталья",
+                "check_in": "2026-11-13",
+                "check_out": "2026-11-17",
+                "rooms": 2
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "allocation_complete",
+                "rooms": 2
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "group_count",
+                "value": 2
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": false
+        },
+        {
+          "id": "02",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_dates",
+                "values": [
+                  "2026-11-10",
+                  "2026-11-17"
+                ]
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "03",
+          "status": "PASS",
+          "checks": [
+            {
+              "check": {
+                "op": "unchanged",
+                "path": "/trip"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_money",
+                "amount_minor": 40000000,
+                "currency": "RUB",
+                "topic": "budget"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "PASS"
+            }
+          ],
+          "run_status": "completed",
+          "error": null,
+          "trip_unchanged": true
+        },
+        {
+          "id": "04",
+          "status": "FAIL",
+          "checks": [
+            {
+              "check": {
+                "op": "party",
+                "adults": 2,
+                "ages": [
+                  7,
+                  8
+                ]
+              },
+              "status": "FAIL"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/trip/budget/amount_minor",
+                "value": 38000000
+              },
+              "status": "FAIL"
+            },
+            {
+              "check": {
+                "op": "stay",
+                "city": "Стамбул",
+                "check_in": "2026-11-10",
+                "check_out": "2026-11-13",
+                "rooms": 2
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "stay",
+                "city": "Анталья",
+                "check_in": "2026-11-13",
+                "check_out": "2026-11-19",
+                "rooms": 2
+              },
+              "status": "FAIL"
+            },
+            {
+              "check": {
+                "op": "hotel_capture",
+                "city": "Анталья",
+                "capture": "hotel_b_id"
+              },
+              "status": "FAIL"
+            },
+            {
+              "check": {
+                "op": "allocation_complete",
+                "rooms": 2
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "constraint",
+                "key": "breakfast",
+                "value": true,
+                "hard": true,
+                "city": "Стамбул"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "reply_money",
+                "amount_minor": 38000000,
+                "currency": "RUB",
+                "topic": "budget"
+              },
+              "status": "FAIL"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/status",
+                "value": "OPTIONS_READY"
+              },
+              "status": "FAIL"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/waiting_reason",
+                "value": null
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "eq",
+                "path": "/pending_question",
+                "value": null
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "plans_min",
+                "value": 1
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "ready_plan"
+              },
+              "status": "PASS"
+            },
+            {
+              "check": {
+                "op": "run_status",
+                "value": "completed"
+              },
+              "status": "FAIL"
+            }
+          ],
+          "run_status": "failed",
+          "error": {
+            "llm": {
+              "model": "openai/gpt-oss-120b",
+              "attempts": [
+                {
+                  "code": "HTTP_ERROR",
+                  "model": "openai/gpt-oss-120b",
+                  "outcome": "failed",
+                  "provider": "groq",
+                  "latency_ms": 425,
+                  "http_status": 413,
+                  "request_metrics": {
+                    "prompt_sha256": "aeb721d2ea97553ab103e7acb2bfa239ac4552e6eb030e8839adb29ed0cbf547",
+                    "schema_sha256": "511479134a8beeadbfc714c994975be70a92b0baf97d36fbc91c08e07d95af8f",
+                    "schema_utf8_bytes": 10093,
+                    "system_utf8_bytes": 15347,
+                    "context_utf8_bytes": 22114
+                  },
+                  "structured_transport": {
+                    "format": "groq_strict_operations_v1",
+                    "wire_schema_sha256": "117ad184900554bbb84ded0dc60adebefe64dfd22c77ec4caeaf52a93d54949a",
+                    "wire_schema_utf8_bytes": 5368,
+                    "validated_output_representation": "decoded_canonical_contract"
+                  }
+                }
+              ],
+              "provider": "groq"
+            },
+            "code": "HTTP_ERROR",
+            "details": {
+              "http_status": 413
+            },
+            "message": "Провайдер отклонил запрос.",
+            "retryable": false
+          },
+          "trip_unchanged": true
+        }
+      ]
+    }
+  ],
+  "whole_cases_pass": 1,
+  "whole_cases_selected": 2,
+  "diagnosis": [
+    "PF-GEO-01 reached all15steps and passed the declared language/state/control checks from an empty natural intake.",
+    "PF-GROUP-04 initial multi-city family/dates/rooms/budget and saved-fact followups pass.",
+    "CompoundT4 failed at providerHTTP413 before any decoded operation; trip unchanged. Initial user-facing400 statement was corrected to the actual413.",
+    "Specific byte/TPM limit and old response body are unknown; no vendor-reset or daily-quota claim.",
+    "GROUP04 originalR5 also lacks an explicit chosen-plan preview before its keep-hotel wish; newR6 will make that precondition explicit, without rewriting this result."
+  ],
+  "real_orders": 0,
+  "payments": 0,
+  "automatic_resends": 0,
+  "local_inference": 0,
+  "limitations": [
+    "Not full80/106, not a fresh holdout benchmark.",
+    "Model and prompt/harness changed together from the earlier Qwen run; this is not an isolated model superiority comparison.",
+    "All plan data in these two cases areDEMO; actual supplier qualification is recorded separately."
+  ]
+}

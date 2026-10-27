@@ -23,8 +23,8 @@ from uuid import uuid4
 from replay_after80 import BLOCKS, HTTP, LLM_PROFILES, Cleaner, check_profile, private_json, require
 
 ROOT = Path(__file__).resolve().parents[1]
-RECIPE = ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027-r5.json"
-RECIPE_SHA256 = "917574bbe7d3f36a40bc391270533fd4d6c04236d116caf44ea67aa7a764bff5"
+RECIPE = ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027-r6.json"
+RECIPE_SHA256 = "54e72c3a9b46909dd90d24796521b83573c7f6aa8351bf7f1fcdba7a7c330d47"
 NATIVE_SOURCE = Path("/home/aegml/projects/otravel-after80-20261026")
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
 ACTION_KINDS = {"message", "queued_message", "resume", "preview", "set_leg_mode", "confirm_stale",
@@ -33,7 +33,7 @@ CHECK_KINDS = {"eq", "unchanged", "party", "stay", "reply_contains", "absent", "
                "last_leg_date", "preference", "group_count", "allocation_complete", "constraint", "hotel_capture",
                "plans_min", "ready_plan", "plans_unchanged", "order_count", "only_simulated_orders", "same_order",
                "leg_mode", "run_error", "reply_money", "reply_nights", "reply_age", "reply_dates", "reply_change_marker",
-               "trip_unchanged_except_version", "state_version_delta"}
+               "trip_unchanged_except_version", "state_version_delta", "preview_selection"}
 MISSING = object()
 
 
@@ -90,6 +90,10 @@ def load_recipe():
                 require(isinstance(step.get("text"), str) and step["text"].strip(), "user_message_required")
             if step["kind"] == "queued_message":
                 require(step["model_policy"] == "zero", "queued_message_cannot_generate")
+            if (step.get("capture") or {}).get("kind") == "preview_hotel":
+                require(step["kind"] == "preview" and step["model_policy"] == "zero"
+                    and step.get("plan_index", 0) == 0 and step["capture"].get("field") == "hotel_id",
+                    "preview_capture_requires_explicit_first_plan_UI_choice")
     require(5 <= len(ids) <= 8 and len(ids) == len(set(ids)), "reviewed_case_count_required")
     return recipe
 
@@ -100,6 +104,48 @@ def select(recipe, ids=None):
     indexed = {case["id"]: case for case in recipe["cases"]}
     require(wanted and all(key in indexed for key in wanted), "unknown_selected_case")
     return [deepcopy(indexed[key]) for key in wanted]
+
+
+def preview_hotel_id(quote_row, snapshot, plans, city):
+    """Read an actual owned preview choice; never fall back to shown options."""
+    if not isinstance(quote_row, dict) or quote_row.get("status") != "active" or not plans:
+        return MISSING
+    plan, trip = quote_row.get("plan"), snapshot.get("trip")
+    if not isinstance(plan, dict) or not isinstance(trip, dict) or not isinstance(plans[0], dict):
+        return MISSING
+    version = snapshot.get("state_version")
+    quote_id = quote_row.get("quote_id", quote_row.get("id"))
+    if (not isinstance(quote_id, str) or not quote_id or not isinstance(snapshot.get("session_id"), str)
+            or quote_row.get("session_id") != snapshot["session_id"]
+            or type(version) is not int or type(quote_row.get("state_version")) is not int
+            or quote_row["state_version"] != version or type(plan.get("state_version")) is not int
+            or plan["state_version"] != version or type(trip.get("state_version")) is not int
+            or trip["state_version"] != version or not isinstance(trip.get("trip_id"), str)
+            or plan.get("trip_id") != trip["trip_id"]
+            or not isinstance(plan.get("plan_id"), str) or plan["plan_id"] != plans[0].get("plan_id")
+            or type(plans[0].get("state_version")) is not int or plans[0]["state_version"] != version
+            or plans[0].get("trip_id") != trip["trip_id"]
+            or (quote_row.get("id") is not None and quote_row["id"] != quote_id)):
+        return MISSING
+    offers = plan.get("offers")
+    if not isinstance(offers, list):
+        return MISSING
+    matching = []
+    for offer in offers:
+        if not isinstance(offer, dict):
+            return MISSING
+        details = offer.get("details") if isinstance(offer.get("details"), dict) else {}
+        binding = details.get("binding") if isinstance(details.get("binding"), dict) else {}
+        if offer.get("kind", details.get("kind")) == "hotel" and offer.get("city", binding.get("city")) == city:
+            matching.append(offer)
+    if len(matching) != 1:
+        return MISSING
+    offer = matching[0]
+    details = offer.get("details") if isinstance(offer.get("details"), dict) else {}
+    value = offer.get("hotel_id")
+    if value is None:
+        value = details.get("hotel_id")
+    return value if isinstance(value, str) and 0 < len(value) <= 300 else MISSING
 
 
 def check_one(check, obs):
@@ -190,6 +236,12 @@ def check_one(check, obs):
         expected = obs.get("captures", {}).get(check["capture"], MISSING)
         rows = [s for s in trip.get("stays", []) if s.get("city") == check["city"]]
         return expected is not MISSING and len(rows) == 1 and rows[0].get("hotel_id") == expected
+    if kind == "preview_selection":
+        expected = obs.get("captures", {}).get(check["capture"], MISSING)
+        actual = preview_hotel_id(obs.get("preview_quote"), before, obs.get("plans", []), check["city"])
+        return (isinstance(expected, str) and bool(expected) and actual is not MISSING and actual == expected
+            and after.get("session_id") == before.get("session_id")
+            and type(after.get("state_version")) is int and after["state_version"] == before.get("state_version"))
     if kind == "plans_min":
         return len(obs.get("plans", [])) >= check["value"]
     if kind == "ready_plan":
@@ -408,7 +460,7 @@ class Driver:
         obs = {"before": before, "after": after, "run": run or {}, "http_status": response["status"],
             "reply": reply, "events": fresh, "orders": self.get(ctx["route"] + "/orders", ctx["token"])["orders"],
             "before_plans": previous, "plans": deepcopy(ctx["plans"]), "captures": deepcopy(ctx["captures"]),
-            "drained_runs": deepcopy(drained)}
+            "drained_runs": deepcopy(drained), "preview_quote": deepcopy(ctx.get("quote"))}
         error_codes = {(row.get("error") or {}).get("code") for row in runs}
         response_error = response.get("body", {}).get("error")
         error_codes.add(response_error.get("code") if isinstance(response_error, dict) else None)
@@ -419,7 +471,8 @@ class Driver:
 
     def execute(self, ctx, step):
         before = self.get(ctx["route"], ctx["token"])
-        prerequisite = {"before": before, "after": before, "plans": ctx["plans"], "captures": ctx["captures"]}
+        prerequisite = {"before": before, "after": before, "plans": ctx["plans"], "captures": ctx["captures"],
+            "preview_quote": ctx.get("quote")}
         if any(row["status"] != "PASS" for row in grade(step.get("requires", []), prerequisite)):
             raise NotReached("PUBLIC_CONVERSATION_PREREQUISITE_NOT_REACHED")
         for name, spec in step.get("prepare", {}).items():
@@ -467,6 +520,7 @@ class Driver:
             response = self.post(ctx["route"] + "/control", ctx["token"], {"action": "pause",
                 "client_message_id": str(uuid4()), "expected_version": before["state_version"]})
         elif kind == "preview":
+            require(step.get("plan_index", 0) == 0, "only_reviewed_first_plan_UI_preview_allowed")
             if not ctx["plans"]:
                 raise NotReached("NO_CURRENT_PLAN_FOR_PREVIEW")
             self.budget.preview_reservations += 16
@@ -503,7 +557,15 @@ class Driver:
         if step.get("capture"):
             spec = step["capture"]
             try:
-                ctx["captures"][spec["name"]] = deepcopy(ctx["plans"]) if spec["kind"] == "current_plans" else self.hotel(ctx["plans"], spec)
+                if spec["kind"] == "preview_hotel":
+                    ctx["captures"].pop(spec["name"], None)
+                    value = preview_hotel_id(response.get("body") if kind == "preview" and response["status"] == 200 else None,
+                        before, ctx["plans"], spec["city"])
+                    if value is MISSING:
+                        raise NotReached("NO_OWN_CURRENT_PREVIEW_HOTEL_SELECTION")
+                    ctx["captures"][spec["name"]] = value
+                else:
+                    ctx["captures"][spec["name"]] = deepcopy(ctx["plans"]) if spec["kind"] == "current_plans" else self.hotel(ctx["plans"], spec)
             except NotReached as exc:
                 obs["capture_error"] = str(exc)
         obs["captures"] = deepcopy(ctx["captures"])
@@ -584,6 +646,7 @@ def main(argv=None):
         "max_model_calls": args.max_model_calls, "max_tool_calls": args.max_tool_calls,
         "model_interval_seconds": args.model_interval_seconds, "parallel": 1,
         "bootstrap_cases": [case["id"] for case in cases if case["initial_trip"]], "default_dry_run_http_calls": 0}
+    frozen["bootstrap_scopes"] = {case["id"]: case["bootstrap_scope"] for case in cases}
     if not args.run:
         print(json.dumps(frozen, ensure_ascii=False, indent=2))
         return 0

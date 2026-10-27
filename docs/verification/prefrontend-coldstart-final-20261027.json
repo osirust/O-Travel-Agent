@@ -1,0 +1,276 @@
+{
+  "status": "PASS",
+  "source_commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+  "project": "otravel-prefrontend-final-20261027",
+  "port": 18089,
+  "started_at_utc": "2026-10-27T08:22:33.710301+00:00",
+  "checks": [
+    {
+      "name": "fresh_isolation_preflight",
+      "passed": true,
+      "blank_key_fields": 18,
+      "false_confirmation_flags": 9,
+      "all_model_caps": 0,
+      "default_search": "DEMO",
+      "host_env_inherited": false
+    },
+    {
+      "name": "typed_duration_date_owned_train_demo_preview_simconfirm_readonly",
+      "passed": true,
+      "plans": 3,
+      "plan_totals_minor": [
+        3055000,
+        3562500,
+        4094060
+      ],
+      "currency": "RUB",
+      "requested_nights": 5,
+      "derived_checkout": "2026-11-18",
+      "only_owned_outbound_train": true,
+      "demo_media_placeholder": true,
+      "saved_nights_reply_zero_model": true,
+      "fresh_database_counts": {
+        "sessions": 0,
+        "runs": 0,
+        "orders": 0,
+        "model_events": 0,
+        "tool_events": 0,
+        "nonterminal_runs": 0
+      },
+      "simulated_orders": 1,
+      "exact_confirm_repeated": true,
+      "saved_budget_reply_zero_model": true,
+      "state_version": 4,
+      "database_counts_before_restart": {
+        "sessions": 1,
+        "runs": 5,
+        "orders": 1,
+        "model_events": 0,
+        "tool_events": 0,
+        "nonterminal_runs": 0
+      }
+    },
+    {
+      "name": "same_token_state_and_order_after_app_restart",
+      "passed": true,
+      "baseline": {
+        "trip_sha256": "f61ca8e96f70d34366435cea37c125c2305fcb16a9cfa378f9af935a62c41f78",
+        "state_version": 4,
+        "status": "BOOKED_DEMO",
+        "orders_sha256": "8b1516d72e99b2598fb9c64d243c083d325156942f6d47c6b44209a4e895b623",
+        "order_id": "f677e68d-6e24-4c36-a922-a337fd588d27"
+      },
+      "after": {
+        "trip_sha256": "f61ca8e96f70d34366435cea37c125c2305fcb16a9cfa378f9af935a62c41f78",
+        "state_version": 4,
+        "status": "BOOKED_DEMO",
+        "orders_sha256": "8b1516d72e99b2598fb9c64d243c083d325156942f6d47c6b44209a4e895b623",
+        "order_id": "f677e68d-6e24-4c36-a922-a337fd588d27"
+      },
+      "database_counts_after_restart": {
+        "sessions": 1,
+        "runs": 5,
+        "orders": 1,
+        "model_events": 0,
+        "tool_events": 0,
+        "nonterminal_runs": 0
+      },
+      "same_token_authorized": true,
+      "exact_confirm_after_restart_same_order": true,
+      "audited_events": 21,
+      "external_call_events": 0
+    }
+  ],
+  "scope": "fresh_committed_archive_isolated_docker_typed_duration_legmode_demo",
+  "personal_env_or_keys_read": false,
+  "supplier_booking": false,
+  "frontend_ux_qualified": false,
+  "permanent_id": "HARNESS-007-COLDSTART-FINAL-20261027-001",
+  "limitations": [
+    "Не проверяет LLM/NLU, реальные API и supplier booking.",
+    "DEMO reprice синтетический; 3 варианта не являются рыночным ранжированием.",
+    "Проверен один Docker/Linux engine и один app restart; не все машины жюри."
+  ],
+  "attempt": 1,
+  "runner_sha256": "220226a8230d8ba62503f4ad3179e404fbbb82d0d4ea6b671d2b6b9b08ace523",
+  "reference_fx_enabled": false,
+  "all_model_caps": 0,
+  "source_working_tree_copied": false,
+  "old_identity_before": {
+    "containers": {
+      "503688e38779": {
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "pid": 599,
+        "started_at": "2026-10-27T06:11:45.590815106Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "project": "otravel",
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "1819611d2a68": {
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "pid": 598,
+        "started_at": "2026-10-27T06:11:45.592022469Z",
+        "ports": {},
+        "project": "otravel",
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "protected_listeners": {
+      "8080": [],
+      "8081": [
+        {
+          "pid": 648,
+          "start_ticks": 722818,
+          "cwd": "/",
+          "exe": "/usr/bin/docker-proxy",
+          "argv_sha256": "e3af7dfe134318f3770ea5a7927a4838a3372d7d940b4293374a4eaed898d1d4"
+        }
+      ],
+      "8083": [],
+      "8084": [
+        {
+          "pid": 116015,
+          "start_ticks": 1465019,
+          "cwd": "/home/aegml/projects/otravel-after80-20261026",
+          "exe": "/usr/bin/python3.12",
+          "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+        }
+      ]
+    }
+  },
+  "engine_id": "7286b49d-87ad-4ae3-a753-2400a6c6b651",
+  "stage": "own_cleanup_preserve_volume",
+  "source": {
+    "commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+    "tree": "f6fe09601bb42f11a02623841f3bf20df04dbc74",
+    "archive_sha256": "c405a29dd0f41c53526c79fd6f50b012f156d95b0fbde201e2822e7ac6a21cd1",
+    "manifest_sha256": "54440b61010a3148677bcf932dd9481a64ba1dcdb7eaae60eadc15fa52f66a36",
+    "files": 601,
+    "context": "/home/aegml/checks/prefrontend-coldstart-final-20261027/396dd551403f/source"
+  },
+  "build": {
+    "exit_code": 0,
+    "seconds": 34.496,
+    "single_compose_up_build_command": true,
+    "cached_layers_allowed": true,
+    "image_tag": "otravel-prefrontend-final:396dd551403f"
+  },
+  "owned_containers": {
+    "app": "919963fdde4c5a3c7d576a6613373d3b2b722b0852c3d9bcc1b8fe0efd0caa51",
+    "db": "b8567bed8e1be9473791f2e2e4e284d086834dd203c7983f183b0ea5b3deabbc"
+  },
+  "images": {
+    "app": "sha256:ce1257690f854267ec08e7a1193d8aab8a1c5c588a5990b340a2d1b283c95b07",
+    "postgres": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe"
+  },
+  "local_http_requests": 38,
+  "model_calls": 0,
+  "supplier_tool_calls": 0,
+  "supplier_orders": 0,
+  "exported_examples": {
+    "path": "docs/examples/prefrontend-coldstart-final-20261027.json",
+    "sha256": "4e7de3c1f348e7e24c3b366e0ad60970a11bfa0c745a07f5cf5c341a93be31d0",
+    "tokens_headers_owner_hashes_idempotency_values_omitted": true
+  },
+  "cleanup": {
+    "own_project_down": true,
+    "volumes_deleted": false,
+    "own_pg_volume_retained": true,
+    "own_pg_volume_present": true,
+    "own_image_retained": true,
+    "other_projects_touched": false
+  },
+  "old_identity_after": {
+    "containers": {
+      "503688e38779": {
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "pid": 599,
+        "started_at": "2026-10-27T06:11:45.590815106Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "project": "otravel",
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "1819611d2a68": {
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "pid": 598,
+        "started_at": "2026-10-27T06:11:45.592022469Z",
+        "ports": {},
+        "project": "otravel",
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "protected_listeners": {
+      "8080": [],
+      "8081": [
+        {
+          "pid": 648,
+          "start_ticks": 722818,
+          "cwd": "/",
+          "exe": "/usr/bin/docker-proxy",
+          "argv_sha256": "e3af7dfe134318f3770ea5a7927a4838a3372d7d940b4293374a4eaed898d1d4"
+        }
+      ],
+      "8083": [],
+      "8084": [
+        {
+          "pid": 116015,
+          "start_ticks": 1465019,
+          "cwd": "/home/aegml/projects/otravel-after80-20261026",
+          "exe": "/usr/bin/python3.12",
+          "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+        }
+      ]
+    }
+  },
+  "historical_evidence_unchanged": true,
+  "finished_at_utc": "2026-10-27T08:23:16.018201+00:00",
+  "windows_protected_listener_verification": {
+    "ports": [
+      8080,
+      8081,
+      8083,
+      8084
+    ],
+    "unchanged": true,
+    "listener_count": 3,
+    "before_sha256": "b8c43edc16e5740428916bcd30add48d989337588c969755a98bff1b2bb65a4f",
+    "after_sha256": "b8c43edc16e5740428916bcd30add48d989337588c969755a98bff1b2bb65a4f",
+    "identity_fields": [
+      "address",
+      "port",
+      "pid",
+      "start_time_utc",
+      "start_identity_basis",
+      "exe",
+      "argv_sha256"
+    ],
+    "method": "Read-only Windows Get-NetTCPConnection/process identity before and after the single Docker run; no process/service mutation.",
+    "preparation_note": "Initial Windows v1 snapshot encountered unavailable start-time metadata and is retained as partial preparation evidence. The authoritative v2 capture was made before execution with a guarded SystemPID4 boot-identity fallback."
+  },
+  "windows_loopback_18089_free_after_cleanup": true,
+  "runner_phase_report_sha256": "621e72394c0b03b98aaebaa9a409cb9a402ef9c5e009e6cc5c50db4d2177a41e",
+  "postcleanup_port_verification": {
+    "port": 18089,
+    "windows_raw_loopback_bind_succeeded": true,
+    "wsl_subsequent_raw_loopback_bind_succeeded": true,
+    "wsl_active_listeners": 0,
+    "owned_containers_remaining": 0,
+    "initial_immediate_wsl_raw_bind": "EADDRINUSE",
+    "initial_cause": "UNKNOWN; no TIME_WAIT cause is claimed; subsequent read-only checks found no listener and both raw binds succeeded. No functional flow rerun was performed."
+  },
+  "finalization": "Host identity and post-cleanup checks added after the single runner completed; original runner-phase JSON remains preserved privately by SHA."
+}

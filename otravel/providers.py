@@ -283,6 +283,21 @@ class _HTTPGateway:
                     raise ProviderError('OFFER_NOT_CONFIRMED',
                         'Поставщик не подтвердил цену или наличие выбранного тарифа. Обновите варианты.',
                         False, provider, {'http_status': status, 'business_code': 2001, 'refresh_required': True})
+            groq_too_large = (status == 413 and provider == "groq" and method == "POST"
+                              and url == "https://api.groq.com/openai/v1/chat/completions")
+            if groq_too_large:
+                try:
+                    error_body = response.json() if len(response.content) <= 1_000_000 else None
+                except (ValueError, UnicodeError):
+                    error_body = None
+                # This parser returns bounded counters/enums only. A token
+                # window is retained only when explicitly stated in the body;
+                # neither HTTP413 nor a token header proves TPM/TPD exhaustion.
+                facts = groq_rate_facts(response.headers, error_body)
+                if facts:
+                    details["rate_limits"] = facts
+                    if "retry_after_seconds" in facts:
+                        details["retry_after_seconds"] = facts["retry_after_seconds"]
             if status == 429:
                 if provider == "groq" and url == "https://api.groq.com/openai/v1/chat/completions":
                     try:
@@ -320,7 +335,9 @@ class _HTTPGateway:
                     pass
             billing = public_rate_failure_fields(provider, details).get('failure_kind') == 'billing'
             message = ("Для этого аккаунта у провайдера нет доступного API-ресурса или баланса." if billing else
-                       "Провайдер ограничил запросы (HTTP 429)." if status == 429 else "Провайдер отклонил запрос.")
+                       "Провайдер ограничил запросы (HTTP 429)." if status == 429 else
+                       "Запрос к Groq слишком большой (HTTP 413). Сократите передаваемый контекст и повторите запрос."
+                       if groq_too_large else "Провайдер отклонил запрос.")
             raise ProviderError("RATE_LIMITED" if status == 429 else "HTTP_ERROR", message,
                                 (status == 429 or status >= 500) and not billing, provider, details)
         if len(response.content) > 5_000_000:
@@ -464,6 +481,21 @@ class LLMGateway(_HTTPGateway):
         self._request_metrics: ContextVar[dict | None] = ContextVar("otravel_request_metrics", default=None)
         self._response_usage: ContextVar[dict | None] = ContextVar("otravel_response_usage", default=None)
         self._structured_transport: ContextVar[dict | None] = ContextVar("otravel_structured_transport", default=None)
+        self._wire_request_metadata: ContextVar[dict | None] = ContextVar("otravel_wire_request_metadata", default=None)
+
+        async def capture_groq_wire_request(request):
+            metadata = self._wire_request_metadata.get()
+            if (not isinstance(metadata, dict) or request.method != "POST"
+                    or str(request.url) != "https://api.groq.com/openai/v1/chat/completions"):
+                return
+            try:
+                body = request.content
+            except httpx.RequestNotRead:
+                return  # Never consume/rewrite a streaming body for diagnostics.
+            metadata["wire_request_body_bytes"] = len(body)
+            metadata["wire_request_body_sha256"] = hashlib.sha256(body).hexdigest()
+
+        self.client.event_hooks["request"].append(capture_groq_wire_request)
 
     def request_metrics_for_current_call(self) -> dict | None:
         return self._request_metrics.get()
@@ -479,10 +511,21 @@ class LLMGateway(_HTTPGateway):
         return metadata
 
     async def _request(self, provider: str, method: str, url: str, **kwargs: Any) -> dict:
+        payload = kwargs.get("json")
+        response_format = payload.get("response_format") if isinstance(payload, dict) else None
+        transport = self._structured_transport.get()
+        capture = (transport if provider == "groq" and method == "POST"
+                   and url == "https://api.groq.com/openai/v1/chat/completions"
+                   and isinstance(response_format, dict) and response_format.get("type") == "json_schema"
+                   and isinstance(transport, dict)
+                   and transport.get("format") in {"groq_strict_operations_v1", "groq_strict_readonly_v1"} else None)
+        token = self._wire_request_metadata.set(capture)
         try:
             body = await asyncio.wait_for(super()._request(provider, method, url, **kwargs), self.wall_timeout)
         except asyncio.TimeoutError:
             raise ProviderError("REQUEST_TIMEOUT", "Превышено общее время ответа LLM.", True, provider) from None
+        finally:
+            self._wire_request_metadata.reset(token)
         # Generation is already consumed even if its content/finish reason or
         # operation schema fails below. Capture counts before those checks.
         self._response_usage.set(usage_counts(provider, body) or None)
@@ -499,9 +542,16 @@ class LLMGateway(_HTTPGateway):
             _fail("Неизвестная серверная роль модели.", provider, "CONFIG_BLOCKED")
         if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
+        context_compression = None
+        visible_context = safe_model_context({key: value for key, value in context.items()
+            if key not in {"__response_schema", "__response_mode"}})
+        compact_flag = _setting(self.settings, "GROQ_STRUCTURED_TRANSPORT_ENABLED", False)
+        if provider == "groq" and mode is None and (compact_flag is True
+                or isinstance(compact_flag, str) and compact_flag.lower() in {"true", "1", "yes"}):
+            from .groq_context import compact_operation_guide
+            visible_context, context_compression = compact_operation_guide(visible_context)
         try:
-            prompt = json.dumps(safe_model_context({key: value for key, value in context.items()
-                if key not in {"__response_schema", "__response_mode"}}), ensure_ascii=False, allow_nan=False,
+            prompt = json.dumps(visible_context, ensure_ascii=False, allow_nan=False,
                 separators=(",", ":"))
         except (TypeError, ValueError):
             _fail("Контекст LLM должен быть JSON-совместимым.", provider)
@@ -620,7 +670,8 @@ class LLMGateway(_HTTPGateway):
                 self._structured_transport.set({"format": "groq_strict_" + groq_transport_role + "_v1",
                     "wire_schema_sha256": hashlib.sha256(encoded_schema).hexdigest(),
                     "wire_schema_utf8_bytes": len(encoded_schema),
-                    "validated_output_representation": "decoded_canonical_contract"})
+                    "validated_output_representation": "decoded_canonical_contract",
+                    **({"context_compression": context_compression} if context_compression is not None else {})})
                 wire_format = {"type": "json_schema", "json_schema": {
                     "name": "otravel_" + groq_transport_role + "_v1", "strict": True, "schema": wire_schema}}
             # JSON mode is requested explicitly; the supplied per-trip schema

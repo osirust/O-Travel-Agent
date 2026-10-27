@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import re
+from copy import deepcopy
 from time import perf_counter
 from typing import Any, Literal
 
@@ -138,6 +139,20 @@ OPERATION_GUIDE = {
 
 def _problem(code: str, message: str, retryable: bool = False) -> dict:
     return {"code": code, "message": message, "retryable": retryable}
+
+
+def _distinct_plan_batches(batches: list[dict]) -> list[dict]:
+    """Keep the newest exact DTO duplicate, without merging changed prices/IDs."""
+    seen, result = set(), []
+    for batch in batches:
+        if isinstance(batch, dict) and set(batch) == {"run_id", "plans"} and isinstance(batch["plans"], list):
+            signature = json.dumps(batch["plans"], ensure_ascii=False, sort_keys=True,
+                separators=(",", ":"), allow_nan=False)
+            if signature in seen:
+                continue
+            seen.add(signature)
+        result.append(deepcopy(batch))
+    return result
 
 
 def operation_conflicts(state: TripState, operations: list[Operation]) -> list[str]:
@@ -466,10 +481,12 @@ class Harness:
                 shown.append({"run_id": prior_id, "plans": [{"plan_id": plan["plan_id"], "state_version": plan["state_version"], "total_minor": plan["total_minor"], "currency": plan["currency"], "offers": [{key: value for key, value in offer.items() if key in offer_fields} for offer in plan["offers"]]} for plan in plans[:3]]})
             if len(shown) >= 2:
                 break
-        history = [{"role": message["role"], "text": message["text"]} for message in preceding if not message["text"].startswith(TYPED_PREFIX)][-12:]
+        history_rows = [message for message in preceding if not message["text"].startswith(TYPED_PREFIX)][-12:]
+        history = [{"role": message["role"], "text": message["text"]} for message in history_rows
+            if message["id"] != run["input_message_id"]]
         guide = {key: value for key, value in OPERATION_GUIDE.items() if key not in {"supported_operations", "room_shape", "known_geographic_cities"}}
         guide["schema_authoritative"] = "Точные типы операций, поля value и допустимые ID заданы обязательной JSON Schema в system; не придумывай другие."
-        context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": shown, "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": guide}
+        context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": _distinct_plan_batches(shown), "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": guide}
         context["current_selected_plan"] = await self._selection_reference(session)
         archived = await plan_history(self.store, session["session_id"], session["state_version"])
         context["first_shown_plan"] = archived["first_saved_plan"]

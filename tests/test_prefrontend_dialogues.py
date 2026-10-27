@@ -32,6 +32,12 @@ def frozen_r4():
     return json.loads(raw)
 
 
+def frozen_r5():
+    raw = (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r5.json').read_bytes()
+    assert runner.sha(raw) == '917574bbe7d3f36a40bc391270533fd4d6c04236d116caf44ea67aa7a764bff5'
+    return json.loads(raw)
+
+
 def group_ready_fixture():
     return json.loads((runner.ROOT / 'fixtures/regression/group-readiness-oracle-20261027.json').read_text(encoding='utf-8'))
 
@@ -100,7 +106,7 @@ def test_no_vacuous_allocation_or_simulation_or_ready_false_pass():
 def test_recipe_is_eight_whole_dialogues_with_explicit_natural_and_typed_scope():
     recipe = runner.load_recipe()
     cases = recipe["cases"]
-    assert len(cases) == 8 and sum(len(case["steps"]) for case in cases) == 98
+    assert len(cases) == 8 and sum(len(case["steps"]) for case in cases) == 99
     assert sum(step["kind"] in {"message", "queued_message", "resume"} for case in cases for step in case["steps"]) == 88
     assert [case["id"] for case in cases if case["initial_trip"]] == ["PF-TRANSPORT-05"]
     assert len(next(case for case in cases if case["id"] == "PF-DURATION-03")["steps"]) == 19
@@ -288,7 +294,7 @@ def test_r4_two_case_ten_call_dry_plan_never_touches_http_or_native(monkeypatch,
 
 
 def test_r5_only_appends_five_readiness_checks_to_compound_step_without_weakening_state_oracles():
-    old, new = frozen_r4(), runner.load_recipe()
+    old, new = frozen_r4(), frozen_r5()
     assert new['revision'] == 5 and new['supersedes_recipe']['sha256'] == runner.sha(
         (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r4.json').read_bytes())
     modified = []
@@ -680,3 +686,175 @@ def test_native_fence_checks_actual_profile_and_payzero_before_allowing_post(tmp
         with pytest.raises(runner.StopRun, match="NATIVE_FENCE_REFUSED_NO_WRITE"):
             fence.check()
     assert reads == ["/health", "/api/v1/providers/status"]
+
+
+def test_r6_adds_one_explicit_UI_preview_and_keeps_all_old_utterances_and_oracles():
+    old, new = frozen_r5(), runner.load_recipe()
+    assert new['revision'] == 6
+    assert new['supersedes_recipe']['sha256'] == '917574bbe7d3f36a40bc391270533fd4d6c04236d116caf44ea67aa7a764bff5'
+    assert len(new['cases']) == len(old['cases']) == 8
+    for before, after in zip(old['cases'], new['cases'], strict=True):
+        if before['id'] != 'PF-GROUP-04':
+            assert before == after
+            continue
+        assert before['initial_trip'] == after['initial_trip'] == {}
+        assert after['bootstrap_scope'] == 'fresh_natural_initial_with_explicit_public_UI_preview_selection'
+        assert {k: v for k, v in before.items() if k not in {'steps', 'bootstrap_scope'}} == {
+            k: v for k, v in after.items() if k not in {'steps', 'bootstrap_scope'}}
+        assert [s['id'] for s in after['steps']] == ['01', '02', '03', '03a', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        preserved = [s for s in after['steps'] if s['id'] != '03a']
+        for prior, current in zip(before['steps'], preserved, strict=True):
+            if prior['id'] != '04':
+                assert prior == current
+            else:
+                assert {k: v for k, v in prior.items() if k not in {'checks', 'requires'}} == {
+                    k: v for k, v in current.items() if k not in {'checks', 'requires'}}
+                assert current['checks'] == prior['checks'] + [
+                    {'op': 'hotel_capture', 'city': 'Стамбул', 'capture': 'selected_first_hotel_id'}]
+                assert current['requires'] == prior['requires'] + [
+                    {'op': 'preview_selection', 'city': 'Стамбул', 'capture': 'selected_first_hotel_id'}]
+        selection = after['steps'][3]
+        assert selection['kind'] == 'preview' and selection['model_policy'] == 'zero'
+        assert selection['requires'] == [{'op': 'plans_min', 'value': 2}]
+        assert selection['capture'] == {'name': 'selected_first_hotel_id', 'kind': 'preview_hotel',
+            'city': 'Стамбул', 'field': 'hotel_id'}
+        assert {'op': 'unchanged', 'path': '/trip'} in selection['checks']
+        assert {'op': 'order_count', 'value': 0} in selection['checks']
+
+
+def selected_group_steps():
+    case = next(c for c in runner.load_recipe()['cases'] if c['id'] == 'PF-GROUP-04')
+    return next(s for s in case['steps'] if s['id'] == '03a'), next(s for s in case['steps'] if s['id'] == '04')
+
+
+def selection_driver(*, response_status=200):
+    """Pure public-HTTP double, not actual API/Store or model acceptance."""
+    api = FakeAPI()
+    api.snapshot.update(state_version=5, waiting_reason=None, status='OPTIONS_READY')
+    api.snapshot['trip'].update(trip_id='own-trip', state_version=5)
+    instance, ctx, api, _ = driver(api)
+    ctx['plans'] = [
+        {'plan_id': 'shown-first', 'trip_id': 'own-trip', 'state_version': 5, 'offers': [
+            {'kind': 'hotel', 'city': 'Стамбул', 'hotel_id': 'first-shown-property', 'name': 'Shown first'},
+            {'kind': 'hotel', 'city': 'Анталья', 'hotel_id': 'first-antalya', 'name': 'Antalya first'}]},
+        {'plan_id': 'shown-second', 'trip_id': 'own-trip', 'state_version': 5, 'offers': [
+            {'kind': 'hotel', 'city': 'Стамбул', 'hotel_id': 'second-istanbul', 'name': 'Shown second'},
+            {'kind': 'hotel', 'city': 'Анталья', 'hotel_id': 'second-antalya', 'name': 'Antalya second'}]},
+    ]
+    quote = {'id': 'actual-own-preview', 'quote_id': 'actual-own-preview', 'session_id': 's',
+        'state_version': 5, 'status': 'active', 'plan': deepcopy(ctx['plans'][0])}
+    # Intentionally distinct to prove that the observer reads the successful
+    # preview response, never a displayed candidate or a default first-shown ID.
+    # This is a comparator control, not approval of supplier substitution.
+    quote['plan']['offers'][0]['hotel_id'] = 'actual-preview-property'
+    old_request = api.request
+
+    def request(method, path, token=None, body=None):
+        if method == 'POST' and path.endswith('/checkout/preview'):
+            api.posts.append((path, deepcopy(body)))
+            return {'status': response_status, 'body': deepcopy(quote)}
+        return old_request(method, path, token, body)
+
+    api.request = request
+    return instance, ctx, api, quote
+
+
+def test_r6_UI_preview_captures_owned_actual_response_without_model_or_purchase_consent():
+    instance, ctx, api, quote = selection_driver()
+    selection, _ = selected_group_steps()
+    result = instance.execute(ctx, selection)
+    assert result['status'] == 'PASS'
+    assert ctx['captures']['selected_first_hotel_id'] == quote['plan']['offers'][0]['hotel_id']
+    assert ctx['captures']['selected_first_hotel_id'] != ctx['plans'][0]['offers'][0]['hotel_id']
+    assert api.posts == [('/api/v1/sessions/s/checkout/preview', {'plan_id': 'shown-first', 'state_version': 5})]
+    assert instance.budget.models == 0 and not api.events
+    assert result['observation']['orders'] == []
+    assert result['observation']['after']['trip'] == result['observation']['before']['trip']
+    assert not any('confirmed' in body or 'idempotency_key' in body for _, body in api.posts)
+
+
+@pytest.mark.parametrize('tamper', [
+    'missing_quote', 'foreign_session', 'foreign_trip', 'stale_quote_version', 'boolean_quote_version',
+    'stale_plan_version', 'foreign_plan', 'inactive_quote', 'quote_alias_mismatch',
+    'missing_property', 'ambiguous_property', 'empty_property', 'stale_shown_plan', 'foreign_shown_trip',
+])
+def test_r6_preview_capture_rejects_unowned_stale_missing_or_ambiguous_selection(tamper):
+    instance, ctx, api, quote = selection_driver()
+    selection, compound = selected_group_steps()
+    if tamper == 'missing_quote':
+        quote.clear()
+    elif tamper == 'foreign_session':
+        quote['session_id'] = 'someone-else'
+    elif tamper == 'foreign_trip':
+        quote['plan']['trip_id'] = 'someone-else'
+    elif tamper == 'stale_quote_version':
+        quote['state_version'] = 4
+    elif tamper == 'boolean_quote_version':
+        quote['state_version'] = True
+    elif tamper == 'stale_plan_version':
+        quote['plan']['state_version'] = 4
+    elif tamper == 'foreign_plan':
+        quote['plan']['plan_id'] = 'shown-second'
+    elif tamper == 'inactive_quote':
+        quote['status'] = 'expired'
+    elif tamper == 'quote_alias_mismatch':
+        quote['id'] = 'another-quote'
+    elif tamper == 'missing_property':
+        quote['plan']['offers'][0].pop('hotel_id')
+    elif tamper == 'ambiguous_property':
+        quote['plan']['offers'].append(deepcopy(quote['plan']['offers'][0]))
+    elif tamper == 'empty_property':
+        quote['plan']['offers'][0]['hotel_id'] = ''
+    elif tamper == 'stale_shown_plan':
+        ctx['plans'][0]['state_version'] = 4
+    else:
+        ctx['plans'][0]['trip_id'] = 'someone-else'
+    ctx['captures']['selected_first_hotel_id'] = 'stale-capture-must-not-survive'
+    result = instance.execute(ctx, selection)
+    assert result['status'] != 'PASS'
+    assert 'selected_first_hotel_id' not in ctx['captures']
+    assert result['observation']['capture_error'] == 'NO_OWN_CURRENT_PREVIEW_HOTEL_SELECTION'
+    posts = len(api.posts)
+    with pytest.raises(runner.NotReached, match='PUBLIC_CONVERSATION_PREREQUISITE_NOT_REACHED'):
+        instance.execute(ctx, compound)
+    assert len(api.posts) == posts and instance.budget.models == 0
+
+
+def test_r6_preview_failure_cannot_reuse_shown_or_old_selected_property():
+    instance, ctx, api, _ = selection_driver(response_status=409)
+    ctx['captures']['selected_first_hotel_id'] = 'stale-capture'
+    selection, compound = selected_group_steps()
+    result = instance.execute(ctx, selection)
+    assert result['status'] == 'FAIL' and 'selected_first_hotel_id' not in ctx['captures']
+    with pytest.raises(runner.NotReached):
+        instance.execute(ctx, compound)
+    assert len(api.posts) == 1
+
+
+def test_r6_T4_keep_is_bound_to_preview_property_and_not_any_first_shown_hotel():
+    instance, ctx, _api, _ = selection_driver()
+    selection, compound = selected_group_steps()
+    assert instance.execute(ctx, selection)['status'] == 'PASS'
+    keep = compound['checks'][-1]
+    row = obs()
+    row['captures'] = deepcopy(ctx['captures'])
+    row['after']['trip']['stays'] = [{'city': 'Стамбул', 'hotel_id': ctx['captures']['selected_first_hotel_id']}]
+    assert runner.grade([keep], row)[0]['status'] == 'PASS'
+    row['after']['trip']['stays'][0]['hotel_id'] = ctx['plans'][0]['offers'][0]['hotel_id']
+    assert runner.grade([keep], row)[0]['status'] == 'FAIL'
+    row['after']['trip']['stays'][0]['hotel_id'] = None
+    assert runner.grade([keep], row)[0]['status'] == 'FAIL'
+
+
+def test_r6_gpt120_dry_plan_labels_UI_choice_without_HTTP_native_or_output(monkeypatch, capsys):
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError('R6 dry plan touched a runtime surface')
+    monkeypatch.setattr(runner, 'LocalHTTP', forbidden)
+    monkeypatch.setattr(runner.NativeFence, 'check', forbidden)
+    monkeypatch.setattr(runner, 'private_json', forbidden)
+    assert runner.main(['--llm-profile', 'groq-gptoss120', '--case-id', 'PF-GROUP-04', '--max-model-calls', '6']) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result['steps'] == 13 and result['language_messages'] == 12
+    assert result['bootstrap_cases'] == []
+    assert result['bootstrap_scopes'] == {'PF-GROUP-04': 'fresh_natural_initial_with_explicit_public_UI_preview_selection'}
+    assert result['default_dry_run_http_calls'] == 0
