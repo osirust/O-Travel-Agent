@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ChevronRight, Info, LoaderCircle, Pause, Play, RotateCcw, Send, Sparkles, Square, UsersRound, ArrowUpRight } from 'lucide-react';
+import { ChevronRight, Info, LoaderCircle, Pause, Play, Send, Sparkles, Square, UsersRound, ArrowUpRight } from 'lucide-react';
 import { session } from '../lib/session.js';
 import { mentionedCity, offerKind } from '../lib/travel.js';
 import { TravelImage } from './Ui.jsx';
@@ -37,6 +37,6 @@ export default function Chat({ data, draft, setDraft, onSend, onEdit, onSelect }
     {paused && <div className="pause-banner"><Pause size={16} /><span>Дополнения сохраняются. Продолжим по вашей команде.</span><button onClick={() => session.control('resume')}>Продолжить <Play size={12} /></button></div>}
     {modelUnavailable && <div className="limited-mode"><Info size={14} /><span>{suggestedCity ? `Вы упомянули город: ${suggestedCity}. Можно указать его в форме.` : 'Чат временно недоступен. Заполните детали поездки в форме.'}</span><button onClick={() => onEdit('route', suggestedCity)}>Открыть</button></div>}
     <form className="composer" onSubmit={send}><label className="sr-only" htmlFor="trip-message">Сообщение агенту</label><textarea id="trip-message" placeholder={modelUnavailable ? 'Напишите город или откройте форму' : 'Что изменим в поездке?'} maxLength={8000} rows={2} value={draft} onChange={event => setDraft(event.target.value)} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); send(event); } }} /><button type="submit" className="send-button" aria-label={modelUnavailable ? 'Открыть форму поездки' : 'Отправить сообщение'} disabled={!draft.trim() || !data.providers || data.sending || (data.busy && !paused)}>{data.sending ? <LoaderCircle size={20} className="spin" /> : <Send size={19} />}</button></form>
-    <div className="chat-controls"><button disabled={!data.snapshot} onClick={() => session.control(paused ? 'resume' : 'pause')}>{paused ? <Play size={13} /> : <Pause size={13} />}{paused ? 'Продолжить' : 'Пауза'}</button><button disabled={!data.snapshot || data.sending} onClick={() => session.control('undo')} title="Отменить последнюю правку"><RotateCcw size={14} /><span>Откатить</span></button>{data.busy && <button onClick={() => session.control('cancel')}><Square size={12} />Стоп</button>}</div>
+    {data.busy && <div className="chat-controls"><button onClick={() => session.control('cancel')}><Square size={12} />Стоп</button></div>}
   </aside>;
 }
