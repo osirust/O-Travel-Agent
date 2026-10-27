@@ -4,7 +4,7 @@
 
 ## Runtime и Git
 
-8084: source /home/aegml/projects/otravel-after80-20261026, DB otravel_zai_eval, WSL AegML-Hackathon на C:. Установлен commit 0bf71be3dc3b1b5eb000f71bd96fea8d2ab80a53, package SHA256 92bb70e62dbb7756c77e9815cd5fc67400ad54c677a58d774dfaab5476b37046. Groq openai/gpt-oss-120b, strict v2, low, 1 attempt; HYBRID LiteAPI + Duffel + SerpApi + CBR. Ветка backend/harness-foundation; оба private remote (origin/cv) указывают на 0bf71be. Новые изменения E после этого коммита ещё не установлены на 8084.
+8084: source /home/aegml/projects/otravel-after80-20261026, DB otravel_zai_eval, WSL AegML-Hackathon на C:. Установлен commit 0bf71be3dc3b1b5eb000f71bd96fea8d2ab80a53, package SHA256 92bb70e62dbb7756c77e9815cd5fc67400ad54c677a58d774dfaab5476b37046. Groq openai/gpt-oss-120b, strict v2, low, 1 attempt; HYBRID LiteAPI + Duffel + SerpApi + CBR. Кодовый checkpoint 177e33f9750534992fe5ba55a8cbc4826940208d отправлен в оба private remote (origin/cv), ветка backend/harness-foundation. Новый код ещё не установлен на 8084; experimental geography flag по умолчанию false.
 
 GigaChat 8085: локальный server/health доступен; OAuth/model inference не подтверждены из-за TLS-зависания api.giga.chat. VPN/Happ только предложения: настройки, маршруты, профили и системную сеть НЕ МЕНЯТЬ. Не отключать TLS verify. Новых проб подключения сейчас нет.
 
@@ -33,7 +33,7 @@ Root связал API/worker: country → city question → homonyms → explici
 2. Existing trusted CityRef identity не должна теряться в legacy intent_grounding при echo/поправке даты. Исправлено, 265 related PASS (20 новых pure cases). Перед supplier search добавлен exact fresh/current Catalog admission используемых refs; stale/changed/missing catalogue блокируют источники и сохраняют состояние.
 3. Model clarification после typo/NO_MATCH не должно заменяться старым вопросом maintenance. Нерешённая информационная география остаётся HOLD; не выбирать город по информационному вопросу.
 4. Общий controlled прогон завершён 6185 PASS. Далее отдельный bounded actual world conversation + travel APIs на отдельной DB. Один actual actor, фиксировать модель/source/wires/ошибки и частичное покрытие. Не выдавать availability/airport match за готовую корзину.
-5. Согласовать main matrix docs/research/harness-plan-review.md по новым доказательствам, secret scan, commit/push только относящегося кода; не git add -A. После зелёных проверок установить точный snapshot на 8084.
+5. Матрица обновлена, 177e33f отправлен в оба private repo; staged secret scan: 74 файла, 9 настроенных ключей и их кодировки, 0 совпадений/приватных JSON-полей. Git package aa3a7f5a1a3e83e336aca410e853aecb98a9cd19ce0190202ba34b5daaec67d0 отличается от проверенного E только нормализацией CRLF семи Python-файлов; pinned CLDR bytes точны. Следующий шаг: bounded actual world conversation на точном отдельном snapshot, затем относящийся rollout 8084. Старые чужие untracked/verification edits не включены.
 
 ## Ограничения
 
