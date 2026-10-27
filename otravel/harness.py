@@ -82,9 +82,10 @@ class ModelResult(BaseModel):
     destination_request: dict[str, Any] | None = Field(default=None, exclude=True)
     operation_normalizations: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
     pending_context: dict[str, Any] | None = Field(default=None, exclude=True)
-    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field", "date_proposal", "duration_proposal", "duration_days", "leg_mode_proposal"]] = Field(default_factory=list, max_length=9, exclude=True)
+    pending_context_clear: list[Literal["proposed_destination", "confirmation_required", "suggested_cities", "contextual_correction", "proposal_field", "date_proposal", "duration_proposal", "duration_days", "leg_mode_proposal", "geo_destination"]] = Field(default_factory=list, max_length=10, exclude=True)
     response_source: str = Field(default="llm", exclude=True)
     server_questions: list[str] = Field(default_factory=list, exclude=True)
+    geo_resolution: dict[str, Any] | None = Field(default=None, exclude=True)
 
 
 OPERATION_GUIDE = {
@@ -487,6 +488,8 @@ class Harness:
         history = [{"role": message["role"], "text": message["text"]} for message in history_rows
             if message["id"] != run["input_message_id"]]
         guide = {key: value for key, value in OPERATION_GUIDE.items() if key not in {"supported_operations", "room_shape", "known_geographic_cities"}}
+        from .provider_cities import available_search_cities
+        guide["supported_cities"] = list(available_search_cities(session["state"]))
         guide["schema_authoritative"] = "Точные типы операций, поля value и допустимые ID заданы обязательной JSON Schema в system; не придумывай другие."
         context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": _distinct_plan_batches(shown), "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": guide}
         context["current_selected_plan"] = await self._selection_reference(session)
@@ -948,6 +951,26 @@ class Harness:
         loader = getattr(self.store, "current_selected_plan", None)
         return await loader(session["session_id"], session["state_version"]) if callable(loader) else None
 
+    async def _recent_country_topic(self, session: dict, run: dict) -> dict | None:
+        from .conversation_followup import last_owned_country_topic
+
+        if any(session["state"].get(key) for key in (
+                "origin", "budget", "travelers", "groups", "stays", "legs", "constraints", "preferences")):
+            return None
+        messages = await self.store.list_messages(session["session_id"])
+        current = next((message for message in messages if message["id"] == run["input_message_id"]), None)
+        if current is None:
+            return None
+        prior = next((message for message in reversed(messages) if message["role"] == "assistant"
+            and message["sequence"] < current["sequence"]), None)
+        if not prior or not prior.get("run_id"):
+            return None
+        saved = await self.store.get_run(prior["run_id"])
+        if (saved.get("session_id") != session["session_id"] or saved.get("status") != "completed"
+                or (saved.get("result") or {}).get("state_version") != session["state_version"]):
+            return None
+        return last_owned_country_topic((saved.get("result") or {}).get("result"))
+
     async def _readonly_context(self, session: dict, run: dict) -> dict:
         from .answering import READONLY_MODE, READONLY_SCHEMA, facts_projection
 
@@ -988,6 +1011,7 @@ class Harness:
         from .trip_answers import classify_saved_question, render_saved_answer
         from .greetings import canonical_greeting
         from .country_intake import literal_country_wish
+        from .conversation_followup import followup_kind
 
         greeting = canonical_greeting(run["input_text"])
         if greeting is not None:
@@ -1008,6 +1032,53 @@ class Harness:
                 speech_act="CHANGE", response_source="contextual_slot",
                 destination_request=wish["requested_destination"],
                 pending_context={"requested_destination":wish["requested_destination"]}), None
+
+        from .geo_dialogue import resolve_geo_destination
+        geo = resolve_geo_destination(session["state"], session.get("pending_question"), run["input_text"])
+        if geo["handled"]:
+            await self._ensure_current_run(session, run)
+            question = geo.get("question")
+            return ModelResult(operations=[Operation.model_validate(operation) for operation in geo["operations"]],
+                control={"action":"none"}, reply=question or geo.get("notice", "Направление сохранено."),
+                unknowns=[question] if question else [], server_questions=[question] if question else [], conflicts=[],
+                speech_act="CHANGE", response_source="canonical_destination_keep" if geo["action"] == "retain_unsupported_destination" else "contextual_slot",
+                pending_context=geo.get("pending_context"), pending_context_clear=geo.get("pending_context_clear", []),
+                geo_resolution=geo), None
+
+        followup = followup_kind(run["input_text"])
+        if followup is not None:
+            pending = session.get("pending_question")
+            if pending and session.get("waiting_reason") == "clarification":
+                pending_context = pending.get("context") or {}
+                requested = pending_context.get("requested_destination") or pending.get("requested_destination") or {}
+                if (followup == "help" or pending.get("field") == "destination.city"
+                        and requested.get("kind") == "country" and pending_context.get("confirmation_required") is not True
+                        or followup == "assent" and pending.get("field") == "search.guest_nationality"):
+                    reply = ("Да, помогу. " if followup == "help" else "Продолжим. ") + human_question(pending, session["state"], pending.get("context"))
+                    await self._ensure_current_run(session, run)
+                    return ModelResult(operations=[], control={"action":"none"}, reply=reply,
+                        unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+            elif not pending:
+                country = await self._recent_country_topic(session, run)
+                if country is not None:
+                    question = human_question({"field":"destination.city"}, session["state"], {"requested_destination":country})
+                    await self._ensure_current_run(session, run)
+                    return ModelResult(operations=[], control={"action":"none"}, reply=question,
+                        unknowns=[question], server_questions=[question], conflicts=[], speech_act="CHANGE",
+                        response_source="contextual_slot", destination_request=country,
+                        pending_context={"requested_destination":country}), None
+                if followup == "help":
+                    missing = [issue for issue in validate_trip(TripState.model_validate(session["state"])) if issue["code"].startswith("missing_")]
+                    await self._ensure_current_run(session, run)
+                    if missing:
+                        reply = "Да, помогу. " + human_question(missing[0], session["state"])
+                        binding = derive_pending_field([missing[0]], session["state"])
+                        return ModelResult(operations=[], control={"action":"none"}, reply=reply,
+                            unknowns=[reply], server_questions=[reply], conflicts=[], speech_act="CHANGE",
+                            response_source="contextual_slot", pending_context=binding), None
+                    reply = "Да, помогу. Что вы хотите уточнить или изменить в сохранённой поездке?"
+                    return ModelResult(operations=[], control={"action":"none"}, reply=reply,
+                        unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
 
         # A narrow, complete saved-fact question is not a reply to a date target.
         # The date resolver deliberately re-asks on any unrecognised selector;
@@ -1141,6 +1212,8 @@ class Harness:
         )
 
         session = await self.store.get_session(run["session_id"])
+        from .question_binding import repair_question_binding
+        session["pending_question"] = repair_question_binding(session.get("pending_question"), session["state"])
         version = session["state_version"]
         if session.get("waiting_reason") == "user_pause":
             raise Conflict("Работа поставлена на паузу.", "user_paused")
@@ -1148,6 +1221,7 @@ class Harness:
         new_state: TripState | None = None
         changes: list[dict] = []
         questions: list[str] = []
+        question_binding_proposal: dict | None = None
         optional_clarifications: list[dict] = []
         clarification_policy_notes: list[dict] = []
         model_question_renderings: dict[str, str] = {}
@@ -1199,6 +1273,7 @@ class Harness:
                 raise DomainError("invalid_command", "Неизвестная структурированная команда.")
         else:
             extracted, model_meta = await self._interpret(session, run)
+            question_binding_proposal = extracted.pending_context
             if (model_meta is not None and model_meta.get("response_role") == "readonly_answer_v1"
                     and extracted.response_source == "readonly_answer"):
                 result.update(no_changes=True, response_source="readonly_answer", llm=model_meta,
@@ -1214,6 +1289,27 @@ class Harness:
             # Explicit conflicts block the *entire* batch, including otherwise
             # valid edits. Unknown fields alone may retain unambiguous changes.
             conflicts = extracted.conflicts or operation_conflicts(state, extracted.operations)
+            if model_meta is None and extracted.response_source == "canonical_destination_keep":
+                if conflicts:
+                    raise DomainError("conflicting_operations", conflicts[0], conflicts)
+                geo = extracted.geo_resolution or {}
+                if geo.get("action") != "retain_unsupported_destination" or geo.get("search") is not False:
+                    raise DomainError("invalid_geo_resolution", "Решение о направлении не прошло проверку.")
+                candidate, changes, undo_meta = await self._apply_or_undo(session, state, extracted.operations)
+                post = geo.get("postconditions") or {}
+                stay = next((item for item in candidate.stays if item.id == post.get("target_id")), None)
+                if undo_meta is not None or stay is None or stay.city != post.get("city"):
+                    raise DomainError("invalid_geo_resolution", "Город в маршруте не совпадает с подтверждённым направлением.")
+                if changes:
+                    candidate.state_version = version + 1
+                await self._ensure_current_run(session, run)
+                await self.store.finish_run(run["run_id"], version,
+                    candidate.model_dump(mode="json") if changes else None, "TRIP_DRAFT", extracted.reply,
+                    pending_question=None, waiting_reason=None, changes=changes,
+                    result={"notice":extracted.reply, "plans":[], "geo_destination":post,
+                        "response_source":"canonical_destination_keep", "search_available":False,
+                        "supplier_search_performed":False, "model_calls":0})
+                return
             if model_meta is None and extracted.response_source == "canonical_saved_answer":
                 # Only the server's pre-model path can enter this branch. A
                 # model-supplied marker always has model_meta and grants no role.
@@ -1394,6 +1490,7 @@ class Harness:
                             domain_slot = derive_pending_field([issue], current)
                             if domain_slot["field"] is not None:
                                 rendered = human_question(issue, current, domain_slot)
+                                question_binding_proposal = None
                                 break
                         if rendered == human_question(None, current) and raw in model_question_renderings:
                             rendered = model_question_renderings[raw]
@@ -1408,6 +1505,7 @@ class Harness:
         if search and waiting_reason != "user_pause" and not questions:
             result = await self._search_trip(current, session=session, run=run)
             questions = result["questions"]
+            question_binding_proposal = None
             status = "OPTIONS_READY" if result["plans"] else "WAITING_USER" if questions else "TRIP_DRAFT"
             waiting_reason = "clarification" if questions else None
         elif not result and waiting_reason != "user_pause":
@@ -1415,6 +1513,7 @@ class Harness:
                 missing = [issue for issue in validate_trip(current) if issue["code"].startswith("missing_")]
                 if missing:
                     questions = [human_question(missing[0], current, clarification_metadata)]
+                    question_binding_proposal = None
                     detail = missing[0].get("details") or {}
                     if detail.get("traveler_id"):
                         clarification_metadata["traveler_id"] = detail["traveler_id"]
@@ -1508,11 +1607,11 @@ class Harness:
                     reply += "\n\n" + explanation["text"]
         pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions else None
         if pending is not None and not preserve_pending:
-            if not run["input_text"].startswith(TYPED_PREFIX) and extracted.pending_context and extracted.pending_context.get("field"):
-                binding = {"field": extracted.pending_context["field"], "target_id": extracted.pending_context.get("target_id")}
-            else:
-                binding = derive_pending_field([{**clarification_metadata, "text": question} for question in questions], current)
+            from .question_binding import final_question_binding
+            binding = final_question_binding(questions, current, clarification_metadata, question_binding_proposal)
             date_packet = clarification_metadata.get("date_proposal")
+            if binding.get("field") != "destination.city":
+                clarification_metadata.pop("geo_destination", None)
             if binding.get("field") != "leg.mode":
                 clarification_metadata.pop("leg_mode_proposal", None)
             if (binding.get("field") not in {"stay.check_in", "stay.check_out"}

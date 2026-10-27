@@ -6,22 +6,20 @@ marked deterministic DEMO alternative. There is no Cartesian basket search.
 """
 from __future__ import annotations
 
+import inspect
+import json
 from copy import deepcopy
 from datetime import datetime, timezone
 from hashlib import sha256
-import inspect
-import json
 from typing import Any, Callable
 
-from .domain import CITIES, TripState, validate_trip
+from .domain import TripState, validate_trip
+from .fx import FxUnavailable, convert_minor
 from .inventory import DemoInventory, _allocation
 from .planning import assemble_plan, compare_plans
+from .provider_cities import available_search_cities, flight_iata
 from .providers import ProviderError
-from .fx import FxUnavailable, convert_minor
 
-
-_IATA = {"Москва": "MOW", "Санкт-Петербург": "LED", "Сочи": "AER", "Казань": "KZN",
-         "Стамбул": "IST", "Анталья": "AYT", "Дубай": "DXB"}
 _TOTALS = {"hotel": {"PROVIDER_ROOMS_STAY_TOTAL", "INDICATIVE_STAY_TOTAL", "PROVIDER_DISPLAY_RATE_TOTAL", "COMPONENT_TOTAL"},
            "flight": {"GROUP_ITINERARY_TOTAL", "INDICATIVE_ITINERARY_TOTAL", "COMPONENT_TOTAL"}}
 
@@ -124,8 +122,9 @@ class TripSearch:
         errors = [issue for issue in validate_trip(state) if not (issue["code"] == "unsupported_budget" and state.budget and state.budget.scope == "whole_trip")]
         if state.stays and policy.hotel_provider == "liteapi" and not policy.guest_nationality:
             errors.append(_issue("missing_nationality", "Гражданство какой страны использовать для поиска отеля?"))
+        live_cities = available_search_cities(state)
         outside = list(dict.fromkeys(city for city in [state.origin, *[stay.city for stay in state.stays],
-            *[city for leg in state.legs for city in (leg.origin, leg.destination)]] if city and city not in CITIES))
+            *[city for leg in state.legs for city in (leg.origin, leg.destination)]] if city and city not in live_cities))
         if outside:
             errors.append(_issue("unsupported_provider_geography", "Текущие поисковые адаптеры не покрывают: "
                 + ", ".join(outside) + ". Направление сохранено; предложения не выдумываются.", cities=outside))
@@ -346,7 +345,11 @@ class TripSearch:
                 unavailable(leg.id, "MISSING_DEPARTURE_DATE", "Для provider request нужна явная дата отправления.")
                 continue
             provider = policy.flight_provider
-            request = {"slices": [{"origin": _IATA[leg.origin], "destination": _IATA[leg.destination],
+            origin_iata, destination_iata = flight_iata(leg.origin), flight_iata(leg.destination)
+            if origin_iata is None or destination_iata is None:
+                unavailable(leg.id, "MISSING_PROVIDER_IATA", "Для этого участка нет подтверждённого кода аэропорта или города; маршрут не подменяется.")
+                continue
+            request = {"slices": [{"origin": origin_iata, "destination": destination_iata,
                                     "departure_date": leg.departure_date.isoformat()}], "currency": currency,
                        "passengers": [{"type": "adult"} if person.type == "adult" else {"age": person.age_on(leg.departure_date)} for person in state.travelers],
                        "adults": sum(person.type == "adult" for person in state.travelers),

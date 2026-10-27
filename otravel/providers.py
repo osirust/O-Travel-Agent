@@ -456,7 +456,9 @@ never put the country name into origin/stay.city. Catalogue coverage limits
 searching, not the ability to understand and discuss an intended destination.
 Always include speech_act: CHANGE for an explicit request or an answer to the
 current clarification, ASK for an informational question, PROPOSE for a tentative
-suggestion. 'Do you know Serbia?' is ASK with information_subject='Сербия', not a
+suggestion. This describes the USER's latest utterance, not your own reply:
+asking the user a clarification does not turn their travel request into ASK.
+'Do you know Serbia?' is ASK with information_subject='Сербия', not a
 request to start trip intake. A bare country answering a destination question is
 CHANGE. information_subject is a place name for ASK, otherwise null. Do not add
 trip operations or missing-booking questions to an informational ASK. The server
@@ -1021,14 +1023,13 @@ class TravelGateway(_HTTPGateway):
 
     async def resolve_hotels(self, city: str, limit: int = 3) -> list[dict]:
         """Small transient sandbox lookup for the supported cities; no catalogue import."""
-        from .domain import canonical_city
-        names = {"Москва": ("RU", "Moscow"), "Санкт-Петербург": ("RU", "St. Petersburg"),
-                 "Сочи": ("RU", "Sochi"), "Казань": ("RU", "Kazan"),
-                 "Стамбул": ("TR", "Istanbul"), "Анталья": ("TR", "Antalya"), "Дубай": ("AE", "Dubai")}
+        from .domain import CITIES, canonical_city
+        from .provider_cities import liteapi_city_query
         normalized = canonical_city(city)
         if type(limit) is not int or not 1 <= limit <= 10:
             _fail("Допустимо от 1 до 10 отелей в одном lookup.", "liteapi")
-        if normalized not in names:
+        location = liteapi_city_query(normalized)
+        if location is None:
             _fail("Город пока не поддержан справочным sandbox lookup.", "liteapi", "UNSUPPORTED_CITY")
         key = self._key("LITEAPI_API_KEY", "liteapi")
         if str(_setting(self.settings, "LITEAPI_MODE", "sandbox")).lower() != "sandbox" or not key.startswith(("sand_", "sandbox_")):
@@ -1040,12 +1041,17 @@ class TravelGateway(_HTTPGateway):
                 cached = self._travel_runtime.get_hotels(normalized, limit)
                 if cached is not None:
                     return cached
-                country, query = names[normalized]
+                country, query = location
                 body = await self._request("liteapi", "GET", "https://api.liteapi.travel/v3.0/data/hotels",
                     headers={"X-API-Key": key}, params={"countryCode": country, "cityName": query, "limit": limit})
                 rows = body.get("data")
                 if not isinstance(rows, list):
                     _fail("Нет списка гостиниц sandbox-каталога.", "liteapi", "INVALID_RESPONSE")
+                if normalized not in CITIES and any(not isinstance(row, dict)
+                        or row.get("country") != country or not isinstance(row.get("city"), str)
+                        or row["city"].casefold() != query.casefold() for row in rows[:limit]):
+                    _fail("Источник не подтвердил страну и город гостиниц нового направления.",
+                        "liteapi", "INVALID_RESPONSE")
                 result = [{"id": row["id"], "name": _safe_text(row.get("name", "")), "city": normalized}
                     for row in rows[:limit] if isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]]
                 self._travel_runtime.put_hotels(normalized, limit, result)

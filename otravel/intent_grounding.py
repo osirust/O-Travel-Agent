@@ -11,8 +11,9 @@ import re
 from copy import deepcopy
 from typing import Any
 
-from .domain import CITIES, DomainError, canonical_city
+from .domain import DomainError, canonical_city
 from .geography import _AMBIGUOUS, _COUNTRY_ALIASES, parse_destination
+from .provider_cities import available_search_cities
 from .route_intake import _FORMS as _BASE_FORMS
 
 
@@ -118,14 +119,15 @@ def resolve_country_destination_answer(before_state: Any, pending_context: dict 
             r"(?:,? город за меня не выбирай)?|город за меня не выбирай|город пока не (?:выбрал|выбрала|выбрали|выбирай))", tail):
         return unhandled
     code = _COUNTRIES[match["country"]]
-    place = parse_destination(code)["requested_destination"]
+    place = parse_destination(code, available_cities=available_search_cities(data))["requested_destination"]
     return {"handled": True, "operations": [],
             "question": f"Понял: страна «{place['name']}». Какой город в этой стране вы выбираете для поездки?",
             "pending_context": {"field": "destination.city", "target_id": target, "requested_destination": place},
             "pending_context_clear": list(_CLEAR_GEO)}
 
 
-def _declared_unknown_destination(text: str, operations: list[dict], *, outside_catalogue: bool = False) -> str | None:
+def _declared_unknown_destination(text: str, operations: list[dict], *, outside_catalogue: bool = False,
+                                  available_cities=None) -> str | None:
     """An unsupported literal command asks; it never authorizes a city edit.
 
     Only an exact current imperative, optionally conditional on catalogue
@@ -140,7 +142,8 @@ def _declared_unknown_destination(text: str, operations: list[dict], *, outside_
                 or not 1 <= len(name.strip()) <= 120):
             continue
         city = _city(name)
-        if (outside_catalogue and (city is None or city in CITIES)
+        coverage = available_search_cities({}) if available_cities is None else available_cities
+        if (outside_catalogue and (city is None or city in coverage)
                 or not outside_catalogue and (city is not None
                     or parse_destination(name)["requested_destination"]["kind"] != "unknown")):
             continue
@@ -494,6 +497,11 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     destination = next(iter(destinations)) if len(destinations) == 1 and not facts["alternative"] else None
     country = next(iter(countries)) if len(countries) == 1 else None
     target = _target(data, copied, facts, facts_pending) if destination else None
+    previous_destination = facts_pending.get('requested_destination')
+    serbian_spelling = (facts_pending.get('field') == 'destination.city'
+        and isinstance(previous_destination, dict) and previous_destination.get('country_code') == 'RS'
+        and destination == 'Белгород' and not countries and not facts['alternative']
+        and not re.search(r'\b(?:именно|точно)\s+(?:в\s+)?белгород\b', _key(text)))
 
     def note(code: str, **fields):
         meta["notes"].append({"code": code, **fields})
@@ -514,8 +522,9 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             "destination.city", {"requested_destination": parse_destination(unsupported)["requested_destination"]})
         meta["pending_context_clear"] = list(_CLEAR_GEO)
         note("declared_unknown_destination_requires_clarification", city=unsupported)
-    catalogue_limited = _declared_unknown_destination(text, copied, outside_catalogue=True)
-    if catalogue_limited:
+    catalogue_limited = _declared_unknown_destination(text, copied, outside_catalogue=True,
+        available_cities=available_search_cities(data))
+    if catalogue_limited and not serbian_spelling:
         place = parse_destination(catalogue_limited)["requested_destination"]
         country_name = parse_destination(place["country_code"])["requested_destination"]["name"]
         ask(f"{place['name']} — город в стране «{country_name}». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
@@ -541,13 +550,25 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             field, {"proposed_destination": place, "confirmation_required": True, "proposal_field": field}, proposal_target)
         meta["pending_context_clear"] = list(_CLEAR_GEO)
         note("geographic_typo_confirmation_required", field=field, original=typo["literal"], city=place["name"])
-    if declined_proposal:
+    if serbian_spelling:
+        blocked = True
+        place = parse_destination('Белград')['requested_destination']
+        ask('Белгород — город в России. В контексте Сербии вы, возможно, имеете в виду Белград. Выбираем Белград в Сербии?',
+            'destination.city', {'requested_destination': previous_destination, 'proposed_destination': place,
+            'confirmation_required': True, 'proposal_field': 'destination.city'}, target)
+        meta['pending_context_clear'] = list(_CLEAR_GEO)
+        note('serbian_city_spelling_requires_confirmation', original='Белгород', proposed='Белград')
+    elif declined_proposal:
         requested = pending.get("requested_destination")
         country_name = requested.get("name") if isinstance(requested, dict) and requested.get("kind") == "country" else None
         from .clarifications import human_question
         retained_city = (isinstance(requested, dict) and requested.get("kind") == "city"
                          and parse_destination(requested.get("name", ""))["requested_destination"] == requested)
-        ask(human_question("destination.city", data, {"requested_destination": requested}) if retained_city else
+        retained_question = human_question("destination.city", data, {"requested_destination": requested})
+        if retained_city and requested['name'] in available_search_cities(data):
+            country_label = parse_destination(requested['country_code'])['requested_destination']['name']
+            retained_question = f"Город «{requested['name']}», {country_label}, остаётся выбранным направлением. Продолжим уточнять условия для поиска?"
+        ask(retained_question if retained_city else
             f"Какой город в стране «{country_name}» вы выбираете для поездки?" if country_name else
             "Какой город назначения вы выбираете? Предложенный город отклонён.", "destination.city",
             {"requested_destination": requested} if isinstance(requested, dict) else None,
@@ -577,7 +598,8 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
         stale_choice = expected_country and expected_country != actual_country and not facts["replace"] and not (country == actual_country and facts["choice"])
         if mismatched_country or stale_choice:
             blocked = True
-            requested = parse_destination(country or expected_country)["requested_destination"]
+            requested = parse_destination(country or expected_country,
+                available_cities=available_search_cities(data))["requested_destination"]
             # An unconfirmed alternative in the same requested country does
             # not discard the user's already chosen (possibly unsupported)
             # city. A genuinely different explicit country still supersedes
@@ -600,14 +622,14 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             meta["pending_context"] = {**(meta["pending_context"] or {}), "requested_destination": place}
             meta["pending_context_clear"] = list(_CLEAR_GEO)
             meta["replace_geo_unknowns"] = True
-            if destination not in CITIES:
+            if destination not in available_search_cities(data):
                 country_name = parse_destination(actual_country)["requested_destination"]["name"]
                 ask(f"{destination} — город в стране «{country_name}». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
                     "destination.city", {"requested_destination": place}, target)
                 note("known_destination_outside_search_catalogue", city=destination)
     elif country and facts["current"]:
         blocked = True
-        place = parse_destination(country)["requested_destination"]
+        place = parse_destination(country, available_cities=available_search_cities(data))["requested_destination"]
         ask(f"Какой город в стране «{place['name']}» вы выбираете для поездки?", "destination.city", {"requested_destination": place})
         meta["pending_context_clear"] = list(_CLEAR_GEO)
     elif affirmative and pending.get("field") == "destination.city":

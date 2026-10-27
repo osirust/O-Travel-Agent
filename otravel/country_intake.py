@@ -12,6 +12,7 @@ from .budget_intent import _current_parts
 from .geography import _CITY_ALIASES, _COUNTRY_ALIASES, parse_destination
 from .intent_grounding import _CLEAR_GEO, _facts, _key
 from .money import _MARKER, _MONEY, _TOTAL_SCOPE, _VALUES, _number
+from .provider_cities import available_search_cities
 
 _COUNTRY_NOT_CITY = re.compile(
     r'\bcountry\s*[,;:]?\s*(?:and\s+)?not\s+(?:(?:a|an|bookable|supported)\s+)*city\b|'
@@ -133,7 +134,7 @@ def normalize_country_intake_clarification(before_state, operations, text, confl
         elif (value.get('type') != 'adult' or value.get('age') is not None
                 or value.get('birth_date') is not None or value.get('group_id') is not None):
             return copied, meta
-    location = parse_destination(next(iter(facts['country'])))
+    location = parse_destination(next(iter(facts['country'])), available_cities=available_search_cities(data))
     place = location['requested_destination']
     question = location['clarification']
     meta.update(handled=True, conflicts=[], unknowns=[question], server_questions=[question],
@@ -150,8 +151,10 @@ _WISH_COUNTRY = '|'.join(re.escape(name) for name in sorted(_COUNTRY_ALIASES, ke
 _WISH_RU = r'(?:(?:я|мы)\s+)?(?:(?:хочу|хотим)(?:\s+(?:поехать|полететь|отправиться))?|еду|едем|летим|лечу|поеду|поедем|поехать|полететь|отправиться)\s+(?:в|во)\s+'
 _WISH_EN = r'(?:(?:i|we)\s+)?(?:(?:want|would like)\s+to\s+(?:go to|travel to|visit)|go to|travel to|visit)\s+'
 _FULL_COUNTRY_WISH = re.compile(
+    rf'(?:(?P<hedge_before>наверное|наверно|пожалуй)\s*,?\s+)?'
     rf'(?:(?:{_WISH_RU}|{_WISH_EN})(?P<country>{_WISH_COUNTRY})|'
-    rf'(?:в|во)\s+(?P<postfix_country>{_WISH_COUNTRY})\s+(?:хочу|хотим))\s*[.!]*')
+    rf'(?:в|во)\s+(?P<postfix_country>{_WISH_COUNTRY})\s+(?:хочу|хотим))'
+    rf'(?:\s*,?\s+(?P<hedge_after>наверное|наверно|пожалуй))?\s*[.!]*')
 
 
 def literal_country_wish(before_state, text):
@@ -167,7 +170,11 @@ def literal_country_wish(before_state, text):
     match = _FULL_COUNTRY_WISH.fullmatch(_key(text))
     if match is None:
         return None
-    location = parse_destination(match['country'] or match['postfix_country'])
+    location = parse_destination(match['country'] or match['postfix_country'],
+        available_cities=available_search_cities(data))
     if location['requested_destination']['kind'] != 'country':
         return None
-    return {'requested_destination': location['requested_destination'], 'question': location['clarification']}
+    question = location['clarification']
+    if match['hedge_before'] or match['hedge_after']:
+        question = f"Пока рассматриваем страну «{location['requested_destination']['name']}». Какой город выбираем?"
+    return {'requested_destination': location['requested_destination'], 'question': question}

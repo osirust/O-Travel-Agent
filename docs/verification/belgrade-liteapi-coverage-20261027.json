@@ -1,0 +1,137 @@
+{
+  "status": "ACTUAL_SANDBOX_CITY_HOTEL_RATES_RECEIVED",
+  "source_commit": "5f4d0d8a582fe9bcd865da68f83fa1813f99151f",
+  "source_package_sha256": "eed0ad2dd123c4619f0a4c2681f0c501a5e6a0d8c733825958f5db356dc1bef7",
+  "wire_cap": 3,
+  "requests": [
+    {
+      "number": 1,
+      "method": "GET",
+      "endpoint": "/v3.0/data/cities",
+      "status": 200,
+      "latency_ms": 11730,
+      "response_sha256": "7946cf44481b31fc4157fa76183e3c099a63a4479a35f1d13fb0703b232902d3"
+    },
+    {
+      "number": 2,
+      "method": "GET",
+      "endpoint": "/v3.0/data/hotels",
+      "status": 200,
+      "latency_ms": 220,
+      "response_sha256": "e38426c13c61b34b9100218822ffd5c7a00a480ae13ab3ffeca914483f2ef501"
+    },
+    {
+      "number": 3,
+      "method": "POST",
+      "endpoint": "/v3.0/hotels/rates",
+      "status": 200,
+      "latency_ms": 2909,
+      "response_sha256": "b170960cce1a29c8d28aa12eff5f6d8a54fc2b3626525e120ab7c79b58c378d3"
+    }
+  ],
+  "real_models": 0,
+  "OAuth_calls": 0,
+  "prebook_book_pay": 0,
+  "DB_writes": 0,
+  "Native_or_profile_changes": 0,
+  "data_type": "SANDBOX",
+  "country": "RS",
+  "requested_city": "Belgrade",
+  "private_folder": "/home/aegml/checks/belgrade-liteapi-readonly-20261027-69412c67",
+  "started_at_utc": "2026-10-27T11:04:29.729678+00:00",
+  "city_dictionary": {
+    "rows": 672,
+    "exact_Belgrade_match": true,
+    "distinct_matching_labels": [
+      "Belgrade"
+    ]
+  },
+  "metadata_hotels": [
+    {
+      "hotel_id": "lpcc0bc",
+      "country": "RS",
+      "city": "Belgrade"
+    },
+    {
+      "hotel_id": "lp64167",
+      "country": "RS",
+      "city": "Belgrade"
+    },
+    {
+      "hotel_id": "lp71935",
+      "country": "RS",
+      "city": "Belgrade"
+    }
+  ],
+  "synthetic_rate_request": {
+    "checkin": "2026-11-10",
+    "checkout": "2026-11-13",
+    "currency": "RUB",
+    "guestNationality": "RU",
+    "occupancies": [
+      {
+        "adults": 1,
+        "children": []
+      }
+    ]
+  },
+  "normalized_rates": {
+    "count": 596,
+    "source_types": [
+      "SANDBOX"
+    ],
+    "currencies": [
+      "RUB"
+    ],
+    "hotel_ids": [
+      "lp64167",
+      "lp71935",
+      "lpcc0bc"
+    ],
+    "amount_minor_bounds": [
+      2942167,
+      10306864
+    ],
+    "initial_probe_provider_facts_field_present": false,
+    "evidence_fields": {
+      "allocation_verified": {
+        "True": 596
+      },
+      "capacity_verified": {
+        "True": 596
+      },
+      "mandatory_fees_known": {
+        "True": 249,
+        "False": 347
+      },
+      "fees_included": {
+        "True": 249,
+        "False": 347
+      },
+      "availability_verified": {
+        "False": 596
+      },
+      "supplier_verified": {
+        "False": 596
+      },
+      "ready_for_real_booking": {
+        "False": 596
+      },
+      "with_room_facts": 596
+    }
+  },
+  "actual_HTTP_requests": 3,
+  "finished_at_utc": "2026-10-27T11:04:44.761458+00:00",
+  "limitations": [
+    "A sandbox response does not establish production price/availability.",
+    "No prebook, supplier book, payment or user trip was created.",
+    "This does not establish Duffel BEG routing or a full grouped/Harness dialogue.",
+    "No shared city whitelist or DEMO catalogue was changed."
+  ],
+  "primary_sources": [
+    "https://docs.liteapi.travel/reference/get_data-cities",
+    "https://docs.liteapi.travel/reference/get_data-hotels",
+    "https://docs.liteapi.travel/reference/post_hotels-rates"
+  ],
+  "summary_correction": "Initial probe checked absent provider_facts key; actual normalized facts are allocation_verified/capacity_verified/room_facts. No additional HTTP."
+}

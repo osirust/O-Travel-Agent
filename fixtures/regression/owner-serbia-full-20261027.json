@@ -1,0 +1,1133 @@
+{
+  "format": "otravel.owner_full_dialogue.regression.v1",
+  "case_id": "OWNER-SERBIA-20261027",
+  "finding_id": "HARNESS-004-SERBIA-CONTINUITY-001",
+  "source": {
+    "path": ".local/evaluation/owner-serbia-20261027/dialogue-projection.json",
+    "sha256": "3f6d58ef911cc6f45353714e08da05d7e3b8dc739d77913164eb87fe8f4747fa",
+    "source_commit": "701da371fff15535ce2a2449e7b8a461f974482b",
+    "native_package_sha256": "d7d715c1ec628e34f0fcb863cec71d49dfbcdca80346c66b89ec0093a21d5d1a",
+    "turn_count": 12,
+    "model_calls": 7,
+    "tool_calls": 0,
+    "diagnostic_inference_calls": 0,
+    "diagnostic_database_writes": 0
+  },
+  "scope": "Immutable observed failure conversation plus case-specific development acceptance SPEC. No new model/API/Store replay; no original80/106 PASS claim.",
+  "identity_projection": "Only irrelevant trip/leg UUIDs and question IDs replaced with synthetic stable labels preserving every equality/reuse relation; exact user inputs/replies/versions/operations preserved. SourceSHA binds unmodified private projection.",
+  "observed_revisions": [
+    {
+      "state_version": 0,
+      "trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "owner-serbia-trip",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      }
+    },
+    {
+      "state_version": 1,
+      "trip": {
+        "legs": [
+          {
+            "id": "owner-leg-1",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Белгород",
+            "departure_date": "2026-10-28"
+          },
+          {
+            "id": "owner-leg-2",
+            "mode": "flight",
+            "origin": "Белгород",
+            "destination": "Москва",
+            "departure_date": "2026-11-04"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Белгород",
+            "rooms": [],
+            "check_in": "2026-10-28",
+            "hotel_id": null,
+            "check_out": "2026-11-04",
+            "requested_nights": 7
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "owner-serbia-trip",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      }
+    },
+    {
+      "state_version": 2,
+      "trip": {
+        "legs": [
+          {
+            "id": "owner-leg-1",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Белгород",
+            "departure_date": "2026-10-28"
+          },
+          {
+            "id": "owner-leg-2",
+            "mode": "flight",
+            "origin": "Белгород",
+            "destination": "Москва",
+            "departure_date": "2026-11-04"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Белгород",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ],
+            "check_in": "2026-10-28",
+            "hotel_id": null,
+            "check_out": "2026-11-04",
+            "requested_nights": 7
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "owner-serbia-trip",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 2
+      }
+    }
+  ],
+  "turns": [
+    {
+      "turn": 1,
+      "input": "Привет",
+      "input_sha256": "dd679c0b9fd408a04148aa7d30c9df393f67b7227f65693fffe0ed6d0f0ade59",
+      "created_at_utc": "2026-10-27T10:44:06.136979+00:00",
+      "observed": {
+        "reply": [
+          "Здравствуйте! Готов помочь с вашей поездкой."
+        ],
+        "based_version": 0,
+        "state_version": 0,
+        "run_status": "completed",
+        "session_status": "NEW",
+        "pending_question": null,
+        "waiting_reason": null,
+        "model_calls": 0,
+        "tool_calls": 0,
+        "event_types": [
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {},
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "greeting",
+        "requirements": [
+          "Reply to greeting without starting search or inventing a trip. Preserve trip, pending and source policy."
+        ],
+        "oracles": [
+          "trip_unchanged",
+          "no_tools",
+          "no_plans_or_hotel_claim"
+        ],
+        "observed_status": "PASS_NARROW_GREETING"
+      }
+    },
+    {
+      "turn": 2,
+      "input": "хочу в сербию наверное",
+      "input_sha256": "2076a810e32ae18f2f591125bddacf74c7235e66a17eb83bc2f3c573fa73dc4f",
+      "created_at_utc": "2026-10-27T10:44:16.104528+00:00",
+      "observed": {
+        "reply": [
+          "Да, Сербия — страна. Могу помочь обсудить маршрут и условия поездки; ваш вопрос сам по себе не меняет поездку."
+        ],
+        "based_version": 0,
+        "state_version": 0,
+        "run_status": "completed",
+        "session_status": "NEW",
+        "pending_question": null,
+        "waiting_reason": null,
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_EXTRACTION_VALIDATED",
+          "MODEL_OPERATIONS_CHECKED",
+          "MODEL_RESPONSE_RECEIVED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {
+        "validated": {
+          "reply": "В какой именно город в Сербии вы планируете поездку?",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [
+            "city_in_serbia"
+          ],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": "Сербия"
+        },
+        "checked": {
+          "reply": "В какой именно город в Сербии вы планируете поездку?",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": "Сербия"
+        }
+      },
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "tentative_country_travel_wish",
+        "requirements": [
+          "наверное makes the wish tentative, not a country-knowledge FAQ. Retain Serbia/RS as requested country and ask a human city question; do not choose a city or invent origin/people/room/budget."
+        ],
+        "oracles": [
+          "requested_country_RS",
+          "city_question_bound",
+          "no_specific_city_commit",
+          "no_tools"
+        ],
+        "observed_status": "FAIL_COUNTRY_WISH_REPLY_AND_PENDING_LOST"
+      }
+    },
+    {
+      "turn": 3,
+      "input": "давай",
+      "input_sha256": "7b976bfc9a73023a274b92d1748da0d73216fc62c9a4a89ac069523106be3717",
+      "created_at_utc": "2026-10-27T10:44:27.400333+00:00",
+      "observed": {
+        "reply": [
+          "Да, Сербия — страна. Могу помочь обсудить маршрут и условия поездки; ваш вопрос сам по себе не меняет поездку."
+        ],
+        "based_version": 0,
+        "state_version": 0,
+        "run_status": "completed",
+        "session_status": "NEW",
+        "pending_question": null,
+        "waiting_reason": null,
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_EXTRACTION_VALIDATED",
+          "MODEL_OPERATIONS_CHECKED",
+          "MODEL_RESPONSE_RECEIVED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {
+        "validated": {
+          "reply": "В какой город в Сербии вы хотели бы поехать?",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": "Сербия"
+        },
+        "checked": {
+          "reply": "В какой город в Сербии вы хотели бы поехать?",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": "Сербия"
+        }
+      },
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "assent_to_help_or_progress",
+        "requirements": [
+          "Resolve давай against the previous assistant offer/help and retained Serbia context. If a city is still unknown, ask that city question. It is not permission to choose Belgrade or change source/booking. Do not repeat the country-knowledge boilerplate."
+        ],
+        "oracles": [
+          "requested_country_RS",
+          "city_question_bound",
+          "no_specific_city_commit",
+          "no_tools"
+        ],
+        "observed_status": "FAIL_CONTEXTUAL_ASSENT_DID_NOT_PROGRESS"
+      }
+    },
+    {
+      "turn": 4,
+      "input": "ты поможешь или нет?",
+      "input_sha256": "15b85a4910a41a7d6494dc4aee00980bd014ef67d437f0939e7c2c36d89b9483",
+      "created_at_utc": "2026-10-27T10:44:46.225050+00:00",
+      "observed": {
+        "reply": [
+          "Из какого города вы отправляетесь? Сколько взрослых поедет в поездку? В какой город вы хотите поехать? Гражданство для гостиничного поиска не указано.\n\nПо сохранённым данным эта часть ответа не подтверждена. Нужен отдельный проверенный источник или уточнение вопроса."
+        ],
+        "based_version": 0,
+        "state_version": 0,
+        "run_status": "completed",
+        "session_status": "NEW",
+        "pending_question": null,
+        "waiting_reason": null,
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_EXTRACTION_VALIDATED",
+          "MODEL_OPERATIONS_CHECKED",
+          "MODEL_RESPONSE_RECEIVED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {
+        "validated": {
+          "reply": "missing,unknown",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        },
+        "checked": {
+          "reply": "missing,unknown",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        }
+      },
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "assistant_help_capability_question",
+        "requirements": [
+          "Affirm assistance and continue the retained Serbia request. Asking genuinely missing origin/party/city/nationality is allowed; those omissions are not themselves failures. Do not say assistance needs external factual verification or substitute an unconfirmed-answer footer."
+        ],
+        "oracles": [
+          "requested_country_RS",
+          "help_affirmed_without_unconfirmed_footer",
+          "no_tools"
+        ],
+        "observed_status": "FAIL_HELP_ANSWER_WITH_CONTEXT_LOST"
+      }
+    },
+    {
+      "turn": 5,
+      "input": "из москвы, я один взрослый и хочу в белгород в отель на неделю с 28 октября",
+      "input_sha256": "fb18ff3d7949951a7060dfd2e345750cf1a534af8f4b7dded4a2d9a25d9c6355",
+      "created_at_utc": "2026-10-27T10:45:59.105287+00:00",
+      "observed": {
+        "reply": [
+          "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. Белгород — город в стране «Россия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?"
+        ],
+        "based_version": 0,
+        "state_version": 1,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Белгород — город в стране «Россия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белгород",
+              "country_code": "RU"
+            }
+          },
+          "questions": [
+            "Белгород — город в стране «Россия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-1",
+          "state_version": 1,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белгород",
+            "country_code": "RU"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_EXTRACTION_VALIDATED",
+          "MODEL_OPERATIONS_CHECKED",
+          "MODEL_RESPONSE_RECEIVED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {
+        "validated": {
+          "reply": "Установлен выезд из Москвы, добавлен один взрослый путешественник и запланировано пребывание в Белгороде с 28 октября на 7 ночей.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              },
+              "target_id": null
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult",
+                "birth_date": null
+              },
+              "target_id": null
+            },
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Белгород",
+                "rooms": [],
+                "check_in": "2026-10-28",
+                "requested_nights": 7
+              },
+              "target_id": "new-stay-1"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        },
+        "checked": {
+          "reply": "Установлен выезд из Москвы, добавлен один взрослый путешественник и запланировано пребывание в Белгороде с 28 октября на 7 ночей.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [
+            "Белгород — город в стране «Россия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?"
+          ],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              },
+              "target_id": null
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult",
+                "birth_date": null
+              },
+              "target_id": null
+            },
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Белгород",
+                "rooms": [],
+                "check_in": "2026-10-28",
+                "requested_nights": 7
+              },
+              "target_id": "new-stay-1"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "original_normalizations": [
+        {
+          "city": "Белгород",
+          "code": "known_destination_outside_search_catalogue"
+        }
+      ],
+      "acceptance": {
+        "intent": "compound_origin_party_city_typo_dates_duration",
+        "requirements": [
+          "Retain origin Москва, exactly one explicitly named adult and check-in28October2026. No room count, nationality or numeric budget is supplied. Preserve prior Serbia intent: Белгород must be treated as contextual Belgrade/RS correction or an explicit Belgorod/RU-vs-Belgrade/RS question; never silently force Russia. Unsupported coverage must not invent a hotel, live price or availability."
+        ],
+        "oracles": [
+          "origin_Moscow_one_adult",
+          "no_guessed_room_before_explicit_count",
+          "no_unconfirmed_Russia_commit",
+          "no_plans_or_hotel_claim"
+        ],
+        "observed_status": "PARTIAL_INTAKE_PASS_BUT_COUNTRY_CONTEXT_FAIL",
+        "duration_policy": "The literal на неделю is retained. A new flow may ask whether7nights is intended; do not silently treat all day durations as nights. For a legacy repair of the already committed state, preserve28Oct–4Nov/requested_nights7 unless user explicitly changes it."
+      }
+    },
+    {
+      "turn": 6,
+      "input": "в белград хочу",
+      "input_sha256": "5c61ea01e4edf5561dafb62784f0e31a2914f3bbc51f5270df2a1b6c87b22a36",
+      "created_at_utc": "2026-10-27T10:46:33.115348+00:00",
+      "observed": {
+        "reply": [
+          "Город «Белград» находится в стране «Сербия». Ранее обсуждали страну «Россия». Меняем страну назначения на «Сербия» и выбираем этот город?"
+        ],
+        "based_version": 1,
+        "state_version": 1,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Город «Белград» находится в стране «Сербия». Ранее обсуждали страну «Россия». Меняем страну назначения на «Сербия» и выбираем этот город?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "proposal_field": "destination.city",
+            "proposed_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            },
+            "confirmation_required": true,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белгород",
+              "country_code": "RU"
+            }
+          },
+          "questions": [
+            "Город «Белград» находится в стране «Сербия». Ранее обсуждали страну «Россия». Меняем страну назначения на «Сербия» и выбираем этот город?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-2",
+          "state_version": 1,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белгород",
+            "country_code": "RU"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 0,
+        "tool_calls": 0,
+        "event_types": [
+          "CONTEXT_ANSWER_PROPOSED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {},
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "explicit_Belgrade_destination_correction",
+        "requirements": [
+          "в белград хочу resolves exact Belgrade/RS. With an already conflicting legacy Belgorod/RU canonical stay, one targeted country-change confirmation is acceptable and is not graded as a failure. In a corrected RS-only pending flow, retain Belgrade without inventing a Russia choice. Other saved facts stay intact."
+        ],
+        "oracles": [
+          "requested_or_proposed_Belgrade_RS",
+          "no_tools",
+          "no_plans_or_hotel_claim"
+        ],
+        "observed_status": "PASS_NARROW_LEGACY_COUNTRY_CONFIRMATION_SAFETY"
+      }
+    },
+    {
+      "turn": 7,
+      "input": "да",
+      "input_sha256": "cdc5ed90cb4b9a7540b24d1c45c23c851930c98b07b6885667114c9f95fb0a12",
+      "created_at_utc": "2026-10-27T10:46:37.441542+00:00",
+      "observed": {
+        "reply": [
+          "Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+        ],
+        "based_version": 1,
+        "state_version": 1,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          },
+          "questions": [
+            "Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-3",
+          "state_version": 1,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 0,
+        "tool_calls": 0,
+        "event_types": [
+          "CONTEXT_ANSWER_PROPOSED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {},
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "owned_country_city_confirmation",
+        "requirements": [
+          "First да answers the preceding single-purpose country/city change confirmation. Accept Belgrade/RS and clear the owned proposal. An active canonical stay/leg may no longer say Белгород while pending says Белград. Either keep an uncovered canonical draft for Belgrade or only a typed retained request; neither representation promises supplier coverage. Preserve all other explicit facts and the legacy date window."
+        ],
+        "oracles": [
+          "requested_country_RS",
+          "no_Belgorod_Belgrade_divergence",
+          "no_tools",
+          "no_plans_or_hotel_claim"
+        ],
+        "observed_status": "FAIL_CONFIRMED_PENDING_DIVERGES_FROM_CANONICAL_TRIP"
+      }
+    },
+    {
+      "turn": 8,
+      "input": "да",
+      "input_sha256": "cdc5ed90cb4b9a7540b24d1c45c23c851930c98b07b6885667114c9f95fb0a12",
+      "created_at_utc": "2026-10-27T10:46:49.770065+00:00",
+      "observed": {
+        "reply": [
+          "Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+        ],
+        "based_version": 1,
+        "state_version": 1,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          },
+          "questions": [
+            "Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-4",
+          "state_version": 1,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 0,
+        "tool_calls": 0,
+        "event_types": [
+          "CONTEXT_ANSWER_PROPOSED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {},
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "ambiguous_yes_to_two_way_keep_or_change_prompt",
+        "requirements": [
+          "The source prompt asked сохраняем ... или хотите изменить; да is ambiguous. Do not silently choose either action or repeat the same two-way prompt indefinitely. Ask one explicit single-purpose question or offer literal answer choices. If the new preceding prompt is single-purpose, bind yes only to its fresh owned action."
+        ],
+        "oracles": [
+          "no_identical_ambiguous_yes_loop",
+          "no_Belgorod_Belgrade_divergence",
+          "no_tools"
+        ],
+        "observed_status": "FAIL_IDENTICAL_AMBIGUOUS_YES_LOOP",
+        "adaptive_policy": "A different fresh question may require adaptive input. Never use the old да as arbitrary booking/source consent."
+      }
+    },
+    {
+      "turn": 9,
+      "input": "сохряняем",
+      "input_sha256": "5caf9f953c911cfbe02627d3b6cef7156e6a5d09d1a36f07fbb0bca05074b603",
+      "created_at_utc": "2026-10-27T10:46:55.907071+00:00",
+      "observed": {
+        "reply": [
+          "Сколько гостиничных номеров вам нужно в городе «Белгород»?"
+        ],
+        "based_version": 1,
+        "state_version": 1,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Сколько гостиничных номеров вам нужно в городе «Белгород»?",
+          "field": "stay.rooms",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          },
+          "questions": [
+            "Сколько гостиничных номеров вам нужно в городе «Белгород»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-5",
+          "state_version": 1,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_EXTRACTION_VALIDATED",
+          "MODEL_OPERATIONS_CHECKED",
+          "MODEL_RESPONSE_RECEIVED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {
+        "validated": {
+          "reply": "Сохранено: поездка в Белград (2026‑10‑28 – 2026‑11‑04, 7 ночей).",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Белград",
+                "rooms": [],
+                "check_in": "2026-10-28",
+                "check_out": "2026-11-04",
+                "requested_nights": 7
+              },
+              "target_id": "new-stay-1"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        },
+        "checked": {
+          "reply": "Сохранено: поездка в Белград (2026‑10‑28 – 2026‑11‑04, 7 ночей).",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "upsert_stay",
+              "value": {
+                "rooms": [],
+                "check_in": "2026-10-28",
+                "check_out": "2026-11-04",
+                "requested_nights": 7
+              },
+              "target_id": "new-stay-1"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "original_normalizations": [
+        {
+          "code": "unanchored_destination_suppressed",
+          "proposed": "Белград",
+          "target_id": "new-stay-1"
+        }
+      ],
+      "acceptance": {
+        "intent": "contextual_keep_typo",
+        "requirements": [
+          "сохряняем is a retention typo under the fresh Belgrade question. It must retain Belgrade/RS, not resume room intake for the stale Belgorod/RU stay. A model proposal for the exact owned pending destination must not lose city merely because the short answer omits its name. No new hotel, room count, price or purchase consent may be invented."
+        ],
+        "oracles": [
+          "requested_country_RS",
+          "no_Belgorod_Belgrade_divergence",
+          "confirmed_pending_city_not_stripped",
+          "no_tools"
+        ],
+        "observed_status": "FAIL_GUARD_STRIPPED_CORRECT_MODEL_CITY"
+      }
+    },
+    {
+      "turn": 10,
+      "input": "1",
+      "input_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "created_at_utc": "2026-10-27T10:47:03.916962+00:00",
+      "observed": {
+        "reply": [
+          "Гражданство какой страны использовать для поиска отеля?"
+        ],
+        "based_version": 1,
+        "state_version": 2,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Гражданство какой страны использовать для поиска отеля?",
+          "field": "stay.rooms",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          },
+          "questions": [
+            "Гражданство какой страны использовать для поиска отеля?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-6",
+          "state_version": 2,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 0,
+        "tool_calls": 0,
+        "event_types": [
+          "CONTEXT_ANSWER_PROPOSED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {},
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "short_room_count_answer",
+        "requirements": [
+          "The literal1 binds to room count only when the fresh owned preceding question is about rooms. In that case preserve the existing adult IDs and city/date facts, save one room in the corrected draft, then ask another genuinely missing fact. Asking nationality is valid because it is missing; its public field must be search.guest_nationality rather than stale stay.rooms."
+        ],
+        "oracles": [
+          "room_count_if_fresh_room_question_else_adaptive",
+          "pending_field_matches_owned_nationality_text",
+          "no_Belgorod_Belgrade_divergence",
+          "no_tools"
+        ],
+        "observed_status": "PARTIAL_ROOM_COUNT_PASS_BUT_NEXT_QUESTION_FIELD_DRIFT",
+        "adaptive_policy": "If corrected flow asked another field, do not bind bare1 blindly; use NEEDS_ADAPTIVE or a targeted clarification."
+      }
+    },
+    {
+      "turn": 11,
+      "input": "россии",
+      "input_sha256": "01e6f1c06ec0e8cc79bdb23ed57b550ecfaad61ee4f691adb5d103a490578678",
+      "created_at_utc": "2026-10-27T10:47:13.307441+00:00",
+      "observed": {
+        "reply": [
+          "Могу помочь с направлением, маршрутом и условиями поездки. Уточните, что именно хотите узнать."
+        ],
+        "based_version": 2,
+        "state_version": 2,
+        "run_status": "completed",
+        "session_status": "WAITING_USER",
+        "pending_question": {
+          "text": "Гражданство какой страны использовать для поиска отеля?",
+          "field": "stay.rooms",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          },
+          "questions": [
+            "Гражданство какой страны использовать для поиска отеля?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-6",
+          "state_version": 2,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_EXTRACTION_VALIDATED",
+          "MODEL_OPERATIONS_CHECKED",
+          "MODEL_RESPONSE_RECEIVED",
+          "RUN_COMPLETED"
+        ],
+        "failure": null,
+        "plans": []
+      },
+      "original_model_contracts": {
+        "validated": {
+          "reply": "Пожалуйста, уточните, что именно вы хотите изменить в поездке: изменить город отправления, добавить гостей, изменить даты или что‑то другое?",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        },
+        "checked": {
+          "reply": "Пожалуйста, уточните, что именно вы хотите изменить в поездке: изменить город отправления, добавить гостей, изменить даты или что‑то другое?",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        }
+      },
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "nationality_answer_in_Russian_genitive",
+        "requirements": [
+          "When the latest owned question asks citizenship, россии means guest_nationality RU. Retain Serbia/Belgrade as destination; do not interpret Russia as destination or origin. The source public question text is nationality even though its stale field is stay.rooms; a repaired context must align field/meaning and accept the answer. If no fresh nationality question exists in a new flow, clarification/NEEDS_ADAPTIVE is allowed."
+        ],
+        "oracles": [
+          "nationality_RU_if_owned_nationality_question_else_adaptive",
+          "no_Belgorod_Belgrade_divergence",
+          "no_tools"
+        ],
+        "observed_status": "FAIL_NATIONALITY_ANSWER_LOST_AFTER_FIELD_DRIFT"
+      }
+    },
+    {
+      "turn": 12,
+      "input": "сам разбери",
+      "input_sha256": "9a2dc4fa0682103abba1ce2f7a4dd6b4bbc29b957a54321f5f5129a34afea0a3",
+      "created_at_utc": "2026-10-27T10:47:24.530962+00:00",
+      "observed": {
+        "reply": [
+          "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий."
+        ],
+        "based_version": 2,
+        "state_version": 2,
+        "run_status": "failed",
+        "session_status": "RECOVERABLE_ERROR",
+        "pending_question": {
+          "text": "Гражданство какой страны использовать для поиска отеля?",
+          "field": "stay.rooms",
+          "reason": "clarification",
+          "context": {
+            "requested_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          },
+          "questions": [
+            "Гражданство какой страны использовать для поиска отеля?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "owner-question-6",
+          "state_version": 2,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "waiting_reason": "clarification",
+        "model_calls": 1,
+        "tool_calls": 0,
+        "event_types": [
+          "MODEL_CALL_FAILED",
+          "RUN_FAILED"
+        ],
+        "failure": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "code": "RATE_LIMITED",
+          "http_status": 429,
+          "rate_limits": {
+            "quota_kind": "tokens",
+            "token_limit": 8000,
+            "token_window": "TPM",
+            "request_limit": 1000,
+            "tokens_remaining": 2955,
+            "requests_remaining": 993,
+            "retry_after_seconds": 15,
+            "tokens_reset_seconds": 38,
+            "requests_reset_seconds": 605,
+            "token_limit_from_error": 8000,
+            "tokens_used_from_error": 5045,
+            "tokens_requested_from_error": 4827
+          },
+          "retry_after_seconds": 15
+        },
+        "plans": []
+      },
+      "original_model_contracts": {},
+      "original_normalizations": [],
+      "acceptance": {
+        "intent": "delegation_after_unresolved_intake",
+        "requirements": [
+          "сам разбери authorizes continued assistance, not invented nationality/room/budget/city or payment. This source attempt was blocked by HTTP429 before model extraction. Grade its resource/state boundary independently: preserve trip/version/pending, show a safe retry hint, no tools/order/fake model result. Do not call it another NLU semantic failure or evidence of a daily limit."
+        ],
+        "oracles": [
+          "resource_failure_keeps_trip_and_pending",
+          "resource_TPM_facts_without_daily_claim",
+          "no_tools"
+        ],
+        "observed_status": "RESOURCE_STOP_TPM_SEMANTIC_RESULT_UNAVAILABLE"
+      }
+    }
+  ],
+  "total_oracle_obligations": 42,
+  "shared_invariants": [
+    "No source policy changes without explicit user request.",
+    "No real/sandbox hotel availability or current price may be invented for an uncovered place.",
+    "Uncovered draft city is not a covered hotel offer. Canonical and public pending destination must agree after owned confirmation.",
+    "Correct explicit questions about missing origin, party, room count, nationality, dates or duration kind are not failures. Do not lock acceptance to an old erroneous question order.",
+    "Short answers require a fresh owned question/proposal; older or foreign pending state cannot grant city/source/checkout consent.",
+    "No arbitrary number1 as roomcount without the correct question; no Russia nationality inferred from destination language.",
+    "Legacy city repair preserves party identity and already committed dates/duration; new semantic data is not reconstructed from a failed model call."
+  ],
+  "attribution": {
+    "2": "The actual model already asked a sensible Serbia-city question; checked ASK lost unknowns and displayed canonical country FAQ.",
+    "3": "The model again asked for a Serbian city, but display again replaced it with the country FAQ.",
+    "5": "Literal Белгород was locally recognized as Russia, but prior Serbia travel intent was never retained; this is a contextual resolution failure, not proof that the model cannot distinguish the two cities.",
+    "6": "Targeted country confirmation is safe under the exact legacy RU canonical before-state, so this question alone is not a new defect.",
+    "9": "Validated model proposed exact owned Belgrade upsert; unanchored_destination_suppressed removed city before commit.",
+    "10": "Saving explicit room count is partial success. The next nationality question is legitimate; its stale stay.rooms field is the defect.",
+    "11": "Nationality answer loss follows malformed pending context plus model ASK/no-ops; do not attribute the whole chain only to model strength.",
+    "12": "Actual provider429 exposes explicit TPM window8000/used5045/requested4827/retry15; no model operations were returned. Daily exhaustion is not established."
+  },
+  "resource_boundary": {
+    "turn": 12,
+    "http_status": 429,
+    "code": "RATE_LIMITED",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "token_window": "TPM",
+    "limit": 8000,
+    "used": 5045,
+    "requested": 4827,
+    "retry_after_seconds": 15,
+    "daily_quota_exhausted": "NOT_ESTABLISHED",
+    "nlu_result": "NOT_RETURNED"
+  },
+  "closure_conditions": [
+    "Targeted controlled full-sequence tests must preserve these12exact inputs and exercise context, pending/canonical retarget and nationality binding; cached contracts are not a new actual NLU PASS.",
+    "A fresh strong-model dialogue must independently pass after deployment when provider capacity is available. Preserve original FAIL and429 observations unchanged.",
+    "Actual tourism API search is separately qualified only for supported/confirmed requested destinations and required facts; Belgrade coverage must not be fabricated."
+  ]
+}

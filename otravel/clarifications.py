@@ -10,8 +10,9 @@ import re
 from copy import deepcopy
 from typing import Any
 
-from .domain import CITIES, MVP_LIMITS
+from .domain import MVP_LIMITS
 from .geography import parse_destination
+from .provider_cities import available_search_cities
 
 _ALIASES = {
     "origin": "origin.city", "origin_city": "origin.city", "origin.city": "origin.city",
@@ -54,7 +55,7 @@ _NO = {"нет", "не надо", "не меняем"}
 # party facts are deliberately outside this allowlist.
 _GEOGRAPHY_CLEAR_KEYS = ("proposed_destination", "confirmation_required", "suggested_cities",
                          "contextual_correction", "proposal_field")
-PENDING_CONTEXT_CLEAR_KEYS = (*_GEOGRAPHY_CLEAR_KEYS, "date_proposal", "duration_proposal", "duration_days", "leg_mode_proposal")
+PENDING_CONTEXT_CLEAR_KEYS = (*_GEOGRAPHY_CLEAR_KEYS, "date_proposal", "duration_proposal", "duration_days", "leg_mode_proposal", "geo_destination")
 _AGE_WORDS = {
     "ноль": 0, "нуль": 0, "один": 1, "два": 2, "три": 3, "четыре": 4,
     "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10,
@@ -216,9 +217,12 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
             if country:
                 return f"Какой город в стране «{country}» вы выбираете для поездки?"
         if isinstance(destination, dict) and destination.get("kind") == "city" and isinstance(destination.get("name"), str):
-            known = parse_destination(destination["name"])["requested_destination"]
-            if known["kind"] == "city" and known["name"] not in CITIES:
+            known = parse_destination(destination["name"], available_cities=available_search_cities(data))["requested_destination"]
+            if known["kind"] == "city" and known["name"] not in available_search_cities(data):
                 return _unsupported_city_question(known, ctx)
+            if known["kind"] == "city":
+                country = _COUNTRY_NAMES.get(known.get("country_code"), known.get("country_code"))
+                return f"Выбираем город «{known['name']}», {country}, для дальнейшего поиска?"
         return "В какой город вы хотите поехать?"
     if field == "party.adults":
         return "Сколько взрослых поедет в поездку?"
@@ -499,7 +503,7 @@ def _city_answer(data: dict, field: str, target: str | None, ctx: dict, text: st
                     if old_country and old_country != new_country else f"Выбираем город «{place['name']}» для поездки?")
         return _answer(question=question, context={**ctx, "field": field, "target_id": target,
                        "proposed_destination": place, "confirmation_required": True, "proposal_field": field})
-    if place["name"] not in CITIES:
+    if place["name"] not in available_search_cities(data):
         # A new explicit city supersedes an earlier proposed alternative. Keep
         # the choice as metadata, without inventing coverage or forcing a route.
         clean = _without_proposal(ctx)

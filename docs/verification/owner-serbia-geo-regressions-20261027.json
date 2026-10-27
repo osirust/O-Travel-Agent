@@ -1,0 +1,99 @@
+{
+  "finding_id": "HARNESS-004-SERBIA-CONTINUITY-001",
+  "scope": "Controlled regression repair of owned geography helpers after live-coverage registry integration; not a new actual NLU qualification.",
+  "original_owner_trace": {
+    "path": ".local/evaluation/owner-serbia-20261027/dialogue-projection.json",
+    "sha256": "3f6d58ef911cc6f45353714e08da05d7e3b8dc739d77913164eb87fe8f4747fa",
+    "immutable": true,
+    "user_turns": 12,
+    "model_calls": 7,
+    "tool_calls": 0
+  },
+  "baseline_full": {
+    "path": ".local/evaluation/after80-20261027/full-owner12-live8-initial.xml",
+    "sha256": "ac60dd1b00db67f5494f7fdc0add802287ffaefcba7c6e573fd03fd9d398ed1a",
+    "tests": "5609",
+    "failures": "8",
+    "errors": "0",
+    "skipped": "0",
+    "time": "233.522"
+  },
+  "baseline_target": {
+    "path": ".local/evaluation/geo-20261027/geo-full-regression-initial.xml",
+    "sha256": "3297037cfb363526a003ce72ea8f275c83ef2c34b5bbcedc45379c16b864c269",
+    "tests": "67",
+    "failures": "1",
+    "errors": "0",
+    "skipped": "0",
+    "time": "2.244"
+  },
+  "confirmed_causes": [
+    {
+      "cause": "An otherwise unhandled active city proposal fell through to retention of the previously selected unsupported city.",
+      "repair": "Return unhandled to the existing active-proposal resolver before legacy retention fallback.",
+      "proof": "test_confirmed_destination_clears_old_country_candidate_and_updates_display_context"
+    },
+    {
+      "cause": "Contextual RS spelling interpretation lost the existing visible acknowledgement in the old cached connected dialogue.",
+      "repair": "Keep explicit Belgrade/Serbia interpretation text and a single-purpose confirmation; do not silently select Russian Belgorod.",
+      "proof": "test_twelve_turns_cached_cf_belgrade_conflict_refusal_child_budget_then_accept"
+    },
+    {
+      "cause": "After rejecting Istanbul, covered pending Belgrade metadata was retained but a generic city question lost its display and search context.",
+      "repair": "Compound-NO owned helper preserves exact selected city/country and human search question. Root shared human_question handles bare NO analogously.",
+      "proof": "test_cached_cf_conflicting_alternative_rejected_retains_exact_previous_unsupported_city[2 parameters]"
+    }
+  ],
+  "owned_source": [
+    {
+      "path": "otravel/geo_dialogue.py",
+      "sha256": "cad5ab035d55a486b2b8c7375865cf34b59fa8e6054f0ff43764dca6babd7bd2"
+    },
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "1f9bb557645a3fd6ef211c6301f6d2dc1a46190351956b666a663fdee64ea614"
+    },
+    {
+      "path": "tests/test_geo_dialogue.py",
+      "sha256": "605e3a4f8ba249395d8b6f3813043b0199c0da32cb201622f33b0040ad11cc18"
+    }
+  ],
+  "shared_dependency": {
+    "owner": "root",
+    "path": "otravel/clarifications.py",
+    "scope": "Known covered requested city question retains name, country and search context."
+  },
+  "verification": {
+    "pure_related": {
+      "path": ".local/evaluation/geo-20261027/geo-related-final.xml",
+      "sha256": "9bf1b309b9350cb657d7aa84ad131e37deb241cb090f5d4b20fe4ba01e749010",
+      "tests": "218",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.861"
+    },
+    "exact_two_pg_cases": {
+      "path": ".local/evaluation/geo-20261027/geo-pg-final.xml",
+      "sha256": "e3f34ae5d5b139e12eebcdbd56014fde2843250ff82563f6cde747ce5d76ebe5",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.631"
+    },
+    "ruff": "PASS for owned source/test files",
+    "database_scope": "otravel_test only through scripts/run_tests.py; no Native database access",
+    "new_model_calls": 0,
+    "new_supplier_calls": 0,
+    "local_inference_calls": 0,
+    "native_changes": 0
+  },
+  "limits": [
+    "Old full and actual FAIL snapshots remain unchanged.",
+    "Cached actual outputs and controlled continuations do not qualify a fresh actual full dialogue.",
+    "Two targeted PostgreSQL cases and 218 pure checks are not a new full-suite result.",
+    "Global dynamic geography proposal remains design only; current coverage is separate from geographic identity and live availability."
+  ],
+  "next": "Root full-suite retry, then separately authorized actual owner dialogue and broader provider-resolved geography."
+}
