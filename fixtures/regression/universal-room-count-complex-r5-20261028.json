@@ -1,0 +1,564 @@
+{
+  "source_package_sha256": "b170deda2396b53451e13f60d6af7da711ab9681f6bdee18d48f54f2339eb793",
+  "parent_report_sha256": "0ef23c035e240159038d21b3a50b4e937c30dd761ead01e21dd3fcd605ba1bca",
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-b44284b4-8dbc-4a7e-8163-b2906ab7d284",
+        "mode": "flight",
+        "origin": "Kazan’",
+        "destination": "Istanbul",
+        "departure_date": "2026-11-10",
+        "origin_place_id": "geo:openmeteo:551487",
+        "destination_place_id": "geo:openmeteo:745044"
+      },
+      {
+        "id": "leg-280c4860-a197-423a-893f-84180fe40595",
+        "mode": "flight",
+        "origin": "Istanbul",
+        "destination": "Antalya",
+        "departure_date": "2026-11-13",
+        "origin_place_id": "geo:openmeteo:745044",
+        "destination_place_id": "geo:openmeteo:323777"
+      },
+      {
+        "id": "leg-cd95ae25-3f27-4c2c-8f62-aec192dfdc55",
+        "mode": "flight",
+        "origin": "Antalya",
+        "destination": "Kazan’",
+        "departure_date": "2026-11-17",
+        "origin_place_id": "geo:openmeteo:323777",
+        "destination_place_id": "geo:openmeteo:551487"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Istanbul",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "place_id": "geo:openmeteo:745044",
+        "check_out": "2026-11-13"
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Antalya",
+        "rooms": [
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": null,
+        "place_id": "geo:openmeteo:323777",
+        "check_out": "2026-11-17"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 120000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-2",
+          "new-traveler-3"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Kazan’",
+    "trip_id": "regression-complex-universal-room-count",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "location_refs": {
+      "geo:openmeteo:323777": {
+        "latitude": 36.90812,
+        "place_id": "geo:openmeteo:323777",
+        "timezone": "Europe/Istanbul",
+        "longitude": 30.69556,
+        "ref_version": 1,
+        "country_iso2": "TR",
+        "country_name": "Republic of Türkiye",
+        "feature_code": "PPLA",
+        "canonical_name": "Antalya",
+        "geographic_source": {
+          "provider": "openmeteo",
+          "external_id": 323777
+        },
+        "provider_bindings": {
+          "duffel": null,
+          "liteapi": null
+        },
+        "source_fact_sha256": "00a0f0cd5c76ed2eca67de6a19fdb1e60a1b0b0b7a0cbdcb9476ceaad20cf850",
+        "administrative_areas": [
+          {
+            "name": "Antalya",
+            "level": 1,
+            "external_id": 323776
+          }
+        ]
+      },
+      "geo:openmeteo:551487": {
+        "latitude": 55.78874,
+        "place_id": "geo:openmeteo:551487",
+        "timezone": "Europe/Moscow",
+        "longitude": 49.12214,
+        "ref_version": 1,
+        "country_iso2": "RU",
+        "country_name": "Russia",
+        "feature_code": "PPLA",
+        "canonical_name": "Kazan’",
+        "geographic_source": {
+          "provider": "openmeteo",
+          "external_id": 551487
+        },
+        "provider_bindings": {
+          "duffel": null,
+          "liteapi": null
+        },
+        "source_fact_sha256": "86c2d146243cdb14a2128b8b9c60a718773f14e7ea7667f15c7a33834fa0a6de",
+        "administrative_areas": [
+          {
+            "name": "Tatarstan Republic",
+            "level": 1,
+            "external_id": 484048
+          },
+          {
+            "name": "Gorodskoy Okrug Kazan’",
+            "level": 2,
+            "external_id": 862913
+          }
+        ]
+      },
+      "geo:openmeteo:745044": {
+        "latitude": 41.01384,
+        "place_id": "geo:openmeteo:745044",
+        "timezone": "Europe/Istanbul",
+        "longitude": 28.94966,
+        "ref_version": 1,
+        "country_iso2": "TR",
+        "country_name": "Republic of Türkiye",
+        "feature_code": "PPLA",
+        "canonical_name": "Istanbul",
+        "geographic_source": {
+          "provider": "openmeteo",
+          "external_id": 745044
+        },
+        "provider_bindings": {
+          "duffel": null,
+          "liteapi": null
+        },
+        "source_fact_sha256": "156f49ee9f53f3a60a4695a83f483aa98973721d29f33fd82b8914a33a6af9c4",
+        "administrative_areas": [
+          {
+            "name": "Istanbul",
+            "level": 1,
+            "external_id": 745042
+          }
+        ]
+      }
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 4,
+    "origin_place_id": "geo:openmeteo:551487"
+  },
+  "input": "Теперь добавь ещё одного ребёнка 4 лет, существующие два взрослых и ребёнок 7 лет остаются. В КАЖДОМ городе сделай два номера: в первом — первый из существующих взрослых и оба ребёнка, во втором — второй существующий взрослый один. Уменьши общий бюджет на 20 000 рублей. Возвращение в Казань перенеси на 19 ноября 2026, и выезд из отеля Антальи тоже на 19 ноября 2026. Даты Стамбула 10–13 ноября и остальные требования сохрани.",
+  "raw_contract": {
+    "value": {
+      "reply": "Добавлен ребенок 4 лет, сформированы номера. Бюджет снижен на 20 000 руб. Дата возвращения и выезда из отеля изменены на 19 ноября 2026.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-4",
+            "age": 4,
+            "type": "child"
+          }
+        },
+        {
+          "type": "set_room_members",
+          "value": {
+            "stay_id": "new-stay-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3",
+              "new-traveler-4"
+            ]
+          },
+          "target_id": "new-room-1"
+        },
+        {
+          "type": "set_room_members",
+          "value": {
+            "stay_id": "new-stay-2",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          },
+          "target_id": "new-room-2"
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 100000000
+          }
+        },
+        {
+          "type": "shift_return",
+          "value": {
+            "days": 2
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "9be02cf3724e1a62a10b9325d5bfe1ed38c6e29f850a5771cd3a6d09fcb87b0e",
+    "captured": true,
+    "utf8_bytes": 879
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Добавлен ребенок 4 лет, сформированы номера. Бюджет снижен на 20 000 руб. Дата возвращения и выезда из отеля изменены на 19 ноября 2026.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-4",
+            "age": 4,
+            "type": "child"
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_room_members",
+          "value": {
+            "stay_id": "new-stay-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3",
+              "new-traveler-4"
+            ]
+          },
+          "target_id": "new-room-1"
+        },
+        {
+          "type": "set_room_members",
+          "value": {
+            "stay_id": "new-stay-2",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          },
+          "target_id": "new-room-2"
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 118000000
+          },
+          "target_id": null
+        },
+        {
+          "type": "shift_return",
+          "value": {
+            "days": 2
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "4d2ca0c1d1caa8113ed41b42fa48eac731e1e76e05c97af75e9cd3232dfc478e",
+    "captured": true,
+    "utf8_bytes": 913
+  },
+  "observed_after_trip": {
+    "legs": [
+      {
+        "id": "leg-b44284b4-8dbc-4a7e-8163-b2906ab7d284",
+        "mode": "flight",
+        "origin": "Kazan’",
+        "destination": "Istanbul",
+        "departure_date": "2026-11-10",
+        "origin_place_id": "geo:openmeteo:551487",
+        "destination_place_id": "geo:openmeteo:745044"
+      },
+      {
+        "id": "leg-280c4860-a197-423a-893f-84180fe40595",
+        "mode": "flight",
+        "origin": "Istanbul",
+        "destination": "Antalya",
+        "departure_date": "2026-11-13",
+        "origin_place_id": "geo:openmeteo:745044",
+        "destination_place_id": "geo:openmeteo:323777"
+      },
+      {
+        "id": "leg-cd95ae25-3f27-4c2c-8f62-aec192dfdc55",
+        "mode": "flight",
+        "origin": "Antalya",
+        "destination": "Kazan’",
+        "departure_date": "2026-11-19",
+        "origin_place_id": "geo:openmeteo:323777",
+        "destination_place_id": "geo:openmeteo:551487"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Istanbul",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "place_id": "geo:openmeteo:745044",
+        "check_out": "2026-11-13"
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Antalya",
+        "rooms": [
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": null,
+        "place_id": "geo:openmeteo:323777",
+        "check_out": "2026-11-19"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 118000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-2",
+          "new-traveler-3"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Kazan’",
+    "trip_id": "regression-complex-universal-room-count",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": 4,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "location_refs": {
+      "geo:openmeteo:323777": {
+        "latitude": 36.90812,
+        "place_id": "geo:openmeteo:323777",
+        "timezone": "Europe/Istanbul",
+        "longitude": 30.69556,
+        "ref_version": 1,
+        "country_iso2": "TR",
+        "country_name": "Republic of Türkiye",
+        "feature_code": "PPLA",
+        "canonical_name": "Antalya",
+        "geographic_source": {
+          "provider": "openmeteo",
+          "external_id": 323777
+        },
+        "provider_bindings": {
+          "duffel": null,
+          "liteapi": null
+        },
+        "source_fact_sha256": "00a0f0cd5c76ed2eca67de6a19fdb1e60a1b0b0b7a0cbdcb9476ceaad20cf850",
+        "administrative_areas": [
+          {
+            "name": "Antalya",
+            "level": 1,
+            "external_id": 323776
+          }
+        ]
+      },
+      "geo:openmeteo:551487": {
+        "latitude": 55.78874,
+        "place_id": "geo:openmeteo:551487",
+        "timezone": "Europe/Moscow",
+        "longitude": 49.12214,
+        "ref_version": 1,
+        "country_iso2": "RU",
+        "country_name": "Russia",
+        "feature_code": "PPLA",
+        "canonical_name": "Kazan’",
+        "geographic_source": {
+          "provider": "openmeteo",
+          "external_id": 551487
+        },
+        "provider_bindings": {
+          "duffel": null,
+          "liteapi": null
+        },
+        "source_fact_sha256": "86c2d146243cdb14a2128b8b9c60a718773f14e7ea7667f15c7a33834fa0a6de",
+        "administrative_areas": [
+          {
+            "name": "Tatarstan Republic",
+            "level": 1,
+            "external_id": 484048
+          },
+          {
+            "name": "Gorodskoy Okrug Kazan’",
+            "level": 2,
+            "external_id": 862913
+          }
+        ]
+      },
+      "geo:openmeteo:745044": {
+        "latitude": 41.01384,
+        "place_id": "geo:openmeteo:745044",
+        "timezone": "Europe/Istanbul",
+        "longitude": 28.94966,
+        "ref_version": 1,
+        "country_iso2": "TR",
+        "country_name": "Republic of Türkiye",
+        "feature_code": "PPLA",
+        "canonical_name": "Istanbul",
+        "geographic_source": {
+          "provider": "openmeteo",
+          "external_id": 745044
+        },
+        "provider_bindings": {
+          "duffel": null,
+          "liteapi": null
+        },
+        "source_fact_sha256": "156f49ee9f53f3a60a4695a83f483aa98973721d29f33fd82b8914a33a6af9c4",
+        "administrative_areas": [
+          {
+            "name": "Istanbul",
+            "level": 1,
+            "external_id": 745042
+          }
+        ]
+      }
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 5,
+    "origin_place_id": "geo:openmeteo:551487"
+  },
+  "finding_id": "HARNESS-004-UNIVERSAL-ROOM-COUNT-COVERAGE-001",
+  "note": "Semantic projection of original cached compound. Only trip_id replaced with a fixed fixture identifier; model and domain field shapes unchanged. No capabilities or HTTP headers. Original private source SHA dcb5badde994e210331154d51ca8e93d4aba909ac1f32aa7913cb18d6db21c20 retained as provenance."
+}

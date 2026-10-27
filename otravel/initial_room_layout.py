@@ -21,6 +21,72 @@ _ADULT = re.compile(r'\b(?P<ordinal>перв(?:ый|ая|ого|ую)|втор(?
 _CHILD = re.compile(r'\bребен(?:ок|ком|ка|ку)(?:\s+(?P<age>[0-9]{1,2}|' + '|'.join(_AGES) + r')\s+(?:лет|год|года))?\b')
 _UNASSERTED = re.compile(r'\b(?:если|допустим|предположим|может|возможно|наверное|гипотетически|раньше|ранее|прежде|цитата|говорил\w*)\b')
 _VETO = re.compile(r'\bне\s+(?:нуж\w*|надо|требу\w*|распредел\w*|размещ\w*|сели\w*|брониру\w*|созда\w*|применя\w*)\b')
+_EACH_ROOM_SCOPE = re.compile(r'\bв\s+(?:каждом\s+(?:городе|отеле)|обоих\s+(?:городах|отелях)|'
+    r'каждом\s+из\s+(?:городов|отелей)|каждом\s+из\s+двух\s+отелей)\b')
+_EACH_COUNT = re.compile(r'\b([0-9]{1,2}|' + '|'.join(_NUMBERS) + r')\s+'
+    r'(?:(?:отдельн\w*|гостиничн\w*)\s+)?(?:номер(?:а|ов)?|комнат(?:а|ы)?)(?!\w)')
+_COUNT_QUERY = re.compile(r'\b(?:напомни|расскажи|объясни|сравни|проверь|покажи|обсудим|'
+    r'не\s+(?:делай|меняй|увеличивай|сокращай))\b')
+
+
+def verify_universal_room_count(state, operations, text, *, model_generated=True):
+    """Ask if an asserted per-city room count was lost by model extraction.
+
+    This is a completeness verifier, not an allocator: it never chooses people,
+    creates room/group IDs or rewrites an already correct explicit allocation.
+    The caller must honor block_batch and show this owned precise question.
+    """
+    original = deepcopy(operations)
+    meta = {'notes': [], 'unknowns': [], 'pending_context': None, 'block_batch': False}
+    if (model_generated is not True or not isinstance(text, str) or not 0 < len(text) <= 20_000
+            or text.startswith('\x1eOTRAVEL_TYPED_V1:')):
+        return original, meta
+    unquoted = _without_quoted_spans(' '.join(text.casefold().replace('ё', 'е').split()))
+    if (unquoted is None or re.search(r'\b(?:кроме|исключая|исключени\w*)\b', unquoted)
+            or re.search(r'\b(?:[0-9]{1,2}|' + '|'.join(_NUMBERS) + r')\s+(?:или|либо)\s+'
+                r'(?:[0-9]{1,2}|' + '|'.join(_NUMBERS) + r')\b', unquoted)):
+        return original, meta
+    scopes = [clause for clause in re.findall(r'[^.!?;]+[.!?;]?', unquoted)
+        if _EACH_ROOM_SCOPE.search(clause) and not clause.rstrip().endswith('?')
+        and not _UNASSERTED.search(clause) and not _VETO.search(clause) and not _COUNT_QUERY.search(clause)
+        and not re.search(r'\bне\s+(?:в\s+)?(?:кажд\w*|обо\w*)\b', clause)
+        and not any(re.search(r'\bне\s+(?:по\s+)?$', clause[:match.start()])
+            for match in _EACH_COUNT.finditer(clause))]
+    counts = {int(match[1]) if match[1].isdigit() else _NUMBERS[match[1]]
+        for clause in scopes for match in _EACH_COUNT.finditer(clause)}
+    if len(counts) != 1:
+        return original, meta
+    count = next(iter(counts))
+    all_counts = {int(match[1]) if match[1].isdigit() else _NUMBERS[match[1]]
+        for match in _EACH_COUNT.finditer(unquoted)}
+    if all_counts != counts:
+        return original, meta  # A separate city-specific count may be an exception.
+    if not 1 <= count <= MVP_LIMITS['rooms_per_stay']:
+        return original, meta
+    try:
+        candidate, _ = apply_operations(TripState.model_validate(state), original)
+    except (DomainError, ValueError):
+        return original, meta  # Do not hide other domain failures behind a count question.
+    if (len(candidate.stays) < 2
+            or len(candidate.stays) != 2 and any(re.search(r'\b(?:обоих|двух)\b', clause) for clause in scopes)):
+        return original, meta
+    missing = [stay for stay in candidate.stays if len(stay.rooms) != count]
+    if not missing:
+        return original, meta
+    observed = ', '.join(f'{stay.city} — {len(stay.rooms)}' for stay in missing)
+    question = (f'Вы указали число номеров в каждом городе: {count}. В извлечённой раскладке число номеров другое: '
+        f'{observed}. Уточните полный состав каждого номера для каждого города. '
+        'Эту неполную раскладку пока не применяю.')
+    meta.update(block_batch=True, unknowns=[question], pending_context={
+        'field': 'stay.rooms', 'target_id': None, 'force_clarification': True,
+        'room_target_selection_required': True, 'room_reallocation_required': True,
+        'requested_room_count': count}, notes=[{
+            'finding_id': 'HARNESS-004-UNIVERSAL-ROOM-COUNT-COVERAGE-001',
+            'code': 'universal_room_count_not_covered', 'status': 'clarification_required',
+            'source': 'asserted_per_city_count', 'requested_room_count': count,
+            'affected_stay_ids': [stay.id for stay in missing], 'question': question,
+            'room_or_group_ids_created': False, 'guest_membership_inferred': False}])
+    return original, meta
 
 
 def _ordinal(token):

@@ -832,11 +832,39 @@ class Harness:
                                 extracted.speech_act = "CHANGE"
                             extracted.operations = [Operation.model_validate(op) for op in grounded]
                             extracted.operation_normalizations.extend(notes)
+                    if (not readonly and not extracted.conflicts
+                            and extracted.control.action in {"none", "continue", "wait"}):
+                        from .budget_intake import explicit_budget_operation, guard_budget_question_operations
+                        literal_budget_op, literal_budget_note = explicit_budget_operation(session["state"], run["input_text"])
+                        budget_ops, question_notes = guard_budget_question_operations(extracted.operations,
+                            run["input_text"], has_asserted_budget=literal_budget_op is not None)
+                        if question_notes and extracted.operations:
+                            extracted.candidate_operations = extracted.operations
+                        extracted.operations = [Operation.model_validate(op) for op in budget_ops]
+                        extracted.operation_normalizations.extend(question_notes)
+                        if (question_notes and not extracted.operations and extracted.speech_act != "PROPOSE"
+                                and not explicit_pause_hint(run["input_text"])):
+                            extracted.speech_act = "ASK"
+                            extracted.control.action = "none"
+                        existing_budget = [op for op in extracted.operations if op.type == "set_budget"]
+                        closed_budget_shape = all(op.target_id is None and set(op.value) <= {"amount_minor", "currency", "scope"}
+                            for op in existing_budget)
+                        if literal_budget_op is not None and len(existing_budget) <= 1 and closed_budget_shape:
+                            if extracted.speech_act in {"ASK", "PROPOSE"}:
+                                extracted.candidate_operations = extracted.candidate_operations or extracted.operations
+                                extracted.operations = [Operation.model_validate(literal_budget_op)]
+                            else:
+                                extracted.operations = [op for op in extracted.operations if op.type != "set_budget"]
+                                extracted.operations.append(Operation.model_validate(literal_budget_op))
+                            extracted.operation_normalizations.append(literal_budget_note)
+                            extracted.speech_act = "CHANGE"
+                            if extracted.control.action == "none":
+                                extracted.control.action = "continue"
                     if (extracted.speech_act in {"ASK", "PROPOSE"} and not extracted.conflicts
                             and (extracted.control.action=="none" or explicit_pause_hint(run["input_text"]))):
                         # Questions/suggestions are not permission to change a
                         # trip. Keep proposed edits as audit data, never execute.
-                        extracted.candidate_operations = extracted.operations
+                        extracted.candidate_operations = extracted.candidate_operations or extracted.operations
                         extracted.operations = []
                         if extracted.control.action == "none":
                             extracted.unknowns = []
@@ -869,13 +897,22 @@ class Harness:
                             extracted.speech_act = "ASK"
                             extracted.control.action = "none"
                     if not extracted.conflicts and extracted.control.action != "cancel":
+                        from .return_preservation import guard_preserved_return_operations
+                        return_ops, return_meta = guard_preserved_return_operations(session["state"],
+                            extracted.operations, run["input_text"], model_generated=True)
+                        extracted.operations = [Operation.model_validate(op) for op in return_ops]
+                        extracted.operation_normalizations.extend(return_meta["notes"])
+                    if not extracted.conflicts and extracted.control.action != "cancel":
                         try:
                             extracted.conflicts = operation_conflicts(TripState.model_validate(session["state"]), extracted.operations)
                         except DomainError:
                             pass  # The normal domain-to-clarification path handles invalid place values below.
                     if not extracted.conflicts and extracted.control.action != "cancel":
-                        extracted.operations, money_notes = ground_budget_operations(
-                            TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
+                        if any(note.get("code") == "explicit_budget_literal_completed" for note in extracted.operation_normalizations):
+                            money_notes = []  # Already grounded from the selected asserted clause, excluding quoted/question amounts.
+                        else:
+                            extracted.operations, money_notes = ground_budget_operations(
+                                TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
                         extracted.operation_normalizations.extend(money_notes)
                         if any(note.get("status") == "clarification_required" for note in extracted.operation_normalizations):
                             question = next((note["question"] for note in extracted.operation_normalizations
@@ -911,6 +948,11 @@ class Harness:
                             extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in removal_ops]
                         extracted.operation_normalizations.extend(removal_meta["notes"])
+                        extracted.conflicts.extend(removal_meta["conflicts"])
+                        extracted.unknowns = list(dict.fromkeys(removal_meta["unknowns"] + extracted.unknowns))
+                        extracted.server_questions.extend(removal_meta["conflicts"] + removal_meta["unknowns"])
+                        if removal_meta.get("pending_context") is not None:
+                            extracted.pending_context = {**(extracted.pending_context or {}), **removal_meta["pending_context"]}
                         from .preference_grounding import guard_preference_operations
                         preference_ops,preference_meta=guard_preference_operations(session["state"],
                             extracted.operations,run["input_text"])
@@ -993,6 +1035,18 @@ class Harness:
                                 extracted.unknowns = list(dict.fromkeys(initial_meta["unknowns"] + extracted.unknowns))
                                 extracted.server_questions.extend(initial_meta["unknowns"])
                                 extracted.pending_context = {**(extracted.pending_context or {}), **(initial_meta["pending_context"] or {})}
+                        if not extracted.conflicts:
+                            from .initial_room_layout import verify_universal_room_count
+                            counted_ops, count_meta = verify_universal_room_count(session["state"],
+                                extracted.operations, run["input_text"], model_generated=True)
+                            extracted.operations = [Operation.model_validate(op) for op in counted_ops]
+                            if count_meta.get("block_batch"):
+                                extracted.operations = []
+                            extracted.operation_normalizations.extend(count_meta["notes"])
+                            if count_meta["unknowns"]:
+                                extracted.unknowns = list(dict.fromkeys(count_meta["unknowns"] + extracted.unknowns))
+                                extracted.server_questions.extend(count_meta["unknowns"])
+                                extracted.pending_context = {**(extracted.pending_context or {}), **(count_meta["pending_context"] or {})}
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None
@@ -2032,15 +2086,18 @@ class Harness:
             from .answering import changed_trip_receipt, wants_saved_facts
             subject = (result.get("conversation") or {}).get("subject") or {}
             literal_preference = any(note.get("finding_id") == "AFTER80-PRICE-INTAKE-001" for note in extracted.operation_normalizations)
+            literal_budget = extracted.speech_act != "PROPOSE" and any(
+                note.get("code") in {"explicit_budget_literal_completed", "budget_question_not_assignment"}
+                for note in extracted.operation_normalizations)
             known_preference_noop = (not changes and any(op.type == "set_preference" and any(
                 saved.key == op.value.get("key") and saved.value == op.value.get("value")
                 for saved in current.preferences) for op in extracted.operations))
-            if ((changes or literal_preference or known_preference_noop) and wants_saved_facts(run["input_text"])
-                    and subject.get("kind") not in {"country", "city"}):
+            if ((changes or literal_preference or known_preference_noop or literal_budget) and wants_saved_facts(run["input_text"])
+                    and (literal_budget or subject.get("kind") not in {"country", "city"})):
                 shown = result.get("plans") if "plans" in result else await self._latest_current_plans(session, run)
                 receipt, sections = changed_trip_receipt(run["input_text"], current.model_dump(mode="json"),
                     current_plans(current, shown), changes, await self.store.list_orders(session["session_id"]))
-                lead = reply if result.get("violations") or extracted.candidate_operations else ""
+                lead = reply if (result.get("violations") or extracted.candidate_operations) and not literal_budget else ""
                 reply = (lead + "\n\n" if lead and not questions else "") + receipt
                 if questions:
                     reply += "\n\n" + questions[0]

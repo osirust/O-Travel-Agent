@@ -231,12 +231,51 @@ def _replacement_role(old: str, new: str, clause: str, data: dict, pending: dict
     return "destination" if matching else None
 
 
-def _facts(data: dict, text: str, pending: dict) -> dict:
+
+def _negated_role_preposition(clause: str, start: int) -> bool:
+    """Negation belongs to this preposition, not every later city clause."""
+    return re.search(r"\b(?:не|not)\s*$", clause[:start]) is not None
+
+
+def _mask_owned_checkout_origin_cues(data: dict, normalized: str, operations) -> str:
+    """A literal checkout with an owned date operation is not a new origin.
+
+    Only removes the server's extra FROM-role inference. Creates no date,
+    stay, identity or operation, and cannot make a model target owned.
+    A separate explicit departure/origin cue remains in the original text.
+    """
+    pattern = re.compile(rf"\b(?:дата\s+)?выезд(?:а)?\s+(?P<cue>из)\s+"
+        rf"(?P<city>{_NAMES})(?![\w-])\s*(?:[-:=]\s*)?"
+        r"(?P<date>\d{1,2}\.\d{1,2}\.\d{4})(?!\d)")
+    chars = list(normalized)
+    stays = {s.get("id"): s for s in data.get("stays", []) if isinstance(s, dict)}
+    for match in pattern.finditer(normalized):
+        day, month, year = map(int, match["date"].split("."))
+        literal_date = f"{year:04d}-{month:02d}-{day:02d}"
+        city = _FORMS[match["city"]]
+        owned_date = False
+        for operation in operations:
+            if not isinstance(operation, dict) or operation.get("type") != "upsert_stay":
+                continue
+            value = operation.get("value")
+            stay = stays.get(operation.get("target_id"))
+            if (not isinstance(value, dict) or not isinstance(stay, dict)
+                    or _city(stay.get("city")) != city
+                    or value.get("check_out") != literal_date
+                    or "city" in value and _city(value["city"]) != city):
+                continue
+            owned_date = True
+        if owned_date:
+            chars[match.start("cue"):match.end("cue")] = " " * len(match["cue"])
+    return "".join(chars)
+
+
+def _facts(data: dict, text: str, pending: dict, operations=()) -> dict:
     result = {"origin": set(), "destination": set(), "country": set(), "ambiguous": set(), "old": set(),
               "targets": set(), "replace": False, "choice": False, "alternative": False, "multicity": False, "current": False}
     hypothetical = False
     bare_origins, bare_destinations = set(), set()
-    normalized = _unquote(text)
+    normalized = _mask_owned_checkout_origin_cues(data, _unquote(text), operations)
     no_lodging = {_FORMS[m["city"]] for m in _NO_LODGING_IN_CITY.finditer(normalized)}
     policy = data.get("route_policy") if isinstance(data.get("route_policy"), dict) else {}
     terminal = _city(policy.get("end_city")) if policy.get("kind") == "open_jaw" else None
@@ -262,7 +301,8 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
                 result["alternative"] = True
             else:
                 for found in _FROM.finditer(clause):
-                    if not _RETURN_OR_LATER.search(clause[:found.start()]):
+                    if (not _RETURN_OR_LATER.search(clause[:found.start()])
+                            and not _negated_role_preposition(clause, found.start())):
                         result["origin"].add(_FORMS[found["city"]])
                 for found in _START.finditer(clause):
                     result["origin"].add(_FORMS[found["city"]])
@@ -274,7 +314,8 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
                         result[role].add(_FORMS[found["city"]])
                 for found in _TO.finditer(clause):
                     prefix = clause[:found.start()]
-                    if (not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", prefix)
+                    if (not _negated_role_preposition(clause, found.start())
+                            and not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", prefix)
                             and not _RETURN.search(prefix) and not _START_BEFORE.search(prefix) and not _END_BEFORE.search(prefix)
                             and _FORMS[found["city"]] not in no_lodging
                             and not (terminal == _FORMS[found["city"]] and _RETURN_OR_LATER.search(prefix))):
@@ -291,7 +332,8 @@ def _facts(data: dict, text: str, pending: dict) -> dict:
                     role = "origin" if (pending.get("field") == "origin.city" or re.search(r"отправлен|город вылета", clause)) and not re.search(r"направлен|назначен", clause) else "destination"
                     result[role].add(_FORMS[found["city"]])
                 for found in _COUNTRY_TO.finditer(clause):
-                    if not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", clause[:found.start()]):
+                    if (not _negated_role_preposition(clause, found.start())
+                            and not re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", clause[:found.start()])):
                         if not found["qualifier"] and parse_destination(found["country"])["requested_destination"]["kind"] == "ambiguous":
                             result["ambiguous"].add(found["country"])
                         else:
@@ -528,7 +570,7 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     stale_pending = ("state_version" in pending and (type(pending["state_version"]) is not int
         or pending["state_version"] != data.get("state_version")))
     facts_pending = {} if stale_pending else pending
-    facts = _facts(data, text, facts_pending)
+    facts = _facts(data, text, facts_pending, copied)
     country_answer = resolve_country_destination_answer(data, facts_pending, text)
     if country_answer["handled"]:
         facts["country"].add(country_answer["pending_context"]["requested_destination"]["country_code"])

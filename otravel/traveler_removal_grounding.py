@@ -9,6 +9,9 @@ from __future__ import annotations
 import re
 from copy import deepcopy
 
+from .budget_intent import _FRESH, _NON_CURRENT
+from .domain import MVP_LIMITS, DomainError, Operation, TripState, apply_operations
+from .operation_aliases import _without_quoted_spans
 from .party_literals import explicit_no_children
 from .preference_grounding import _clauses
 
@@ -31,6 +34,107 @@ _OTHER_OBJECT = re.compile(r"\s*(?:это\s+|этот\s+|данное\s+)?(?:п�
     r"рейс\w*|перелет\w*|тариф\w*|preference|constraint|filter|budget|hotel|flight|fare)\b")
 _LOCAL_SCOPE = re.compile(r"\b(?:из|с)\s+(?:групп\w*|номер\w*|комнат\w*|семь\w*)\b")
 _TRIP_SCOPE = re.compile(r"\b(?:поездк\w*|состав\w*|маршрут\w*|trip|travel\s+party)\b")
+_COUNTS = {'один': 1, 'одна': 1, 'два': 2, 'две': 2, 'двое': 2, 'три': 3, 'трое': 3,
+    'четыре': 4, 'четверо': 4, 'пять': 5, 'пятеро': 5, 'шесть': 6, 'семь': 7,
+    'восемь': 8, 'девять': 9, 'десять': 10}
+_AGES = {**_COUNTS, 'ноль': 0, 'нуль': 0, 'одного': 1, 'двух': 2, 'трех': 3, 'четырех': 4,
+    'пяти': 5, 'шести': 6, 'семи': 7, 'восьми': 8, 'девяти': 9, 'десяти': 10,
+    'одиннадцать': 11, 'одиннадцати': 11, 'двенадцать': 12, 'двенадцати': 12,
+    'тринадцать': 13, 'тринадцати': 13, 'четырнадцать': 14, 'четырнадцати': 14,
+    'пятнадцать': 15, 'пятнадцати': 15, 'шестнадцать': 16, 'шестнадцати': 16,
+    'семнадцать': 17, 'семнадцати': 17}
+_COUNT_TOKEN = r'(?:[0-9]{1,2}|' + '|'.join(sorted(_COUNTS, key=len, reverse=True)) + r')'
+_AGE_TOKEN = r'(?:[0-9]{1,2}|' + '|'.join(sorted(_AGES, key=len, reverse=True)) + r')'
+_AGE_SEQUENCE = rf'{_AGE_TOKEN}(?:\s*(?:,|и|/)\s*{_AGE_TOKEN})*'
+_COMPLETE_ROSTER = re.compile(
+    r'\s*(?:(?:окончательный|полный|итоговый)\s+состав(?:\s+(?:всей\s+)?поездки)?\s*[:—-]\s*|'
+    r'(?:теперь\s+)?(?:едем|едут|поедем|поедут|остаемся|остаются)\s+только\s+|'
+    r'в\s+поездке\s+(?:теперь\s+)?(?:остаются\s+)?только\s+)'
+    rf'(?P<adults>{_COUNT_TOKEN})\s+взросл\w*\s*(?:и|,)\s*'
+    rf'(?P<children>{_COUNT_TOKEN})\s+(?:детей|дети|ребенок|ребенка)\s*[,—:-]?\s*'
+    rf'(?P<ages>{_AGE_SEQUENCE})\s+(?:лет|года|год)\s*[.!]?\s*')
+_ROSTER_VETO = re.compile(r'\b(?:гипотез\w*|предложени\w*|пример\w*|только\s+обсуждаем|'
+    r'пока\s+не\s+примен\w*|не\s+меняй\s+состав|никого\s+не\s+(?:удаляй|убирай))\b')
+_ROSTER_QUESTION = 'Уточните, каких участников нужно сохранить или исключить: окончательные числа сами по себе не определяют личность разных участников.'
+
+
+def _number(token, values):
+    return int(token) if token.isascii() and token.isdigit() else values[token]
+
+
+def _complete_current_roster(text):
+    """Closed whole-trip declaration, never a room/group census or ID picker."""
+    unquoted = _without_quoted_spans(re.sub(r'`[^`]*`', ' ', text.casefold().replace('ё', 'е')))
+    if unquoted is None or '`' in unquoted:
+        return None, False
+    found = []
+    for sentence in re.finditer(r'[^.!?;\n]+(?:[.!?;\n]|$)', unquoted):
+        piece = sentence.group()
+        if piece.rstrip().endswith('?') or piece.lstrip().startswith('>'):
+            continue
+        for branch in _FRESH.split(piece):
+            if _NON_CURRENT.search(branch) or _NONCURRENT.search(branch):
+                continue
+            match = _COMPLETE_ROSTER.fullmatch(branch)
+            if not match:
+                continue
+            adults = _number(match['adults'], _COUNTS)
+            ages = tuple(sorted(_number(token, _AGES) for token in re.findall(_AGE_TOKEN, match['ages'])))
+            if (0 < adults <= MVP_LIMITS['travelers'] and len(ages) == _number(match['children'], _COUNTS)
+                    and adults + len(ages) <= MVP_LIMITS['travelers'] and all(0 <= age < 18 for age in ages)):
+                found.append((adults, ages))
+    if not found:
+        return None, False
+    return found[0], len(set(found)) != 1 or bool(_ROSTER_VETO.search(unquoted))
+
+
+def _anonymous_unbound_adults(data, adults):
+    ids = {person.get('id') for person in adults}
+    for person in adults:
+        if (person.get('age') is not None or person.get('birth_date') is not None or person.get('group_id') is not None
+                or any(key not in {'id', 'type', 'age', 'birth_date', 'group_id'} and value not in (None, '')
+                    for key, value in person.items())):
+            return False
+    if any(ids.intersection(group.get('traveler_ids', [])) for group in data.get('groups', [])):
+        return False
+    if any(ids.intersection(room.get('traveler_ids', [])) for stay in data.get('stays', []) for room in stay.get('rooms', [])):
+        return False
+    def mentions_person(value):
+        if isinstance(value, str):
+            return value in ids
+        if isinstance(value, dict):
+            return any(mentions_person(item) for item in value.values())
+        if isinstance(value, (list, tuple)):
+            return any(mentions_person(item) for item in value)
+        return False
+    return not mentions_person([data.get('constraints', []), data.get('preferences', [])])
+
+
+def _complete_roster_permission(data, operations, text):
+    declared, conflict = _complete_current_roster(text)
+    if declared is None:
+        return None
+    if conflict:
+        return False
+    adults = [person for person in data.get('travelers', []) if person.get('type') == 'adult']
+    ids = {person.get('id') for person in adults}
+    targets = {operation.get('target_id') for operation in operations
+        if isinstance(operation, dict) and operation.get('type') == 'remove_traveler'}
+    if not targets or not targets <= ids or not _anonymous_unbound_adults(data, adults):
+        return False  # No child removal or distinguishing adult identity is inferred.
+    try:
+        projected, _ = apply_operations(TripState.model_validate(data),
+            [Operation.model_validate(operation) for operation in operations])
+    except (DomainError, ValueError, TypeError):
+        return False
+    after = projected.model_dump(mode='json')
+    kept_adults = [person for person in after['travelers'] if person['type'] == 'adult']
+    child_ages = tuple(sorted(person['age'] for person in after['travelers']
+        if person['type'] == 'child' and type(person.get('age')) is int))
+    all_children = sum(person['type'] == 'child' for person in after['travelers'])
+    return (len(kept_adults) == declared[0] and child_ages == declared[1] and all_children == len(declared[1])
+        and {person['id'] for person in kept_adults} == ids - targets
+        and _anonymous_unbound_adults({**after, 'stays': [], 'groups': []}, kept_adults))
 
 
 def _has_current_removal(state: dict, text: str) -> bool:
@@ -62,6 +166,16 @@ def guard_traveler_removal_operations(before_state, operations, text):
         return copied, meta
     if _has_current_removal(data, text):
         return copied, meta
+    if any(isinstance(operation, dict) and operation.get('type') == 'remove_traveler' for operation in copied):
+        complete = _complete_roster_permission(data, copied, text)
+        if complete is True:
+            meta['notes'].append({'code': 'complete_current_roster_removal_authorized', 'finding_id': FINDING_ID,
+                'status': 'authorized', 'source': 'exact_projected_census_of_anonymous_unbound_adults'})
+            return copied, meta
+        if complete is False:
+            meta['conflicts'].append(_ROSTER_QUESTION)
+            meta['unknowns'].append(_ROSTER_QUESTION)
+            meta['pending_context'] = {'field': 'party.removal', 'target_id': None, 'force_clarification': True}
     result = []
     for operation in copied:
         if isinstance(operation, dict) and operation.get("type") == "remove_traveler":

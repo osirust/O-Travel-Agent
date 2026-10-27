@@ -1,0 +1,96 @@
+{
+  "format": "otravel.prefrontend.r14.release.v1",
+  "created_at_utc": "2026-10-27T23:39:21.109060+00:00",
+  "status": "FULL_CONTROLLED_PASS_ACTUAL_LANGUAGE_AND_SUBMISSION_GAPS_RETAINED",
+  "package_sha256": "3eca7197628416b4614650ba473121af5aa695298fec28b5e349053799b77564",
+  "full": {
+    "passed": 7098,
+    "failed": 0,
+    "skipped": 0,
+    "junit_seconds": 410.434,
+    "source_unchanged": true,
+    "tests_sha256": "80a6b603224d3f07c1d6117c5f23d012716c9d04df46e736a86d9eca088fd5d1",
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r14-initial.xml",
+    "xml_sha256": "c85185bc38c08a281f3db035aa530a75d76230aa9b47ed5ffbfd1a82cd361b65"
+  },
+  "historical_r13": {
+    "passed": 7062,
+    "failed": 5,
+    "source_sha256": "370173555f916249c2b5dc6fceb732ea0180b81d19b6dde472ca58848dcf2b6d",
+    "failures_and_original_tests_retained": true,
+    "repairs": [
+      "literal budget does not erase malformed raw schema before bounded repair",
+      "PROPOSE candidates and unchanged-trip response survive guards",
+      "unknown date choice does not revoke an independent budget in three country dialogues"
+    ],
+    "related_original_tests_after_repair": {
+      "passed": 5,
+      "failed": 0
+    }
+  },
+  "related": {
+    "money_and_original_r13_regressions": {
+      "passed": 248,
+      "xml": ".local/evaluation/after80-20261028/r14-money-and-r13-regressions-combined.xml"
+    },
+    "geo": "docs/verification/geo-role-grounding-repair-20261028.json",
+    "return": "docs/verification/return-preservation-repair-20261028.json",
+    "room_count": "docs/verification/universal-room-count-repair-20261028.json",
+    "final_roster": "docs/verification/final-roster025-removal-20261028.json",
+    "raw_budget": "docs/verification/budget-raw-authority-20261028.json"
+  },
+  "actual_language": {
+    "a36_zai45": {
+      "accepted_inputs": 619,
+      "original_inputs": 697,
+      "observed_cases": 71,
+      "completed": 584,
+      "failed": 30,
+      "queued_not_executed": 5,
+      "model_calls": 515,
+      "source_tools": 771,
+      "proof": "docs/verification/after80-a36-execution-final-20261028.json"
+    },
+    "independent_r12_zai47": {
+      "accepted_inputs": 1,
+      "failed": 1,
+      "model_calls": 1,
+      "source_tools": 0,
+      "remaining_unsubmitted_inputs": 77,
+      "proof": "docs/verification/after80-zai47-8088-072-080-20261028.json"
+    },
+    "not_a_uniform_combined_acceptance": true,
+    "full_80_pass_claimed": false,
+    "full_106_pass_claimed": false,
+    "actual_retests_of_all_current_repairs_completed": false
+  },
+  "external": {
+    "gigachat_oauth_http": 200,
+    "gigachat_generation_successes": 0,
+    "gigachat_block": "API TLS handshake times out before model response; no VPN or TLS-verification changes.",
+    "zai_timeout": "45-second gateway deadline; network/queue/model cause unknown, not proved quota exhaustion.",
+    "jury_ciphertext_ready": false,
+    "jury_key_copied_from_master": false,
+    "jury_block": "Official separate-key requirement; browser access was stopped because the current URL was not reliably determined."
+  },
+  "current_scope_local_qwen_calls": 0,
+  "paid_calls": 0,
+  "supplier_book_pay": 0,
+  "staged_package": {
+    "tested_package_sha256": "3eca7197628416b4614650ba473121af5aa695298fec28b5e349053799b77564",
+    "staged_package_sha256": "e37ccb723f2709443fef30a76b53a104ab9066e554f64f751c9e5b92d42d6993",
+    "package_files": 80,
+    "only_allowed_crlf_normalization": [
+      "otravel/budget_intake.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

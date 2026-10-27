@@ -164,6 +164,14 @@ def _direction(prefix: str) -> int:
             between = head[verb.end():]
             if re.fullmatch(r"\s*(?:(?:к|общий|общему|обший|весь|наш|мой|на|whole|total)\s*)*", between):
                 directions.append(direction)
+        # A budget noun may precede its own imperative: 'бюджет уменьши на'.
+        # Bind both sides of that verb, so a later person/hotel instruction
+        # cannot borrow the financial marker as authority.
+        tail = local[marker.end():]
+        for verb in pattern.finditer(tail):
+            if (re.fullmatch(r"\s*(?:(?:пожалуйста|теперь|сейчас|только|общий|общему|обший|мой|наш)\s*)*", tail[:verb.start()])
+                    and re.fullmatch(r"\s*(?:(?:пожалуйста|еще)\s+)*(?:на|до)?\s*", tail[verb.end():])):
+                directions.append(direction)
     return directions[0] if len(directions) == 1 else 0
 
 

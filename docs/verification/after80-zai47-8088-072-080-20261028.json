@@ -1,0 +1,151 @@
+{
+  "format": "otravel.after80.independent-zai47.v1",
+  "date": "2026-10-28",
+  "status": "ACTUAL_FIRST_RESOURCE_STOP_NOT_NLU_QUALIFIED",
+  "finding_id": "EVAL-API-ZAI47-8088-TIMEOUT-001",
+  "objective": "Explicit new comparison epoch for original072–080/78inputs; never resume8086 or claim uniform80-pass.",
+  "source": {
+    "commit": "3f369a9e92f38cd04a896300133e1d6ccecaf22d",
+    "package_sha256": "bfb5f662637d3fd9e9f9c1990d53b991bbce508ce7ff641094c3991a0a2b3fee",
+    "source_path": "/home/aegml/projects/otravel-after80-zai47-8088-20261028",
+    "original_dialogues_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "oracle_v3_sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+    "archive_oracle_sha256": "c9e7e910dbb1c2bba725a980b9cdfc583890e40613ac14225aac7b4c0de7778d",
+    "oracle_semantics_equal": true,
+    "oracle_bytes_note": "Original518f CRLFbytes copiedread-only into privateC;committed archivefixtureLF c9e7 leftunchanged.",
+    "driver_sha256": "a764427f5030aa025e0425971b1975a25fe1cf229f8e25513516b9a2e53e718c",
+    "controller_sha256": "4981caf61ad6cc4a8f3c2062898b35561607eeedb40d780a95fed7cb8330384c",
+    "grader_sha256": "1f288c0b085b08d0fe71b5e3093754d01e35784b912d3b7f93377cc9e0b36ffd",
+    "mutable_E_core_imported": false,
+    "source_or_oracles_changed": false
+  },
+  "profile": {
+    "provider": "zai",
+    "model": "glm-4.7-flash",
+    "free_confirmation": "ExistingMasterconfirmationrequiredandverified;noBillingchanged",
+    "search_seed": {
+      "mode": "HYBRID",
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "demo_fallback": true,
+      "guest_nationality": "RU"
+    },
+    "nationality_scope": "EXPLICIT_SYNTHETIC_TEST_SEED_NOT_EMPTY_NATURAL",
+    "phase_max_model_calls": 160,
+    "phase_max_source_tool_calls": 500,
+    "per_run_max_model_calls": 2,
+    "local_calls_allowed": 0,
+    "paid_fallback": false,
+    "parallel": 1,
+    "post_pacing_seconds": 2,
+    "llm_total_timeout_seconds": 45,
+    "max_output_tokens": 2048,
+    "reasoning_enabled": false,
+    "supplier_book_pay": false,
+    "new_database_does_not_reset_old_counters": true,
+    "vendor_quota_or_reset": "UNKNOWN",
+    "prior_account_audit": {
+      "model_calls": 515,
+      "source_tools": 771,
+      "other_functional_probes": "SEPARATE_UNKNOWN"
+    }
+  },
+  "guards": {
+    "exactGitArchiveinstalled": true,
+    "complete78filepackagepin": true,
+    "symlinks_env_git_local_refused_in_archive": true,
+    "new_own_database": "otravel_zai47_9_eval_20261028",
+    "new_loopback_port": 8088,
+    "pid_before_stop": 914961,
+    "start_ticks": 6858999,
+    "owner_uid": 1000,
+    "source_and_client_fenced_before_eachPOST": true,
+    "no_other_listener_stopped": true,
+    "selected_Master_fields_only": true,
+    "source_dotenv_read": false,
+    "startup_db_counts_all_zero": {
+      "agent_events": 0,
+      "agent_runs": 0,
+      "demo_orders": 0,
+      "messages": 0,
+      "quotes": 0,
+      "sessions": 0,
+      "pending_or_running": 0,
+      "model_call_started": 0
+    },
+    "fake_dry_guard_tests": 13,
+    "fake_tests_are_not_model_calls": true
+  },
+  "actual": {
+    "selected_cases": 9,
+    "selected_original_inputs": 78,
+    "case_id": "ZAI100-072",
+    "observed_turn": 1,
+    "original_user_text": "Из Москвы в Сочи 23–30 ноября 2026. Двое взрослых и дети трёх и десяти лет, один семейный номер. Общий бюджет 100000 рублей.",
+    "registered_model_attempts": 1,
+    "source_tool_calls": 0,
+    "orders": 0,
+    "successful_model_final_jsons": 0,
+    "observed_error": {
+      "code": "REQUEST_TIMEOUT",
+      "message": "Превышено общее время ответа LLM."
+    },
+    "vendor_http_status": "UNKNOWN_NOT_CAPTURED",
+    "registered_call_to_failure_seconds": 45.01628,
+    "turn_elapsed_seconds": 47.496,
+    "state_version_before_after": [
+      0,
+      0
+    ],
+    "canonical_origin_party_stays_budget_after": "Fresh emptyfactsremain;no partialtripmutation",
+    "attempt_reposted": false,
+    "schema_repair_after_timeout": false,
+    "driver_status": "STOPPED_PARTIAL",
+    "budget_held_after": {},
+    "remaining_inputs_not_submitted": 77,
+    "remaining_cases": "072/T2–T9 and073–080 NOT_RUN",
+    "whole_dialogue_passes_claimed": 0,
+    "cause": "App45secondtotalLLMdeadlineobserved;vendorqueue/network/inferencestage/TPMbalance/reset UNKNOWN."
+  },
+  "offline_v3": {
+    "summary": {
+      "case_files_found": 9,
+      "source_cases": 80,
+      "source_turn_ids": 697,
+      "fully_bound_case_oracles": 0,
+      "check_status_counts": {
+        "PASS": 4,
+        "FAIL": 2
+      },
+      "comparability_counts": {}
+    },
+    "full_behavioral_status": "INCOMPLETE_ORACLES_NOT_80PASS",
+    "scope": "4propertyPASS/2FAIL are raw partial-bound mechanicalchecks on oneresource-failedturn,NOTsuccessfulNLU;initialfactsFAILdependentontimeout;fully_boundcases0.Originalgraderoutputpreserved."
+  },
+  "cleanup": {
+    "own_process_stopped": true,
+    "database_preserved": true,
+    "counts_after": {
+      "agent_events": 6,
+      "agent_runs": 1,
+      "demo_orders": 0,
+      "messages": 2,
+      "quotes": 0,
+      "sessions": 1,
+      "pending_or_running": 0,
+      "model_call_started": 1
+    },
+    "old8084_8086_or_VPN_changed": false
+  },
+  "private_evidence": {
+    "folder": "/home/aegml/.local/evaluation/after80-zai47-8088-independent-epoch1-20261027-230938-fe2d1267",
+    "safe_projection": "/home/aegml/.local/evaluation/after80-zai47-8088-independent-epoch1-20261027-230938-fe2d1267/safe-dialogues-072-080.jsonl",
+    "safe_projection_sha256": "8fba3071bb47815d5e2e914fcbd894baae84661dbb8b1477a37ebe968b90d694",
+    "safe_summary_sha256": "3de13df51a20ba2456086291966a62dfa55ee8134d6b87d6d45f657ceebbc9b2",
+    "setup_zero_generation_sha256": "c1dbec5bdf4bc2468359218c5981a39aec08c833878ce0d9198b478524f96cbb",
+    "resume_vault_not_exported": true,
+    "headers_reasoning_providerraw_not_exported": true
+  },
+  "next": "No further modelgeneration/retry/profilechange without a separate explicitRootepoch. Read-onlydiagnosis maycompare existingknownsuccessprofile,notinferquotalimits.",
+  "no_original_outputs_overwritten": true
+}
