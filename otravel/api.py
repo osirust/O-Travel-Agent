@@ -29,7 +29,7 @@ from .domain import DomainError, Operation, TripState, validate_trip
 from .harness import Harness, TYPED_PREFIX, encode_command, exact_control
 from .inventory import reprice_plan, validate_plan
 from .planning import assemble_plan, validate_quote
-from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields, public_offer_failure_fields
+from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields, public_offer_failure_fields, redact_runtime_text
 from .fx import CBRFxClient, FxUnavailable
 from .media import MEDIA_CSP_SOURCES, MediaResolver
 from .store import Conflict, NotFound, Store, StoreError
@@ -37,7 +37,7 @@ from .store import Conflict, NotFound, Store, StoreError
 
 _PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "api_token", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
 _PUBLIC_PROVIDER_NAMES = frozenset({
-    "gemini", "openrouter", "groq", "zai", "cloudflare", "ollama",
+    "gemini", "openrouter", "groq", "zai", "cloudflare", "ollama", "gigachat",
     "liteapi", "duffel", "serpapi", "open_meteo", "hotelbeds", "ratehawk", "travelpayouts",
 })
 
@@ -66,12 +66,13 @@ def _provider_error_public_fields(exc: ProviderError) -> dict:
 
 def _clean(value: Any) -> Any:
     if isinstance(value, dict):
-        return {key: _clean(item) for key, item in value.items() if key.casefold().replace("-", "_") not in _PRIVATE and not key.casefold().endswith(("_api_key", "_api_secret", "_access_token", "_api_token"))}
+        return {key: _clean(item) for key, item in value.items() if key.casefold().replace("-", "_") not in _PRIVATE and not key.casefold().replace("-", "_").endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_auth_key"))}
     if isinstance(value, list):
         return [_clean(item) for item in value]
     if isinstance(value, str):
+        value = redact_runtime_text(value)
         # Never echo configured credentials, even inside an otherwise public string.
-        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN", "ZAI_API_KEY", "COHERE_API_KEY", "CLOUDFLARE_API_TOKEN", "NVIDIA_API_KEY"):
+        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN", "ZAI_API_KEY", "COHERE_API_KEY", "CLOUDFLARE_API_TOKEN", "NVIDIA_API_KEY", "GIGACHAT_AUTH_KEY"):
             secret = os.getenv(name)
             if secret:
                 value = value.replace(secret, "[REDACTED]")
@@ -245,7 +246,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         if isinstance(value, dict):
             for key, item in value.items():
                 normalized = key.casefold().replace("-", "_")
-                if normalized in {"api_key", "apikey", "token", "authorization", "password", "secret", "headers", "url", "endpoint"} or normalized.endswith(("_api_key", "_access_token", "_api_secret")):
+                if normalized in {"api_key", "apikey", "token", "authorization", "password", "secret", "headers", "url", "endpoint"} or normalized.endswith(("_api_key", "_access_token", "_api_secret", "_auth_key")):
                     raise HTTPException(400, "Ключи и адреса HTTP задаются только серверной конфигурацией.")
                 no_credentials(item)
         elif isinstance(value, list):

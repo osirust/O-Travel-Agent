@@ -26,9 +26,9 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 SCHEMA_VERSION = 1
-REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq", "cloudflare", "zai"})
-INDEPENDENT_REMOTE_PROVIDERS = frozenset({"groq", "cloudflare", "zai"})
-SINGLE_ATTEMPT_REMOTE_PROVIDERS = frozenset({"cloudflare", "zai"})
+REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq", "cloudflare", "zai", "gigachat"})
+INDEPENDENT_REMOTE_PROVIDERS = frozenset({"groq", "cloudflare", "zai", "gigachat"})
+SINGLE_ATTEMPT_REMOTE_PROVIDERS = frozenset({"cloudflare", "zai", "gigachat"})
 LOCAL_MODEL_PROVIDERS = frozenset({"ollama"})
 metadata = MetaData()
 schema_versions = Table(
@@ -938,7 +938,7 @@ class Store:
                 # Shared accounting is retained; caller defaults remain40.
                 provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
                     event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
-                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 1000 if provider == "groq" else 50 if provider == "openrouter" else 40)
+                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 1000 if provider in {"groq", "gigachat"} else 50 if provider == "openrouter" else 40)
                 per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))

@@ -16,4 +16,5 @@ artifacts/
 .coverage
 .local/
 *.pem
+!certs/gigachat-root-ca.pem
 *.key

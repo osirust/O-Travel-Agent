@@ -10,7 +10,7 @@ from test_replay_after80_profiles import metadata, rows, runner
 def gptoss_metadata():
     health, status, evidence = metadata('groq-gptoss120')
     evidence['limits']['groq_daily_engineering_bound'] = 1000
-    status['groq'].update(structured_transport=True, reasoning_effort='low', include_reasoning=False)
+    status['groq'].update(structured_transport=True, transport_version=2, reasoning_effort='low', include_reasoning=False)
     return health, status, evidence
 
 

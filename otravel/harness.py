@@ -252,7 +252,7 @@ def _can_switch_model(error: Exception) -> bool:
         return True
     if not isinstance(error, ProviderError):
         return False
-    if error.provider in {"cloudflare", "zai"}:
+    if error.provider in {"cloudflare", "zai", "gigachat"}:
         return False
     details = error.details if isinstance(error.details, dict) else {}
     limit_source = details.get("limit_source")
@@ -272,6 +272,8 @@ def _requested_model(gateway: Any, provider: str) -> str:
         return str(config.get("OLLAMA_MODEL", "qwen3.5:4b"))
     if isinstance(config, dict) and provider == "groq":
         return str(config.get("GROQ_MODEL", "qwen/qwen3.8-27b"))
+    if isinstance(config, dict) and provider == "gigachat":
+        return str(config.get("GIGACHAT_MODEL", "GigaChat-3-Ultra"))
     if isinstance(config, dict) and provider == "cloudflare":
         return str(config.get("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"))
     if isinstance(config, dict) and provider == "zai":
@@ -520,6 +522,12 @@ class Harness:
                 if str(config.get("GROQ_FREE_TIER_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
                     raise ProviderError("CONFIG_BLOCKED", "Подтвердите бесплатный аккаунт Groq без billing.", provider="groq")
                 provider = "groq"
+            elif primary == "gigachat":
+                if not config.get("GIGACHAT_AUTH_KEY"):
+                    raise ProviderError("CONFIG_MISSING", "Ключ авторизации GigaChat не настроен.", provider="gigachat")
+                if str(config.get("GIGACHAT_FREEMIUM_CONFIRMED", False)).lower() not in {"true", "1", "yes"}:
+                    raise ProviderError("CONFIG_BLOCKED", "Нужен подтверждённый бесплатный доступ GigaChat для физлица.", provider="gigachat")
+                provider = "gigachat"
             elif primary == "cloudflare":
                 token = config.get("CLOUDFLARE_API_TOKEN")
                 if not isinstance(token, str) or not token.strip():
@@ -551,7 +559,7 @@ class Harness:
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
         if readonly:
             attempts = min(1, attempts)
-        if provider in {"ollama", "groq", "cloudflare", "zai"}:
+        if provider in {"ollama", "groq", "cloudflare", "zai", "gigachat"}:
             # Keep local and tightly capped free providers to one generation;
             # a malformed answer does not trigger an immediate full-context repair.
             attempts = min(1, attempts)
@@ -582,6 +590,7 @@ class Harness:
                 daily_limit = (min(500, self.settings.max_local_llm_calls_per_day) if provider == "ollama" else
                     min(2000, self.settings.max_cloudflare_llm_calls_per_day) if provider == "cloudflare" else
                     min(1000, self.settings.max_groq_llm_calls_per_day) if provider == "groq" else
+                    min(1000, self.settings.max_gigachat_llm_calls_per_day) if provider == "gigachat" else
                     min(2000, self.settings.max_llm_calls_per_day) if provider == "zai" else
                     min(50 if self.settings.max_llm_calls_per_day == 50 else 40,
                         self.settings.max_llm_calls_per_day) if provider == "openrouter" else
@@ -977,6 +986,18 @@ class Harness:
         from .answering import canonical_geography_answer, canonical_order_status_answer, canonical_source_answer, canonical_unit_capability_answer, checked_reply, order_status_question, readonly_question, short_place_inquiry
         from .conversational import request_kinds
         from .trip_answers import classify_saved_question, render_saved_answer
+        from .greetings import canonical_greeting
+
+        greeting = canonical_greeting(run["input_text"])
+        if greeting is not None:
+            reply = greeting["text"]
+            pending = session.get("pending_question")
+            if pending and session.get("waiting_reason") == "clarification":
+                question = human_question(pending, session["state"], pending.get("context"))
+                reply += " " + question
+            await self._ensure_current_run(session, run)
+            return ModelResult(operations=[], control={"action": "none"}, reply=reply,
+                unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
 
         # A narrow, complete saved-fact question is not a reply to a date target.
         # The date resolver deliberately re-asks on any unrecognised selector;

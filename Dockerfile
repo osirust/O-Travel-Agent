@@ -13,6 +13,7 @@ RUN python -m pip install --no-cache-dir --only-binary=:all: pip==26.2.2 \
     && useradd --system --uid 10001 --create-home app
 COPY --from=builder /opt/venv /opt/venv
 WORKDIR /app
+COPY --chmod=0444 certs/gigachat-root-ca.pem /app/certs/gigachat-root-ca.pem
 USER app
 EXPOSE 8080
 CMD ["uvicorn", "otravel.api:app", "--host", "0.0.0.0", "--port", "8080", "--no-access-log"]

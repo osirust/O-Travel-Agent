@@ -134,12 +134,12 @@ def groq_rate_facts(headers: Mapping, body: Any) -> dict:
 def model_snapshot(value: Mapping, settings: Mapping | None = None, *, limit: int = 65536) -> dict:
     """Preserve the structured contract for attribution, excluding hidden data."""
     secrets = [item for key, item in (settings or {}).items() if isinstance(item, str) and item
-        and re.search(r"(?:API_KEY|API_SECRET|ACCESS_TOKEN|API_TOKEN|PASSWORD)$", str(key), re.I)]
+        and re.search(r"(?:API_KEY|AUTH_KEY|API_SECRET|ACCESS_TOKEN|API_TOKEN|PASSWORD)$", str(key), re.I)]
     def clean(item):
         if isinstance(item, Mapping):
             return {str(key): clean(part) for key, part in item.items()
                 if str(key).casefold().replace("-", "_") not in PRIVATE_FIELDS
-                and not str(key).casefold().endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_refresh_token"))}
+                and not str(key).casefold().replace("-", "_").endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_refresh_token", "_auth_key"))}
         if isinstance(item, (list, tuple)):
             return [clean(part) for part in item]
         if isinstance(item, str):

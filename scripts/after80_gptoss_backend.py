@@ -124,6 +124,7 @@ def environment(engine, database, profile):
         'LLM_REQUEST_TIMEOUT': '45', 'LLM_MAX_OUTPUT_TOKENS': '2048', 'LLM_REASONING_ENABLED': 'false',
         # The fixed GPT-OSS gateway also sends include_reasoning=false.
         'GROQ_REASONING_EFFORT': 'low', 'GROQ_STRUCTURED_TRANSPORT_ENABLED': 'true',
+        'GROQ_TRANSPORT_VERSION': '2',
         'REFERENCE_FX_ENABLED': 'true',
         'OPENROUTER_BACKUP_MODEL': '', 'GEMINI_FREE_TIER_CONFIRMED': 'false', 'GROQ_FREE_TIER_CONFIRMED': 'true',
         'ZAI_FREE_TIER_CONFIRMED': 'false', 'CLOUDFLARE_FREE_TIER_CONFIRMED': 'false',
@@ -168,6 +169,8 @@ def require_ready(engine):
         and status.get('groq', {}).get('free_tier_confirmed') is True
         and status.get('groq', {}).get('paid_fallback') is False
         and status.get('groq', {}).get('structured_transport') is True
+        and type(status.get('groq', {}).get('transport_version')) is int
+        and status['groq']['transport_version'] == 2
         and status.get('groq', {}).get('reasoning_effort') == 'low'
         and status.get('groq', {}).get('include_reasoning') is False, 'gptoss_runtime_profile_mismatch')
     engine.require(status.get('liteapi', {}).get('configured') is True and status.get('liteapi', {}).get('mode') == 'sandbox'
@@ -245,6 +248,7 @@ def start(engine, account):
         "'model':os.environ['GROQ_MODEL'],'daily_limit':s.max_groq_llm_calls_per_day,"
         "'generic_daily_limit':s.max_llm_calls_per_day,"
         "'gptoss_transport':s.provider_settings().get('GROQ_STRUCTURED_TRANSPORT_ENABLED'),"
+        "'gptoss_transport_version':s.provider_settings().get('GROQ_TRANSPORT_VERSION'),"
         "'gptoss_reasoning_effort':s.provider_settings().get('GROQ_REASONING_EFFORT'),"
         "'gptoss_include_reasoning':provider_status()['groq'].get('include_reasoning'),"
         "'run_limit':s.max_llm_calls_per_run,'local_limit':s.max_local_llm_calls_per_day,"
@@ -256,7 +260,7 @@ def start(engine, account):
     facts = json.loads(imported.stdout)
     expected = {'api_file': str(SOURCE / 'otravel/api.py'), 'provider': 'groq', 'model': MODEL,
         'daily_limit': 1000, 'generic_daily_limit': 40, 'run_limit': 1, 'local_limit': 0, 'search_mode': 'HYBRID',
-        'gptoss_transport': 'true', 'gptoss_reasoning_effort': 'low', 'gptoss_include_reasoning': False, 'other_model_credentials_present': False}
+        'gptoss_transport': 'true', 'gptoss_transport_version': '2', 'gptoss_reasoning_effort': 'low', 'gptoss_include_reasoning': False, 'other_model_credentials_present': False}
     engine.require(facts == expected, 'gptoss_native_source_or_explicit_limits_mismatch')
     engine.require(engine.source_manifest() == manifest, 'gptoss_source_changed_before_database_check')
     require_existing_database(engine, database)

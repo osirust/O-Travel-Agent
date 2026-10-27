@@ -1,0 +1,2 @@
+# Preserve the verified public CA download exactly, including its original EOL.
+certs/gigachat-root-ca.pem -text

@@ -16,9 +16,11 @@ import logging
 import math
 import os
 import re
+import ssl
 from datetime import UTC, date, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from typing import Any
+from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
@@ -29,8 +31,9 @@ from .observability import groq_rate_facts, request_stats, seconds_hint, usage_c
 
 
 _SECRETS: set[str] = set()
+_EPHEMERAL_PUBLIC_SECRETS: set[str] = set()
 _SENSITIVE_FIELDS = {"api_key", "apikey", "api_token", "key", "authorization", "access_token", "password", "secret"}
-_LLM_CREDENTIAL_FIELDS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "CLOUDFLARE_API_TOKEN", "ZAI_API_KEY")
+_LLM_CREDENTIAL_FIELDS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "CLOUDFLARE_API_TOKEN", "ZAI_API_KEY", "GIGACHAT_AUTH_KEY")
 _LIMIT_SOURCES = {
     "upstream_provider_shared_pool", "account_quota", "key_rate_limit",
     "workspace_credit_limit", "exhausted_global_quota", "unknown",
@@ -51,11 +54,30 @@ def _safe_text(value: Any) -> str:
     return re.sub(r"(?i)([?&](?:api_key|api_token|key|access_token|token)=)[^&\s'\"]+", r"\1[REDACTED]", text)
 
 
+def redact_runtime_text(value: str) -> str:
+    """Redact Giga client credentials registered in RAM, independently of logs."""
+    for secret in sorted(_EPHEMERAL_PUBLIC_SECRETS, key=len, reverse=True):
+        if secret:
+            value = value.replace(secret, "[REDACTED]")
+    return value
+
+
+def _contains_registered_secret(value: Any, secrets: set[str]) -> bool:
+    if isinstance(value, str):
+        return any(secret and secret in value for secret in secrets)
+    if isinstance(value, dict):
+        return any(_contains_registered_secret(key, secrets) or _contains_registered_secret(item, secrets)
+                   for key, item in value.items())
+    if isinstance(value, list):
+        return any(_contains_registered_secret(item, secrets) for item in value)
+    return False
+
+
 def _safe(value: Any) -> Any:
     if isinstance(value, dict):
         def sensitive(key: Any) -> bool:
             name = str(key).lower().replace("-", "_")
-            return name in _SENSITIVE_FIELDS or name.endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_key_id"))
+            return name in _SENSITIVE_FIELDS or name.endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_key_id", "_auth_key"))
         return {str(k): _safe(v) for k, v in value.items() if not sensitive(k)}
     if isinstance(value, (list, tuple)):
         return [_safe(item) for item in value]
@@ -94,7 +116,7 @@ def safe_model_context(value: Any) -> Any:
             for field, item in node.items():
                 name = str(field).lower().replace("-", "_")
                 sensitive = (name in _SENSITIVE_FIELDS or name in {"token", "refresh_token", "headers", "client_secret"}
-                    or name.endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_key_id")))
+                    or name.endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_key_id", "_auth_key")))
                 if sensitive:
                     if field == "key" and semantic_key(path, node):
                         # This enum value is code-known, not a provider secret.
@@ -338,6 +360,9 @@ class _HTTPGateway:
                        "Провайдер ограничил запросы (HTTP 429)." if status == 429 else
                        "Запрос к Groq слишком большой (HTTP 413). Сократите передаваемый контекст и повторите запрос."
                        if groq_too_large else "Провайдер отклонил запрос.")
+            retry_seconds = details.get("retry_after_seconds")
+            if status == 429 and not billing and type(retry_seconds) is int and 0 <= retry_seconds <= 86400:
+                message += f" Указанное провайдером ожидание: {retry_seconds} сек."
             raise ProviderError("RATE_LIMITED" if status == 429 else "HTTP_ERROR", message,
                                 (status == 429 or status >= 500) and not billing, provider, details)
         if len(response.content) > 5_000_000:
@@ -457,6 +482,7 @@ class ExtractionOutput(dict):
 class LLMGateway(_HTTPGateway):
     def __init__(self, settings: dict):
         super().__init__(settings)
+        self._runtime_credentials: set[str] = set()
         # Register configured credentials BEFORE serializing the very first
         # prompt. Only these known fields/named env lookups are read; arbitrary
         # settings/user values never become credential-registration candidates.
@@ -465,7 +491,7 @@ class LLMGateway(_HTTPGateway):
             if credential is None:
                 credential = os.getenv(field)
             if isinstance(credential, str) and credential.strip():
-                _SECRETS.add(credential.strip())
+                self._register_runtime_secret(credential.strip())
         try:
             local = str(_setting(settings, "LLM_PROVIDER", "gemini")).lower() == "ollama"
             default_timeout = 105 if local else 45
@@ -482,6 +508,7 @@ class LLMGateway(_HTTPGateway):
         self._response_usage: ContextVar[dict | None] = ContextVar("otravel_response_usage", default=None)
         self._structured_transport: ContextVar[dict | None] = ContextVar("otravel_structured_transport", default=None)
         self._wire_request_metadata: ContextVar[dict | None] = ContextVar("otravel_wire_request_metadata", default=None)
+        self._gigachat_client = None
 
         async def capture_groq_wire_request(request):
             metadata = self._wire_request_metadata.get()
@@ -499,6 +526,14 @@ class LLMGateway(_HTTPGateway):
 
     def request_metrics_for_current_call(self) -> dict | None:
         return self._request_metrics.get()
+
+    def _register_runtime_secret(self, value: str) -> None:
+        self._runtime_credentials.add(value)
+        _SECRETS.add(value)
+
+    def _register_gigachat_secret(self, value: str) -> None:
+        self._register_runtime_secret(value)
+        _EPHEMERAL_PUBLIC_SECRETS.add(value)
 
     def call_metadata_for_current_call(self) -> dict:
         metadata = {}
@@ -518,7 +553,8 @@ class LLMGateway(_HTTPGateway):
                    and url == "https://api.groq.com/openai/v1/chat/completions"
                    and isinstance(response_format, dict) and response_format.get("type") == "json_schema"
                    and isinstance(transport, dict)
-                   and transport.get("format") in {"groq_strict_operations_v1", "groq_strict_readonly_v1"} else None)
+                   and transport.get("format") in {"groq_strict_operations_v1", "groq_strict_readonly_v1",
+                       "groq_strict_operations_v2", "groq_strict_readonly_v2"} else None)
         token = self._wire_request_metadata.set(capture)
         try:
             body = await asyncio.wait_for(super()._request(provider, method, url, **kwargs), self.wall_timeout)
@@ -540,7 +576,7 @@ class LLMGateway(_HTTPGateway):
         mode = context.get("__response_mode")
         if mode not in {None, "readonly_answer_v1"}:
             _fail("Неизвестная серверная роль модели.", provider, "CONFIG_BLOCKED")
-        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai"}:
+        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai", "gigachat"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         context_compression = None
         visible_context = safe_model_context({key: value for key, value in context.items()
@@ -568,12 +604,14 @@ class LLMGateway(_HTTPGateway):
             output_schema = READONLY_SCHEMA
             system = READONLY_SYSTEM
             max_tokens = min(max_tokens, 512)
+        base_system = system
         # JSON mode alone does not tell a model which envelope fields to emit.
         # OpenRouter free endpoints need this contract in the prompt as well.
         system += "\nRequired output JSON Schema:\n" + json.dumps(output_schema, ensure_ascii=False, separators=(",", ":"))
         metrics = request_stats(system, prompt, output_schema)
         self._request_metrics.set(metrics)
         groq_transport_role = None
+        groq_transport_version = 1
         if provider == "gemini":
             model = str(_setting(self.settings, "GEMINI_MODEL", "gemini-3.8-flash"))
             if model != "gemini-3.8-flash":
@@ -648,29 +686,65 @@ class LLMGateway(_HTTPGateway):
                 structured = _truth(flag)
             else:
                 _fail("GROQ_STRUCTURED_TRANSPORT_ENABLED должен быть true/false.", provider, "CONFIG_BLOCKED")
+            version = _setting(self.settings, "GROQ_TRANSPORT_VERSION", "1")
+            if type(version) is int and version in {1, 2}:
+                groq_transport_version = version
+            elif isinstance(version, str) and version in {"", "1", "2"}:
+                groq_transport_version = int(version or "1")
+            else:
+                _fail("GROQ_TRANSPORT_VERSION должен быть 1 или 2.", provider, "CONFIG_BLOCKED")
             wire_format = {"type": "json_object"}
             if structured:
                 from .groq_transport import (GroqTransportError, build_transport_schema,
-                    build_readonly_transport_schema)
+                    build_readonly_transport_schema, build_compact_transport_schema)
                 try:
                     wire_schema = (build_readonly_transport_schema() if mode == "readonly_answer_v1"
+                        else build_compact_transport_schema(output_schema) if groq_transport_version == 2
                         else build_transport_schema(output_schema))
                 except GroqTransportError:
                     _fail("Для строгого транспорта нужна каноническая схема текущей поездки.", provider, "CONFIG_BLOCKED")
                 groq_transport_role = "readonly" if mode == "readonly_answer_v1" else "operations"
+                semantic_delivery = "full_schema_in_system"
+                hint_metadata = None
+                if groq_transport_version == 2 and groq_transport_role == "readonly":
+                    system = base_system
+                    semantic_delivery = "server_constructed_readonly_noop"
+                elif groq_transport_version == 2 and base_system == _EXTRACT_PROMPT:
+                    from .groq_prompt import build_compact_operation_hints
+                    try:
+                        hints, hint_metadata = build_compact_operation_hints(output_schema)
+                    except GroqTransportError:
+                        _fail("Каноническая схема не поддерживает компактные подсказки операций.", provider, "CONFIG_BLOCKED")
+                    system = base_system + "\nOperation value hints (guidance only; full canonical validation stays on the server):\n" + hints
+                    semantic_delivery = "compact_hints_full_server_validation"
+                    if context_compression and "schema_authoritative" in context_compression["changed_fields"]:
+                        visible_context["operation_contract"]["schema_authoritative"] = (
+                            "Wire grammar restricts operation codes and targets. Value hints guide extraction; "
+                            "the full canonical schema is validated on the server. Never invent fields or IDs.")
+                        prompt = json.dumps(visible_context, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
+                        context_compression["authority_label"] = "compact_hints_full_server_validation"
                 instruction = ("Return ONLY {\"sections\":[the selected section codes]}; the server renders saved facts."
                     if groq_transport_role == "readonly" else
+                    "Each operation contains op (choose an exact selector from the wire enum) and value_json. "
+                    "value_json is a JSON STRING encoding the operation value OBJECT. "
+                    "The server maps the selector to its owned type/target; never invent selectors or IDs. "
+                    "Omitted fields and explicit null are distinct; do not infer missing facts or consent."
+                    if groq_transport_version == 2 else
                     "Use the strict transport envelope. Each operation contains type, target_id, value_json. "
                     "value_json is a JSON STRING encoding exactly the operation value OBJECT described above. "
                     "Preserve omitted fields and explicit null distinctly. Choose only the supplied target aliases; "
                     "do not invent IDs, field values, guests, dates, prices or consent.")
-                system += "\nWire transport override (the schema above remains the decoded semantic contract):\n" + instruction
+                system += ("\nWire transport (full canonical validation stays on the server):\n"
+                    if groq_transport_version == 2 else
+                    "\nWire transport override (the schema above remains the decoded semantic contract):\n") + instruction
                 self._request_metrics.set(request_stats(system, prompt, output_schema))
                 encoded_schema = json.dumps(wire_schema, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
-                self._structured_transport.set({"format": "groq_strict_" + groq_transport_role + "_v1",
+                self._structured_transport.set({"format": "groq_strict_" + groq_transport_role + "_v" + str(groq_transport_version),
+                    "transport_version": groq_transport_version, "semantic_schema_delivery": semantic_delivery,
                     "wire_schema_sha256": hashlib.sha256(encoded_schema).hexdigest(),
                     "wire_schema_utf8_bytes": len(encoded_schema),
                     "validated_output_representation": "decoded_canonical_contract",
+                    **({"operation_hints": hint_metadata} if hint_metadata is not None else {}),
                     **({"context_compression": context_compression} if context_compression is not None else {})})
                 wire_format = {"type": "json_schema", "json_schema": {
                     "name": "otravel_" + groq_transport_role + "_v1", "strict": True, "schema": wire_schema}}
@@ -691,6 +765,68 @@ class LLMGateway(_HTTPGateway):
                 content = choice["message"]["content"]
             except (TypeError, KeyError, IndexError):
                 _fail("LLM не вернула текст ответа.", provider, "INVALID_LLM_RESPONSE")
+        elif provider == "gigachat":
+            from .gigachat_client import GigaChatClient, GigaChatError
+            from .groq_transport import (build_transport_schema, build_readonly_transport_schema, GroqTransportError)
+            model = str(_setting(self.settings, "GIGACHAT_MODEL", "GigaChat-3-Ultra"))
+            if model not in {"GigaChat-3-Ultra", "GigaChat-2-Max"}:
+                _fail("Для GigaChat нужен явно разрешённый Freemium model ID.", provider, "CONFIG_BLOCKED")
+            if not _truth(_setting(self.settings, "GIGACHAT_FREEMIUM_CONFIRMED", False)):
+                _fail("Подтвердите бесплатный личный доступ GigaChat API.", provider, "CONFIG_BLOCKED")
+            key = self._key("GIGACHAT_AUTH_KEY", provider)
+            try:
+                wire_schema = build_readonly_transport_schema() if mode == "readonly_answer_v1" else build_transport_schema(output_schema)
+            except GroqTransportError:
+                _fail("Для GigaChat нужна каноническая схема текущей поездки.", provider, "CONFIG_BLOCKED")
+            groq_transport_role = "readonly" if mode == "readonly_answer_v1" else "operations"
+            groq_transport_version = 1
+            instruction = ("Return ONLY {\"sections\":[the selected section codes]}; the server renders saved facts."
+                if groq_transport_role == "readonly" else
+                "Return the strict wire envelope: operations contain type, target_id and value_json. "
+                "value_json is a JSON STRING encoding the exact value OBJECT described in the canonical schema. "
+                "Preserve omission and explicit null distinctly; never guess IDs or facts.")
+            system += "\nWire format for this provider (full canonical validation stays on server):\n" + instruction
+            self._request_metrics.set(request_stats(system, prompt, output_schema))
+            encoded = json.dumps(wire_schema, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+            self._structured_transport.set({"format": "gigachat_strict_" + groq_transport_role + "_v1",
+                "wire_schema_sha256": hashlib.sha256(encoded).hexdigest(), "wire_schema_utf8_bytes": len(encoded),
+                "validated_output_representation": "decoded_canonical_contract"})
+            if self._gigachat_client is None:
+                ca = _setting(self.settings, "GIGACHAT_CA_FILE")
+                context_tls = None
+                if ca not in (None, ""):
+                    if not isinstance(ca, str):
+                        _fail("Нужен доверенный локальный CA-файл GigaChat.", provider, "CONFIG_BLOCKED")
+                    path = Path(ca)
+                    if not path.is_absolute() or path.is_symlink() or not path.is_file():
+                        _fail("Доверенный CA-файл GigaChat не найден.", provider, "CONFIG_BLOCKED")
+                    try:
+                        context_tls = ssl.create_default_context()
+                        context_tls.load_verify_locations(cafile=str(path))
+                    except (OSError, ssl.SSLError):
+                        _fail("Не удалось загрузить доверенный CA GigaChat.", provider, "CONFIG_BLOCKED")
+                try:
+                    self._gigachat_client = GigaChatClient(key, ssl_context=context_tls,
+                        transport=self.settings.get("http_transport"), register_secret=self._register_gigachat_secret,
+                        timeout=min(45, self.wall_timeout))
+                except GigaChatError as error:
+                    raise ProviderError(error.code, error.message, error.retryable, provider, error.details) from None
+            try:
+                body = await asyncio.wait_for(self._gigachat_client.complete(model,
+                    [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+                    {"type": "json_schema", "schema": wire_schema, "strict": True}, max_tokens), self.wall_timeout)
+                self._response_usage.set(usage_counts(provider, body) or None)
+            except GigaChatError as error:
+                raise ProviderError(error.code, error.message, error.retryable, provider, error.details) from None
+            except asyncio.TimeoutError:
+                raise ProviderError("REQUEST_TIMEOUT", "Превышено время ответа GigaChat.", True, provider) from None
+            try:
+                choice = body["choices"][0]
+                if choice.get("finish_reason") not in {None, "stop"}:
+                    _fail("GigaChat не завершил структурированный ответ.", provider, "INVALID_LLM_RESPONSE")
+                content = choice["message"]["content"]
+            except (KeyError, TypeError, IndexError):
+                _fail("GigaChat не вернул текст ответа.", provider, "INVALID_LLM_RESPONSE")
         elif provider == "zai":
             model = str(_setting(self.settings, "ZAI_MODEL", "glm-4.7-flash"))
             if model not in {"glm-4.7-flash", "glm-4.5-flash"}:
@@ -775,24 +911,30 @@ class LLMGateway(_HTTPGateway):
             content = message["content"]
         if groq_transport_role is not None:
             from .groq_transport import (GroqTransportError, decode_transport_response,
-                decode_readonly_transport_response)
+                decode_readonly_transport_response, decode_compact_transport_response)
             try:
                 self._structured_transport.get()["wire_final_sha256"] = hashlib.sha256(content.encode("utf-8")).hexdigest()
                 result = (decode_readonly_transport_response(content) if groq_transport_role == "readonly"
+                    else decode_compact_transport_response(content, output_schema) if groq_transport_version == 2
                     else decode_transport_response(content, output_schema))
             except GroqTransportError as error:
                 canonical = error.details.get("validation_stage") == "canonical_schema"
                 raise ProviderError("INVALID_LLM_OPERATION" if canonical else "INVALID_LLM_RESPONSE",
-                    "Структурированный ответ Groq не прошёл проверку транспорта и операций.", provider=provider,
+                    "Структурированный ответ модели не прошёл проверку транспорта и операций.", provider=provider,
                     details={"validation_stage": error.details.get("validation_stage"),
                         **({"schema_errors": error.details["schema_errors"]} if error.details.get("schema_errors") else {})}) from None
             except (UnicodeError, AttributeError, TypeError):
-                _fail("Структурированный ответ Groq не прошёл проверку транспорта и операций.", provider, "INVALID_LLM_RESPONSE")
+                _fail("Структурированный ответ модели не прошёл проверку транспорта и операций.", provider, "INVALID_LLM_RESPONSE")
         else:
             try:
                 result = json.loads(content, parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
             except (TypeError, ValueError):
                 _fail("Ответ LLM не является корректным JSON.", provider, "INVALID_LLM_RESPONSE")
+        # Reject a provider credential echo before operations or traces can be
+        # persisted. Replacing a value inside an operation would change its
+        # semantics, so this is an explicit failed response, never a repair.
+        if _contains_registered_secret(result, self._runtime_credentials):
+            _fail("Ответ модели содержит служебные данные и отклонён. Поездка сохранена.", provider, "INVALID_LLM_RESPONSE")
         if (not isinstance(result, dict) or set(_LLM_SCHEMA["required"]) - set(result)
                 or set(result) - set(_LLM_SCHEMA["properties"])
                 or not isinstance(result.get("operations"), list) or not isinstance(result.get("control"), dict)
@@ -825,6 +967,11 @@ class LLMGateway(_HTTPGateway):
         # of this mutable attribute when sessions share a gateway concurrently.
         self.last_call = metadata
         return ExtractionOutput(result, metadata)
+
+    async def close(self) -> None:
+        if self._gigachat_client is not None:
+            await self._gigachat_client.close()
+        await super().close()
 
 
 class TravelGateway(_HTTPGateway):

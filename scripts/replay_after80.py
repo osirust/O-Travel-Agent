@@ -373,6 +373,8 @@ def check_profile(health, status, evidence, llm_profile="zai"):
             "explicit_groq_evaluation_limit_required")
         if llm_profile == "groq-gptoss120":
             require(status["groq"].get("structured_transport") is True
+                and type(status["groq"].get("transport_version")) is int
+                and status["groq"]["transport_version"] == 2
                 and status["groq"].get("reasoning_effort") == "low"
                 and status["groq"].get("include_reasoning") is False,
                 "explicit_gptoss_strict_hidden_low_profile_required")

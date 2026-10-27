@@ -25,6 +25,7 @@ class Settings:
     max_cloudflare_llm_calls_per_day: int = 40
     reference_fx_enabled: bool = False
     max_groq_llm_calls_per_day: int = 40
+    max_gigachat_llm_calls_per_day: int = 40
 
     def __post_init__(self):
         for value, allowed in (
@@ -38,6 +39,8 @@ class Settings:
             raise ValueError("Cloudflare application call budget must be an integer from 0 to 2000")
         if type(self.max_groq_llm_calls_per_day) is not int or not 0 <= self.max_groq_llm_calls_per_day <= 1000:
             raise ValueError("Groq application call budget must be an integer from 0 to 1000")
+        if type(self.max_gigachat_llm_calls_per_day) is not int or not 0 <= self.max_gigachat_llm_calls_per_day <= 1000:
+            raise ValueError("GigaChat application call budget must be an integer from 0 to 1000")
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -60,12 +63,14 @@ class Settings:
             max_cloudflare_llm_calls_per_day=int(os.getenv("MAX_CLOUDFLARE_LLM_CALLS_PER_DAY", "40")),
             reference_fx_enabled=enabled("REFERENCE_FX_ENABLED"),
             max_groq_llm_calls_per_day=int(os.getenv("MAX_GROQ_LLM_CALLS_PER_DAY", "40")),
+            max_gigachat_llm_calls_per_day=int(os.getenv("MAX_GIGACHAT_LLM_CALLS_PER_DAY", "40")),
         )
 
     def provider_settings(self) -> dict[str, Any]:
         keys = [
             "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL",
-            "GROQ_API_KEY", "GROQ_MODEL", "GROQ_REASONING_EFFORT", "GROQ_STRUCTURED_TRANSPORT_ENABLED",
+            "GROQ_API_KEY", "GROQ_MODEL", "GROQ_REASONING_EFFORT", "GROQ_STRUCTURED_TRANSPORT_ENABLED", "GROQ_TRANSPORT_VERSION",
+            "GIGACHAT_AUTH_KEY", "GIGACHAT_MODEL", "GIGACHAT_CA_FILE",
             "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_MODEL",
             "ZAI_API_KEY", "ZAI_MODEL",
             "LITEAPI_API_KEY", "LITEAPI_MODE", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY",
@@ -76,10 +81,13 @@ class Settings:
         ]
         values: dict[str, Any] = {key: os.getenv(key, "") for key in keys}
         values.update({
+            "GROQ_TRANSPORT_VERSION": os.getenv("GROQ_TRANSPORT_VERSION", "1"),
             "GEMINI_MODEL": os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
             "OPENROUTER_MODEL": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"),
             "GEMINI_FREE_TIER_CONFIRMED": enabled("GEMINI_FREE_TIER_CONFIRMED"),
             "GROQ_MODEL": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
+            "GIGACHAT_MODEL": os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra"),
+            "GIGACHAT_FREEMIUM_CONFIRMED": enabled("GIGACHAT_FREEMIUM_CONFIRMED"),
             "GROQ_FREE_TIER_CONFIRMED": enabled("GROQ_FREE_TIER_CONFIRMED"),
             "CLOUDFLARE_MODEL": os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"),
             "CLOUDFLARE_FREE_TIER_CONFIRMED": enabled("CLOUDFLARE_FREE_TIER_CONFIRMED"),
@@ -105,14 +113,18 @@ def provider_status() -> dict[str, Any]:
                      "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b") if os.getenv("LLM_PROVIDER") == "ollama"
                               else os.getenv("GEMINI_MODEL", "gemini-3.8-flash") if os.getenv("LLM_PROVIDER") == "gemini"
                               else os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b") if os.getenv("LLM_PROVIDER") == "groq"
+                              else os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra") if os.getenv("LLM_PROVIDER") == "gigachat"
                               else os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast") if os.getenv("LLM_PROVIDER") == "cloudflare"
                               else os.getenv("ZAI_MODEL", "glm-4.7-flash") if os.getenv("LLM_PROVIDER") == "zai"
                               else os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")},
         "gemini": {"configured": bool(os.getenv("GEMINI_API_KEY")), "free_tier_confirmed": enabled("GEMINI_FREE_TIER_CONFIRMED"), "model": os.getenv("GEMINI_MODEL", "gemini-3.8-flash")},
+        "gigachat": {"configured": bool(os.getenv("GIGACHAT_AUTH_KEY")), "model": os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra"),
+            "freemium_confirmed": enabled("GIGACHAT_FREEMIUM_CONFIRMED"), "paid_fallback": False, "parallel_flows": 1},
         "openrouter": {"configured": bool(os.getenv("OPENROUTER_API_KEY")), "model": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"), "backup_model": os.getenv("OPENROUTER_BACKUP_MODEL", ""), "paid_fallback": False},
         "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False,
             **({"include_reasoning": False} if os.getenv("GROQ_MODEL") == "openai/gpt-oss-120b" else {}),
             **({"structured_transport": True,
+                "transport_version": 2 if os.getenv("GROQ_TRANSPORT_VERSION") == "2" else 1,
                 "reasoning_effort": os.getenv("GROQ_REASONING_EFFORT") if os.getenv("GROQ_REASONING_EFFORT") in {"none", "default", "low", "medium", "high"} else None}
                 if enabled("GROQ_STRUCTURED_TRANSPORT_ENABLED") else {})},
         "cloudflare": {"configured": bool(os.getenv("CLOUDFLARE_API_TOKEN") and os.getenv("CLOUDFLARE_ACCOUNT_ID")), "model": os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"), "free_tier_confirmed": enabled("CLOUDFLARE_FREE_TIER_CONFIRMED"), "paid_fallback": False},

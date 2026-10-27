@@ -456,3 +456,65 @@ def decode_readonly_transport_response(content: str) -> dict:
         'unknowns': [], 'conflicts': [], 'speech_act': 'ASK', 'information_subject': None}
     _validate(result, READONLY_SCHEMA, 'readonly_canonical_schema')
     return result
+
+
+# Engineering bounds for the separate v2 grammar, not provider quota claims.
+# Refuse an oversized codebook as a whole; never truncate its exact allowset.
+MAX_COMPACT_SELECTORS = 4096
+
+
+def _compact_compile(original_dynamic_schema):
+    original, previous, resolve = _compile(original_dynamic_schema)
+    codebook = OrderedDict()
+    for variant in previous['properties']['operations']['items']['anyOf']:
+        props = variant['properties']
+        kind = props['type']['enum'][0]
+        target = props['target_id']
+        branches = target.get('anyOf', [target])
+        for branch in branches:
+            targets = [None] if branch.get('type') == 'null' else branch['enum']
+            for target_id in targets:
+                selector = kind if target_id is None else kind + '@' + target_id
+                if selector in codebook:
+                    _fail('compact_selector_collision')
+                codebook[selector] = (kind, target_id)
+                if len(codebook) > MAX_COMPACT_SELECTORS:
+                    _fail('compact_selector_count_limit')
+    wire = deepcopy(previous)
+    wire['properties']['operations']['items'] = _object({
+        'op': {'type': 'string', 'enum': list(codebook)}, 'value_json': {'type': 'string'}})
+    _bounded_tree(wire, depth_limit=_MAX_SCHEMA_DEPTH, stage='transport_schema')
+    if len(json.dumps(wire, ensure_ascii=False, allow_nan=False, separators=(',', ':')).encode('utf-8')) > MAX_SCHEMA_BYTES:
+        _fail('compact_schema_byte_limit')
+    return original, wire, resolve, codebook
+
+
+def build_compact_transport_schema(original_dynamic_schema: dict) -> dict:
+    """Separate v2 grammar: exact finite operation selectors plus opaque JSON.
+
+    A selector is a codebook key, not a delimiter-parsed type/target expression.
+    All7 envelope fields and original canonical value validation are retained.
+    """
+    return _compact_compile(original_dynamic_schema)[1]
+
+
+def decode_compact_transport_response(content: str, original_dynamic_schema: dict) -> dict:
+    """Decode only known selectors, preserving values/omission/null verbatim."""
+    original, wire, resolve, codebook = _compact_compile(original_dynamic_schema)
+    parsed = _json(content, limit=MAX_JSON_BYTES, stage='transport_json')
+    _validate(parsed, wire, 'transport_schema')
+    if len(parsed['operations']) > resolve(original['properties']['operations'])['maxItems']:
+        _fail('operation_count_limit', 'canonical_schema')
+    result = {key: deepcopy(value) for key, value in parsed.items() if key != 'operations'}
+    result['operations'] = []
+    for operation in parsed['operations']:
+        pair = codebook.get(operation['op'])
+        if pair is None:
+            _fail('unknown_operation_selector', 'transport_schema')
+        kind, target_id = pair
+        value = _json(operation['value_json'], limit=MAX_VALUE_BYTES, stage='operation_value_json')
+        if type(value) is not dict:
+            _fail('operation_value_object_required', 'operation_value_json')
+        result['operations'].append({'type': kind, 'target_id': target_id, 'value': value})
+    _validate(result, original, 'canonical_schema')
+    return result

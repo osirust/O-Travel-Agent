@@ -31,7 +31,7 @@ def readiness():
     value = {name: {'configured': False} for name in ('gemini', 'cloudflare', 'openrouter', 'zai', 'ollama', 'hotelbeds', 'ratehawk', 'travelpayouts')}
     value.update({'_runtime': {'llm_provider': 'groq', 'model': manager.MODEL},
         'groq': {'configured': True, 'model': manager.MODEL, 'free_tier_confirmed': True, 'paid_fallback': False,
-            'structured_transport': True, 'reasoning_effort': 'low', 'include_reasoning': False},
+            'structured_transport': True, 'transport_version': 2, 'reasoning_effort': 'low', 'include_reasoning': False},
         'liteapi': {'configured': True, 'mode': 'sandbox'}, 'duffel': {'configured': True, 'mode': 'sandbox'},
         'serpapi': {'configured': True, 'free_tier_confirmed': True, 'source_type': 'LIVE_INDICATIVE'},
         'open_meteo': {'configured': True, 'requires_key': False}})
@@ -51,6 +51,7 @@ def test_fixed_gptoss_env_uses_existing_groq1000_pool_generic40_and_no_inherited
     assert env['OPENROUTER_BACKUP_MODEL'] == '' and env['MAX_LLM_CALLS_PER_RUN'] == '1'
     assert env['MAX_LOCAL_LLM_CALLS_PER_DAY'] == '0' and env['LLM_MAX_OUTPUT_TOKENS'] == '2048'
     assert env['GROQ_STRUCTURED_TRANSPORT_ENABLED'] == 'true' and env['GROQ_REASONING_EFFORT'] == 'low'
+    assert env['GROQ_TRANSPORT_VERSION'] == '2'
     assert env['REFERENCE_FX_ENABLED'] == 'true'
     assert env['DEFAULT_SEARCH_MODE'] == 'HYBRID' and env['DEFAULT_FLIGHT_PROVIDER'] == 'duffel'
     assert env['DATABASE_URL'].endswith('/otravel_zai_eval') and 'synthetic%3A%23%40' in env['DATABASE_URL']
@@ -188,7 +189,7 @@ def test_start_import_proves_explicit_separate_cap_and_no_startup_model_calls(en
     account = SimpleNamespace(pw_uid=1000, pw_gid=1000)
     facts = {'api_file': str(manager.SOURCE / 'otravel/api.py'), 'provider': 'groq', 'model': manager.MODEL,
         'daily_limit': 1000, 'generic_daily_limit': 40, 'run_limit': 1, 'local_limit': 0,
-        'search_mode': 'HYBRID', 'gptoss_transport': 'true', 'gptoss_reasoning_effort': 'low', 'gptoss_include_reasoning': False,
+        'search_mode': 'HYBRID', 'gptoss_transport': 'true', 'gptoss_transport_version': '2', 'gptoss_reasoning_effort': 'low', 'gptoss_include_reasoning': False,
         'other_model_credentials_present': False}
     if bad == 'generic_limit': facts['generic_daily_limit'] = 1000
     elif bad == 'old_model': facts['model'] = 'qwen/qwen3.8-27b'

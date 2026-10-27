@@ -1,0 +1,32 @@
+{
+  "finding_id": "HARNESS-004-GROQ-MINUTE-CONTEXT-01",
+  "status": "CAUSE_CONFIRMED_CANDIDATE_FIX_ACTUAL_RECHECK_PENDING",
+  "observed_at": "2026-10-27T10:09:41.057528+00:00",
+  "source_commit": "216aeb6e651fa8ceb7188bb1780cf50defab5ff1",
+  "runtime": {"port": 8084, "provider": "groq", "model": "openai/gpt-oss-120b", "transport_version": 1},
+  "observed_http_status": 429,
+  "provider_facts": {
+    "token_window": "TPM", "token_limit": 8000,
+    "tokens_used_from_error": 3944, "tokens_requested_from_error": 6132,
+    "tokens_remaining": 4056, "requests_remaining": 999,
+    "retry_after_seconds": 16, "tokens_reset_seconds": 30
+  },
+  "read_method": "read-only SELECT of matching failed run and MODEL_CALL_FAILED event in owned Native database",
+  "diagnostic_model_calls": 0,
+  "diagnostic_database_writes": 0,
+  "conclusions": [
+    "This failure is explicitly a tokens-per-minute limit, not proof of daily exhaustion or destination-understanding failure.",
+    "The preceding simple greeting consumed a model call; the current candidate handles exact standalone greetings without inference.",
+    "The next request exceeded remaining tokens; the provider's wait is a hint, not a guarantee of future availability."
+  ],
+  "candidate_changes": [
+    "exact greeting handler preserves trip, clarification and explicit pause",
+    "Groq V2 compact operation selectors and value guidance retain full canonical server validation",
+    "public failure text includes only validated numeric provider retry hint"
+  ],
+  "limitations": [
+    "8084 remains frozen at the owner's tested version; candidate fixes are not deployed there yet.",
+    "No new actual generation was sent to test restoration.",
+    "No automatic retry or fallback and no quota reset performed."
+  ]
+}

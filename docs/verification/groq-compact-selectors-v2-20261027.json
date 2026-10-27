@@ -1,0 +1,111 @@
+{
+  "format": "otravel.verification_receipt.v1",
+  "date": "2026-10-27",
+  "permanent_id": "HARNESS-004-GROQ-COMPACT-SELECTORS-V2-001",
+  "status": "PURE_PROTOCOL_EQUIVALENCE_AND_BYTE_REDUCTION_TESTED_ACTUAL_PROVIDER_QUALIFICATION_OPEN",
+  "fact": "The finite v1 per-operation type/target grammar repeats object structure. A closed selector codebook can encode the identical allowed pairs while retaining the same canonical value schema and full seven-field envelope.",
+  "action": {
+    "new_API": [
+      "build_compact_transport_schema(original_dynamic_schema)",
+      "decode_compact_transport_response(content, original_dynamic_schema)"
+    ],
+    "wire_item": {
+      "op": "finite enum codebook selector",
+      "value_json": "string containing one JSON object"
+    },
+    "selector_mapping": "The null-target selector is the known operation type. A nonnull selector is type plus @ plus the exact target ID. Decoding looks up the entire string in a rebuilt server codebook; it never splits IDs or guesses a target.",
+    "authority": "The codebook is derived from the exact admitted v1 finite type-target allowset. After opaque value parsing, the decoded canonical type/target_id/value envelope is validated against the original complete dynamic schema.",
+    "no_widening": "No new target, null target or cross-room/stay permission is added. Omission and explicit null inside value_json remain distinct. No defaults/casts or trip operations are applied.",
+    "resource_bounds": {
+      "selectors": 4096,
+      "wire_schema_UTF8_bytes": 262144,
+      "policy": "Engineering limits, not vendor quota claims. Oversized schemas are refused as a whole, never truncated."
+    },
+    "preserved_v1": {
+      "source_prefix_bytes": 20374,
+      "source_prefix_sha256": "c3d5c4083fdc814ccecd5255e0bb74ba2532ba96985996c748636b136b851aa7",
+      "source_prefix_unchanged": true,
+      "all_preexisting_functions": "Build/decode v1, shared privacy/reference/resource guards and separate readonly functions remain unchanged."
+    },
+    "integration_owner": "Parent owns providers/config/controllers opt-in version2/default1 integration; this agent changed only transport helper and its pure tests."
+  },
+  "verification": {
+    "pure_tests": 251,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": "7.886",
+    "artifact": {
+      "path": ".local/evaluation/groq-compact-transport-20261027/pure-final.xml",
+      "sha256": "feffd1a6e72d14de1c123a1b3196dacca6574dac62da9357237e50f1068046ed",
+      "bytes": 47081
+    },
+    "ruff": "transport module and new test file passed",
+    "proofs": [
+      "Bijection of selector/codebook pairs with the exact v1 allowset, with no nullable target widening.",
+      "IDs containing @, slash, colon and Unicode decode as whole codebook keys.",
+      "Local room IDs reused by different stays retain original canonical stay-room correlation; wrong pairs remain canonical-schema errors.",
+      "Finite oneOf intersections, chained local refs, unknown/external/cyclic refs, unsafe schema patterns and bounded structure remain guarded.",
+      "Unknown selectors, extra or missing keys, null wire fields, duplicate JSON keys, non-finite numbers, Unicode surrogates, malformed/oversized/deep JSON and excess operation count fail closed without echoing private values.",
+      "Explicit v1 and v2 decoders reject the other wire representation; no implicit version fallback.",
+      "Independent builds/decodes do not mutate original schema/state and produce deterministic wire structures."
+    ]
+  },
+  "saved_T4_schema_measurement": {
+    "scope": "OFFLINE_SAVED_SCHEMA_BYTE_MEASUREMENT_NOT_TOKEN_OR_RUNTIME_ESTIMATE",
+    "source_schema_path": "/home/aegml/checks/groq-group04-t4-context-audit-20261027/original-operation-schema.json",
+    "source_schema_artifact_sha256": "f1b0c1249ed85c2f794ee0b28516ed14fba40657f591c709c5dbce6d9952bdc3",
+    "source_schema_file_bytes": 28023,
+    "canonical_schema_compact_utf8_bytes": 10093,
+    "v1_wire_compact_utf8_bytes": 5368,
+    "v2_wire_compact_utf8_bytes": 1915,
+    "v1_wire_sorted_default_utf8_bytes": 5848,
+    "v2_wire_sorted_default_utf8_bytes": 2032,
+    "saved_compact_wire_utf8_bytes": 3453,
+    "selectors": 41,
+    "types": 19,
+    "v1_pair_count": 41,
+    "v2_pair_count": 41,
+    "canonical_schema_authority_unchanged": true,
+    "real_model_calls": 0,
+    "vendor_HTTP": 0,
+    "SQL": 0,
+    "v1_wire_compact_sha256": "18357029dc0a1b5e72dad8df2808038e61afa715f696f456707c1f8b5dbe3a69",
+    "v2_wire_compact_sha256": "e4378109d63761ae79e9436200dbc70a6be664631dcc14446e95fff6c4ed2115",
+    "wire_saved_percent": 64.326,
+    "pair_set_equal": true,
+    "canonical_pair_set_sha256": "fe3a9058a0564948c42415ea1aaf6ab6ad726991256dd4cfd109392b29ed74c5"
+  },
+  "artifacts": [
+    {
+      "path": "otravel/groq_transport.py",
+      "sha256": "aac42a4b771fb89dce02773b46a5faa3fa25b75822e1dd94013a5a05777d3aaf",
+      "bytes": 23541
+    },
+    {
+      "path": "tests/test_groq_compact_transport.py",
+      "sha256": "6d54a982c0044a564debd9aab35c649058321886d66b2cb979f2bd4e96143ad9",
+      "bytes": 16170
+    },
+    {
+      "path": ".local/evaluation/groq-compact-transport-20261027/saved-t4-measurement.json",
+      "sha256": "960c0da39b46ce38cc7c01d8665ce7c6028b7c25da03a2032f227bbe1e14a4f1",
+      "bytes": 1130
+    }
+  ],
+  "execution": {
+    "actual_model_calls": 0,
+    "vendor_HTTP": 0,
+    "PostgreSQL": 0,
+    "Native_or_engine_changes": 0,
+    "personal_env_or_keys_read": 0,
+    "local_inference": 0
+  },
+  "closure_condition": "The pure protocol optimization is prepared when exact admitted pair equivalence and original canonical validation remain intact. Parent must integrate opt-in version2, run its related/full suite and independently qualify actual Groq acceptance/request usage under the account TPM limit. Byte savings alone do not establish token counts or model quality.",
+  "limitations": [
+    "The byte measurement uses the saved T4 schema artifact, not an assertion that current runtime request bytes or token IDs are identical.",
+    "5368 to1915 compact UTF-8 wire-schema bytes is not a token estimate or a guarantee that the total request fits8000TPM.",
+    "No prices, requirements, histories or canonical domain validation were removed; canonical schema remains10093 compact UTF-8 bytes in the measured artifact.",
+    "No actual provider call or routing/default configuration change was made by this agent."
+  ]
+}
