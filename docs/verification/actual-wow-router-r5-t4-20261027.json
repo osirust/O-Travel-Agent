@@ -78,7 +78,8 @@
     "pending_field": "destination.city",
     "plans": 0,
     "message": "Выберите один город назначения или явно опишите последовательность остановок.",
-    "score_scope_gap": "The original T4 predicates checked correct state facts but not OPTIONS_READY/pendingNone/current plans. Their PASS remains unchanged."
+    "score_scope_gap": "The original T4 predicates checked correct state facts but not OPTIONS_READY/pendingNone/current plans. Their PASS remains unchanged.",
+    "alias_of": "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001"
   },
   "capture_activity": {
     "report_reads": 1,

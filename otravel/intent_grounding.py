@@ -414,6 +414,8 @@ def _existing_stay_city_references(data: dict, operations: list[dict], text: str
             or facts['choice'] or facts['multicity'] or pending.get('field') in {'origin.city', 'destination.city'}
             or facts['origin'] - {_city(data.get('origin'))}):
         return False
+    if any(sum(_city(stay.get('city')) == city for stay in stays.values()) != 1 for city in destinations):
+        return False  # A city shared by several stays is not an owned target.
     for operation in operations:
         kind, value, target = operation.get('type'), operation.get('value'), operation.get('target_id')
         if not isinstance(value, dict):
@@ -471,6 +473,13 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     if country_answer["handled"]:
         facts["country"].add(country_answer["pending_context"]["requested_destination"]["country_code"])
         facts["current"] = True
+    scoped_city_names = None
+    if _existing_stay_city_references(data, copied, text, facts, facts_pending):
+        scoped_city_names = sorted(facts['destination'])
+        # These places address current components. Do not send them through
+        # either single-city target selection or initial multi-city intake.
+        # Raw operations and all non-destination facts retain their own guards.
+        facts['destination'] = set()
     compound_answer = _compound_proposal_answer(text)
     affirmative = _key(text).rstrip(".!") in {"да", "верно", "подтверждаю", "да меняем", "да выбираем"}
     proposal = pending.get("proposed_destination")
@@ -496,6 +505,9 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             meta["pending_context"] = {**(meta["pending_context"] or {}), **(context or {}), "field": field, "target_id": target_id}
         meta["replace_geo_unknowns"] = True
 
+    if scoped_city_names:
+        meta['replace_geo_unknowns'] = True
+        note('existing_stay_city_scopes_preserved', city_names=scoped_city_names, route_changed=False)
     unsupported = _declared_unknown_destination(text, copied)
     if unsupported:
         ask(f"Город «{unsupported}» не удалось однозначно распознать в текущем каталоге. Уточните страну и город назначения.",
@@ -513,11 +525,7 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     if len(origins) > 1:
         ask("Из какого одного города вы отправляетесь? Уточните город отправления.", "origin.city")
     if facts["alternative"] or len(destinations) > 1 and not facts["multicity"]:
-        if _existing_stay_city_references(data, copied, text, facts, facts_pending):
-            meta['replace_geo_unknowns'] = True
-            note('existing_stay_city_scopes_preserved', city_names=sorted(destinations), route_changed=False)
-        else:
-            ask("Выберите один город назначения или явно опишите последовательность остановок.", "destination.city")
+        ask("Выберите один город назначения или явно опишите последовательность остановок.", "destination.city")
     expected = facts_pending.get("requested_destination")
     expected_country = expected.get("country_code") if isinstance(expected, dict) else None
     blocked = False

@@ -173,7 +173,8 @@ def test_pure_projection_rejects_foreign_quote_owner_and_never_returns_checkout_
     assert project_current_selection(session, quote, 0, now) is None
     quote["session_id"] = "owner"
     result = project_current_selection(session, quote, 0, now)
-    assert result is not None and set(result) == {"source", "selection_status", "plan_id", "state_version", "source_type", "hotels", "reference_only", "prices_included"}
+    assert result is not None and set(result) == {"source", "selection_status", "trip_id", "plan_id", "state_version", "source_type", "hotels", "reference_only", "prices_included"}
+    assert result['trip_id'] == session['trip_id']
 
 
 @pytest.mark.parametrize("mutation", [None, "foreign_binding", "stale_binding", "ambiguous_binding_version", "conflicting_identity"])

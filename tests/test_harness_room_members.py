@@ -47,6 +47,10 @@ async def test_compound_new_child_room_patches_preserve_untouched_rooms_breakfas
             'plan_id': plans[0]['plan_id'], 'state_version': created['state_version']})
         assert preview.status_code == 200
         quote = preview.json()
+        selection = await store.current_selected_plan(sid, created['state_version'])
+        assert selection and selection['trip_id'] == created['trip_id']
+        preserved_hotel = next(hotel['hotel_id'] for hotel in selection['hotels']
+            if hotel['stay_id'] == created['trip']['stays'][0]['id'])
         before = deepcopy(created['trip'])
         run, after = await _message(client, sid, token, row['text'])
         assert run['status'] == 'completed' and not run.get('error')
@@ -64,7 +68,7 @@ async def test_compound_new_child_room_patches_preserve_untouched_rooms_breakfas
             assert [room['id'] for room in stay['rooms']] == [room['id'] for room in prior['rooms']]
             assert stay['rooms'][0] == prior['rooms'][0]
             assert stay['rooms'][1]['traveler_ids'] == ['new-traveler-2', 'new-traveler-4']
-        assert trip['stays'][0]['hotel_id'] == before['stays'][0]['hotel_id']
+        assert trip['stays'][0]['hotel_id'] == preserved_hotel
         assert trip['stays'][0]['check_out'] == '2026-11-13'
         assert trip['stays'][1]['hotel_id'] == 'demo-hotel-antalya-garden'
         assert trip['stays'][1]['check_out'] == trip['legs'][-1]['departure_date'] == '2026-11-19'

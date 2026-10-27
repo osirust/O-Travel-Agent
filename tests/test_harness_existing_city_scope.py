@@ -28,6 +28,13 @@ async def test_cached_actual_t4_is_options_ready_with_plans_and_preserves_every_
         selected = next(offer['hotel_id'] for offer in before_plans[1]['offers']
                         if offer.get('kind') == 'hotel' and offer.get('city') == 'Анталья')
         assert selected == SOURCE['captures']['hotel_b_id']
+        # Explicit hotel preservation now requires an actual selected preview,
+        # not merely a first shown candidate. This setup is labelled below.
+        first_selected = next(offer['hotel_id'] for offer in before_plans[0]['offers']
+                              if offer.get('kind') == 'hotel' and offer.get('city') == 'Стамбул')
+        preview = await client.post(route + '/checkout/preview', headers=_headers(token), json={
+            'plan_id': before_plans[0]['plan_id'], 'state_version': created['state_version']})
+        assert preview.status_code == 200
         run, after = await _message(client, sid, token, SOURCE['text'])
         assert run['status'] == 'completed' and not run.get('error')
         assert after['status'] == 'OPTIONS_READY'
@@ -44,7 +51,7 @@ async def test_cached_actual_t4_is_options_ready_with_plans_and_preserves_every_
             assert stay['rooms'][0] == prior['rooms'][0]
             assert [room['id'] for room in stay['rooms']] == [room['id'] for room in prior['rooms']]
             assert stay['rooms'][1]['traveler_ids'] == ['new-traveler-2', 'new-traveler-4']
-        assert trip['stays'][0]['hotel_id'] == before['stays'][0]['hotel_id']
+        assert trip['stays'][0]['hotel_id'] == first_selected
         assert trip['stays'][0]['check_out'] == before['stays'][0]['check_out']
         assert trip['stays'][1]['hotel_id'] == selected
         assert trip['stays'][1]['check_out'] == trip['legs'][-1]['departure_date'] == '2026-11-19'
@@ -52,7 +59,7 @@ async def test_cached_actual_t4_is_options_ready_with_plans_and_preserves_every_
         # Preserve a successful controlled API/PG projection for oracle review.
         # It is labelled separately from the original real-provider epoch.
         record = {'format': 'otravel.cached-pg-flow-pass.v1', 'case_id': 'PF-GROUP-04', 'step_id': '04',
-            'scope': 'Cached actual T4 extraction injected into the API/isolated PG on current working source; no new remote NLU.',
+            'scope': 'Cached actual T4 extraction injected after an explicit first-plan preview into the API/isolated PG on current working source; no new remote NLU.',
             'source_projection_sha256': SOURCE['projection_sha256_without_self_digest'],
             'status': after['status'], 'waiting_reason': after.get('waiting_reason'), 'pending_question': after['pending_question'],
             'trip': trip, 'plans': plans, 'selected_hotel_id': selected, 'model_adapter_calls': len(model.calls),

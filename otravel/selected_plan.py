@@ -91,5 +91,5 @@ def project_current_selection(session: dict, quote: dict | None, expected_versio
     if set(hotels) != set(owned):
         return None
     return {"source": "ui_preview_selection", "selection_status": "current_reference_only",
-        "plan_id": plan["plan_id"], "state_version": expected_version, "source_type": plan["source_type"],
+        "trip_id": session["trip_id"], "plan_id": plan["plan_id"], "state_version": expected_version, "source_type": plan["source_type"],
         "hotels": [hotels[stay["id"]] for stay in stays], "reference_only": True, "prices_included": False}

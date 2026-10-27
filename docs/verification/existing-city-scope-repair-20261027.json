@@ -87,5 +87,6 @@
   "hash_scope": "E working-tree bytes, not deployed-source identity.",
   "closure": "Retest the real T4 NLU transition on a new immutable deployed package. Require OPTIONS_READY, no pending question and at least one current ready plan, alongside all original business facts. A pre-T4 typed bootstrap must be labelled explicitly; it is not a fresh full dialogue.",
   "native_profile_unchanged": true,
-  "original_actual_scores_preserved": true
+  "original_actual_scores_preserved": true,
+  "alias_of": "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001"
 }

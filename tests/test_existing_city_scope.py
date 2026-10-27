@@ -35,6 +35,8 @@ def test_captured_hotel_and_breakfast_city_references_do_not_create_a_route_choi
     'Замени отель в Анталье. Завтрак в Стамбуле сохрани.',
     'В Стамбуле сохрани номера. В Анталье измени проживание.',
     'Тариф отеля в Анталье поменяй. Условия отмены в Стамбуле сохрани.',
+    'Первый отель в Стамбуле сохрани.',
+    'Сохрани отель в Стамбуле.',
 ])
 def test_existing_hotel_room_and_constraint_scopes_do_not_reopen_destination_intake(text):
     _, meta = ground_intent_operations(SOURCE['before_trip'], [], text)
@@ -95,3 +97,21 @@ def test_geography_question_keeps_the_canonical_readonly_path():
     assert reply and 'Турция' in reply
     result, meta = ground_intent_operations(SOURCE['before_trip'], [], text)
     assert result == [] and meta['unknowns'] == []
+
+
+def test_repeated_city_stays_are_not_assumed_to_be_a_unique_component_scope():
+    state = deepcopy(SOURCE['before_trip'])
+    repeated = deepcopy(state['stays'][0])
+    repeated['id'] = 'repeated-istanbul'
+    state['stays'].append(repeated)
+    _, meta = ground_intent_operations(state, [], 'Сохрани отель в Стамбуле.')
+    assert meta['unknowns']
+    assert not any(note['code'] == 'existing_stay_city_scopes_preserved' for note in meta['notes'])
+
+
+def test_single_saved_stay_city_change_remains_a_real_edit():
+    state = deepcopy(SOURCE['before_trip'])
+    state['stays'] = state['stays'][:1]
+    result, meta = ground_intent_operations(state, [], 'Замени Стамбул на Казань.')
+    assert {'type': 'upsert_stay', 'target_id': state['stays'][0]['id'], 'value': {'city': 'Казань'}} in result
+    assert not any(note['code'] == 'existing_stay_city_scopes_preserved' for note in meta['notes'])

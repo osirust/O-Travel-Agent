@@ -615,6 +615,22 @@ class Harness:
                         patches, patch_notes = normalize_sparse_room_additions(session["state"], extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in patches]
                         extracted.operation_normalizations.extend(patch_notes)
+                        from .hotel_preservation import ground_preserved_hotel_selection
+                        hotel_ops, hotel_meta = ground_preserved_hotel_selection(session["state"], extracted.operations,
+                            run["input_text"], await self._selection_reference(session))
+                        extracted.operations = [Operation.model_validate(op) for op in hotel_ops]
+                        extracted.operation_normalizations.extend(hotel_meta["notes"])
+                        if (any(note.get("code") == "explicit_selected_hotel_preserved" for note in hotel_meta["notes"])
+                                and extracted.control.action in {"none", "continue", "wait", "resume"}):
+                            extracted.speech_act = "CHANGE"
+                            if extracted.control.action == "none":
+                                extracted.control.action = "continue"
+                        extracted.conflicts.extend(hotel_meta["conflicts"])
+                        extracted.server_questions.extend(hotel_meta["conflicts"])
+                        if hotel_meta["unknowns"]:
+                            extracted.unknowns = list(dict.fromkeys(hotel_meta["unknowns"] + extracted.unknowns))
+                            extracted.server_questions.extend(hotel_meta["unknowns"])
+                            extracted.pending_context = {**(extracted.pending_context or {}), **(hotel_meta["pending_context"] or {})}
                     if (not readonly and not extracted.conflicts
                             and extracted.control.action in {"none", "continue", "wait"}):
                         from .preference_intake import ground_lowest_cost, price_preference_operation
@@ -1065,6 +1081,9 @@ class Harness:
         new_state: TripState | None = None
         changes: list[dict] = []
         questions: list[str] = []
+        optional_clarifications: list[dict] = []
+        clarification_policy_notes: list[dict] = []
+        model_question_renderings: dict[str, str] = {}
         result: dict = {}
         model_meta: dict | None = None
         undo_meta: dict | None = None
@@ -1175,6 +1194,24 @@ class Harness:
                     exc.llm_meta = model_meta
                     raise
                 new_state = candidate if changes else None
+                if extracted.unknowns:
+                    from .clarification_policy import classify_model_clarifications
+                    recent_users = [message["text"] for message in await self.store.list_messages(session["session_id"])
+                        if message.get("role") == "user" and not message["text"].startswith(TYPED_PREFIX)][-20:]
+                    classification = classify_model_clarifications(candidate, extracted.unknowns,
+                        server_questions=extracted.server_questions, current_text=run["input_text"],
+                        recent_user_texts=recent_users,
+                        search_requested=should_search(run["input_text"], changed=bool(changes),
+                            action=extracted.control.action, response_source=extracted.response_source,
+                            speech_act=extracted.speech_act, undo=undo_meta is not None))
+                    extracted.unknowns = classification["blocking_questions"]
+                    optional_clarifications = classification["optional_clarifications"]
+                    clarification_policy_notes = classification["notes"]
+                    model_question_renderings = classification["blocking_renderings"]
+                    if (optional_clarifications and not extracted.unknowns and not extracted.server_questions
+                            and extracted.control.action == "wait" and not explicit_pause_hint(run["input_text"])):
+                        extracted.control.action = "continue"
+                        clarification_policy_notes.append({"code": "optional_only_model_wait_continued", "user_pause_removed": False})
                 questions = extracted.unknowns
                 informational = (not changes and undo_meta is None
                     and extracted.control.action in {"none", "continue"}
@@ -1291,6 +1328,10 @@ class Harness:
                             if domain_slot["field"] is not None:
                                 rendered = human_question(issue, current, domain_slot)
                                 break
+                        if rendered == human_question(None, current) and raw in model_question_renderings:
+                            rendered = model_question_renderings[raw]
+                            extracted.unknowns.append(rendered)
+                            extracted.server_questions.append(rendered)
                     normalized.append(rendered)
                 questions = list(dict.fromkeys(normalized))[:1]
                 if not questions and waiting_reason != "user_pause":
@@ -1312,6 +1353,9 @@ class Harness:
                         clarification_metadata["traveler_id"] = detail["traveler_id"]
             if questions:
                 status, waiting_reason = "WAITING_USER", "clarification"
+        if optional_clarifications:
+            result["optional_clarifications"] = optional_clarifications
+            result["clarification_policy_notes"] = clarification_policy_notes
         # Search and typed commands can generate questions after the model/slot
         # phase. Sanitize that path too; raw schema names never enter the chat.
         if questions and waiting_reason != "user_pause":

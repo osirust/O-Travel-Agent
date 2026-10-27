@@ -1,0 +1,200 @@
+{
+  "format": "otravel.explicit-hotel-preservation.repair.v1",
+  "created_at": "2026-10-27T06:01:12.255381+00:00",
+  "finding_id": "HARNESS-004-SELECTED-HOTEL-KEEP-PIN-001",
+  "status": "CONTROLLED_EXPLICIT_SELECTION_PIN_PASS_ACTUAL_TRANSITION_RETEST_PENDING",
+  "actual_source": {
+    "source_folder": "/home/aegml/checks/one-wow-transition-1-f8e2f027",
+    "source_commit": "3208f0383d7be522f5d6690d5f34809c3a790063",
+    "package_sha256": "5e9f6860cbefabcc3518f6930db4dd8cbbe13af9677e3a92bdf2c40e2c9cd3c8",
+    "report_sha256": "982e8b56c4fecbf54cde412ff246c32c1fc250df71e20e036252d3e829e2b8aa",
+    "run_sha256": "297d0f45e5c56a5b29e4f54265d04cde09936a58a7687272e9ed91d6338d6b8c",
+    "events_sha256": "33a76b2cedc1de7617e403987d66914d3988167185225775d69e66be61c7b96e"
+  },
+  "actual_scope": "Actual single LLM/harness transition after explicit typed pre-turn state bootstrap. Not a new whole natural conversation.",
+  "actual_model_calls": 1,
+  "actual_failure": {
+    "predicate": "first_selected_hotel_kept",
+    "value": false,
+    "before_pin": null,
+    "after_pin": null,
+    "raw_model_output": "Seven operations preserve the second hotel/party/budget/rooms/dates, but no first-stay hotel assignment despite a positive keep wish.",
+    "all_other_operator_predicates": {
+      "completed": true,
+      "ready_status": true,
+      "pending_none": true,
+      "new_plans": true,
+      "budget380000": true,
+      "party": true,
+      "second_hotel_changed": true,
+      "checkout_and_return19": true,
+      "room_ids_order_kept": true,
+      "breakfast_constraints_kept": true,
+      "child_second_family_room": true,
+      "orders0": true
+    },
+    "bounded_interpretation": "The literal preservation wish was not persisted as a hotel identity constraint. A null pin does not by itself prove that a displayed hotel or price switched.",
+    "returned_first_city_hotel_ids": [
+      [
+        "demo-hotel-istanbul-garden"
+      ],
+      [
+        "demo-hotel-istanbul-family"
+      ]
+    ],
+    "selected_hotel_id_in_actual_quote": "Not separately persisted in the operator files; fresh PG preview identities are tested independently."
+  },
+  "action": {
+    "helper": "ground_preserved_hotel_selection",
+    "authority": "Positive current keep-hotel instruction with owned ordinal stay or unique city; fresh code-owned current UI-preview selection re-read through Store after model extraction.",
+    "context_fences": [
+      "trip_id match",
+      "exact integer state_version match",
+      "current reference-only source marker",
+      "complete unique owned stay/hotel/city identities",
+      "prices_included=false"
+    ],
+    "effect": "Append only replace_hotel for an unpinned explicitly preserved stay; same already-extracted assignment is not duplicated. An existing persisted pin needs no fresh quote.",
+    "no_context": "Before pin null with no valid fresh selection asks the user to select an actual current variant. No first-shown-plan default is used.",
+    "conflicts": "Same-stay replace/keep, a different extracted hotel assignment, city/topology/provider changes produce clarification/conflict rather than guessed identity.",
+    "excluded": [
+      "questions",
+      "hypotheses",
+      "history",
+      "quoted commands",
+      "negated keep",
+      "untargeted or contradictory hotel references"
+    ],
+    "not_granted": [
+      "price",
+      "availability",
+      "purchase consent",
+      "supplier booking"
+    ]
+  },
+  "root_integration": {
+    "file": "otravel/harness.py",
+    "selection_projection": "Root added trip_id to selected_plan.project_current_selection.",
+    "fresh_lookup": "After model response, not the prompt context copy.",
+    "classification": "A proved code-owned positive pin may set CHANGE; model ASK classification cannot erase the literal keep wish."
+  },
+  "related_geo_refinement": {
+    "finding_id": "HARNESS-004-COMPOUND-CITY-REFERENCE-ASK-001",
+    "alias_of": "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001",
+    "change": "The same proved existing hotel/room/condition reference role clears only destination facts before target resolution, covering single-city as well as multi-city component mentions. Raw operations and other facts are unchanged.",
+    "negative_boundaries": [
+      "new route wish",
+      "new stay or changed city/origin/route policy",
+      "unknown referenced city",
+      "active country/city consent question",
+      "repeated-city stay ambiguity"
+    ]
+  },
+  "files": [
+    {
+      "path": "otravel/hotel_preservation.py",
+      "sha256": "9ef5dc0a5c84ea238e34057340839571a0984abea1b776124ded222ba5a45839",
+      "bytes": 9469
+    },
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "3b142e2286aaa34e9517df5a5cd1a4422f4fbb7f3e52b2361387871a77d8a5c9",
+      "bytes": 51388
+    },
+    {
+      "path": "tests/test_hotel_preservation.py",
+      "sha256": "d3134b13a53f43b97736782967bdaff8bcb3f3bdae46fbc5265b9fbf8695e5be",
+      "bytes": 7588
+    },
+    {
+      "path": "tests/test_harness_hotel_preservation.py",
+      "sha256": "303daef504f921ac2d4222881f90ba5ca2174fa13d49ebb86b34bb5eb7825a49",
+      "bytes": 7952
+    },
+    {
+      "path": "tests/test_existing_city_scope.py",
+      "sha256": "4eccfc9c69fecd7ed13a57f79f54bf9c700648d4c7262dc4e14f8399b3fe0fcf",
+      "bytes": 6532
+    },
+    {
+      "path": "tests/test_harness_existing_city_scope.py",
+      "sha256": "c5d27b20ba2d34f470cf5d09ad1888b5b55dfa6121e38ec92f2213dfe6c0af16",
+      "bytes": 4775
+    },
+    {
+      "path": "fixtures/regression/preserved-hotel-one-wow-20261027.json",
+      "sha256": "98d739a0255436177ec63227848be010ee096427ae315492d3e734d5d84793e3",
+      "bytes": 14292
+    }
+  ],
+  "initial_failures_preserved": [
+    {
+      "path": ".local/evaluation/geo-20261027/hotel-preservation-initial.xml",
+      "sha256": "10d46f8d22e472729a96f05503f21e349f860c98499ee2c7c7b2031cda353e47",
+      "bytes": 1542,
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/hotel-preservation-pg-initial.xml",
+      "sha256": "f46d9ce480181c9a4e247001da2402079ffecaa087cad4333105fe63c26d0f62",
+      "bytes": 3071,
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/hotel-preservation-pg-hook.xml",
+      "sha256": "1e91849d05465c2daee439438cf1b6153066700b917e9def82454aaced0f9598",
+      "bytes": 1889,
+      "tests": 4,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/hotel-preservation-related-final.xml",
+      "sha256": "f37a5879d51bb53baf65c13928ec6f445cf8beacf6a6519bc41cbcc606e5ca38",
+      "bytes": 51554,
+      "tests": 200,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "verification": {
+    "path": ".local/evaluation/geo-20261027/hotel-preservation-related-guard-final.xml",
+    "sha256": "c071e289f6914d25b98e3e6075f3a52aeb6106a3f4a904616b21c7ebce37ebda",
+    "bytes": 56779,
+    "tests": 229,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ruff": "PASS six owned files",
+  "pg_scope": {
+    "cases": 6,
+    "database": "otravel_test",
+    "actual_model_http": 0,
+    "actual_supplier_http": 0,
+    "asserted": [
+      "actual fresh first-plan preview pin",
+      "actual fresh third-plan preview identity differs from first shown",
+      "the exact captured seven-op WOW batch gains the omitted selected first-hotel pin",
+      "original source breakfast/room/party/budget/second-hotel/date facts remain correct and OPTIONS_READY",
+      "old quote confirmation409 and no orders",
+      "missing selection asks rather than defaults",
+      "model ASK/none cannot suppress an explicit code-owned keep",
+      "existing canonical pin survives keep without a fresh quote"
+    ],
+    "third_plan_fixture_boundary": "The actual mandatory-breakfast prestate admits only two plans. The dedicated third-plan identity case explicitly removes that constraint in a separate fixture to obtain a real plan3; it does not relabel plan2. The exact WOW case retains the original breakfast constraint."
+  },
+  "test_precondition_change": "The former city-scope cached-flow test now performs an explicit preview before asking to keep an unpinned first hotel. Without that preview the new intended response is clarification. Historical no-preview PASS evidence is preserved rather than regraded.",
+  "hash_scope": "E working-tree bytes, not the installed native source identity.",
+  "closure": "Repeat the actual typed-prestate single NLU transition on a new immutable deployed source with a real selected preview. Require the selected first-hotel ID to persist alongside every previous WOW state and ready-plan predicate; do not call it a fresh full conversation.",
+  "production_native_changed_by_author": false,
+  "old_actual_results_rewritten": false
+}
