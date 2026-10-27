@@ -41,7 +41,7 @@ export default function App() {
   }, [screen, offerTab, editor, details, newConfirm, data.quote, data.snapshot?.session_id, data.snapshot?.state_version, data.snapshot?.waiting_reason, data.busy, data.sending, data.restoring, data.online, data.flightClass, data.providers?.serpapi?.configured, data.providers?.serpapi?.free_tier_confirmed, data.external[offerTab], data.plans, data.deliveries]);
   async function start(city) { location.hash = 'studio'; setScreen('studio'); if (city) setDraft(`Хочу в ${city}. Помоги спланировать поездку.`); window.scrollTo(0, 0); await session.open(); }
   function home() { location.hash = ''; setScreen('home'); window.scrollTo(0, 0); }
-  const edit = async (tab, suggestedCity = null) => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor({ tab: tab || 'route', suggestedCity }); };
+  const edit = async (tab, suggestedCity = null, field = null) => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor({ tab: tab || 'route', suggestedCity, field }); };
   const selected = data.plans.find(plan => plan.plan_id === data.selectedId), trip = data.snapshot?.trip;
   const cartCurrent = Boolean(data.snapshot && storedCart?.items && storedCart?.sessionId === data.snapshot.session_id && storedCart?.version === data.snapshot.state_version);
   const cartItems = cartCurrent ? storedCart.items : { flights: null, hotels: null };
@@ -70,7 +70,7 @@ export default function App() {
       <div className="workspace-bottom-note"><ShieldCheck size={14} />Ваша поездка сохраняется. Цены могут измениться.</div>
     </section><TripSummary data={data} onEdit={edit} onPreview={() => session.preview()} onDetails={setDetails} cartItems={cartItems} onCart={() => setCartOpen(true)} /></main>
     <nav className="mobile-navigation" aria-label="Разделы поездки">{[['agent', MessageCircle, 'Агент'], ['options', Compass, 'Варианты'], ['trip', Plane, 'Поездка']].map(([id, Icon, title]) => <button key={id} className={mobileTab === id ? 'active' : ''} onClick={() => setMobileTab(id)}><Icon size={20} /><span>{title}</span>{id === 'options' && data.plans.length > 0 && <i />}</button>)}</nav>
-    {editor && <TripEditor snapshot={data.snapshot} initialTab={editor.tab} suggestedCity={editor.suggestedCity} onSave={save} onClose={() => setEditor(null)} />}
+    {editor && <TripEditor snapshot={data.snapshot} initialTab={editor.tab} initialField={editor.field} suggestedCity={editor.suggestedCity} onSave={save} onClose={() => setEditor(null)} />}
     {data.quote && <Checkout key={`${data.quote.quote_id}:${data.quote.quote_version}`} quote={data.quote} previousPlan={selected} confirming={data.confirming} onClose={() => { if (!data.confirming) session.closeQuote(); }} onConfirm={() => session.confirm()} />}
     {details && <Modal title="Состав и условия" onClose={() => setDetails(null)} wide><PlanDetails plan={details} trip={trip} /></Modal>}
     {cartOpen && <Cart items={cartItems} trip={trip} stale={cartStale} onRemove={kind => updateCart(kind, null)} onClose={() => setCartOpen(false)} onBrowse={kind => { setCartOpen(false); setOfferTab(kind); setMobileTab('options'); }} />}

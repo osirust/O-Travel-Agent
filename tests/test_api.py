@@ -639,6 +639,29 @@ async def test_hotel_page_tokens_and_offers_survive_the_session_api(api_factory,
 
 
 @pytest.mark.asyncio
+async def test_citizenship_answer_updates_trip_without_llm(api_factory):
+    initial = sample_trip().model_dump(mode='json')
+    initial['search_policy'] = {'mode': 'HYBRID', 'hotel_provider': 'liteapi', 'flight_provider': 'duffel', 'demo_fallback': False, 'guest_nationality': None}
+    async with api_factory() as (client, model):
+        sid, token, state = await _session(client, initial)
+        path = f'/api/v1/sessions/{sid}'
+        response = await client.post(path + '/search', headers=_headers(token), json={'client_message_id': str(uuid4()), 'expected_version': state['state_version'], 'mode': 'HYBRID'})
+        assert response.status_code == 202
+        await _wait(client, response.json()['run_id'], token)
+        before = await _snapshot(client, sid, token)
+        assert before['waiting_reason'] == 'clarification'
+        assert before['pending_question']['field'] == 'search.guest_nationality'
+        response = await client.post(path + '/messages', headers=_headers(token), json={'client_message_id': str(uuid4()), 'expected_version': before['state_version'], 'text': 'Россия'})
+        assert response.status_code == 202
+        await _wait(client, response.json()['run_id'], token)
+        after = await _snapshot(client, sid, token)
+        assert after['trip']['search_policy']['guest_nationality'] == 'RU'
+        assert after['trip']['origin'] == initial['origin']
+        assert after['trip']['stays'] == initial['stays']
+        assert model.calls == []
+
+
+@pytest.mark.asyncio
 async def test_model_context_has_only_preceding_dialogue_and_saved_offer_ids(api_factory):
     async with api_factory() as (client, model):
         session_id, token, _ = await _session(client)

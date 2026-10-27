@@ -109,7 +109,7 @@ export function componentRequest(trip, kind, provider = 'serpapi', cabinClass = 
   const occupancies = stay.rooms.map(room => { const people = guests.filter(person => room.traveler_ids.includes(person.id)); return { adults: people.filter(person => person.type === 'adult').length, children: people.filter(person => person.type === 'child').map(person => person.age) }; });
   if (occupancies.some(room => room.adults < 1)) throw new Error('Укажите хотя бы одного взрослого в каждом номере.');
   if (provider === 'liteapi') {
-    if (!trip.search_policy?.guest_nationality) throw new Error('Укажите гражданство гостей во вкладке «Источники».');
+    if (!trip.search_policy?.guest_nationality) throw new Error('Укажите гражданство в разделе «Гости и номера».');
     return { kind: 'hotels', provider, demo_fallback: false, request: { city: stay.city, checkin: stay.check_in, checkout: stay.check_out, currency, occupancies, guestNationality: trip.search_policy.guest_nationality } };
   }
   return { kind: 'hotels', provider: 'serpapi', demo_fallback: false, request: { q: stay.city, checkin: stay.check_in, checkout: stay.check_out, currency, occupancies } };

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { ArrowRight, LoaderCircle, Plus, Trash2 } from 'lucide-react';
 import { CITIES, uuid } from '../lib/travel.js';
 import { buildTripOperations, createTripDraft } from '../lib/tripDraft.js';
+import { COUNTRIES } from '../lib/countries.js';
 import { Modal } from './Ui.jsx';
 
-export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'route', suggestedCity = null }) {
+export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'route', suggestedCity = null, initialField = null }) {
   const [draft, setDraft] = useState(() => createTripDraft(snapshot?.trip));
   const [tab, setTab] = useState(initialTab);
   const [error, setError] = useState('');
@@ -42,6 +43,7 @@ export default function TripEditor({ snapshot, onSave, onClose, initialTab = 'ro
           <div className="form-grid route-policy"><label>Завершение маршрута<select value={draft.routeKind} onChange={e => update('routeKind', e.target.value)}><option value="round_trip">Возвращение в город отправления</option><option value="one_way">В одну сторону</option><option value="open_jaw">Возвращение в другой город</option><option value="undecided">Пока не определились</option></select></label>{draft.routeKind === 'open_jaw' && <label>Конечный город<input list="cities" placeholder="Город возвращения" value={draft.endCity} onChange={e => update('endCity', e.target.value)} /></label>}</div>
         </>}
         {tab === 'party' && <>
+          <label>Гражданство для поиска отеля<select data-initial-focus={initialField === 'nationality' ? '' : undefined} value={draft.nationality} onChange={e => update('nationality', e.target.value)}><option value="">Выберите страну</option>{draft.nationality && !COUNTRIES.some(country => country.code === draft.nationality) && <option value={draft.nationality}>{draft.nationality}</option>}{COUNTRIES.map(country => <option value={country.code} key={country.code}>{country.name}</option>)}</select></label><p className="hint">Укажите страну гражданства, которую использовать при подборе отеля.</p>
           <div className="section-title"><h3>Кто едет?</h3><span className="muted">До 10 гостей в текущей версии</span></div>
           {draft.travelers.length === 0 && <p className="hint">Добавьте участников, когда определитесь с составом поездки.</p>}
           {draft.travelers.map((person, index) => <div className="guest-editor" key={person.id}>

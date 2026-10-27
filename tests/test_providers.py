@@ -310,6 +310,23 @@ def test_serpapi_multicity_params_and_indicative_segments():
     assert offer["details"]["itinerary_complete"] is False
 
 
+@pytest.mark.parametrize("message,success", [
+    ("Google Flights hasn't returned any results for this query.", True),
+    ("Account quota exhausted", False),
+])
+def test_serpapi_distinguishes_empty_flights_from_provider_failure(message, success):
+    def handler(request):
+        return httpx.Response(200, json={"search_metadata": {"status": "Success"}, "error": message})
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    request = {**FLIGHT_REQUEST, "adults": 1, "currency": "RUB"}
+    if success:
+        assert call(gateway, "search_flights", request, "serpapi") == []
+    else:
+        with pytest.raises(ProviderError) as error:
+            call(gateway, "search_flights", request, "serpapi")
+        assert error.value.code == "PROVIDER_RESPONSE_ERROR"
+
+
 def test_serpapi_hotel_pagination_forwards_token_and_preserves_offer_identity():
     calls = []
     def handler(request):

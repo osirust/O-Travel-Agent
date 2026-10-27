@@ -9,6 +9,8 @@ import { cartTotal, compareToBudget } from '../src/lib/cart.js';
 import { airlineLogo, cabinLabel } from '../src/lib/flights.js';
 import { agentProposalReady } from '../src/lib/agentProposal.js';
 import { restoreHotelPages } from '../src/lib/hotelPages.js';
+import { COUNTRIES } from '../src/lib/countries.js';
+import { chatAcceptsText, pendingEditorTarget } from '../src/lib/pendingEditor.js';
 
 const emptyTrip = { origin: null, travelers: [], groups: [], stays: [], budget: null, constraints: [], route_policy: { kind: 'round_trip', end_city: null }, search_policy: { mode: 'DEMO', hotel_provider: 'liteapi', flight_provider: 'serpapi', demo_fallback: true, guest_nationality: null } };
 
@@ -86,6 +88,23 @@ test('saving a partial draft does not invent travelers, places or dates', () => 
   assert.deepEqual(buildTripOperations(emptyTrip, draft), []);
   draft.budget = '150000';
   assert.deepEqual(buildTripOperations(emptyTrip, draft), [{ type: 'set_budget', value: { amount_minor: 15000000, currency: 'RUB', scope: 'whole_trip' } }]);
+});
+
+test('citizenship selection opens the guests form and saves the explicit country code', () => {
+  assert.deepEqual(pendingEditorTarget({ field: 'search.guest_nationality' }), { tab: 'party', field: 'nationality' });
+  assert.deepEqual(pendingEditorTarget({ text: 'Гражданство какой страны использовать?' }), { tab: 'party', field: 'nationality' });
+  assert.deepEqual(pendingEditorTarget({ field: 'budget.amount_minor' }), { tab: 'budget', field: null });
+  assert.equal(chatAcceptsText(true, true), true);
+  assert.equal(chatAcceptsText(true, false), false);
+  assert.equal(chatAcceptsText(false, false), true);
+  assert.equal(COUNTRIES.find(country => country.code === 'RU')?.name, 'Россия');
+  const draft = createTripDraft(emptyTrip);
+  assert.equal(draft.nationality, '');
+  draft.nationality = 'RU';
+  const operations = buildTripOperations(emptyTrip, draft);
+  assert.equal(operations.length, 1);
+  assert.equal(operations[0].type, 'set_search_policy');
+  assert.equal(operations[0].value.guest_nationality, 'RU');
 });
 
 test('changing a group preserves the other trip details and assigns its complete membership', () => {

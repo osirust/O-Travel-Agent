@@ -30,7 +30,7 @@ export function Modal({ title, subtitle, onClose, children, wide = false }) {
     const previous = document.activeElement;
     const dialog = ref.current;
     const getFocusable = () => [...dialog.querySelectorAll('button, input, select, textarea, a[href], [tabindex="0"]')].filter(el => !el.disabled && el.getClientRects().length);
-    getFocusable()[0]?.focus();
+    (dialog.querySelector('[data-initial-focus]') || getFocusable()[0])?.focus();
     const onKey = event => {
       if (event.key === 'Escape') closeRef.current();
       if (event.key !== 'Tab') return;

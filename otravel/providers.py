@@ -291,6 +291,16 @@ class _HTTPGateway:
             raise ProviderError("INVALID_RESPONSE", "Провайдер вернул не JSON.", provider=provider) from None
         if not isinstance(body, dict):
             raise ProviderError("INVALID_RESPONSE", "Ожидался объект ответа провайдера.", provider=provider)
+        # Google Flights reports an empty result set in an `error` field even
+        # though the search completed successfully. Other provider errors must
+        # remain failures rather than being silently presented as no results.
+        if (provider == "serpapi"
+                and kwargs.get("params", {}).get("engine") == "google_flights"
+                and body.get("error") == "Google Flights hasn't returned any results for this query."
+                and isinstance(body.get("search_metadata"), dict)
+                and body.get("search_metadata", {}).get("status") == "Success"
+                and not body.get("errors")):
+            return {**body, "error": None}
         if body.get("error") or body.get("errors"):
             raise ProviderError("PROVIDER_RESPONSE_ERROR", "Провайдер сообщил об ошибке.", provider=provider)
         return body
