@@ -20,9 +20,11 @@
 
 ## Runtime / rollout
 
-8084 доrolloutещёold0bf71be, Csource /home/aegml/projects/otravel-after80-20261026, DBotravel_zai_eval, package92bb70e62dbb7756c77e9815cd5fc67400ad54c677a58d774dfaab5476b37046. Старыйcontroller scripts/after80_gptoss_backend.py управляеттолькоегоownPID. Новыйprivate .local/after80_world_backend.py: тотжеCsource/DB/port8084, отдельныйCREATOR+runtimeidentity, Groq120B strictv3+DYNAMIC_GEOGRAPHY_ENABLED=true,local0,paidfallbacknone. SyntheticprofilecheckPASS,actualstartпокаНЕпроведён.
+8084 ОБНОВЛЁН И ПРОВЕРЕН: http://localhost:8084/debug, «Новая поездка». Code6ea3d110560a0d4c95ce0021687c7f5505147db6 вorigin+cv/backend/harness-foundation; functionalcommitcced386 иfull6448. НовыйCpackagec07b46abbf1599eac299078d497965a98dfab95ad4f7ba80d2e7244a566ea11f. Readinessstatusверсия3 исправлена отдельнойоднострочнойметадатнойправкой+58targetedPASS, весьfullпосленеёнепереобъявлен.
 
-Дальше: secret scan→commit/push origin+cv backend/harness-foundation→oldownedstop→.local/promote_delivery_native_20261027.py exactcommit+previous92bbguard→newworldcontrollerstart/status→0startupinference+GETpersistence→одинownerchatprobe. Проверитьsource manifest/credentialmetadata, чужиеolduntrackedневключать. Послеrolloutдописатьточныеcommit/runtimeSHAсюда.
+Controller .local/after80_world_backend.py (CREATORafter80_world_backend.py), SOURCE/home/aegml/projects/otravel-after80-20261026, DBotravel_zai_eval, Runtimeidentity .local/after80-world-backend-8084. ТолькоownPID/uid/argv/source/loopback guards, strictv3/globalTrue/Groq120B/free/local0. Полный start manifestMATCH, /health и/debug200, actualnativeAR→cityquestion0LLM/0implicitcapital. docs/verification/native-delivery-ready-20261027.json. Master.envinode/size/mtime/uid/modeнеизменны;DBданныесохранены. Oldcontrollerstopиобаarchiveinstallreceiptsв/home/aegml/checks/after80-delivery-cced386 иafter80-delivery-6ea3d11. ПерваяstartuphealthREFUSEDиз-занеправильногоstatus.transportversionсохранена; процессбылоостановленоowncontroller,metadatafixпроверен,повторныйstartRUNNING.
+
+Всеисторическиепроверки/SourceR1–R5/FAILimmutable. Неотключатьnative8084дляbulk80, userможетпроверять. BulkZAI45/8086долженбытьотдельным: RootдалsetupGOexact6ea3d11/c07b46/newC/newDB, generationпокаНЕразрешалась(ждёмREADY+RootpilotGO). НиLocalQwen,ниpaidfallbackнеподключать.
 
 ## Осталось после стенда
 
