@@ -35,6 +35,8 @@ def metadata(profile='zai'):
     if profile == 'openrouter-dots':
         status['openrouter'].pop('free_tier_confirmed')
         status['openrouter'].update(model=selected['model'], backup_model='')
+    if profile == 'zai47-flash':
+        evidence['limits']['daily_engineering_bound'] = 2000
     return health, status, evidence
 
 
@@ -50,7 +52,7 @@ def test_default_zai_and_explicit_cf_profiles_are_frozen_and_not_interchangeable
     assert cf['synthetic_initial_trip'] == zai['synthetic_initial_trip']
 
 
-@pytest.mark.parametrize('profile', ['zai', 'cloudflare-nemotron', 'openrouter-dots'])
+@pytest.mark.parametrize('profile', ['zai', 'zai47-flash', 'cloudflare-nemotron', 'openrouter-dots'])
 def test_exact_profile_metadata_passes_and_dry_run_does_not_read_runtime_or_http(profile, monkeypatch, capsys):
     runner.check_profile(*metadata(profile), profile)
     monkeypatch.setattr(runner, 'load_source', rows)

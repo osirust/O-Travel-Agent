@@ -1,0 +1,64 @@
+{
+  "format": "otravel.zai47.controller-preparation.v1",
+  "date": "2026-10-27",
+  "finding_id": "OPS-ZAI47-PAUSED-ADMISSION-001",
+  "status": "PURE_TESTED_ACTUAL_START_NOT_PERFORMED_BY_AUTHOR",
+  "controller": {
+    "path": "scripts/after80_zai47_backend.py",
+    "sha256": "0d5e87f5fe1addf7e543aeefed75842490acdd62caf9cb80b8973295f0ba3298",
+    "creator": "after80_zai47_backend.py",
+    "source": "/home/aegml/projects/otravel-after80-20261026",
+    "database": "otravel_zai_eval",
+    "port": 8084,
+    "bind": "127.0.0.1",
+    "runtime_folder": ".local/after80-zai47-backend-8084",
+    "actual_runtime_receipt": "docs/verification/after80-zai47-backend-20261027.json"
+  },
+  "profile": {
+    "provider": "zai",
+    "model": "glm-4.7-flash",
+    "free_confirmation_required": true,
+    "app_daily_bound": 2000,
+    "calls_per_run": 1,
+    "local_calls": 0,
+    "fallback": false,
+    "travel": {"liteapi": "SANDBOX", "duffel": "TEST", "serpapi": "LIVE_INDICATIVE"},
+    "default_search": "HYBRID",
+    "vendor_remaining": "UNKNOWN"
+  },
+  "credential_policy": {
+    "source_dotenv_read": false,
+    "selected_master_fields_only": true,
+    "inherited_environment_copied": false,
+    "credentials_printed_or_recorded": false
+  },
+  "pending_admission": {
+    "database_writes": 0,
+    "queries": "Bounded SELECT only; input SHA256 is computed inside PostgreSQL, not returned as plaintext.",
+    "max_rows": 100,
+    "running_or_nonpaused_pending": "REFUSE",
+    "active_session": "REFUSE",
+    "allowed": "Only exact explicitly reviewed pending rows with user_pause, null active run, matching based/current version and input digest.",
+    "review_file": "Canonical internal-C /home/aegml path, root-owned, private permissions, bounded size, explicit expected SHA256.",
+    "review_source_bound": true,
+    "before_launch_recheck": "Exact pending snapshot and all recorded database counts must remain unchanged.",
+    "after_launch_recheck": "Paused rows and database/model/event/quote/order counts must remain unchanged; failure retains the owned process for explicit operator handling.",
+    "automatic_resume_cancel_replay": false
+  },
+  "verification": {
+    "tests": "tests/test_after80_zai47_backend.py",
+    "junit": ".local/evaluation/geo-20261027/zai47-controller-pure-initial.xml",
+    "passed": 40,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.42,
+    "ruff": "PASS controller and test file",
+    "real_processes_started": 0,
+    "real_database_calls": 0,
+    "inference_calls": 0,
+    "real_supplier_calls": 0,
+    "master_credentials_read": 0
+  },
+  "unchanged": ["legacy glm-4.5-flash controller", "historical evidence", "production otravel package", "native process lifecycle"],
+  "closure": "The parent operator must explicitly start the new manager with its approved review path/digest, then inspect the actual runtime receipt and zero-startup-activity guards. Pure tests are not an actual launch or provider-quota qualification."
+}

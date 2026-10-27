@@ -33,6 +33,8 @@ BASE = "http://127.0.0.1:8084"
 LLM_PROFILES = {
     "zai": {"provider": "zai", "model": "glm-4.5-flash", "manager": "after80_backend.py",
         "evidence": "docs/verification/after80-backend-20261026.json"},
+    "zai47-flash": {"provider": "zai", "model": "glm-4.7-flash", "manager": "after80_zai47_backend.py",
+        "evidence": "docs/verification/after80-zai47-backend-20261027.json"},
     "cloudflare-nemotron": {"provider": "cloudflare", "model": "@cf/nvidia/nemotron-3-120b-a12b",
         "manager": "after80_cf_backend.py", "evidence": "docs/verification/after80-cf-backend-20261026.json"},
     "openrouter-dots": {"provider": "openrouter", "model": "dots-studio/dots-3-note-preview:free",
@@ -366,6 +368,10 @@ def check_profile(health, status, evidence, llm_profile="zai"):
         require(type(evidence.get("limits", {}).get("groq_daily_engineering_bound")) is int
             and evidence["limits"]["groq_daily_engineering_bound"] == 1000,
             "explicit_groq_evaluation_limit_required")
+    elif llm_profile == "zai47-flash":
+        require(type(evidence.get("limits", {}).get("daily_engineering_bound")) is int
+            and evidence["limits"]["daily_engineering_bound"] == 2000,
+            "explicit_zai47_evaluation_limit_required")
 
 
 def code_manifest():

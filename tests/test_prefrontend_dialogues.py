@@ -549,7 +549,7 @@ def test_cloudflare_short_interval_cannot_be_used_for_other_fixed_profiles(profi
     assert runner.ModelPacer(60, llm_profile=profile).seconds == 60
 
 
-@pytest.mark.parametrize('profile', ['cloudflare-nemotron', 'zai'])
+@pytest.mark.parametrize('profile', ['cloudflare-nemotron', 'zai', 'zai47-flash'])
 def test_only_reviewed_fixed_profiles_can_use_fifteen_second_pacing(profile):
     clock = FakeClock()
     pacer = runner.ModelPacer(15, llm_profile=profile, clock=clock, sleep=clock.sleep)
