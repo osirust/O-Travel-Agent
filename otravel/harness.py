@@ -1341,13 +1341,18 @@ class Harness:
         try:
             if kind == "hotels":
                 hotel_names = {}
+                pagination = None
                 if provider == "liteapi" and not request.get("hotelIds") and request.get("city"):
                     matches = await self.travel.resolve_hotels(request["city"], limit=10)
                     request = {**request, "hotelIds": [hotel["id"] for hotel in matches if hotel.get("id")]}
                     hotel_names = {hotel["id"]: hotel["name"] for hotel in matches if hotel.get("id") and hotel.get("name")}
                     if not request["hotelIds"]:
                         raise ProviderError("NO_MATCHES", "В тестовом каталоге не нашлось отелей этого города.", provider="liteapi")
-                offers = await self.travel.search_hotels(request, provider)
+                if provider == "serpapi" and hasattr(self.travel, "search_hotel_page"):
+                    offers, next_page = await self.travel.search_hotel_page(request)
+                    pagination = {"page_token": request.get("next_page_token"), "next_page_token": next_page}
+                else:
+                    offers = await self.travel.search_hotels(request, provider)
                 for offer in offers:
                     hotel_id = offer.get("details", {}).get("hotel_id")
                     if hotel_id in hotel_names:
@@ -1359,7 +1364,7 @@ class Harness:
                 await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_COMPLETED", {"kind": kind, "provider": "open_meteo"})
                 return {"weather": weather, "source_type": weather["source_type"], "plans": []}
             await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_COMPLETED", {"kind": kind, "provider": provider, "count": len(offers)})
-            return {"live_offers": offers, "source_type": offers[0].get("source_type", "UNKNOWN") if offers else "NO_MATCHES", "plans": [], "warnings": ["Это отдельные компоненты, не проверенная многогородская корзина. Supplier orders не создаются."]}
+            return {"live_offers": offers, **({"hotel_pagination": pagination} if kind == "hotels" and pagination is not None else {}), "source_type": offers[0].get("source_type", "UNKNOWN") if offers else "NO_MATCHES", "plans": [], "warnings": ["Это отдельные компоненты, не проверенная многогородская корзина. Supplier orders не создаются."]}
         except ProviderError as exc:
             await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_FAILED", {"kind": kind, "provider": provider, "code": exc.code})
             if not command.get("demo_fallback"):

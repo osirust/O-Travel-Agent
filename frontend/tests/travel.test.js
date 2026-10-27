@@ -4,9 +4,11 @@ import { checkoutAllowed, componentRequest, currentPlans, mentionedCity, minorUn
 import { TravelApi, ApiError } from '../src/lib/api.js';
 import { friendlyError, TravelSession } from '../src/lib/session.js';
 import { buildTripOperations, createTripDraft } from '../src/lib/tripDraft.js';
-import { EMPTY_HOTEL_FILTERS, filterHotels, parseHotelFilters } from '../src/lib/hotelFilters.js';
+import { EMPTY_HOTEL_FILTERS, filterHotels, parseHotelFilters, sortHotels } from '../src/lib/hotelFilters.js';
 import { cartTotal, compareToBudget } from '../src/lib/cart.js';
 import { airlineLogo, cabinLabel } from '../src/lib/flights.js';
+import { agentProposalReady } from '../src/lib/agentProposal.js';
+import { restoreHotelPages } from '../src/lib/hotelPages.js';
 
 const emptyTrip = { origin: null, travelers: [], groups: [], stays: [], budget: null, constraints: [], route_policy: { kind: 'round_trip', end_city: null }, search_policy: { mode: 'DEMO', hotel_provider: 'liteapi', flight_provider: 'serpapi', demo_fallback: true, guest_nationality: null } };
 
@@ -66,6 +68,19 @@ test('hotel filters compare ratings and the whole-stay price without guessing mi
   assert.ok(parseHotelFilters({ ...bounds, priceFrom: '30001', priceTo: '30000' }).error);
 });
 
+test('hotel sorting uses comparable full prices and keeps missing values last', () => {
+  const offers = [
+    { offer_id: 'a', currency: 'RUB', price_kind: 'INDICATIVE_STAY_TOTAL', amount_minor: 300, details: { provider_data: { rating: 4.5, review_count: 10 } } },
+    { offer_id: 'b', currency: 'RUB', price_kind: 'INDICATIVE_STAY_TOTAL', amount_minor: 100, details: { provider_data: { rating: 4.1, review_count: 500 } } },
+    { offer_id: 'night', currency: 'RUB', price_kind: 'INDICATIVE_NIGHTLY', amount_minor: 1, details: { provider_data: {} } },
+  ];
+  assert.deepEqual(sortHotels(offers, 'price_asc').map(offer => offer.offer_id), ['b', 'a', 'night']);
+  assert.deepEqual(sortHotels(offers, 'price_desc').map(offer => offer.offer_id), ['a', 'b', 'night']);
+  assert.deepEqual(sortHotels(offers, 'rating_desc').map(offer => offer.offer_id), ['a', 'b', 'night']);
+  assert.deepEqual(sortHotels(offers, 'reviews_desc').map(offer => offer.offer_id), ['b', 'a', 'night']);
+  assert.deepEqual(offers.map(offer => offer.offer_id), ['a', 'b', 'night']);
+});
+
 test('saving a partial draft does not invent travelers, places or dates', () => {
   const draft = createTripDraft(emptyTrip);
   assert.deepEqual(buildTripOperations(emptyTrip, draft), []);
@@ -91,6 +106,19 @@ test('money preserves exact minor units and does not turn an unknown amount into
 const snapshot = { session_id: 's', trip_id: 't', state_version: 4, status: 'OPTIONS_READY', waiting_reason: null };
 const plan = { plan_id: 'p', trip_id: 't', state_version: 4, total_minor: 15000000, currency: 'RUB' };
 const run = (id, payload, version = 4) => ({ run_id: id, status: 'completed', result: { state_version: version, result: payload } });
+
+test('hotel pagination restores ordered pages, deduplicates and ignores stale or unrelated results', () => {
+  const hotel = id => ({ offer_id: id, details: { kind: 'hotel' } });
+  const runs = new Map([
+    ['first', run('first', { live_offers: [hotel('a'), hotel('b')], hotel_pagination: { page_token: null, next_page_token: 'next-1' } })],
+    ['wrong', run('wrong', { live_offers: [hotel('wrong')], hotel_pagination: { page_token: 'wrong', next_page_token: null } })],
+    ['second', run('second', { live_offers: [hotel('b'), hotel('c')], hotel_pagination: { page_token: 'next-1', next_page_token: null } })],
+    ['stale', run('stale', { live_offers: [hotel('stale')] }, 3)],
+  ]);
+  const restored = restoreHotelPages(['first', 'wrong', 'second', 'stale'].map(run_id => ({ run_id })), runs, snapshot, {});
+  assert.deepEqual(restored.offers.map(offer => offer.offer_id), ['a', 'b', 'c']);
+  assert.deepEqual(restored.pagination, { known: true, next: null });
+});
 
 test('a readonly answer preserves the matching plan, but a new empty search clears it', () => {
   const messages = [{ run_id: 'search' }, { run_id: 'answer' }];
@@ -157,6 +185,17 @@ test('automatic search starts only once for a version and allows an explicit ret
   assert.equal(posts, 2);
 });
 
+test('loading more hotels sends the saved page once and does not repeat a pending request', async () => {
+  const calls = [];
+  const { client } = controller({ request: async (path, options) => { calls.push(options.body); return { run_id: 'page-run' }; } });
+  const trip = { travelers: [{ id: 'a', type: 'adult' }], stays: [{ city: 'Стамбул', check_in: '2026-11-09', check_out: '2026-11-16', rooms: [{ id: 'r', traveler_ids: ['a'] }] }] };
+  client.patch({ snapshot: { ...snapshot, trip }, providers: { serpapi: { configured: true, free_tier_confirmed: true } }, online: true, hotelPagination: { known: true, next: 'page-two' } });
+  assert.equal(await client.loadMoreHotels(), true);
+  assert.equal(calls[0].request.next_page_token, 'page-two');
+  assert.equal(await client.loadMoreHotels(), false);
+  assert.equal(calls.length, 1);
+});
+
 test('changing flight cabin starts a separate search and does not reuse the previous offers', async () => {
   const requests = [];
   const { client } = controller({ request: async (path, options) => { requests.push(options.body); return { run_id: `run-${requests.length}` }; } });
@@ -186,6 +225,25 @@ test('a component search proceeds during unrelated clarification but not during 
   client.patch({ snapshot: { ...snapshot, trip, waiting_reason: 'user_pause' } });
   assert.equal(await client.ensureAutomaticSearch('hotels', { retry: true }), false);
   assert.equal(posts, 1);
+});
+
+test('agent proposal requires saved trip details and runs once per revision', async () => {
+  const calls = [];
+  const { client } = controller({ request: async (path, options) => { calls.push({ path, body: options.body }); return { run_id: 'plan-run' }; } });
+  const trip = { origin: 'Казань', travelers: [{ id: 'a', type: 'adult' }], route_policy: { kind: 'round_trip' }, search_policy: { mode: 'DEMO' }, stays: [{ city: 'Стамбул', check_in: '2026-11-09', check_out: '2026-11-16', rooms: [{ traveler_ids: ['a'] }] }] };
+  assert.equal(agentProposalReady({ ...trip, stays: [{ ...trip.stays[0], rooms: [] }] }), false);
+  assert.equal(agentProposalReady(trip), true);
+  client.patch({ snapshot: { ...snapshot, trip }, online: true });
+  assert.equal(await client.ensureAutomaticProposal(), true);
+  assert.equal(calls[0].path.endsWith('/search'), true);
+  assert.equal(calls[0].body.mode, 'DEMO');
+  client.deliveries = [];
+  assert.equal(await client.ensureAutomaticProposal(), false);
+  assert.equal(await client.ensureAutomaticProposal({ retry: true }), true);
+  assert.equal(calls.length, 2);
+  client.deliveries = [];
+  client.patch({ snapshot: { ...snapshot, trip, waiting_reason: 'user_pause' } });
+  assert.equal(await client.ensureAutomaticProposal({ retry: true }), false);
 });
 
 test('an accepted request remains accepted when reading its result fails', async () => {

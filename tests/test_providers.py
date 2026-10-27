@@ -310,6 +310,34 @@ def test_serpapi_multicity_params_and_indicative_segments():
     assert offer["details"]["itinerary_complete"] is False
 
 
+def test_serpapi_hotel_pagination_forwards_token_and_preserves_offer_identity():
+    calls = []
+    def handler(request):
+        token = request.url.params.get('next_page_token')
+        calls.append(token)
+        pagination = {'next_page_token': 'page-two'} if token is None else {}
+        return httpx.Response(200, json={'properties': [{'name': 'Hotel', 'property_token': 'hotel-one', 'total_rate': {'extracted_lowest': 1000}}], 'serpapi_pagination': pagination})
+    request = {**HOTEL_REQUEST, 'city': 'Казань', 'occupancies': [{'adults': 2, 'children': []}]}
+    async def run():
+        gateway = TravelGateway(settings(handler, SERPAPI_API_KEY='fake', SERPAPI_FREE_TIER_CONFIRMED=True))
+        try:
+            first, next_token = await gateway.search_hotel_page(request)
+            second, after = await gateway.search_hotel_page({**request, 'next_page_token': next_token})
+            assert calls == [None, 'page-two']
+            assert first[0]['offer_id'] == second[0]['offer_id']
+            assert after is None
+        finally:
+            await gateway.close()
+    asyncio.run(run())
+
+
+def test_serpapi_rejects_invalid_hotel_page_token_before_http():
+    gateway = TravelGateway(settings(forbidden, SERPAPI_API_KEY='fake', SERPAPI_FREE_TIER_CONFIRMED=True))
+    request = {**HOTEL_REQUEST, 'city': 'Казань', 'occupancies': [{'adults': 2, 'children': []}], 'next_page_token': 'bad&key=value'}
+    with pytest.raises(ProviderError):
+        call(gateway, 'search_hotel_page', request)
+
+
 @pytest.mark.parametrize("cabin,expected", [("economy", "1"), ("premium_economy", "2"), ("business", "3"), ("first", "4")])
 def test_serpapi_forwards_selected_cabin(cabin, expected):
     def handler(request):

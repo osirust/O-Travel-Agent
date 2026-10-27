@@ -1,5 +1,7 @@
 import { TravelApi } from './api.js';
 import { componentRequest, currentPlans, isPending, latestChanges, payloadOf, uuid } from './travel.js';
+import { agentProposalReady } from './agentProposal.js';
+import { restoreHotelPages } from './hotelPages.js';
 
 const storage = {
   get(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
@@ -27,7 +29,7 @@ export class TravelSession {
     this.listeners = new Set(); this.runs = new Map(); this.cursor = 0;
     this.state = { snapshot: null, messages: [], plans: [], selectedId: null, changes: [], media: {}, providers: null,
       online: null, restoring: false, sending: false, busy: false, progress: '', notice: null, quote: null,
-      previewing: false, confirming: false, orders: [], external: { hotels: null, flights: null }, flightClass: ['economy', 'premium_economy', 'business', 'first'].includes(saved.flightClass) ? saved.flightClass : 'economy', autoAttempts: this.autoAttempts, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery };
+      previewing: false, confirming: false, orders: [], external: { hotels: null, flights: null }, hotelPagination: { known: false, next: null }, flightClass: ['economy', 'premium_economy', 'business', 'first'].includes(saved.flightClass) ? saved.flightClass : 'economy', autoAttempts: this.autoAttempts, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery };
   }
   getSnapshot = () => this.state;
   subscribe = listener => { this.listeners.add(listener); return () => this.listeners.delete(listener); };
@@ -63,7 +65,7 @@ export class TravelSession {
       this.access = { session_id: snapshot.session_id, session_token: snapshot.session_token };
       this.deliveries = []; this.confirmDelivery = null; this.liveKinds = {}; this.liveClasses = {}; this.autoAttempts = {}; this.patch({ flightClass: 'economy' }); this.persist();
       this.patch({ snapshot, messages: [], plans: [], selectedId: null, changes: [], media: {}, quote: null, orders: [], busy: false,
-        deliveries: [], confirmDelivery: null, external: { hotels: null, flights: null }, autoAttempts: {}, notice: null, online: true });
+        deliveries: [], confirmDelivery: null, external: { hotels: null, flights: null }, hotelPagination: { known: false, next: null }, autoAttempts: {}, notice: null, online: true });
     })();
     try { await this.opening; return true; } catch (error) { this.handleError(error); return false; }
     finally { this.opening = null; }
@@ -96,7 +98,8 @@ export class TravelSession {
       });
       const active = [...this.runs.values()].filter(isPending);
       const plans = currentPlans(messages, this.runs, snapshot);
-      const external = { hotels: null, flights: null };
+      const hotelPages = restoreHotelPages(messages, this.runs, snapshot, this.liveKinds);
+      const external = { hotels: hotelPages.offers, flights: null };
       for (const message of [...messages].reverse()) {
         const run = this.runs.get(message.run_id);
         if (run?.status !== 'completed' || run.result?.state_version !== snapshot.state_version) continue;
@@ -105,7 +108,7 @@ export class TravelSession {
         const kind = this.liveKinds[run.run_id] || (offers[0]?.details?.kind === 'hotel' ? 'hotels' : offers[0]?.details?.kind === 'flight' ? 'flights' : null);
         const flightClass = this.liveClasses[run.run_id] || offers[0]?.details?.search_request?.cabin_class || 'economy';
         if (kind === 'flights' && flightClass !== this.state.flightClass) continue;
-        if (kind && external[kind] === null) external[kind] = offers;
+        if (kind === 'flights' && external.flights === null) external.flights = offers;
       }
       const selectedId = plans.some(plan => plan.plan_id === this.state.selectedId) ? this.state.selectedId : plans[0]?.plan_id || null;
       const paused = snapshot.waiting_reason === 'user_pause';
@@ -120,7 +123,7 @@ export class TravelSession {
       if (this.confirmDelivery && orders.some(order => order.quote_id === this.confirmDelivery.quote_id)) this.confirmDelivery = null;
       const quote = this.state.quote?.state_version === snapshot.state_version && !active.length && !snapshot.waiting_reason ? this.state.quote : null;
       const media = this.state.snapshot?.state_version === snapshot.state_version && selectedId === this.state.selectedId ? this.state.media : {};
-      this.patch({ snapshot, messages, plans, selectedId, media, external, changes: latestChanges(messages, this.runs), orders, online: true,
+      this.patch({ snapshot, messages, plans, selectedId, media, external, hotelPagination: hotelPages.pagination, changes: latestChanges(messages, this.runs), orders, online: true,
         busy: !paused && active.length > 0, progress: paused ? 'На паузе' : active.length ? 'Обрабатываем ваш запрос…' : '', quote, notice });
       this.journal();
       void this.loadMedia();
@@ -172,6 +175,17 @@ export class TravelSession {
   send(text) { return this.submit('messages', { text }); }
   commands(operations, search = false) { return this.submit('commands', { operations, search }); }
   search() { return this.submit('search', { mode: this.state.snapshot.trip.search_policy.mode }); }
+  async ensureAutomaticProposal({ retry = false } = {}) {
+    const { snapshot, busy, sending, restoring, online, plans } = this.state;
+    if (!snapshot || !this.access || busy || sending || restoring || online !== true || snapshot.waiting_reason || !agentProposalReady(snapshot.trip)) return false;
+    if (!retry && plans.length) return false;
+    const key = `${snapshot.session_id}:${snapshot.state_version}:agent`;
+    if (!retry && this.autoAttempts[key]) return false;
+    if (this.deliveries.some(entry => entry.kind === 'search' && entry.body.expected_version === snapshot.state_version)) return false;
+    this.autoAttempts = Object.fromEntries([...Object.entries(this.autoAttempts), [key, true]].slice(-40));
+    this.persist(); this.patch({ autoAttempts: { ...this.autoAttempts } });
+    return this.search();
+  }
   demo() { return this.submit('demo', {}); }
   liveSearch(kind, provider = 'serpapi') {
     try { return this.submit('live/search', componentRequest(this.state.snapshot?.trip, kind, provider)); }
@@ -198,6 +212,15 @@ export class TravelSession {
     try { request = componentRequest(snapshot.trip, kind, 'serpapi', this.state.flightClass); } catch { return false; }
     this.autoAttempts = Object.fromEntries([...Object.entries(this.autoAttempts), [key, true]].slice(-40));
     this.persist(); this.patch({ autoAttempts: { ...this.autoAttempts } });
+    return this.submit('live/search', request);
+  }
+  async loadMoreHotels() {
+    const { snapshot, busy, sending, restoring, online, providers, hotelPagination } = this.state;
+    if (!snapshot || !this.access || busy || sending || restoring || online !== true || snapshot.waiting_reason === 'user_pause' || !providers?.serpapi?.configured || !providers?.serpapi?.free_tier_confirmed || !hotelPagination.next) return false;
+    if (this.deliveries.some(entry => entry.kind === 'live/search' && entry.body.kind === 'hotels' && entry.body.expected_version === snapshot.state_version)) return false;
+    let request;
+    try { request = componentRequest(snapshot.trip, 'hotels'); } catch { return false; }
+    request.request.next_page_token = hotelPagination.next;
     return this.submit('live/search', request);
   }
   hotelReviews = offerId => this.request(this.path(`/hotel-reviews?offer_id=${encodeURIComponent(offerId)}`), { timeout: 30000 });

@@ -1183,7 +1183,12 @@ class TravelGateway(_HTTPGateway):
                 "LIVE_INDICATIVE", "CACHED_REFERENCE_FARE", expiry))
         return result
 
-    async def _serp(self, request: dict, kind: str) -> list[dict]:
+    async def search_hotel_page(self, request: dict) -> tuple[list[dict], str | None]:
+        if not isinstance(request, dict):
+            _fail("Поиск должен быть объектом.", "serpapi")
+        return await self._serp(request, "hotel", include_pagination=True)
+
+    async def _serp(self, request: dict, kind: str, *, include_pagination: bool = False):
         provider = "serpapi"
         confirmed = _setting(self.settings, "SERPAPI_FREE_TIER_CONFIRMED")
         if confirmed is None:
@@ -1204,6 +1209,11 @@ class TravelGateway(_HTTPGateway):
                 _fail("SerpApi hotel search не подтверждает заданную multiroom allocation; используйте другой источник или явный demo.", provider, "UNSUPPORTED_REQUEST")
             params.update(q=query, check_in_date=checkin, check_out_date=checkout,
                           adults=rooms[0]["adults"], children=len(rooms[0]["children"]))
+            page_token = request.get("next_page_token")
+            if page_token is not None:
+                if not isinstance(page_token, str) or not 1 <= len(page_token) <= 4096 or not re.fullmatch(r"[A-Za-z0-9._~+/=:-]+", page_token):
+                    _fail("Некорректный указатель страницы отелей.", provider)
+                params["next_page_token"] = page_token
             if rooms[0]["children"]:
                 params["children_ages"] = ",".join(map(str, rooms[0]["children"]))
         else:
@@ -1246,7 +1256,7 @@ class TravelGateway(_HTTPGateway):
                 total = total_block.get("extracted_lowest") if isinstance(total_block, dict) else None
                 nightly = nightly_block.get("extracted_lowest") if isinstance(nightly_block, dict) else None
                 amount, price_kind = (total, "INDICATIVE_STAY_TOTAL") if total is not None else (nightly, "INDICATIVE_NIGHTLY")
-                identity = [row.get("property_token"), row.get("name"), request]
+                identity = [row.get("property_token"), row.get("name"), {key: value for key, value in request.items() if key != "next_page_token"}]
                 description = row.get("name", "Гостиничная поисковая выдача")
                 selected = {k: row[k] for k in ("property_token", "prices", "total_rate", "rate_per_night", "gps_coordinates", "hotel_class") if k in row}
                 selected.update(google_hotel_presentation(row))
@@ -1264,6 +1274,12 @@ class TravelGateway(_HTTPGateway):
                 "LIVE_INDICATIVE", price_kind))
         if rows and not result:
             _fail("В поисковой выдаче нет проверяемой числовой цены.", provider, "INVALID_RESPONSE")
+        if include_pagination:
+            pagination = body.get("serpapi_pagination")
+            token = pagination.get("next_page_token") if isinstance(pagination, dict) else None
+            if not isinstance(token, str) or not 1 <= len(token) <= 4096 or not re.fullmatch(r"[A-Za-z0-9._~+/=:-]+", token):
+                token = None
+            return result, token
         return result
 
     async def hotel_reviews(self, property_token: str) -> list[dict]:

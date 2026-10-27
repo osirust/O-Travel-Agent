@@ -10,6 +10,7 @@ import ExternalCatalog from './components/ExternalCatalog.jsx';
 import TripEditor from './components/TripEditor.jsx';
 import Checkout from './components/Checkout.jsx';
 import Cart from './components/Cart.jsx';
+import AgentProposal from './components/AgentProposal.jsx';
 import { PlanDetails, TripSummary } from './components/PlanViews.jsx';
 import './cart.css';
 
@@ -19,6 +20,7 @@ export default function App() {
   const [draft, setDraft] = useState(() => { try { return sessionStorage.getItem('otravel.draft') || ''; } catch { return ''; } });
   const [offerTab, setOfferTab] = useState('flights');
   const [hotelFilters, setHotelFilters] = useState(EMPTY_HOTEL_FILTERS);
+  const [hotelSort, setHotelSort] = useState('recommended');
   const [cartOpen, setCartOpen] = useState(false);
   const [storedCart, setStoredCart] = useState(() => { try { return JSON.parse(localStorage.getItem('otravel.cart.v1')) || null; } catch { return null; } });
   const [mobileTab, setMobileTab] = useState('agent'), [editor, setEditor] = useState(null), [details, setDetails] = useState(null), [newConfirm, setNewConfirm] = useState(false);
@@ -32,8 +34,11 @@ export default function App() {
   useEffect(() => { try { sessionStorage.setItem('otravel.draft', draft); } catch { /* keep the in-memory draft */ } }, [draft]);
   useEffect(() => { if (screen === 'studio') void session.open(); }, [screen]);
   useEffect(() => {
-    if (screen === 'studio' && !editor && !details && !data.quote && !newConfirm) void session.ensureAutomaticSearch(offerTab);
-  }, [screen, offerTab, editor, details, newConfirm, data.quote, data.snapshot?.session_id, data.snapshot?.state_version, data.snapshot?.waiting_reason, data.busy, data.sending, data.restoring, data.online, data.flightClass, data.providers?.serpapi?.configured, data.providers?.serpapi?.free_tier_confirmed, data.external[offerTab], data.deliveries]);
+    if (screen === 'studio' && !editor && !details && !data.quote && !newConfirm) {
+      if (offerTab === 'agent') void session.ensureAutomaticProposal();
+      else void session.ensureAutomaticSearch(offerTab);
+    }
+  }, [screen, offerTab, editor, details, newConfirm, data.quote, data.snapshot?.session_id, data.snapshot?.state_version, data.snapshot?.waiting_reason, data.busy, data.sending, data.restoring, data.online, data.flightClass, data.providers?.serpapi?.configured, data.providers?.serpapi?.free_tier_confirmed, data.external[offerTab], data.plans, data.deliveries]);
   async function start(city) { location.hash = 'studio'; setScreen('studio'); if (city) setDraft(`Хочу в ${city}. Помоги спланировать поездку.`); window.scrollTo(0, 0); await session.open(); }
   function home() { location.hash = ''; setScreen('home'); window.scrollTo(0, 0); }
   const edit = async (tab, suggestedCity = null) => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor({ tab: tab || 'route', suggestedCity }); };
@@ -61,7 +66,7 @@ export default function App() {
     {data.confirmDelivery && <div className="delivery-bar"><ShieldCheck size={16} /><span>Проверим, сохранился ли ваш пример поездки.</span><button onClick={() => session.sync().catch(error => session.handleError(error))}>Проверить</button><button onClick={() => session.retryConfirmation()} disabled={data.confirming}>Повторить подтверждение</button></div>}
     <main className={`workspace mobile-${mobileTab}`}><Chat data={data} draft={draft} setDraft={setDraft} onSend={send} onEdit={edit} onSelect={id => { session.selectPlan(id); const plan = data.plans.find(item => item.plan_id === id); if (plan) setDetails(plan); }} /><section className="options-panel"><div className="options-heading"><div><p className="eyebrow">ВАШЕ ПУТЕШЕСТВИЕ</p><h1>Варианты поездки</h1><p className="muted">Найдите перелёт и отель для вашего путешествия</p></div></div>
       {data.orders.length > 0 && <div className="order-success"><CheckCircle2 size={23} /><div><strong>Пример поездки сохранён</strong><p>Бронирование не создано.</p></div></div>}
-      <div className="offer-tabs" role="tablist" aria-label="Предложения">{[['flights', 'Перелёты'], ['hotels', 'Отели']].map(([id, title]) => <button key={id} role="tab" aria-selected={offerTab === id} className={offerTab === id ? 'active' : ''} onClick={() => setOfferTab(id)}>{title}</button>)}</div><ExternalCatalog key={offerTab} kind={offerTab} data={data} filters={hotelFilters} setFilters={setHotelFilters} retry={() => session.ensureAutomaticSearch(offerTab, { retry: true })} loadReviews={session.hotelReviews} selectedOffer={cartItems[offerTab]} onSelectOffer={offer => updateCart(offerTab, offer)} />
+      <div className="offer-tabs" role="tablist" aria-label="Предложения">{[['agent', 'Предложение от агента'], ['flights', 'Перелёты'], ['hotels', 'Отели']].map(([id, title]) => <button key={id} role="tab" aria-selected={offerTab === id} className={offerTab === id ? 'active' : ''} onClick={() => setOfferTab(id)}>{title}</button>)}</div>{offerTab === 'agent' ? <AgentProposal data={data} onEdit={() => edit('route')} onBuild={() => session.ensureAutomaticProposal({ retry: true })} onDetails={plan => { session.selectPlan(plan.plan_id); setDetails(plan); }} /> : <ExternalCatalog key={offerTab} kind={offerTab} data={data} filters={hotelFilters} setFilters={setHotelFilters} hotelSort={hotelSort} setHotelSort={setHotelSort} loadMore={() => session.loadMoreHotels()} retry={() => session.ensureAutomaticSearch(offerTab, { retry: true })} loadReviews={session.hotelReviews} selectedOffer={cartItems[offerTab]} onSelectOffer={offer => updateCart(offerTab, offer)} />}
       <div className="workspace-bottom-note"><ShieldCheck size={14} />Ваша поездка сохраняется. Цены могут измениться.</div>
     </section><TripSummary data={data} onEdit={edit} onPreview={() => session.preview()} onDetails={setDetails} cartItems={cartItems} onCart={() => setCartOpen(true)} /></main>
     <nav className="mobile-navigation" aria-label="Разделы поездки">{[['agent', MessageCircle, 'Агент'], ['options', Compass, 'Варианты'], ['trip', Plane, 'Поездка']].map(([id, Icon, title]) => <button key={id} className={mobileTab === id ? 'active' : ''} onClick={() => setMobileTab(id)}><Icon size={20} /><span>{title}</span>{id === 'options' && data.plans.length > 0 && <i />}</button>)}</nav>

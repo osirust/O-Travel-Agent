@@ -39,3 +39,22 @@ export function filterHotels(offers, filters, currency = 'RUB') {
   });
   return { ...bounds, offers: filtered };
 }
+
+export function sortHotels(offers, sort, currency = 'RUB') {
+  const value = offer => {
+    if (sort === 'price_asc' || sort === 'price_desc') {
+      const amount = offer.total_minor ?? offer.amount_minor;
+      return offer.currency === currency && ['INDICATIVE_STAY_TOTAL', 'PROVIDER_ROOMS_STAY_TOTAL'].includes(offer.price_kind) && Number.isSafeInteger(amount) && amount >= 0 ? amount : null;
+    }
+    const info = offer.details?.provider_data || {};
+    if (sort === 'rating_desc') return typeof info.rating === 'number' && Number.isFinite(info.rating) && info.rating >= 0 && info.rating <= 5 ? info.rating : null;
+    if (sort === 'reviews_desc') return Number.isSafeInteger(info.review_count) && info.review_count >= 0 ? info.review_count : null;
+    return null;
+  };
+  if (!['price_asc', 'price_desc', 'rating_desc', 'reviews_desc'].includes(sort)) return [...offers];
+  const direction = sort === 'price_asc' ? 1 : -1;
+  return offers.map((offer, index) => ({ offer, index, value: value(offer) })).sort((a, b) => {
+    if (a.value === null || b.value === null) return a.value === b.value ? a.index - b.index : a.value === null ? 1 : -1;
+    return (a.value - b.value) * direction || a.index - b.index;
+  }).map(item => item.offer);
+}

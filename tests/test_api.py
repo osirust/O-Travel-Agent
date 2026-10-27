@@ -618,6 +618,27 @@ async def test_component_search_keeps_unrelated_pending_question(api_factory, mo
 
 
 @pytest.mark.asyncio
+async def test_hotel_page_tokens_and_offers_survive_the_session_api(api_factory, monkeypatch):
+    async def page(self, request):
+        token = request.get('next_page_token')
+        return ([{'offer_id': 'hotel-second' if token else 'hotel-first', 'source_type': 'LIVE_INDICATIVE', 'details': {'kind': 'hotel'}}], None if token else 'page-two')
+    monkeypatch.setattr(NoTravelHTTP, 'search_hotel_page', page, raising=False)
+    async with api_factory() as (client, _):
+        sid, token, state = await _session(client, sample_trip().model_dump(mode='json'))
+        path = f'/api/v1/sessions/{sid}/live/search'
+        for page_token, expected in [(None, 'page-two'), ('page-two', None)]:
+            response = await client.post(path, headers=_headers(token), json={
+                'client_message_id': str(uuid4()), 'expected_version': state['state_version'],
+                'kind': 'hotels', 'provider': 'serpapi', 'request': {'next_page_token': page_token} if page_token else {}})
+            assert response.status_code == 202
+            result = await _wait(client, response.json()['run_id'], token)
+            assert result['status'] == 'completed'
+            payload = result['result']['result']
+            assert payload['hotel_pagination'] == {'page_token': page_token, 'next_page_token': expected}
+            assert payload['live_offers'][0]['offer_id'] == ('hotel-second' if page_token else 'hotel-first')
+
+
+@pytest.mark.asyncio
 async def test_model_context_has_only_preceding_dialogue_and_saved_offer_ids(api_factory):
     async with api_factory() as (client, model):
         session_id, token, _ = await _session(client)
