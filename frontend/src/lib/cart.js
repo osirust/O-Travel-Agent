@@ -15,3 +15,8 @@ export function cartTotal(items) {
   }
   return { amount, currency };
 }
+
+export function compareToBudget(total, budget) {
+  if (!total || !budget || !total.currency || total.currency !== budget.currency || !Number.isSafeInteger(total.amount) || !Number.isSafeInteger(budget.amount_minor) || total.amount < 0 || budget.amount_minor < 0) return null;
+  return total.amount <= budget.amount_minor;
+}

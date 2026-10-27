@@ -5,7 +5,7 @@ import { TravelApi, ApiError } from '../src/lib/api.js';
 import { friendlyError, TravelSession } from '../src/lib/session.js';
 import { buildTripOperations, createTripDraft } from '../src/lib/tripDraft.js';
 import { EMPTY_HOTEL_FILTERS, filterHotels, parseHotelFilters } from '../src/lib/hotelFilters.js';
-import { cartTotal } from '../src/lib/cart.js';
+import { cartTotal, compareToBudget } from '../src/lib/cart.js';
 import { airlineLogo, cabinLabel } from '../src/lib/flights.js';
 
 const emptyTrip = { origin: null, travelers: [], groups: [], stays: [], budget: null, constraints: [], route_policy: { kind: 'round_trip', end_city: null }, search_policy: { mode: 'DEMO', hotel_provider: 'liteapi', flight_provider: 'serpapi', demo_fallback: true, guest_nationality: null } };
@@ -20,6 +20,15 @@ test('cart totals only comparable prices for the whole itinerary and stay', () =
   assert.deepEqual(cartTotal({ flights: null, hotels }), { amount: 2500000, currency: 'RUB' });
   assert.equal(cartTotal({ flights: null, hotels: null }), null);
   assert.equal(cartTotal({ flights: { ...flights, amount_minor: null }, hotels }), null);
+});
+
+test('budget comparison only uses known prices in the same currency', () => {
+  const budget = { amount_minor: 100000, currency: 'RUB' };
+  assert.equal(compareToBudget({ amount: 100000, currency: 'RUB' }, budget), true);
+  assert.equal(compareToBudget({ amount: 100001, currency: 'RUB' }, budget), false);
+  assert.equal(compareToBudget({ amount: 1, currency: 'USD' }, budget), null);
+  assert.equal(compareToBudget(null, budget), null);
+  assert.equal(compareToBudget({ amount: 1, currency: 'RUB' }, null), null);
 });
 
 test('airline logos are limited to the expected Google image CDN', () => {
