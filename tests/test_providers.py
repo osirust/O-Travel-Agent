@@ -310,6 +310,21 @@ def test_serpapi_multicity_params_and_indicative_segments():
     assert offer["details"]["itinerary_complete"] is False
 
 
+@pytest.mark.parametrize("cabin,expected", [("economy", "1"), ("premium_economy", "2"), ("business", "3"), ("first", "4")])
+def test_serpapi_forwards_selected_cabin(cabin, expected):
+    def handler(request):
+        assert request.url.params["travel_class"] == expected
+        return httpx.Response(200, json={"best_flights": []})
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    assert call(gateway, "search_flights", {**FLIGHT_REQUEST, "adults": 1, "currency": "RUB", "cabin_class": cabin}, "serpapi") == []
+
+
+def test_serpapi_rejects_invalid_cabin_before_request():
+    gateway = TravelGateway(settings(forbidden, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    with pytest.raises(ProviderError):
+        call(gateway, "search_flights", {**FLIGHT_REQUEST, "adults": 1, "currency": "RUB", "cabin_class": "invalid"}, "serpapi")
+
+
 def test_serpapi_errors_and_http_logs_redact_key(caplog):
     secret = "do-not-log-this-serp-key"
     def handler(request):

@@ -6,6 +6,7 @@ import { friendlyError, TravelSession } from '../src/lib/session.js';
 import { buildTripOperations, createTripDraft } from '../src/lib/tripDraft.js';
 import { EMPTY_HOTEL_FILTERS, filterHotels, parseHotelFilters } from '../src/lib/hotelFilters.js';
 import { cartTotal } from '../src/lib/cart.js';
+import { airlineLogo, cabinLabel } from '../src/lib/flights.js';
 
 const emptyTrip = { origin: null, travelers: [], groups: [], stays: [], budget: null, constraints: [], route_policy: { kind: 'round_trip', end_city: null }, search_policy: { mode: 'DEMO', hotel_provider: 'liteapi', flight_provider: 'serpapi', demo_fallback: true, guest_nationality: null } };
 
@@ -15,8 +16,18 @@ test('cart totals only comparable prices for the whole itinerary and stay', () =
   assert.deepEqual(cartTotal({ flights, hotels }), { amount: 4000000, currency: 'RUB' });
   assert.equal(cartTotal({ flights, hotels: { ...hotels, price_kind: 'INDICATIVE_NIGHTLY' } }), null);
   assert.equal(cartTotal({ flights, hotels: { ...hotels, currency: 'USD' } }), null);
-  assert.equal(cartTotal({ flights, hotels: null }), null);
+  assert.deepEqual(cartTotal({ flights, hotels: null }), { amount: 1500000, currency: 'RUB' });
+  assert.deepEqual(cartTotal({ flights: null, hotels }), { amount: 2500000, currency: 'RUB' });
+  assert.equal(cartTotal({ flights: null, hotels: null }), null);
   assert.equal(cartTotal({ flights: { ...flights, amount_minor: null }, hotels }), null);
+});
+
+test('airline logos are limited to the expected Google image CDN', () => {
+  assert.ok(airlineLogo('https://www.gstatic.com/flights/airline_logos/70px/FZ.png'));
+  assert.equal(airlineLogo('https://evil.example/flights/airline_logos/70px/FZ.png'), null);
+  assert.equal(airlineLogo('https://www.gstatic.com/flights/airline_logos/70px/FZ.png?tracking=1'), null);
+  assert.equal(cabinLabel('Business Class'), 'Бизнес');
+  assert.equal(cabinLabel('Premium economy'), 'Премиум-эконом');
 });
 
 test('provider errors are explained without implementation jargon', () => {
@@ -137,6 +148,37 @@ test('automatic search starts only once for a version and allows an explicit ret
   assert.equal(posts, 2);
 });
 
+test('changing flight cabin starts a separate search and does not reuse the previous offers', async () => {
+  const requests = [];
+  const { client } = controller({ request: async (path, options) => { requests.push(options.body); return { run_id: `run-${requests.length}` }; } });
+  const trip = { origin: 'Казань', travelers: [{ id: 'a', type: 'adult' }], legs: [{ origin: 'Казань', destination: 'Стамбул', departure_date: '2026-11-09' }], stays: [{ city: 'Стамбул' }] };
+  client.patch({ snapshot: { ...snapshot, trip }, providers: { serpapi: { configured: true, free_tier_confirmed: true } }, online: true });
+  assert.equal(await client.ensureAutomaticSearch('flights'), true);
+  assert.equal(requests[0].request.cabin_class, 'economy');
+  client.deliveries = [];
+  client.patch({ external: { hotels: null, flights: [{ offer_id: 'old' }] } });
+  client.setFlightClass('business');
+  assert.equal(client.state.external.flights, null);
+  assert.equal(await client.ensureAutomaticSearch('flights'), true);
+  assert.equal(requests[1].request.cabin_class, 'business');
+  client.deliveries = [];
+  assert.equal(await client.ensureAutomaticSearch('flights'), false);
+  assert.equal(requests.length, 2);
+});
+
+test('a component search proceeds during unrelated clarification but not during an explicit pause', async () => {
+  let posts = 0;
+  const { client } = controller({ request: async () => { posts++; return { run_id: 'component' }; } });
+  const trip = { travelers: [{ id: 'a', type: 'adult' }], stays: [{ city: 'Стамбул', check_in: '2026-11-09', check_out: '2026-11-16', rooms: [{ id: 'r', traveler_ids: ['a'] }] }] };
+  client.patch({ snapshot: { ...snapshot, trip, waiting_reason: 'clarification' }, providers: { serpapi: { configured: true, free_tier_confirmed: true } }, online: true });
+  assert.equal(await client.ensureAutomaticSearch('hotels'), true);
+  assert.equal(posts, 1);
+  client.deliveries = [];
+  client.patch({ snapshot: { ...snapshot, trip, waiting_reason: 'user_pause' } });
+  assert.equal(await client.ensureAutomaticSearch('hotels', { retry: true }), false);
+  assert.equal(posts, 1);
+});
+
 test('an accepted request remains accepted when reading its result fails', async () => {
   const { client } = controller({ request: async () => ({ run_id: 'accepted-run' }) });
   client.sync = async () => { throw new ApiError('Connection lost'); };
@@ -212,6 +254,20 @@ test('an old provider failure is not shown after a newer successful search', asy
   client.access = { session_id: 's', session_token: 'test-session' };
   await client.sync();
   assert.equal(client.state.notice, null);
+  client.destroy();
+});
+
+test('restoring searches shows only the selected class, including an empty result', async () => {
+  const client = new TravelSession({ request: async path => {
+    if (path.endsWith('/messages')) return { messages: [{ sequence: 1, run_id: 'business' }, { sequence: 2, run_id: 'economy' }] };
+    if (path.endsWith('/orders')) return { orders: [] };
+    if (path.endsWith('/business')) return { run_id: 'business', session_id: 's', status: 'completed', result: { state_version: 4, result: { live_offers: [] } } };
+    if (path.endsWith('/economy')) return { run_id: 'economy', session_id: 's', status: 'completed', result: { state_version: 4, result: { live_offers: [{ offer_id: 'economy', details: { kind: 'flight' } }] } } };
+    return snapshot;
+  } }, { get: () => ({ flightClass: 'business', liveKinds: { business: 'flights', economy: 'flights' }, liveClasses: { business: 'business', economy: 'economy' } }), set: () => {} });
+  client.access = { session_id: 's', session_token: 'test-session' };
+  await client.sync();
+  assert.deepEqual(client.state.external.flights, []);
   client.destroy();
 });
 

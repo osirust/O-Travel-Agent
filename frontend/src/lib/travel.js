@@ -85,7 +85,7 @@ export function currentPlans(messages, runs, snapshot) {
   return [];
 }
 
-export function componentRequest(trip, kind, provider = 'serpapi') {
+export function componentRequest(trip, kind, provider = 'serpapi', cabinClass = 'economy') {
   const iata = { 'Москва': 'MOW', 'Санкт-Петербург': 'LED', 'Сочи': 'AER', 'Казань': 'KZN', 'Стамбул': 'IST', 'Анталья': 'AYT', 'Дубай': 'DXB' };
   if (!trip?.travelers?.length || !trip.stays?.length) throw new Error('Сначала заполните маршрут, даты и гостей в параметрах поездки.');
   const currency = trip.budget?.currency || 'RUB';
@@ -99,7 +99,8 @@ export function componentRequest(trip, kind, provider = 'serpapi') {
       if (passengers.some(person => person.age === null || person.age === undefined && !person.type)) throw new Error('Укажите возраст детей для поиска перелётов Duffel.');
       return { kind, provider, demo_fallback: false, request: { currency, slices, passengers } };
     }
-    return { kind, provider: 'serpapi', demo_fallback: false, request: { currency, slices, adults: trip.travelers.filter(person => person.type === 'adult').length, children: trip.travelers.filter(person => person.type === 'child').length } };
+    if (!['economy', 'premium_economy', 'business', 'first'].includes(cabinClass)) throw new Error('Выберите класс обслуживания.');
+    return { kind, provider: 'serpapi', demo_fallback: false, request: { currency, slices, adults: trip.travelers.filter(person => person.type === 'adult').length, children: trip.travelers.filter(person => person.type === 'child').length, cabin_class: cabinClass } };
   }
   const stay = trip.stays[0];
   if (!stay.check_in || !stay.check_out || !stay.city || !stay.rooms.length || (provider === 'serpapi' && stay.rooms.length !== 1)) throw new Error('Укажите город, даты и гостей. Пока можно искать отели только для одного номера.');

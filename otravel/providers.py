@@ -1212,6 +1212,11 @@ class TravelGateway(_HTTPGateway):
             if type(adults) is not int or adults < 1 or type(children) is not int or children < 0:
                 _fail("Нужны явные количества взрослых и детей.", provider)
             params.update(adults=adults, children=children)
+            cabin_classes = {"economy": "1", "premium_economy": "2", "business": "3", "first": "4"}
+            cabin = request.get("cabin_class", "economy")
+            if not isinstance(cabin, str) or cabin not in cabin_classes:
+                _fail("Выберите допустимый класс обслуживания.", provider)
+            params["travel_class"] = cabin_classes[cabin]
             if len(slices) == 1:
                 params.update(type="2", departure_id=slices[0]["origin"], arrival_id=slices[0]["destination"], outbound_date=slices[0]["departure_date"])
             else:

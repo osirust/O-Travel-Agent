@@ -1014,6 +1014,10 @@ class Harness:
                 questions = result.get("questions", [])
                 status = "WAITING_USER" if questions else "OPTIONS_READY" if result.get("live_offers") or result.get("weather") or result.get("plans") else "TRIP_DRAFT"
                 waiting_reason = "clarification" if questions else None
+                # A component can be searched while another part of the trip is
+                # incomplete. Keep its pending question until the user answers it.
+                if not questions and session.get("waiting_reason") == "clarification" and session.get("pending_question"):
+                    preserve_pending, waiting_reason, status = True, "clarification", "WAITING_USER"
             else:
                 raise DomainError("invalid_command", "Неизвестная структурированная команда.")
         else:

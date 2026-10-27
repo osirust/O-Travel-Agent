@@ -33,7 +33,7 @@ export default function App() {
   useEffect(() => { if (screen === 'studio') void session.open(); }, [screen]);
   useEffect(() => {
     if (screen === 'studio' && !editor && !details && !data.quote && !newConfirm) void session.ensureAutomaticSearch(offerTab);
-  }, [screen, offerTab, editor, details, newConfirm, data.quote, data.snapshot?.session_id, data.snapshot?.state_version, data.snapshot?.waiting_reason, data.busy, data.sending, data.restoring, data.online, data.providers?.serpapi?.configured, data.providers?.serpapi?.free_tier_confirmed, data.external[offerTab], data.deliveries]);
+  }, [screen, offerTab, editor, details, newConfirm, data.quote, data.snapshot?.session_id, data.snapshot?.state_version, data.snapshot?.waiting_reason, data.busy, data.sending, data.restoring, data.online, data.flightClass, data.providers?.serpapi?.configured, data.providers?.serpapi?.free_tier_confirmed, data.external[offerTab], data.deliveries]);
   async function start(city) { location.hash = 'studio'; setScreen('studio'); if (city) setDraft(`Хочу в ${city}. Помоги спланировать поездку.`); window.scrollTo(0, 0); await session.open(); }
   function home() { location.hash = ''; setScreen('home'); window.scrollTo(0, 0); }
   const edit = async (tab, suggestedCity = null) => { if (!session.getSnapshot().snapshot && !await session.open()) return; setEditor({ tab: tab || 'route', suggestedCity }); };

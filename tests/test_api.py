@@ -585,6 +585,39 @@ async def test_provider_failure_switches_to_demo_only_when_explicitly_requested(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('kind,missing', [('hotels', 'origin'), ('flights', 'rooms')])
+async def test_component_search_keeps_unrelated_pending_question(api_factory, monkeypatch, kind, missing):
+    async def offers(*args, **kwargs):
+        return [{'offer_id': 'sample', 'source_type': 'LIVE_INDICATIVE', 'details': {'kind': kind[:-1]}}]
+    monkeypatch.setattr(NoTravelHTTP, 'search_hotels' if kind == 'hotels' else 'search_flights', offers)
+    initial = sample_trip().model_dump(mode='json')
+    if missing == 'origin':
+        initial['origin'] = None
+        initial['legs'] = []
+    else:
+        initial['stays'][0]['rooms'] = []
+    async with api_factory() as (client, _):
+        sid, token, state = await _session(client, initial)
+        path = f'/api/v1/sessions/{sid}'
+        command = await client.post(path + '/commands', headers=_headers(token), json={
+            'client_message_id': str(uuid4()), 'expected_version': state['state_version'],
+            'operations': [{'type': 'set_budget', 'value': {'amount_minor': 78000000}}], 'search': False})
+        assert command.status_code == 202
+        await _wait(client, command.json()['run_id'], token)
+        before = await _snapshot(client, sid, token)
+        assert before['waiting_reason'] == 'clarification' and before['pending_question']
+        search = await client.post(path + '/live/search', headers=_headers(token), json={
+            'client_message_id': str(uuid4()), 'expected_version': before['state_version'],
+            'kind': kind, 'provider': 'serpapi', 'request': {}})
+        assert search.status_code == 202
+        assert (await _wait(client, search.json()['run_id'], token))['status'] == 'completed'
+        after = await _snapshot(client, sid, token)
+        assert after['waiting_reason'] == 'clarification'
+        assert after['pending_question'] == before['pending_question']
+        assert after['trip'] == before['trip']
+
+
+@pytest.mark.asyncio
 async def test_model_context_has_only_preceding_dialogue_and_saved_offer_ids(api_factory):
     async with api_factory() as (client, model):
         session_id, token, _ = await _session(client)
