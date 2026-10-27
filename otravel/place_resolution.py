@@ -19,6 +19,7 @@ from .place_refs import CityRefSnapshot
 
 OWNER = "place_resolution.v1"
 COUNTRY_OWNER = "place_resolution.country.v1"
+NO_MATCH_OWNER = "place_resolution.no_match.v1"
 CHOICE_TTL = 900
 _ROLES = {"origin", "destination", "route_end"}
 _HEX = re.compile(r"[0-9a-f]{64}\Z")
@@ -26,6 +27,7 @@ _ORDINALS = {"первый": 1, "первую": 1, "первое": 1, "перв�
     "второе": 2, "третью": 3, "третий": 3, "третья": 3, "четвертый": 4, "четвертую": 4,
     "пятый": 5, "пятую": 5}
 _YES = {"да", "верно", "подтверждаю", "yes"}
+_NO = {"нет", "не надо", "не обновляй", "оставь прежнее", "no"}
 
 
 class PlaceResolutionError(ValueError):
@@ -132,9 +134,12 @@ def interpret_short_reply(pending, text, state, *, now=None):
         packet = _read_pending(pending, data, _date(now) if now is not None else datetime.now(UTC))
     except (ValueError, KeyError, TypeError):
         return {"selection": None, "question": "Выбор места устарел или относится к другой поездке. Укажите направление заново."}
-    if packet["stage"] not in {"country_choice", "city_choice"}:
+    if packet["stage"] not in {"country_choice", "city_choice", "ref_revision_confirm"}:
         return no
     candidates, token = packet["candidates"], _key(text)
+    if packet["stage"] == "ref_revision_confirm" and token in _NO and len(candidates) == 1:
+        return {"selection": {"resolution_id": packet["resolution_id"],
+            "candidate_id": candidates[0]["candidate_id"], "decision": "reject"}, "question": None}
     chosen = None
     if token in _YES:
         if len(candidates) != 1:
@@ -160,10 +165,63 @@ def interpret_short_reply(pending, text, state, *, now=None):
     return {"selection": {"resolution_id": packet["resolution_id"], "candidate_id": chosen["candidate_id"]}, "question": None}
 
 
+def _revision_scope(state, role, target):
+    if role == "origin":
+        return {"city": state.get("origin"), "place_id": state.get("origin_place_id")}
+    if role == "route_end":
+        return deepcopy(state.get("route_policy") or {})
+    stay = next((row for row in state.get("stays", []) if row["id"] == target), {})
+    return {"city": stay.get("city"), "place_id": stay.get("place_id")}
+
+
+def checked_ref_revision(pending, selection, state, *, now):
+    """Read one exact server-owned old/new revision confirmation, without I/O."""
+    data = _state(state)
+    packet = _read_pending(pending, data, _date(now))
+    _require(packet.get("stage") == "ref_revision_confirm" and len(packet["candidates"]) == 1,
+        "revision_confirmation_required")
+    _require(isinstance(selection, dict) and set(selection) in ({"resolution_id", "candidate_id"},
+        {"resolution_id", "candidate_id", "decision"}) and selection.get("decision") in {None, "reject"}
+        and selection["resolution_id"] == packet["resolution_id"], "foreign_selection")
+    candidate = packet["candidates"][0]
+    _require(candidate.get("kind") == "ref_revision" and selection["candidate_id"] == candidate["candidate_id"],
+        "foreign_selection")
+    revision = candidate.get("revision")
+    _require(isinstance(revision, dict) and set(revision) == {"place_id", "previous_ref_version", "new_ref_version",
+        "previous_snapshot_sha256", "new_snapshot_sha256", "new_snapshot", "scope_sha256"}, "invalid_revision_confirmation")
+    new = CityRefSnapshot.model_validate(revision["new_snapshot"])
+    old = CityRefSnapshot.model_validate((data.get("location_refs") or {}).get(revision["place_id"]))
+    _require(old.place_id == new.place_id == revision["place_id"] and old.geographic_source == new.geographic_source
+        and type(revision["previous_ref_version"]) is int and type(revision["new_ref_version"]) is int
+        and old.ref_version == revision["previous_ref_version"] < revision["new_ref_version"] == new.ref_version
+        and old.snapshot_sha256() == revision["previous_snapshot_sha256"]
+        and new.snapshot_sha256() == revision["new_snapshot_sha256"]
+        and candidate["source_id"] == new.geographic_source.external_id and candidate["label"] == new.canonical_name
+        and candidate["country_iso2"] == new.country_iso2
+        and revision["scope_sha256"] == _sha(_revision_scope(data, packet["role"], packet["stay_id"])), "source_changed")
+    return packet, old, new
+
+
+def _place_setter(packet, ref, state, *, refresh=False):
+    value = {"city": ref.canonical_name, "place_id": ref.place_id}
+    if packet["role"] == "origin":
+        return {"type": "set_origin", "value": value}
+    if packet["role"] == "route_end":
+        return {"type": "set_route_policy", "value": {"kind": "open_jaw", "end_city": ref.canonical_name,
+            "end_place_id": ref.place_id}}
+    previous = next((stay for stay in state.get("stays", []) if stay["id"] == packet["stay_id"]), None)
+    if previous and (refresh or previous.get("place_id") != ref.place_id or previous.get("city") != ref.canonical_name):
+        value["hotel_id"] = None
+    return {"type": "upsert_stay", "target_id": packet["stay_id"], "value": value}
+
+
 class PlaceResolutionCoordinator:
-    def __init__(self, catalog, directory, travel, clock=None):
+    def __init__(self, catalog, directory, travel, clock=None, *, offline_countries=False):
+        if type(offline_countries) is not bool:
+            raise ValueError("offline_countries must be an explicit boolean")
         self.catalog, self.directory, self.travel = catalog, directory, travel
         self.clock = clock or (lambda: datetime.now(UTC))
+        self.offline_countries = offline_countries
         self._countries = None
         self._country_lock = asyncio.Lock()
 
@@ -182,6 +240,7 @@ class PlaceResolutionCoordinator:
         return {"owner": COUNTRY_OWNER, "trip_id": state["trip_id"], "state_version": state["state_version"],
             "role": request["role"], "stay_id": request.get("stay_id"), "country_iso2": country["country_iso2"],
             "name": country["name"], "fact_sha256": _sha(country), "source_sha256": metadata["source_sha256"],
+            "source_provider": metadata.get("source_provider", "liteapi"),
             "retrieved_at": metadata["retrieved_at"], "expires_at": metadata["expires_at"]}
 
     def _checked_country_ref(self, ref, state, request):
@@ -193,12 +252,26 @@ class PlaceResolutionCoordinator:
             and 0 < len(name) <= 160 and ref.get("fact_sha256") == _sha({"country_iso2": code, "name": name})
             and isinstance(ref.get("source_sha256"), str) and _HEX.fullmatch(ref["source_sha256"])
             and _date(ref["retrieved_at"]) <= self._now() < _date(ref["expires_at"]), "stale_country_ref")
+        provider = ref.get("source_provider", "liteapi")
+        _require(provider in {"liteapi", "unicode-cldr"}, "invalid_country_source")
+        if provider == "unicode-cldr":
+            from .country_lexicon import DATA_SHA256, _lexicon
+            rows, _aliases, _pattern = _lexicon()
+            _require(code in rows and name == rows[code]["ru"] and ref["source_sha256"] == DATA_SHA256,
+                "invalid_country_source")
         return code
 
     async def _list_countries(self, before_call):
         now = self._now()
         async with self._country_lock:
             if self._countries and _date(self._countries["expires_at"]) > now:
+                return deepcopy(self._countries)
+            if self.offline_countries:
+                from .country_lexicon import DATA_SHA256, _lexicon
+                rows, _aliases, _pattern = _lexicon()
+                self._countries = {"rows": [{"country_iso2": code, "name": row["ru"]} for code, row in sorted(rows.items())],
+                    "source_provider": "unicode-cldr", "source_sha256": DATA_SHA256,
+                    "retrieved_at": now.isoformat(), "expires_at": (now + timedelta(hours=24)).isoformat()}
                 return deepcopy(self._countries)
             event = {"provider": "liteapi", "method": "GET", "endpoint": "/v3.0/data/countries",
                 "operation": "country_directory", "attempt": 1}
@@ -249,10 +322,23 @@ class PlaceResolutionCoordinator:
                 metadata = await self._list_countries(before_call)
                 country_alias = parse_destination(req["query"])["requested_destination"]
                 code = country_alias.get("country_code") if country_alias.get("kind") == "country" else None
-                matches = [r for r in metadata["rows"] if _key(req["query"]) in {_key(r["name"]), r["country_iso2"].casefold()}
-                    or r["country_iso2"] == code]
+                extra_codes = set()
+                ambiguous = country_alias.get("kind") == "ambiguous"
+                if metadata.get("source_provider") == "unicode-cldr":
+                    from .country_lexicon import _lexicon
+                    _rows, aliases, _pattern = _lexicon()
+                    token = _key(req["query"])
+                    if re.fullmatch(r"[a-z]{2}", token) and not req["query"].isupper():
+                        code = None
+                    if not re.fullmatch(r"[a-z]{2}", token) or req["query"].isupper():
+                        extra_codes = aliases.get(token, set())
+                    ambiguous = ambiguous or len(extra_codes) > 1
+                matches = [r for r in metadata["rows"] if _key(req["query"]) == _key(r["name"])
+                    or _key(req["query"]) == r["country_iso2"].casefold()
+                    and (metadata.get("source_provider") != "unicode-cldr" or req["query"].isupper())
+                    or r["country_iso2"] == code or r["country_iso2"] in extra_codes]
                 hinted = [r for r in metadata["rows"] if r["country_iso2"] == hint]
-                if len(matches) == 1 and (hint is None or hint == matches[0]["country_iso2"]):
+                if len(matches) == 1 and not ambiguous and (hint is None or hint == matches[0]["country_iso2"]):
                     return self._ask_city(data, req, self._country_ref(data, req, matches[0], metadata))
                 candidates = matches + [r for r in hinted if r not in matches]
                 if not candidates:
@@ -260,6 +346,8 @@ class PlaceResolutionCoordinator:
                 _require(len(candidates) <= 5, "too_many_country_matches")
                 packet = self._new(data, req, "country_choice", _date(metadata["expires_at"]))
                 packet["country_source"] = {k: metadata[k] for k in ("retrieved_at", "expires_at", "source_sha256")}
+                if metadata.get("source_provider"):
+                    packet["country_source"]["source_provider"] = metadata["source_provider"]
                 for row in candidates:
                     packet["candidates"].append({"kind": "country",
                         "source_id": row["country_iso2"], "country_iso2": row["country_iso2"], "label": row["name"],
@@ -300,6 +388,64 @@ class PlaceResolutionCoordinator:
             question = "Для какой остановки выбрать город? Укажите её точный ID." if code == "stay_target_required" else "Не удалось завершить выбор места. Уточните направление или повторите позже."
             return _packet("ask" if isinstance(error, PlaceResolutionError) else "unavailable", question=question, error=code)
 
+    def no_match_clarification(self, request, outcome, state):
+        """Keep a new, exact typed question when a bounded NLU retry has no query.
+
+        Model prose is never parsed into a place or granted source authority.
+        This does not reset the pending epoch, source country or its TTL.
+        """
+        data = _state(state)
+        _require(isinstance(request, dict) and isinstance(outcome, dict) and outcome.get("action") == "no_match"
+            and not outcome.get("operations") and not outcome.get("resolved_places"), "invalid_no_match")
+        context = outcome.get("pending_context")
+        packet = _read_pending(context, data, self._now())
+        target = _target(data, request.get("role"), request.get("stay_id"))
+        _require(request.get("kind") == "city" and packet["stage"] == "city_query"
+            and packet["role"] == request["role"] and packet["stay_id"] == target
+            and packet["query"] == request.get("query") and not packet["candidates"], "invalid_no_match")
+        country = packet.get("country_ref")
+        if country is not None:
+            self._checked_country_ref(country, data, {"role": packet["role"], "stay_id": target})
+        suffix = f", страна «{country['name']}»" if country else ""
+        question = f"Не нашёл подтверждения города «{packet['query']}»{suffix}. Проверьте написание или укажите другой город и регион."
+        result = _packet("no_match", question=question, context=context,
+            notice="Поездка не изменена; неподтверждённое название не стало выбранным городом.")
+        result["clarification_owner"] = NO_MATCH_OWNER
+        return result
+
+    def _revision_confirmation(self, original, candidate, old, new, source, data):
+        request = {"role": original["role"], "stay_id": original["stay_id"], "query": original["query"],
+            "country_ref": original.get("country_ref")}
+        expires = min(_date(original["expires_at"]), _date(source["expires_at"]))
+        packet = self._new(data, request, "ref_revision_confirm", expires)
+        differences = []
+        for field, label in (("canonical_name", "название"), ("country_iso2", "страна"),
+                ("latitude", "широта"), ("longitude", "долгота"), ("timezone", "часовой пояс")):
+            a, b = getattr(old, field), getattr(new, field)
+            if a != b:
+                differences.append(f"{label}: {a if a is not None else 'не указан'} → {b if b is not None else 'не указан'}")
+        if old.administrative_areas != new.administrative_areas:
+            differences.append("обновлены административные сведения")
+        if old.provider_bindings != new.provider_bindings:
+            differences.append("обновлены привязки поставщиков")
+        if not differences:
+            differences.append("обновлены исходные справочные факты")
+        revision = {"place_id": new.place_id, "previous_ref_version": old.ref_version,
+            "new_ref_version": new.ref_version, "previous_snapshot_sha256": old.snapshot_sha256(),
+            "new_snapshot_sha256": new.snapshot_sha256(), "new_snapshot": new.model_dump(mode="json"),
+            "scope_sha256": _sha(_revision_scope(data, packet["role"], packet["stay_id"]))}
+        packet["candidates"] = [{"kind": "ref_revision", "source_id": new.geographic_source.external_id,
+            "label": new.canonical_name, "country_iso2": new.country_iso2, "revision": revision,
+            "fact_sha256": new.source_fact_sha256, "response_sha256": source["response_sha256"],
+            "key": validate_directory_key({"provider": "openmeteo", "operation": "get_place", "role": original["role"],
+                "country_iso2": None, "query": str(new.geographic_source.external_id), "language": "en", "count": 1})}]
+        for choice in packet["candidates"]:
+            choice["candidate_id"] = _choice_id(packet, choice)
+        question = (f"Для места «{old.canonical_name}» ({old.country_iso2}) источник предлагает версию {new.ref_version} вместо {old.ref_version}: "
+            + "; ".join(differences) + ". Обновить сведения во всех связанных частях поездки? Выбранные отели и прежние цены потребуется проверить заново. Ответьте «да» или «нет».")
+        return _packet("ask", question=question, context=_binding(packet),
+            notice="Новая версия ещё не применена; прежняя поездка сохранена.")
+
     async def _proof(self, candidate):
         key = validate_directory_key(candidate["key"])
         envelope = await self.catalog.get_directory(key, now=self._now())
@@ -321,12 +467,27 @@ class PlaceResolutionCoordinator:
                 if answer["selection"] is None:
                     return _packet("ask", question=answer["question"] or self._city_question(packet), context=_binding(packet))
                 selection = answer["selection"]
-            _require(isinstance(selection, dict) and set(selection) == {"resolution_id", "candidate_id"}
+            _require(isinstance(selection, dict) and (set(selection) == {"resolution_id", "candidate_id"}
+                    or packet["stage"] == "ref_revision_confirm" and set(selection) == {"resolution_id", "candidate_id", "decision"}
+                    and selection["decision"] == "reject")
                 and selection["resolution_id"] == packet["resolution_id"], "foreign_selection")
             chosen = [c for c in packet["candidates"] if c["candidate_id"] == selection["candidate_id"]]
             _require(len(chosen) == 1, "foreign_selection")
             candidate = chosen[0]
             req = {"role": packet["role"], "stay_id": packet["stay_id"], "query": packet["query"]}
+            if packet["stage"] == "ref_revision_confirm":
+                packet, old, ref = checked_ref_revision(pending, selection, data, now=self._now())
+                if selection.get("decision") == "reject":
+                    return _packet("retained", notice="Прежние сведения о месте сохранены. Новая версия не применена; поиск не выполнялся.")
+                verified = await self.catalog.verify_places({ref.place_id: ref.model_dump(mode="json")},
+                    now=self._now(), require_fresh=True, require_current=True)
+                _require(set(verified) == {ref.place_id} and CityRefSnapshot.model_validate(verified[ref.place_id]) == ref,
+                    "source_changed")
+                checked_ref_revision(pending, selection, data, now=self._now())
+                result = _packet("selected", notice=f"Справочные сведения «{ref.canonical_name}» обновлены с версии {old.ref_version} на {ref.ref_version}. Прежние цены и подтверждения не используются.",
+                    operations=[_place_setter(packet, ref, data, refresh=True)], refs={ref.place_id: ref.model_dump(mode="json")})
+                result["replace_place_versions"] = {ref.place_id: old.ref_version}
+                return result
             if packet["stage"] == "country_choice":
                 row = {"country_iso2": candidate["country_iso2"], "name": candidate["label"]}
                 _require(candidate["kind"] == "country" and candidate["source_id"] == row["country_iso2"]
@@ -360,17 +521,11 @@ class PlaceResolutionCoordinator:
             payload = ref.model_dump(mode="json")
             _read_pending(pending, data, self._now())
             existing = data.get("location_refs", {}).get(ref.place_id)
-            _require(existing is None or existing == payload, "existing_ref_revision_changed")
-            value = {"city": ref.canonical_name, "place_id": ref.place_id}
-            if packet["role"] == "origin":
-                operation = {"type": "set_origin", "value": value}
-            elif packet["role"] == "route_end":
-                operation = {"type": "set_route_policy", "value": {"kind": "open_jaw", "end_city": ref.canonical_name, "end_place_id": ref.place_id}}
-            else:
-                previous = next((s for s in data.get("stays", []) if s["id"] == packet["stay_id"]), None)
-                if previous and (previous.get("place_id") != ref.place_id or previous.get("city") != ref.canonical_name):
-                    value["hotel_id"] = None
-                operation = {"type": "upsert_stay", "target_id": packet["stay_id"], "value": value}
+            if existing is not None and existing != payload:
+                old = CityRefSnapshot.model_validate(existing)
+                _require(ref.ref_version > old.ref_version and ref.geographic_source == old.geographic_source, "existing_ref_revision_changed")
+                return self._revision_confirmation(packet, candidate, old, ref, source, data)
+            operation = _place_setter(packet, ref, data)
             return _packet("selected", notice=f"Выбрано место «{candidate['label']}» ({candidate['country_iso2']}).",
                 operations=[operation], refs={ref.place_id: payload})
         except Exception as error:  # noqa: BLE001 - catalog/transport errors must never expose raw details.

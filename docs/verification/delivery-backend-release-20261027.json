@@ -1,0 +1,65 @@
+{
+  "status": "CONTROLLED_FULL_PASS_WITH_ACTUAL_R5_SINGLE_CITY_CHECKOUT_PROOF",
+  "source_package_sha256": "7e8b4d1b28b12a365a1251e604993d47575f4b9bc3ab10ca176c90c5473acb9b",
+  "tests_sha256": "28abf6622570c7428ffe43e99bbd5b9bc70870da8193a270933895d2bd26ebfc",
+  "source_and_tests_unchanged": true,
+  "junit": ".local/evaluation/after80-20261027/full-delivery-prefrontend-r5-initial.xml",
+  "junit_sha256": "6dd52dfa72a2c96b11fab33a65370600aa0dbdbf9cfdb30687aed3f6d19b8278",
+  "tests": 6448,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 362.934,
+  "actual_proof": "docs/verification/world-single-city-actual-r5-20261027.json",
+  "actual_scope": "Four public messages, Groq120B1 request, actual source HTTP13, photo, refresh, one BOOKED_DEMO, same-order retry",
+  "actual_snapshot_sha256": "f423a80f455269434d540e50da7b9a2d23d405649914b983fcefe69e54f78fd7",
+  "changes_after_actual_snapshot": "Only date-parser ownership fence and positive-price-preference phrase scope; related77 preserves all14 previous regression oracles",
+  "historical_failures": [
+    {
+      "junit": ".local/evaluation/after80-20261027/full-delivery-prefrontend-r1-initial.xml",
+      "tests": 6370,
+      "failures": 3,
+      "wrapper_timeout": true
+    },
+    {
+      "junit": ".local/evaluation/after80-20261027/full-delivery-prefrontend-r3-initial.xml",
+      "tests": 6442,
+      "failures": 14,
+      "wrapper_timeout": false
+    }
+  ],
+  "closed_related_ids": [
+    "HARNESS-004-PLAINTEXT-CONTROL-CRASH-OPEN",
+    "HARNESS-004-ACCEPTED-CONTROL-PRECOMMIT-001",
+    "HARNESS-004-PAUSE-TASK-EPOCH-001",
+    "HARNESS-004-DYNAMIC-OPERATION-PREFLIGHT-001",
+    "HARNESS-004-NONPLACE-HYPOTHETICAL-PAUSE-001",
+    "HARNESS-001-SOURCE-OFFER-PREFILTER-CAP-001"
+  ],
+  "remaining": [
+    "Actual full80/106 and multi-city/group language acceptance on the release snapshot",
+    "GigaChat external TLS access",
+    "Unresolved general world-information answers",
+    "All supplier equivalence, excluded-fee ledger, business-class end-to-end, final frontend and final clean archive"
+  ],
+  "local_model_calls": 0,
+  "paid_calls": 0,
+  "supplier_bookings": 0,
+  "payments": 0,
+  "staged_package": {
+    "tested_package_sha256": "7e8b4d1b28b12a365a1251e604993d47575f4b9bc3ab10ca176c90c5473acb9b",
+    "staged_package_sha256": "f3eb5db8b720c951e0983621329d6f9d3d333e6d2eaa626037e76dc8f5274252",
+    "package_files": 72,
+    "only_allowed_crlf_normalization": [
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

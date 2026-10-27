@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-ACCEPTED-CONTROL-PRECOMMIT-001",
+  "status": "CLOSED_BOUNDED_AUTHENTICATED_RECOVERY_SCOPE",
+  "source_before_store_sha256": "48a2a188ad43948a820bd22c051d8d6e57630ead3791887915eddb4280a93429",
+  "source_files_sha256": {
+    "otravel/store.py": "ef623cb756a1b47651fe31b11ad971ae34acfcbede487e840f79ca867fee80f6",
+    "otravel/place_resume.py": "aee559edc2c9ba00028f8984fd03392ea02fb062d206f27088dc365fe85fb706",
+    "tests/test_control_recovery_pg.py": "2ccf7444d89d0fbcf26c1a290624bd5112d006c585cab196741df3a406d50de6",
+    "tests/test_control_message_atomic_pg.py": "a74810a9d51a8d84dd87c06bf6dd07c91b3b7724636c3a56150b7afc8070601f",
+    "tests/test_control_cancel_epoch.py": "3f4475ee610d91d448b80fade5c68f0b690f406642cfd0868fffe177c744f08b"
+  },
+  "root_owned_hook_function_sha256": {
+    "start": "e510df378df2994a1dff79691add0c0d18d8f1c28a2302021450803c1d456509",
+    "_maintenance": "4b03de35e0dd171d5024edda0b220ee46b802c373475df5eddabc9033e93cb02",
+    "_recover_accepted_controls": "a0edca6cc8aa7b4a0293cb9e56e910cac5bfc86b4b4cfccb774fa4875dc20232",
+    "_cancel_if_current_pause": "2ff8cf1c7ee786a8fbc3f62a29f3e813f6dfa698f1ae7928ca9775cd8b11d244",
+    "control": "11cb9da8a34930a1b5ff9e849a19075766f46ea268566faa8839138ef9852080",
+    "control_message": "00e90b2210e96abb4da0c1a30552cc0ab8993fc4b904f8bbe3e845e0dc116b6a",
+    "_drain": "3c22e0db5a59270bd3d81f6746b7de4909e56b6792d92ab3ae43594ffa4c221b",
+    "_process": "c0381e8ab2756ecd7242b79f2b91ea7d436481a56a767d6f60ae15ebe25e3e60"
+  },
+  "initial_failure": {
+    "tests": 1,
+    "failures": 1,
+    "junit": ".local/evaluation/after80-20261027/control-precommit-initial.xml",
+    "junit_sha256": "36102e250b42298b309b04ed1938f692039446b7a65d20bc9279f23670b472a5",
+    "fact": "After durable intake of an exact resume, ordinary worker pause barrier left the accepted control pending instead of recovering it before NLU."
+  },
+  "verification": {
+    "tests": 90,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 14.817,
+    "junit": ".local/evaluation/after80-20261027/control-precommit-epoch-related-final.xml",
+    "junit_sha256": "36f303467ef1752142dd02b1c04f3fcba93168b573287f33907cbe1948f68f82",
+    "new_precommit_pg": 12,
+    "new_epoch_interleaving_pure": 2,
+    "new_aftercommit_pg_asgi": 8,
+    "old_marker_and_related": 68,
+    "ruff_new_tests": "PASS"
+  },
+  "contracts": {
+    "Store.recover_accepted_controls": "(session_id=None,*,limit=32) -> safe per-run outcome list",
+    "session_batch_limit": 8,
+    "global_batch_limit": 32,
+    "ordinary_claim_rule": "Unchanged: user_pause prevents ordinary-message claim",
+    "input_authority": "User message role + same input text/session/FK + USER_MESSAGE_RECEIVED exact message_id proof + authenticated owner hash; exact existing control vocabulary rechecked",
+    "ordering": "Server event sequences, never client timestamps; newest accepted exact controls and newer committed buttons supersede older pending controls",
+    "atomicity": "Control revision/completion/continuation committed under session then owned-run lock; completed replay reports applied=False",
+    "task_fence": "Before cancelling a non-current task, Root rereads the session and requires the same exact control revision and user_pause, with no await between selecting and cancelling the task"
+  },
+  "facts": [
+    "A normal session worker recovers an accepted exact resume before the ordinary pause gate, then executes its saved continuation without NLU",
+    "Later committed pause/resume buttons and later accepted controls complete old queued controls as superseded without another revision or source action",
+    "Ordinary paused messages remain pending and cannot claim a run; controls beyond the session batch retain an exact-control pre-NLU path",
+    "Two independent Store workers recover one control with exactly one applied outcome/revision/continuation",
+    "Original expected version is checked; stale accepted control is rejected with the session and saved facts preserved",
+    "Message-role, server-event binding and owner-provenance damage is not promoted to a control",
+    "Unicode whitespace/case/punctuation candidates match the canonical exact command parser; arbitrary ordinary text is not a control",
+    "Completed old pause replay does not cancel a task started after a newer resume",
+    "Peer found delayed-applied-pause cancellation race in both direct and recovered hooks; both initial pure failures and new epoch-fenced results are retained"
+  ],
+  "peer_finding": {
+    "id": "HARNESS-004-PAUSE-TASK-EPOCH-001",
+    "status": "CLOSED_CONTROLLED_INTERLEAVING_SCOPE",
+    "initial_junit": ".local/evaluation/after80-20261027/control-cancel-epoch-peer-initial-20261027.xml",
+    "initial_failures": 2,
+    "fix": "Root _cancel_if_current_pause exact session version/current pause fence",
+    "final_included_in_90": true
+  },
+  "preserved_intermediate": {
+    "path": ".local/evaluation/after80-20261027/control-precommit-related-initial.xml",
+    "pass": 87,
+    "fail": 1,
+    "attribution": "The test directly awaited private _drain without registering the normal scheduled task; recovery scheduled a concurrent legitimate task. Test now uses normal schedule plus awaiting its task, with all state/source assertions retained."
+  },
+  "execution": {
+    "database": "otravel_test; only own rows, own pending negative fixtures retired through Store.fail_run(preserve_session=True)",
+    "model_actual": 0,
+    "external_http_actual": 0,
+    "supplier_orders": 0,
+    "payments": 0,
+    "network_vpn_changes": 0,
+    "native_changes": 0,
+    "global_shared_testdb_recovery": false
+  },
+  "limits": [
+    "Targeted qualification does not replace the final merged Root full suite",
+    "Shared test DB tests use session-scoped recovery; startup/maintenance call the same bounded Store method globally, with no unrestricted recovery run against unrelated fixture rows",
+    "Fault boundaries are controlled durable-row/interleaving tests, not OS kills or arbitrary PostgreSQL/disk failures",
+    "No cross-process or external HTTP exactly-once guarantee, no actual LLM/provider or full-dialogue quality claim"
+  ]
+}

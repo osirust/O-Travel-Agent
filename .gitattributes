@@ -2,3 +2,6 @@
 certs/gigachat-root-ca.pem -text
 # The CLDR reference is verified by its exact byte hash on Windows and WSL.
 otravel/data/* -text whitespace=cr-at-eol
+fixtures/regression/world-r4-date-omission-20261027.json -text whitespace=cr-at-eol
+fixtures/regression/world-r4-preferences-20261027.json -text whitespace=cr-at-eol
+fixtures/regression/lite-fees-included-projection-20261027.json -text whitespace=cr-at-eol

@@ -429,12 +429,19 @@ def _synchronize_route(data: dict[str, Any]) -> None:
 
 
 def apply_operations(state: TripState, operations: list[Operation], *,
-                     resolved_places: Mapping[str, CityRefSnapshot] | None = None) -> tuple[TripState, list[dict[str, Any]]]:
+                     resolved_places: Mapping[str, CityRefSnapshot] | None = None,
+                     replace_place_versions: Mapping[str, int] | None = None) -> tuple[TripState, list[dict[str, Any]]]:
     """Atomic edits on a copy; version belongs to the persistent store, not this function."""
     data = deepcopy(state.model_dump(mode="json"))
     changes: list[dict[str, Any]] = []
     if resolved_places is not None and not isinstance(resolved_places, Mapping):
         raise DomainError("invalid_place_refs", "Географические снимки передаются серверным словарём.")
+    if replace_place_versions is not None and (not isinstance(replace_place_versions, Mapping)
+            or any(not isinstance(key, str) or type(version) is not int or version <= 0
+                for key, version in replace_place_versions.items())):
+        raise DomainError("invalid_place_ref_replacement", "Обновление снимка требует точной предыдущей версии.")
+    replacements = dict(replace_place_versions or {})
+    replaced = set()
     if resolved_places:
         prior_refs = deepcopy(data.get("location_refs", {}))
         refs = deepcopy(prior_refs)
@@ -447,14 +454,45 @@ def apply_operations(state: TripState, operations: list[Operation], *,
                 raise DomainError("place_ref_mismatch", "Ключ географического снимка не совпадает с place_id.")
             snapshot = ref.model_dump(mode="json")
             if key in refs and refs[key] != snapshot:
-                raise DomainError("place_ref_conflict", "Сохранённый снимок места нельзя неявно перезаписать.")
+                old = CityRefSnapshot.model_validate(refs[key])
+                if (replacements.get(key) != old.ref_version or ref.ref_version <= old.ref_version
+                        or old.geographic_source != ref.geographic_source):
+                    raise DomainError("place_ref_conflict", "Сохранённый снимок места нельзя неявно перезаписать.")
+                replaced.add(key)
+                # This opt-in is server-only, after an owned explicit revision
+                # confirmation and fresh/current Catalog admission. Every use
+                # of the same identity must keep its exact snapshot label.
+                bound = []
+                if data.get("origin_place_id") == key:
+                    bound.append((data, "origin", "origin", None))
+                policy = data.get("route_policy") or {}
+                if policy.get("end_place_id") == key:
+                    bound.append((policy, "end_city", "route_policy.end_city", None))
+                for stay in data.get("stays", []):
+                    if stay.get("place_id") == key:
+                        bound.append((stay, "city", "stay.city", stay["id"]))
+                        if stay.get("hotel_id") is not None:
+                            changes.append({"operation": "refresh_place_reference", "target_id": stay["id"],
+                                "field": "stay.hotel_id", "before": stay["hotel_id"], "after": None})
+                            stay["hotel_id"] = None
+                for leg in data.get("legs", []):
+                    for direction in ("origin", "destination"):
+                        if leg.get(direction + "_place_id") == key:
+                            bound.append((leg, direction, "leg." + direction, leg["id"]))
+                for container, field, label, target_id in bound:
+                    if container.get(field) != ref.canonical_name:
+                        changes.append({"operation": "refresh_place_reference", "target_id": target_id,
+                            "field": label, "before": container.get(field), "after": ref.canonical_name})
+                        container[field] = ref.canonical_name
             refs[key] = snapshot
         if len(refs) > MAX_LOCATION_REFS:
             raise DomainError("too_many_place_refs", "Превышен технический размер снимков географии поездки.")
         data["location_refs"] = refs
         if refs != prior_refs:
             changes.append({"operation": "resolve_places", "target_id": None, "field": "location_refs", "before": prior_refs, "after": deepcopy(refs)})
-    route_changed = False
+    if set(replacements) != replaced:
+        raise DomainError("invalid_place_ref_replacement", "Подтверждение обновления не совпадает с изменённым снимком.")
+    route_changed = bool(replaced)
     allowed = {"set_origin", "set_budget", "set_search_policy", "set_route_policy", "set_leg_mode", "set_room_members", "set_preference", "clear_preference", "add_traveler", "remove_traveler", "upsert_group", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
     for raw_operation in operations:
         try:

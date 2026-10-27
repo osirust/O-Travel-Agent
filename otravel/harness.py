@@ -180,6 +180,26 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
     def members(value: Any) -> Any:
         return sorted(value) if isinstance(value, list) and all(isinstance(item, str) for item in value) else value
 
+    def city_identity(name: Any, value: dict, *, field: str = "place_id", current_id: str | None = None) -> Any:
+        def matches(reference) -> bool:
+            from .intent_grounding import _same_ref_name
+            return _same_ref_name(name,reference)
+        identifier=value.get(field)
+        # Echoing the current selected name does not turn that place back into
+        # an unqualified legacy name. Conflict checking never admits new refs.
+        if identifier is None and field not in value and current_id in state.location_refs:
+            current=state.location_refs[current_id]
+            if matches(current):
+                identifier=current_id
+        if identifier is None:
+            return canonical_city(name)
+        reference=state.location_refs.get(identifier)
+        if reference is None:
+            raise DomainError("place_provenance_required","Сначала подтвердите место через географический справочник.")
+        if not matches(reference):
+            raise DomainError("place_pair_mismatch","Название города не соответствует выбранному месту.")
+        return {"city":reference.canonical_name,"place_id":identifier}
+
     for patch in items:
         if patch.type != "set_room_members":
             continue
@@ -196,7 +216,7 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
         if item.type == "set_origin":
             for key in ("city", "origin"):
                 if key in value:
-                    write(("trip", "origin"), canonical_city(value[key]))
+                    write(("trip", "origin"), city_identity(value[key],value,current_id=state.origin_place_id))
         elif item.type == "set_budget":
             for key, default in (("amount_minor", None), ("currency", "RUB"), ("scope", "whole_trip")):
                 write(("budget", key), value.get(key, default))
@@ -204,7 +224,9 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
             for key, field in value.items():
                 write(("search_policy", key), field)
         elif item.type == "set_route_policy":
-            write(("route_policy",), {"kind": value.get("kind"), "end_city": value.get("end_city")})
+            end=value.get("end_city")
+            write(("route_policy",), {"kind": value.get("kind"), "end_city":city_identity(end,value,
+                field="end_place_id",current_id=state.route_policy.end_place_id) if end else end})
         elif item.type == "set_leg_mode":
             write(("leg", target, "mode"), value.get("mode"))
         elif item.type == "set_room_members":
@@ -220,7 +242,9 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
             write(("stay", target, "exists"), item.type != "remove_stay")
             for key, field in value.items():
                 if key != "id":
-                    write(("stay", target, key), canonical_city(field) if key == "city" and field else field)
+                    current_stay=next((stay for stay in state.stays if stay.id==target),None)
+                    write(("stay", target, key), city_identity(field,value,current_id=current_stay.place_id if current_stay else None)
+                        if key == "city" and field else field)
                     if key == "rooms" and isinstance(field, list):
                         for room in field:
                             if isinstance(room, dict) and isinstance(room.get("id"), str):
@@ -295,7 +319,7 @@ class Harness:
         self.place_resolution = None
         if settings.dynamic_geography_enabled and geo_catalog is not None and place_directory is not None:
             from .place_resolution import PlaceResolutionCoordinator
-            self.place_resolution = PlaceResolutionCoordinator(geo_catalog, place_directory, travel)
+            self.place_resolution = PlaceResolutionCoordinator(geo_catalog, place_directory, travel, offline_countries=True)
         self.fx = fx
         self.inventory = DemoInventory()
         self.tasks: dict[str, asyncio.Task] = {}
@@ -305,6 +329,7 @@ class Harness:
 
     async def start(self) -> None:
         await self.store.recover_stale_runs()
+        await self._recover_accepted_controls()
         await self.schedule_pending()
         self.maintenance = asyncio.create_task(self._maintenance())
 
@@ -322,12 +347,36 @@ class Harness:
             await asyncio.sleep(5)
             try:
                 await self.store.recover_stale_runs()
+                await self._recover_accepted_controls()
                 await self.schedule_pending()
             except asyncio.CancelledError:
                 raise
             except Exception:
                 # Do not log driver URLs, credentials, or raw provider exceptions.
                 continue
+
+    async def _recover_accepted_controls(self, session_id: str | None = None, *, limit: int = 32) -> None:
+        recover=getattr(self.store,"recover_accepted_controls",None)
+        if not callable(recover):
+            return
+        recovered=await recover(session_id,limit=limit)
+        for row in recovered:
+            if not row.get("applied"):
+                continue
+            if row["action"]=="pause":
+                await self._cancel_if_current_pause(row["session_id"],row.get("state_version"))
+            elif row["action"]=="resume":
+                self.schedule(row["session_id"])
+
+    async def _cancel_if_current_pause(self, session_id: str, version: int | None) -> None:
+        latest=await self.store.get_session(session_id)
+        if type(version) is not int or latest["state_version"]!=version or latest.get("waiting_reason")!="user_pause":
+            return
+        task=self.tasks.get(session_id)
+        if task and task is not asyncio.current_task() and not task.done():
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
 
     async def schedule_pending(self) -> None:
         for run in await self.store.list_pending_runs():
@@ -342,31 +391,26 @@ class Harness:
             # Retrieve task failures without logging DSNs or raw HTTP exceptions.
             self.tasks[session_id].add_done_callback(lambda task: None if task.cancelled() else task.exception())
 
-    async def control(self, session_id: str, action: str, *, schedule: bool = True, write_reply: bool = True) -> dict:
+    async def control(self, session_id: str, action: str, *, schedule: bool = True, write_reply: bool = True,
+                      control_run_id: str | None = None) -> dict:
         # This transaction increments the CAS version before cancellation.
         reply = ("Пауза сохранена. Жду явного «продолжай»." if action == "pause" else "Продолжаю с сохранённой поездкой.") if write_reply else ""
-        session = await self.store.set_control(session_id, action, reply)
-        if action == "pause":
-            task = self.tasks.get(session_id)
-            if task and not task.done():
-                task.cancel()
-                with suppress(asyncio.CancelledError):
-                    await task
-        elif schedule:
+        session = (await self.store.set_control(session_id, action, reply, control_run_id=control_run_id)
+            if control_run_id is not None else await self.store.set_control(session_id, action, reply))
+        if action == "pause" and session.get("control_applied",True):
+            await self._cancel_if_current_pause(session_id,session.get("state_version"))
+        elif schedule and session.get("control_applied",True):
             self.schedule(session_id)
         return session
 
     async def control_message(self, run: dict, action: str) -> dict:
         if action == "cancel":
             return await self.cancel_control(run)
-        session = await self.control(run["session_id"], action, schedule=False, write_reply=False)
+        session = await self.control(run["session_id"], action, schedule=False, write_reply=False,
+            control_run_id=run["run_id"])
         # A control message has already been durably accepted. It is not sent to NLU.
-        result = await self.store.finish_run(run["run_id"], session["state_version"], None,
-            session["status"],
-            "Жду явного «продолжай»." if action == "pause" else "Продолжаю. " + ((session.get("pending_question") or {}).get("text") or ""),
-            waiting_reason=session.get("waiting_reason"), pending_question=session.get("pending_question"),
-            result={"control": action, "available_actions": ["commands", "demo", "resume"]})
-        if action == "resume":
+        result = session["control_run_result"]
+        if action == "resume" and session.get("control_applied",True):
             self.schedule(run["session_id"])
         return result
 
@@ -475,6 +519,7 @@ class Harness:
 
     async def _drain(self, session_id: str) -> None:
         while not self.closed:
+            await self._recover_accepted_controls(session_id,limit=8)
             session = await self.store.get_session(session_id)
             if session.get("waiting_reason") == "user_pause":
                 return
@@ -788,12 +833,14 @@ class Harness:
                                 extracted.speech_act = "CHANGE"
                             extracted.operations = [Operation.model_validate(op) for op in grounded]
                             extracted.operation_normalizations.extend(notes)
-                    if extracted.speech_act in {"ASK", "PROPOSE"} and extracted.control.action == "none" and not extracted.conflicts:
+                    if (extracted.speech_act in {"ASK", "PROPOSE"} and not extracted.conflicts
+                            and (extracted.control.action=="none" or explicit_pause_hint(run["input_text"]))):
                         # Questions/suggestions are not permission to change a
                         # trip. Keep proposed edits as audit data, never execute.
                         extracted.candidate_operations = extracted.operations
                         extracted.operations = []
-                        extracted.unknowns = []
+                        if extracted.control.action == "none":
+                            extracted.unknowns = []
                     if not readonly and not extracted.conflicts and extracted.control.action != "cancel":
                         from .budget_intent import guard_budget_prohibitions
                         budget_ops, budget_meta = guard_budget_prohibitions(extracted.operations, run["input_text"])
@@ -860,6 +907,14 @@ class Harness:
                         auxiliary, auxiliary_notes = ground_auxiliary_operations(session["state"], extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in auxiliary]
                         extracted.operation_normalizations.extend(auxiliary_notes)
+                        from .preference_grounding import guard_preference_operations
+                        preference_ops,preference_meta=guard_preference_operations(session["state"],
+                            extracted.operations,run["input_text"])
+                        extracted.operations=[Operation.model_validate(op) for op in preference_ops]
+                        extracted.operation_normalizations.extend(preference_meta["notes"])
+                        extracted.conflicts.extend(preference_meta["conflicts"])
+                        extracted.unknowns.extend(preference_meta["unknowns"])
+                        extracted.server_questions.extend(preference_meta["unknowns"])
                         from .room_intent import ground_room_count_operations
                         room_ops, room_meta = ground_room_count_operations(session["state"], extracted.operations,
                             run["input_text"], session.get("pending_question"))
@@ -869,6 +924,25 @@ class Harness:
                             extracted.unknowns = list(dict.fromkeys(room_meta["unknowns"] + extracted.unknowns))
                             extracted.server_questions.extend(room_meta["unknowns"])
                             extracted.pending_context = {**(extracted.pending_context or {}), **(room_meta["pending_context"] or {})}
+                        if extracted.speech_act=="CHANGE" and not extracted.conflicts:
+                            from .date_intake import ground_explicit_stay_dates
+                            date_ops,date_meta=ground_explicit_stay_dates(session["state"],run["input_text"],
+                                extracted.operations,pending=session.get("pending_question"),
+                                now=datetime.now(timezone.utc))
+                            extracted.operations=[Operation.model_validate(op) for op in date_ops]
+                            extracted.operation_normalizations.extend(date_meta["notes"])
+                            extracted.conflicts.extend(date_meta["conflicts"])
+                            extracted.unknowns.extend(date_meta["unknowns"])
+                            extracted.server_questions.extend(date_meta["unknowns"])
+                        if extracted.speech_act=="CHANGE" and not extracted.conflicts:
+                            from .nationality_intake import ground_explicit_nationality
+                            nationality_ops,nationality_meta=ground_explicit_nationality(session["state"],
+                                run["input_text"],extracted.operations)
+                            extracted.operations=[Operation.model_validate(op) for op in nationality_ops]
+                            extracted.operation_normalizations.extend(nationality_meta["notes"])
+                            extracted.conflicts.extend(nationality_meta["conflicts"])
+                            extracted.unknowns.extend(nationality_meta["unknowns"])
+                            extracted.server_questions.extend(nationality_meta["unknowns"])
                         from .group_semantics import guard_group_separation, guard_unapplied_traveler_removal
                         separation = guard_group_separation(session["state"], extracted.operations, run["input_text"],
                             {**((session.get("pending_question") or {}).get("context") or {}),
@@ -1156,7 +1230,7 @@ class Harness:
                         unknowns=[],conflicts=[],speech_act="ASK",response_source="canonical_saved_answer"),None
                 short=interpret_short_reply(pending,run["input_text"],session["state"])
                 acknowledgement=run["input_text"].strip().casefold().strip(" .!")
-                if (not short.get("selection") and not short.get("question") and packet.get("stage") in {"city_choice","country_choice"}
+                if (not short.get("selection") and not short.get("question") and packet.get("stage") in {"city_choice","country_choice","ref_revision_confirm"}
                         and acknowledgement in {"давай","давайте","сохраняем","сохряняем","оставляем"}):
                     short=interpret_short_reply(pending,"да",session["state"])
                 if short.get("selection"):
@@ -1202,7 +1276,24 @@ class Harness:
                         retry_context["geography_feedback"]={"status":"NO_MATCH","query":text,
                             "country_iso2":(packet.get("country_ref") or {}).get("country_iso2"),
                             "instruction":"Предложи исправленное написание через resolve_place, либо уточни город. Не придумывай CityRef или ID."}
-                        return await self._extract_checked_interpretation(session,run,context_override=retry_context)
+                        try:
+                            fallback,metadata = await self._extract_checked_interpretation(session,run,context_override=retry_context)
+                        except ProviderError as error:
+                            await self._ensure_current_run(session,run)
+                            clarification=self.place_resolution.no_match_clarification(request,outcome,session["state"])
+                            return ModelResult(operations=[],control={"action":"none"},reply=clarification["question"],
+                                unknowns=[],conflicts=[],speech_act="CHANGE",response_source="place_request",
+                                place_packet=clarification),{"provider":error.provider or self.settings.llm_mode,
+                                    "spelling_repair_failed":True,"error":{"code":error.code,"retryable":error.retryable}}
+                        if (not fallback.conflicts and not fallback.place_requests and not fallback.place_selection
+                                and not fallback.place_packet and fallback.control.action in {"none","continue","wait","resume"}):
+                            fallback.place_packet=self.place_resolution.no_match_clarification(request,outcome,session["state"])
+                            fallback.speech_act="CHANGE"
+                            fallback.response_source="place_request"
+                            fallback.unknowns=[]
+                            fallback.server_questions=[]
+                            fallback.reply=fallback.place_packet["question"]
+                        return fallback,metadata
                     return ModelResult(operations=[],control={"action":"none"},reply=outcome.get("question") or outcome.get("notice") or "Уточняю место.",
                         unknowns=[],conflicts=[],speech_act="CHANGE",response_source="place_request",place_packet=outcome),None
 
@@ -1418,6 +1509,10 @@ class Harness:
         )
 
         session = await self.store.get_session(run["session_id"])
+        accepted_control=exact_control(run["input_text"])
+        if accepted_control in {"pause","resume"}:
+            await self.control_message(run,accepted_control)
+            return
         from .question_binding import repair_question_binding
         session["pending_question"] = repair_question_binding(session.get("pending_question"), session["state"])
         version = session["state_version"]
@@ -1492,6 +1587,11 @@ class Harness:
                 raise DomainError("invalid_command", "Неизвестная структурированная команда.")
         else:
             extracted, model_meta = await self._interpret(session, run)
+            if (extracted.speech_act in {"ASK", "PROPOSE"} and extracted.operations
+                    and (extracted.control.action=="none" or explicit_pause_hint(run["input_text"]))):
+                extracted.candidate_operations.extend(extracted.operations)
+                extracted.operations=[]
+                extracted.operation_normalizations.append({"code":"non_change_speech_does_not_authorize_edits"})
             question_binding_proposal = extracted.pending_context
             if (model_meta is not None and model_meta.get("response_role") == "readonly_answer_v1"
                     and extracted.response_source == "readonly_answer"):

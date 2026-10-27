@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
+import json
 from collections import Counter
 from copy import deepcopy
 from datetime import date
 from hashlib import sha256
-import json
 from typing import Any
 
-from .domain import CITIES, DomainError, TripState, route_edges, validate_trip
-
+from .domain import CITIES, MVP_LIMITS, DomainError, TripState, route_edges, validate_trip
 
 CITY_DATA = {
     "Москва": ("moscow", 500_000), "Санкт-Петербург": ("petersburg", 450_000),
@@ -29,6 +28,10 @@ RATES = (
     {"id": "flex", "breakfast": True, "refundable": True},
 )
 NOTICE = "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся."
+PLACE_TRANSFER_NOTICE = "Демонстрационный трансфер; стоимость и наличие вымышлены. Трансфер поставщика не бронируется."
+PLACE_TRANSFER_CATALOGUE = "verified_place_transfer_demo_v1"
+PLACE_TRANSFER_PROVIDER = "demo_place_transfer"
+PLACE_TRANSFER_ID_PREFIX = "demo-place-transfer-"
 SUPPORTED_CONSTRAINTS = {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}
 
 
@@ -246,6 +249,71 @@ def bounded_transport_catalog(state: TripState | dict) -> dict[str, Any]:
         base["violations"].append(_error("flight_facts_mismatch", "Не подтверждены свойства конечного DEMO-перелёта."))
         return base
     base["offers"] = offers
+    return base
+
+
+def bounded_place_transfer_catalog(state: TripState | dict) -> dict[str, Any]:
+    """Finite synthetic transfer snapshots for explicitly selected place refs.
+
+    The server's persistent selection boundary supplies the canonical refs;
+    this pure catalogue neither verifies live geography nor makes HTTP calls.
+    It never creates a hotel/flight or joins a city/country by its display name.
+    The existing HYBRID+demo_fallback policy is required even for validation.
+    """
+    state = TripState.model_validate(state)
+    base = {"offers": [], "questions": [], "violations": [], "source_type": "DEMO",
+        "price_kind": "synthetic", "scope": "verified_place_transfers_only", "warnings": [PLACE_TRANSFER_NOTICE]}
+    if state.search_policy.mode != "HYBRID" or not state.search_policy.demo_fallback or not state.location_refs:
+        return base
+    issues = [issue for issue in validate_trip(state)
+        if issue["code"] not in {"missing_budget", "unsupported_budget"}]
+    pets, questions = _pet_request(state)
+    base["questions"] = list(dict.fromkeys([i["message"] for i in issues if i["code"].startswith("missing_")] + questions))
+    base["violations"] = [i for i in issues if not i["code"].startswith("missing_")]
+    for condition in state.constraints:
+        if condition.hard and condition.key not in SUPPORTED_CONSTRAINTS:
+            base["violations"].append(_error("unsupported_constraint",
+                "Демонстрационный трансфер не подтверждает неизвестное обязательное условие.", key=condition.key))
+        elif (condition.hard and condition.key in {"breakfast", "refundable", "pets_allowed", "nonstop"}
+                and type(condition.value) is not bool):
+            base["violations"].append(_error("invalid_constraint", "Для обязательного условия нужно true/false.", key=condition.key))
+    if any(pet["weight_kg"] > 20 for pet in pets):
+        base["violations"].append(_error("transport_pets", "Демонстрационный трансфер поддерживает животных до20кг."))
+    people = [person.id for person in state.travelers]
+    if not 1 <= len(people) <= MVP_LIMITS["travelers"]:
+        base["violations"].append(_error("transfer_capacity", "Число пассажиров вне конечного профиля DEMO-трансфера."))
+    if base["questions"] or base["violations"]:
+        return base
+    seats_per_vehicle = 4
+    vehicles = (len(people) + seats_per_vehicle - 1) // seats_per_vehicle
+    for stay in state.stays:
+        ref = state.location_refs.get(stay.place_id) if stay.place_id is not None else None
+        if ref is None or stay.city != ref.canonical_name or stay.check_in is None or stay.check_out is None:
+            base["violations"].append(_error("transfer_place_unverified",
+                "Для этого DEMO-трансфера нужны точная выбранная географическая ссылка и даты.", stay_id=stay.id))
+            continue
+        breakdown = [_line("demo_transfer_passenger", 40_000, len(people))]
+        if pets:
+            breakdown.append(_line("demo_transfer_pet", 100_000, len(pets)))
+        identity = {"catalogue": PLACE_TRANSFER_CATALOGUE, "trip_id": state.trip_id,
+            "state_version": state.state_version, "stay_id": stay.id, "place_id": ref.place_id,
+            "place_ref_sha256": ref.snapshot_sha256(), "check_in": stay.check_in.isoformat(),
+            "check_out": stay.check_out.isoformat(), "travelers": [p.model_dump(mode="json") for p in state.travelers],
+            "pets": pets, "breakdown": breakdown, "vehicle_count": vehicles, "seats_per_vehicle": seats_per_vehicle}
+        base["offers"].append({"offer_id": PLACE_TRANSFER_ID_PREFIX + _digest(identity),
+            "provider": PLACE_TRANSFER_PROVIDER, "component_id": "transfer-" + stay.id,
+            "catalogue": PLACE_TRANSFER_CATALOGUE, "kind": "transfer", "name": PLACE_TRANSFER_NOTICE,
+            "trip_id": state.trip_id, "state_version": state.state_version, "stay_id": stay.id,
+            "city": ref.canonical_name, "country_iso2": ref.country_iso2, "place_id": ref.place_id,
+            "place_ref_version": ref.ref_version, "place_ref_sha256": ref.snapshot_sha256(),
+            "date": stay.check_in.isoformat(), "check_out": stay.check_out.isoformat(),
+            "traveler_ids": people.copy(), "vehicle_count": vehicles, "seats_per_vehicle": seats_per_vehicle,
+            "capacity": vehicles * seats_per_vehicle, "capacity_source": "synthetic_demo_profile",
+            "pets_allowed": True, "max_pet_kg": 20, "breakdown": breakdown,
+            "total_minor": sum(line["amount_minor"] for line in breakdown), "currency": "RUB",
+            "fees_included": True, "fees_scope": "synthetic_transfer_rule_all_inclusive",
+            "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True,
+            "availability": "synthetic_not_live", "booking_created_at_supplier": False})
     return base
 
 

@@ -16,7 +16,17 @@ from datetime import UTC, datetime
 from .clarifications import derive_pending_field, human_question
 from .domain import DomainError, Operation, TripState, apply_operations, validate_trip
 from .place_refs import CityRefSnapshot
-from .place_resolution import COUNTRY_OWNER, OWNER, _choice_id, _date, _read_pending, _sha, _target
+from .place_resolution import (
+    COUNTRY_OWNER,
+    NO_MATCH_OWNER,
+    OWNER,
+    _choice_id,
+    _date,
+    _read_pending,
+    _sha,
+    _target,
+    checked_ref_revision,
+)
 
 MAX_REMAINING_REQUESTS = 5
 _DEFERRED_OWNER = "place_run.deferred.v1"
@@ -122,7 +132,9 @@ def _prepare_selection(selection, pending, before, current, harness):
         mapping[previous] = candidate["candidate_id"]
     translated = deepcopy(selection)
     if isinstance(translated, dict):
-        _need(set(translated) == {"resolution_id", "candidate_id"}
+        _need((set(translated) == {"resolution_id", "candidate_id"}
+                or old.get("stage") == "ref_revision_confirm"
+                and set(translated) == {"resolution_id", "candidate_id", "decision"} and translated["decision"] == "reject")
             and translated["resolution_id"] == old["resolution_id"] and translated["candidate_id"] in mapping)
         translated["candidate_id"] = mapping[translated["candidate_id"]]
     elif isinstance(translated, str):
@@ -314,7 +326,19 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
         and not (request is not None and selection is not None)
         and (not maintenance or _owned(session.get("pending_question"))))
     edits = [Operation.model_validate(op) for op in operations]
-    _need(precomputed_packet is None or not edits and selection is None and control != "wait")
+    _need(precomputed_packet is None or isinstance(precomputed_packet, dict))
+    _need(precomputed_packet is None or selection is None and control != "wait"
+        and (not edits or precomputed_packet.get("action") == "no_match"
+            and precomputed_packet.get("clarification_owner") == NO_MATCH_OWNER))
+    if precomputed_packet is not None and edits:
+        # The marker alone grants nothing. Check server-owned trip/epoch/TTL
+        # before applying even independent edits from a precomputed packet.
+        proof = _read_pending({"context": precomputed_packet.get("pending_context")},
+            before.model_dump(mode="json"), _now(harness))
+        _need(proof.get("stage") == "city_query" and not proof["candidates"])
+        if proof.get("country_ref") is not None:
+            harness.place_resolution._checked_country_ref(proof["country_ref"],
+                before.model_dump(mode="json"), {"role": proof["role"], "stay_id": proof["stay_id"]})
     from .harness import operation_conflicts
     conflicts = operation_conflicts(before, edits)
     if conflicts:
@@ -382,6 +406,10 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
                 if request is not None:
                     checked = _request(request, current)
                     _need((checked["role"], checked["stay_id"]) == (owned_packet["role"], owned_packet["stay_id"]))
+                # Independent facts may change the virtual revision, never the
+                # role identity or source TTL of this already-owned question.
+                rebound = _rebase_owned_pending({"context": context}, before, current, _now(harness))
+                packet["pending_context"] = rebound["context"]
             elif packet["action"] == "ask":
                 _need(False)
             prepared, chosen, selection_pending = None, None, None
@@ -443,10 +471,20 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
                             for key, ref in packet["resolved_places"].items()})
                     if selection_pending is not None:
                         shown = [choice for choice in scope["candidates"] if choice["candidate_id"] == chosen["candidate_id"]]
-                        _need(len(shown) == 1 and shown[0].get("kind") == "city"
+                        _need(len(shown) == 1 and shown[0].get("kind") in {"city", "ref_revision"}
                             and all(ref.geographic_source.external_id == shown[0].get("source_id")
                                 and ref.country_iso2 == shown[0].get("country_iso2") for ref in verified.values()))
-                    candidate, delta = apply_operations(current, selected, resolved_places=verified)
+                        if shown[0]["kind"] == "ref_revision":
+                            _packet_scope, old_ref, new_ref = checked_ref_revision(selection_pending, chosen, current, now=_now(harness))
+                            _need(chosen.get("decision") is None
+                                and packet.get("replace_place_versions") == {old_ref.place_id: old_ref.ref_version}
+                                and verified == {new_ref.place_id: new_ref})
+                        else:
+                            _need(packet.get("replace_place_versions") is None)
+                    else:
+                        _need(packet.get("replace_place_versions") is None)
+                    candidate, delta = apply_operations(current, selected, resolved_places=verified,
+                        replace_place_versions=packet.get("replace_place_versions"))
                 except Exception:  # noqa: BLE001 - only source selection is discarded; independent facts remain.
                     await fence()
                     packet = {"action": "unavailable", "question": _SAFE_QUESTION, "pending_context": None}
@@ -456,6 +494,9 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
                 current = candidate
                 current.state_version = version + int(bool(changes))
                 result["place_resolution"] = {"action": "selected"}
+                if packet.get("replace_place_versions"):
+                    result["place_ref_revisions"] = [{"place_id": ref_id, "previous_ref_version": old_version,
+                        "ref_version": verified[ref_id].ref_version} for ref_id, old_version in packet["replace_place_versions"].items()]
                 result["notice"] = packet.get("notice") or "Выбранное место сохранено."
                 if queue:
                     prepared = _request(queue.pop(0), current)
@@ -482,6 +523,20 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
                     status = "WAITING_USER"
                 waiting = "clarification" if pending else None
                 reply = pending["text"] if pending else result.get("notice", "Выбранное место сохранено.")
+                break
+            if action == "retained":
+                try:
+                    _need(selection_pending is not None and chosen.get("decision") == "reject"
+                        and not packet.get("operations") and not packet.get("resolved_places")
+                        and packet.get("replace_place_versions") is None)
+                    checked_ref_revision(selection_pending, chosen, current, now=_now(harness))
+                except (ValueError, TypeError, KeyError):
+                    packet = {"action": "unavailable", "question": _SAFE_QUESTION, "pending_context": None}
+                    continue
+                await fence()
+                result["place_resolution"] = {"action": "revision_declined"}
+                pending, status, waiting = None, "TRIP_DRAFT", None
+                reply = "Прежние сведения о месте сохранены. Новая версия не применена; поиск не выполнялся."
                 break
             if action in {"ask", "no_match", "unavailable"}:
                 context = deepcopy(packet.get("pending_context") or {})

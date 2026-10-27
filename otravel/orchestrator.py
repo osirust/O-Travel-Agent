@@ -16,13 +16,14 @@ from typing import Any
 
 from .domain import TripState, validate_trip
 from .fx import FxUnavailable, convert_minor
-from .inventory import DemoInventory, _allocation
+from .inventory import PLACE_TRANSFER_PROVIDER, DemoInventory, _allocation
 from .planning import assemble_plan, compare_plans
 from .provider_cities import available_search_cities, flight_iata
 from .providers import ProviderError
 
 _TOTALS = {"hotel": {"PROVIDER_ROOMS_STAY_TOTAL", "INDICATIVE_STAY_TOTAL", "PROVIDER_DISPLAY_RATE_TOTAL", "COMPONENT_TOTAL"},
            "flight": {"GROUP_ITINERARY_TOTAL", "INDICATIVE_ITINERARY_TOTAL", "COMPONENT_TOTAL"}}
+MAX_SOURCE_OFFER_ROWS = 600
 
 
 def _issue(code: str, message: str, **details: Any) -> dict:
@@ -96,7 +97,7 @@ class TripSearch:
         state = TripState.model_validate(state).model_copy(deep=True)
         policy = state.search_policy
         dynamic_places = bool(state.location_refs)
-        allow_demo_fallback = policy.demo_fallback and not dynamic_places
+        allow_demo_fallback = policy.demo_fallback
         if policy.mode == "DEMO" and dynamic_places:
             return {"plans": [], "partial_plan": None, "questions": [], "warnings": [],
                 "violations": [_issue("unsupported_demo_geography",
@@ -145,6 +146,7 @@ class TripSearch:
         component_errors: list[dict] = []
         selected: list[dict] = []
         rejected: dict[str, set[str]] = {}
+        selection_diagnostics: list[dict] = []
         fx_snapshot, fx_error, used, fx_attempted = None, None, 0, False
         currency = state.budget.currency.upper() if state.budget else "RUB"
 
@@ -197,14 +199,22 @@ class TripSearch:
             # An unconverted partial candidate never outranks a comparable quote.
             return (1, 0, offer["offer_id"])
 
-        async def choose(rows: Any, kind: str, component_id: str, provider: str, binding: dict, report: bool = True) -> dict | None:
+        def record_selection(rows: list, kind: str, component_id: str, provider: str, eligible: int, reasons: set) -> None:
+            selection_diagnostics.append({"component_id": component_id, "provider": provider, "kind": kind,
+                "source_rows_received": len(rows), "source_rows_examined": min(len(rows), MAX_SOURCE_OFFER_ROWS),
+                "source_rows_not_examined": max(0, len(rows) - MAX_SOURCE_OFFER_ROWS),
+                "scan_limit": MAX_SOURCE_OFFER_ROWS, "eligible_rows": eligible,
+                "scan_truncated": len(rows) > MAX_SOURCE_OFFER_ROWS, "rejected_reasons": sorted(reasons)})
+
+        async def choose(rows: Any, kind: str, component_id: str, provider: str, binding: dict,
+                         report: bool = True, record_stats: bool = True) -> dict | None:
             nonlocal fx_snapshot, fx_error, used, fx_attempted
             if not isinstance(rows, list):
                 unavailable(component_id, "INVALID_RESPONSE", "Gateway не вернул список предложений.")
                 return None
             eligible = []
             reasons: set[str] = set()
-            for raw in rows[:30]:
+            for raw in rows[:MAX_SOURCE_OFFER_ROWS]:
                 if not isinstance(raw, dict) or not isinstance(raw.get("details"), dict):
                     reasons.add("invalid_shape")
                     continue
@@ -258,7 +268,11 @@ class TripSearch:
                 details["binding"], details["kind"] = deepcopy(binding), kind
                 offer["details"] = details
                 eligible.append(offer)
+            if record_stats:
+                record_selection(rows, kind, component_id, provider, len(eligible), reasons)
             if not eligible:
+                if len(rows) > MAX_SOURCE_OFFER_ROWS:
+                    reasons.add("source_offer_scan_limit")
                 rejected.setdefault(component_id, set()).update(reasons or {"no_matches"})
                 if report:
                     unavailable(component_id, "NO_VERIFIED_COMPONENT", "Нет пригодного тарифа: " + ", ".join(sorted(reasons) or ["no_matches"]))
@@ -331,7 +345,7 @@ class TripSearch:
                 rows = await call("search_hotels", stay.id, provider, request, provider=provider)
                 # hotel_id comes from each actual response, never a name match.
                 bound_rows = []
-                for row in rows[:30] if isinstance(rows, list) else []:
+                for row in rows[:MAX_SOURCE_OFFER_ROWS] if isinstance(rows, list) else []:
                     if not isinstance(row, dict) or not isinstance(row.get("details"), dict):
                         continue
                     hotel_id = row["details"].get("hotel_id")
@@ -349,9 +363,13 @@ class TripSearch:
                                "checkout": request["checkout"], "hotel_id": hotel_id}
                     if place is not None:
                         binding.update(place_id=place.place_id, place_ref_sha256=place.snapshot_sha256())
-                    candidate = await choose([row], "hotel", stay.id, provider, binding, False)
+                    candidate = await choose([row], "hotel", stay.id, provider, binding, False, False)
                     if candidate:
                         bound_rows.append(candidate)
+                if isinstance(rows, list):
+                    if not bound_rows and len(rows) > MAX_SOURCE_OFFER_ROWS:
+                        rejected.setdefault(stay.id, set()).add("source_offer_scan_limit")
+                    record_selection(rows, "hotel", stay.id, provider, len(bound_rows), rejected.get(stay.id, set()))
                 if bound_rows:
                     selected.append(min(bound_rows, key=rank))
                 elif not rows:
@@ -438,7 +456,7 @@ class TripSearch:
             except ProviderError as exc:
                 unavailable(leg.id, exc.code, exc.message)
         if state.stays:
-            warnings.append("Трансферный источник для выбранных мест не подключён; синтетические цены не подставляются."
+            warnings.append("Реальный источник трансфера не подключён. Разрешённый DEMO fallback может добавить только явно вымышленный трансфер выбранного места."
                 if dynamic_places else "Live transfer gateway не подключён; трансферы могут быть только явно обозначенными DEMO fallback-компонентами.")
         plan = assemble_plan(state, selected, demo_fallback=allow_demo_fallback,
                              previous_plan=_comparison_input(previous_plan) if previous_plan is not None else None, now=current_time(),
@@ -449,13 +467,17 @@ class TripSearch:
                   "warnings": list(dict.fromkeys(warnings)), "violations": plan["blockers"],
                   "component_errors": component_errors, "partial_plan": None if ready else plan,
                   "source_type": plan["source_type"], "tool_calls_used": used, "max_tool_calls": self.max_tool_calls,
-                  "comparison_scope": "first_30_offers_per_component_not_global_market_minimum",
+                  "comparison_scope": "first_600_returned_offers_per_component_not_global_market_minimum",
+                  "selection_diagnostics": selection_diagnostics,
                   "price_kind": "simulated_estimate", "ready_for_real_booking": False,
                   "search_policy": policy.model_dump(mode="json")}
         if self.fx is not None:
             result["fx_error"] = fx_error
         if dynamic_places:
             result["effective_demo_fallback"] = False
+            result["effective_transfer_demo_fallback"] = any(
+                component.get("provider") == PLACE_TRANSFER_PROVIDER and component.get("source_type") == "DEMO"
+                for component in plan["components"])
         await emit("TRIP_SEARCH_COMPLETED", {"source_type": plan["source_type"], "ready_for_simulated_checkout": ready,
                     "tool_calls_used": used, "blocker_count": len(plan["blockers"])})
         return result

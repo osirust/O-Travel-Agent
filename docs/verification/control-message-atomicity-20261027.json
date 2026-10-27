@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-PLAINTEXT-CONTROL-CRASH-OPEN",
+  "status": "CLOSED_AFTER_CONTROL_COMMIT_SCOPE",
+  "source_before_sha256": {
+    "store.py": "7a1bd841241cbb6d54fe80f2204918b7f1a95dd42812774c5266d6ec69440501",
+    "harness.py": "b749578992867455c3808f40145b10c15235dbbcfdb64c17027339bfd9b3bd92",
+    "place_resume.py": "aee559edc2c9ba00028f8984fd03392ea02fb062d206f27088dc365fe85fb706"
+  },
+  "source_files_sha256": {
+    "otravel/store.py": "48a2a188ad43948a820bd22c051d8d6e57630ead3791887915eddb4280a93429",
+    "otravel/place_resume.py": "aee559edc2c9ba00028f8984fd03392ea02fb062d206f27088dc365fe85fb706",
+    "tests/test_control_message_atomic_pg.py": "e3f62732ba5500fa71bace6e74df714dddd941ead5c8099a96c282e5a3edb859"
+  },
+  "root_owned_hook_function_sha256": {
+    "control": "2a2fcd9db6b64f3cabfa863ece88e52fbdc7b70b448b43b8a56a0ecdbbfb2927",
+    "control_message": "5636cfe8544fe49f6a39f461d2f0276ff89026d1e7bc586e5e08e08ddfc3a6d5"
+  },
+  "root_hook_note": "Root-owned Harness.control forwards optional control_run_id; control_message returns the same transaction control_run_result and no longer calls a second finish_run. Other ongoing Harness edits require the final Root full-suite checkpoint.",
+  "initial_failure": {
+    "tests": 2,
+    "failures": 2,
+    "junit": ".local/evaluation/after80-20261027/control-message-crash-initial.xml",
+    "junit_sha256": "d706f03ed49f265959698fe5c59bde128785f34f585bc8af14acb9775629744b",
+    "fact": "Injected crash after committed set_control, before the separate Harness finish, left both accepted pause and resume runs pending."
+  },
+  "verification": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 2.727,
+    "junit": ".local/evaluation/after80-20261027/control-message-crash-restart-green.xml",
+    "junit_sha256": "6d6c677a49d4e0fdbc6bbd176584959909bf7217e9bbfce0f795ce5b0dd62990",
+    "ruff_new_tests": "PASS"
+  },
+  "fault_method": {
+    "type": "SimulatedCrash(BaseException) immediately after awaiting Store.set_control commit",
+    "postgres_server_crash": false,
+    "os_process_kill": false,
+    "repository_reopen": true,
+    "separate_real_api_app_lifetimes": true,
+    "session_scoped_worker_recovery": true
+  },
+  "facts": [
+    "Accepted exact pause/resume user input, owner/session, run status and requested expected version are checked under session then owned-run locks",
+    "Control revision, pending authority rebase, optional continuation, assistant reply, completed control result and event commit in one short transaction",
+    "Completed accepted control replay returns its saved result before creating any new revision, control event or continuation",
+    "A fault before commit rolls back all control/reply/completion/marker changes; retry commits once",
+    "A fault after commit leaves control completed and only the server continuation pending, so restart does not queue the plaintext for NLU",
+    "New API instance schedules only the owned session and executes the continuation through normal Harness._process: zero StubLLM calls, one controlled geocoder HTTP, saved budget retained",
+    "Repeated completed control after continuation creates no new state revision, event or source call",
+    "Foreign/non-control input and stale accepted-control versions cannot change the target session; running owned control releases its lease atomically",
+    "Existing candidate/version/TTL and catalog guards remain authoritative through the unchanged place-resume worker"
+  ],
+  "related_runs_preserved": [
+    {
+      "path": ".local/evaluation/after80-20261027/control-message-crash-related-final.xml",
+      "pass": 73,
+      "fail": 2,
+      "attribution": "Synthetic accepted queues left by new negative fixtures were consumed by unrelated legacy global startup recovery. Fixed only by retiring pending rows created by each own fixture; no production assertion was weakened."
+    },
+    {
+      "path": ".local/evaluation/after80-20261027/control-message-crash-related-isolated.xml",
+      "pass": 74,
+      "fail": 1,
+      "attribution": "Root-owned place_run precomputed-independent-operation contract changed; unrelated to atomic controls. Reported to Root/global review; old failure retained."
+    }
+  ],
+  "execution": {
+    "database": "otravel_test only; own fixtures, no truncate/schema reset/foreign row writes",
+    "actual_llm": 0,
+    "actual_external_http": 0,
+    "supplier_orders": 0,
+    "payments": 0,
+    "vpn_changes": 0,
+    "native_changes": 0
+  },
+  "remaining_boundary": {
+    "finding_id": "HARNESS-004-ACCEPTED-CONTROL-PRECOMMIT-001",
+    "status": "CLOSED_BOUNDED_AUTHENTICATED_RECOVERY_SCOPE",
+    "trigger": "Plaintext resume is durably accepted by intake_message, then process stops before the control transaction commits while session is user_paused. Existing startup claim/drain rejects paused sessions; duplicate input does not itself rerun control.",
+    "closure": "A separately authorized exact-control recovery/claim path proves that accepted pending pause/resume reaches atomic completion once before NLU, retains owner/version checks, preserves queued facts, and rejects stale input.",
+    "note": "This is before the first control commit and distinct from the closed after-commit gap. No full distributed or arbitrary crash-recovery claim.",
+    "historical_status": "OPEN",
+    "superseded_by": "docs/verification/control-precommit-recovery-20261027.json",
+    "superseded_by_sha256": "aba3855643b963b7984fcaa613323240100ea23815954cb8dc2ffcb968ec17d1"
+  },
+  "limits": [
+    "Final merged full suite remains Root-owned and is not replaced by this targeted8-case qualification",
+    "No actual model/provider quality or full-language dialogue acceptance is claimed",
+    "External read-only HTTP is not exactly-once across arbitrary post-wire crashes"
+  ]
+}

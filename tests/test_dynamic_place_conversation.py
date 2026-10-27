@@ -13,6 +13,7 @@ from otravel.api import create_app
 from otravel.config import Settings
 from otravel.geo_catalog import GeoCatalog
 from otravel.place_directory import PlaceDirectory
+from otravel.place_resolution import PlaceResolutionCoordinator
 from otravel.store import Store
 
 
@@ -27,7 +28,7 @@ class Countries:
 
 
 @asynccontextmanager
-async def world_app(monkeypatch,model):
+async def world_app(monkeypatch,model, *, legacy_country_provider=True):
     wires=[]
     def handler(request):
         wires.append(request)
@@ -45,6 +46,10 @@ async def world_app(monkeypatch,model):
     directory=PlaceDirectory(cache=catalog,transport=httpx.MockTransport(handler))
     travel=Countries()
     app=create_app(settings,store=store,llm=model,travel=travel,geo_catalog=catalog,place_directory=directory)
+    if legacy_country_provider:
+        # Retain the original provider-country contract and its call-count
+        # assertions. The new default offline source has a separate test below.
+        app.state.harness.place_resolution=PlaceResolutionCoordinator(catalog,directory,travel,offline_countries=False)
     # Append-only test DB contains unrelated queue fixtures. Exercise scheduling
     # for this session only; recovery/maintenance has its own PG acceptance.
     async def no_recovery():
@@ -52,6 +57,20 @@ async def world_app(monkeypatch,model):
     monkeypatch.setattr(app.state.harness,'start',no_recovery)
     async with app.router.lifespan_context(app), httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
         yield client,app,wires,travel
+
+
+@pytest.mark.asyncio
+async def test_default_harness_country_intake_uses_pinned_cldr_without_travel_or_model(monkeypatch):
+    model=StubLLM([])
+    async with world_app(monkeypatch,model,legacy_country_provider=False) as (client,app,wires,travel):
+        assert app.state.harness.place_resolution.offline_countries is True
+        sid,token,initial=await _session(client)
+        run,current=await _message(client,sid,token,'хочу в аргентину наверное')
+        assert run['status']=='completed' and current['trip']==initial['trip']
+        packet=current['pending_question']['context']['place_resolution']
+        assert packet['stage']=='city_query' and packet['country_ref']['country_iso2']=='AR'
+        assert packet['country_ref']['source_provider']=='unicode-cldr'
+        assert not travel.calls and not wires and not model.calls
 
 
 @pytest.mark.asyncio

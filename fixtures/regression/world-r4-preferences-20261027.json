@@ -1,0 +1,91 @@
+{
+  "case_id": "WORLD-R4-UNREQUESTED-PREFERENCES",
+  "finding_id": "HARNESS-004-UNREQUESTED-PREFERENCE-001",
+  "source_files_sha256": {
+    "turn-04.json": "e1008e16a5dadb6effcd32329dcd99c108029fc1bba14227702167198af7d579",
+    "turn4-events-dates.json": "fe52b379b010cbd9b30dfaa4a037c1bd613544c3a3c9fd0a98859bf75fb35107"
+  },
+  "raw_contract_sha256": "c24a21e3e4598237b37052b099fc190d51ec462ec1fb10257a9e357f06651c80",
+  "checked_contract_sha256": "e59c86c6070ced35f628fbcc22eab953c2f05c709989df9ca6813a091c0f285b",
+  "input": "Из Москвы, один взрослый, без детей. Заезд 10 ноября 2026, выезд 17 ноября 2026, один номер для меня. Бюджет на всю поездку 300 тысяч рублей. Гражданство Россия.",
+  "before_preferences": [],
+  "operations": [
+    {
+      "type": "set_origin",
+      "value": {
+        "city": "Москва"
+      },
+      "target_id": null
+    },
+    {
+      "type": "add_traveler",
+      "value": {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "birth_date": null
+      },
+      "target_id": null
+    },
+    {
+      "type": "upsert_group",
+      "value": {
+        "traveler_ids": [
+          "new-traveler-1"
+        ],
+        "keep_separate": false
+      },
+      "target_id": "new-group-1"
+    },
+    {
+      "type": "upsert_stay",
+      "value": {
+        "city": "Buenos Aires",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1"
+            ]
+          }
+        ],
+        "check_in": null,
+        "hotel_id": null,
+        "check_out": null,
+        "requested_nights": 7
+      },
+      "target_id": "new-stay-1"
+    },
+    {
+      "type": "set_budget",
+      "value": {
+        "currency": "RUB",
+        "amount_minor": 30000000
+      },
+      "target_id": null
+    },
+    {
+      "type": "set_preference",
+      "value": {
+        "key": "price_priority",
+        "value": "lowest_total",
+        "weight": 1
+      },
+      "target_id": null
+    },
+    {
+      "type": "set_preference",
+      "value": {
+        "key": "departure_time",
+        "value": "early_morning",
+        "weight": 1
+      },
+      "target_id": null
+    }
+  ],
+  "expected_suppressed_keys": [
+    "price_priority",
+    "departure_time"
+  ],
+  "fixture_scope": "Exact input and raw operations; only relevant before.preferences retained. Private session and run identifiers, response metrics and unrelated state are omitted."
+}

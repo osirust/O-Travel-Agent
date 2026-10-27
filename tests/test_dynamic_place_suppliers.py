@@ -312,6 +312,9 @@ class DynamicFakeTravel(FakeTravel):
 
 def test_dynamic_orchestration_memoizes_air_by_ref_and_preserves_partial_real_components():
     state, adapter = dynamic_trip(), DynamicFakeTravel()
+    # Explicit no-fallback branch retains the earlier partial-only contract.
+    # Policy-enabled dynamic transfer fallback is qualified separately.
+    state.search_policy.demo_fallback = False
     before = state.model_dump(mode="json")
     result = asyncio.run(TripSearch(adapter, clock=lambda: NOW).search(state))
     assert state.model_dump(mode="json") == before
@@ -361,6 +364,7 @@ def test_two_same_name_physical_refs_have_separate_air_lookups_and_codes():
     a = place(1, "Cordoba", "AR")
     b = place(2, "Cordoba", "ES", timezone="Europe/Madrid")
     state = dynamic_trip(a)
+    state.search_policy.demo_fallback = False
     state, _ = apply_operations(state, [
         Operation(type="upsert_stay", target_id="stay-world", value={"check_out": "2026-11-12"}),
         Operation(type="upsert_stay", target_id="stay-second", value={"city": b.canonical_name,
@@ -400,7 +404,9 @@ def test_full_dynamic_supplier_gateway_with_five_intercepted_http_requests_is_ho
     async def run():
         adapter = gateway(handler)
         try:
-            return await TripSearch(adapter, clock=lambda: NOW).search(dynamic_trip())
+            state = dynamic_trip()
+            state.search_policy.demo_fallback = False
+            return await TripSearch(adapter, clock=lambda: NOW).search(state)
         finally:
             await adapter.close()
     result = asyncio.run(run())

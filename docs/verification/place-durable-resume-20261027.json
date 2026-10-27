@@ -51,18 +51,32 @@
   "remaining_boundary": {
     "id": "HARNESS-004-PLAINTEXT-CONTROL-CRASH-OPEN",
     "fact": "The existing plaintext control path commits set_control before separately completing its accepted control run. A crash in that earlier boundary can leave the plaintext control pending for recovery; the new continuation itself is already durable.",
-    "status": "OPEN_REPORTED_TO_ROOT",
+    "status": "CLOSED_AFTER_CONTROL_COMMIT_SCOPE",
     "required": "Atomic completion of accepted plaintext control in set_control, or a proven server-owned recovery shortcut before NLU. No claim that all distributed/worker crash outcomes are closed.",
     "exact_trigger": "Process stops after Store.set_control commits USER_RESUMED and its durable marker but before Harness.control_message separately finishes the accepted plaintext resume run; recovery may treat that pending plaintext as NLU.",
     "closure_condition": "Controlled crash exactly at the commit/finish boundary, restart, zero repeated NLU/control, preserved queued facts, one execution of current continuation, stale/expired authority rejection, and completed-control idempotence.",
     "runtime_note": "docs/verification/PLACE_RESUME_RUNTIME_20261027.md",
-    "runtime_note_sha256": "f8afecc835dc2adfe83b0c178aa2c3fd50dd6ada45e00f1e6cfb99f62c20a6f4",
-    "root_decision": "Explicitly deferred to the next control-recovery checkpoint; no production expansion in this phase."
+    "runtime_note_sha256": "d0abad17c2d994a5c355fcb69b86f5bf687d1a60b6a77b95718e2f62567eb7da",
+    "root_decision": "Explicitly deferred to the next control-recovery checkpoint; no production expansion in this phase.",
+    "historical_status": "OPEN_REPORTED_TO_ROOT",
+    "superseded_by": "docs/verification/control-message-atomicity-20261027.json",
+    "superseded_by_sha256": "c702bb715bc3d9fd0d5e72a83153478e334f755fa08f2f7f52c67f3b739a2b66",
+    "closure_evidence": "Initial2PGfailures then8PG/ASGIpasses on atomic accepted-control completion; no second Harness finish transaction."
   },
   "limits": [
     "No actual provider, model, full-language or frontend acceptance is implied",
     "External read-only HTTP is not claimed exactly-once across arbitrary crashes after wire and before result persistence",
     "Current session CAS/lease and normal place_run/catalog guards remain authoritative",
     "Only the durable place action queue is newly qualified; existing generic resume/control lifecycle retains separately reported crash boundary"
-  ]
+  ],
+  "remaining_precommit_boundary": {
+    "finding_id": "HARNESS-004-ACCEPTED-CONTROL-PRECOMMIT-001",
+    "status": "CLOSED_BOUNDED_AUTHENTICATED_RECOVERY_SCOPE",
+    "trigger": "Plaintext resume is durably accepted by intake_message, then process stops before the control transaction commits while session is user_paused. Existing startup claim/drain rejects paused sessions; duplicate input does not itself rerun control.",
+    "closure": "A separately authorized exact-control recovery/claim path proves that accepted pending pause/resume reaches atomic completion once before NLU, retains owner/version checks, preserves queued facts, and rejects stale input.",
+    "note": "This is before the first control commit and distinct from the closed after-commit gap. No full distributed or arbitrary crash-recovery claim.",
+    "historical_status": "OPEN",
+    "superseded_by": "docs/verification/control-precommit-recovery-20261027.json",
+    "superseded_by_sha256": "aba3855643b963b7984fcaa613323240100ea23815954cb8dc2ffcb968ec17d1"
+  }
 }

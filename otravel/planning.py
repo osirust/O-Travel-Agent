@@ -15,7 +15,15 @@ from typing import Any
 
 from .domain import TripState, route_edges, validate_trip
 from .fx import FxUnavailable, convert_minor, validate_snapshot
-from .inventory import DemoInventory, bounded_transport_catalog
+from .inventory import (
+    PLACE_TRANSFER_CATALOGUE,
+    PLACE_TRANSFER_ID_PREFIX,
+    PLACE_TRANSFER_NOTICE,
+    PLACE_TRANSFER_PROVIDER,
+    DemoInventory,
+    bounded_place_transfer_catalog,
+    bounded_transport_catalog,
+)
 
 _PINNED_SOURCE = {"liteapi": "SANDBOX", "duffel": "SANDBOX", "hotelbeds": "SANDBOX",
                   "ratehawk": "SANDBOX", "serpapi": "LIVE_INDICATIVE", "travelpayouts": "LIVE_INDICATIVE"}
@@ -57,8 +65,12 @@ def _demo_binding(state: TripState, offer: dict) -> dict:
                 "room_assignments": deepcopy(offer["room_assignments"]), "city": offer.get("city"),
                 "checkin": offer.get("check_in"), "checkout": offer.get("check_out"), "hotel_id": offer.get("hotel_id")}
     if offer.get("kind") == "transfer":
-        return {**common, "stay_id": str(component).removeprefix("transfer-"), "traveler_ids": offer.get("traveler_ids", []),
-                "city": offer.get("city"), "date": offer.get("date")}
+        binding = {**common, "stay_id": str(component).removeprefix("transfer-"), "traveler_ids": offer.get("traveler_ids", []),
+            "city": offer.get("city"), "date": offer.get("date")}
+        if offer.get("catalogue") == PLACE_TRANSFER_CATALOGUE:
+            binding.update({key: offer.get(key) for key in ("place_id", "place_ref_version", "place_ref_sha256",
+                "country_iso2", "check_out", "capacity", "vehicle_count", "seats_per_vehicle")})
+        return binding
     return {**common, "leg_ids": [component], "traveler_ids": offer.get("traveler_ids", [])}
 
 
@@ -112,6 +124,20 @@ def _covers(state: TripState, offer: dict, binding: dict, errors: list[dict]) ->
         if stay is None or binding.get("city") != stay.city or binding.get("date") != (stay.check_in.isoformat() if stay.check_in else None):
             errors.append(_issue("invalid_transfer_binding", "Не подтверждены остановка и дата трансфера.", offer_id=oid))
             return []
+        if stay.place_id is not None:
+            ref = state.location_refs.get(stay.place_id)
+            expected = {"place_id": stay.place_id, "place_ref_version": ref.ref_version if ref else None,
+                "place_ref_sha256": ref.snapshot_sha256() if ref else None,
+                "country_iso2": ref.country_iso2 if ref else None,
+                "check_out": stay.check_out.isoformat() if stay.check_out else None}
+            if ref is None or any(binding.get(key) != value for key, value in expected.items()):
+                errors.append(_issue("transfer_place_binding_mismatch",
+                    "Трансфер связан с другим выбранным местом, страной или датами.", offer_id=oid))
+                return []
+            capacity, vehicles, seats = (binding.get(key) for key in ("capacity", "vehicle_count", "seats_per_vehicle"))
+            if (any(type(value) is not int or value <= 0 for value in (capacity, vehicles, seats))
+                    or capacity != vehicles * seats or capacity < len(people)):
+                errors.append(_issue("transfer_capacity", "Не подтверждена вместимость DEMO-трансфера для всей группы.", offer_id=oid))
         covered = [f"transfer:{stay.id}"]
     elif kind in {"flight", "train"}:
         ids = binding.get("leg_ids", [binding["leg_id"]] if "leg_id" in binding else None)
@@ -151,8 +177,12 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
     components: list[dict] = []
     demo = DemoInventory().search_trip(state, catalogue_only=True)
     transport = bounded_transport_catalog(state)
-    catalog = {offer["offer_id"]: offer for plan in demo["plans"] for offer in plan["offers"]}
-    catalog.update({offer["offer_id"]: offer for offer in transport["offers"]})
+    place_transfers = bounded_place_transfer_catalog(state)
+    catalog = ({offer["offer_id"]: offer for plan in demo["plans"] for offer in plan["offers"]}
+        if not state.location_refs else {})
+    if not state.location_refs:
+        catalog.update({offer["offer_id"]: offer for offer in transport["offers"]})
+    catalog.update({offer["offer_id"]: offer for offer in place_transfers["offers"]})
     clock = now.astimezone(timezone.utc) if isinstance(now, datetime) and now.tzinfo is not None else None
 
     def add(raw: Any, fallback: bool = False) -> None:
@@ -166,12 +196,20 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
             errors.append(_issue("invalid_offer", "Нет offer_id/details."))
             return
         local_demo = offer.get("source_type") == "DEMO"
+        if (not local_demo and (offer.get("provider") == PLACE_TRANSFER_PROVIDER
+                or offer.get("catalogue") == PLACE_TRANSFER_CATALOGUE
+                or offer["offer_id"].startswith(PLACE_TRANSFER_ID_PREFIX))):
+            errors.append(_issue("unknown_demo_snapshot",
+                "Синтетический трансфер нельзя выдавать за предложение внешнего источника.", offer_id=offer["offer_id"]))
+            return
         if local_demo:
             original = catalog.get(offer["offer_id"])
             if original is None or offer != original:
                 errors.append(_issue("unknown_demo_snapshot", "DEMO-снимок не совпадает с текущим конечным каталогом.", offer_id=offer["offer_id"]))
                 return
             binding = _demo_binding(state, offer)
+            if offer.get("catalogue") == PLACE_TRANSFER_CATALOGUE:
+                warnings.append(PLACE_TRANSFER_NOTICE)
         else:
             binding = details.get("binding")
             if not isinstance(binding, dict):
@@ -256,9 +294,18 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
             errors.append(_issue("invalid_offer_data", "Предложение не является конечным JSON-снимком."))
     covered = {key for component in components for key in component["covers"]}
     if demo_fallback and set(required) - covered:
-        candidates = list(demo["plans"][0]["offers"]) if demo["plans"] else []
+        # Dynamic refs do not expand the finite hotel/flight DEMO catalogue.
+        # Only explicitly policy-enabled, exact-ref transfer snapshots may fill
+        # its uncovered transfer components.
+        missing_before_fallback = set(required) - covered
+        transfer_only_gap = bool(missing_before_fallback) and all(
+            key.startswith("transfer:") for key in missing_before_fallback)
+        candidates = (list(place_transfers["offers"]) if state.location_refs and transfer_only_gap and not errors else
+            [] if state.location_refs else
+            list(demo["plans"][0]["offers"]) if demo["plans"] else [])
         candidate_ids = {offer["offer_id"] for offer in candidates}
-        candidates.extend(offer for offer in transport["offers"] if offer["offer_id"] not in candidate_ids)
+        if not state.location_refs:
+            candidates.extend(offer for offer in transport["offers"] if offer["offer_id"] not in candidate_ids)
         for offer in candidates:
             binding = _demo_binding(state, offer)
             local_errors: list[dict] = []
@@ -269,8 +316,11 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
             elif coverage - covered:
                 warnings.append("Частично покрытая остановка не дополняется вторым отелем молча; требуется полный согласованный набор комнат.")
         if not candidates:
-            warnings.extend(demo["questions"] + [v["message"] for v in demo["violations"]])
-            warnings.extend(transport["questions"] + [v["message"] for v in transport["violations"]])
+            if state.location_refs:
+                warnings.extend(place_transfers["questions"] + [v["message"] for v in place_transfers["violations"]])
+            else:
+                warnings.extend(demo["questions"] + [v["message"] for v in demo["violations"]])
+                warnings.extend(transport["questions"] + [v["message"] for v in transport["violations"]])
     counts = Counter(key for component in components for key in component["covers"])
     missing = [key for key in required if counts[key] == 0]
     repeated = [key for key, count in counts.items() if count > 1]
