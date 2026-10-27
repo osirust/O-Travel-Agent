@@ -1,0 +1,23 @@
+{
+  "status": "OWN_SYNTHETIC_QUEUE_CANCELLED_OUTCOME_RECONCILED_READ_ONLY",
+  "scope": "Only the obsolete paused R4 GROUP04 input. No resubmission after the helper expected the wrong HTTP status.",
+  "original_report": "prefrontend-router-r4-20261027.json",
+  "review_sha256": "595471dbf08c84601b23c0c35acb7d802855fd2cdc33cafbceaf5501fc4b2ff2",
+  "old_run_status": "pending",
+  "new_run_status": "cancelled",
+  "initial_http_status": "NOT_RETAINED",
+  "trip_semantic_unchanged": true,
+  "orders_unchanged": true,
+  "rows_deleted": 0,
+  "model_calls": 0,
+  "tool_calls": 0,
+  "source_booking_calls": 0,
+  "source_payment_calls": 0,
+  "reconciliation_requests": "GET only",
+  "automatic_or_manual_resends": 0,
+  "new_event_types": [
+    "USER_MESSAGE_RECEIVED",
+    "RUN_CANCELLED",
+    "RUN_COMPLETED"
+  ]
+}

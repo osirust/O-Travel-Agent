@@ -900,7 +900,9 @@ class Store:
         """Reserve an actual attempt in remote/local/test durable budget buckets.
 
         This is an application budget, not a query of the provider's allowance.
-        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Groq has
+        Gemini/OpenRouter share accounting and a 2/run bucket. Gemini is capped
+        at40/day; OpenRouter may explicitly opt up from caller-default40 to50/day
+        for its free request allowance, without resetting existing usage. Groq has
         an independent default40/day pool, explicitly raisable up to1000/day.
         These are engineering ceilings, not vendor quota promises. Cloudflare and Z.ai have separate
         default 40/day caller limits; dedicated evaluation may explicitly raise
@@ -933,10 +935,10 @@ class Store:
             event_provider = events.c.payload["provider"].astext
             if provider in REAL_MODEL_PROVIDERS:
                 # Independent accounts retain their own conservative daily pool.
-                # Gemini/OpenRouter continue sharing the original remote cap.
+                # Shared accounting is retained; caller defaults remain40.
                 provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
                     event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
-                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 1000 if provider == "groq" else 40)
+                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 1000 if provider == "groq" else 50 if provider == "openrouter" else 40)
                 per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))

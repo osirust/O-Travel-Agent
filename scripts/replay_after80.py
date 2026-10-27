@@ -362,8 +362,9 @@ def check_profile(health, status, evidence, llm_profile="zai"):
         require(evidence.get("limits", {}).get("cloudflare_daily_engineering_bound") == 2000,
             "explicit_cf_evaluation_limit_required")
     elif llm_profile == "openrouter-dots":
-        require(evidence.get("limits", {}).get("daily_engineering_bound") == 40,
-            "router_shared40_application_limit_required")
+        bound = evidence.get("limits", {}).get("daily_engineering_bound")
+        require(type(bound) is int and bound in {40, 50},
+            "router_shared40_or_explicit50_application_limit_required")
     elif llm_profile == "groq-qwen":
         require(type(evidence.get("limits", {}).get("groq_daily_engineering_bound")) is int
             and evidence["limits"]["groq_daily_engineering_bound"] == 1000,

@@ -123,7 +123,8 @@ async def test_499_concurrent_boundary_allows_one_local_reservation(ledger):
 @pytest.mark.asyncio
 async def test_remote_shared_40_cap_does_not_consume_local_or_test_bucket(ledger):
     await seed(ledger, ["gemini"] * 20 + ["openrouter"] * 19)
-    assert await reserve(ledger, await new_run(ledger), provider="openrouter", limit=500)
+    assert await reserve(ledger, await new_run(ledger), provider="openrouter", limit=40)
+    assert not await reserve(ledger, await new_run(ledger), provider="openrouter", limit=40)
     assert not await reserve(ledger, await new_run(ledger), provider="gemini", limit=500)
     assert await reserve(ledger, await new_run(ledger), provider="groq", limit=500)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
@@ -376,7 +377,7 @@ async def test_zai_explicit_eval_cap_is_hard_2000_and_does_not_raise_other_remot
     assert await reserve(ledger, await new_run(ledger), provider="zai", limit=100_000)
     assert not await reserve(ledger, await new_run(ledger), provider="zai", limit=100_000)
     for provider in ("groq", "gemini", "openrouter"):
-        assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=40 if provider == "groq" else 100_000)
+        assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=40 if provider in {"groq", "openrouter"} else 100_000)
     assert not await reserve(ledger, await new_run(ledger), provider="cloudflare", limit=40)
     assert await reserve(ledger, await new_run(ledger), provider="ollama", limit=1)
     assert await reserve(ledger, await new_run(ledger), provider="injected_test_adapter", limit=1)

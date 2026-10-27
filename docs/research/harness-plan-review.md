@@ -238,3 +238,11 @@ CF:Gemma/NemotronдобавленыявнымиFreeпрофилями,defaultLla
 **COMPOSE-COLDSTART-001 — CLOSED_CURRENT_DOCKER_DEMO_SCOPE.** Freshархивcb0/newPG/no18keys/no9flags:attempt1FAILиз-заНАШЕЙinternalnetwork; directbridgehealth200. Freshattempt2ordinarybridgePASS13checks/restarts; freshattempt3oneactualup--build--waitPASS11checks/DEMOquote/order/idempotence.0model/external/toolcalls,old8081/8083/8084IDs/volumesнеизменены. Owncontainersdownбез-v,volumes/imagesсохранены;sourceархивнеизменён. Это не всеОС/offlineemptycache/finalfrontend.
 
 QA25-EVAL-INTEGRITY-01: limitedpatterncheck219trackedtextfiles/0strongpatterns,notfullmanualcompliance. SECURITYscopeвсегдачастичный; зависимостиPyPI/OSVисходно0knownadvisoriesнеравнывсемуsource/OSsecurity. ФронтендконтрактуточняетLLMvsdataисточник,условияcachedplans иread-onlypreviewaction.
+
+## Текущий кандидат после GLM45 initial-room omission
+
+**HARNESS-004-MULTISTAY-INITIAL-ROOMS-001 — CONTROLLED_PASS / ACTUAL_PENDING.** Modelraw11ops сохранял города/даты/семьи/бюджет, но не rooms. Guard счёта выходил при ordinalallocation cue. Новый initial helper только для новых пустых multi-stay layouts и полной literal room→adult→knownfamily bijection, не угадывает семьи/возраст; singlecity/неуниверсальность не перехватывает, «оба» при3городах уточняет.227related; [receipt](../verification/initial-room-layout-repair-20261027.json).
+
+**H004-EXPLICIT-CHANGE-ANSWER-COVERAGE-001 — CONTROLLED_PASS / ACTUAL_PENDING.** Selector party,budget не заменяет просьбу «что изменилось»: добавляется серверная history секция с before→after. Гипотезы/цитаты/история/отрицания не становятся таким запросом; 10newpure/PG внутри81related.
+
+Дополнительный свободный ресурс подтверждёнGET/key:39/50used,11remaining,$0. Только OpenRouter ceiling50 при явном operator request, default40/Gemini40 сохраняются; счётчикине сбрасываются, max_price0/:free/nobackup/creditlimitнеизменны. Новыйfull4403PASS/0skip/147.56s; [core](../verification/initial-layout-router50-core-20261027.json). Это не actualwholelanguagePASS и не quota guarantee.

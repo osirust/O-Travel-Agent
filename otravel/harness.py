@@ -727,6 +727,18 @@ class Harness:
                             extracted.server_questions = [removal["question"]]
                             extracted.pending_context = removal["context"]
                             extracted.operation_normalizations.extend(removal["notes"])
+                        if extracted.operations and not extracted.conflicts:
+                            from .initial_room_layout import complete_initial_room_layouts
+                            initial_ops, initial_meta = complete_initial_room_layouts(session["state"], extracted.operations, run["input_text"])
+                            extracted.operations = [Operation.model_validate(op) for op in initial_ops]
+                            extracted.operation_normalizations.extend(initial_meta["notes"])
+                            if any(note.get("code") == "initial_literal_family_rooms_completed" for note in initial_meta["notes"]):
+                                extracted.unknowns = [question for question in extracted.unknowns if question_field(question) != "stay.rooms"]
+                                extracted.server_questions = [question for question in extracted.server_questions if question_field(question) != "stay.rooms"]
+                            if initial_meta["unknowns"]:
+                                extracted.unknowns = list(dict.fromkeys(initial_meta["unknowns"] + extracted.unknowns))
+                                extracted.server_questions.extend(initial_meta["unknowns"])
+                                extracted.pending_context = {**(extracted.pending_context or {}), **(initial_meta["pending_context"] or {})}
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None

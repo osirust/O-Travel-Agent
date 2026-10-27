@@ -187,7 +187,7 @@ async def test_groq_explicit1000_never_expands_shared_router_or_other_default_po
     assert await reserve(ledger, await new_run(ledger), provider="groq", limit=1000)
     assert not await reserve(ledger, await new_run(ledger), provider="groq", limit=100_000)
     for provider in ("gemini", "openrouter"):
-        assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=100_000)
+        assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=40 if provider == "openrouter" else 100_000)
     for provider in ("cloudflare", "zai"):
         assert not await reserve(ledger, await new_run(ledger), provider=provider, limit=40)
         assert await reserve(ledger, await new_run(ledger), provider=provider, limit=2000)

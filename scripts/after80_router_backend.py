@@ -31,10 +31,13 @@ PROFILE_FIELDS = (*ROUTER_KEYS, *TRAVEL_KEYS, 'SERPAPI_FREE_TIER_CONFIRMED', 'LI
 DB_FIELDS = ('POSTGRES_USER', 'POSTGRES_DB', 'POSTGRES_PASSWORD')
 EXTRA_FIELDS = {'database_setup', 'database_counts_before', 'database_counts_after', 'import_check',
                 'stopped_owned_process', 'signal', 'signal_target'}
+DAILY_BOUNDS = (40, 50)
 
 
-def new_engine():
+def new_engine(daily_bound=40):
     """Reuse pidfd/Docker/manifest guards in a fresh isolated core namespace."""
+    if type(daily_bound) is not int or daily_bound not in DAILY_BOUNDS:
+        raise ValueError('router_invalid_daily_bound')
     spec = importlib.util.spec_from_file_location('after80_router_core_' + uuid4().hex, ROOT / 'scripts/local_backend.py')
     engine = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(engine)
@@ -42,7 +45,7 @@ def new_engine():
     overrides = {'SOURCE': SOURCE, 'DATABASE': DATABASE, 'PORT': PORT, 'BASE': f'http://127.0.0.1:{PORT}',
         'RUNTIME': runtime, 'IDENTITY': runtime / 'process.json', 'LOG': runtime / 'uvicorn.log',
         'EVIDENCE': ROOT / 'docs/verification/after80-router-backend-20261026.json',
-        'SAFE_CONTEXT': {}, 'CURRENT_STAGE': 'router_preflight'}
+        'SAFE_CONTEXT': {}, 'CURRENT_STAGE': 'router_preflight', 'ROUTER_DAILY_BOUND': daily_bound}
     for key, value in overrides.items():
         setattr(engine, key, value)
     engine.ARGV = [str(engine.PYTHON), '-m', 'uvicorn', 'otravel.api:app', '--host', '127.0.0.1',
@@ -51,6 +54,18 @@ def new_engine():
     engine.recorded_process = lambda account: recorded_process(engine, account)
     engine.save_evidence = lambda action, account, extra=None: save_evidence(engine, action, account, extra)
     return engine
+
+
+def requested_daily_bound(engine):
+    value = getattr(engine, 'ROUTER_DAILY_BOUND', 40)
+    engine.require(type(value) is int and value in DAILY_BOUNDS, 'router_invalid_daily_bound')
+    return value
+
+
+def recorded_daily_bound(engine, saved):
+    value = saved.get('daily_engineering_bound', 40)
+    engine.require(type(value) is int and value in DAILY_BOUNDS, 'router_recorded_daily_bound_invalid')
+    return value
 
 
 def private_values(engine, path, allowed):
@@ -117,7 +132,7 @@ def environment(engine, database, profile):
         'DATABASE_URL': f"postgresql+asyncpg://otravel:{quote(database.password, safe='')}@{database.ip}:5432/{DATABASE}",
         'DATABASE_HOST': database.ip, 'DATABASE_PORT': '5432', 'DATABASE_USER': 'otravel',
         'DATABASE_NAME': DATABASE, 'DATABASE_PASSWORD': database.password,
-        'LLM_PROVIDER': 'openrouter', 'OPENROUTER_MODEL': MODEL, 'MAX_LLM_CALLS_PER_DAY': '40',
+        'LLM_PROVIDER': 'openrouter', 'OPENROUTER_MODEL': MODEL, 'MAX_LLM_CALLS_PER_DAY': str(requested_daily_bound(engine)),
         'MAX_LLM_CALLS_PER_RUN': '1', 'MAX_LOCAL_LLM_CALLS_PER_DAY': '0',
         'LLM_REQUEST_TIMEOUT': '45', 'LLM_MAX_OUTPUT_TOKENS': '2048', 'LLM_REASONING_ENABLED': 'false',
         'REFERENCE_FX_ENABLED': 'true',
@@ -139,6 +154,7 @@ def recorded_process(engine, account):
     engine.require(saved.get('created_by') == CREATOR and saved.get('database') == DATABASE
         and saved.get('port') == PORT and saved.get('uid') == account.pw_uid
         and saved.get('argv') == engine.ARGV and saved.get('cwd') == str(SOURCE), 'router_recorded_identity_scope_mismatch')
+    recorded_daily_bound(engine, saved)
     if saved.get('stopped_at_utc'):
         return None
     current = engine.process_identity(saved['pid'])
@@ -190,7 +206,8 @@ def save_evidence(engine, action, account, extra=None):
         'source': str(SOURCE), 'database': DATABASE, 'url': engine.BASE, 'process': identity, 'listeners': listeners,
         'current_source_manifest': manifest, 'process_start_source_manifest': saved.get('source_manifest'), 'loaded_manifest': loaded,
         'default_search': {'mode': 'HYBRID', 'hotel_provider': 'liteapi', 'flight_provider': 'duffel', 'guest_nationality': None},
-        'limits': {'daily_engineering_bound': 40, 'vendor_quota': 'UNKNOWN', 'calls_per_run': 1, 'local_calls': 0, 'fallback': False},
+        'limits': {'daily_engineering_bound': recorded_daily_bound(engine, saved) if saved else requested_daily_bound(engine),
+            'vendor_quota': 'UNKNOWN', 'calls_per_run': 1, 'local_calls': 0, 'fallback': False},
         'source_env_read': False, 'inference_requested_by_manager': False, 'supplier_requests_by_manager': False,
         'credentials_recorded': False, 'helper_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     if identity:
@@ -221,6 +238,8 @@ def start(engine, account):
     if identity:
         engine.require_owned_listener(identity)
         saved = json.loads(engine.IDENTITY.read_text())
+        engine.require(recorded_daily_bound(engine, saved) == requested_daily_bound(engine),
+            'router_daily_bound_changed_explicit_stop_start_required')
         engine.require(engine.loaded_manifest_status(saved, engine.source_manifest()).get('matches_current') is True,
             'router_source_changed_owned_restart_required')
         require_ready(engine)
@@ -240,7 +259,7 @@ def start(engine, account):
     engine.require(imported.returncode == 0, 'router_native_import_failed_details_suppressed')
     facts = json.loads(imported.stdout)
     expected = {'api_file': str(SOURCE / 'otravel/api.py'), 'provider': 'openrouter', 'model': MODEL,
-        'daily_limit': 40, 'run_limit': 1, 'local_limit': 0, 'search_mode': 'HYBRID', 'zai_environment_present': False}
+        'daily_limit': requested_daily_bound(engine), 'run_limit': 1, 'local_limit': 0, 'search_mode': 'HYBRID', 'zai_environment_present': False}
     engine.require(facts == expected, 'router_native_source_or_explicit_limits_mismatch')
     engine.require(engine.source_manifest() == manifest, 'router_source_changed_before_database_check')
     require_existing_database(engine, database)
@@ -258,7 +277,8 @@ def start(engine, account):
     identity = engine.process_identity(process.pid)
     engine.require(identity is not None, 'router_process_exited_immediately_private_log_retained')
     engine.atomic_json(engine.IDENTITY, {**identity, 'created_by': CREATOR, 'created_at_utc': engine.now(),
-        'database': DATABASE, 'port': PORT, 'source_manifest': manifest})
+        'database': DATABASE, 'port': PORT, 'source_manifest': manifest,
+        'daily_engineering_bound': requested_daily_bound(engine)})
     for _ in range(45):
         engine.require(process.poll() is None, 'router_process_exited_private_log_retained')
         try:
@@ -277,9 +297,11 @@ def start(engine, account):
         'database_counts_before': before, 'database_counts_after': after, 'import_check': facts})
 
 
-def windows_dispatch(action):
+def windows_dispatch(action, daily_bound=40):
     import winreg
 
+    if type(daily_bound) is not int or daily_bound not in DAILY_BOUNDS:
+        raise ValueError('router_invalid_daily_bound')
     base = None
     with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows\CurrentVersion\Lxss') as registry:
         for index in range(winreg.QueryInfoKey(registry)[0]):
@@ -290,7 +312,8 @@ def windows_dispatch(action):
         raise ValueError('router_distro_not_c_backed')
     path = str(Path(__file__).resolve())
     script = '/mnt/' + path[0].lower() + path[2:].replace("\\", "/")
-    result = subprocess.run(['wsl.exe', '-d', 'AegML-Hackathon', '-u', 'root', '--', 'python3', '-B', script, '--action', action],
+    result = subprocess.run(['wsl.exe', '-d', 'AegML-Hackathon', '-u', 'root', '--', 'python3', '-B', script, '--action', action,
+        '--daily-bound', str(daily_bound)],
         capture_output=True, text=True, encoding='utf-8', errors='replace', check=False)
     print(result.stdout, end='')
     if result.stderr:
@@ -301,14 +324,16 @@ def windows_dispatch(action):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--action', choices=('start', 'status', 'stop'), required=True)
-    action = parser.parse_args(argv).action
+    parser.add_argument('--daily-bound', type=int, choices=DAILY_BOUNDS, default=40)
+    arguments = parser.parse_args(argv)
+    action = arguments.action
     engine = None
     try:
         if sys.platform == 'win32':
-            return windows_dispatch(action)
+            return windows_dispatch(action, arguments.daily_bound)
         import fcntl
 
-        engine = new_engine()
+        engine = new_engine(arguments.daily_bound)
         account = engine.native_paths()
         with (engine.RUNTIME / 'controller.lock').open('a') as lock:
             os.chmod(engine.RUNTIME / 'controller.lock', 0o600)

@@ -1,6 +1,7 @@
 """Router-specific pure profile guards; shared lifecycle mechanics remain fake."""
 import importlib.util
 import json
+from copy import deepcopy
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -127,3 +128,180 @@ def test_existing_database_only_no_create_or_hba(engine):
     manager.require_existing_database(engine, db)
     assert db.receipt['database_created'] is False and db.receipt['hba_modified_by_manager'] is False
     db.create.assert_not_called(); db.allow_local_database.assert_not_called()
+
+
+def test_explicit50_env_changes_only_daily_bound_and_keeps_free_profile():
+    default, expanded = manager.new_engine(), manager.new_engine(50)
+    db = SimpleNamespace(password='synthetic', ip='172.18.0.2')
+    before, after = manager.environment(default, db, profile()), manager.environment(expanded, db, profile())
+    assert {key for key in before if before[key] != after[key]} == {'MAX_LLM_CALLS_PER_DAY'}
+    assert before['MAX_LLM_CALLS_PER_DAY'] == '40' and after['MAX_LLM_CALLS_PER_DAY'] == '50'
+    assert after['OPENROUTER_MODEL'].endswith(':free') and after['OPENROUTER_BACKUP_MODEL'] == ''
+    assert after['MAX_LLM_CALLS_PER_RUN'] == '1' and after['MAX_LOCAL_LLM_CALLS_PER_DAY'] == '0'
+
+
+@pytest.mark.parametrize('bound', [None, True, False, 40.0, 50.0, '40', '50', 0, 41, 51, 2000])
+def test_noncanonical_or_unbounded_engine_configuration_is_refused(bound):
+    with pytest.raises(ValueError, match='daily_bound'):
+        manager.new_engine(bound)
+
+
+@pytest.mark.parametrize('bound', [None, True, 50.0, '50', 2000])
+def test_manually_corrupted_requested_or_recorded_bound_is_refused(engine, bound):
+    engine.ROUTER_DAILY_BOUND = bound
+    with pytest.raises(engine.Refusal, match='daily_bound'):
+        manager.environment(engine, SimpleNamespace(password='fake', ip='172.18.0.2'), profile())
+    with pytest.raises(engine.Refusal, match='daily_bound'):
+        manager.recorded_daily_bound(engine, {'daily_engineering_bound': bound})
+
+
+def router_owned(engine, monkeypatch, bound=None):
+    current = {'pid': 12345, 'uid': 1000, 'start_ticks': 99, 'argv': deepcopy(engine.ARGV),
+        'cwd': str(manager.SOURCE), 'executable': str(engine.PYTHON.resolve())}
+    manifest = {'format': engine.MANIFEST_FORMAT, 'files': [{'path': 'otravel/api.py', 'sha256': 'fixture'}]}
+    saved = {**deepcopy(current), 'created_by': manager.CREATOR, 'database': manager.DATABASE,
+        'port': manager.PORT, 'source_manifest': manifest}
+    if bound is not None:
+        saved['daily_engineering_bound'] = bound
+    engine.IDENTITY = IdentityFile(saved)
+    monkeypatch.setattr(engine, 'process_identity', lambda _: deepcopy(current))
+    monkeypatch.setattr(engine, 'require_owned_listener', lambda _: None)
+    monkeypatch.setattr(engine, 'source_manifest', lambda: deepcopy(manifest))
+    return saved, current
+
+
+@pytest.mark.parametrize('requested,saved', [(50, 40), (40, 50), (50, None)])
+def test_reusing_different_or_legacy_bound_requires_explicit_stop_start(monkeypatch, requested, saved):
+    engine = manager.new_engine(requested)
+    router_owned(engine, monkeypatch, saved)
+    forbidden = Mock(side_effect=AssertionError('No key, DB, metadata probe or launch for mismatched bound'))
+    monkeypatch.setattr(manager, 'read_master_profile', forbidden)
+    monkeypatch.setattr(manager, 'require_ready', forbidden)
+    monkeypatch.setattr(engine, 'Database', forbidden)
+    monkeypatch.setattr(engine, 'save_evidence', forbidden)
+    with pytest.raises(engine.Refusal, match='explicit_stop_start'):
+        manager.start(engine, SimpleNamespace(pw_uid=1000))
+    forbidden.assert_not_called()
+
+
+@pytest.mark.parametrize('bound', [40, 50])
+def test_same_bound_process_reuse_never_reads_keys_or_resets_ledger(monkeypatch, bound):
+    engine = manager.new_engine(bound)
+    router_owned(engine, monkeypatch, bound)
+    forbidden = Mock(side_effect=AssertionError('Reuse must not create DB, read keys or reset counters'))
+    monkeypatch.setattr(manager, 'read_master_profile', forbidden)
+    monkeypatch.setattr(engine, 'Database', forbidden)
+    monkeypatch.setattr(manager, 'require_ready', lambda _: {})
+    saved = Mock(return_value={'status': 'reused'})
+    monkeypatch.setattr(engine, 'save_evidence', saved)
+    assert manager.start(engine, SimpleNamespace(pw_uid=1000)) == {'status': 'reused'}
+    saved.assert_called_once_with('start_reused_owned_process', SimpleNamespace(pw_uid=1000))
+    forbidden.assert_not_called()
+
+
+def test_status_reports_recorded50_with_default40_cli_engine_without_mutation(engine, monkeypatch, tmp_path):
+    router_owned(engine, monkeypatch, 50)
+    monkeypatch.setattr(engine, 'listeners', lambda: [{'address': '127.0.0.1:8084', 'pids': [12345]}])
+    engine.EVIDENCE = tmp_path / 'status.json'
+    forbidden = Mock(side_effect=AssertionError('Status cannot read keys or DB'))
+    monkeypatch.setattr(manager, 'read_master_profile', forbidden)
+    monkeypatch.setattr(engine, 'Database', forbidden)
+
+    def metadata(path):
+        if path == '/health':
+            return 200, {'database': 'ready', 'application': 'backend', 'supplier_booking': False}
+        return (200, readiness()) if path == '/api/v1/providers/status' else (200, None)
+
+    monkeypatch.setattr(engine, 'http', metadata)
+    record = manager.save_evidence(engine, 'status', SimpleNamespace(pw_uid=1000))
+    assert record['limits']['daily_engineering_bound'] == 50 and engine.ROUTER_DAILY_BOUND == 40
+    assert record['readiness']['pay_zero_policy']['sdk_max_price'] == 0
+    assert record['credentials_recorded'] is False and record['inference_requested_by_manager'] is False
+    forbidden.assert_not_called()
+
+
+def test_stopped_owned50_identity_keeps_its_recorded_bound_in_evidence(engine, monkeypatch, tmp_path):
+    saved, _ = router_owned(engine, monkeypatch, 50)
+    saved['stopped_at_utc'] = '2026-10-27T04:00:00+00:00'
+    engine.EVIDENCE = tmp_path / 'stopped.json'
+    monkeypatch.setattr(engine, 'listeners', list)
+    forbidden = Mock(side_effect=AssertionError('Stopped status cannot contact runtime, keys or DB'))
+    monkeypatch.setattr(engine, 'http', forbidden)
+    monkeypatch.setattr(engine, 'Database', forbidden)
+    record = manager.save_evidence(engine, 'status', SimpleNamespace(pw_uid=1000))
+    assert record['status'] == 'STOPPED' and record['limits']['daily_engineering_bound'] == 50
+    forbidden.assert_not_called()
+
+
+@pytest.mark.parametrize('argv,bound', [(['--action', 'status'], 40), (['--action', 'start', '--daily-bound', '50'], 50)])
+def test_windows_cli_dispatch_preserves_default_or_explicit_bound_without_runtime(monkeypatch, argv, bound):
+    monkeypatch.setattr(manager.sys, 'platform', 'win32')
+    child = Mock(return_value=0)
+    monkeypatch.setattr(manager, 'windows_dispatch', child)
+    assert manager.main(argv) == 0
+    child.assert_called_once_with('status' if bound == 40 else 'start', bound)
+
+
+@pytest.mark.parametrize('bound', ['41', '51', '2000', '50.0', 'True', '-1'])
+def test_invalid_cli_bound_exits_before_any_engine_or_runtime(monkeypatch, bound):
+    forbidden = Mock(side_effect=AssertionError('Invalid bound cannot reach runtime'))
+    monkeypatch.setattr(manager, 'new_engine', forbidden)
+    monkeypatch.setattr(manager, 'windows_dispatch', forbidden)
+    with pytest.raises(SystemExit) as error:
+        manager.main(['--action', 'start', '--daily-bound', bound])
+    assert error.value.code == 2
+    forbidden.assert_not_called()
+
+
+@pytest.mark.parametrize('imported_bound', [40, 50])
+def test_fresh50_start_attests_bound_records_identity_and_preserves_39_counter(monkeypatch, tmp_path, imported_bound):
+    engine = manager.new_engine(50)
+    engine.IDENTITY = IdentityFile()
+    engine.LOG = tmp_path / 'synthetic.log'
+    manifest = {'format': engine.MANIFEST_FORMAT, 'files': [{'path': 'otravel/api.py', 'sha256': 'fixture'}]}
+    current = {'pid': 12345, 'uid': 1000, 'start_ticks': 99, 'argv': deepcopy(engine.ARGV),
+        'cwd': str(manager.SOURCE), 'executable': str(engine.PYTHON.resolve())}
+    counts = {'sessions': 2, 'agent_runs': 3, 'agent_events': 10, 'pending_or_running': 0, 'model_call_started': 39}
+    db = SimpleNamespace(password='synthetic', ip='172.18.0.2', receipt={}, verify_same=Mock(),
+        sql=Mock(return_value='otravel|false|true'), counts=Mock(side_effect=lambda: deepcopy(counts)))
+    monkeypatch.setattr(engine, 'Database', lambda: db)
+    monkeypatch.setattr(engine, 'source_manifest', lambda: deepcopy(manifest))
+    monkeypatch.setattr(engine, 'listeners', list)
+    monkeypatch.setattr(engine, 'require_owned_listener', lambda _: None)
+    monkeypatch.setattr(engine, 'process_identity', lambda _: deepcopy(current))
+    monkeypatch.setattr(manager, 'read_master_profile', lambda _: profile())
+    monkeypatch.setattr(manager, 'require_ready', lambda _: {})
+    facts = {'api_file': str(manager.SOURCE / 'otravel/api.py'), 'provider': 'openrouter', 'model': manager.MODEL,
+        'daily_limit': imported_bound, 'run_limit': 1, 'local_limit': 0, 'search_mode': 'HYBRID', 'zai_environment_present': False}
+
+    def capture(*args, **kwargs):
+        assert kwargs['env']['MAX_LLM_CALLS_PER_DAY'] == '50'
+        return SimpleNamespace(returncode=0, stdout=json.dumps(facts))
+
+    monkeypatch.setattr(engine, 'capture', capture)
+    launched = Mock(return_value=SimpleNamespace(pid=12345, poll=lambda: None))
+    monkeypatch.setattr(manager.subprocess, 'Popen', launched)
+    identities = []
+
+    def save_identity(path, data, mode=0o600):
+        assert path is engine.IDENTITY and mode == 0o600
+        engine.IDENTITY.data = deepcopy(data)
+        identities.append(deepcopy(data))
+
+    monkeypatch.setattr(engine, 'atomic_json', save_identity)
+    monkeypatch.setattr(engine, 'save_evidence', lambda action, account, extra=None: extra)
+    account = SimpleNamespace(pw_uid=1000, pw_gid=1000)
+    if imported_bound != 50:
+        with pytest.raises(engine.Refusal, match='explicit_limits_mismatch'):
+            manager.start(engine, account)
+        launched.assert_not_called()
+        db.sql.assert_not_called()
+        assert identities == []
+    else:
+        record = manager.start(engine, account)
+        assert identities[0]['daily_engineering_bound'] == 50 and len(identities) == 1
+        assert record['import_check']['daily_limit'] == 50
+        assert record['database_counts_before']['model_call_started'] == record['database_counts_after']['model_call_started'] == 39
+        assert launched.call_args.kwargs['env']['MAX_LLM_CALLS_PER_DAY'] == '50'
+        assert launched.call_args.kwargs['env']['OPENROUTER_MODEL'].endswith(':free')
+        assert db.sql.call_count == 1 and db.sql.call_args.args[0].startswith('SELECT')

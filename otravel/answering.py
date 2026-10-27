@@ -547,7 +547,15 @@ def checked_reply(reply: str, facts: dict, text: str) -> tuple[str, list[str]]:
                 "Эти сведения сохранены. Проверенных данных для остальной части объяснения недостаточно; новый поиск и оформление не выполнялись.",
             ]
         ), ["invalid_fact_selector"]
-    return "\n\n".join(facts["sections"][section] for section in dict.fromkeys(selected)), []
+    from .operation_aliases import _without_quoted_spans
+    literal = _without_quoted_spans(" ".join(text.casefold().replace("ё", "е").split()))
+    notes = []
+    if (literal is not None and not re.search(r"\b(?:если|допустим|предположим|гипотетическ\w*|бы)\b", literal)
+            and re.search(r"\b(?:что\s+(?:именно\s+)?(?:изменилось|поменялось)|покажи(?:те)?\s+(?:изменения|разницу)|как\s+(?:изменил\w*|поменял\w*))\b", literal)
+            and "changes" not in selected):
+        selected.append("changes")
+        notes.append("explicit_saved_change_question_covered")
+    return "\n\n".join(facts["sections"][section] for section in dict.fromkeys(selected)), notes
 
 
 def canonical_source_answer(text: str, state: dict, plans: list[dict], *, selection_reference: dict | None = None) -> str | None:
