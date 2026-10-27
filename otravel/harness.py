@@ -25,7 +25,7 @@ from .llm_contract import build_operation_schema
 from .clarifications import PENDING_CONTEXT_CLEAR_KEYS, derive_pending_field, human_question, question_field, resolve_short_answer
 from .date_slots import resolve_date_answer
 from .observability import model_snapshot
-from .providers import LLMGateway, ProviderError
+from .providers import LLMGateway, ProviderError, public_rate_failure_fields
 from .store import Conflict, StoreError
 
 
@@ -432,6 +432,7 @@ class Harness:
                     problem["llm"] = exc.llm_meta
                 if isinstance(exc, ProviderError) and isinstance(exc.details, dict):
                     problem["details"] = {key: exc.details[key] for key in ("limit_source", "provider_name", "http_status", "validation_stage", "domain_error_code") if key in exc.details}
+                    problem["details"].update(public_rate_failure_fields(exc.provider, exc.details))
                 with suppress(Exception):
                     readonly_failed = getattr(exc, "readonly_answer", False)
                     reply = ("Не удалось получить объяснение. Поездка и текущий вопрос сохранены."

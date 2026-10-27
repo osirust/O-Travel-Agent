@@ -123,6 +123,19 @@ for _logger_name in ("httpx", "httpcore"):
         _logger.addFilter(_SecretFilter())
 
 
+def public_rate_failure_fields(provider: str, details: Any) -> dict:
+    """Recompute two public facts from a documented code, never provider prose."""
+    if (not isinstance(provider, str) or provider not in {'zai', 'cloudflare'}
+            or not isinstance(details, dict) or type(details.get('http_status')) is not int
+            or details['http_status'] != 429 or type(details.get('business_code')) is not int):
+        return {}
+    from .rate_failures import classify_rate_failure
+    facts = classify_rate_failure(provider, 429, {'error': {'code': details['business_code']}})
+    if facts is None or facts['business_code'] is None:
+        return {}
+    return {'business_code': facts['business_code'], 'failure_kind': facts['failure_kind']}
+
+
 class ProviderError(Exception):
     def __init__(self, code: str, message: str, retryable: bool = False,
                  provider: str = "", details: Any = None):
@@ -137,6 +150,10 @@ class ProviderError(Exception):
             # allowlisted public enum. A short secret (e.g. "id") must not
             # corrupt a policy value such as upstream_provider_shared_pool.
             self.details["limit_source"] = _limit_source(raw_details["limit_source"])
+        if isinstance(self.details, dict):
+            # Only recomputed enum/int facts may survive short-secret filtering;
+            # arbitrary provider strings and raw error bodies remain redacted.
+            self.details.update(public_rate_failure_fields(provider, raw_details))
         super().__init__(self.message)
 
     def as_dict(self) -> dict:
@@ -277,9 +294,11 @@ class _HTTPGateway:
                         details["provider_name"] = _safe_text(provider_name)
                 except (ValueError, TypeError, AttributeError):
                     pass
-            raise ProviderError("RATE_LIMITED" if status == 429 else "HTTP_ERROR",
-                                "Провайдер ограничил запросы (HTTP 429)." if status == 429 else "Провайдер отклонил запрос.",
-                                status == 429 or status >= 500, provider, details)
+            billing = public_rate_failure_fields(provider, details).get('failure_kind') == 'billing'
+            message = ("Для этого аккаунта у провайдера нет доступного API-ресурса или баланса." if billing else
+                       "Провайдер ограничил запросы (HTTP 429)." if status == 429 else "Провайдер отклонил запрос.")
+            raise ProviderError("RATE_LIMITED" if status == 429 else "HTTP_ERROR", message,
+                                (status == 429 or status >= 500) and not billing, provider, details)
         if len(response.content) > 5_000_000:
             raise ProviderError("INVALID_RESPONSE", "Ответ провайдера слишком большой.", provider=provider)
         try:

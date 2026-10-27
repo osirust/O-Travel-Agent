@@ -29,7 +29,7 @@ from .domain import DomainError, Operation, TripState, validate_trip
 from .harness import Harness, TYPED_PREFIX, encode_command, exact_control
 from .inventory import reprice_plan, validate_plan
 from .planning import assemble_plan, validate_quote
-from .providers import LLMGateway, ProviderError, TravelGateway
+from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields
 from .fx import CBRFxClient, FxUnavailable
 from .media import MEDIA_CSP_SOURCES, MediaResolver
 from .store import Conflict, NotFound, Store, StoreError
@@ -58,6 +58,7 @@ def _provider_error_public_fields(exc: ProviderError) -> dict:
         result["upstream_http_status"] = status
     if type(retry) is int and 0 <= retry <= 86400:
         result["retry_after_seconds"] = retry
+    result.update(public_rate_failure_fields(exc.provider, details))
     return result
 
 

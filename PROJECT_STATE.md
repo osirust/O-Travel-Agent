@@ -12,11 +12,11 @@
 - Actual natural HYBRID group: модель сохранила все12операций/семьи/номера/даты/бюджет/RU. Два optional вопроса заблокировали поиск. Новый gate51controlledPASS, actual повтор pending.
 - Explicit typed search этой естественно извлечённой группы дал5SANDBOX+2DEMO компонента. Preview503/upstreamLiteAPI409,causeUNKNOWN. Один прямой diagnostic prebook первого отеля200 с прежней ценой; второй не повторялся. Это не autonomous natural-agent PASS.
 - Earlier actual typed group ab378: LiteAPIprebook2+DuffelEURrefresh3+CBR→RUB,2DEMOtransfers→один BOOKED_DEMO, exact retry sameorder.0supplierbook/pay. Serp property-details:12seller names/6matching oneadult rates; exact-equivalence/bookability не доказаны. Фото10exacthotelIDs вне economic hash. ColdDockerarchive/0keys/search/preview/confirm/restart проверен.
-- Все80/697исходных реплик прочитаны; полный новый actual80 НЕ начат. Oraclesv2:20partialcases/172turns/194rules,fullybound0.106:71partial/35notexecuted; full-languagePASSне заявлен. D25050dialogs/300turns импортирован.
+- Все80/697исходных реплик прочитаны; новыеactual80 запущены3профилями, каждыйSTOPна1model/1message/0tools: ZAI1113billing,CF429unknown,Groq429unknown. Полныхдиалогов0. Oraclesv2:20partialcases/172turns/194rules,fullybound0.106:71partial/35notexecuted; full-languagePASSне заявлен. D25050dialogs/300turns импортирован.
 
 ## Следующий шаг
 
-Дождаться current full → приPASS explicit stage/secret-scan/commit/push → own Routerstop → exact committed Native install (previous5e9f..., added hotel_preservation.py+clarification_policy.py) → startRouter50. Два оставшихся free slots: actual oneWOWtransition и selectedplan3. Далее отдельный fresh HYBRID search→reprice→simconfirm и GLM4.5/4.7 availability перед all80 fixed-transcript replay. Никаких слепых retries неизвестного POST. Старые FAIL сохранять.
+Дождаться current full → Новыйfull4557PASS/0skip167.81s после publicbillingrepair, candidateготовкcommit. Nativeпокаb934/pkg12666, GroqRUNNING, акторовнет. Actual oneWOWtransition и selectedplan3 прошли21checks/2models, accountapp50used; Router stopped. Далее отдельный fresh HYBRID search→reprice→simconfirm и GLM4.5/4.7 availability перед all80 fixed-transcript replay. Никаких слепых retries неизвестного POST. Старые FAIL сохранять.
 
 Параллельно acceptance_audit сверяет основную матрицу, travel_checkout готовит actual source recipe, geo_dialogues проверяет all80 replay. Ни один не меняет текущий Native/source/tests во время full.
 
@@ -27,3 +27,5 @@
 AEGYX R16 INDEX81 PAUSED; другие AEGYX работы другого чата не трогать. Не менять Ubuntu24.04/WindowsPG/PEM/httpd8080; no WSLshutdown/dockerprune/volume delete/globalkill. Только owned PID/controller. Тестовая БД исключительноotravel_test.
 
 Контракты: docs/FRONTEND_HANDOFF.md, FRONTEND_CONTRACT.md, HOTEL_MEDIA.md, SUPPLIER_COMPARISON.md, docs/frontend/openapi.json. API IDs/источники/валюты/unknownfacts не выдумывать. DEMO/SANDBOX/LIVE_INDICATIVE отдельно, LIVE_BOOKABLE не обещать.
+
+27Oct checkpoint: новыйfreshsourcegroup5SANDBOX+2DEMO/9coverage, firsthotelprebook200, secondAntalya409business2001 точносохранён, confirm0/orders0/requirementsunchanged. НужнапонятнаяOFFER_NOT_CONFIRMED/409диагностика, неpriceguess. Mainreceipt natural-group-fresh-checkout-20261027.json; privateownDBotravel_natural_eval_20261027 сохранена.
