@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import inspect
 import json
+from collections.abc import Callable
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from hashlib import sha256
-from typing import Any, Callable
+from typing import Any
 
 from .domain import TripState, validate_trip
 from .fx import FxUnavailable, convert_minor
@@ -31,7 +32,7 @@ def _issue(code: str, message: str, **details: Any) -> dict:
 def _timestamp(value: Any) -> datetime | None:
     try:
         moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        return moment.astimezone(timezone.utc) if moment.tzinfo is not None else None
+        return moment.astimezone(UTC) if moment.tzinfo is not None else None
     except (TypeError, AttributeError, ValueError):
         return None
 
@@ -65,7 +66,7 @@ class TripSearch:
         self.fx = fx
         self.inventory = DemoInventory()
         self.max_tool_calls = min(30, max(0, int(max_tool_calls)))
-        self.clock = clock or (lambda: datetime.now(timezone.utc))
+        self.clock = clock or (lambda: datetime.now(UTC))
 
     async def _reference_fx(self, event_sink: Callable | None, *, used: int = 0) -> tuple[dict | None, dict | None, int]:
         if self.fx is None:
@@ -94,6 +95,14 @@ class TripSearch:
                      event_sink: Callable | None = None) -> dict:
         state = TripState.model_validate(state).model_copy(deep=True)
         policy = state.search_policy
+        dynamic_places = bool(state.location_refs)
+        allow_demo_fallback = policy.demo_fallback and not dynamic_places
+        if policy.mode == "DEMO" and dynamic_places:
+            return {"plans": [], "partial_plan": None, "questions": [], "warnings": [],
+                "violations": [_issue("unsupported_demo_geography",
+                    "DEMO-каталог не подтверждает географические ссылки. Выбранные места сохранены; синтетические предложения не созданы.")],
+                "source_type": "INCOMPLETE", "tool_calls_used": 0, "max_tool_calls": self.max_tool_calls,
+                "effective_demo_fallback": False, "ready_for_real_booking": False}
         if policy.mode == "DEMO":
             if self.fx is not None and state.budget and state.budget.currency.upper() != "RUB":
                 native = self.inventory.search_trip(state, catalogue_only=True)
@@ -117,7 +126,7 @@ class TripSearch:
             moment = self.clock()
             if not isinstance(moment, datetime) or moment.tzinfo is None:
                 raise ValueError("TripSearch clock must return timezone-aware datetime")
-            return moment.astimezone(timezone.utc)
+            return moment.astimezone(UTC)
         current_time()
         errors = [issue for issue in validate_trip(state) if not (issue["code"] == "unsupported_budget" and state.budget and state.budget.scope == "whole_trip")]
         if state.stays and policy.hotel_provider == "liteapi" and not policy.guest_nationality:
@@ -172,7 +181,9 @@ class TripSearch:
         def unavailable(component_id: str, code: str, message: str) -> None:
             issue = _issue(code, message, component_id=component_id)
             component_errors.append(issue)
-            suffix = " Будет рассмотрен явно обозначенный DEMO-компонент." if policy.demo_fallback else " DEMO fallback запрещён политикой."
+            suffix = (" Будет рассмотрен явно обозначенный DEMO-компонент." if allow_demo_fallback else
+                " Синтетические компоненты для географических ссылок не подставляются." if dynamic_places else
+                " DEMO fallback запрещён политикой.")
             warnings.append(f"{component_id}: {message}{suffix}")
 
         def rank(offer: dict) -> tuple:
@@ -263,6 +274,11 @@ class TripSearch:
         common = {"trip_id": state.trip_id, "state_version": state.state_version}
         for stay in state.stays:
             provider = policy.hotel_provider
+            place = state.location_refs.get(stay.place_id) if stay.place_id is not None else None
+            if place is not None and provider != "liteapi":
+                unavailable(stay.id, "UNSUPPORTED_PROVIDER_GEOGRAPHY",
+                    "Этот гостиничный источник не подтверждает выбранную географическую ссылку.")
+                continue
             if provider == "liteapi" and not policy.guest_nationality:
                 message = "Гражданство какой страны использовать для поиска отеля?"
                 unavailable(stay.id, "MISSING_NATIONALITY", message)
@@ -285,15 +301,22 @@ class TripSearch:
                            for room in assignments]
             request = {"checkin": stay.check_in.isoformat(), "checkout": stay.check_out.isoformat(),
                        "currency": currency, "occupancies": occupancies}
+            if place is not None:
+                request["place_ref"] = place.model_dump(mode="json")
             try:
                 if provider == "liteapi":
-                    if stay.hotel_id:
+                    if stay.hotel_id and place is None:
                         ids = [stay.hotel_id]
                     else:
-                        resolved = await call("resolve_hotels", stay.id, provider, stay.city, limit=3)
+                        lookup = {"city": stay.city, "place_ref": place.model_dump(mode="json")} if place is not None else stay.city
+                        resolved = await call("resolve_hotels", stay.id, provider, lookup, limit=3)
                         if not isinstance(resolved, list):
                             raise ProviderError("INVALID_RESPONSE", "Resolver не вернул список гостиниц.", provider=provider)
-                        ids = [row["id"] for row in resolved[:3] if isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]]
+                        ids = [row["id"] for row in resolved[:3] if isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]
+                            and (place is None or row.get("identity_verified") is True
+                                and row.get("place_id") == place.place_id and row.get("place_ref_sha256") == place.snapshot_sha256())]
+                        if stay.hotel_id:
+                            ids = [identifier for identifier in ids if identifier == stay.hotel_id]
                     if not ids:
                         raise ProviderError("NO_MATCHES", "Нет проверенных provider hotel IDs для города.", provider=provider)
                     request.update(hotelIds=ids, guestNationality=policy.guest_nationality)
@@ -314,12 +337,18 @@ class TripSearch:
                     hotel_id = row["details"].get("hotel_id")
                     if not hotel_id:
                         continue
+                    if place is not None and (row["details"].get("place_id") != place.place_id
+                            or row["details"].get("place_ref_sha256") != place.snapshot_sha256()):
+                        rejected.setdefault(stay.id, set()).add("place_identity_unverified")
+                        continue
                     if provider == "liteapi" and hotel_id not in request["hotelIds"]:
                         rejected.setdefault(stay.id, set()).add("unrequested_hotel_id")
                         continue
                     binding = {**common, "stay_id": stay.id, "room_ids": [room["room_id"] for room in assignments],
                                "room_assignments": assignments, "city": stay.city, "checkin": request["checkin"],
                                "checkout": request["checkout"], "hotel_id": hotel_id}
+                    if place is not None:
+                        binding.update(place_id=place.place_id, place_ref_sha256=place.snapshot_sha256())
                     candidate = await choose([row], "hotel", stay.id, provider, binding, False)
                     if candidate:
                         bound_rows.append(candidate)
@@ -333,6 +362,37 @@ class TripSearch:
             except ProviderError as exc:
                 unavailable(stay.id, exc.code, exc.message)
 
+        air_places: dict[tuple[str, str], dict | ProviderError] = {}
+
+        async def air_code(name: str, place_id: str | None, leg_id: str, provider: str) -> str | None:
+            if place_id is None:
+                return flight_iata(name)
+            if provider != "duffel":
+                raise ProviderError("UNSUPPORTED_PROVIDER_GEOGRAPHY",
+                    "Этот транспортный источник не подтверждает географическую ссылку.", provider=provider)
+            ref = state.location_refs[place_id]
+            key = (place_id, ref.snapshot_sha256())
+            if key not in air_places:
+                try:
+                    value = await call("resolve_air_place", leg_id + ":place:" + place_id, provider,
+                        {"place_ref": ref.model_dump(mode="json")})
+                    if (not isinstance(value, dict) or value.get("status") != "RESOLVED"
+                            or value.get("identity_verified") is not True or value.get("place_id") != place_id
+                            or value.get("country_iso2") != ref.country_iso2
+                            or value.get("place_ref_sha256") != ref.snapshot_sha256()
+                            or not isinstance(value.get("iata_code"), str) or len(value["iata_code"]) != 3
+                            or not value["iata_code"].isascii() or not value["iata_code"].isalpha()
+                            or value["iata_code"] != value["iata_code"].upper()):
+                        raise ProviderError("AIR_PLACE_UNVERIFIED",
+                            "Источник не подтвердил однозначный авиационный код выбранного места.", provider=provider)
+                    air_places[key] = value
+                except ProviderError as error:
+                    air_places[key] = error
+            result = air_places[key]
+            if isinstance(result, ProviderError):
+                raise result
+            return result["iata_code"]
+
         legs = list(state.legs)
         if not legs:
             # Domain permits fully specified stays with derived route in DEMO.
@@ -345,7 +405,12 @@ class TripSearch:
                 unavailable(leg.id, "MISSING_DEPARTURE_DATE", "Для provider request нужна явная дата отправления.")
                 continue
             provider = policy.flight_provider
-            origin_iata, destination_iata = flight_iata(leg.origin), flight_iata(leg.destination)
+            try:
+                origin_iata = await air_code(leg.origin, leg.origin_place_id, leg.id, provider)
+                destination_iata = await air_code(leg.destination, leg.destination_place_id, leg.id, provider)
+            except ProviderError as exc:
+                unavailable(leg.id, exc.code, exc.message)
+                continue
             if origin_iata is None or destination_iata is None:
                 unavailable(leg.id, "MISSING_PROVIDER_IATA", "Для этого участка нет подтверждённого кода аэропорта или города; маршрут не подменяется.")
                 continue
@@ -358,6 +423,13 @@ class TripSearch:
                 request["nonstop"] = True
             binding = {**common, "leg_ids": [leg.id], "origin": leg.origin, "destination": leg.destination,
                        "departure_date": leg.departure_date.isoformat(), "traveler_ids": [p.id for p in state.travelers]}
+            for endpoint in ("origin", "destination"):
+                place_id = getattr(leg, endpoint + "_place_id")
+                if place_id is not None:
+                    ref = state.location_refs[place_id]
+                    binding[endpoint + "_place_id"] = place_id
+                    binding[endpoint + "_place_ref_sha256"] = ref.snapshot_sha256()
+                    request.setdefault("place_refs", {})[endpoint] = ref.model_dump(mode="json")
             try:
                 rows = await call("search_flights", leg.id, provider, request, provider=provider)
                 chosen = await choose(rows, "flight", leg.id, provider, binding)
@@ -366,8 +438,9 @@ class TripSearch:
             except ProviderError as exc:
                 unavailable(leg.id, exc.code, exc.message)
         if state.stays:
-            warnings.append("Live transfer gateway не подключён; трансферы могут быть только явно обозначенными DEMO fallback-компонентами.")
-        plan = assemble_plan(state, selected, demo_fallback=policy.demo_fallback,
+            warnings.append("Трансферный источник для выбранных мест не подключён; синтетические цены не подставляются."
+                if dynamic_places else "Live transfer gateway не подключён; трансферы могут быть только явно обозначенными DEMO fallback-компонентами.")
+        plan = assemble_plan(state, selected, demo_fallback=allow_demo_fallback,
                              previous_plan=_comparison_input(previous_plan) if previous_plan is not None else None, now=current_time(),
                              fx_snapshot=fx_snapshot)
         warnings.extend(plan["warnings"])
@@ -381,6 +454,8 @@ class TripSearch:
                   "search_policy": policy.model_dump(mode="json")}
         if self.fx is not None:
             result["fx_error"] = fx_error
+        if dynamic_places:
+            result["effective_demo_fallback"] = False
         await emit("TRIP_SEARCH_COMPLETED", {"source_type": plan["source_type"], "ready_for_simulated_checkout": ready,
                     "tool_calls_used": used, "blocker_count": len(plan["blockers"])})
         return result

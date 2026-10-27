@@ -1,0 +1,94 @@
+{
+  "id": "DYNAMIC-GEO-PHASE2-SCHEMA-WIRE-001",
+  "status": "PURE_OPT_IN_SCHEMA_WIRE_TESTED / PROVIDER_HARNESS_AND_ACTUAL_OPEN",
+  "scope": "An additive v3 operation schema, finite compact wire and reviewed prompt projection. No new remote model/provider calls.",
+  "source_base": "0bf71be",
+  "files": [
+    {
+      "path": "otravel/llm_contract.py",
+      "sha256": "42ca33ed59710f0295cbe036fccf73c456cc6699585d2126ff3e65dc91c6cd0a"
+    },
+    {
+      "path": "otravel/groq_transport.py",
+      "sha256": "3cc3184f93a2ad356ecc8e825f400bf98215bc419d0cdf91aadf325a6cd3eb9c"
+    },
+    {
+      "path": "otravel/groq_place_prompt.py",
+      "sha256": "b8728c94ebfc94dda607952538b4788705ad08223ff736729e231f0ecdd540fe"
+    },
+    {
+      "path": "tests/test_dynamic_place_contract.py",
+      "sha256": "82e4c1852bd20e6b0d432f07fba7a26fd2c479feee091502c4166172921a279d"
+    }
+  ],
+  "api": {
+    "canonical_schema": "build_operation_schema(state, *, dynamic_places=False)",
+    "wire": "build_transport_schema/build_compact_transport_schema(schema, *, allow_dynamic_places=False)",
+    "decode": "decode_transport_response/decode_compact_transport_response(content, schema, *, allow_dynamic_places=False)",
+    "hints": "groq_place_prompt.build_place_operation_hints(schema, trusted_state) -> (text, metadata)"
+  },
+  "implemented": [
+    "Legacy default operation types and known-city enumeration remain unchanged; opt-in adds only trusted snapshot names and finite reference IDs.",
+    "Optional nullable place_id for origin/stay edits and end_place_id for route endpoint; existing domain remains authority for exact city/reference relations.",
+    "resolve_place is a non-mutating request: target_id required null; role origin/destination/route_end; kind country/city; query2..160; optional nullable ISO2; destination stay_id requires exact owned/new alias and other roles require null.",
+    "No CityRefSnapshot, coordinates or provider identifiers can be emitted in operation values.",
+    "V3 reuses exact finite type/target selector codebooks; unknown selectors, duplicate JSON keys, NaN, malformed Unicode and bounded structure failures remain rejected.",
+    "The v3 hints verifier rebuilds the entire expected schema from a trusted trip, checks exact schema equality and a reviewed resolve grammar fingerprint, removes only validated additive fields/query variant, then reuses the unchanged legacy value grammar and city-enum verifier.",
+    "V3 wrappers are appended after the full untouched old transport source; default v1/v2 behavior and separate readonly role remain intact."
+  ],
+  "verification": {
+    "final": {
+      "path": ".local/evaluation/geo-20261027/place-schema-safe-final.xml",
+      "sha256": "ee8d72c1f1909ee0f5a45c4e2295732961e149cc42922500a864ec1cc706e5d6",
+      "tests": "491",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "21.383"
+    },
+    "initial_preserved_prefix_fail": {
+      "path": ".local/evaluation/geo-20261027/place-schema-related.xml",
+      "sha256": "f0b0c9f97d5a9f2c8bfaa92ede542125675f85fd2fd86262499d314e8bad5960",
+      "tests": "482",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "20.561"
+    },
+    "prefix_repair": {
+      "path": ".local/evaluation/geo-20261027/place-schema-prefix-fixed.xml",
+      "sha256": "52f80345824d8d1aefa5f1658296ec667b7df04225a554d839ab9ecb145ca6fe",
+      "tests": "107",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "8.125"
+    },
+    "legacy_source_proof": {
+      "legacy_ref": "0bf71be",
+      "lf_normalized_preexisting_entire_source_bytes": 23541,
+      "lf_normalized_preexisting_entire_source_sha256": "aac42a4b771fb89dce02773b46a5faa3fa25b75822e1dd94013a5a05777d3aaf",
+      "current_starts_with_entire_legacy_source": true,
+      "lf_normalized_v1_prefix_bytes": 20374,
+      "lf_normalized_v1_prefix_sha256": "c3d5c4083fdc814ccecd5255e0bb74ba2532ba96985996c748636b136b851aa7"
+    },
+    "legacy_default_schema_wire_hints_metadata_10_sha_pins": {
+      "path": ".local/evaluation/geo-20261027/place-schema-legacy-baseline.json",
+      "sha256": "ab61eb8b06485013fee16f28313d9d98df233205e6dd9c64c4404fe44b13f0ed"
+    },
+    "reviewed_resolve_query_shape_sha256": "8462dd1958274b764bf8a57484434d3a91f084798bf6ae560860cb01a24de9e5",
+    "ruff": "PASS",
+    "remote_model_calls": 0,
+    "provider_http_calls": 0,
+    "database_calls": 0,
+    "native_changes": 0
+  },
+  "limits": [
+    "Trusted_state provenance must already be verified by API/Store/Catalog; structural schema and hints do not authenticate a client-supplied snapshot.",
+    "Provider/config/harness opt-in integration is owned by root and is not qualified by these pure tests.",
+    "resolve_place is deliberately rejected by apply_operations; the harness must resolve, clarify and convert a selected verified result into a separate owned domain edit.",
+    "No global actual NLU/search/availability or tariff result is claimed.",
+    "The hint text is guidance, not equivalent JSON Schema; the original full canonical schema and domain checks remain mandatory.",
+    "Default legacy models/profiles are not silently switched to dynamic geography."
+  ]
+}

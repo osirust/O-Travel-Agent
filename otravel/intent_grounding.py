@@ -13,6 +13,7 @@ from typing import Any
 
 from .domain import DomainError, canonical_city
 from .geography import _AMBIGUOUS, _COUNTRY_ALIASES, parse_destination
+from .place_refs import CityRefSnapshot
 from .provider_cities import available_search_cities
 from .route_intake import _FORMS as _BASE_FORMS
 
@@ -67,6 +68,62 @@ def _city(value: Any) -> str | None:
         return canonical_city(value) if isinstance(value, str) else None
     except DomainError:
         return None
+
+
+def _selected_ref(data: dict, role: str, target: str | None = None) -> CityRefSnapshot | None:
+    if role == "origin":
+        name, place_id = data.get("origin"), data.get("origin_place_id")
+    else:
+        stay = next((stay for stay in data.get("stays", []) if stay.get("id") == target), {})
+        name, place_id = stay.get("city"), stay.get("place_id")
+    if not isinstance(place_id, str):
+        return None
+    try:
+        ref = CityRefSnapshot.model_validate((data.get("location_refs") or {}).get(place_id))
+    except ValueError:
+        return None
+    return ref if ref.place_id == place_id and ref.canonical_name == name else None
+
+
+def _same_ref_name(value: Any, ref: CityRefSnapshot) -> bool:
+    if not isinstance(value, str):
+        return False
+    if _key(value) == _key(ref.canonical_name):
+        return True
+    # An alias is a name-only echo of the CURRENT role identity, never a
+    # country lookup or permission to bind another same-named place.
+    canonical = _FORMS.get(_key(ref.canonical_name), _city(ref.canonical_name))
+    return canonical is not None and _FORMS.get(_key(value), _city(value)) == canonical
+
+
+def _current_ref_echo(data: dict, operation: dict) -> bool:
+    kind, value = operation.get("type"), operation.get("value")
+    if kind not in {"set_origin", "upsert_stay"} or not isinstance(value, dict):
+        return False
+    ref = _selected_ref(data, "origin" if kind == "set_origin" else "destination", operation.get("target_id"))
+    return (ref is not None and _same_ref_name(value.get("city", value.get("origin")), ref)
+        and ("place_id" not in value or value["place_id"] == ref.place_id))
+
+
+def _origin_ref_country_conflict(text: str, ref: CityRefSnapshot) -> str | None:
+    """Bound an explicit origin qualifier, not the following destination.
+
+    The reviewed Russian case is ``из Москвы в России``; ``в Сербию`` is a
+    destination and must not be attached to the departure city. Broader role
+    extraction still belongs to NLU/coordinator confirmation.
+    """
+    canonical = _FORMS.get(_key(ref.canonical_name), _city(ref.canonical_name))
+    aliases = {_key(ref.canonical_name), *[name for name, city in _FORMS.items() if canonical is not None and city == canonical]}
+    names = "|".join(re.escape(name) for name in sorted(aliases, key=len, reverse=True))
+    pattern = re.compile(rf"\b(?:из|from)\s+(?:города\s+)?(?:{names})(?![\w-])\s+(?P<prep>в|in)\s+(?P<country>{_COUNTRY_NAMES})(?![\w-])")
+    for match in pattern.finditer(_unquote(text)):
+        literal = match["country"]
+        if match["prep"] == "в" and not literal.endswith(("е", "и")):
+            continue
+        code = _COUNTRIES[literal]
+        if code != ref.country_iso2:
+            return code
+    return None
 
 
 def _pending(value: Any) -> dict:
@@ -513,16 +570,40 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             meta["pending_context"] = {**(meta["pending_context"] or {}), **(context or {}), "field": field, "target_id": target_id}
         meta["replace_geo_unknowns"] = True
 
+    def selected_country_conflict(role, ref, target_id, requested_country):
+        field = "origin.city" if role == "origin" else "destination.city"
+        direction = "отправления" if role == "origin" else "назначения"
+        # Current snapshot identity outranks an inferred seed-country binding.
+        meta["unknowns"] = []
+        meta["pending_context"] = {"field": field, "target_id": target_id,
+            "selected_place_conflict": {"role": role, "current_place_id": ref.place_id,
+                "current_country_iso2": ref.country_iso2, "requested_country_iso2": requested_country}}
+        meta["pending_context_clear"] = list(dict.fromkeys([*meta["pending_context_clear"], *_CLEAR_GEO, "requested_destination"]))
+        ask(f"В поездке выбран город «{ref.canonical_name}» ({ref.country_iso2}), а сейчас указана страна {requested_country}. Какое точное место {direction} выбираем?",
+            field, target_id=target_id)
+        note("selected_place_country_qualifier_conflict", role=role, place_id=ref.place_id, country_iso2=requested_country)
+
+    def preserve_selected_destination_metadata(ref):
+        context = meta.get("pending_context") or {}
+        if any(isinstance(context.get(key), dict) and context[key].get("kind") == "city"
+                and _same_ref_name(context[key].get("name"), ref)
+                for key in ("requested_destination", "proposed_destination")):
+            meta["pending_context"] = None
+            meta["unknowns"] = []
+            meta["pending_context_clear"] = list(dict.fromkeys([*meta["pending_context_clear"], *_CLEAR_GEO, "requested_destination"]))
+            note("selected_place_seed_country_context_suppressed", place_id=ref.place_id)
+
     if scoped_city_names:
         meta['replace_geo_unknowns'] = True
         note('existing_stay_city_scopes_preserved', city_names=scoped_city_names, route_changed=False)
-    unsupported = _declared_unknown_destination(text, copied)
+    unresolved_proposals = [op for op in copied if not _current_ref_echo(data, op)]
+    unsupported = _declared_unknown_destination(text, unresolved_proposals)
     if unsupported:
         ask(f"Город «{unsupported}» не удалось однозначно распознать в текущем каталоге. Уточните страну и город назначения.",
             "destination.city", {"requested_destination": parse_destination(unsupported)["requested_destination"]})
         meta["pending_context_clear"] = list(_CLEAR_GEO)
         note("declared_unknown_destination_requires_clarification", city=unsupported)
-    catalogue_limited = _declared_unknown_destination(text, copied, outside_catalogue=True,
+    catalogue_limited = _declared_unknown_destination(text, unresolved_proposals, outside_catalogue=True,
         available_cities=available_search_cities(data))
     if catalogue_limited and not serbian_spelling:
         place = parse_destination(catalogue_limited)["requested_destination"]
@@ -641,11 +722,54 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
 
     result = []
     has_origin, has_destination = False, False
+    blocked_ref_roles = set()
     existing = {stay.get("id"): stay for stay in data.get("stays", [])}
     for op in copied:
         kind, value = op.get("type"), op.get("value")
         if not isinstance(value, dict):
             result.append(op); continue
+        if kind == "set_origin" or kind == "upsert_stay" and ("city" in value or "place_id" in value):
+            role = "origin" if kind == "set_origin" else "destination"
+            ref = _selected_ref(data, role, op.get("target_id"))
+            supplied_name = value.get("city", value.get("origin"))
+            echo = ref is not None and _same_ref_name(supplied_name, ref)
+            literal = origin if role == "origin" else destination
+            different_literal = literal is not None and ref is not None and not _same_ref_name(literal, ref)
+            if echo and not different_literal and ("place_id" not in value or value["place_id"] == ref.place_id):
+                country_conflict = _origin_ref_country_conflict(text, ref) if role == "origin" else None
+                if role == "destination" and destination and _same_ref_name(destination, ref) and country and country != ref.country_iso2:
+                    country_conflict = country
+                if country_conflict is not None:
+                    blocked_ref_roles.add(role)
+                    remainder = {key: val for key, val in value.items() if key not in {"city", "origin", "place_id"}}
+                    if kind == "upsert_stay" and remainder:
+                        result.append({**op, "value": remainder})
+                    selected_country_conflict(role, ref, op.get("target_id"), country_conflict)
+                    continue
+                kept = {**value, "city": ref.canonical_name, "place_id": ref.place_id}
+                kept.pop("origin", None)
+                result.append({**op, "value": kept})
+                if role == "origin":
+                    has_origin = True
+                else:
+                    has_destination = True
+                    preserve_selected_destination_metadata(ref)
+                note("selected_place_identity_echo_preserved", role=role, place_id=ref.place_id)
+                continue
+            if "place_id" in value and (value["place_id"] is not None or ref is not None):
+                # New/other refs require an owned directory selection. Drop the
+                # identity as one pair while preserving independent stay data.
+                remainder = {key: val for key, val in value.items() if key not in {"city", "origin", "place_id"}}
+                if kind == "upsert_stay" and remainder:
+                    result.append({**op, "value": remainder})
+                blocked_ref_roles.add(role)
+                ask("Уточните точное место и подтвердите его выбор; географическая идентичность пока не изменена.",
+                    "origin.city" if role == "origin" else "destination.city", target_id=op.get("target_id"))
+                note("unowned_place_identity_change_suppressed", role=role, target_id=op.get("target_id"))
+                continue
+            if "place_id" in value:
+                op = {**op, "value": {key: val for key, val in value.items() if key != "place_id"}}
+                value = op["value"]
         if kind == "set_origin":
             proposed = _city(value.get("city", value.get("origin")))
             if origin:
@@ -675,16 +799,34 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
             else:
                 note("unanchored_destination_suppressed", proposed=proposed, target_id=op.get("target_id"))
                 if old:
-                    remainder = {key: val for key, val in value.items() if key != "city"}
+                    remainder = {key: val for key, val in value.items() if key not in {"city", "place_id"}}
                     if remainder: result.append({**op, "value": remainder})
+                elif (blocked and facts["current"] and op.get("target_id") == target
+                        and (meta.get("pending_context") or {}).get("field") == "destination.city"
+                        and (meta.get("pending_context") or {}).get("confirmation_required") is True):
+                    # The city is unresolved, but the validated dates/night
+                    # requirement belongs to this exact new stop. Retain a
+                    # city-less draft instead of losing independent facts.
+                    remainder = {key: value[key] for key in ("check_in", "check_out", "requested_nights") if key in value}
+                    if remainder:
+                        result.append({**op, "value": remainder})
+                        note("unresolved_destination_dates_retained", target_id=target, fields=sorted(remainder))
             continue
         result.append(op)
-    if origin and not has_origin and origin != _city(data.get("origin")) and len(result) < 30:
+    if origin and not has_origin and "origin" not in blocked_ref_roles and origin != _city(data.get("origin")) and len(result) < 30:
         result.append({"type": "set_origin", "value": {"city": origin}})
         note("origin_grounded_from_current_literal", after=origin)
-    if destination and not blocked and not has_destination and len(result) < 30:
-        result.append({"type": "upsert_stay", "target_id": target, "value": {"city": destination}})
-        note("destination_grounded_from_current_literal", after=destination, target_id=target)
+    if destination and not blocked and not has_destination and "destination" not in blocked_ref_roles and len(result) < 30:
+        ref = _selected_ref(data, "destination", target)
+        if ref is not None and _same_ref_name(destination, ref) and country and country != ref.country_iso2:
+            selected_country_conflict("destination", ref, target, country)
+        else:
+            value = ({"city": ref.canonical_name, "place_id": ref.place_id}
+                if ref is not None and _same_ref_name(destination, ref) else {"city": destination})
+            if ref is not None and _same_ref_name(destination, ref):
+                preserve_selected_destination_metadata(ref)
+            result.append({"type": "upsert_stay", "target_id": target, "value": value})
+            note("destination_grounded_from_current_literal", after=destination, target_id=target)
     return result, meta
 
 

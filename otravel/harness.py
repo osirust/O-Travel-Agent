@@ -27,7 +27,7 @@ from .clarifications import PENDING_CONTEXT_CLEAR_KEYS, derive_pending_field, hu
 from .date_slots import resolve_date_answer
 from .observability import model_snapshot
 from .providers import LLMGateway, ProviderError, public_rate_failure_fields
-from .store import Conflict, StoreError
+from .store import Conflict
 
 
 TYPED_PREFIX = "\x1eOTRAVEL_TYPED_V1:"
@@ -86,6 +86,9 @@ class ModelResult(BaseModel):
     response_source: str = Field(default="llm", exclude=True)
     server_questions: list[str] = Field(default_factory=list, exclude=True)
     geo_resolution: dict[str, Any] | None = Field(default=None, exclude=True)
+    place_requests: list[dict[str, Any]] = Field(default_factory=list, exclude=True)
+    place_selection: dict[str, Any] | None = Field(default=None, exclude=True)
+    place_packet: dict[str, Any] | None = Field(default=None, exclude=True)
 
 
 OPERATION_GUIDE = {
@@ -285,8 +288,14 @@ def _requested_model(gateway: Any, provider: str) -> str:
 
 
 class Harness:
-    def __init__(self, settings: Settings, store: Any, llm: Any, travel: Any, fx: Any = None):
+    def __init__(self, settings: Settings, store: Any, llm: Any, travel: Any, fx: Any = None,
+                 geo_catalog: Any = None, place_directory: Any = None):
         self.settings, self.store, self.llm, self.travel = settings, store, llm, travel
+        self.geo_catalog, self.place_directory = geo_catalog, place_directory
+        self.place_resolution = None
+        if settings.dynamic_geography_enabled and geo_catalog is not None and place_directory is not None:
+            from .place_resolution import PlaceResolutionCoordinator
+            self.place_resolution = PlaceResolutionCoordinator(geo_catalog, place_directory, travel)
         self.fx = fx
         self.inventory = DemoInventory()
         self.tasks: dict[str, asyncio.Task] = {}
@@ -384,6 +393,23 @@ class Harness:
         return result
 
     async def _search_trip(self, state: TripState, *, session: dict | None = None, run: dict | None = None) -> dict:
+        used_places = {state.origin_place_id, state.route_policy.end_place_id}
+        used_places.update(stay.place_id for stay in state.stays)
+        used_places.update(identifier for leg in state.legs for identifier in (leg.origin_place_id, leg.destination_place_id))
+        used_places.discard(None)
+        if used_places:
+            from .geo_catalog import GeoCatalogError
+            if session is not None and run is not None:
+                await self._ensure_current_run(session, run)
+            if self.geo_catalog is None or not self.settings.dynamic_geography_enabled:
+                raise ProviderError("PLACE_REVALIDATION_REQUIRED", "Проверка выбранных мест недоступна. Условия поездки сохранены; повторите выбор места перед поиском.", provider="openmeteo")
+            try:
+                await self.geo_catalog.verify_places({key:state.location_refs[key] for key in used_places},
+                    now=datetime.now(timezone.utc), require_fresh=True, require_current=True)
+            except GeoCatalogError:
+                raise ProviderError("PLACE_REVALIDATION_REQUIRED", "Сведения о выбранном месте устарели или изменились. Условия поездки сохранены; повторите выбор места перед поиском.", provider="openmeteo") from None
+            if session is not None and run is not None:
+                await self._ensure_current_run(session, run)
         previous = None
         if session is not None:
             seen = set()
@@ -404,7 +430,33 @@ class Harness:
                     await self._ensure_current_run(session, run)
                 await self.store.save_event(session["session_id"], run["run_id"], kind, payload)
 
-        return await TripSearch(self.travel, fx=self.fx).search(state, previous_plan=previous, event_sink=audit)
+        prior = 0
+        if session is not None and run is not None:
+            prior = sum(event.get("run_id") == run["run_id"] and event["event_type"] == "TOOL_CALL_STARTED"
+                for event in await self.store.list_events(session["session_id"]))
+        result = await TripSearch(self.travel, fx=self.fx, max_tool_calls=max(0,16-prior)).search(state, previous_plan=previous, event_sink=audit)
+        if prior:
+            result["search_tool_calls_used"] = result.get("tool_calls_used",0)
+            result["tool_calls_used"] = prior+result.get("tool_calls_used",0)
+            result["max_tool_calls"] = 16
+        return result
+
+    async def _before_place_call(self, session: dict, run: dict, event: dict) -> float:
+        from .place_directory import PlaceDirectoryError
+        await self._ensure_current_run(session,run)
+        used = sum(row.get("run_id") == run["run_id"] and row["event_type"] == "TOOL_CALL_STARTED"
+            for row in await self.store.list_events(session["session_id"]))
+        if used >= 16:
+            raise PlaceDirectoryError("BUDGET_EXHAUSTED")
+        started = run.get("started_at") or run.get("created_at")
+        if isinstance(started,str):
+            started=datetime.fromisoformat(started)
+        remaining = 120-(datetime.now(timezone.utc)-started).total_seconds() if started else 120
+        if remaining <= 0:
+            raise PlaceDirectoryError("DEADLINE_EXCEEDED")
+        safe={key:event[key] for key in ("provider","operation","role","kind") if isinstance(event.get(key),str) and len(event[key])<=80}
+        await self.store.save_event(session["session_id"],run["run_id"],"TOOL_CALL_STARTED",{**safe,"kind":"geographic_directory"})
+        return min(4.0,remaining)
 
     async def _ensure_current_run(self, session: dict, run: dict) -> None:
         latest = await self.store.get_session(session["session_id"])
@@ -495,7 +547,7 @@ class Harness:
         context["current_selected_plan"] = await self._selection_reference(session)
         archived = await plan_history(self.store, session["session_id"], session["state_version"])
         context["first_shown_plan"] = archived["first_saved_plan"]
-        context["__response_schema"] = build_operation_schema(session["state"])
+        context["__response_schema"] = build_operation_schema(session["state"], dynamic_places=self.settings.dynamic_geography_enabled)
         return context
 
     async def _extract(self, session: dict, run: dict, context_override: dict | None = None) -> tuple[ModelResult, dict]:
@@ -619,6 +671,53 @@ class Harness:
                     # adapters. A response cannot label itself a no-model path.
                     extracted.response_source = "llm"
                     extracted.server_questions = []
+                    extracted.place_requests = []
+                    extracted.place_selection = None
+                    extracted.place_packet = None
+                    place_alternative_question = None
+                    raw_place_queries=[operation for operation in extracted.operations if operation.type=="resolve_place"]
+                    if not readonly and not any(operation.type!="resolve_place" for operation in extracted.operations):
+                        from .literal_intake import ground_explicit_initial_facts
+                        literal_pending=deepcopy(session.get("pending_question"))
+                        destination_targets={operation.value.get("stay_id") for operation in raw_place_queries
+                            if operation.value.get("role")=="destination"}
+                        if len(destination_targets)<=1:
+                            if destination_targets:
+                                literal_pending={**(literal_pending or {}),"field":"destination.city",
+                                    "target_id":next(iter(destination_targets))}
+                            captured=context.get("reference_now_utc")
+                            captured=datetime.fromisoformat(captured) if isinstance(captured,str) else datetime.now(timezone.utc)
+                            literal_ops,literal_meta=ground_explicit_initial_facts(session["state"],run["input_text"],
+                                extracted.operations,pending=literal_pending,now=captured)
+                            if literal_meta["recovered"]:
+                                extracted.operations=[Operation.model_validate(operation) for operation in literal_ops]
+                                extracted.speech_act="CHANGE"
+                                extracted.operation_normalizations.extend(literal_meta["notes"])
+                                extracted.conflicts.extend(literal_meta["conflicts"])
+                                extracted.unknowns.extend(literal_meta["unknowns"])
+                                extracted.server_questions.extend(literal_meta["unknowns"])
+                    queries = [operation for operation in extracted.operations if operation.type == "resolve_place"]
+                    if queries:
+                        if readonly or not self.settings.dynamic_geography_enabled or len(queries)>6:
+                            raise ProviderError("CONFIG_BLOCKED", "Поиск новых мест не включён для этой обработки.", provider=provider)
+                        from jsonschema import Draft202012Validator
+                        validator = Draft202012Validator(context["__response_schema"])
+                        for query in queries:
+                            check = {**validated_snapshot["value"], "operations":[query.model_dump(mode="json")]}
+                            if not validator.is_valid(check):
+                                raise ProviderError("INVALID_LLM_OPERATION", "Запрос географии не соответствует разрешённой схеме.",provider=provider)
+                        extracted.place_requests = [deepcopy(query.value) for query in queries]
+                        extracted.operations = [operation for operation in extracted.operations if operation.type != "resolve_place"]
+                        scopes = {}
+                        for query in extracted.place_requests:
+                            scope=(query.get("role"),query.get("stay_id"),query.get("kind"))
+                            scopes.setdefault(scope,set()).add((query.get("query"),query.get("country_iso2")))
+                        if re.search(r"\b(?:или|либо|or)\b",run["input_text"],re.IGNORECASE) and any(len(values)>1 for values in scopes.values()):
+                            question="Вы указали альтернативные направления. Какое одно направление выбираем?"
+                            place_alternative_question=question
+                            extracted.conflicts.append(question)
+                            extracted.unknowns.append(question)
+                            extracted.server_questions.append(question)
                     if readonly:
                         from .answering import valid_readonly_contract
                         if not valid_readonly_contract(validated_snapshot["value"]):
@@ -860,6 +959,10 @@ class Harness:
                         extracted.destination_request = country_context
                         if not extracted.operations and not extracted.conflicts:
                             extracted.unknowns = [location["clarification"]]
+                    if place_alternative_question:
+                        extracted.conflicts=list(dict.fromkeys([*extracted.conflicts,place_alternative_question]))
+                        extracted.unknowns=list(dict.fromkeys([*extracted.unknowns,place_alternative_question]))
+                        extracted.server_questions=list(dict.fromkeys([*extracted.server_questions,place_alternative_question]))
                     last_call = getattr(raw_extraction, "call_metadata", None) or getattr(gateway, "last_call", {})
                     actual = {"provider": str(last_call.get("provider", provider)), "model": str(last_call.get("model", requested_model)), "latency_ms": max(0, int((perf_counter() - started) * 1000))}
                     for metric in ("usage", "request_metrics", "structured_transport"):
@@ -1011,7 +1114,7 @@ class Harness:
         from .trip_answers import classify_saved_question, render_saved_answer
         from .greetings import canonical_greeting
         from .country_intake import literal_country_wish
-        from .conversation_followup import followup_kind
+        from .conversation_followup import followup_kind, nonanswer_pending_question
 
         greeting = canonical_greeting(run["input_text"])
         if greeting is not None:
@@ -1033,6 +1136,76 @@ class Harness:
                 destination_request=wish["requested_destination"],
                 pending_context={"requested_destination":wish["requested_destination"]}), None
 
+        if self.settings.dynamic_geography_enabled and self.place_resolution is not None:
+            from .country_lexicon import CountryLexiconError, literal_country_destination_request
+            try:
+                country_request = literal_country_destination_request(session["state"], run["input_text"])
+            except CountryLexiconError:
+                country_request = None
+            if country_request is not None:
+                await self._ensure_current_run(session, run)
+                return ModelResult(operations=[], control={"action":"none"}, reply="Уточняю страну и город поездки.",
+                    unknowns=[], conflicts=[], speech_act="CHANGE", response_source="place_request",
+                    place_requests=[country_request]), None
+            pending=session.get("pending_question") or {}
+            packet=(pending.get("context") or {}).get("place_resolution")
+            if isinstance(packet,dict) and str(pending.get("field","")).startswith("place."):
+                from .place_resolution import interpret_short_reply
+                if followup_kind(run["input_text"]) == "help":
+                    return ModelResult(operations=[],control={"action":"none"},reply="Да, помогу. "+pending["text"],
+                        unknowns=[],conflicts=[],speech_act="ASK",response_source="canonical_saved_answer"),None
+                short=interpret_short_reply(pending,run["input_text"],session["state"])
+                acknowledgement=run["input_text"].strip().casefold().strip(" .!")
+                if (not short.get("selection") and not short.get("question") and packet.get("stage") in {"city_choice","country_choice"}
+                        and acknowledgement in {"давай","давайте","сохраняем","сохряняем","оставляем"}):
+                    short=interpret_short_reply(pending,"да",session["state"])
+                if short.get("selection"):
+                    return ModelResult(operations=[],control={"action":"none"},reply="Проверяю выбранное место.",
+                        unknowns=[],conflicts=[],speech_act="CHANGE",response_source="place_request",place_selection=short["selection"]),None
+                if short.get("question"):
+                    context=deepcopy(pending.get("context") or {})
+                    from .place_resolution import _read_pending
+                    try:
+                        _read_pending(pending,session["state"],datetime.now(timezone.utc))
+                        valid_packet=True
+                    except (ValueError,KeyError,TypeError):
+                        valid_packet=False
+                    if not valid_packet:
+                        context={"field":"destination.city"}
+                    else:
+                        context.update(field=pending["field"],target_id=pending.get("target_id"))
+                    return ModelResult(operations=[],control={"action":"none"},reply=short["question"],
+                        unknowns=[short["question"]],server_questions=[short["question"]],conflicts=[],
+                        speech_act="CHANGE",response_source="contextual_slot",pending_context=context),None
+                if packet.get("stage")=="city_query" and followup_kind(run["input_text"])=="assent":
+                    return ModelResult(operations=[],control={"action":"none"},reply="Нужно название города. "+pending["text"],
+                        unknowns=[],conflicts=[],speech_act="ASK",response_source="canonical_saved_answer"),None
+                text=run["input_text"].strip()
+                simple=(2<=len(text)<=160 and not explicit_pause_hint(text) and not readonly_question(text)
+                    and not re.search(r"[0-9?;\n]|\b(?:что|как|почему|где|кто|когда|зачем|объясни|поясни|погоди|постой|стоп|отмен\w*|подожд\w*|пауз\w*|расскажи|ты|сам|помоги|давай|бюджет\w*|рубл\w*|номер\w*|взросл\w*|дет\w*|ребен\w*|ноч\w*|недел\w*|добав\w*|измен\w*)\b",text,re.IGNORECASE))
+                if simple and packet.get("stage") in {"city_query","city_choice"}:
+                    if text.casefold().strip(" .!") in {"нет","не надо","другой","другое","не выбираем"}:
+                        context=deepcopy(pending["context"])
+                        context["place_resolution"].update(stage="city_query",candidates=[])
+                        context.update(field="place.city_query",target_id=pending.get("target_id"))
+                        question="Какой другой город хотите рассмотреть?"
+                        return ModelResult(operations=[],control={"action":"none"},reply=question,unknowns=[question],
+                            server_questions=[question],conflicts=[],speech_act="CHANGE",response_source="contextual_slot",pending_context=context),None
+                    request={"role":packet["role"],"stay_id":packet.get("stay_id"),"kind":"city","query":text}
+                    if packet.get("country_ref"):
+                        request["country_ref"]=deepcopy(packet["country_ref"])
+                    outcome=await self.place_resolution.resolve(request,session["state"],
+                        before_call=lambda event:self._before_place_call(session,run,event))
+                    await self._ensure_current_run(session,run)
+                    if outcome.get("action")=="no_match":
+                        retry_context=await self._extraction_context(session,run)
+                        retry_context["geography_feedback"]={"status":"NO_MATCH","query":text,
+                            "country_iso2":(packet.get("country_ref") or {}).get("country_iso2"),
+                            "instruction":"Предложи исправленное написание через resolve_place, либо уточни город. Не придумывай CityRef или ID."}
+                        return await self._extract_checked_interpretation(session,run,context_override=retry_context)
+                    return ModelResult(operations=[],control={"action":"none"},reply=outcome.get("question") or outcome.get("notice") or "Уточняю место.",
+                        unknowns=[],conflicts=[],speech_act="CHANGE",response_source="place_request",place_packet=outcome),None
+
         from .geo_dialogue import resolve_geo_destination
         geo = resolve_geo_destination(session["state"], session.get("pending_question"), run["input_text"])
         if geo["handled"]:
@@ -1044,6 +1217,15 @@ class Harness:
                 speech_act="CHANGE", response_source="canonical_destination_keep" if geo["action"] == "retain_unsupported_destination" else "contextual_slot",
                 pending_context=geo.get("pending_context"), pending_context_clear=geo.get("pending_context_clear", []),
                 geo_resolution=geo), None
+
+        nonanswer = nonanswer_pending_question(session.get("pending_question"), run["input_text"], session["state"])
+        if nonanswer is not None:
+            pending=session["pending_question"]
+            await self._ensure_current_run(session, run)
+            return ModelResult(operations=[],control={"action":"none"},reply=nonanswer,
+                unknowns=[nonanswer],server_questions=[nonanswer],conflicts=[],speech_act="CHANGE",
+                response_source="contextual_slot",pending_context={**(pending.get("context") or {}),
+                    "field":pending["field"],"target_id":pending.get("target_id")}),None
 
         followup = followup_kind(run["input_text"])
         if followup is not None:
@@ -1198,7 +1380,31 @@ class Harness:
             extracted.response_source = "readonly_answer"
             metadata["reply_checks"] = {"rejected_reasons": reasons, "facts_source": "canonical_projection"}
             return extracted, metadata
-        return await self._extract(session, run)
+        return await self._extract_checked_interpretation(session, run)
+
+    async def _extract_checked_interpretation(self,session,run,context_override=None):
+        from .answering import readonly_question
+        extracted,metadata=await self._extract(session,run,context_override=context_override)
+        pending=session.get("pending_question") or {}
+        field=pending.get("field")
+        typed_field=field
+        if field=="place.city_query":
+            role=((pending.get("context") or {}).get("place_resolution") or {}).get("role")
+            typed_field="origin.city" if role=="origin" else "destination.city"
+        if (extracted.speech_act=="ASK" and not extracted.operations and not extracted.place_requests
+                and extracted.control.action in {"none","continue","wait"}
+                and not (extracted.control.action=="wait" and explicit_pause_hint(run["input_text"]))
+                and session.get("waiting_reason")=="clarification" and typed_field
+                and "?" not in run["input_text"] and not readonly_question(run["input_text"])
+                and any(question_field(question)==typed_field for question in [extracted.reply,*extracted.unknowns])):
+            question=(pending["text"] if str(field).startswith("place.") else human_question(pending,session["state"],pending.get("context")))
+            extracted.speech_act="CHANGE"
+            extracted.unknowns=[question]
+            extracted.server_questions=[question]
+            extracted.pending_context={**(pending.get("context") or {}),"field":field,"target_id":pending.get("target_id")}
+            extracted.response_source="contextual_slot"
+            extracted.operation_normalizations.append({"code":"assistant_clarification_is_not_user_information_ask","field":field})
+        return extracted,metadata
 
     async def _process(self, run: dict) -> None:
         from .conversational import (
@@ -1238,6 +1444,12 @@ class Harness:
         resumed_after_input = bool(control_events and control_events[-1]["event_type"] == "USER_RESUMED" and control_events[-1]["created_at"] > run["created_at"])
         if run["input_text"].startswith(TYPED_PREFIX):
             command = json.loads(run["input_text"][len(TYPED_PREFIX):])
+            if command.get("kind") == "resume_place":
+                if not self.settings.dynamic_geography_enabled or self.place_resolution is None:
+                    raise DomainError("dynamic_geography_disabled", "Продолжение выбора места не включено в этой конфигурации.")
+                from .place_resume import resume_deferred_place_run
+                await resume_deferred_place_run(self,session,run,state)
+                return
             if command["base_state_hash"] != state_fingerprint(session["state"]):
                 raise Conflict("Поездка изменилась после отправки формы.", "stale_state")
             kind = command["kind"]
@@ -1269,6 +1481,13 @@ class Harness:
                 questions = result.get("questions", [])
                 status = "WAITING_USER" if questions else "OPTIONS_READY" if result.get("live_offers") or result.get("weather") or result.get("plans") else "TRIP_DRAFT"
                 waiting_reason = "clarification" if questions else None
+            elif kind in {"resolve_place","select_place"}:
+                if not self.settings.dynamic_geography_enabled or self.place_resolution is None:
+                    raise DomainError("dynamic_geography_disabled","Поиск новых мест не включён в этой конфигурации.")
+                from .place_run import finish_place_run
+                await finish_place_run(self,session,run,state,request=command.get("request") if kind=="resolve_place" else None,
+                    selection=command.get("selection") if kind=="select_place" else None)
+                return
             else:
                 raise DomainError("invalid_command", "Неизвестная структурированная команда.")
         else:
@@ -1289,6 +1508,44 @@ class Harness:
             # Explicit conflicts block the *entire* batch, including otherwise
             # valid edits. Unknown fields alone may retain unambiguous changes.
             conflicts = extracted.conflicts or operation_conflicts(state, extracted.operations)
+            has_place_action = bool(extracted.place_requests or extracted.place_selection or extracted.place_packet)
+            if (self.settings.dynamic_geography_enabled and has_place_action and not conflicts
+                    and extracted.control.action == "cancel"):
+                await self.store.cancel_processing(session["session_id"], version,
+                    target_run_id=run["run_id"], result={"llm": model_meta})
+                return
+            if (self.settings.dynamic_geography_enabled and extracted.speech_act in {"ASK", "PROPOSE"} and not conflicts
+                    and not (extracted.control.action == "wait" and explicit_pause_hint(run["input_text"])
+                        and not resumed_after_input)
+                    and (extracted.place_requests or extracted.place_selection or extracted.place_packet)):
+                # A directory operation is not permission to change a trip.
+                # Unresolved informational geography needs its own fact-only path.
+                await self.store.finish_run(run["run_id"], version, None, session["status"],
+                    "Вы хотите выбрать это направление для поездки или только обсудить его?",
+                    pending_question=session.get("pending_question"), waiting_reason=session.get("waiting_reason"),
+                    changes=[], result={"no_changes":True,"response_source":"unresolved_place_question",
+                        "informational_geography":"clarification_required", "llm":model_meta})
+                return
+            if (self.settings.dynamic_geography_enabled and self.place_resolution is not None and not conflicts
+                    and extracted.control.action in {"none","continue","wait","resume"}
+                    and (extracted.place_requests or extracted.place_selection or extracted.place_packet)):
+                from .place_run import finish_place_run
+                await finish_place_run(self,session,run,state,
+                    request=extracted.place_requests[0] if extracted.place_requests else None,
+                    selection=extracted.place_selection,
+                    operations=extracted.operations if extracted.speech_act == "CHANGE" else (),model_meta=model_meta,
+                    control="wait" if extracted.control.action=="wait" and explicit_pause_hint(run["input_text"]) and not resumed_after_input else "none",
+                    remaining_requests=extracted.place_requests[1:],precomputed_packet=extracted.place_packet)
+                return
+            if (self.settings.dynamic_geography_enabled and self.place_resolution is not None and not conflicts
+                    and extracted.speech_act=="CHANGE" and extracted.control.action in {"none","continue","wait","resume"}
+                    and not extracted.unknowns
+                    and not (extracted.response_source=="contextual_slot" and extracted.pending_context is not None and extracted.unknowns)
+                    and str((session.get("pending_question") or {}).get("field","")).startswith("place.")):
+                from .place_run import finish_place_run
+                await finish_place_run(self,session,run,state,operations=extracted.operations,model_meta=model_meta,
+                    control="wait" if extracted.control.action=="wait" and explicit_pause_hint(run["input_text"]) and not resumed_after_input else "none")
+                return
             if model_meta is None and extracted.response_source == "canonical_destination_keep":
                 if conflicts:
                     raise DomainError("conflicting_operations", conflicts[0], conflicts)
@@ -1612,6 +1869,9 @@ class Harness:
             date_packet = clarification_metadata.get("date_proposal")
             if binding.get("field") != "destination.city":
                 clarification_metadata.pop("geo_destination", None)
+            if not str(binding.get("field","")).startswith("place."):
+                for key in ("place_resolution","place_remaining_requests","place_deferred_action"):
+                    clarification_metadata.pop(key,None)
             if binding.get("field") != "leg.mode":
                 clarification_metadata.pop("leg_mode_proposal", None)
             if (binding.get("field") not in {"stay.check_in", "stay.check_out"}

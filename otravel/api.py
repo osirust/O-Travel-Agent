@@ -20,7 +20,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse, FileResponse
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from jsonschema import Draft202012Validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from sqlalchemy import text as sql_text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -33,6 +34,9 @@ from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_fai
 from .fx import CBRFxClient, FxUnavailable
 from .media import MEDIA_CSP_SOURCES, MediaResolver
 from .store import Conflict, NotFound, Store, StoreError
+from .geo_catalog import GeoCatalog, GeoCatalogError
+from .llm_contract import build_operation_schema
+from .place_directory import PlaceDirectory
 
 
 _PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "api_token", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
@@ -131,6 +135,30 @@ class LiveSearch(Body):
     demo_fallback: StrictBool = False
 
 
+class ResolvePlace(Body):
+    client_message_id: str = Field(min_length=1, max_length=200, strict=True)
+    expected_version: int = Field(ge=0, strict=True)
+    role: Literal["origin", "destination", "route_end"]
+    kind: Literal["country", "city"]
+    query: str = Field(min_length=2, max_length=160, strict=True)
+    country_iso2: str | None = Field(default=None, pattern=r"^[A-Z]{2}$", strict=True)
+    stay_id: str | None = Field(default=None, min_length=1, max_length=128, strict=True)
+
+    @field_validator("query")
+    @classmethod
+    def meaningful_query(cls, value: str) -> str:
+        if len(value.strip()) < 2 or any(ord(char) < 32 or ord(char) == 127 for char in value):
+            raise ValueError("Укажите название страны или города.")
+        return value
+
+
+class SelectPlace(Body):
+    client_message_id: str = Field(min_length=1, max_length=200, strict=True)
+    expected_version: int = Field(ge=0, strict=True)
+    resolution_id: str = Field(min_length=1, max_length=160, strict=True)
+    candidate_id: str = Field(min_length=1, max_length=160, strict=True)
+
+
 class Preview(Body):
     plan_id: str = Field(min_length=1, max_length=120)
     state_version: int = Field(ge=0, strict=True)
@@ -144,21 +172,31 @@ class Confirm(Body):
     confirmed: StrictBool
 
 
-def create_app(settings: Settings | None = None, store: Any = None, llm: Any = None, travel: Any = None, fx: Any = None, media: Any = None) -> FastAPI:
+def create_app(settings: Settings | None = None, store: Any = None, llm: Any = None, travel: Any = None, fx: Any = None, media: Any = None,
+               geo_catalog: Any = None, place_directory: Any = None) -> FastAPI:
     settings = settings or Settings.from_env()
     repository = store if store is not None else Store(settings.database_url)
     model = llm if llm is not None else LLMGateway(settings.provider_settings())
     gateway = travel if travel is not None else TravelGateway(settings.provider_settings())
     rates = fx if fx is not None else CBRFxClient() if settings.reference_fx_enabled else None
     pictures = media if media is not None else MediaResolver(gateway)
-    harness = Harness(settings, repository, model, gateway, fx=rates)
+    catalog = (geo_catalog if geo_catalog is not None else GeoCatalog(repository.engine)) if settings.dynamic_geography_enabled else None
+    directory = (place_directory if place_directory is not None else PlaceDirectory(cache=catalog)) if settings.dynamic_geography_enabled else None
+    harness_options = {"fx": rates}
+    if settings.dynamic_geography_enabled:
+        harness_options.update(geo_catalog=catalog, place_directory=directory)
+    harness = Harness(settings, repository, model, gateway, **harness_options)
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         try:
             await repository.initialize()
+            if catalog is not None:
+                await catalog.initialize()
             await harness.start()
         except Exception:
+            if directory is not None:
+                await directory.close()
             await repository.close()
             await model.close()
             await gateway.close()
@@ -173,6 +211,8 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await gateway.close()
             if rates is not None:
                 await rates.close()
+            if directory is not None:
+                await directory.close()
             await repository.close()
 
     app = FastAPI(title="O!Travel Agent Backend", version="0.1.0", lifespan=lifespan,
@@ -181,6 +221,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     app.state.llm, app.state.travel, app.state.settings = model, gateway, settings
     app.state.fx = rates
     app.state.media = pictures
+    app.state.geo_catalog, app.state.place_directory = catalog, directory
     origins = [value.strip().rstrip("/") for value in os.getenv("CORS_ORIGINS", "").split(",") if value.strip() and value.strip() != "*"]
     if origins:
         app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type"], allow_credentials=False)
@@ -218,6 +259,11 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def fx_error(_request, exc):
         return error(exc.code, exc.message, 503, True)
 
+    @app.exception_handler(GeoCatalogError)
+    async def geo_catalog_error(_request, exc):
+        unavailable = exc.code in {"catalog_unavailable", "catalog_integrity"}
+        return error(exc.code, exc.message, 503 if unavailable else 422, unavailable)
+
     @app.exception_handler(SQLAlchemyError)
     @app.exception_handler(ConnectionError)
     @app.exception_handler(TimeoutError)
@@ -248,12 +294,16 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                 normalized = key.casefold().replace("-", "_")
                 if normalized in {"api_key", "apikey", "token", "authorization", "password", "secret", "headers", "url", "endpoint"} or normalized.endswith(("_api_key", "_access_token", "_api_secret", "_auth_key")):
                     raise HTTPException(400, "Ключи и адреса HTTP задаются только серверной конфигурацией.")
+                if (normalized in {"place_ref", "place_refs", "city_ref", "location_ref", "location_refs", "resolved_places", "provider_bindings"}
+                        or normalized.endswith(("_place_ref", "_city_ref"))):
+                    raise HTTPException(400, "Географические снимки и связи поставщиков подтверждаются только серверным справочником.")
                 no_credentials(item)
         elif isinstance(value, list):
             for item in value:
                 no_credentials(item)
 
-    async def submit(session: dict, client_id: str, expected_version: int | None, kind: str, *, schedule: bool = True, **fields: Any) -> dict:
+    async def submit(session: dict, client_id: str, expected_version: int | None, kind: str, *, schedule: bool = True,
+                     validate_new: Any = None, **fields: Any) -> dict:
         no_credentials(fields)
         # Reuse the original server-side fingerprint on an identical replay.
         incoming = {"kind": kind, **fields}
@@ -268,6 +318,8 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                     if payload == incoming:
                         encoded = previous_text
                 break
+        if encoded is None and validate_new is not None:
+            validate_new()
         encoded = encoded or encode_command(kind, session, **fields)
         if len(encoded) > max(16_000, settings.max_message_chars * 4):
             raise HTTPException(413, "Структурированная команда слишком велика.")
@@ -308,6 +360,11 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     @app.post("/api/v1/sessions", status_code=201)
     async def create_session(body: CreateSession | None = None):
         state = body.initial_trip if body and body.initial_trip else TripState()
+        if state.location_refs:
+            if not settings.dynamic_geography_enabled or catalog is None:
+                raise DomainError("place_provenance_required", "Сначала подтвердите новые места через серверный географический справочник.")
+            await catalog.verify_places(state.location_refs, now=datetime.now(timezone.utc),
+                require_fresh=True, require_current=True)
         if "search_policy" not in state.model_fields_set and settings.default_search_mode == "HYBRID":
             state.search_policy = type(state.search_policy)(mode="HYBRID",
                 hotel_provider=settings.default_hotel_provider, flight_provider=settings.default_flight_provider)
@@ -322,10 +379,46 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def get_session(session_id: str, authorization: str | None = Header(default=None)):
         return _session_public(await owned(session_id, authorization))
 
+    @app.get("/api/v1/sessions/{session_id}/operation-schema")
+    async def operation_schema(session_id: str, state_version: int | None = Query(default=None, ge=0),
+                               authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if state_version is not None and state_version != session["state_version"]:
+            raise Conflict("Версия поездки изменилась; обновите схему операций.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"],
+            "schema": build_operation_schema(session["state"], dynamic_places=settings.dynamic_geography_enabled)})
+
+    @app.post("/api/v1/sessions/{session_id}/places/resolve", status_code=202)
+    async def resolve_place(session_id: str, body: ResolvePlace, authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if not settings.dynamic_geography_enabled or catalog is None or directory is None:
+            raise Conflict("Динамический географический справочник не включён.", "dynamic_geography_not_configured")
+        request = body.model_dump(exclude={"client_message_id", "expected_version"}, mode="json")
+        envelope = {"operations": [{"type": "resolve_place", "target_id": None, "value": request}],
+            "control": {"action": "none"}, "reply": "", "unknowns": [], "conflicts": [],
+            "speech_act": "CHANGE", "information_subject": None}
+        def validate_new():
+            if not Draft202012Validator(build_operation_schema(session["state"], dynamic_places=True)).is_valid(envelope):
+                raise HTTPException(422, "Роль и адрес разрешения места не соответствуют текущей схеме поездки.")
+        # An identical stored request reuses its original fingerprint even if a
+        # later valid edit removed its old target. It never becomes new work.
+        return await submit(session, body.client_message_id, body.expected_version, "resolve_place",
+            validate_new=validate_new, request=request)
+
+    @app.post("/api/v1/sessions/{session_id}/places/select", status_code=202)
+    async def select_place(session_id: str, body: SelectPlace, authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if not settings.dynamic_geography_enabled or catalog is None or directory is None:
+            raise Conflict("Динамический географический справочник не включён.", "dynamic_geography_not_configured")
+        selection = body.model_dump(exclude={"client_message_id", "expected_version"}, mode="json")
+        return await submit(session, body.client_message_id, body.expected_version, "select_place", selection=selection)
+
     @app.get("/api/v1/sessions/{session_id}/messages")
     async def get_messages(session_id: str, authorization: str | None = Header(default=None)):
         await owned(session_id, authorization)
         rows = await repository.list_messages(session_id)
+        from .place_resume import read_resume_marker
+        rows = [row for row in rows if not (row.get("role") == "system" and read_resume_marker(row.get("text")))]
         for row in rows:
             if row["text"].startswith(TYPED_PREFIX):
                 row["text"], row["kind"] = "Структурированная команда из формы.", "command"
@@ -375,7 +468,11 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                 await harness.cancel_control(await repository.get_run(accepted["run_id"]))
                 accepted["status"] = (await repository.get_run(accepted["run_id"]))["status"]
             return JSONResponse(_clean(accepted), status_code=202)
-        return _session_public(await harness.control(session_id, body.action))
+        controlled = await harness.control(session_id, body.action)
+        result = _session_public(controlled)
+        if controlled.get("resume_run_id"):
+            result["resume_run_id"] = controlled["resume_run_id"]
+        return result
 
     @app.post("/api/v1/sessions/{session_id}/demo", status_code=202)
     async def demo(session_id: str, body: Search | None = None, authorization: str | None = Header(default=None)):

@@ -26,8 +26,11 @@ class Settings:
     reference_fx_enabled: bool = False
     max_groq_llm_calls_per_day: int = 40
     max_gigachat_llm_calls_per_day: int = 40
+    dynamic_geography_enabled: bool = False
 
     def __post_init__(self):
+        if type(self.dynamic_geography_enabled) is not bool:
+            raise ValueError("Dynamic geography flag must be boolean")
         for value, allowed in (
             (self.default_search_mode, {"DEMO", "HYBRID"}),
             (self.default_hotel_provider, {"liteapi", "serpapi"}),
@@ -64,6 +67,7 @@ class Settings:
             reference_fx_enabled=enabled("REFERENCE_FX_ENABLED"),
             max_groq_llm_calls_per_day=int(os.getenv("MAX_GROQ_LLM_CALLS_PER_DAY", "40")),
             max_gigachat_llm_calls_per_day=int(os.getenv("MAX_GIGACHAT_LLM_CALLS_PER_DAY", "40")),
+            dynamic_geography_enabled=enabled("DYNAMIC_GEOGRAPHY_ENABLED"),
         )
 
     def provider_settings(self) -> dict[str, Any]:
@@ -81,6 +85,7 @@ class Settings:
         ]
         values: dict[str, Any] = {key: os.getenv(key, "") for key in keys}
         values.update({
+            "DYNAMIC_GEOGRAPHY_ENABLED": enabled("DYNAMIC_GEOGRAPHY_ENABLED"),
             "GROQ_TRANSPORT_VERSION": os.getenv("GROQ_TRANSPORT_VERSION", "1"),
             "GEMINI_MODEL": os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
             "OPENROUTER_MODEL": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"),

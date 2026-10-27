@@ -1,2 +1,4 @@
 # Preserve the verified public CA download exactly, including its original EOL.
 certs/gigachat-root-ca.pem -text
+# The CLDR reference is verified by its exact byte hash on Windows and WSL.
+otravel/data/* -text whitespace=cr-at-eol

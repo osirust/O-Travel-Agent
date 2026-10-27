@@ -249,6 +249,10 @@ def _pending_after_control(session: dict, version: int) -> dict | None:
     if (not isinstance(pending, dict) or type(pending.get("state_version")) is not int
             or pending["state_version"] != before):
         return None
+    original_context=pending.get("context") or {}
+    if isinstance(original_context,dict) and ("place_resolution" in original_context or "place_deferred_action" in original_context):
+        from .place_run import rebase_place_control
+        return rebase_place_control(pending,session["state"],version)
     pending["state_version"] = version
     context = pending.get("context")
     if isinstance(context, dict):
@@ -664,6 +668,27 @@ class Store:
             session = await self._session(conn, session_id, lock=True)
             version = session["state_version"] + 1
             pending = _pending_after_control(session, version)
+            from .place_resume import OWNER as deferred_owner
+            from .place_resume import resume_marker, stale_place_question
+            old_context = (session.get("pending_question") or {}).get("context") or {}
+            place_owned = isinstance(old_context, dict) and (
+                "place_deferred_action" in old_context or "place_resolution" in old_context)
+            if action == "resume" and pending is None and place_owned:
+                pending = stale_place_question(version, str(uuid4()))
+            resume_run_id = None
+            context = pending.get("context") if isinstance(pending, dict) else None
+            deferred = context.get("place_deferred_action") if isinstance(context, dict) else None
+            if action == "resume" and isinstance(deferred, dict) and deferred.get("owner") == deferred_owner:
+                resume_run_id, message_id, now = str(uuid4()), str(uuid4()), _now()
+                deferred["resume_id"] = deferred.get("resume_id") or str(uuid4())
+                deferred["resume_run_id"] = resume_run_id
+                client_id = "place-resume:" + resume_run_id
+                text = resume_marker(session["trip_id"], deferred["resume_id"], resume_run_id)
+                await conn.execute(insert(messages).values(id=message_id, session_id=session_id,
+                    run_id=resume_run_id, client_message_id=client_id, role="system", text=text, created_at=now))
+                await conn.execute(insert(runs).values(id=resume_run_id, session_id=session_id,
+                    input_message_id=message_id, client_message_id=client_id, input_text=text,
+                    request_expected_version=None, based_version=version, status="pending", created_at=now))
             values = dict(
                 state_version=version, state=_stamped(session["state"], version),
                 status="WAITING_USER" if action == "pause" or pending else "TRIP_DRAFT",
@@ -677,11 +702,32 @@ class Store:
             await self._invalidate_quotes(conn, session_id)
             await self._revision(conn, session, None, [{"op": action}])
             await self._event(conn, session, None, "USER_PAUSED" if action == "pause" else "USER_RESUMED", {})
+            if resume_run_id is not None:
+                await self._event(conn, session, resume_run_id, "PLACE_RESUME_QUEUED", {})
             if reply:
                 if action == "resume" and pending and isinstance(pending.get("text"), str):
                     reply += " " + pending["text"]
                 await self._assistant(conn, session_id, None, reply)
-            return _public(session)
+            visible = _public(session)
+            if resume_run_id is not None:
+                visible["resume_run_id"] = resume_run_id
+            return visible
+
+    async def get_place_resume_marker(self, run_id: str) -> dict | None:
+        """Read exact server-message provenance by the indexed run/message IDs."""
+        from .place_resume import read_resume_marker
+        async with self.engine.connect() as conn:
+            row = (await conn.execute(select(runs, messages.c.role.label("input_role"),
+                messages.c.text.label("message_text"), messages.c.session_id.label("message_session"))
+                .join(messages, messages.c.id == runs.c.input_message_id)
+                .where(runs.c.id == run_id).limit(1))).mappings().first()
+        if row is None or row["input_role"] != "system" or row["message_session"] != row["session_id"]:
+            return None
+        marker = read_resume_marker(row["input_text"])
+        if (marker is None or row["message_text"] != row["input_text"] or marker["resume_run_id"] != run_id
+                or row["client_message_id"] != "place-resume:" + run_id):
+            return None
+        return {"marker": marker, "status": row["status"], "session_id": row["session_id"]}
 
     async def create_quote(self, session_id: str, expected_version: int, plan: dict,
                            expires_seconds: int = 600) -> dict:

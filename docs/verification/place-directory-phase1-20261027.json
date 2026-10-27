@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-GLOBAL-PLACE-DIRECTORY-PHASE1-001",
+  "status": "MOCK_CLIENT_AND_CATALOG_SHAPE_BOUNDARY_PASS_RUNTIME_INTEGRATION_OPEN",
+  "scope": "New isolated keyless city-directory client and pure validators only; no shared Harness/provider/domain edits in this task.",
+  "files": {
+    "otravel/place_directory.py": "bb7185d293d0cd4bee9c958b5cf5bb836cd789ee9a7884f9e3838de8d157b0ac",
+    "tests/test_place_directory.py": "57acbef73a95b0c81b1509f2fd9bb1d58f229f2d2d937421af5d479acbcc5095"
+  },
+  "interfaces": {
+    "client": "PlaceDirectory(cache=None,transport=None,timeout=4,clock=None)",
+    "search": "search_city(query,country_code=None,language=ru,*,before_call,count=5,role=city)",
+    "get": "get_place(identifier,language=en,*,before_call,role=city)",
+    "admission": "before_call(safe_event) -> await positive finite remaining seconds; called only before an actual cache-miss wire request.",
+    "cache": "async get_directory(key,*,now); async put_directory(key,envelope,*,now)",
+    "validators": [
+      "validate_directory_key(value)->canonical bounded dict",
+      "validate_directory_candidate(value)->copied raw fact dict, not external provenance/consent"
+    ],
+    "error": "PlaceDirectoryError(ValueError) with fixed code/message and validated numeric HTTP/retry facts only"
+  },
+  "invariants": [
+    "Fixed HTTPS OpenMeteo search/get; trust_env=false, redirects=false, retries=0; no arbitrary URL or credentials.",
+    "City candidates use PPL* source records only; airports/AIRP and country/PCLI do not become cities.",
+    "No automatic first/capital/population choice; search returns candidates and explicit truncation.",
+    "Count1/full windows cannot be cached as proved unique; count is part of the key.",
+    "Stable source IDs/country/admin/finite coordinates/IANA timezone and row hash; no internal place_id/ref_version generated.",
+    "Streaming response capped at2MB; result records atrequested count<=5; request keys and source fields bounded.",
+    "All HTTP admission finishes before wire; total network timeout limited by both configured timeout and remaining seconds.",
+    "Cache hit costs0; positive/ambiguousTTL<=24h, negative<=900s; errors are not cached as no_match.",
+    "Bounded32inflight queries/128waiters; success/error shared; owner/waiter cancellation cleans map; no waiter retry.",
+    "External/SQL/callback error text and raw headers/body are not exported."
+  ],
+  "verification": {
+    "pytest": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "68",
+      "time": "1.063",
+      "timestamp": "2026-10-27T15:18:25.065065+03:00",
+      "hostname": "Libvi21"
+    },
+    "junit": ".local\\evaluation\\after80-20261027\\place-directory-freeze-final.xml",
+    "junit_sha256": "e8a4d60db7439139f8fc40b3684c8d5d0b00ab867a8d0d6f3066a0f70adb3b86",
+    "ruff": "PASS",
+    "pure_catalog_boundary": "PASS: directory raw facts -> GeoCatalog._envelope -> _fact_snapshot; HTTP0/SQL0",
+    "original_artifacts": [
+      ".local/evaluation/after80-20261027/place-directory-initial.xml:63PASS",
+      ".local/evaluation/after80-20261027/place-directory-final.xml:intermediate test-edit indentation collection error",
+      ".local/evaluation/after80-20261027/place-directory-corrected-final.xml:67PASS"
+    ],
+    "full_application_suite": "NOT_RUN_BY_THIS_TASK"
+  },
+  "execution": {
+    "actual_HTTP": 0,
+    "actual_LLM": 0,
+    "tourism_API": 0,
+    "DB_reads_or_writes": 0,
+    "Native": 0,
+    "GigaChat": 0,
+    "VPN_proxy_route_or_service_changes": 0
+  },
+  "prior_actual_contract_probe": "docs/verification/openmeteo-geocoding-ar-20261027.json (two earlier authorized keyless reads; not executed through the new client)",
+  "limits": [
+    "This does not wire global CityRef into messages/search/prices or qualify a global travel dialogue.",
+    "Raw fact/hash validation is structural and does not alone grant provenance or a user selection.",
+    "Catalog owns persisted identity IDs/versions and admission; domain/schema integration is separate.",
+    "The callback owner must reserve outside long SQL transactions and fence run state before applying returned facts."
+  ]
+}

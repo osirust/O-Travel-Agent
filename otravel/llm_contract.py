@@ -7,13 +7,12 @@ New IDs are deterministic aliases for this snapshot, not invented identities.
 
 from __future__ import annotations
 
-from copy import deepcopy
 import json
+from copy import deepcopy
 from typing import Any
 
-from .domain import CITIES, MVP_LIMITS, TripState
+from .domain import MVP_LIMITS, TripState
 from .geography import known_cities
-
 
 DATE_PATTERN = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
 CONTROL_ACTIONS = ("continue", "wait", "resume", "cancel", "request_checkout", "confirm", "none")
@@ -22,6 +21,8 @@ OPERATION_TYPES = frozenset({
     "update_traveler", "remove_traveler", "upsert_stay", "remove_stay",
     "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference", "clear_preference", "set_route_policy", "set_leg_mode", "set_room_members", "upsert_group",
 })
+
+DYNAMIC_OPERATION_TYPES = frozenset({"resolve_place"})
 
 
 def _object(properties: dict, required: tuple[str, ...] = (), **extra: Any) -> dict:
@@ -64,8 +65,7 @@ def _local_definitions(schema: dict) -> dict:
         return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
     def children(node: dict):
-        for child in node.get("properties", {}).values():
-            yield child
+        yield from node.get("properties", {}).values()
         if isinstance(node.get("items"), dict):
             yield node["items"]
         for keyword in ("oneOf", "anyOf", "allOf"):
@@ -145,7 +145,8 @@ def _local_definitions(schema: dict) -> dict:
     return result
 
 
-def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
+def build_operation_schema(state: TripState | dict[str, Any], *,
+                           dynamic_places: bool = False) -> dict[str, Any]:
     """Build the complete five-field response envelope for one immutable snapshot.
 
     Existing-person/stay edits require an existing stable ID. Creation aliases
@@ -154,6 +155,8 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     Empty target sets remove impossible edit variants rather than guessing IDs.
     Bounds mirror current implementation guards, not owner-approved product limits.
     """
+    if type(dynamic_places) is not bool:
+        raise ValueError("dynamic_places must be an explicit boolean")
     state = state if isinstance(state, TripState) else TripState.model_validate(state)
     traveler_ids = [person.id for person in state.travelers]
     stay_ids = [stay.id for stay in state.stays]
@@ -263,6 +266,47 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
     operation("clear_constraint", _object({"key": _text(), "stay_id": stay_reference,
         "room_id": _nullable(_enum(room_ids))}, ("key",), allOf=[room_scope, flight_scope]))
     operation("undo", _object({}))
+
+    if dynamic_places:
+        # Names and reference IDs come only from this trusted trip snapshot.
+        # A new free-form place belongs to resolve_place, never an invented ref.
+        place_ids = sorted(state.location_refs)
+        names = list(dict.fromkeys([*known_cities(),
+            *(state.location_refs[key].canonical_name for key in place_ids)]))
+        resolved_city = _enum(names)
+        place_ref = _nullable(_enum(place_ids)) if place_ids else {"type": "null"}
+        for variant in variants:
+            props = variant["properties"]
+            kind = props["type"]["const"]
+            value_schema = props["value"]
+            if kind == "set_origin":
+                value_schema["properties"]["city"] = deepcopy(resolved_city)
+                value_schema["properties"]["place_id"] = deepcopy(place_ref)
+            elif kind == "upsert_stay":
+                value_schema["properties"]["city"] = _nullable(deepcopy(resolved_city))
+                value_schema["properties"]["place_id"] = deepcopy(place_ref)
+                value_schema["allOf"] = [{"if": {"required": ["place_id"]},
+                    "then": {"required": ["city"]}}]
+            elif kind == "set_route_policy":
+                value_schema["properties"]["end_city"] = _nullable(deepcopy(resolved_city))
+                value_schema["properties"]["end_place_id"] = deepcopy(place_ref)
+                value_schema["oneOf"][1]["properties"]["end_place_id"] = {"type": "null"}
+                value_schema["allOf"] = [{"if": {"required": ["end_place_id"],
+                    "properties": {"end_place_id": {"type": "string"}}},
+                    "then": {"required": ["end_city"]}}]
+        resolve_value = _object({
+            "role": _enum(("origin", "destination", "route_end")),
+            "kind": _enum(("country", "city")),
+            "query": {"type": "string", "minLength": 2, "maxLength": 160},
+            "country_iso2": _nullable(_text(pattern=r"^[A-Z]{2}$")),
+            "stay_id": stay_reference,
+        }, ("role", "kind", "query", "stay_id"), oneOf=[
+            {"properties": {"role": {"const": "destination"}, "stay_id": _enum(all_stays)},
+                "required": ["stay_id"]},
+            {"properties": {"role": _enum(("origin", "route_end")), "stay_id": {"type": "null"}}},
+        ])
+        operation("resolve_place", resolve_value)
+        variants[-1]["required"] = ["target_id"]
 
     schema = _object({
         "operations": {"type": "array", "maxItems": 30,

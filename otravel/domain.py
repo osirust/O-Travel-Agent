@@ -2,12 +2,23 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from copy import deepcopy
 from datetime import date, timedelta
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
+
+from .place_refs import MAX_LOCATION_REFS, CityRefSnapshot, location_label
 
 # Proposed implementation guards, not approved product limits. Rooms are per stay.
 MVP_LIMITS = {"travelers": 10, "stays": 4, "rooms_per_stay": 5}
@@ -78,6 +89,7 @@ class RoomAllocation(Model):
 
 class Stay(Model):
     id: str = Field(min_length=1)
+    place_id: str | None = Field(default=None, min_length=1, max_length=128, exclude_if=lambda value: value is None)
     city: str | None = None
     check_in: date | None = None
     check_out: date | None = None
@@ -98,12 +110,14 @@ class Stay(Model):
 
     @field_validator("city")
     @classmethod
-    def normalize_city(cls, value: str | None) -> str | None:
-        return canonical_city(value) if value else None
+    def normalize_city(cls, value: str | None, info: ValidationInfo) -> str | None:
+        return location_label(value) if value is not None and info.data.get("place_id") else canonical_city(value) if value else None
 
 
 class Leg(Model):
     id: str = Field(min_length=1)
+    origin_place_id: str | None = Field(default=None, min_length=1, max_length=128, exclude_if=lambda value: value is None)
+    destination_place_id: str | None = Field(default=None, min_length=1, max_length=128, exclude_if=lambda value: value is None)
     origin: str | None = None
     destination: str | None = None
     departure_date: date | None = None
@@ -111,8 +125,8 @@ class Leg(Model):
 
     @field_validator("origin", "destination")
     @classmethod
-    def normalize_city(cls, value: str | None) -> str | None:
-        return canonical_city(value) if value else None
+    def normalize_city(cls, value: str | None, info: ValidationInfo) -> str | None:
+        return location_label(value) if value is not None and info.data.get(info.field_name + "_place_id") else canonical_city(value) if value else None
 
 
 class Budget(Model):
@@ -129,7 +143,7 @@ class Constraint(Model):
     room_id: str | None = None
 
     @model_validator(mode="after")
-    def room_scope(self) -> "Constraint":
+    def room_scope(self) -> Constraint:
         if self.key == "nonstop" and (type(self.value) is not bool or self.stay_id is not None or self.room_id is not None):
             raise ValueError("nonstop задаётся true/false для перелётов всей поездки, без привязки к отелю или номеру.")
         if self.room_id is not None and (not self.stay_id or self.key not in {"breakfast", "refundable"}):
@@ -155,16 +169,17 @@ class RoutePolicy(Model):
     # The legacy default is retained for existing saved trips. A declared
     # one-way/undecided route must never inherit that implicit return edge.
     kind: Literal["round_trip", "one_way", "open_jaw", "undecided"] = "round_trip"
+    end_place_id: str | None = Field(default=None, min_length=1, max_length=128, exclude_if=lambda value: value is None)
     end_city: str | None = None
 
     @field_validator("end_city")
     @classmethod
-    def normalize_end_city(cls, value: str | None) -> str | None:
-        return canonical_city(value) if value is not None else None
+    def normalize_end_city(cls, value: str | None, info: ValidationInfo) -> str | None:
+        return location_label(value) if value is not None and info.data.get("end_place_id") else canonical_city(value) if value is not None else None
 
     @model_validator(mode="after")
-    def endpoint_scope(self) -> "RoutePolicy":
-        if self.kind != "open_jaw" and self.end_city is not None:
+    def endpoint_scope(self) -> RoutePolicy:
+        if self.kind != "open_jaw" and (self.end_city is not None or self.end_place_id is not None):
             raise ValueError("Отдельный конечный город задаётся только для open_jaw.")
         return self
 
@@ -172,6 +187,7 @@ class RoutePolicy(Model):
 class TripState(Model):
     trip_id: str = Field(default_factory=lambda: str(uuid4()))
     state_version: int = Field(default=0, ge=0, strict=True)
+    origin_place_id: str | None = Field(default=None, min_length=1, max_length=128, exclude_if=lambda value: value is None)
     origin: str | None = None
     travelers: list[Traveler] = Field(default_factory=list)
     groups: list[Group] = Field(default_factory=list)
@@ -182,11 +198,53 @@ class TripState(Model):
     preferences: list[Preference] = Field(default_factory=list)
     search_policy: SearchPolicy = Field(default_factory=SearchPolicy)
     route_policy: RoutePolicy = Field(default_factory=RoutePolicy)
+    location_refs: dict[str, CityRefSnapshot] = Field(default_factory=dict, max_length=MAX_LOCATION_REFS,
+        exclude_if=lambda value: not value)
 
     @field_validator("origin")
     @classmethod
-    def normalize_city(cls, value: str | None) -> str | None:
-        return canonical_city(value) if value else None
+    def normalize_city(cls, value: str | None, info: ValidationInfo) -> str | None:
+        return location_label(value) if value is not None and info.data.get("origin_place_id") else canonical_city(value) if value else None
+
+
+    @model_validator(mode="after")
+    def reference_graph(self, info: ValidationInfo) -> TripState:
+        physical_ids = set()
+        for key, ref in self.location_refs.items():
+            if key != ref.place_id:
+                raise ValueError("Ключ location_refs не совпадает с place_id снимка.")
+            physical = (ref.geographic_source.provider, ref.geographic_source.external_id)
+            if physical in physical_ids:
+                raise ValueError("Одна географическая идентичность записана под разными place_id.")
+            physical_ids.add(physical)
+
+        def pair(name, place_id):
+            if place_id is not None:
+                ref = self.location_refs.get(place_id)
+                if ref is None:
+                    raise ValueError("Место ссылается на неизвестный location_ref.")
+                if name != ref.canonical_name:
+                    raise ValueError("Название места не совпадает с выбранным location_ref.")
+
+        pair(self.origin, self.origin_place_id)
+        for stay in self.stays:
+            pair(stay.city, stay.place_id)
+        pair(self.route_policy.end_city, self.route_policy.end_place_id)
+        for leg in self.legs:
+            pair(leg.origin, leg.origin_place_id)
+            pair(leg.destination, leg.destination_place_id)
+        # During an atomic edit, derived legs still describe the previous
+        # revision until synchronization. Only this path check is deferred.
+        context = info.context if isinstance(info.context, dict) else {}
+        has_refs = self.origin_place_id or self.route_policy.end_place_id or any(stay.place_id for stay in self.stays) or any(leg.origin_place_id or leg.destination_place_id for leg in self.legs)
+        if has_refs and self.legs and not context.get("defer_derived_route"):
+            expected = _route_layout_refs(self)
+            if expected:
+                actual = [(_place_key(leg.origin, leg.origin_place_id), _place_key(leg.destination, leg.destination_place_id)) for leg in self.legs]
+                edges = [(_place_key(origin, origin_id), _place_key(destination, destination_id)) for origin, destination, _, origin_id, destination_id in expected]
+                if actual != edges:
+                    raise ValueError("Ссылки плеч маршрута не соответствуют порядку остановок.")
+        return self
 
 
 class Operation(Model):
@@ -199,15 +257,26 @@ def _issue(code: str, message: str, **details: Any) -> dict[str, Any]:
     return {"code": code, "message": message, "details": details}
 
 
-def _route_layout(state: TripState) -> list[tuple[str, str, date | None]]:
+def _place_key(name: str | None, place_id: str | None) -> tuple[str, str | None]:
+    return ("place", place_id) if place_id is not None else ("legacy", name)
+
+
+def _route_layout_refs(state: TripState) -> list[tuple[str, str, date | None, str | None, str | None]]:
     if not state.origin or not state.stays or any(not stay.city for stay in state.stays):
         return []
-    edges = [(state.origin, state.stays[0].city, state.stays[0].check_in)]
-    edges += [(a.city, b.city, b.check_in) for a, b in zip(state.stays, state.stays[1:])]
+    first = state.stays[0]
+    edges = [(state.origin, first.city, first.check_in, state.origin_place_id, first.place_id)]
+    edges += [(a.city, b.city, b.check_in, a.place_id, b.place_id) for a, b in zip(state.stays, state.stays[1:])]
     end = state.origin if state.route_policy.kind == "round_trip" else state.route_policy.end_city if state.route_policy.kind == "open_jaw" else None
+    end_id = state.origin_place_id if state.route_policy.kind == "round_trip" else state.route_policy.end_place_id if state.route_policy.kind == "open_jaw" else None
     if end is not None:
-        edges.append((state.stays[-1].city, end, state.stays[-1].check_out))
-    return [(origin, destination, day) for origin, destination, day in edges if origin != destination]
+        last = state.stays[-1]
+        edges.append((last.city, end, last.check_out, last.place_id, end_id))
+    return [edge for edge in edges if _place_key(edge[0], edge[3]) != _place_key(edge[1], edge[4])]
+
+
+def _route_layout(state: TripState) -> list[tuple[str, str, date | None]]:
+    return [(origin, destination, day) for origin, destination, day, _, _ in _route_layout_refs(state)]
 
 
 def route_edges(state: TripState | dict) -> list[tuple[str, str, date]]:
@@ -337,14 +406,14 @@ def _keys(value: dict[str, Any], allowed: set[str]) -> None:
 
 def _synchronize_route(data: dict[str, Any]) -> None:
     """Rebuild affected derived legs; preserve modes and IDs of corresponding edges."""
-    state = TripState.model_validate(data)
+    state = TripState.model_validate(data, context={"defer_derived_route": True})
     old = data["legs"]
     complete = all(stay.city and stay.check_in and stay.check_out for stay in state.stays)
-    edges = _route_layout(state)
+    edges = _route_layout_refs(state)
     used = set()
     rebuilt = []
-    for index, (origin, destination, day) in enumerate(edges):
-        previous = next((leg for leg in old if leg["origin"] == origin and leg["destination"] == destination and leg["id"] not in used), None)
+    for index, (origin, destination, day, origin_id, destination_id) in enumerate(edges):
+        previous = next((leg for leg in old if _place_key(leg["origin"], leg.get("origin_place_id")) == _place_key(origin, origin_id) and _place_key(leg["destination"], leg.get("destination_place_id")) == _place_key(destination, destination_id) and leg["id"] not in used), None)
         if previous is None and complete and len(old) == len(edges):
             previous = old[index]
         if not complete and previous is None:
@@ -353,14 +422,38 @@ def _synchronize_route(data: dict[str, Any]) -> None:
         used.add(identifier)
         rebuilt.append({"id": identifier, "origin": origin, "destination": destination,
                         "departure_date": day.isoformat() if day is not None else None,
-                        "mode": previous["mode"] if previous else "flight"})
+                        "mode": previous["mode"] if previous else "flight",
+                        **({"origin_place_id": origin_id} if origin_id is not None else {}),
+                        **({"destination_place_id": destination_id} if destination_id is not None else {})})
     data["legs"] = rebuilt
 
 
-def apply_operations(state: TripState, operations: list[Operation]) -> tuple[TripState, list[dict[str, Any]]]:
+def apply_operations(state: TripState, operations: list[Operation], *,
+                     resolved_places: Mapping[str, CityRefSnapshot] | None = None) -> tuple[TripState, list[dict[str, Any]]]:
     """Atomic edits on a copy; version belongs to the persistent store, not this function."""
     data = deepcopy(state.model_dump(mode="json"))
     changes: list[dict[str, Any]] = []
+    if resolved_places is not None and not isinstance(resolved_places, Mapping):
+        raise DomainError("invalid_place_refs", "Географические снимки передаются серверным словарём.")
+    if resolved_places:
+        prior_refs = deepcopy(data.get("location_refs", {}))
+        refs = deepcopy(prior_refs)
+        for key, raw_ref in resolved_places.items():
+            try:
+                ref = CityRefSnapshot.model_validate(raw_ref)
+            except ValidationError as exc:
+                raise DomainError("invalid_place_ref", "Географический снимок не прошёл проверку.") from exc
+            if key != ref.place_id:
+                raise DomainError("place_ref_mismatch", "Ключ географического снимка не совпадает с place_id.")
+            snapshot = ref.model_dump(mode="json")
+            if key in refs and refs[key] != snapshot:
+                raise DomainError("place_ref_conflict", "Сохранённый снимок места нельзя неявно перезаписать.")
+            refs[key] = snapshot
+        if len(refs) > MAX_LOCATION_REFS:
+            raise DomainError("too_many_place_refs", "Превышен технический размер снимков географии поездки.")
+        data["location_refs"] = refs
+        if refs != prior_refs:
+            changes.append({"operation": "resolve_places", "target_id": None, "field": "location_refs", "before": prior_refs, "after": deepcopy(refs)})
     route_changed = False
     allowed = {"set_origin", "set_budget", "set_search_policy", "set_route_policy", "set_leg_mode", "set_room_members", "set_preference", "clear_preference", "add_traveler", "remove_traveler", "upsert_group", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
     for raw_operation in operations:
@@ -371,8 +464,14 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                 raise DomainError("unsupported_operation", f"Операция {kind} не поддерживается.")
             before = deepcopy(data)
             if kind == "set_origin":
-                _keys(value, {"city", "origin"})
-                data["origin"] = canonical_city(value.get("city", value.get("origin")))
+                _keys(value, {"city", "origin", "place_id"})
+                raw_city = value.get("city", value.get("origin"))
+                place_id = value.get("place_id")
+                data["origin"] = raw_city if place_id is not None else canonical_city(raw_city)
+                if place_id is not None:
+                    data["origin_place_id"] = place_id
+                else:
+                    data.pop("origin_place_id", None)
             elif kind == "set_budget":
                 _keys(value, {"amount_minor", "currency", "scope"})
                 data["budget"] = Budget.model_validate(value).model_dump(mode="json")
@@ -398,7 +497,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                     raise DomainError("unknown_preference", "Уточните, какое сохранённое пожелание нужно снять.")
                 data["preferences"] = [item for item in data["preferences"] if item["key"] != key]
             elif kind == "set_route_policy":
-                _keys(value, {"kind", "end_city"})
+                _keys(value, {"kind", "end_city", "end_place_id"})
                 if target is not None or "kind" not in value:
                     raise DomainError("invalid_route_policy", "Укажите тип маршрута без привязки к участнику или отелю.")
                 data["route_policy"] = RoutePolicy.model_validate(value).model_dump(mode="json")
@@ -461,7 +560,9 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                             group = _target(data["groups"], person["group_id"], "группа")
                             group["traveler_ids"].append(target)
             elif kind == "upsert_stay":
-                _keys(value, {"id", "city", "check_in", "check_out", "rooms", "hotel_id", "requested_nights"})
+                _keys(value, {"id", "city", "place_id", "check_in", "check_out", "rooms", "hotel_id", "requested_nights"})
+                if "place_id" in value and "city" not in value:
+                    raise DomainError("place_pair_required", "Выбранное место и его точное название меняются вместе.")
                 identifier = target or value.get("id")
                 if not identifier:
                     raise DomainError("missing_target", "Для остановки нужен стабильный ID.")
@@ -471,6 +572,8 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                 if existing is None:
                     data["stays"].append({"id": identifier, **value})
                 else:
+                    if "city" in value and "place_id" not in value:
+                        existing.pop("place_id", None)
                     existing.update(value)
             elif kind == "set_room_members":
                 _keys(value, {"stay_id", "traveler_ids"})
@@ -526,7 +629,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                 # Validate the scope even for an idempotent absent-key clear.
                 Constraint.model_validate({**value, "key": key, "value": False if key == "nonstop" else None})
                 data["constraints"] = [item for item in data["constraints"] if (item["key"], item.get("stay_id"), item.get("room_id")) != (key, value.get("stay_id"), value.get("room_id"))]
-            candidate = TripState.model_validate(data)
+            candidate = TripState.model_validate(data, context={"defer_derived_route": True})
             data = candidate.model_dump(mode="json")
             route_changed |= kind in {"set_origin", "set_route_policy", "upsert_stay", "remove_stay", "shift_return"}
             if before != data:
@@ -540,7 +643,11 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
         _synchronize_route(data)
         if previous_legs != data["legs"]:
             changes.append({"operation": "rebuild_route", "target_id": None, "field": "legs", "before": previous_legs, "after": deepcopy(data["legs"])})
-    result = TripState.model_validate(data)
+    try:
+        result = TripState.model_validate(data)
+    except ValidationError as exc:
+        raise DomainError("invalid_operation", "Географические ссылки поездки не прошли проверку.",
+            exc.errors(include_url=False, include_context=False)) from exc
     failures = validate_trip(result, final=False)
     if failures:
         raise DomainError(failures[0]["code"], failures[0]["message"], failures)

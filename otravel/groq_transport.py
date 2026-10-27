@@ -518,3 +518,150 @@ def decode_compact_transport_response(content: str, original_dynamic_schema: dic
         result['operations'].append({'type': kind, 'target_id': target_id, 'value': value})
     _validate(result, original, 'canonical_schema')
     return result
+
+
+# V3 is an additive opt-in extension. The complete preexisting v1/v2 source
+# above stays byte-identical; default calls retain those original functions.
+_LEGACY_COMPILE = _compile
+_LEGACY_BUILD_TRANSPORT_SCHEMA = build_transport_schema
+_LEGACY_DECODE_TRANSPORT_RESPONSE = decode_transport_response
+_LEGACY_COMPACT_COMPILE = _compact_compile
+_LEGACY_BUILD_COMPACT_TRANSPORT_SCHEMA = build_compact_transport_schema
+_LEGACY_DECODE_COMPACT_TRANSPORT_RESPONSE = decode_compact_transport_response
+
+
+def _compile_dynamic_places(original_dynamic_schema):
+    original, _, resolve = _prepare(original_dynamic_schema)
+
+    def expanded(node):
+        if isinstance(node, dict):
+            node = resolve(node) if '$ref' in node else node
+            return {key: expanded(value) for key, value in node.items() if key != '$defs'}
+        if isinstance(node, list):
+            return [expanded(value) for value in node]
+        return deepcopy(node)
+
+    projected = expanded(original)
+    try:
+        variants = projected['properties']['operations']['items']['oneOf']
+        special = [variant for variant in variants
+            if variant.get('properties', {}).get('type') == {'const': 'resolve_place'}]
+        if len(special) != 1:
+            _fail('single_resolve_place_variant_required')
+        variant = special[0]
+        props = variant.get('properties', {})
+        if (set(variant) != {'properties', 'required'} or variant['required'] != ['target_id']
+                or set(props) != {'type', 'target_id', 'value'}
+                or props['target_id'] != {'type': 'null'}
+                or props['value'].get('type') != 'object'
+                or props['value'].get('additionalProperties') is not False):
+            _fail('bounded_resolve_place_variant_required')
+        variants.remove(variant)
+        # The legacy compiler checks the full unchanged envelope and every
+        # other exact type/target allowset. It never learns a global new kind.
+        _, wire, _ = _LEGACY_COMPILE(projected)
+        wire['properties']['operations']['items']['anyOf'].append(_object({
+            'type': {'type': 'string', 'enum': ['resolve_place']},
+            'target_id': {'type': 'null'}, 'value_json': {'type': 'string'}}))
+        return original, wire, resolve
+    except GroqTransportError:
+        raise
+    except (KeyError, TypeError, ValueError, RecursionError, OverflowError):
+        _fail('unsupported_dynamic_place_schema')
+
+
+def _compile(original_dynamic_schema, *, allow_dynamic_places=False):
+    if type(allow_dynamic_places) is not bool:
+        _fail('explicit_dynamic_place_flag_required')
+    if not allow_dynamic_places:
+        return _LEGACY_COMPILE(original_dynamic_schema)
+    try:
+        return _compile_dynamic_places(original_dynamic_schema)
+    except GroqTransportError:
+        raise
+    except (KeyError, TypeError, ValueError, RecursionError, OverflowError):
+        _fail('unsupported_dynamic_place_schema')
+
+
+def build_transport_schema(original_dynamic_schema: dict, *, allow_dynamic_places: bool = False) -> dict:
+    if allow_dynamic_places is False:
+        return _LEGACY_BUILD_TRANSPORT_SCHEMA(original_dynamic_schema)
+    return _compile(original_dynamic_schema, allow_dynamic_places=allow_dynamic_places)[1]
+
+
+def decode_transport_response(content: str, original_dynamic_schema: dict, *,
+                              allow_dynamic_places: bool = False) -> dict:
+    if allow_dynamic_places is False:
+        return _LEGACY_DECODE_TRANSPORT_RESPONSE(content, original_dynamic_schema)
+    original, wire, resolve = _compile(original_dynamic_schema, allow_dynamic_places=allow_dynamic_places)
+    parsed = _json(content, limit=MAX_JSON_BYTES, stage='transport_json')
+    _validate(parsed, wire, 'transport_schema')
+    if len(parsed['operations']) > resolve(original['properties']['operations'])['maxItems']:
+        _fail('operation_count_limit', 'canonical_schema')
+    result = {key: deepcopy(value) for key, value in parsed.items() if key != 'operations'}
+    result['operations'] = []
+    for operation in parsed['operations']:
+        value = _json(operation['value_json'], limit=MAX_VALUE_BYTES, stage='operation_value_json')
+        if type(value) is not dict:
+            _fail('operation_value_object_required', 'operation_value_json')
+        result['operations'].append({'type': operation['type'], 'target_id': operation['target_id'], 'value': value})
+    _validate(result, original, 'canonical_schema')
+    return result
+
+
+def _compact_compile(original_dynamic_schema, *, allow_dynamic_places=False):
+    if allow_dynamic_places is False:
+        return _LEGACY_COMPACT_COMPILE(original_dynamic_schema)
+    original, previous, resolve = _compile(original_dynamic_schema, allow_dynamic_places=allow_dynamic_places)
+    codebook = OrderedDict()
+    for variant in previous['properties']['operations']['items']['anyOf']:
+        props = variant['properties']
+        kind = props['type']['enum'][0]
+        target = props['target_id']
+        for branch in target.get('anyOf', [target]):
+            for target_id in [None] if branch.get('type') == 'null' else branch['enum']:
+                selector = kind if target_id is None else kind + '@' + target_id
+                if selector in codebook:
+                    _fail('compact_selector_collision')
+                codebook[selector] = (kind, target_id)
+                if len(codebook) > MAX_COMPACT_SELECTORS:
+                    _fail('compact_selector_count_limit')
+    wire = deepcopy(previous)
+    wire['properties']['operations']['items'] = _object({
+        'op': {'type': 'string', 'enum': list(codebook)}, 'value_json': {'type': 'string'}})
+    _bounded_tree(wire, depth_limit=_MAX_SCHEMA_DEPTH, stage='transport_schema')
+    if len(json.dumps(wire, ensure_ascii=False, allow_nan=False, separators=(',', ':')).encode()) > MAX_SCHEMA_BYTES:
+        _fail('compact_schema_byte_limit')
+    return original, wire, resolve, codebook
+
+
+def build_compact_transport_schema(original_dynamic_schema: dict, *,
+                                   allow_dynamic_places: bool = False) -> dict:
+    if allow_dynamic_places is False:
+        return _LEGACY_BUILD_COMPACT_TRANSPORT_SCHEMA(original_dynamic_schema)
+    return _compact_compile(original_dynamic_schema, allow_dynamic_places=allow_dynamic_places)[1]
+
+
+def decode_compact_transport_response(content: str, original_dynamic_schema: dict, *,
+                                      allow_dynamic_places: bool = False) -> dict:
+    if allow_dynamic_places is False:
+        return _LEGACY_DECODE_COMPACT_TRANSPORT_RESPONSE(content, original_dynamic_schema)
+    original, wire, resolve, codebook = _compact_compile(original_dynamic_schema,
+        allow_dynamic_places=allow_dynamic_places)
+    parsed = _json(content, limit=MAX_JSON_BYTES, stage='transport_json')
+    _validate(parsed, wire, 'transport_schema')
+    if len(parsed['operations']) > resolve(original['properties']['operations'])['maxItems']:
+        _fail('operation_count_limit', 'canonical_schema')
+    result = {key: deepcopy(value) for key, value in parsed.items() if key != 'operations'}
+    result['operations'] = []
+    for operation in parsed['operations']:
+        pair = codebook.get(operation['op'])
+        if pair is None:
+            _fail('unknown_operation_selector', 'transport_schema')
+        kind, target_id = pair
+        value = _json(operation['value_json'], limit=MAX_VALUE_BYTES, stage='operation_value_json')
+        if type(value) is not dict:
+            _fail('operation_value_object_required', 'operation_value_json')
+        result['operations'].append({'type': kind, 'target_id': target_id, 'value': value})
+    _validate(result, original, 'canonical_schema')
+    return result

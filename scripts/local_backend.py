@@ -51,6 +51,7 @@ ARGV = [str(PYTHON), "-m", "uvicorn", "otravel.api:app", "--host", "127.0.0.1",
 SOURCE_FILES = ("api.py", "providers.py", "config.py", "harness.py", "store.py")
 MANIFEST_FORMAT = "otravel.package_source_manifest.v1"
 SOURCE_SUFFIXES = {".py", ".html", ".css", ".js", ".json"}
+PACKAGE_NOTICES = {"data/UNICODE-CLDR-LICENSE.txt", "data/CLDR-ATTRIBUTION.md"}
 OPENER = build_opener(ProxyHandler({}))
 CURRENT_STAGE = "preflight"
 SAFE_CONTEXT = {}
@@ -370,7 +371,8 @@ def source_manifest(root=None):
         directories[:] = kept
         for name in names:
             path = current / name
-            if name.startswith(".") or path.suffix not in SOURCE_SUFFIXES:
+            if name.startswith(".") or (path.suffix not in SOURCE_SUFFIXES
+                    and path.relative_to(package).as_posix() not in PACKAGE_NOTICES):
                 continue
             require(not path.is_symlink() and path.is_file() and path.resolve() == path, "source_manifest_symlink_file_refused")
             files.append(path)

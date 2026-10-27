@@ -7,6 +7,7 @@ Topic coverage and language understanding still require actual model evaluation.
 from __future__ import annotations
 
 import re
+import unicodedata
 from copy import deepcopy
 
 from jsonschema import Draft202012Validator
@@ -14,6 +15,7 @@ from jsonschema import Draft202012Validator
 from .conversational import _party, _selected_plan, current_plans, explicit_search_request
 from .domain import TripState, validate_trip
 from .geography import _CITIES, _COUNTRIES, parse_destination
+from .place_refs import CityRefSnapshot
 from .trip_answers import _budget, _dates, _explain, _money, _route, _source
 
 READONLY_MODE = "readonly_answer_v1"
@@ -228,7 +230,7 @@ def facts_projection(
     result = {
         "budget": _budget(state),
         "dates": _dates(state),
-        "route": _route(state),
+        "route": _route_with_refs(state),
         "party": _party(state),
         "travelers": [
             {"number": i, "type": p.get("type"), "age": p.get("age"), "birth_date": p.get("birth_date")}
@@ -252,6 +254,8 @@ def facts_projection(
         "recent_messages": recent[-6:],
     }
     result["current_selected_plan"] = deepcopy(selection_reference)
+    if state.get("location_refs"):
+        result["route_geography"] = _bound_geography(state)
     result["sections"] = _fact_sections(state, valid, saved_orders, changes, question, selection_reference)
     return result
 
@@ -410,7 +414,7 @@ def _fact_sections(
         "party": _party(state),
         "budget": _budget(state),
         "dates": _dates(state),
-        "route": _route(state),
+        "route": _route_with_refs(state),
         "rooms": " ".join(rooms) or "Распределение по номерам пока не сохранено.",
         "preferences": " ".join(prefs) or "Дополнительные пожелания и требования не заданы.",
         "source": " ".join(
@@ -439,7 +443,159 @@ def _fact_sections(
     }
 
 
+def _geo_key(value: str) -> str:
+    return " ".join(unicodedata.normalize("NFKC", value).casefold().replace("ё", "е").split())
+
+
+def _bound_geography(state: dict) -> list[dict]:
+    """Project only snapshots bound by current canonical origin/stay/end IDs.
+
+    Snapshot authentication is the caller/catalog boundary. Structural checks
+    here keep malformed or unbound dictionaries from becoming answer facts.
+    """
+    refs = state.get("location_refs")
+    if not isinstance(refs, dict) or not refs:
+        return []
+    bindings = [("origin", None, None, state.get("origin"), state.get("origin_place_id"))]
+    bindings.extend(("destination", stay.get("id"), index, stay.get("city"), stay.get("place_id"))
+        for index, stay in enumerate(state.get("stays", []), 1) if isinstance(stay, dict))
+    route = state.get("route_policy") or {}
+    bindings.append(("route_end", None, None, route.get("end_city"), route.get("end_place_id")))
+    result = []
+    for role, stay_id, position, name, identifier in bindings:
+        if not isinstance(identifier, str) or identifier not in refs:
+            continue
+        try:
+            ref = CityRefSnapshot.model_validate(refs[identifier])
+        except (ValueError, TypeError):
+            continue
+        if ref.place_id != identifier or ref.canonical_name != name:
+            continue
+        result.append({"role": role, "stay_id": stay_id, "position": position,
+            "place_id": ref.place_id, "name": ref.canonical_name, "country_iso2": ref.country_iso2,
+            "country_name": ref.country_name, "administrative_areas": [a.model_dump(mode="json") for a in ref.administrative_areas],
+            "timezone": ref.timezone})
+    return result
+
+
+def _geo_label(place: dict) -> str:
+    code = place["country_iso2"]
+    country = place["country_name"] or (_COUNTRIES[code][0] if code in _COUNTRIES else code)
+    label = (f"Остановка №{place['position']}, " if place["role"] == "destination" else
+        "Отправление, " if place["role"] == "origin" else "Завершение маршрута, ")
+    answer = f"{label}{place['name']} — {country}" + (f" ({code})" if country != code else "") + "."
+    if place["administrative_areas"]:
+        answer += " Регион: " + ", ".join(a["name"] for a in place["administrative_areas"]) + "."
+    if place["timezone"]:
+        answer += " Часовой пояс: " + place["timezone"] + "."
+    return answer
+
+
+def _route_with_refs(state: dict) -> str:
+    route = _route(state)
+    if state.get("location_refs"):
+        labels = " ".join(_geo_label(place) for place in _bound_geography(state))
+        if labels:
+            route += " " + labels
+    return route
+
+
+def _place_aliases(name: str) -> set[str]:
+    aliases = {_geo_key(name)}
+    for known, (_, forms) in _CITIES.items():
+        names = {_geo_key(value) for value in (known, *forms)}
+        if _geo_key(name) in names:
+            aliases.update(names)  # Names only: the seed country is not copied.
+    return aliases
+
+
+def _selected_geography_answer(question: str, state: dict, *, complete_only: bool = False) -> str | None:
+    if not state.get("location_refs"):
+        return None
+    key = _geo_key(question)
+    clean = _NO_CHANGE.sub("", key)
+    if complete_only and (not key or len(key) > 700 or "?" not in key or _EDIT.search(clean)
+            or _POLITE_EDIT.search(clean) or explicit_search_request(question)):
+        return None
+    places = _bound_geography(state)
+    aliases = {place["place_id"]: _place_aliases(place["name"]) for place in places}
+    country_aliases = {place["country_iso2"]: {_geo_key(place["country_iso2"])} for place in places}
+    for place in places:
+        if place["country_name"]:
+            country_aliases[place["country_iso2"]].add(_geo_key(place["country_name"]))
+    for code, forms in _COUNTRIES.items():
+        country_aliases.setdefault(code, set()).update(_geo_key(alias) for alias in (code, *forms))
+    mentions = [place for place in places if any(re.search(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", key)
+        for alias in aliases[place["place_id"]])]
+    deictic = bool(re.search(r"\b(?:наш\w*|выбранн\w*|текущ\w*|сохраненн\w*|этот|этого|этом|там|туда|маршрут|отправлен\w*|возвращен\w*)\b", key))
+    ordinal_words = {"перв": 1, "втор": 2, "трет": 3, "четверт": 4, "последн": -1}
+    indices = set()
+    for match in re.finditer(r"\b(перв\w*|втор\w*|трет\w*|четверт\w*|последн\w*|[1-4])\s+(?:останов\w*|город\w*|проживан\w*|этап\w*|отел\w*)\b", key):
+        token = match[1]
+        indices.add(int(token) if token.isdigit() else next(index for stem, index in ordinal_words.items() if token.startswith(stem)))
+    for match in re.finditer(r"\b(?:останов\w*|город\w*|проживан\w*|этап\w*)\s*(?:№\s*)?([1-4])\b", key):
+        indices.add(int(match[1]))
+    if not mentions and not indices:
+        unrelated_city = any(re.search(r"(?<!\w)" + re.escape(_geo_key(alias)) + r"(?!\w)", key)
+            for name, (_, forms) in _CITIES.items() for alias in (name, *forms))
+        if unrelated_city:
+            return None
+        literal_country = any(re.search(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", key)
+            for forms in country_aliases.values() for alias in forms)
+        if literal_country and not re.search(r"город|останов|направлен|маршрут|отправлен|возвращен|там|туда", key):
+            return None
+    if not mentions and not deictic and not indices:
+        if complete_only:
+            return None
+        return " ".join(_geo_label(place) for place in places) or "География выбранного места по сохранённым ссылкам не подтверждена."
+    if complete_only:
+        if not re.search(r"стран|регион|област|провинц|часов\w*\s+пояс|timezone|country|находит|где|одного\s+города|один\s+город|одно\s+название", key):
+            return None
+        rest = clean
+        for alias in sorted({alias for values in aliases.values() for alias in values}, key=len, reverse=True):
+            rest = re.sub(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", " ", rest)
+        for forms in country_aliases.values():
+            for alias in sorted(forms, key=len, reverse=True):
+                rest = re.sub(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", " ", rest)
+        grammar = re.compile(r"(?:а|и|в|во|на|у|не|ли|это|этот|этого|этом|там|туда|мы|наш\w*|выбранн\w*|текущ\w*|сохраненн\w*|"
+            r"отправлен\w*|возвращен\w*|маршрут\w*|останов\w*|город\w*|проживан\w*|этап\w*|отел\w*|"
+            r"перв\w*|втор\w*|трет\w*|четверт\w*|последн\w*|[1-4]|стран\w*|регион\w*|област\w*|провинц\w*|"
+            r"часов\w*|пояс\w*|где|како\w*|какая|какие|находит\w*|один|одного|одно|названи\w*|"
+            r"правда|ведь|разве|же|или|пожалуйста|напомни|скажи|расскажи|объясни|действительно|сейчас|"
+            r"which|what|where|country|timezone|is|in|our|current|selected|city|the)")
+        if any(not grammar.fullmatch(word) for word in re.findall(r"\w+", rest)):
+            return None
+    if not places:
+        return "География выбранного места по сохранённым ссылкам не подтверждена. Уточните остановку."
+    selected = mentions
+    if indices:
+        stays = [place for place in places if place["role"] == "destination"]
+        last = len(state.get("stays", []))
+        selected = [place for place in stays if place["position"] in {last if i == -1 else i for i in indices}]
+        if len(indices) != 1 or len(selected) != 1:
+            return "Какую остановку вы имеете в виду? Укажите её номер или город и страну."
+    elif re.search(r"\b(?:отправлен\w*|откуда)\b", key):
+        selected = [place for place in places if place["role"] == "origin"]
+    elif re.search(r"\b(?:возвращен\w*|завершен\w*)\b", key):
+        selected = [place for place in places if place["role"] == "route_end"]
+    elif not selected:
+        selected = [place for place in places if place["role"] == "destination"] or places
+        if complete_only and len({place["place_id"] for place in selected}) > 1 and not re.search(r"маршрут|все|странах|города|остановки", key):
+            return "Какую остановку вы имеете в виду? Укажите её номер или город и страну."
+    countries = {code for code, forms in country_aliases.items() if any(re.search(r"(?<!\w)" + re.escape(alias) + r"(?!\w)", key) for alias in forms)}
+    if len({place["place_id"] for place in selected}) > 1:
+        matching = [place for place in selected if place["country_iso2"] in countries]
+        if len({place["place_id"] for place in matching}) == 1:
+            selected = matching
+        elif any(len({p["place_id"] for p in selected if _geo_key(p["name"]) == _geo_key(place["name"])}) > 1 for place in selected):
+            return "Какую остановку вы имеете в виду? Одноимённые города различаются; укажите номер остановки или страну."
+    return " ".join(_geo_label(place) for place in selected) or "Для этой остановки нет подтверждённой географической ссылки."
+
+
 def _geography_text(question: str, state: dict) -> str:
+    selected = _selected_geography_answer(question, state)
+    if selected is not None:
+        return selected
     key = question.casefold().replace("ё", "е")
     cities = []
     for name, (country, aliases) in _CITIES.items():
@@ -494,6 +650,9 @@ def _geography_text(question: str, state: dict) -> str:
 
 def canonical_geography_answer(text: str, state: dict) -> str | None:
     """Answer a complete known-place FAQ; never accept destination consent."""
+    selected = _selected_geography_answer(text, state, complete_only=True)
+    if selected is not None:
+        return selected
     key = " ".join(text.casefold().replace("ё", "е").split())
     if not key or len(key) > 700 or "?" not in key or any(char.isdigit() for char in key):
         return None

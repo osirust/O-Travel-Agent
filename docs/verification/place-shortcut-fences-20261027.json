@@ -1,0 +1,78 @@
+{
+  "format": "otravel.dynamic_place.shortcut_fences.v1",
+  "finding_id": "HARNESS-004-DYNAMIC-PLACE-SPEECH-FENCE-001",
+  "status": "CONTROLLED_API_PG_FENCE_SCOPE_PASS_ACTUAL_DYNAMIC_REPLAY_PENDING",
+  "scope": "A fresh country-owned city question is reached through ordinary API messages, then an explicit compound pause or informational question must not enter a directory shortcut.",
+  "test_file": "tests/test_place_shortcut_fences.py",
+  "test_file_sha256": "360b543302bbe9408e2c9fac9829b0bcb33a4c3dd4929b2c08e04dcca1f65084",
+  "initial_attempt": {
+    "junit": ".local/evaluation/after80-20261027/place-shortcut-fences-initial.xml",
+    "junit_sha256": "ec8136985abdfbb674e692fb8390be51ae7f67426ab3f0ee9fef5e2c49c2cbb8",
+    "passed": 2,
+    "failed": 1,
+    "cause": "The author's controlled read-only adapter returned free text where READONLY_SCHEMA requires a section code. The new stub was corrected to geography; no production edit or relaxed business assertion was made by this agent."
+  },
+  "final_attempt": {
+    "junit": ".local/evaluation/after80-20261027/place-shortcut-fences-final.xml",
+    "junit_sha256": "bc3b400ac3697741a38030b12aac768ff67b8722e90f7e6cdbb77371de521336",
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 2.93,
+    "ruff": "PASS"
+  },
+  "cases": [
+    {
+      "initial_input": "хочу в аргентину наверное",
+      "next_input": "Буэнос-Айрес, подожди",
+      "verified": [
+        "Initial input reaches owned AR place.city_query through API/Harness/real Store, with no fabricated city.",
+        "Compound input reaches user_pause and exactly one control revision.",
+        "Canonical facts remain equal apart from the control version.",
+        "The city request is deferred with the owned country reference.",
+        "No coordinator resolve/select, directory search/get, additional country lookup, TOOL_CALL_STARTED or order occurs for the compound pause."
+      ]
+    },
+    {
+      "initial_input": "хочу в аргентину наверное",
+      "next_input": "объясни Буэнос-Айрес",
+      "verified": [
+        "Informational text takes the existing read-only model role using a controlled valid section-code response.",
+        "Trip, version, complete prior pending question and waiting reason remain equal.",
+        "No city or location reference is selected.",
+        "No coordinator/directory call, additional country lookup, TOOL_CALL_STARTED or order occurs."
+      ]
+    },
+    {
+      "initial_input": "хочу в аргентину наверное",
+      "next_input": "где находится Буэнос-Айрес",
+      "verified": [
+        "An informational phrase without question punctuation does not become a city-query shortcut.",
+        "A controlled general ASK response is permitted; no assumption that it took the read-only role is made.",
+        "Trip, version, pending and waiting reason remain equal; no city/reference is selected.",
+        "No coordinator/directory call, additional country lookup, TOOL_CALL_STARTED or order occurs."
+      ]
+    }
+  ],
+  "cache_hit_cannot_hide_a_false_pass": "Spies cover coordinator.resolve/select and directory.search_city/get_place in addition to MockTransport wire counts. Bootstrap country resolve is observed then counters are cleared before the actual assertion.",
+  "postgres": {
+    "database": "otravel_test",
+    "owned_new_sessions_only": true,
+    "no_drop_or_table_cleanup": true,
+    "global_recovery_disabled": true,
+    "other_databases_changed": false
+  },
+  "runtime_source_edited_by_this_agent": false,
+  "observed_harness_sha256_after_tests": "3bc8cc01e2fefc84a733803afe03b7047404551a9e11287078c9d931ef3881fc",
+  "atomic_full_package_release_qualified": false,
+  "external_actual_model_calls": 0,
+  "external_actual_directory_calls": 0,
+  "external_actual_supplier_calls": 0,
+  "native_process_changes": 0,
+  "limitations": [
+    "These three cases use real persistent Store/API/Harness with controlled model/country/directory adapters, not new actual NLU or worldwide API qualification.",
+    "Other ASK/PROPOSE/cancel paths are covered by the parent's separate dynamic conversation tests and are not counted again here.",
+    "No full80/106, live availability, price, media, checkout, payment or booking qualification is implied."
+  ]
+}

@@ -556,7 +556,8 @@ class LLMGateway(_HTTPGateway):
                    and isinstance(response_format, dict) and response_format.get("type") == "json_schema"
                    and isinstance(transport, dict)
                    and transport.get("format") in {"groq_strict_operations_v1", "groq_strict_readonly_v1",
-                       "groq_strict_operations_v2", "groq_strict_readonly_v2"} else None)
+                       "groq_strict_operations_v2", "groq_strict_readonly_v2",
+                       "groq_strict_operations_v3", "groq_strict_readonly_v3"} else None)
         token = self._wire_request_metadata.set(capture)
         try:
             body = await asyncio.wait_for(super()._request(provider, method, url, **kwargs), self.wall_timeout)
@@ -689,18 +690,21 @@ class LLMGateway(_HTTPGateway):
             else:
                 _fail("GROQ_STRUCTURED_TRANSPORT_ENABLED должен быть true/false.", provider, "CONFIG_BLOCKED")
             version = _setting(self.settings, "GROQ_TRANSPORT_VERSION", "1")
-            if type(version) is int and version in {1, 2}:
+            if type(version) is int and version in {1, 2, 3}:
                 groq_transport_version = version
-            elif isinstance(version, str) and version in {"", "1", "2"}:
+            elif isinstance(version, str) and version in {"", "1", "2", "3"}:
                 groq_transport_version = int(version or "1")
             else:
-                _fail("GROQ_TRANSPORT_VERSION должен быть 1 или 2.", provider, "CONFIG_BLOCKED")
+                _fail("GROQ_TRANSPORT_VERSION должен быть 1, 2 или 3.", provider, "CONFIG_BLOCKED")
+            if groq_transport_version == 3 and (not structured or not _truth(_setting(self.settings, "DYNAMIC_GEOGRAPHY_ENABLED", False))):
+                _fail("Транспорт v3 требует включённую динамическую географию и строгую схему.", provider, "CONFIG_BLOCKED")
             wire_format = {"type": "json_object"}
             if structured:
                 from .groq_transport import (GroqTransportError, build_transport_schema,
                     build_readonly_transport_schema, build_compact_transport_schema)
                 try:
                     wire_schema = (build_readonly_transport_schema() if mode == "readonly_answer_v1"
+                        else build_compact_transport_schema(output_schema, allow_dynamic_places=True) if groq_transport_version == 3
                         else build_compact_transport_schema(output_schema) if groq_transport_version == 2
                         else build_transport_schema(output_schema))
                 except GroqTransportError:
@@ -708,9 +712,20 @@ class LLMGateway(_HTTPGateway):
                 groq_transport_role = "readonly" if mode == "readonly_answer_v1" else "operations"
                 semantic_delivery = "full_schema_in_system"
                 hint_metadata = None
-                if groq_transport_version == 2 and groq_transport_role == "readonly":
+                if groq_transport_version in {2, 3} and groq_transport_role == "readonly":
                     system = base_system
                     semantic_delivery = "server_constructed_readonly_noop"
+                elif groq_transport_version == 3:
+                    from .groq_place_prompt import build_place_operation_hints
+                    try:
+                        hints, hint_metadata = build_place_operation_hints(output_schema, context.get("trip"))
+                    except GroqTransportError:
+                        _fail("Схема мест не совпадает с подтверждённым состоянием поездки.", provider, "CONFIG_BLOCKED")
+                    if base_system == _EXTRACT_PROMPT:
+                        system = base_system + "\nOperation value hints (full canonical validation stays on server):\n" + hints
+                        semantic_delivery = "trusted_place_hints_full_server_validation"
+                    else:
+                        semantic_delivery = "full_schema_in_system_verified_place_grammar"
                 elif groq_transport_version == 2 and base_system == _EXTRACT_PROMPT:
                     from .groq_prompt import build_compact_operation_hints
                     try:
@@ -731,14 +746,21 @@ class LLMGateway(_HTTPGateway):
                     "value_json is a JSON STRING encoding the operation value OBJECT. "
                     "The server maps the selector to its owned type/target; never invent selectors or IDs. "
                     "Omitted fields and explicit null are distinct; do not infer missing facts or consent."
-                    if groq_transport_version == 2 else
+                    if groq_transport_version in {2, 3} else
                     "Use the strict transport envelope. Each operation contains type, target_id, value_json. "
                     "value_json is a JSON STRING encoding exactly the operation value OBJECT described above. "
                     "Preserve omitted fields and explicit null distinctly. Choose only the supplied target aliases; "
                     "do not invent IDs, field values, guests, dates, prices or consent.")
                 system += ("\nWire transport (full canonical validation stays on the server):\n"
-                    if groq_transport_version == 2 else
+                    if groq_transport_version in {2, 3} else
                     "\nWire transport override (the schema above remains the decoded semantic contract):\n") + instruction
+                if groq_transport_version==3 and groq_transport_role=="operations":
+                    system += ("\nFor a new country or city not in trusted current references, emit resolve_place: "
+                        "it performs a read-only directory lookup and does not choose a destination. "
+                        "Do not return an empty batch merely because the place is not in the city enum. "
+                        "A country request uses kind=country; do not invent its capital. "
+                        "Keep independently stated origin, travelers, dates and preferences in their normal operations, "
+                        "even while the destination needs clarification. speech_act describes the USER, not your own question.")
                 self._request_metrics.set(request_stats(system, prompt, output_schema))
                 encoded_schema = json.dumps(wire_schema, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
                 self._structured_transport.set({"format": "groq_strict_" + groq_transport_role + "_v" + str(groq_transport_version),
@@ -917,6 +939,7 @@ class LLMGateway(_HTTPGateway):
             try:
                 self._structured_transport.get()["wire_final_sha256"] = hashlib.sha256(content.encode("utf-8")).hexdigest()
                 result = (decode_readonly_transport_response(content) if groq_transport_role == "readonly"
+                    else decode_compact_transport_response(content, output_schema, allow_dynamic_places=True) if groq_transport_version == 3
                     else decode_compact_transport_response(content, output_schema) if groq_transport_version == 2
                     else decode_transport_response(content, output_schema))
             except GroqTransportError as error:
@@ -984,6 +1007,10 @@ class TravelGateway(_HTTPGateway):
         self._travel_runtime = TravelRuntime(clock=self.settings.get("clock"),
             monotonic=self.settings.get("monotonic_clock"))
         self._travel_retry_after = ContextVar("travel_retry_after", default=None)
+        # Read-only identity facts, not prices or availability. The cache is
+        # instance-local, bounded and never authorizes a location by its name.
+        self._place_hotel_evidence: dict[str, dict] = {}
+        self._place_air_evidence: dict[str, dict] = {}
 
         async def capture_retry_after(response):
             if response.status_code == 429:
@@ -1021,8 +1048,10 @@ class TravelGateway(_HTTPGateway):
         clock = self.settings.get("clock")
         return clock().astimezone(timezone.utc) if callable(clock) else datetime.now(timezone.utc)
 
-    async def resolve_hotels(self, city: str, limit: int = 3) -> list[dict]:
+    async def resolve_hotels(self, city: str | dict, limit: int = 3) -> list[dict]:
         """Small transient sandbox lookup for the supported cities; no catalogue import."""
+        if isinstance(city, dict):
+            return await self._resolve_place_hotels(city, limit)
         from .domain import CITIES, canonical_city
         from .provider_cities import liteapi_city_query
         normalized = canonical_city(city)
@@ -1059,6 +1088,166 @@ class TravelGateway(_HTTPGateway):
         except TravelClockError:
             raise ProviderError("INVALID_CLOCK", "Источник требует явного времени с часовым поясом.", provider="liteapi") from None
 
+    def _liteapi_reference_key(self) -> str:
+        key = self._key("LITEAPI_API_KEY", "liteapi")
+        if (str(_setting(self.settings, "LITEAPI_MODE", "sandbox")).lower() != "sandbox"
+                or not key.startswith(("sand_", "sandbox_"))):
+            _fail("Разрешён только LiteAPI sandbox key.", "liteapi", "CONFIG_BLOCKED")
+        return key
+
+    def _private_place(self, request: dict, provider: str):
+        from .provider_cities import private_place_ref
+        try:
+            return private_place_ref(request)
+        except (ValueError, TypeError):
+            _fail("Нужна точная серверная ссылка выбранного места.", provider, "INVALID_PLACE_REF")
+
+    def _place_elapsed(self, provider: str) -> float:
+        from .travel_runtime import TravelClockError
+        try:
+            return self._travel_runtime.elapsed()
+        except TravelClockError:
+            _fail("Нужно явное время источника с часовым поясом.", provider, "INVALID_CLOCK")
+
+    async def list_countries(self) -> list[dict]:
+        """One sandbox reference request; the caller reserves its tool budget."""
+        key = self._liteapi_reference_key()
+        body = await self._request("liteapi", "GET", "https://api.liteapi.travel/v3.0/data/countries",
+            headers={"X-API-Key": key})
+        rows = body.get("data")
+        if (not isinstance(rows, list) or len(rows) > 300
+                or any(not isinstance(row, dict) or not isinstance(row.get("code"), str)
+                    or not re.fullmatch(r"[A-Z]{2}", row["code"])
+                    or not isinstance(row.get("name"), str) or not 1 <= len(row["name"].strip()) <= 160
+                    for row in rows)):
+            _fail("Источник не вернул проверяемый список ISO-2 стран.", "liteapi", "INVALID_RESPONSE")
+        if len({row["code"] for row in rows}) != len(rows):
+            _fail("Источник вернул неоднозначные коды стран.", "liteapi", "INVALID_RESPONSE")
+        return [{"country_iso2": row["code"], "name": _safe_text(row["name"].strip())} for row in rows]
+
+    async def _resolve_place_hotels(self, request: dict, limit: int) -> list[dict]:
+        from .provider_cities import place_metadata_matches
+        if type(limit) is not int or not 1 <= limit <= 10:
+            _fail("Допустимо от 1 до 10 отелей в одном lookup.", "liteapi")
+        ref = self._private_place(request, "liteapi")
+        key = self._liteapi_reference_key()
+        body = await self._request("liteapi", "GET", "https://api.liteapi.travel/v3.0/data/hotels",
+            headers={"X-API-Key": key}, params={"countryCode": ref.country_iso2,
+                "cityName": ref.canonical_name, "limit": limit})
+        rows = body.get("data")
+        if not isinstance(rows, list):
+            _fail("Нет списка гостиниц sandbox-каталога.", "liteapi", "INVALID_RESPONSE")
+        result, facts = [], {}
+        for row in rows[:limit]:
+            if (not isinstance(row, dict) or not isinstance(row.get("id"), str) or not row["id"]
+                    or not place_metadata_matches(ref, country=row.get("country"), city=row.get("city"),
+                        latitude=row.get("latitude"), longitude=row.get("longitude"))):
+                continue
+            if row["id"] in facts:
+                _fail("Источник повторил ID гостиницы с неоднозначной географией.", "liteapi", "INVALID_RESPONSE")
+            facts[row["id"]] = {"country_iso2": ref.country_iso2, "city": row["city"],
+                "latitude": row["latitude"], "longitude": row["longitude"],
+                "place_id": ref.place_id, "place_ref_sha256": ref.snapshot_sha256(),
+                "identity_verified": True, "availability_verified": False}
+            result.append({"id": row["id"], "name": _safe_text(row.get("name", "")),
+                "city": ref.canonical_name, "place_id": ref.place_id,
+                "place_ref_sha256": ref.snapshot_sha256(), "identity_verified": True})
+        if rows and not result:
+            _fail("Источник не подтвердил город, страну и координаты гостиниц выбранного места.",
+                "liteapi", "GEOGRAPHY_UNVERIFIED")
+        digest = ref.snapshot_sha256()
+        self._place_hotel_evidence[digest] = {"expires": self._place_elapsed("liteapi") + 3600, "facts": facts}
+        while len(self._place_hotel_evidence) > 64:
+            self._place_hotel_evidence.pop(next(iter(self._place_hotel_evidence)))
+        return result
+
+    def _verified_place_hotels(self, ref, hotel_ids: list[str]) -> dict:
+        stored = self._place_hotel_evidence.get(ref.snapshot_sha256())
+        if (not stored or stored["expires"] <= self._place_elapsed("liteapi")
+                or any(hotel_id not in stored["facts"] for hotel_id in hotel_ids)):
+            _fail("Перед тарифами нужны свежие географические сведения об этих гостиницах.",
+                "liteapi", "GEOGRAPHY_UNVERIFIED")
+        return deepcopy(stored["facts"])
+
+    async def resolve_air_place(self, request: dict) -> dict:
+        """One place suggestion request, with no nearest-airport substitution."""
+        from .provider_cities import place_city_aliases, place_city_key, place_coordinates_match
+        ref = self._private_place(request, "duffel")
+        key = self._key("DUFFEL_ACCESS_TOKEN", "duffel")
+        if not key.startswith("duffel_test_"):
+            _fail("Разрешён только Duffel test token.", "duffel", "CONFIG_BLOCKED")
+        body = await self._request("duffel", "GET", "https://api.duffel.com/places/suggestions",
+            headers={"Authorization": f"Bearer {key}", "Duffel-Version": "v2"},
+            params={"query": ref.canonical_name})
+        rows = body.get("data")
+        if not isinstance(rows, list) or len(rows) > 100:
+            _fail("Нет ограниченного списка географических мест Duffel.", "duffel", "INVALID_RESPONSE")
+        aliases = place_city_aliases(ref)
+        cities, airports = {}, {}
+        binding = ref.provider_bindings.duffel
+
+        def candidate(row: dict, kind: str, associated_airport=None):
+            name = row.get("name") if kind == "city" else row.get("city_name")
+            if (row.get("iata_country_code") != ref.country_iso2 or place_city_key(name) not in aliases
+                    or not isinstance(row.get("id"), str) or not 1 <= len(row["id"]) <= 160
+                    or not isinstance(row.get("iata_code"), str) or not re.fullmatch(r"[A-Z]{3}", row["iata_code"])):
+                return
+            spatial = place_coordinates_match(ref, row.get("latitude"), row.get("longitude"))
+            if kind == "city" and not spatial:
+                linked = [associated_airport] if isinstance(associated_airport, dict) else row.get("airports", [])
+                spatial = isinstance(linked, list) and any(isinstance(airport, dict)
+                    and airport.get("iata_country_code") == ref.country_iso2
+                    and place_coordinates_match(ref, airport.get("latitude"), airport.get("longitude"))
+                    for airport in linked[:100])
+            bound = (binding is not None and binding.external_id == row["id"]
+                and binding.country_iso2 == ref.country_iso2 and binding.place_type == kind
+                and binding.iata_code == row["iata_code"])
+            if not spatial and not bound:
+                return
+            result = {"provider_place_id": row["id"], "iata_code": row["iata_code"],
+                "place_type": kind, "country_iso2": ref.country_iso2}
+            group = cities if kind == "city" else airports
+            group[(row["id"], row["iata_code"])] = result
+
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            if row.get("type") == "city":
+                candidate(row, "city")
+            elif row.get("type") == "airport":
+                candidate(row, "airport")
+                if isinstance(row.get("city"), dict):
+                    candidate(row["city"], "city", row)
+        candidates = list(cities.values()) if cities else list(airports.values())
+        status = "RESOLVED" if len(candidates) == 1 else "AMBIGUOUS" if candidates else "UNVERIFIED" if rows else "NO_MATCH"
+        result = {"status": status, "provider": "duffel", "source_type": "SANDBOX",
+            "place_id": ref.place_id, "country_iso2": ref.country_iso2,
+            "place_ref_sha256": ref.snapshot_sha256(), "identity_verified": status == "RESOLVED",
+            "availability_verified": False, "candidates": candidates[:10],
+            "iata_code": None, "provider_place_id": None, "place_type": None}
+        if status == "RESOLVED":
+            result.update(candidates[0])
+            self._place_air_evidence[ref.snapshot_sha256()] = {
+                "expires": self._place_elapsed("duffel") + 3600, "iata_code": result["iata_code"]}
+            while len(self._place_air_evidence) > 64:
+                self._place_air_evidence.pop(next(iter(self._place_air_evidence)))
+        else:
+            self._place_air_evidence.pop(ref.snapshot_sha256(), None)
+        return result
+
+    def _verified_air_request(self, request: dict, slices: list[dict]) -> None:
+        refs = request.get("place_refs")
+        if (not isinstance(refs, dict) or not 1 <= len(refs) <= 2
+                or not set(refs) <= {"origin", "destination"} or len(slices) != 1):
+            _fail("Для географических ссылок нужен один точный участок маршрута.", "duffel", "INVALID_PLACE_REF")
+        for endpoint, raw_ref in refs.items():
+            ref = self._private_place({"place_ref": raw_ref}, "duffel")
+            stored = self._place_air_evidence.get(ref.snapshot_sha256())
+            if (not stored or stored["expires"] <= self._place_elapsed("duffel")
+                    or stored["iata_code"] != slices[0][endpoint]):
+                _fail("Перед поиском нужен свежий подтверждённый авиационный код этого места.",
+                    "duffel", "AIR_PLACE_UNVERIFIED")
+
     def _offer(self, provider: str, identity: Any, amount: Any, currency: str,
                description: str, details: dict, source_type: str, price_kind: str,
                expires_at: str | None = None) -> dict:
@@ -1073,6 +1262,9 @@ class TravelGateway(_HTTPGateway):
     async def search_hotels(self, request: dict, provider: str = "liteapi") -> list[dict]:
         if not isinstance(request, dict):
             _fail("Поиск должен быть объектом.", provider)
+        if "place_ref" in request and provider != "liteapi":
+            _fail("Этот гостиничный адаптер не подтверждает выбранную географическую ссылку.",
+                provider, "UNSUPPORTED_PROVIDER_GEOGRAPHY")
         if provider == "hotelbeds":
             return await self._hotelbeds(request)
         if provider == "ratehawk":
@@ -1090,6 +1282,8 @@ class TravelGateway(_HTTPGateway):
         hotels = request.get("hotelIds", request.get("hotel_ids"))
         if not isinstance(hotels, list) or not 1 <= len(hotels) <= 100 or any(not isinstance(h, str) or not h for h in hotels):
             _fail("Для LiteAPI нужны известные hotelIds (1–100).", provider)
+        place = self._private_place(request, provider) if "place_ref" in request else None
+        place_facts = self._verified_place_hotels(place, hotels) if place is not None else {}
         rooms = _occupancies(request.get("occupancies"), provider)
         currency = _currency(request.get("currency"), provider)
         nationality = request.get("guestNationality", request.get("guest_nationality"))
@@ -1105,9 +1299,22 @@ class TravelGateway(_HTTPGateway):
                                    headers={"X-API-Key": key}, json=payload)
         if not isinstance(body.get("data"), list):
             _fail("Нет ожидаемого списка гостиничных тарифов.", provider, "INVALID_RESPONSE")
+        if place is not None and "hotels" in body:
+            from .provider_cities import place_metadata_matches
+            metadata = body["hotels"]
+            if not isinstance(metadata, list):
+                _fail("Неверные географические сведения тарифа.", provider, "INVALID_RESPONSE")
+            for row in metadata:
+                if isinstance(row, dict) and row.get("id") in hotels and not place_metadata_matches(place,
+                        country=row.get("country_code"), city=row.get("city_name"),
+                        latitude=row.get("latitude"), longitude=row.get("longitude")):
+                    _fail("География тарифного ответа не подтверждает выбранное место.",
+                        provider, "GEOGRAPHY_UNVERIFIED")
         result = []
         for hotel in body["data"]:
             if not isinstance(hotel, dict):
+                continue
+            if place is not None and hotel.get("hotelId") not in hotels:
                 continue
             bundles = hotel.get("roomTypes", [])
             if not isinstance(bundles, list):
@@ -1141,7 +1348,10 @@ class TravelGateway(_HTTPGateway):
                     hotel.get("name", hotel.get("hotelId", "Гостиничный тариф")),
                     {"kind": "hotel", "native_offer_id": native, "hotel_id": hotel.get("hotelId"),
                      "rates": rates, "checkin": checkin, "checkout": checkout, "occupancies": rooms,
-                     **facts, **supplier_report, "supplier_verified": False, "availability_verified": False,
+                     **facts, **supplier_report,
+                     **({"place_id": place.place_id, "place_ref_sha256": place.snapshot_sha256(),
+                         "geography_evidence": place_facts[hotel["hotelId"]]} if place is not None else {}),
+                     "supplier_verified": False, "availability_verified": False,
                      "search_request": request}, "SANDBOX", "PROVIDER_ROOMS_STAY_TOTAL"))
         if body["data"] and not result:
             _fail("Нет тарифа с подтверждённой суммой всех запрошенных комнат.", provider, "INVALID_RESPONSE")
@@ -1150,6 +1360,9 @@ class TravelGateway(_HTTPGateway):
     async def search_flights(self, request: dict, provider: str = "duffel") -> list[dict]:
         if not isinstance(request, dict):
             _fail("Поиск должен быть объектом.", provider)
+        if "place_refs" in request and provider != "duffel":
+            _fail("Этот транспортный адаптер не подтверждает географические ссылки.",
+                provider, "UNSUPPORTED_PROVIDER_GEOGRAPHY")
         if "nonstop" in request and type(request["nonstop"]) is not bool:
             _fail("nonstop задаётся только true/false.", provider)
         if provider == "travelpayouts":
@@ -1162,6 +1375,8 @@ class TravelGateway(_HTTPGateway):
         if not key.startswith("duffel_test_"):
             _fail("Разрешён только Duffel test token; live-вызов заблокирован.", provider, "CONFIG_BLOCKED")
         slices = self._slices(request.get("slices"), provider)
+        if "place_refs" in request:
+            self._verified_air_request(request, slices)
         passengers = request.get("passengers")
         if not isinstance(passengers, list) or not passengers or len(passengers) > 20:
             _fail("Нужен полный список пассажиров.", provider)
@@ -1190,6 +1405,9 @@ class TravelGateway(_HTTPGateway):
         offers = body.get("data", {}).get("offers") if isinstance(body.get("data"), dict) else None
         if not isinstance(offers, list):
             _fail("Нет ожидаемого списка авиапредложений.", provider, "INVALID_RESPONSE")
+        if "place_refs" in request and any(not isinstance(offer, dict)
+                or self._duffel_nonstop(offer.get("slices"), slices) is None for offer in offers):
+            _fail("Авиатариф не подтвердил запрошенные участок и дату.", provider, "ITINERARY_UNVERIFIED")
         return [self._duffel_offer(offer, request) for offer in offers]
 
     def _slices(self, value: Any, provider: str) -> list[dict]:

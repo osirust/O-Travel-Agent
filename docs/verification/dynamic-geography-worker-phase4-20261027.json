@@ -1,0 +1,86 @@
+{
+  "id": "DYNAMIC-GEO-PHASE4-PERSISTENT-WORKER-001",
+  "status": "CONTROLLED_WORKER_AND_REAL_PG_TESTED / ROOT_DISPATCH_AND_ACTUAL_FLOW_OPEN",
+  "scope": "New place_run helper only. The harness/Store/API dispatch and control hook are integrated separately by root.",
+  "files": [
+    {
+      "path": "otravel/place_run.py",
+      "sha256": "2f42c74f66d6be562850a5ff72f79aa2cde1ee02f31083bab1729085ed3d8081"
+    },
+    {
+      "path": "tests/test_place_run.py",
+      "sha256": "813206475362cf0cbf37632200ab5bfdb44612a28a0bc7922556179c5bf755fe"
+    },
+    {
+      "path": "tests/test_place_run_pg.py",
+      "sha256": "1bf25d249f12b7b6eeed7d0f54edb05c2597f0b78f14ae705c4694e5fe906574"
+    }
+  ],
+  "api": {
+    "worker": "async finish_place_run(harness,session,run,state,*,request=None,selection=None,operations=(),model_meta=None,control=\"none\",remaining_requests=(),informational=False,precomputed_packet=None)->None",
+    "control": "rebase_place_control(pending,before_state,new_version,*,now=None)->dict|None; invalid, expired or foreign authority returns None and must be cleared/reasked by caller."
+  },
+  "implemented": [
+    "Independent validated edits apply to a copy first. The resolution coordinator sees a virtual version old+1 only when canonical/control changes exist. One final Store.finish_run uses the original expected version and commits at most one revision.",
+    "Exact owned selection packets/country references may follow unrelated fact changes only when trip, old version and role/target physical scope remain valid. Candidate IDs are recomputed and only exact prior owned selection IDs are translated.",
+    "Selected snapshots are reverified against fresh/current exact catalog records; the snapshot physical source ID and country must match the exact shown candidate before applying its scoped setter.",
+    "The source coordinator cannot replace the human pending question with a model reply. Unexpected source/catalog failures use fixed safe errors/questions while preserving independently valid facts.",
+    "Before/after source calls and before final commit, the original run/session lease is fenced. A source layer swallowing the fence exception cannot cause a stale write.",
+    "Explicit wait defers validated request/selection and bounded remaining jobs without coordinator/catalog/search calls. A new wait with no data edits creates one control revision; an already paused session receives no redundant control revision.",
+    "Pure control rebase updates normal and deferred packet epochs, nested country references, derived candidate IDs and deferred selections together. Source timestamps/expiry are not refreshed and expired choices are never revived.",
+    "Maintenance mode with no new request/selection applies independent facts, rebinds the existing owned place question and asks it again without starting directory or supplier search. Deleted/changed targets are not retargeted to another stay.",
+    "Up to five remaining explicit jobs are persisted. After selection the next job is resolved before trip search. A freshly resolved country can feed an explicitly supplied same-role/same-target next city job without a redundant city-name question.",
+    "Server-only precomputed ask/no_match/unavailable packets avoid repeating an initial geographic lookup. They cannot inject setters or snapshots, accept independent edits, or bind a foreign trip/version."
+  ],
+  "verification": {
+    "combined": {
+      "path": ".local/evaluation/geo-20261027/place-worker-combined-final.xml",
+      "sha256": "7efc6a8944babe643296571882c53dab208365e6b2b5c33558acfa9b4b317b13",
+      "tests": "35",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.768"
+    },
+    "initial_pg": {
+      "path": ".local/evaluation/geo-20261027/place-worker-pg-initial.xml",
+      "sha256": "d2d4e3ca3c1616b0e863427ddc0a2ca452e9c575f6604b9a98a203ba5001c8ef",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.053"
+    },
+    "initial_pure_preserved": {
+      "path": ".local/evaluation/geo-20261027/place-worker-pure-final.xml",
+      "sha256": "540fcfab1f661d15a39bcdd2543c4e213a403086fd617e663edd7379167f3f48",
+      "tests": "26",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.725"
+    },
+    "initial_pure_failure_attribution": "One added control test initially missed the TripState test import. The assertion/production semantics were unchanged; the original failing XML is retained.",
+    "real_pg_cases": [
+      "selected ref + budget one revision / quote stale / replay intake / owner identity unchanged",
+      "explicit wait with no domain edits one control revision and quote invalidation / zero source calls",
+      "country-pending maintenance keeps country scope and TTL while budget and child age change",
+      "unknown catalog snapshot rejected while independent budget survives",
+      "mid-source pause supersedes old run and blocks its stale write"
+    ],
+    "database_scope": "otravel_test only through scripts/run_tests.py; own sessions/cache records, no cleanup or runtime DB access",
+    "ruff": "PASS for all three owned files",
+    "actual_source_http": 0,
+    "model_calls": 0,
+    "native_changes": 0,
+    "source_coordinator_calls": "controlled test doubles only; PostgreSQL storage and catalog validation are real"
+  },
+  "open_boundaries": [
+    "Root must gate dispatch behind the opt-in feature and wire Store control rebinding; these source integrations were not changed by this worker task.",
+    "The five PG tests do not qualify an actual supplier/LLM flow or full owner conversation.",
+    "Search is delegated to harness._search_trip after remaining jobs and missing facts are resolved. Root owns cumulative tool accounting across geographic and supplier phases.",
+    "Control rebinding returns None for stale/expired authority; caller must clear/reask rather than silently keeping old inner tokens.",
+    "No quote, confirmation, order, payment, hidden child run, local Qwen or unbounded source retry is created by the worker.",
+    "DYNAMIC-GEO-INFORMATIONAL-WORKER-001 remains HOLD: informational=True raises place_information_mode_unavailable before edits/source/storage; global factual QA must not be routed as travel mutation."
+  ]
+}
