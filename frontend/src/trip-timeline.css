@@ -13,6 +13,10 @@
 .trip-timeline .timeline-action strong{font-size:13px;line-height:1.35;font-weight:750;overflow-wrap:anywhere}
 .trip-timeline .timeline-action small{font-size:11px;line-height:1.35;color:#7485a6;margin-top:5px}
 .trip-timeline .timeline-action svg{color:#253655;flex:0 0 auto}
-.trip-timeline .timeline-attribution{font-size:9px;line-height:1.4;margin-top:3px;color:#7184a5;overflow-wrap:anywhere}
-.trip-timeline .timeline-action:hover strong,.trip-timeline .timeline-attribution:hover{color:var(--blue)}
+.trip-timeline .timeline-action:hover strong{color:var(--blue)}
+.timeline-credits{margin:-12px 0 14px;text-align:right;color:#91a0b7;font-size:9px;line-height:1.5}
+.timeline-credits summary{cursor:pointer;list-style:none}
+.timeline-credits summary::-webkit-details-marker{display:none}
+.timeline-credits a{display:block;margin-top:4px;overflow-wrap:anywhere}
+.timeline-credits summary:hover,.timeline-credits a:hover{color:var(--blue)}
 @media(min-width:1500px),(max-width:700px){.trip-timeline .timeline-point{gap:12px;min-height:96px}.trip-timeline .timeline-photo{width:68px;height:72px;flex-basis:68px}.trip-timeline .timeline-action strong{font-size:15px}.trip-timeline .timeline-action small{font-size:12px}}

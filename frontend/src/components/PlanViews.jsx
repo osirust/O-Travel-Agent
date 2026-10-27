@@ -81,12 +81,13 @@ export function TripTimeline({ trip, onEdit }) {
     return () => { active = false; };
   }, [citiesKey]);
   const ending = trip.route_policy.kind === 'round_trip' ? trip.origin : trip.route_policy.kind === 'open_jaw' ? trip.route_policy.end_city : null;
-  return <div className="trip-timeline">
+  const credits = [...new Set(trip.stays.filter(stay => attributionLink(photos[stay.city]?.source_url) && photos[stay.city].url === visiblePhotos[stay.id]).map(stay => stay.city))];
+  return <><div className="trip-timeline">
     {trip.origin && <div className="timeline-point origin-point"><span className="timeline-icon"><Plane size={19} /></span><button className="timeline-action" onClick={onEdit}><span><strong>{trip.origin}</strong><small>{dateLabel(trip.stays[0]?.check_in, { day: 'numeric', month: 'long' })}</small></span><ChevronRight size={17} /></button></div>}
-    {trip.stays.map(stay => <div className="timeline-point destination-point" key={stay.id}><span className="timeline-marker" aria-hidden="true"><i /></span><DestinationThumbnail city={stay.city} photo={photos[stay.city]} onLoaded={url => setVisiblePhotos(current => current[stay.id] === url ? current : { ...current, [stay.id]: url })} /><div className="timeline-destination"><button className="timeline-action" onClick={onEdit}><span><strong>{stay.city || 'Новый город'}{nightsLabel(stay)}</strong><small>{dateLabel(stay.check_in)} — {dateLabel(stay.check_out)}</small></span><ChevronRight size={17} /></button>{attributionLink(photos[stay.city]?.source_url) && photos[stay.city].url === visiblePhotos[stay.id] && <a className="timeline-attribution" href={photos[stay.city].source_url} target="_blank" rel="noreferrer noopener">Фото: {photos[stay.city].author} · {photos[stay.city].license}</a>}</div></div>)}
+    {trip.stays.map(stay => <div className="timeline-point destination-point" key={stay.id}><span className="timeline-marker" aria-hidden="true"><i /></span><DestinationThumbnail city={stay.city} photo={photos[stay.city]} onLoaded={url => setVisiblePhotos(current => current[stay.id] === url ? current : { ...current, [stay.id]: url })} /><div className="timeline-destination"><button className="timeline-action" onClick={onEdit}><span><strong>{stay.city || 'Новый город'}{nightsLabel(stay)}</strong><small>{dateLabel(stay.check_in)} — {dateLabel(stay.check_out)}</small></span><ChevronRight size={17} /></button></div></div>)}
     {ending && trip.stays.length > 0 && <div className="timeline-point origin-point"><span className="timeline-icon"><Plane size={19} /></span><button className="timeline-action" onClick={onEdit}><span><strong>{ending}</strong><small>{dateLabel(trip.stays.at(-1).check_out, { day: 'numeric', month: 'long' })}</small></span><ChevronRight size={17} /></button></div>}
     {trip.route_policy.kind === 'undecided' && <p className="hint">Нужно уточнить завершение маршрута</p>}
-  </div>;
+  </div>{credits.length > 0 && <details className="timeline-credits"><summary>Источники изображений</summary>{credits.map(city => <a key={city} href={attributionLink(photos[city].source_url)} target="_blank" rel="noreferrer noopener">{city}: {photos[city].author} · {photos[city].license}</a>)}</details>}</>;
 }
 
 export function TripSummary({ data, onEdit, onPreview, onDetails, cartItems, onCart }) {
