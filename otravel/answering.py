@@ -580,6 +580,50 @@ def canonical_unit_capability_answer(text: str, state: dict) -> str | None:
             "Этот лимит не применён; общий бюджет поездки не заменён ценой за ночь. " + _budget(state))
 
 
+def order_status_question(text: str, subject: str | None = None) -> bool:
+    """A narrow order-status query; a model subject selects a topic, not facts."""
+    key = " ".join(text.casefold().replace("ё", "е").split())
+    if not key or len(key) > 1500 or explicit_search_request(text):
+        return False
+    if re.search(r"\b(?:если|допустим|предположим|гипотетическ\w*|будет)\b", key):
+        return False
+    clean = _NO_CHANGE.sub("", key)
+    if _EDIT.search(clean) or _POLITE_EDIT.search(clean):
+        return False
+    if re.search(r"бюджет|путешествен|ребен|взросл|ноч|заезд|выезд|маршрут|расселен|номер\s+комнат", key):
+        return False  # A multi-topic question retains the richer fact-selector role.
+    if "?" not in key and not re.match(r"^(?:напомни|покажи|скажи|какой)\b", key):
+        return False
+    if not re.search(r"\b(?:есть|создан\w*|существ\w*|оформлен\w*|статус|оплачен\w*|напомни|покажи)\b", key):
+        return False
+    # Only this small status vocabulary can bypass extraction. A second clause
+    # with a declarative edit ("теперь вылетаем...") must retain the normal path.
+    words = re.findall(r"\w+", clean)
+    status_word = re.compile(
+        r"(?:а|и|ли|у|нас|меня|мой|моя|мои|наш|наша|наши|уже|сейчас|еще|вообще|"
+        r"есть|нет|не|был|была|были|он|она|они|это|этот|эта|эти|какой|какая|какие|"
+        r"пожалуйста|напомни|покажи|скажи|статус|заказ(?:а|ы|ов)?|бронь|брони|броней|"
+        r"бронировани(?:е|я|й)|тестов(?:ый|ая|ое|ые|ого|ой|ых)|"
+        r"настоящ(?:ий|ая|ее|ие|его|ей|их)|реальн(?:ый|ая|ое|ые|ого|ой|ых)|"
+        r"создан(?:а|о|ы|ный|ная|ное|ные)?|оформлен(?:а|о|ы|ный|ная|ное|ные)?|"
+        r"оплачен(?:а|о|ы|ный|ная|ное|ные)?|существует|существуют)"
+    )
+    if not words or not all(status_word.fullmatch(word) for word in words):
+        return False
+    named = bool(re.search(r"заказ|брон|бронирован", key))
+    selected = isinstance(subject, str) and bool(re.search(r"заказ|брон|бронирован", subject.casefold()))
+    return named or selected and len(key) <= 200
+
+
+def canonical_order_status_answer(text: str, state: dict, orders: list[dict], *, subject: str | None = None) -> str | None:
+    if not order_status_question(text, subject):
+        return None
+    reply = facts_projection(state, [], orders, [], [], question=text)["sections"]["orders"]
+    if not orders:
+        reply += " Настоящая бронь в этом приложении не создавалась; оплаты поставщику не было."
+    return reply
+
+
 def wants_saved_facts(text: str) -> bool:
     return "?" in text or bool(re.search(
         r"\b(?:напомни|скажи|назови|объясни|поясни|сверь|перечисли|сколько|что изменилось|what|which|remind|explain|tell me)\b",

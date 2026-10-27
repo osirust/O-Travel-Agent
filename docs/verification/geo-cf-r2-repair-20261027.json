@@ -1,0 +1,137 @@
+{
+  "format": "otravel.geo.cf-r2-repair.v1",
+  "created_at": "2026-10-27T01:37:35.733413+00:00",
+  "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING",
+  "baseline": {
+    "commit": "ab378d299639b484774c2697130adf71c56ecacb",
+    "report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-012305-e541d0e5/report.json",
+    "sha256": "ec5c7e7dc701a2228f1f0de3e58bec60774f28c9eedc94dabc3f016fc749d3d9",
+    "preserved": true,
+    "recipe": {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r2.json",
+      "sha256": "fc40e7aab1083633fb09fd3702772c6af50618b0dde04a38481ec73d7a9bb64e",
+      "bytes": 76047
+    }
+  },
+  "findings": [
+    {
+      "id": "H004-GEO-LATE-FIELD-TYPO-001",
+      "actual": "PF-GEO-02/T4 raw set_origin=Санкт-Петербург was suppressed as unanchored; no typo consent; T5 NOT_REACHED.",
+      "action": "Bound one-edit city suggestions to explicit origin/destination field labels even while a date is pending; questions, alternatives, history and veto excluded.",
+      "closure": "Cached real operations and 8-turn PG chain pass. Repeat the frozen dialogue against the deployed remote model; old actual FAIL remains."
+    },
+    {
+      "id": "H004-GEO-UNCONFIRMED-CITY-LOSS-001",
+      "actual": "PF-GEO-01/T5 Белград.city/RS; T6 Стамбул в Сербии replaced it with Сербия.country/RS before consent; T7 no+child retained only country.",
+      "action": "Retain canonical selected city while the unconfirmed alternative repeats its country. Confirm applies the new city; reject preserves the exact old city. A different explicitly named country supersedes the old city.",
+      "closure": "Cached real operations and 12-turn PG chain pass; independent child/budget preserved. 6-turn explicit Russia override negative passes. Repeat frozen remote-model series without weakening city assertion."
+    },
+    {
+      "id": "H004-GEO-COVERAGE-SLOT-CONTINUATION-001",
+      "actual": "New long controlled chain exposed city-field loss after an unrelated budget edit because the server coverage question was not classified.",
+      "action": "Classify only the two rendered coverage-question phrases as destination.city, retaining the current city through unrelated changes.",
+      "closure": "12-turn PG chain passes including budget change then a new proposal and acceptance; remote continuation remains pending."
+    }
+  ],
+  "policy": {
+    "new_prior_packet": false,
+    "search_geography_expanded": false,
+    "new_keys": false,
+    "literal_schema_changed": false,
+    "native_C_changed": false,
+    "original_actual_reports_changed": false
+  },
+  "files": [
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "c3711ec6dd3c311ea4465875c8b5db54c43994498c98f44fc80b8981525b4105",
+      "bytes": 47502
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "0b26997cf179073db7ede4c6cbeac680e391f571a93dc64e76bb4d6b580fbab2",
+      "bytes": 40541
+    },
+    {
+      "path": "tests/test_geo_cf_r2_regressions.py",
+      "sha256": "b713e678b0ce7af773eeb862b883915bd5996a70b0082a804857bf06cbffd5f8",
+      "bytes": 7676
+    },
+    {
+      "path": "tests/test_harness_geo_cf_r2_series.py",
+      "sha256": "a85c387092fba219291a6dc8e3fe46d0fbf95bdebac2200dbf500f2ab96bef91",
+      "bytes": 9901
+    },
+    {
+      "path": "fixtures/regression/geography-cf-r2-20261027.json",
+      "sha256": "ac6d16c2d003d45a2b36d4175d2153bf56b3a4e7136a4cafa7f52949ebbdf2b6",
+      "bytes": 29279
+    }
+  ],
+  "hash_scope": "E working-tree bytes; not a native archive/package identity.",
+  "initial_failures_preserved": [
+    {
+      "path": ".local/evaluation/geo-20261027/cf-r2-initial.xml",
+      "sha256": "7199d3a61143d3219bace7caefa65ee5355c949336979bfaa36ff0a6dd0faf55",
+      "bytes": 4022,
+      "tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/cf-r2-expanded-initial.xml",
+      "sha256": "d9d7376d91c54340fee5d3298d5ee094b6e42fdc20613bedf42ea49d4d82a842",
+      "bytes": 9699,
+      "tests": 16,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/cf-r2-pg-initial.xml",
+      "sha256": "95344889e42e17e327d02eac3c328e2924cd14fdfeac1edca3ea07722d03f3db",
+      "bytes": 7622,
+      "tests": 21,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/cf-r2-pg-diagnostic.xml",
+      "sha256": "82b308989add6a21fb97d392bb0c2ad44738847cfd287da50852140555cd071b",
+      "bytes": 2609,
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "verification": {
+    "path": ".local/evaluation/geo-20261027/cf-r2-related-final.xml",
+    "sha256": "16cc7144266350029c5ba2575f10ccb2cbb980891efc82b99fde1f4bf9dcebcf",
+    "bytes": 94507,
+    "tests": 424,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_connected_scope": {
+    "dialogues": 3,
+    "turns": 26,
+    "adapter_calls": 11,
+    "actual_remote_llm_http": 0,
+    "supplier_http": 0,
+    "quotes_or_orders_created": 0,
+    "database": "otravel_test",
+    "seed_pending_used": false,
+    "model_source": "Cached actual CF validated outputs plus explicitly identified continuation doubles"
+  },
+  "not_claimed": [
+    "new actual remote LLM PASS",
+    "full original80 or106 execution",
+    "live travel search qualification",
+    "production deployment",
+    "final frontend"
+  ]
+}

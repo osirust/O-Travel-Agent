@@ -40,7 +40,9 @@ def test_capability_questions_history_quotes_and_negation_do_not_change_sources(
 ])
 def test_explicit_current_policy_fields_are_allowed(text, prior, proposed):
     result, meta = guard_search_policy_operations(prior, [policy(**proposed)], text)
-    assert result == [policy(**proposed)] and not meta["notes"]
+    assert result == [policy(**proposed)]
+    expected = ["search_policy_literal_grounded"] if "mode" in proposed else []
+    assert [note["code"] for note in meta["notes"]] == expected
 
 
 def test_mode_permission_does_not_authorize_changed_provider_or_fallback():

@@ -1,0 +1,218 @@
+{
+  "status": "ACTUAL_MIXED_GROUP_SEARCH_PREBOOK_REFRESH_SIMCONFIRM_PASS",
+  "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "package_sha256": "2d9f2d88d0b673236ec860518e7c783b61f8cb2837b31eaac36eadf95a08b714",
+  "scope": "Explicit typed four-person/two-family/two-stay/four-room/three-flight fixture; actual sandbox suppliers and reference FX, DEMO transfers; not an NLU or real-booking test",
+  "source_report_sha256": "d0d041fd31e2803f58c2d59b0df79b96ecdf044129b51affb1d919263f4de549",
+  "llm_calls": 0,
+  "durable_search_tool_starts": 6,
+  "supplier_http_count": "Not instrumented as a wire counter",
+  "supplier_booking_calls": 0,
+  "payment_calls": 0,
+  "search_total_minor": 34669738,
+  "quote_total_minor": 34669738,
+  "currency": "RUB",
+  "native_currency_totals": {
+    "EUR": 98883,
+    "RUB": 25761022
+  },
+  "fx_snapshot": {
+    "as_of": "2026-10-27",
+    "provider": "cbr",
+    "expires_at": "2026-10-27T07:00:23.561059+00:00",
+    "source_url": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=27%2F10%2F2026",
+    "snapshot_id": "cbr-75be7a9f5f4721ca2b2b561d9c7636aecb1c8149e4a4402d868ec324038bfa52",
+    "ttl_seconds": 21600,
+    "fees_unknown": true,
+    "requested_on": "2026-10-27",
+    "retrieved_at": "2026-10-27T01:00:23.561059+00:00",
+    "source_quotes": {
+      "EUR": {
+        "nominal": 1,
+        "value_rub": "90.0935"
+      },
+      "RUB": {
+        "nominal": 1,
+        "value_rub": "1"
+      },
+      "USD": {
+        "nominal": 1,
+        "value_rub": "80.4909"
+      }
+    },
+    "reference_only": true,
+    "schema_version": 1,
+    "raw_source_sha256": "ac1efa3af3324eb24712594c3c218b4432ae9fb11340ff8b9a1c4c118c7a7591",
+    "rates_rub_per_unit": {
+      "EUR": "90.0935",
+      "RUB": "1",
+      "USD": "80.4909"
+    },
+    "max_source_age_days": 7,
+    "real_booking_supported": false
+  },
+  "coverage": {
+    "covered": [
+      "hotel:ayt:ayt-a",
+      "hotel:ayt:ayt-b",
+      "hotel:ist:ist-a",
+      "hotel:ist:ist-b",
+      "leg:back",
+      "leg:between",
+      "leg:out",
+      "transfer:ayt",
+      "transfer:ist"
+    ],
+    "missing": [],
+    "complete": true,
+    "required": [
+      "hotel:ist:ist-a",
+      "hotel:ist:ist-b",
+      "hotel:ayt:ayt-a",
+      "hotel:ayt:ayt-b",
+      "leg:out",
+      "leg:between",
+      "leg:back",
+      "transfer:ist",
+      "transfer:ayt"
+    ],
+    "overlapping": []
+  },
+  "source_type": "MIXED",
+  "ready_for_real_booking": false,
+  "hotel_prebook_checks": [
+    {
+      "hotel_id": "lp8a2f3",
+      "source_type": "SANDBOX",
+      "amount_minor": 8971394,
+      "currency": "RUB",
+      "occupancies": [
+        {
+          "adults": 1,
+          "children": [
+            6
+          ]
+        },
+        {
+          "adults": 1,
+          "children": [
+            12
+          ]
+        }
+      ],
+      "allocation_verified": true,
+      "fees_included": true,
+      "sandbox_prebook_verified": true
+    },
+    {
+      "hotel_id": "lp55de7",
+      "source_type": "SANDBOX",
+      "amount_minor": 16469628,
+      "currency": "RUB",
+      "occupancies": [
+        {
+          "adults": 1,
+          "children": [
+            7
+          ]
+        },
+        {
+          "adults": 1,
+          "children": [
+            12
+          ]
+        }
+      ],
+      "allocation_verified": true,
+      "fees_included": true,
+      "sandbox_prebook_verified": true
+    }
+  ],
+  "flight_refresh_checks": [
+    {
+      "source_type": "SANDBOX",
+      "amount_minor": 38887,
+      "currency": "EUR",
+      "group_quote": true,
+      "passengers_count": 4,
+      "request_passengers": [
+        {
+          "type": "adult"
+        },
+        {
+          "age": 6
+        },
+        {
+          "type": "adult"
+        },
+        {
+          "age": 12
+        }
+      ],
+      "reprice_kind": "test_offer_refresh"
+    },
+    {
+      "source_type": "SANDBOX",
+      "amount_minor": 17538,
+      "currency": "EUR",
+      "group_quote": true,
+      "passengers_count": 4,
+      "request_passengers": [
+        {
+          "type": "adult"
+        },
+        {
+          "age": 7
+        },
+        {
+          "type": "adult"
+        },
+        {
+          "age": 12
+        }
+      ],
+      "reprice_kind": "test_offer_refresh"
+    },
+    {
+      "source_type": "SANDBOX",
+      "amount_minor": 42458,
+      "currency": "EUR",
+      "group_quote": true,
+      "passengers_count": 4,
+      "request_passengers": [
+        {
+          "type": "adult"
+        },
+        {
+          "age": 7
+        },
+        {
+          "type": "adult"
+        },
+        {
+          "age": 12
+        }
+      ],
+      "reprice_kind": "test_offer_refresh"
+    }
+  ],
+  "demo_transfer_count": 2,
+  "preview_http": 200,
+  "confirm_http": 200,
+  "repeat_http": 200,
+  "orders_count": 1,
+  "order_status": "BOOKED_DEMO",
+  "exact_repeat_same_order": true,
+  "post_order_old_plan_media": {
+    "http_status": 409,
+    "code": "stale_state",
+    "meaning": "This separate read used the old state_version after order bumped0to1; rejected as stale. Photos before checkout were tested separately on the same package."
+  },
+  "initial_failure_preserved": "travel-media-ab378d2-0d9abd9f: preview503HTTP_ERROR, no order; isolated suppliers all200, cause unproven",
+  "unclosed": [
+    "Live bookable production fares and real booking",
+    "Verified comparable tariffs from different suppliers",
+    "Unbounded language understanding and80/106 actual corpus",
+    "Media after order is not a fresh current-plan proof"
+  ]
+}

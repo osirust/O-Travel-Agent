@@ -126,6 +126,11 @@ def _field(raw: Any) -> str | None:
         return "party.children"
     if re.search(r"какой город|какие города|куда (?:хотите|поед|ед)|город.*назначения", key):
         return "destination.city"
+    if re.search(r"сохраняем это направление без поиска или вы хотите его изменить"
+                 r"|обсудим направление без поиска или выберем другой город", key):
+        # Server-rendered coverage questions remain city-bound after an
+        # unrelated party/budget edit. They are not an exhausted date slot.
+        return "destination.city"
     if re.search(r"дат[ауые].*(?:заезд|прибыт)|когда.*заез", key):
         return "stay.check_in"
     if re.search(r"дат[ауые].*(?:выезд|возвращ)|когда.*возвращ", key):

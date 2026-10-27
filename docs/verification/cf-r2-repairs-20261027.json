@@ -1,0 +1,85 @@
+{
+  "format": "otravel.cf-r2-repair.integration.v1",
+  "date": "2026-10-27",
+  "base_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "scope": "Changed working source, cached actual validated outputs and fresh isolated PostgreSQL; not a new external-model retest",
+  "source_files": [
+    {
+      "path": "otravel/answering.py",
+      "sha256": "bd2bc14f9ca26b13794aa76d941777687ce85f2d1fd324ff582740275959cf23"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "1d866bf1220441ca45977c9fc2fdd973d37fbcf46b0fc32737a8e15f42a1651d"
+    },
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "c3711ec6dd3c311ea4465875c8b5db54c43994498c98f44fc80b8981525b4105"
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "0b26997cf179073db7ede4c6cbeac680e391f571a93dc64e76bb4d6b580fbab2"
+    },
+    {
+      "path": "otravel/search_policy_intent.py",
+      "sha256": "e9cda59b5db3427c9b2a4e947aa03575a5c56b193948ff01b4d0ba0bf0d385e1"
+    }
+  ],
+  "findings": [
+    {
+      "id": "HARNESS-004-DEMO-COMMAND-IGNORED-001",
+      "fact": "The two captured CF contracts already contained set_search_policy DEMO; old guard stripped it for the explicit word деморежим.",
+      "action": "Ground an unambiguous literal mode, retain provider/fallback values and wait semantics, block conflicting mode commands.",
+      "closure": "Cached exact outputs and two PG intakes pass; actual-model repeat pending."
+    },
+    {
+      "id": "HARNESS-004-LATE-ORIGIN-TYPO-001",
+      "fact": "Explicit late departure-field typo was suppressed while a date question was pending.",
+      "action": "Recognize owned departure cue, issue targeted confirmation without replacing other requirements.",
+      "closure": "Related cached/PG regression passes; actual-model repeat pending."
+    },
+    {
+      "id": "HARNESS-004-CHOSEN-CITY-LOSS-001",
+      "fact": "Unconfirmed Istanbul proposal replaced selected unsupported Belgrade intent; rejection then retained only Serbia.",
+      "action": "Preserve the selected city until acceptance or an explicit different-country change; retain destination question through unrelated edits.",
+      "closure": "Three PG chains/26 turns and related assertions pass; actual-model repeat pending."
+    },
+    {
+      "id": "HARNESS-004-ORDER-REPLY-SUPPRESSED-001",
+      "fact": "Actual correct order-status answer was replaced by a generic unchanged-plan receipt.",
+      "action": "Render existing orders from Store; narrow topic shortcut excludes mixed declarative edits and hypotheses.",
+      "closure": "Exact captured validated contract and own simulated order PG regression pass; no new model/tool/quote/order for exact status question. Actual-model series retest pending."
+    }
+  ],
+  "controlled_integrated": {
+    "path": ".local/evaluation/after80-20261027/cf-r2-repairs-integrated.xml",
+    "sha256": "746e7f258fa03a8dc6938bcb6cb1cd6cde646c501239be8ca5d12df5e2366277",
+    "tests": 103,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 6.162
+  },
+  "full": {
+    "path": ".local/evaluation/after80-20261027/full-cf-r2-repaired.xml",
+    "sha256": "182c878f8cdebe73aa6ce5fd42d05dcc57ad8b5ada4d1470a3337520e3a0bdc9",
+    "tests": 4026,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 123.742
+  },
+  "llm_http_calls_in_tests": 0,
+  "supplier_http_calls_in_tests": 0,
+  "supplier_booking_calls": 0,
+  "payment_calls": 0,
+  "original_actual_report": {
+    "sha256": "ec5c7e7dc701a2228f1f0de3e58bec60774f28c9eedc94dabc3f016fc749d3d9",
+    "unchanged": true
+  },
+  "limitations": [
+    "Full80 and original106 language acceptance remain open.",
+    "Existing harness-wide legacy lint findings are not claimed fixed; new root test import ordering is fixed.",
+    "Native has not been updated by these controlled tests."
+  ]
+}

@@ -365,8 +365,14 @@ def _typo_place_proposals(text: str) -> list[dict]:
     """
     proposals = []
     hypothetical = False
-    pattern = re.compile(r"(?<![\w-])(?P<cue>из|from|iz|в|во|to|v|vo)\s+(?:город[ау]?\s+)?"
-                         r"(?P<literal>[а-яa-z][а-яa-z-]{3,59})(?![\w-])")
+    patterns = [
+        (re.compile(r"(?<![\w-])(?P<cue>из|from|iz|в|во|to|v|vo)\s+(?:город[ау]?\s+)?"
+                    r"(?P<literal>[а-яa-z][а-яa-z-]{3,59})(?![\w-])"), None),
+        (re.compile(r"\b(?:отправление|город отправления|город вылета)\s*[:=-]?\s*"
+                    r"(?:(?:теперь|сейчас)\s+)?(?P<literal>[а-яa-z][а-яa-z-]{3,59})(?![\w-])"), 'origin.city'),
+        (re.compile(r"\b(?:назначение|направление|город назначения)\s*[:=-]?\s*"
+                    r"(?:(?:теперь|сейчас)\s+)?(?P<literal>[а-яa-z][а-яa-z-]{3,59})(?![\w-])"), 'destination.city'),
+    ]
     for item in re.finditer(r"[^,;.!?\n]+(?:[,;.!?\n]|$)", _unquote(text)):
         raw = item.group().strip()
         stop = raw[-1:] in {";", ".", "!", "?", "\n"}
@@ -374,22 +380,24 @@ def _typo_place_proposals(text: str) -> list[dict]:
         if _HYPOTHETICAL.search(clause) or _HISTORY.search(clause) or _NEGATIVE.search(clause):
             hypothetical = True
         skip = (hypothetical or _QUESTION.search(clause) or raw.endswith("?") or _NO_LODGING.search(clause)
+                or re.search(r"\b(?:или|либо)\b", clause)
                 or re.search(r"\b(?:пересад\w*|транзит\w*|проездом)\b", clause))
         if not skip:
-            for match in pattern.finditer(clause):
-                literal = match["literal"]
-                prefix = clause[:match.start()]
-                if (literal in _FORMS or literal in _COUNTRIES or literal in _AMBIGUOUS
-                        or re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", prefix)
-                        or _RETURN.search(prefix) or _END_BEFORE.search(prefix)):
-                    continue
-                candidates = {city for alias, city in _FORMS.items() if len(alias) >= 4 and _one_typo(literal, alias)}
-                if len(candidates) == 1:
-                    place = parse_destination(next(iter(candidates)))["requested_destination"]
-                    proposal = {"field": "origin.city" if match["cue"] in {"из", "from", "iz"} else "destination.city",
-                                "literal": literal, "place": place}
-                    if proposal not in proposals:
-                        proposals.append(proposal)
+            for pattern, explicit_field in patterns:
+                for match in pattern.finditer(clause):
+                    literal = match["literal"]
+                    prefix = clause[:match.start()]
+                    if (literal in _FORMS or literal in _COUNTRIES or literal in _AMBIGUOUS
+                            or re.search(r"(?:живу|живем|прожива\w*|работа\w*)\s*$", prefix)
+                            or _RETURN.search(prefix) or _END_BEFORE.search(prefix)):
+                        continue
+                    candidates = {city for alias, city in _FORMS.items() if len(alias) >= 4 and _one_typo(literal, alias)}
+                    if len(candidates) == 1:
+                        place = parse_destination(next(iter(candidates)))["requested_destination"]
+                        field = explicit_field or ('origin.city' if match['cue'] in {'из', 'from', 'iz'} else 'destination.city')
+                        proposal = {"field": field, "literal": literal, "place": place}
+                        if proposal not in proposals:
+                            proposals.append(proposal)
         if stop:
             hypothetical = False
     return proposals
@@ -461,7 +469,7 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
         ask("Из какого одного города вы отправляетесь? Уточните город отправления.", "origin.city")
     if facts["alternative"] or len(destinations) > 1 and not facts["multicity"]:
         ask("Выберите один город назначения или явно опишите последовательность остановок.", "destination.city")
-    expected = pending.get("requested_destination")
+    expected = facts_pending.get("requested_destination")
     expected_country = expected.get("country_code") if isinstance(expected, dict) else None
     blocked = False
     typo_proposals = _typo_place_proposals(text)
@@ -479,7 +487,11 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     if declined_proposal:
         requested = pending.get("requested_destination")
         country_name = requested.get("name") if isinstance(requested, dict) and requested.get("kind") == "country" else None
-        ask(f"Какой город в стране «{country_name}» вы выбираете для поездки?" if country_name else
+        from .clarifications import human_question
+        retained_city = (isinstance(requested, dict) and requested.get("kind") == "city"
+                         and parse_destination(requested.get("name", ""))["requested_destination"] == requested)
+        ask(human_question("destination.city", data, {"requested_destination": requested}) if retained_city else
+            f"Какой город в стране «{country_name}» вы выбираете для поездки?" if country_name else
             "Какой город назначения вы выбираете? Предложенный город отклонён.", "destination.city",
             {"requested_destination": requested} if isinstance(requested, dict) else None,
             pending.get("target_id"))
@@ -509,6 +521,14 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
         if mismatched_country or stale_choice:
             blocked = True
             requested = parse_destination(country or expected_country)["requested_destination"]
+            # An unconfirmed alternative in the same requested country does
+            # not discard the user's already chosen (possibly unsupported)
+            # city. A genuinely different explicit country still supersedes
+            # that old city; rejection must not resurrect an obsolete country.
+            if (isinstance(expected, dict) and expected.get("kind") == "city"
+                    and expected.get("country_code") == requested.get("country_code")
+                    and parse_destination(expected.get("name", ""))["requested_destination"] == expected):
+                requested = deepcopy(expected)
             actual_name = parse_destination(actual_country)["requested_destination"]["name"]
             ask(f"Город «{destination}» находится в стране «{actual_name}». Вы подтверждаете выбор этого города и смену страны назначения?",
                 "destination.city", {"requested_destination": requested, "proposed_destination": place,

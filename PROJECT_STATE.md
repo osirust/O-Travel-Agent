@@ -1,39 +1,35 @@
 # O!Travel Agent — состояние на 27 октября 2026
 
-## Цель и ограничения
+## Цель и границы
 
-27 октября довести backend/harness до передачи frontend и тестировщику. Рабочий список — `docs/research/harness-plan-review.md`. Дизайн здесь не делаем. Только бесплатные подтверждённые API; локальную Qwen не использовать, пока доступны сильные API. Настоящих оплат/бронирований нет. Исходные корпуса и FAIL не переписывать.
+Закрыть backend/harness по docs/research/harness-plan-review.md до интеграции frontend. Работа разрешена, продолжать. Дизайн делает сокомандник. Только подтверждённые free/test API; локальную Qwen не использовать, пока доступны сильные API. Реальных броней/оплат нет. Исходные FAIL/корпуса сохранять.
 
-Исходники: `E:/work/aegml`. Native: `/home/aegml/projects/otravel-after80-20261026`, WSL `AegML-Hackathon`, PostgreSQL `otravel_zai_eval`, порт8084. Тесты используют только `otravel_test`. Master-секреты — private `/home/aegml/projects/otravel/.env`, не Git/отчёты. AEGYX INDEX81 остаётся PAUSE перед SOURCE3; Ubuntu24.04, WindowsPG/PEM/8080 не трогать. Никаких WSL shutdown, docker prune или удаления volumes.
+E:/work/aegml; Native /home/aegml/projects/otravel-after80-20261026, WSL AegML-Hackathon, DB otravel_zai_eval,8084. Тесты только otravel_test. Master private /home/aegml/projects/otravel/.env. AEGYX R16 INDEX81 PAUSED, чужие WSL/WindowsPG/httpd8080 не трогать; no shutdown/prune/volume delete.
 
-## Проверенный исходный checkpoint
+## Публикация и runtime
 
-- В обеих приватных репозиториях ветка `backend/harness-foundation` получила `9ddfcda6dde46604e01c132f02b9a54a12cef628`. Следующий локальный commit `3c9f3c06bf78e2342b66172971268a56c7f77781` исправляет ошибочную суточную блокировку при неизвестном Groq429 (143PG checks); ещё не опубликован.
-- Native уже3c9f3c0/package `bb08b98b166432a969d15acbfa91c00efa3d50409e61e835e36de5307dba4214`, controller `scripts/after80_groq_backend.py`, Groq Free Qwen3.8-27B +HYBRID LiteAPI sandbox/Duffel test/SerpApi Free, FX включён. Новые правки ниже пока в E и не развёрнуты.
-- Последний завершённый общий прогон:3723PASS/0skip (`.local/evaluation/after80-20261026/full-20261027-initial.xml`). Он предшествует последнему leg-intent/semantic-pause пакету; новый полный прогон идёт отдельно.
-- Actual Groq: один связный custom диалог,3 model calls,3 пользовательских сообщения +1 явный typed resume. Сохранены Москва→Казань,1adult, child7→8, бюджет75k→55k, пауза/очередь;0tools/orders. `docs/verification/groq-dialogue-20261027.json`. Первый driver неправильно ждал queuedrun и timeout сохранён; это не80/106PASS.
+- В обоих private remotes ветка backend/harness-foundation: ab378d299639b484774c2697130adf71c56ecacb. Draft PR3 открыт, main не сливается автоматически.
+- Native ab378d2/package2d9f2d88d0b673236ec860518e7c783b61f8cb2837b31eaac36eadf95a08b714, Cloudflare @cf/nvidia/nemotron-3-120b-a12b. Own manager scripts/after80_cf_backend.py. Groq остановлен своим manager. HYBRID LiteAPI sandbox/Duffel test/Serp Free, reference FX включён; paid/local fallback запрещён.
+- Последний полный baseline3914 PASS/0skip. Новые CF-r2 repairs находятся в E, пока не deployed; integrated103 PASS. Общий full новых repairs:4026PASS/0skip/123.78s; docs/verification/cf-r2-repairs-20261027.json.
 
-## Новые исправления до общей приёмки
+## Настоящие внешние проверки
 
-- `TRAVEL-LITEAPI-SELECTED-REPRICE-001`: выбранный offerId перепроверяется через sandbox prebook, а не повтор rates. Настоящие single-room Dubai и multi-room Istanbul проходят (7HTTP/0booking/payment);253relatedPASS. Цена/состав/fees перепроверяются, источник остаётсяSANDBOX. Native search→prebook→simconfirm ещё требуется. `docs/verification/liteapi-prebook-20261027.json`.
-- География: qualified city/country conflict, scoped Белгород→Белград при Сербии, адресные предложения опечаток Москвы/Петербурга/Стамбула, compound yes/no+child, позднее yes после отказа. 402relatedPASS,5 PG диалогов/38ходов; actual NLU этих новых случаев ещё нужен. `docs/verification/geo-dialogues-20261027.json`.
-- FAQ: содержательный ответ о неподдержанном nightly hotel cap без замены whole-trip бюджета; вопросы о стране и aliases не меняют поездку. 8PG связанных проверок старой activequote и17последних pause/FAQ/geo/duration checks проходят.
-- Длительность: `Stay.requested_nights` сохраняется без дат, после заезда выводится checkout+N и обратное плечо. Дни не превращаются в ночи; противоречие требует fresh confirmation. None не меняет legacy JSON/ревизию/quote. 343relatedpure+5PG. Pydantic>=2.14.1, lock не изменён.
-- Публичный `set_leg_mode` меняет только mode существующего leg. Новый intent guard и адресный pendingpacket защищают от незапрошенных/неверно адресованных правок;114rootrelatedPASS. Oldquote не воскресает после undo.
-- `HARNESS-004-PAUSE-CLARIFICATION-LOSS-001`: initial1controlPASS/3reproFAIL подтвердили потерю нового и уже показанного country-consent вопроса при model/UI pause. Root сохраняет fresh semantic pending через control-only версии, не оживляет stale packet;17targetPASS. Новый preview/confirm блокируются на user_pause, включая no-op модельную паузу.
+- Actual group:2stays/4rooms/3flights,4people/2families; child6→7, LiteAPI prebook2 + Duffel EUR refresh3 + CBR RUB, DEMO transfers. Полное покрытие9компонентов,346697.38RUB, preview/confirm/retry200→1BOOKED_DEMO,0supplierbooking/payment. docs/verification/actual-group-checkout-20261027.json. Первый503 сохранён, exact cause UNKNOWN; отдельные диагностические чтения не воспроизвели его.
+- Фото: Native поиск→10фото exact hotel IDs без изменения цены. В отдельном positive checkout media после confirmation получил stale409 по версии — это ожидаемая защита, не новый photo PASS.
+- Fresh committed archive Docker:0ключей, one build/up31.866s,38local HTTP,0model/tool/vendor. DEMO search/preview/confirm/retry/restart сохранили trip/token/order/idempotency; собственный Compose down без-v. docs/verification/prefrontend-coldstart-20261027.json.
+- Serp Free Hotels20 indicative; Flights MOW→DXB exact noresults, IST→DXB12. Последний подтверждённый остаток232/250 был ДО последующих запросов. OpenMeteo текущий прогноз, CBR reference с датой/TTL; не банковская цена. Реальные разные сравнимые suppliers/LIVE_BOOKABLE OPEN.
 
-## Туристические источники
+## Последняя actual LLM серия и ремонт
 
-- LiteAPI/Duffel даютSANDBOX. Смешанный native9dd поиск действительно вернул hotel+2flights EUR+referenceCBR+DEMOtransfer и5фото, цена после media неизменна. Но старый preview503OFFER_UNAVAILABLE не объявленPASS; его закрывает только новый prebook end-to-end.
-- Фото: отдельный owner-auth `/api/v1/sessions/{id}/media`, exact hotel ID, кэш статического контента, gallery<=5, вне economic hash. Actual browser JPEG200 подтверждён; никакого дизайна или image-generation.
-- SerpApi: Account200 Free, перед проверками232/250 поисков; после запросов остаток не перечитывался. HotelsDubai20 ориентировочных вариантов; FlightsMOW→DXB — точный no-results, контрольIST→DXB дал12 вариантов. Только точная форма no-results нормализуется вNO_MATCHES; это не доказательство отсутствия московских рейсов.
-- Open-Meteo200 — прогноз27окт–2ноя, не погода ноябрьской поездки. CBR бываетtimeout: при отказе нет выдуманного общего итога; успешные reference snapshots ранее получены.
-- Сравнимость нескольких подтверждённых реальных suppliers и LIVE_BOOKABLE остаются отдельным OPEN. Поля source-name сами по себе её не доказывают.
+- CF r2 report ec5c7e7dc701a2228f1f0de3e58bec60774f28c9eedc94dabc3f016fc749d3d9:71language messages,24calls(23responses+1HTTP429),7durabletoolstarts,72PASS/9FAIL,2NOT_REACHED. Полностью прошёл PF-TRANSPORT05 12/12. PF-SOURCE06 достиг mixed preview/confirm/retry и1demoorder. docs/verification/prefrontend-cf-20261027.json.
+- HARNESS-004-DEMO-COMMAND-IGNORED-001: модель вернула DEMO, старый guard удалял из-за слова «деморежим». Literal guard+root intake интегрированы;303related + exact2PG проходят, providers/fallback не подменяются.
+- Поздняя «отправление Санкт-Петербрг» теперь создаёт confirmation, Белград не стирается неподтверждённым Стамбулом и отказом. Geo424related,3PGchains26turns/11injected outputs; actual retest PENDING.
+- HARNESS-004-ORDER-REPLY-SUPPRESSED-001: точный вопрос и captured validated contract сохранены; ответ только из Store orders. Mixed declarative edits не поглощаются status shortcut. Новый integrated103PASS, including0extraorders/tools/quotes.
+- r3 корректирует только неверные oracles unsupportedcity pending и pause control-only CAS+1; r2 исходные результаты не переписываются. Actual retest после freeze/deploy, vendor429 не обходим.
 
-## Корпуса и следующий шаг
+## Корпуса и ближайшее
 
-- Все80 исходных диалогов/697turns прочитаны, SHA `81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca`. Новый fixed replay был43messages/39modelcalls/4полных+часть5го; остановка локального бюджета, не80PASS.
-- После новых исправлений нужен сильный API actual-run: подготовлен отдельный runner8связных диалогов/98steps сcase-specific assertions; defaultdry0HTTP. Полный80 и исходный106 NLU ещё не квалифицированы.
--106:71частично проверены/35не исполнены в исходном учёте; часть сценариев вне согласованного MVP. D250=50диалогов/300turns только импорт. Аудит доказательств: `docs/verification/acceptance-audit-20261027.md`.
-- Ближайшее: общий full/секрет-scan→commit/push обоих remotes→exact Native deploy. Затем actual2stays/4rooms/3flights EUR+FX→prebook/refresh→simconfirm+idempotency, cold-start freshDocker/0keys и8actualдиалогов. Все failure/неохваченные условия сохранять отдельно; фронтенд интегрируется после27октября.
-- Для frontend: `docs/FRONTEND_HANDOFF.md`, `docs/FRONTEND_CONTRACT.md`, `docs/HOTEL_MEDIA.md`, `docs/frontend/openapi.json`. Перед передачей обновить экспорт схемы/receipt на новый commit; ключи не включать.
+-80 исходных/697turns прочитаны, SHA81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca. Ранний fixed replay43messages/39calls/4целых+часть5го остановлен локальнымcap, не80PASS.
+-106:71partial/35notexecuted, полного language PASS нет. D25050dialogs/300turns только импорт. docs/verification/acceptance-audit-20261027.md.
+- Сейчас: full новых repairs завершён, secret-scan, commit/push обоих remotes, exact CF Native deploy. Затем r3 actual targeted retest и расширение языковой приёмки с case-specific checks. OpenRouter reserve можно проверить read-only account quota; никакого платного switch или обхода429.
+- Frontend: docs/FRONTEND_HANDOFF.md, FRONTEND_CONTRACT.md,HOTEL_MEDIA.md,docs/frontend/openapi.json. Portable APP_PORT по умолчанию8080 конфигурируется; локальный8080 владельца не трогать. Без ключа формы/DEMO, не имитация NLU.

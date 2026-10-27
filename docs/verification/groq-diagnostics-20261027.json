@@ -1,0 +1,100 @@
+{
+  "status": "TWO_BOUNDED_GROQ_EPOCHS_RECORDED_ORIGINAL_429_CAUSE_UNKNOWN",
+  "date": "2026-10-27",
+  "timezone": "Europe/Moscow",
+  "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "package_sha256": "2d9f2d88d0b673236ec860518e7c783b61f8cb2837b31eaac36eadf95a08b714",
+  "epochs": [
+    {
+      "id": "prefrontend-full-context-20261027-004915",
+      "purpose": "First ordinary user turn of the connected public-API suite",
+      "actual_model_requests": 1,
+      "output_limit": 2048,
+      "http_status": 429,
+      "application_code": "RATE_LIMITED",
+      "exact_resource_cause": "UNKNOWN",
+      "rate_limits": {
+        "quota_kind": "tokens",
+        "token_limit": 8000,
+        "request_limit": 1000,
+        "tokens_remaining": 8000,
+        "requests_remaining": 1000
+      },
+      "request_metrics": {
+        "prompt_sha256": "8bc850a9a80796481348e87c8321d7678f98befd080d6a3178d57d434002e7a1",
+        "schema_sha256": "ab86a0290c7f84f71bbc3b29d6d372b1f0818b5b93bc129a3f1093f5c878a643",
+        "schema_utf8_bytes": 7441,
+        "system_utf8_bytes": 11405,
+        "context_utf8_bytes": 5964
+      },
+      "original_domain_state_preserved": true,
+      "tool_starts": 0,
+      "orders": 0,
+      "fully_executed_dialogues": 0,
+      "unexecuted_cases": [
+        "PF-GEO-02",
+        "PF-DURATION-03",
+        "PF-GROUP-04",
+        "PF-TRANSPORT-05",
+        "PF-SOURCE-06",
+        "PF-SOURCE-07",
+        "PF-PAUSE-08"
+      ],
+      "evidence": "prefrontend-actual-20261027-initial.json",
+      "private_report_sha256": "d2df7fa695b7aa18ce858a2cf8aab5d80bbf41406ad6d3e5387a702e5cfa5d48"
+    },
+    {
+      "id": "same-context-diagnostic-output512-29ac503b",
+      "purpose": "One no-apply extraction through native Harness._extract and shared Store ledger after natural cooldown",
+      "actual_model_requests": 1,
+      "output_limit": 512,
+      "http_status": 400,
+      "application_code": "HTTP_ERROR",
+      "vendor_error_type": "invalid_request_error",
+      "vendor_error_code": "UNKNOWN_CAPTURE_FIELD_OVERWRITTEN_BY_APPLICATION_CODE",
+      "message_category": "EXACT_STANDARD_JSON_GENERATION_FAILURE_MESSAGE",
+      "same_original_domain_context": true,
+      "same_original_input": true,
+      "schema_sha256": "ab86a0290c7f84f71bbc3b29d6d372b1f0818b5b93bc129a3f1093f5c878a643",
+      "schema_utf8_bytes": 7441,
+      "context_clock_difference": "reference_now_utc recomputed by native source; original prompt bytes were not persisted",
+      "transaction_committed_before_http": true,
+      "diagnostic_operations_applied": false,
+      "diagnostic_domain_state_preserved": true,
+      "original_user_session_unchanged": true,
+      "diagnostic_run_terminal": "failed",
+      "tool_starts": 0,
+      "orders": 0,
+      "evidence": "groq-512-context-diagnostic-20261027.json",
+      "private_report_sha256": "e8e97589961ada500d591cc201b7bc72a52771a0fd78733d1fbd543e0b4175ed"
+    }
+  ],
+  "total_actual_model_requests": 2,
+  "auto_retries": 0,
+  "tools": 0,
+  "orders": 0,
+  "native_or_production_changed_by_diagnostics": false,
+  "source_headers_interpretation": {
+    "remaining_tokens": "TPM, not TPD balance",
+    "remaining_requests": "RPD, not a complete quota diagnosis",
+    "additional_limits_possible": [
+      "TPD",
+      "ITPM",
+      "OTPM"
+    ],
+    "original_429_daily_exhaustion_proven": false
+  },
+  "conclusions": [
+    "Original 429 cause is not established from remaining headers.",
+    "Output512 reached vendor JSON-generation validation and failed; it is not valid structured-extraction PASS.",
+    "The smaller-output result does not establish the reason for the original 429.",
+    "The hook captured only a bounded redacted private error.message, not failed_generation/reasoning or raw request headers.",
+    "Exact vendor error.code was overwritten by application code in the diagnostic record; UNKNOWN is retained rather than inferred."
+  ],
+  "primary_sources": [
+    "https://console.groq.com/docs/api-reference",
+    "https://console.groq.com/docs/rate-limits",
+    "https://console.groq.com/docs/model/qwen/qwen3.8-27b",
+    "https://console.groq.com/docs/prompt-caching"
+  ]
+}

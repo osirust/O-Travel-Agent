@@ -614,7 +614,11 @@ class Harness:
                             extracted.server_questions.extend(policy_meta["unknowns"] + policy_meta["conflicts"])
                             if policy_meta.get("pending_context") is not None:
                                 extracted.pending_context = {**(extracted.pending_context or {}), **policy_meta["pending_context"]}
-                        if (not extracted.operations and any(note.get("code") == "search_policy_change_not_requested"
+                        literal_mode = any(note.get("code") == "search_policy_literal_grounded"
+                                           for note in extracted.operation_normalizations)
+                        if literal_mode and extracted.control.action in {"none", "continue", "wait", "resume"}:
+                            extracted.speech_act = "CHANGE"
+                        if (not literal_mode and not extracted.operations and any(note.get("code") == "search_policy_change_not_requested"
                                 for note in extracted.operation_normalizations)):
                             extracted.speech_act = "ASK"
                             extracted.control.action = "none"
@@ -862,7 +866,7 @@ class Harness:
                 "__response_mode": READONLY_MODE, "__response_schema": READONLY_SCHEMA}
 
     async def _interpret(self, session: dict, run: dict) -> tuple[ModelResult, dict | None]:
-        from .answering import canonical_geography_answer, canonical_source_answer, canonical_unit_capability_answer, checked_reply, readonly_question, short_place_inquiry
+        from .answering import canonical_geography_answer, canonical_order_status_answer, canonical_source_answer, canonical_unit_capability_answer, checked_reply, order_status_question, readonly_question, short_place_inquiry
         from .conversational import request_kinds
         from .trip_answers import classify_saved_question, render_saved_answer
 
@@ -871,13 +875,23 @@ class Harness:
         # calling it first would swallow a budget/route question while pending.
         # Short answers and all mixed/uncertain input retain the original path.
         kind = classify_saved_question(run["input_text"])
+        from .search_policy_intent import explicit_search_mode_request
+        mode_command = explicit_search_mode_request(run["input_text"])
         readonly = (kind is None and readonly_question(run["input_text"])
+                    and mode_command is None
                     and not explicit_pause_hint(run["input_text"])
                     and not short_place_inquiry(run["input_text"])
                     and parse_destination(run["input_text"])["requested_destination"]["kind"] not in {"city", "country"})
         kinds = request_kinds(run["input_text"])
-        capability = (canonical_geography_answer(run["input_text"], session["state"])
-                      or canonical_unit_capability_answer(run["input_text"], session["state"]))
+        if order_status_question(run["input_text"]) and not explicit_pause_hint(run["input_text"]):
+            orders = await self.store.list_orders(session["session_id"])
+            reply = canonical_order_status_answer(run["input_text"], session["state"], orders)
+            await self._ensure_current_run(session, run)
+            return ModelResult(operations=[], control={"action": "none"}, reply=reply,
+                unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+        capability = ((canonical_geography_answer(run["input_text"], session["state"])
+                       or canonical_unit_capability_answer(run["input_text"], session["state"]))
+                      if mode_command is None else None)
         if capability is not None and not explicit_pause_hint(run["input_text"]):
             await self._ensure_current_run(session, run)
             return ModelResult(operations=[], control={"action": "none"}, reply=capability,
@@ -1305,6 +1319,15 @@ class Harness:
                     reply += "\n\n" + questions[0]
                 result["answer_sections"] = sections
                 result["conversational_response"] = {"facts_source": "canonical_changed_state_and_shown_plans", "kinds": ["receipt"]}
+        if (not run["input_text"].startswith(TYPED_PREFIX) and not changes and not extracted.conflicts
+                and waiting_reason != "user_pause" and extracted.speech_act == "ASK"
+                and extracted.control.action in {"none", "continue"}):
+            from .answering import canonical_order_status_answer
+            order_reply = canonical_order_status_answer(run["input_text"], current.model_dump(mode="json"),
+                await self.store.list_orders(session["session_id"]), subject=extracted.information_subject)
+            if order_reply is not None:
+                reply = order_reply
+                result["conversational_response"] = {"kinds": ["orders"], "facts_source": "canonical_state_and_stored_orders"}
         if ("plans" in result and not result.get("plans_preserved")
                 and (result.get("tool_calls_used", 0) > 0 or result.get("component_errors"))):
             from .search_explanation import render_search_explanation

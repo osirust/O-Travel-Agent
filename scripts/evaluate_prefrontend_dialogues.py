@@ -23,8 +23,8 @@ from uuid import uuid4
 from replay_after80 import BLOCKS, HTTP, LLM_PROFILES, Cleaner, check_profile, private_json, require
 
 ROOT = Path(__file__).resolve().parents[1]
-RECIPE = ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027.json"
-RECIPE_SHA256 = "cbaf7b168e0574aca26a9f30b043a7dd86d91dbca5d273f26b786ca413ffdad6"
+RECIPE = ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027-r3.json"
+RECIPE_SHA256 = "c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5"
 NATIVE_SOURCE = Path("/home/aegml/projects/otravel-after80-20261026")
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
 ACTION_KINDS = {"message", "queued_message", "resume", "preview", "set_leg_mode", "confirm_stale",
@@ -32,7 +32,8 @@ ACTION_KINDS = {"message", "queued_message", "resume", "preview", "set_leg_mode"
 CHECK_KINDS = {"eq", "unchanged", "party", "stay", "reply_contains", "absent", "run_status", "http_status",
                "last_leg_date", "preference", "group_count", "allocation_complete", "constraint", "hotel_capture",
                "plans_min", "ready_plan", "plans_unchanged", "order_count", "only_simulated_orders", "same_order",
-               "leg_mode", "run_error", "reply_money", "reply_nights", "reply_age", "reply_dates", "reply_change_marker"}
+               "leg_mode", "run_error", "reply_money", "reply_nights", "reply_age", "reply_dates", "reply_change_marker",
+               "trip_unchanged_except_version", "state_version_delta"}
 MISSING = object()
 
 
@@ -112,6 +113,19 @@ def check_one(check, obs):
     if kind == "unchanged":
         left, right = pointer(before, check["path"]), pointer(after, check["path"])
         return left is not MISSING and right is not MISSING and stable(left) == stable(right)
+    if kind == "trip_unchanged_except_version":
+        left, right = before.get("trip"), after.get("trip")
+        return (isinstance(left, dict) and isinstance(right, dict)
+            and stable({key: value for key, value in left.items() if key != "state_version"})
+                == stable({key: value for key, value in right.items() if key != "state_version"}))
+    if kind == "state_version_delta":
+        expected, left, right = check["value"], before.get("state_version"), after.get("state_version")
+        before_trip, after_trip = before.get("trip"), after.get("trip")
+        return (type(expected) is int and expected >= 0 and type(left) is int and type(right) is int
+            and isinstance(before_trip, dict) and isinstance(after_trip, dict)
+            and type(before_trip.get("state_version")) is int and before_trip["state_version"] == left
+            and type(after_trip.get("state_version")) is int and after_trip["state_version"] == right
+            and right - left == expected)
     if kind == "absent":
         return pointer(after, check["path"]) is MISSING
     if kind == "party":
@@ -212,8 +226,12 @@ def grade(checks, obs):
 
 class ModelPacer:
     """Conservative monotonic wait after an observed MODEL_CALL_STARTED."""
-    def __init__(self, seconds=60, *, clock=time.monotonic, sleep=time.sleep):
-        require(type(seconds) in {int, float} and math.isfinite(seconds) and 60 <= seconds <= 120, "model_interval_60_to_120_required")
+    def __init__(self, seconds=60, *, llm_profile="groq-qwen", clock=time.monotonic, sleep=time.sleep):
+        require(llm_profile in LLM_PROFILES, "unknown_fixed_pacing_profile")
+        minimum = 15 if llm_profile == "cloudflare-nemotron" else 60
+        require(type(seconds) in {int, float} and math.isfinite(seconds) and minimum <= seconds <= 120,
+                "model_interval_outside_fixed_profile_bound")
+        self.llm_profile = llm_profile
         self.seconds, self.clock, self.sleep, self.last_model_seen = seconds, clock, sleep, None
 
     def before(self, possible):
@@ -269,8 +287,9 @@ class LocalHTTP(HTTP):
 
 
 class NativeFence:
-    def __init__(self, profile, expected_package):
-        self.profile, self.expected = profile, expected_package
+    def __init__(self, profile, expected_package, http):
+        require(profile in LLM_PROFILES, "unknown_fixed_runtime_profile")
+        self.profile, self.expected, self.http = profile, expected_package, http
 
     def check(self):
         try:
@@ -290,6 +309,9 @@ class NativeFence:
             require(type(pid) is int and type(ticks) is int, "runtime_process_identity_missing")
             stat = Path(f"/proc/{pid}/stat").read_text()
             require(int(stat[stat.rfind(")") + 2:].split()[19]) == ticks, "runtime_process_changed")
+            # Pacing permissions belong to the actual serving profile. A CLI
+            # label cannot grant the Cloudflare interval to a Groq process.
+            check_profile(self.http.get("/health"), self.http.get("/api/v1/providers/status"), receipt, self.profile)
             return receipt
         except (local_backend.Refusal, OSError, ValueError, KeyError, TypeError, IndexError):
             # The source-manifest helper has its own refusal class. Preserve a
@@ -552,7 +574,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     recipe = load_recipe()
     cases = select(recipe, args.case_id)
-    budget, pacer = Budget(args.max_model_calls, args.max_tool_calls), ModelPacer(args.model_interval_seconds)
+    budget = Budget(args.max_model_calls, args.max_tool_calls)
+    pacer = ModelPacer(args.model_interval_seconds, llm_profile=args.llm_profile)
     driver_sha = sha(Path(__file__).read_bytes())
     frozen = {"format": recipe["format"], "recipe_sha256": RECIPE_SHA256, "driver_sha256": driver_sha,
         "selected_cases": [case["id"] for case in cases], "steps": sum(len(case["steps"]) for case in cases),
@@ -570,7 +593,8 @@ def main(argv=None):
         and all(c in "0123456789abcdef" for c in args.expected_package_sha256), "reviewed_package_sha_required")
     require(args.output_root.is_absolute() and args.output_root.resolve().is_relative_to(Path("/home/aegml"))
         and not args.output_root.is_symlink(), "private_C_backed_output_required")
-    http, fence = LocalHTTP(), NativeFence(args.llm_profile, args.expected_package_sha256)
+    http = LocalHTTP()
+    fence = NativeFence(args.llm_profile, args.expected_package_sha256, http)
     receipt = fence.check()
     check_profile(http.get("/health"), http.get("/api/v1/providers/status"), receipt, args.llm_profile)
     folder = args.output_root / ("prefrontend-" + datetime.now(UTC).strftime("%Y%m%d-%H%M%S-") + uuid4().hex[:8])

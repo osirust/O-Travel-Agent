@@ -14,6 +14,12 @@ runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 
+def frozen_r2():
+    raw = (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r2.json').read_bytes()
+    assert runner.sha(raw) == 'fc40e7aab1083633fb09fd3702772c6af50618b0dde04a38481ec73d7a9bb64e'
+    return json.loads(raw)
+
+
 def obs():
     snapshot = {"session_id": "s", "state_version": 0, "trip": {"origin": "Москва",
         "travelers": [{"id": "a", "type": "adult"}, {"id": "c", "type": "child", "age": 7}],
@@ -89,6 +95,147 @@ def test_recipe_is_eight_whole_dialogues_with_explicit_natural_and_typed_scope()
     assert "not a claim that vendor outage was injected" in boundary["source_failure_policy"].casefold()
     assert all(not part.isdecimal() for case in cases for step in case["steps"] for check in step["checks"]
                if check["op"] == "reply_contains" for part in check["parts"])
+
+
+def test_r2_keeps_r1_immutable_and_corrects_only_unsupported_city_gold_and_model_reservations():
+    from otravel.trip_answers import classify_saved_question
+    source = runner.ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027.json"
+    raw = source.read_bytes()
+    assert runner.sha(raw) == "cbaf7b168e0574aca26a9f30b043a7dd86d91dbca5d273f26b786ca413ffdad6"
+    old, new = json.loads(raw), frozen_r2()
+    assert new["revision"] == 2 and new["supersedes_recipe"]["sha256"] == runner.sha(raw)
+    assert new["revision_rationale"]
+    for old_case, new_case in zip(old["cases"], new["cases"], strict=True):
+        assert old_case["id"] == new_case["id"]
+        for before, after in zip(old_case["steps"], new_case["steps"], strict=True):
+            assert before["id"] == after["id"] and before.get("text") == after.get("text")
+            if (old_case["id"], before["id"]) == ("PF-GEO-01", "05"):
+                assert after["scope"] == "unsupported_city_retained_as_request_not_bookable"
+                assert {"op": "eq", "path": "/pending_question/context/requested_destination", "value": {
+                    "kind": "city", "name": "Белград", "country_code": "RS"}} in after["checks"]
+                assert {"op": "eq", "path": "/trip/stays", "value": []} in after["checks"]
+                assert {"op": "stay", "city": "Белград"} in before["checks"]
+                assert all(check in after["checks"] for check in before["checks"] if check["op"] != "stay")
+            else:
+                assert before["checks"] == after["checks"]
+            assert before.get("requires") == after.get("requires")
+            if after["kind"] == "message":
+                expected_zero = (classify_saved_question(after["text"]) is not None
+                    or after["text"].strip().casefold() == "подожди")
+                assert (after["model_policy"] == "zero") is expected_zero
+            else:
+                assert before == after
+    assert new["cases"][0]["steps"][5]["model_policy"] == "possible"
+
+
+def test_r2_unsupported_city_gold_requires_exact_pending_and_no_fabricated_stay():
+    case = frozen_r2()["cases"][0]["steps"][4]
+    row = obs()
+    row["after"]["trip"].update(origin="Москва", budget={"amount_minor": 8000000},
+        travelers=[{"id": "a", "type": "adult"}], stays=[])
+    row["after"]["pending_question"] = {"context": {"requested_destination": {
+        "kind": "city", "name": "Белград", "country_code": "RS"}}}
+    row["reply"] = "Понял как Белград, Сербия. Поиск пока недоступен."
+    assert all(item["status"] == "PASS" for item in runner.grade(case["checks"], row))
+    row["after"]["pending_question"]["context"]["requested_destination"]["country_code"] = "RU"
+    assert any(item["status"] == "FAIL" for item in runner.grade(case["checks"], row))
+    row["after"]["pending_question"]["context"]["requested_destination"]["country_code"] = "RS"
+    row["after"]["trip"]["stays"] = [{"city": "Белград", "hotel_id": "fabricated"}]
+    assert any(item["status"] == "FAIL" for item in runner.grade(case["checks"], row))
+
+
+def test_r3_preserves_r2_and_changes_only_three_confirmed_oracles():
+    old, new = frozen_r2(), runner.load_recipe()
+    assert new['revision'] == 3 and new['supersedes_recipe']['sha256'] == runner.sha(
+        (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r2.json').read_bytes())
+    assert new['revision_rationale']
+    modified = []
+    for old_case, new_case in zip(old['cases'], new['cases'], strict=True):
+        assert {key: value for key, value in old_case.items() if key != 'steps'} == {
+            key: value for key, value in new_case.items() if key != 'steps'}
+        for before, after in zip(old_case['steps'], new_case['steps'], strict=True):
+            assert {key: value for key, value in before.items() if key != 'checks'} == {
+                key: value for key, value in after.items() if key != 'checks'}
+            if before['checks'] == after['checks']:
+                continue
+            identity = old_case['id'], before['id']
+            modified.append(identity)
+            expected = []
+            for check in before['checks']:
+                if identity == ('PF-GEO-01', '07') and check == {'op': 'stay', 'city': 'Белград'}:
+                    expected.extend([
+                        {'op': 'eq', 'path': '/pending_question/context/requested_destination',
+                         'value': {'kind': 'city', 'name': 'Белград', 'country_code': 'RS'}},
+                        {'op': 'eq', 'path': '/trip/stays', 'value': []},
+                    ])
+                elif identity in {('PF-GEO-01', '12'), ('PF-PAUSE-08', '02')} and check == {'op': 'unchanged', 'path': '/trip'}:
+                    expected.extend([{'op': 'trip_unchanged_except_version'}, {'op': 'state_version_delta', 'value': 1}])
+                else:
+                    expected.append(check)
+            assert after['checks'] == expected
+    assert modified == [('PF-GEO-01', '07'), ('PF-GEO-01', '12'), ('PF-PAUSE-08', '02')]
+
+
+def test_r3_rejected_alternative_requires_exact_selected_city_and_no_fabricated_stay():
+    case = runner.load_recipe()['cases'][0]['steps'][6]
+    row = obs()
+    row['after']['trip'].update(budget={'amount_minor': 8000000}, stays=[])
+    row['after']['pending_question'] = {'context': {'requested_destination': {
+        'kind': 'city', 'name': 'Белград', 'country_code': 'RS'}}}
+    assert all(item['status'] == 'PASS' for item in runner.grade(case['checks'], row))
+    row['after']['pending_question']['context']['requested_destination'] = {
+        'kind': 'country', 'name': 'Сербия', 'country_code': 'RS'}
+    assert any(item['status'] == 'FAIL' for item in runner.grade(case['checks'], row))
+    row['after']['pending_question']['context']['requested_destination'] = {
+        'kind': 'city', 'name': 'Белград', 'country_code': 'RS'}
+    row['after']['trip']['stays'] = [{'city': 'Белград', 'hotel_id': 'fabricated'}]
+    assert any(item['status'] == 'FAIL' for item in runner.grade(case['checks'], row))
+
+
+def control_revision_obs():
+    row = obs()
+    row['before']['trip']['state_version'] = row['before']['state_version']
+    row['after']['state_version'] += 1
+    row['after']['trip']['state_version'] = row['after']['state_version']
+    return row
+
+
+def test_control_revision_ignores_only_trip_version_and_requires_exact_consistent_delta():
+    row = control_revision_obs()
+    assert runner.check_one({'op': 'trip_unchanged_except_version'}, row)
+    assert runner.check_one({'op': 'state_version_delta', 'value': 1}, row)
+    assert not runner.check_one({'op': 'unchanged', 'path': '/trip'}, row)
+
+
+@pytest.mark.parametrize('field', ['trip_id', 'origin', 'travelers', 'groups', 'stays', 'legs',
+    'budget', 'preferences', 'constraints', 'route_policy', 'search_policy', 'new_unreviewed_field'])
+def test_control_revision_still_rejects_every_other_trip_change(field):
+    row = control_revision_obs()
+    row['after']['trip'][field] = 'unauthorized mutation'
+    assert not runner.check_one({'op': 'trip_unchanged_except_version'}, row)
+
+
+@pytest.mark.parametrize('side,scope,value', [
+    ('before', 'wrapper', True), ('after', 'wrapper', True), ('after', 'wrapper', 0), ('after', 'wrapper', 2),
+    ('before', 'nested', 1), ('after', 'nested', 0), ('after', 'nested', True), ('after', 'nested', None),
+])
+def test_control_revision_rejects_boolean_missing_inconsistent_or_wrong_versions(side, scope, value):
+    row = control_revision_obs()
+    (row[side] if scope == 'wrapper' else row[side]['trip'])['state_version'] = value
+    assert not runner.check_one({'op': 'state_version_delta', 'value': 1}, row)
+
+
+@pytest.mark.parametrize('expected', [True, -1, 0, 2, '1'])
+def test_control_revision_rejects_invalid_or_wrong_expected_delta(expected):
+    assert not runner.check_one({'op': 'state_version_delta', 'value': expected}, control_revision_obs())
+
+
+@pytest.mark.parametrize('side', ['before', 'after'])
+def test_control_revision_missing_trip_is_not_evidence_of_nonmutation(side):
+    row = control_revision_obs()
+    del row[side]['trip']
+    assert not runner.check_one({'op': 'trip_unchanged_except_version'}, row)
+    assert not runner.check_one({'op': 'state_version_delta', 'value': 1}, row)
 
 
 def test_default_dry_run_cannot_construct_http_or_native_fence_or_output(monkeypatch, capsys):
@@ -301,7 +448,7 @@ def test_native_manifest_refusal_or_io_error_is_a_code_only_stop_before_writes(t
     def refusal(_):
         raise ForeignRefusal("synthetic-private-path-and-error")
     monkeypatch.setitem(sys.modules, "local_backend", SimpleNamespace(source_manifest=refusal, Refusal=ForeignRefusal))
-    fence = runner.NativeFence(profile, expected)
+    fence = runner.NativeFence(profile, expected, http=None)
     with pytest.raises(runner.StopRun, match="^NATIVE_FENCE_REFUSED_NO_WRITE$"):
         fence.check()
     receipt_path.unlink()
@@ -318,3 +465,75 @@ def test_fence_refusal_during_driver_keeps_a_terminal_report_and_never_posts():
     result = instance.run()
     assert result["status"] == "STOPPED_NO_RETRY" and api.posts == []
     assert writes["/not-created/report.json"]["status"] == "STOPPED_NO_RETRY"
+
+
+@pytest.mark.parametrize("profile", ["groq-qwen", "zai", "openrouter-dots"])
+def test_cloudflare_short_interval_cannot_be_used_for_other_fixed_profiles(profile):
+    with pytest.raises(ValueError, match="profile_bound"):
+        runner.ModelPacer(15, llm_profile=profile)
+    assert runner.ModelPacer(60, llm_profile=profile).seconds == 60
+
+
+def test_only_exact_cloudflare_profile_can_use_fifteen_second_pacing():
+    clock = FakeClock()
+    pacer = runner.ModelPacer(15, llm_profile="cloudflare-nemotron", clock=clock, sleep=clock.sleep)
+    pacer.observe([{"event_type": "MODEL_CALL_STARTED"}])
+    pacer.before(False)
+    assert clock.waits == []
+    pacer.before(True)
+    assert sum(clock.waits) == 15 and max(clock.waits) <= 10
+    with pytest.raises(ValueError, match="unknown_fixed_pacing_profile"):
+        runner.ModelPacer(15, llm_profile="pretend-cloudflare")
+
+
+def test_cloudflare_dry_plan_does_not_touch_http_or_relax_other_model_defaults(monkeypatch, capsys):
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("Dry plan touched HTTP")
+    monkeypatch.setattr(runner, "LocalHTTP", forbidden)
+    assert runner.main(["--llm-profile", "cloudflare-nemotron", "--model-interval-seconds", "15", "--max-model-calls", "40"]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["profile"] == "cloudflare-nemotron" and result["model_interval_seconds"] == 15
+    assert result["max_model_calls"] == 40 and result["default_dry_run_http_calls"] == 0
+
+
+@pytest.mark.parametrize("runtime_provider,accepted", [("groq", False), ("cloudflare", True)])
+def test_native_fence_checks_actual_profile_and_payzero_before_allowing_post(tmp_path, monkeypatch, runtime_provider, accepted):
+    from types import SimpleNamespace
+    profile, expected, pid, ticks = "cloudflare-nemotron", "a" * 64, 123456, 777
+    receipt_path = tmp_path / runner.LLM_PROFILES[profile]["evidence"]
+    receipt_path.parent.mkdir(parents=True)
+    receipt_path.write_text(json.dumps({"status": "RUNNING", "manager": runner.LLM_PROFILES[profile]["manager"],
+        "source": str(runner.NATIVE_SOURCE), "database": "otravel_zai_eval", "url": "http://127.0.0.1:8084",
+        "current_source_manifest": {"sha256": expected}, "loaded_manifest": {"matches_current": True},
+        "process": {"pid": pid, "start_ticks": ticks}, "limits": {"calls_per_run": 1, "local_calls": 0,
+            "fallback": False, "cloudflare_daily_engineering_bound": 2000}}))
+    monkeypatch.setattr(runner, "ROOT", tmp_path)
+    class Refusal(Exception):
+        pass
+    monkeypatch.setitem(sys.modules, "local_backend", SimpleNamespace(source_manifest=lambda _: {"sha256": expected}, Refusal=Refusal))
+    original_read = Path.read_text
+    def read(path, *args, **kwargs):
+        if str(path) == f"/proc/{pid}/stat":
+            return f"{pid} (python) " + " ".join(["S", *(["0"] * 18), str(ticks)])
+        return original_read(path, *args, **kwargs)
+    monkeypatch.setattr(Path, "read_text", read)
+    status = {key: {"configured": False, "free_tier_confirmed": False} for key in
+        ["gemini", "openrouter", "groq", "zai", "cloudflare", "ollama", "hotelbeds", "ratehawk", "travelpayouts"]}
+    status.update({"_runtime": {"llm_provider": runtime_provider,
+        "model": runner.LLM_PROFILES[profile]["model"] if runtime_provider == "cloudflare" else "qwen/qwen3.8-27b"},
+        "cloudflare": {"configured": True, "free_tier_confirmed": True, "paid_fallback": False},
+        "liteapi": {"configured": True, "mode": "sandbox"}, "duffel": {"configured": True, "mode": "sandbox"},
+        "serpapi": {"configured": True, "free_tier_confirmed": True, "source_type": "LIVE_INDICATIVE"},
+        "open_meteo": {"configured": True}})
+    reads = []
+    class ReadHTTP:
+        def get(self, path):
+            reads.append(path)
+            return {"database": "ready", "supplier_booking": False} if path == "/health" else status
+    fence = runner.NativeFence(profile, expected, ReadHTTP())
+    if accepted:
+        assert fence.check()["manager"] == "after80_cf_backend.py"
+    else:
+        with pytest.raises(runner.StopRun, match="NATIVE_FENCE_REFUSED_NO_WRITE"):
+            fence.check()
+    assert reads == ["/health", "/api/v1/providers/status"]

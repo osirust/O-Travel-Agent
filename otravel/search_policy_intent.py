@@ -6,10 +6,21 @@ from copy import deepcopy
 
 from .route_policy_intent import current_clauses
 
-_MODE = re.compile(r"\b(?:включи|переключи|используй|выбери|установи|хочу\s+режим)\s+"
-    r"(?:(?:на|в|режим|поиск|только|пожалуйста)\s+)*(demo|hybrid|демо|гибрид(?:ный)?)\b(?!\s+fallback\b)")
+_MODE_NAME = r"(?:demo(?:[- ]?режим)?|демо(?:[- ]?режим)?|hybrid|гибрид(?:ный)?(?:[- ]?режим)?)"
+_MODE = re.compile(r"\b(?:включи|переключи|используй|выбери|установи|активируй|перейди|хочу\s+режим|"
+    r"enable|switch|use|select|set|activate)\s+"
+    rf"(?:(?:на|в|режим|поиска|поиск|только|пожалуйста|to|on|the|search|mode)\s+)*({_MODE_NAME})\b"
+    r"(?!\s*[- ]\s*(?:fallback|фолб[еэ]к)\b)")
+_MODE_ALTERNATIVE = re.compile(rf"\s*(?:(?:или|либо|и|or|and)\s+|/\s*)({_MODE_NAME})\b")
+_MODE_CHOICE_OR_SEQUENCE = re.compile(r"(?:\b(?:или|либо|or|потом|затем|позже|then)\s+|/\s*)"
+    r"(?:(?:включи|переключи|используй|выбери|установи|enable|switch|use|set)\s+)?"
+    rf"(?:(?:на|в|режим|поиска|поиск|to|on|the|search|mode)\s+)*{_MODE_NAME}\b")
+_MODE_NONCURRENT = re.compile(r"\b(?:if|would|suppose|yesterday|previously|said|wrote|quoted|never|don't|do\s+not|"
+    r"спрашивал\w*|обсуждал\w*|цитат\w*|инструкц\w*|пример\w*|фраз\w*|надпис\w*|"
+    r"можно|можешь|умеешь|как|зачем|почему)\b|\b(?:не\s+сейчас|пока\s+не|не\s+нужно)\b")
 _AFFIRM = re.compile(r"\b(?:включи|переключи|используй|выбери|установи|ищи|показывай|работай|хочу|отключи|запрети|разреши)\b")
-_NEGATIVE = re.compile(r"\bне\s+(?:включай|переключай|используй|выбирай|устанавливай|хочу)\b")
+_NEGATIVE = re.compile(r"\bне\s+(?:включи|включай|переключи|переключай|используй|выбери|выбирай|"
+    r"установи|устанавливай|активируй|переходи|перейди|хочу)\b")
 _HOTEL = re.compile(r"\b(?:отел\w*|гостиниц\w*)\b")
 _FLIGHT = re.compile(r"\b(?:перелет\w*|рейс\w*|авиабилет\w*)\b")
 _DEFAULT = {"mode": "DEMO", "hotel_provider": "liteapi", "flight_provider": "serpapi", "demo_fallback": True}
@@ -19,22 +30,49 @@ def _get(value, key, default=None):
     return value.get(key, default) if isinstance(value, dict) else getattr(value, key, default)
 
 
+def _mode_name(value: str) -> str:
+    return "DEMO" if value.startswith(("demo", "демо")) else "HYBRID"
+
+
+def _requested_modes(text: str) -> set[str]:
+    requested = set()
+    for clause in current_clauses(text):
+        if _NEGATIVE.search(clause) or _MODE_NONCURRENT.search(clause):
+            continue
+        for match in _MODE.finditer(clause):
+            requested.add(_mode_name(match[1]))
+            tail = clause[match.end():]
+            # A single command cannot choose DEMO and HYBRID at once. Only
+            # directly connected mode alternatives extend its literal scope.
+            while alternative := _MODE_ALTERNATIVE.match(tail):
+                requested.add(_mode_name(alternative[1]))
+                tail = tail[alternative.end():]
+    return requested
+
+
+def explicit_search_mode_request(text: str) -> str | None:
+    """One current literal mode command, never a fallback or quoted question."""
+    requested = _requested_modes(text)
+    return next(iter(requested)) if len(requested) == 1 else None
+
+
 def guard_search_policy_operations(state, ops: list, text: str) -> tuple[list, dict]:
     """Remove unaddressed protected fields; do not inspect nationality slots.
 
-    No policy is inferred from 'how do I do a test checkout'. A partly allowed
+    A current literal mode command is completed if the model omitted it. No
+    policy is inferred from 'how do I do a test checkout'. A partly allowed
     model operation can keep an explicitly selected mode while unrequested
     provider/fallback edits are removed. Identical-only policy ops are dropped
     so they cannot become a reason for another search. Typed commands bypass
     this function in the caller.
     """
     prior = _get(state, "search_policy", {})
-    allowed = {}
+    requested_modes = _requested_modes(text)
+    literal_mode = next(iter(requested_modes)) if len(requested_modes) == 1 else None
+    allowed = {"mode": requested_modes} if requested_modes else {}
     for clause in current_clauses(text):
         if _NEGATIVE.search(clause):
             continue
-        for mode in _MODE.finditer(clause):
-            allowed.setdefault("mode", set()).add("DEMO" if mode[1] in {"demo", "демо"} else "HYBRID")
         affirmative = bool(_AFFIRM.search(clause))
         if affirmative or clause.strip() == "без демо":
             if re.search(r"\bбез\s+демо\b|\b(?:отключи|запрети)\s+(?:demo\s+)?fallback\b", clause):
@@ -49,6 +87,16 @@ def guard_search_policy_operations(state, ops: list, text: str) -> tuple[list, d
                         if re.search(rf"\b{provider}\b", clause):
                             allowed.setdefault(field, set()).add(provider)
     result, meta = [], {"notes": [], "conflicts": [], "unknowns": []}
+    if len(requested_modes) > 1:
+        question = "Какой один режим поиска включить: DEMO или HYBRID?"
+        meta["unknowns"].append(question)
+        current = ", ".join(clause for clause in current_clauses(text)
+            if not _NEGATIVE.search(clause) and not _MODE_NONCURRENT.search(clause))
+        if not _MODE_CHOICE_OR_SEQUENCE.search(current):
+            # Simultaneous mutually exclusive instructions are a batch
+            # conflict. An offered choice/sequence only needs clarification.
+            meta["conflicts"].append(question)
+    mode_written, model_mode_corrected = False, False
     for operation in deepcopy(ops):
         if _get(operation, "type") != "set_search_policy":
             result.append(operation)
@@ -59,6 +107,15 @@ def guard_search_policy_operations(state, ops: list, text: str) -> tuple[list, d
             continue
         kept, removed = {}, []
         for key, proposed in value.items():
+            if key == "mode" and literal_mode:
+                model_mode_corrected |= proposed != literal_mode
+                if _get(prior, "mode", _DEFAULT["mode"]) != literal_mode and not mode_written:
+                    kept["mode"] = literal_mode
+                    mode_written = True
+                continue
+            if key == "mode" and len(requested_modes) > 1:
+                removed.append(key)
+                continue
             if key not in _DEFAULT:
                 kept[key] = proposed  # guest_nationality is separately owned.
                 continue
@@ -81,5 +138,14 @@ def guard_search_policy_operations(state, ops: list, text: str) -> tuple[list, d
             else:
                 operation.value = kept
             result.append(operation)
+    mode_added = False
+    if literal_mode:
+        if _get(prior, "mode", _DEFAULT["mode"]) != literal_mode and not mode_written:
+            result.append({"type": "set_search_policy", "value": {"mode": literal_mode}})
+            mode_added = True
+        meta["notes"].append({"code": "search_policy_literal_grounded", "mode": literal_mode,
+            "source": "current_explicit_mode_command", "operation_added": mode_added,
+            "model_mode_corrected": model_mode_corrected,
+            "finding_id": "HARNESS-004-DEMO-COMMAND-IGNORED-001"})
     meta["unknowns"] = list(dict.fromkeys(meta["unknowns"]))
     return result, meta
