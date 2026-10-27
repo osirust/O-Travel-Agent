@@ -8,9 +8,57 @@ from __future__ import annotations
 import json
 import re
 from copy import deepcopy
+from datetime import timedelta
 
 from .clarifications import question_field
 from .domain import TripState, route_edges, validate_trip
+
+
+def fulfilled_return_clarifications(before, after, operations, unknowns, *, server_questions=()):
+    """Remove one model capability flag only after the backend changed return.
+
+    Ordinary questions, supplier availability and unresolved route edits remain
+    blocking. Existing dates alone do not establish a completed requested edit.
+    """
+    kept = deepcopy(unknowns)
+    old, new = TripState.model_validate(before), TripState.model_validate(after)
+    if (old.route_policy.kind != "round_trip" or new.route_policy.kind != "round_trip"
+            or not old.stays or not new.stays or not old.legs or not new.legs):
+        return kept, []
+    old_stay, new_stay, old_leg, new_leg = old.stays[-1], new.stays[-1], old.legs[-1], new.legs[-1]
+    if (old_stay.id != new_stay.id or old_leg.id != new_leg.id
+            or (old_leg.origin, old_leg.destination) != (new_leg.origin, new_leg.destination)
+            or old_leg.destination != old.origin or new_leg.destination != new.origin
+            or old_stay.check_out is None or new_stay.check_out is None
+            or old_stay.check_out == new_stay.check_out
+            or old_leg.departure_date != old_stay.check_out or new_leg.departure_date != new_stay.check_out):
+        return kept, []
+    proven = False
+    for operation in operations:
+        op = operation.model_dump(mode="json") if hasattr(operation, "model_dump") else operation
+        if not isinstance(op, dict) or not isinstance(op.get("value"), dict):
+            continue
+        value = op["value"]
+        if (op.get("type") == "upsert_stay" and (op.get("target_id") or value.get("id")) == new_stay.id
+                and value.get("check_out") == new_stay.check_out.isoformat()):
+            proven = True
+        days = value.get("days")
+        if (op.get("type") == "shift_return" and type(days) is int and -366 <= days <= 366
+                and old_stay.check_out + timedelta(days=days) == new_stay.check_out):
+            proven = True
+    if not proven:
+        return kept, []
+    aliases = {"return_flight_date_change"}
+    trusted = {raw.strip().casefold() for raw in server_questions}
+    removed = [raw for raw in kept if raw.strip().casefold() in aliases and raw.strip().casefold() not in trusted]
+    if not removed:
+        return kept, []
+    return [raw for raw in kept if raw not in removed], [{
+        "finding_id": "HARNESS-004-FULFILLED-RETURN-CLARIFICATION-001",
+        "code": "model_return_capability_flag_already_completed", "removed_model_flags": removed,
+        "source": "applied_domain_operation", "target_id": new_leg.id,
+        "before_date": old_leg.departure_date.isoformat(), "after_date": new_leg.departure_date.isoformat(),
+        "supplier_facts_inferred": False, "booking_consent_granted": False}]
 
 _ROOM_TOPIC = re.compile(r"кроват|двуспал|односпал|ванн|душ|(?:тип|категори)\w*\s+номер|bed|bath|shower|room\s*type")
 _ROOM_WORD = re.compile(r"(?:требован\w*|ограничен\w*|предпочтен\w*|пожелан\w*|уточн\w*|тип\w*|категори\w*|"

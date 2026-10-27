@@ -56,14 +56,27 @@ def test_new_city_lookup_does_not_label_wrong_or_unverified_location_as_belgrade
     assert error.value.code == 'INVALID_RESPONSE'
 
 
-def test_hybrid_eighth_city_reaches_actual_format_lookups_but_does_not_make_demo_transfer():
-    state, gateway = belgrade(), FakeTravel()
+@pytest.mark.parametrize('fallback', [False, True])
+def test_hybrid_eighth_city_lookups_respect_explicit_registered_transfer_policy(fallback):
+    state, gateway = belgrade(fallback=fallback), FakeTravel()
     before = state.model_dump(mode='json')
     result = search(gateway, state)
     assert len(gateway.calls) == 4  # lookup + hotel rates + two controlled flight searches.
     flights = [request for method, _, request in gateway.calls if method == 'search_flights']
     assert [row['slices'][0]['destination'] for row in flights] == ['BEG', 'MOW']
     assert [row['slices'][0]['origin'] for row in flights] == ['MOW', 'BEG']
+    if fallback:
+        plan, = result['plans']
+        assert plan['source_type'] == 'MIXED' and plan['coverage']['complete']
+        assert plan['ready_for_simulated_checkout'] and plan['ready_for_real_booking'] is False
+        external = [offer for offer in plan['offers'] if offer['source_type'] != 'DEMO']
+        synthetic = [offer for offer in plan['offers'] if offer['source_type'] == 'DEMO']
+        assert len(external) == 3 and all(offer['source_type'] == 'SANDBOX' for offer in external)
+        transfer, = synthetic
+        assert transfer['kind'] == 'transfer' and transfer['provider'] == 'demo_registered_transfer'
+        assert transfer['availability'] == 'synthetic_not_live' and transfer['booking_created_at_supplier'] is False
+        assert state.model_dump(mode='json') == before
+        return
     assert result['plans'] == []
     partial = result['partial_plan']
     assert partial and partial['ready_for_simulated_checkout'] is False

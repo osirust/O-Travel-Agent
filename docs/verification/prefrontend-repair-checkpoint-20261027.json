@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-27",
+  "status": "FULL_CONTROLLED_PASS_ACTUAL_CORPUS_AND_COMPLEX_REBUILD_OPEN",
+  "package_sha256": "ddc54528e15b02f1d20119120948bfc2fabbef6bcc95e39401b962e83a7707c3",
+  "full": {
+    "passed": 6680,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 381.76,
+    "source_unchanged": true,
+    "tests_sha256": "8ff2f9aaacaec38c75ad32f0c859fa56a6c7ed813beb38deb103ab109d889cad",
+    "private_terminal": ".local/evaluation/after80-20261027/full-completed-return-r10-terminal.json"
+  },
+  "historical": {
+    "r9_passed": 6671,
+    "r8_passed": 6604,
+    "r8_failed": 1,
+    "r8_failure": "Old test unconditionally prohibited the newly requested registered-city DEMO transfer. Original source and failed XML retained; revised pair explicitly checks both fallback policies without weakening supplier identity or synthetic labels.",
+    "old_test_sha256": "b3b298a715b49f2c87bf95765373fb563db22b2aaa42ae3acb1f9c369072d59e"
+  },
+  "actual": {
+    "single_city_checks_passed": 19,
+    "single_city_orders": 1,
+    "complex_rebuild": "NOT_COMPLETED_distinct_wire_enum_and_derived_duration_failures_preserved",
+    "original80": "NOT_COMPLETED",
+    "original106": "4_executed_33of34_bound_predicates_8UNBOUND_no_full_claim"
+  },
+  "supplier_book_pay": 0,
+  "local_qwen": 0,
+  "paid": 0,
+  "staged_package": {
+    "tested_package_sha256": "ddc54528e15b02f1d20119120948bfc2fabbef6bcc95e39401b962e83a7707c3",
+    "staged_package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+    "package_files": 76,
+    "only_allowed_crlf_normalization": [
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

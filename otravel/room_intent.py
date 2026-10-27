@@ -42,6 +42,33 @@ def _asserted_counts(text: str) -> tuple[set[int], str]:
     return counts, " ".join(asserted)
 
 
+def _explicit_allocation(text: str) -> bool:
+    """Accept asserted room assignments, including a shared 'two rooms' head.
+
+    'В первом — взрослый ..., во втором — ...' refers to the room head in
+    that clause. It is not an instruction to invent guest memberships: only
+    the model's separately validated explicit assignments are retained.
+    """
+    from .operation_aliases import _without_quoted_spans
+
+    unquoted = _without_quoted_spans(_key(text))
+    if unquoted is None:
+        return False
+    for clause in re.findall(r"[^.!?;\n]+[.!?;\n]?", unquoted):
+        if (clause.rstrip().endswith("?") or _NONCURRENT.search(clause)
+                or re.search(r"\bне\s+(?:пересел|перемест|распредел|назнач)\w*", clause)):
+            continue
+        if _ALLOCATION_EDIT.search(clause):
+            return True
+        if not _COUNT.search(clause) or not re.search(r"\b(?:взросл|ребен|дет|семь|групп)\w*", clause):
+            continue
+        ordinals = set(re.findall(r"\b(?:в|во)\s+(первом|втором|третьем)\b"
+            r"(?!\s+(?:город|отел|этап|пункт|рейс|прожив)\w*)", clause))
+        if {"первом", "втором"}.issubset(ordinals):
+            return True
+    return False
+
+
 def _declared_new_people(data: dict, operations: list[dict], text: str) -> set[str]:
     """Only raw same-batch new IDs with an asserted addition, no ID selection."""
     from .operation_aliases import _without_quoted_spans
@@ -121,7 +148,7 @@ def ground_room_count_operations(state: TripState | dict, operations: list, text
     if not isinstance(data, dict) or not isinstance(text, str) or not 0 < len(text) <= 20_000:
         return copied, meta
     counts, asserted = _asserted_counts(text)
-    if not counts or _ALLOCATION_EDIT.search(_key(text)):
+    if not counts or _explicit_allocation(text):
         return copied, meta
     prior = {s["id"]: s for s in data.get("stays", []) if isinstance(s, dict) and isinstance(s.get("id"), str)}
     projected = deepcopy(prior)

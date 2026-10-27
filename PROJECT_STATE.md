@@ -1,5 +1,17 @@
 # O!Travel Agent — backend перед frontend, 27 октября 2026
 
+## Текущий checkpoint перед новой инструкцией сдачи
+
+Последний полный frozen-source прогон r10: **6680 PASS / 0 fail / 0 skip**, 381.76 с; package `ddc54528e15b02f1d20119120948bfc2fabbef6bcc95e39401b962e83a7707c3`, tests `8ff2f9aaacaec38c75ad32f0c859fa56a6c7ed813beb38deb103ab109d889cad`, source/tests unchanged. r9:6671 PASS. Квитанции `.local/evaluation/after80-20261027/full-completed-return-r10-*` и `full-prefrontend-fixes-r9-*`.
+
+Новый запрос владельца: сверить два PDF, выполнить требования передачи секретов через age, проверить GigaChat; продолжать все прогоны даже при его отказе. Утром интеграция frontend и подготовка видео. VPN/Happ остаются без изменений. Официальная инструкция требует ОТДЕЛЬНЫЙ ключ жюри, основной не передавать; вопрос доступа к вошедшему Chrome отправлен владельцу асинхронно. Public recipient подтверждён страницей организаторов; helper пока шифрует только synthetic/ignored jury env, Master не экспортируется.
+
+Исправлено после a63: DEMO-трансфер для зарегистрированного Белграда; потеря начальных уточнений NLU01; сохранение отвергнутого final JSON без reasoning/ключей; явное расселение «в первом — …, во втором — …» в обоих городах; удаление выдуманного возраста новых взрослых; снятие единственного model-флага `return_flight_date_change` только после доказанного переноса последнего проживания и стабильного обратного плеча. Raw FAIL/oracles сохранены. Старый тест запрета любого Belgrade fallback имеет byte-exact historical copy SHA `b3b298a715b49f2c87bf95765373fb563db22b2aaa42ae3acb1f9c369072d59e`; новая пара проверяет ОБЕ политики fallback=False/True и неизменные external-факты.
+
+Actual complex: R1 и R2 выявили реальные guard-дефекты, R3 остановился на Groq400 для новой room-reference; один разрешённый known-failed retry получил200, но Domain отверг stale derived duration4 при checkout19. Итог новая версия4pax/2rooms ещё НЕ дошла до поиска/оформления. Нужно: same-batch room-target schema, не превращать выведенные моделью ночи в новое жёсткое условие; отдельный новый actual-прогон. Не возобновлять исчерпанные actor-эпохи скрытым resend.
+
+Giga: поздние Windows+WSL public DNS/TLS-пробы подтверждают OAuth TLS1.3 с pinned CA; `api.giga.chat` TCP есть, TLS timeout. Ключи/OAuth/model этими пробами не вызывались. Одна некорректная WSL curl-проба с wildcard остановлена по exact own curl/UID/argv; чужие процессы не затронуты. Повторить только прямыми argv/SSL, без shell wildcard. Не отключать TLS и не менять VPN. Подготовленный Z.ai repair2/8086 сохраняет историю БД,2/modelrun/day1000, no local/paid; ждёт нового committed source pin и Root GO.
+
 Команда владельца: выполнить реальные прогоны нового backend и туристических API, довести разговор/пересборку/refresh до одного имитированного заказа, устранить ошибки диалога и control recovery. Frontend делает сокомандник. Продолжать без новых согласований в этом scope.
 
 ## Текущий этап: повтор диалога про декабрь
@@ -8,9 +20,11 @@
 
 Исправления кандидата: общий literal-parser нулевого состава; адресные даты с «на»; объяснение обратного порядка дат; отдельное подтверждение январского выезда следующего года; вопросы о стоимости из сохранённых сумм либо новый поиск; «так что?» возвращает к текущему вопросу. Управляемые проверки: 236 по датам, 203 pure и 2 PG по детям, 4 PG по стоимости, 19 независимых pure по маршрутизации стоимости. Это не actual-повтор исходного разговора.
 
-Полный прогон r6 завершён: **6581 PASS / 0 skip**, 415.21 с, source unchanged `074743bd0cf6df9f116e67239b4b94be5450e0ec7d7857b27705eb71a4c230b7`. Затем исправлен отдельно воспроизведённый price-crash на legacy `field=null`, проведена Ruff-очистка импортов/UTC: **103 related PASS**. Новый кандидат `6b8de209267a53a1bf4a757d990c42b1948ca489ea75a160f16e032e0694a63f`, r7 общий прогон выполняется. До terminal не менять код/тесты. [Квитанция](docs/verification/owner-december-release-20261027.json).
+Полные прогоны: r6 **6581 PASS**, r7 после null-field исправления **6582 PASS / 0 skip**, 419.44 с, source unchanged `6b8de209267a53a1bf4a757d990c42b1948ca489ea75a160f16e032e0694a63f`. На8084 установлен a63c2fc / Git package9706a5a7; health/debug200, Groq120B/v3. [Квитанция](docs/verification/owner-december-release-20261027.json).
 
-Actual owner-like actor r1 остановился при setup с `CalledProcessError` до PREPARED, модель/туристический повтор ещё не квалифицирован. Исходный отказ `/home/aegml/checks/owner-december-actual-r1-20261027-185007` сохранён; исправляется только actor, исходная пользовательская сессия не затрагивается. Следом установка кандидата на 8084, отдельный Z.ai 8086 pilot трёх разговоров перед полным 80. 106 проверяется отдельно. Пилоты и полные серии пока не объявлены исполненными.
+Actual R3: **17 реплик, 19/19 предметных checks**, 10 source HTTP, 0 LLM; даты/опечатка/дети → LiteAPI hotel + Duffel flights SANDBOX → DEMO transfer → фото → reprice → один BOOKED_DEMO/retry. Итог12952552minor RUB=129525.52 RUB, справочный FX. Это адаптированный повтор с явным годом, не exact14 и не языковой benchmark. [Доказательство](docs/verification/owner-december-actual-r3-20261027.json). R1 setup отказ Git safe.directory и R2 transfer-only gap сохранены отдельно. Исправление зарегистрированного DEMO-трансфера не расширяет DEMO-отели/перелёты:191relatedPASS, package `4b8eedd251365427a19fa2b2113708d6991ec06360947ba745f6ca2a03f32699`. Полный r8 выполняется, код/тесты до terminal не менять.
+
+Сильные API проверяются отдельно: на одном a63c2fc и одинаковом HYBRID/RU seed Groq120B прошёл три исходные реплики001, сохранив состав/утро/отправление и сменив город; Z.ai45 на T3 дал INVALID_LLM_OPERATION. Точный badfield неизвестен: gateway не сохранил схему отказа в аудит. [Сравнение](docs/verification/three-turn-provider-comparison-20261027.json). Полный80 не завершён: первый3-case pilot остановился на T3; новый executor продолжает семантические FAIL без повторной отправки, но останавливает ресурсные/неизвестные исходы. Оригинальный106 pilot4 запущен отдельно на8086, результатов пока нет.
 
 ## Проверенный checkpoint
 

@@ -32,6 +32,9 @@ PLACE_TRANSFER_NOTICE = "Демонстрационный трансфер; ст
 PLACE_TRANSFER_CATALOGUE = "verified_place_transfer_demo_v1"
 PLACE_TRANSFER_PROVIDER = "demo_place_transfer"
 PLACE_TRANSFER_ID_PREFIX = "demo-place-transfer-"
+REGISTERED_TRANSFER_CATALOGUE = "registered_city_transfer_demo_v1"
+REGISTERED_TRANSFER_PROVIDER = "demo_registered_transfer"
+REGISTERED_TRANSFER_ID_PREFIX = "demo-registered-transfer-"
 SUPPORTED_CONSTRAINTS = {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}
 
 
@@ -314,6 +317,78 @@ def bounded_place_transfer_catalog(state: TripState | dict) -> dict[str, Any]:
             "fees_included": True, "fees_scope": "synthetic_transfer_rule_all_inclusive",
             "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True,
             "availability": "synthetic_not_live", "booking_created_at_supplier": False})
+    return base
+
+
+def bounded_registered_transfer_catalog(state: TripState | dict) -> dict[str, Any]:
+    """Synthetic transfers for the explicit fixed LiteAPI/Duffel registry only.
+
+    Does not extend hotel/flight DEMO coverage, invent CityRefs, or assert any
+    location, availability, distance or supplier transfer fact. Dynamic refs
+    continue to use the separate exact-ref catalogue unchanged.
+    """
+    from .provider_cities import available_search_cities, flight_iata, liteapi_city_query
+
+    state = TripState.model_validate(state)
+    base = {"offers": [], "questions": [], "violations": [], "source_type": "DEMO",
+        "price_kind": "synthetic", "scope": "registered_city_transfers_only", "warnings": [PLACE_TRANSFER_NOTICE]}
+    policy = state.search_policy
+    if (state.location_refs or policy.mode != "HYBRID" or not policy.demo_fallback
+            or policy.hotel_provider != "liteapi" or policy.flight_provider != "duffel"):
+        return base
+    issues = [issue for issue in validate_trip(state)
+        if issue["code"] not in {"missing_budget", "unsupported_budget"}]
+    pets, questions = _pet_request(state)
+    base["questions"] = list(dict.fromkeys([issue["message"] for issue in issues
+        if issue["code"].startswith("missing_")] + questions))
+    base["violations"] = [issue for issue in issues if not issue["code"].startswith("missing_")]
+    for condition in state.constraints:
+        if condition.hard and condition.key not in SUPPORTED_CONSTRAINTS:
+            base["violations"].append(_error("unsupported_constraint",
+                "Демонстрационный трансфер не подтверждает неизвестное обязательное условие.", key=condition.key))
+        elif (condition.hard and condition.key in {"breakfast", "refundable", "pets_allowed", "nonstop"}
+                and type(condition.value) is not bool):
+            base["violations"].append(_error("invalid_constraint", "Для обязательного условия нужно true/false.", key=condition.key))
+    if any(pet["weight_kg"] > 20 for pet in pets):
+        base["violations"].append(_error("transport_pets", "Демонстрационный трансфер поддерживает животных до20кг."))
+    if not 1 <= len(state.travelers) <= MVP_LIMITS["travelers"]:
+        base["violations"].append(_error("transfer_capacity", "Число пассажиров вне конечного профиля DEMO-трансфера."))
+    allowed = set(available_search_cities(state))
+    if any(stay.city not in allowed or liteapi_city_query(stay.city) is None or flight_iata(stay.city) is None
+            or stay.place_id is not None for stay in state.stays):
+        base["violations"].append(_error("transfer_city_unregistered",
+            "Этот DEMO-трансфер ограничен явно зарегистрированными направлениями LiteAPI/Duffel."))
+    if base["questions"] or base["violations"]:
+        return base
+    people = [person.id for person in state.travelers]
+    seats, vehicles = 4, (len(people) + 3) // 4
+    # This existing deterministic generator is a price rule, never an external
+    # route. Only its transfer rows leave this function.
+    for original in _transport_offers(state, pets):
+        if original["kind"] != "transfer":
+            continue
+        stay = next(stay for stay in state.stays if original["component_id"] == "transfer-" + stay.id)
+        country, provider_city = liteapi_city_query(stay.city)
+        identity = {"catalogue": REGISTERED_TRANSFER_CATALOGUE, "trip_id": state.trip_id,
+            "state_version": state.state_version, "stay_id": stay.id, "city": stay.city,
+            "check_in": stay.check_in.isoformat(), "check_out": stay.check_out.isoformat(),
+            "travelers": [person.model_dump(mode="json") for person in state.travelers],
+            "pets": pets, "breakdown": original["breakdown"], "vehicles": vehicles, "seats_per_vehicle": seats}
+        offer = {**original, "offer_id": REGISTERED_TRANSFER_ID_PREFIX + _digest(identity),
+            "provider": REGISTERED_TRANSFER_PROVIDER, "catalogue": REGISTERED_TRANSFER_CATALOGUE,
+            "name": PLACE_TRANSFER_NOTICE, "trip_id": state.trip_id, "state_version": state.state_version,
+            "stay_id": stay.id, "check_out": stay.check_out.isoformat(), "country_iso2": country,
+            "registry_city_label": provider_city, "registry_iata_code": flight_iata(stay.city),
+            "vehicle_count": vehicles, "seats_per_vehicle": seats, "capacity": vehicles * seats,
+            "capacity_source": "synthetic_demo_profile", "booking_created_at_supplier": False,
+            "fees_included": True, "fees_scope": "synthetic_transfer_rule_all_inclusive"}
+        if pets:
+            offer["breakdown"].append(_line("demo_transfer_pet", 100_000, len(pets)))
+            offer["total_minor"] = sum(item["amount_minor"] for item in offer["breakdown"])
+            # Pet charges participate in the canonical identity as well.
+            identity["breakdown"] = offer["breakdown"]
+            offer["offer_id"] = REGISTERED_TRANSFER_ID_PREFIX + _digest(identity)
+        base["offers"].append(offer)
     return base
 
 

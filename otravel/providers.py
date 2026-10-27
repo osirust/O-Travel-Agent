@@ -27,7 +27,7 @@ import httpx
 from jsonschema import Draft202012Validator
 
 from .provider_facts import lite_rate_facts
-from .observability import groq_rate_facts, request_stats, seconds_hint, usage_counts
+from .observability import groq_rate_facts, model_snapshot, request_stats, seconds_hint, usage_counts
 
 
 _SECRETS: set[str] = set()
@@ -986,7 +986,8 @@ class LLMGateway(_HTTPGateway):
                     break
             if violations:
                 raise ProviderError("INVALID_LLM_OPERATION", "Ответ модели нарушает контракт доступных операций.",
-                    provider=provider, details={"schema_errors": violations})
+                    provider=provider, details={"schema_errors": violations,
+                        "rejected_structured_contract": model_snapshot(result, self.settings)})
         metadata = {"provider": provider, "model": model, **self.call_metadata_for_current_call()}
         # Kept for legacy callers. Harness uses the per-result metadata instead
         # of this mutable attribute when sessions share a gateway concurrently.

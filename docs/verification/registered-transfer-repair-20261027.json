@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "finding_id": "HARNESS-001-REGISTERED-TRANSFER-001",
+  "recorded_on": "2026-10-27",
+  "status": "RELATED_TESTED_ACTUAL_SOURCE_PENDING",
+  "scope": "Только явно синтетический трансфер зарегистрированного направления при HYBRID LiteAPI/Duffel без динамических CityRef. Это не расширение DEMO-отелей или перелётов.",
+  "original_observation": {
+    "evidence_folder": "/home/aegml/checks/owner-december-actual-r2-20261027-185156",
+    "source_package_sha256": "6b8de209267a53a1bf4a757d990c42b1948ca489ea75a160f16e032e0694a63f",
+    "scenario": "Санкт-Петербург → Белград → Санкт-Петербург, 28.12.2026–05.01.2027, один взрослый, один номер, гражданство RU.",
+    "completed_user_turns": 14,
+    "actual_model_http_requests": 0,
+    "actual_source_http_requests": 5,
+    "source_response_statuses": {
+      "liteapi_hotels": [200],
+      "liteapi_rates": [200],
+      "duffel_offer_requests": [201, 201],
+      "cbr_reference_fx": [200]
+    },
+    "source_type": "SANDBOX",
+    "covered": ["hotel_room", "outbound_flight", "return_flight"],
+    "missing": ["transfer"],
+    "known_subtotal_minor": 12901830,
+    "currency": "RUB",
+    "whole_trip_total_minor": null,
+    "ready_for_simulated_checkout": false,
+    "supplier_booking_payment_requests": 0,
+    "state_room_allocation_note": "Пустое traveler_ids в требовании номера допустимо: собранное гостиничное предложение уже содержало размещение единственного взрослого. Это не потеря гостя.",
+    "actor_stop_note": "R2 остановил собственный слишком строгий oracle, требовавший записанного распределения в TripState. Независимо от этой ошибки актёра сохранённый partial_plan доказывает единственный реальный пробел покрытия — трансфер.",
+    "root_cause": "Белград зарегистрирован в поиске LiteAPI/Duffel, но не входит в прежние семь DEMO-городов. У этого legacy-маршрута нет CityRef; отдельный каталог exact-ref трансферов намеренно возвращает пустой результат без географической ссылки."
+  },
+  "implemented_action": {
+    "catalogue": "registered_city_transfer_demo_v1",
+    "provider": "demo_registered_transfer",
+    "policy_guards": [
+      "HYBRID",
+      "demo_fallback=true",
+      "hotel_provider=liteapi",
+      "flight_provider=duffel",
+      "location_refs пуст",
+      "Город проживания зарегистрирован одновременно в фиксированных таблицах обоих провайдеров"
+    ],
+    "coverage_guards": [
+      "Автоматическое дополнение только оставшегося transfer-only пробела при отсутствии уже обнаруженных ошибок",
+      "Каноническое равенство DEMO-снимка, версии, состава, даты и тарифа",
+      "Сохранены проверки вместимости, животных и обязательных ограничений",
+      "Известный синтетический provider/catalogue/prefix запрещено объявлять внешним LIVE-предложением"
+    ],
+    "data_guards": [
+      "Только DEMO transfer с обозначением вымышленных цены и наличия",
+      "Никаких придуманных CityRef, координат, расстояний или фактов наличия поставщика",
+      "Прежний семигородской DemoInventory и границы exact-ref каталога сохранены",
+      "Нет подключения реального сервиса трансферов"
+    ]
+  },
+  "controlled_validation": {
+    "status": "PASS_RELATED_SCOPE_ONLY",
+    "tests": 191,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "junit_seconds": 10.367,
+    "database_scope": "otravel_test",
+    "external_model_http_requests": 0,
+    "external_source_http_requests": 0,
+    "provider_behavior": "Контролируемые гостиничные и авиационные ответы; PostgreSQL и ASGI настоящие.",
+    "evidence_path": ".local/evaluation/after80-20261027/registered-transfer-related-20261027.xml",
+    "evidence_sha256": "cac7fc6b2373d1b85df2a0b631d3f741d14ac3121b25b1614352720875016f13",
+    "covered_checks": [
+      "Один номер с неуказанным распределением корректно размещает одного взрослого в предложении",
+      "Белград: MIXED-план из контролируемых гостиницы, двух перелётов и явно синтетического трансфера",
+      "Повторная проверка трёх внешних компонентов, неизменный DEMO-трансфер, один BOOKED_DEMO при повторе подтверждения",
+      "Отключение demo_fallback создаёт новую ревизию, отзывает старую котировку и сохраняет непокрытый трансфер",
+      "Пропажа обязательных сборов блокирует новую котировку и использование старого согласия",
+      "Подмена цены, страны, вместимости, даты, версии или происхождения DEMO-снимка отклоняется",
+      "Старые exact-ref, inventory, planning, FX, transport и provider-city проверки"
+    ],
+    "new_test_oracle_corrections": [
+      "Первый новый pure-тест ожидал catalogue-ошибку для malformed nonstop; фактически существующая доменная схема отклоняет его раньше. Добавлен отдельный negative на ValidationError.",
+      "Первый новый PG-тест ожидал неизменную state_version после подтверждения. Существующий Store корректно создаёт одну новую ревизию: итоговый тест требует ровно +1 и неизменности остальных требований."
+    ],
+    "original_failed_artifacts_preserved": true,
+    "existing_test_oracles_modified": false
+  },
+  "source_binding": {
+    "package_sha256": "4b8eedd251365427a19fa2b2113708d6991ec06360947ba745f6ca2a03f32699",
+    "files": {
+      "otravel/inventory.py": "42ff449ed1b5d85f49875ed899c966028f646e2c66af4c2cdef70e1a56f4c3de",
+      "otravel/planning.py": "4280bb6dcd7ac2578ae91f1ddf6bed5db4798795ec4a0ad1b552820d66f32b37",
+      "tests/test_registered_transfer_demo.py": "ffe1810ab2d5274a2c4f11e4b331f6859fc36cb399a96d6d525a5beee3052ee3",
+      "tests/test_registered_transfer_checkout.py": "de16cfb33187f1a125f759967d90fed790fa16d20d47ec6ada21c69975309039"
+    }
+  },
+  "actual_after_patch": {
+    "status": "PENDING_ROOT_OWNED_RUN",
+    "completed_result_claimed": false,
+    "actual_nlu_quality_proven": false,
+    "note": "R3 выполняется отдельно Root. Данная запись не объявляет его завершённым и не подменяет фактический результат контролируемыми тестами."
+  },
+  "closure_condition": "Свежий сквозной прогон исправленного снимка должен получить пригодные гостиницу и перелёты, явно помеченный DEMO-трансфер и MIXED-итог, проверить медиа, повторно проверить внешние тарифы, сохранить котировку при вопросе о цене и завершить ровно один имитированный заказ с идемпотентным повтором. Результат LLM оценивается отдельно: ноль вызовов модели не является доказательством её NLU-качества.",
+  "remaining_limits": [
+    "Трансфер остаётся синтетическим; полностью live-поездка и реальная бронь не подтверждены.",
+    "Новый каталог ограничен явно зарегистрированными направлениями, политикой LiteAPI/Duffel и отсутствием CityRef; общий случай смешанных legacy/dynamic ссылок этим изменением не закрыт.",
+    "Этот related-набор не является полной приёмкой 80 диалогов или 106 сценариев.",
+    "Полный frozen-source прогон и actual R3 принадлежат отдельным квитанциям Root."
+  ]
+}

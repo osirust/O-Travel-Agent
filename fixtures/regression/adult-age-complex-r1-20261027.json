@@ -1,0 +1,279 @@
+{
+  "format": "otravel.cached.actual.adult-age.v1",
+  "finding_id": "HARNESS-004-UNASKED-ADULT-AGE-001",
+  "source_path": "/home/aegml/checks/complex-actual-r1-20261027-191441",
+  "source_file_sha256": {
+    "turn-01.json": "2a59f646e0cf307001388841a807eb14fb9b435dde1776029b6c50cccc1a6670",
+    "events.json": "9cb4a9b814253e774440bb452a2c186ffeae91dd8aa3a006575c931e114df153"
+  },
+  "input": "Хочу поездку: из Казани в Стамбул, заезд 10 ноября 2026, выезд 13 ноября 2026; затем Анталья, заезд 13 ноября 2026, выезд 17 ноября 2026; вернуться в Казань 17 ноября 2026. Едут два взрослых и ребёнок 7 лет. В каждом городе нужен один номер для всех троих. Бюджет на всю поездку 1 200 000 рублей. Гражданство для гостиничного поиска — Россия.",
+  "before_trip": {
+    "legs": [],
+    "stays": [],
+    "budget": null,
+    "groups": [],
+    "origin": null,
+    "trip_id": "ecf1335f-a764-491d-a72e-d145d88306d1",
+    "travelers": [],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 0
+  },
+  "raw_contract": {
+    "value": {
+      "reply": "Запрос обработан, предложенные изменения готовы к проверке.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Казань"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-1",
+            "age": 30,
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-2",
+            "age": 30,
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-3",
+            "age": 7,
+            "type": "child"
+          },
+          "target_id": null
+        },
+        {
+          "type": "upsert_group",
+          "value": {
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "keep_separate": false
+          },
+          "target_id": "new-group-1"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-13",
+            "requested_nights": 3
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Анталья",
+            "rooms": [
+              {
+                "id": "new-room-2",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-13",
+            "check_out": "2026-11-17",
+            "requested_nights": 4
+          },
+          "target_id": "new-stay-2"
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "currency": "RUB",
+            "amount_minor": 120000000
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_preference",
+          "value": {
+            "key": "price_priority",
+            "value": "lowest_total"
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_search_policy",
+          "value": {
+            "guest_nationality": "RU"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "435467412e696a687a7bba4d6271be79fb9b016f5b39cc0e2b81c4711c27c6fe",
+    "captured": true,
+    "utf8_bytes": 1529
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Запрос обработан, предложенные изменения готовы к проверке.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Казань"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-1",
+            "age": 30,
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-2",
+            "age": 30,
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-3",
+            "age": 7,
+            "type": "child"
+          },
+          "target_id": null
+        },
+        {
+          "type": "upsert_group",
+          "value": {
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "keep_separate": false
+          },
+          "target_id": "new-group-1"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-13",
+            "requested_nights": 3
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Анталья",
+            "rooms": [
+              {
+                "id": "new-room-2",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-13",
+            "check_out": "2026-11-17",
+            "requested_nights": 4
+          },
+          "target_id": "new-stay-2"
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "currency": "RUB",
+            "amount_minor": 120000000
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_search_policy",
+          "value": {
+            "guest_nationality": "RU"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "57ecf2041282bab38448df0b411fd29fe7a9938170d15d1c112afc38129cf07e",
+    "captured": true,
+    "utf8_bytes": 1430
+  },
+  "new_model_calls": 0,
+  "new_provider_http": 0
+}

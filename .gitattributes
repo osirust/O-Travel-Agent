@@ -5,3 +5,5 @@ otravel/data/* -text whitespace=cr-at-eol
 fixtures/regression/world-r4-date-omission-20261027.json -text whitespace=cr-at-eol
 fixtures/regression/world-r4-preferences-20261027.json -text whitespace=cr-at-eol
 fixtures/regression/lite-fees-included-projection-20261027.json -text whitespace=cr-at-eol
+fixtures/evaluation/historical-tests/* -text whitespace=cr-at-eol
+fixtures/regression/adult-age-complex-r1-20261027.json -text whitespace=cr-at-eol

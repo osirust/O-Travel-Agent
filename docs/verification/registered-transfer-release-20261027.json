@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-27",
+  "status": "RELATED_AND_ACTUAL_TESTED_FULL_RUNNING",
+  "package_sha256": "4b8eedd251365427a19fa2b2113708d6991ec06360947ba745f6ca2a03f32699",
+  "related": {
+    "passed": 191,
+    "failures": 0,
+    "skipped": 0
+  },
+  "actual": {
+    "proof": "docs/verification/owner-december-actual-r3-20261027.json",
+    "passed_checks": 19,
+    "turns": 17,
+    "source_http": 10,
+    "llm_calls": 0,
+    "order_status": "BOOKED_DEMO",
+    "orders": 1
+  },
+  "full": "RUNNING_SEPARATE_TERMINAL_REQUIRED",
+  "local_qwen": 0,
+  "paid": 0,
+  "supplier_book_pay": 0,
+  "whole80_or_106_acceptance": "NOT_COMPLETED",
+  "staged_package": {
+    "tested_package_sha256": "4b8eedd251365427a19fa2b2113708d6991ec06360947ba745f6ca2a03f32699",
+    "staged_package_sha256": "4ebbc7e9c2503084b215598380af377ae861d6b010f5ffb69f5438a59587f7db",
+    "package_files": 74,
+    "only_allowed_crlf_normalization": [
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

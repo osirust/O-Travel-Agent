@@ -911,6 +911,11 @@ class Harness:
                         extracted.conflicts.extend(preference_meta["conflicts"])
                         extracted.unknowns.extend(preference_meta["unknowns"])
                         extracted.server_questions.extend(preference_meta["unknowns"])
+                        from .adult_age_grounding import guard_adult_age_operations
+                        adult_ops, adult_meta = guard_adult_age_operations(session["state"], extracted.operations,
+                            run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in adult_ops]
+                        extracted.operation_normalizations.extend(adult_meta["notes"])
                         from .room_intent import ground_room_count_operations
                         room_ops, room_meta = ground_room_count_operations(session["state"], extracted.operations,
                             run["input_text"], session.get("pending_question"))
@@ -1063,6 +1068,14 @@ class Harness:
                     failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits", "business_code", "failure_kind", "daily_quota_confirmed", "reset_basis", "engineering_wait_seconds", "validation_stage", "domain_error_code") if key in details}}
                     if isinstance(gateway, LLMGateway):
                         failed.update(gateway.call_metadata_for_current_call())
+                        if isinstance(details.get("schema_errors"), list):
+                            failed["schema_errors"] = details["schema_errors"][:3]
+                        rejected = details.get("rejected_structured_contract")
+                        if isinstance(rejected, dict) and rejected.get("captured") is True and isinstance(rejected.get("value"), dict):
+                            # Only the gateway's final structured JSON, already
+                            # checked for credential echoes; never hidden text.
+                            failed["rejected_structured_contract"] = model_snapshot(rejected["value"],
+                                {**self.settings.provider_settings(), **gateway.settings})
                     attempt_meta.append({**failed, "outcome": "failed"})
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_CALL_FAILED", failed)
                     exc.llm_meta = {"provider": provider, "model": requested_model, "attempts": attempt_meta}
@@ -1499,6 +1512,20 @@ class Harness:
         from .answering import readonly_question
         extracted,metadata=await self._extract(session,run,context_override=context_override)
         pending=session.get("pending_question") or {}
+        if (extracted.speech_act == "ASK" and not extracted.operations and extracted.unknowns
+                and not extracted.conflicts and not extracted.place_requests and not extracted.place_selection
+                and extracted.control.action in {"none", "continue", "wait"}
+                and not explicit_pause_hint(run["input_text"])):
+            from .planning_intent import initial_planning_question
+            initial = initial_planning_question(session["state"], pending, run["input_text"])
+            if initial is not None:
+                extracted.speech_act = "CHANGE"
+                extracted.control.action = "none"
+                extracted.unknowns = extracted.server_questions = [initial["question"]]
+                extracted.pending_context = initial["context"]
+                extracted.response_source = "initial_planning_clarification"
+                extracted.operation_normalizations.append({"finding_id": "HARNESS-004-INITIAL-CLARIFICATION-LOSS-001",
+                    "source": "canonical_missing_fact", "state_changed": False, "model_speech_act": "ASK"})
         field=pending.get("field")
         typed_field=field
         if field=="place.city_query":
@@ -1737,7 +1764,13 @@ class Harness:
                     raise
                 new_state = candidate if changes else None
                 if extracted.unknowns:
-                    from .clarification_policy import classify_model_clarifications
+                    from .clarification_policy import classify_model_clarifications, fulfilled_return_clarifications
+                    extracted.unknowns, completed_questions = fulfilled_return_clarifications(state, candidate,
+                        extracted.operations, extracted.unknowns, server_questions=extracted.server_questions)
+                    extracted.operation_normalizations.extend(completed_questions)
+                    if completed_questions:
+                        await self.store.save_event(session["session_id"], run["run_id"], "MODEL_CLARIFICATION_RESOLVED",
+                            {"based_state_version": version, "items": completed_questions})
                     recent_users = [message["text"] for message in await self.store.list_messages(session["session_id"])
                         if message.get("role") == "user" and not message["text"].startswith(TYPED_PREFIX)][-20:]
                     classification = classify_model_clarifications(candidate, extracted.unknowns,

@@ -20,8 +20,12 @@ from .inventory import (
     PLACE_TRANSFER_ID_PREFIX,
     PLACE_TRANSFER_NOTICE,
     PLACE_TRANSFER_PROVIDER,
+    REGISTERED_TRANSFER_CATALOGUE,
+    REGISTERED_TRANSFER_ID_PREFIX,
+    REGISTERED_TRANSFER_PROVIDER,
     DemoInventory,
     bounded_place_transfer_catalog,
+    bounded_registered_transfer_catalog,
     bounded_transport_catalog,
 )
 
@@ -70,6 +74,9 @@ def _demo_binding(state: TripState, offer: dict) -> dict:
         if offer.get("catalogue") == PLACE_TRANSFER_CATALOGUE:
             binding.update({key: offer.get(key) for key in ("place_id", "place_ref_version", "place_ref_sha256",
                 "country_iso2", "check_out", "capacity", "vehicle_count", "seats_per_vehicle")})
+        elif offer.get("catalogue") == REGISTERED_TRANSFER_CATALOGUE:
+            binding.update({key: offer.get(key) for key in ("country_iso2", "check_out", "capacity",
+                "vehicle_count", "seats_per_vehicle", "registry_city_label", "registry_iata_code")})
         return binding
     return {**common, "leg_ids": [component], "traveler_ids": offer.get("traveler_ids", [])}
 
@@ -134,6 +141,7 @@ def _covers(state: TripState, offer: dict, binding: dict, errors: list[dict]) ->
                 errors.append(_issue("transfer_place_binding_mismatch",
                     "Трансфер связан с другим выбранным местом, страной или датами.", offer_id=oid))
                 return []
+        if stay.place_id is not None or offer.get("catalogue") == REGISTERED_TRANSFER_CATALOGUE:
             capacity, vehicles, seats = (binding.get(key) for key in ("capacity", "vehicle_count", "seats_per_vehicle"))
             if (any(type(value) is not int or value <= 0 for value in (capacity, vehicles, seats))
                     or capacity != vehicles * seats or capacity < len(people)):
@@ -178,10 +186,12 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
     demo = DemoInventory().search_trip(state, catalogue_only=True)
     transport = bounded_transport_catalog(state)
     place_transfers = bounded_place_transfer_catalog(state)
+    registered_transfers = bounded_registered_transfer_catalog(state)
     catalog = ({offer["offer_id"]: offer for plan in demo["plans"] for offer in plan["offers"]}
         if not state.location_refs else {})
     if not state.location_refs:
         catalog.update({offer["offer_id"]: offer for offer in transport["offers"]})
+        catalog.update({offer["offer_id"]: offer for offer in registered_transfers["offers"]})
     catalog.update({offer["offer_id"]: offer for offer in place_transfers["offers"]})
     clock = now.astimezone(timezone.utc) if isinstance(now, datetime) and now.tzinfo is not None else None
 
@@ -198,7 +208,10 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
         local_demo = offer.get("source_type") == "DEMO"
         if (not local_demo and (offer.get("provider") == PLACE_TRANSFER_PROVIDER
                 or offer.get("catalogue") == PLACE_TRANSFER_CATALOGUE
-                or offer["offer_id"].startswith(PLACE_TRANSFER_ID_PREFIX))):
+                or offer["offer_id"].startswith(PLACE_TRANSFER_ID_PREFIX)
+                or offer.get("provider") == REGISTERED_TRANSFER_PROVIDER
+                or offer.get("catalogue") == REGISTERED_TRANSFER_CATALOGUE
+                or offer["offer_id"].startswith(REGISTERED_TRANSFER_ID_PREFIX))):
             errors.append(_issue("unknown_demo_snapshot",
                 "Синтетический трансфер нельзя выдавать за предложение внешнего источника.", offer_id=offer["offer_id"]))
             return
@@ -208,7 +221,7 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
                 errors.append(_issue("unknown_demo_snapshot", "DEMO-снимок не совпадает с текущим конечным каталогом.", offer_id=offer["offer_id"]))
                 return
             binding = _demo_binding(state, offer)
-            if offer.get("catalogue") == PLACE_TRANSFER_CATALOGUE:
+            if offer.get("catalogue") in {PLACE_TRANSFER_CATALOGUE, REGISTERED_TRANSFER_CATALOGUE}:
                 warnings.append(PLACE_TRANSFER_NOTICE)
         else:
             binding = details.get("binding")
@@ -306,6 +319,8 @@ def assemble_plan(state: TripState | dict, offers: list[dict], *, demo_fallback:
         candidate_ids = {offer["offer_id"] for offer in candidates}
         if not state.location_refs:
             candidates.extend(offer for offer in transport["offers"] if offer["offer_id"] not in candidate_ids)
+            if transfer_only_gap and not errors:
+                candidates.extend(offer for offer in registered_transfers["offers"] if offer["offer_id"] not in candidate_ids)
         for offer in candidates:
             binding = _demo_binding(state, offer)
             local_errors: list[dict] = []
