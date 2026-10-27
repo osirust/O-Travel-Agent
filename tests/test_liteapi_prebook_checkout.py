@@ -120,7 +120,16 @@ async def test_prebook_failure_or_fresh_hard_condition_violation_stales_old_cons
     before = (await client.get(f"/api/v1/sessions/{sid}", headers=headers(token))).json()
     travel.prebook_mode = mode
     failed = await preview(client, sid, token, session["state_version"], selected)
-    assert failed.status_code == (503 if mode == "unavailable" else 422)
+    assert failed.status_code == (409 if mode == "unavailable" else 422)
+    if mode == "unavailable":
+        error = failed.json()["error"]
+        assert error["code"] == "OFFER_NOT_CONFIRMED" and error["retryable"] is False
+        assert error["provider"] == "liteapi" and error["upstream_http_status"] == 409
+        assert error["business_code"] == 2001 and error["refresh_required"] is True
+        assert "цен" in error["message"].casefold() and "налич" in error["message"].casefold()
+        assert "Synthetic" not in str(error) and "offerId" not in str(error)
+        # Stop at the declined first prebook; no second call or hidden re-search.
+        assert travel.requests.count(("book.liteapi.travel", "/v3.0/rates/prebook")) == 3
     stale = await client.post(f"/api/v1/sessions/{sid}/checkout/confirm", headers=headers(token), json=confirmation(old_quote))
     assert stale.status_code == 409
     after = (await client.get(f"/api/v1/sessions/{sid}", headers=headers(token))).json()

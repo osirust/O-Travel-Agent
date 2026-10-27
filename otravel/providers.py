@@ -136,6 +136,16 @@ def public_rate_failure_fields(provider: str, details: Any) -> dict:
     return {'business_code': facts['business_code'], 'failure_kind': facts['failure_kind']}
 
 
+def public_offer_failure_fields(provider: str, code: str, details: Any) -> dict:
+    """Only the code-owned selected LiteAPI prebook refusal is public here."""
+    if (provider != 'liteapi' or code != 'OFFER_NOT_CONFIRMED' or not isinstance(details, dict)
+            or type(details.get('http_status')) is not int or details['http_status'] not in {400, 409}
+            or type(details.get('business_code')) is not int or details['business_code'] != 2001
+            or details.get('refresh_required') is not True):
+        return {}
+    return {'business_code': 2001, 'refresh_required': True}
+
+
 class ProviderError(Exception):
     def __init__(self, code: str, message: str, retryable: bool = False,
                  provider: str = "", details: Any = None):
@@ -259,6 +269,20 @@ class _HTTPGateway:
         if response.status_code >= 300:
             status = response.status_code
             details: dict[str, Any] = {"http_status": status}
+            if (provider == 'liteapi' and method == 'POST'
+                    and url == 'https://book.liteapi.travel/v3.0/rates/prebook' and status in {400, 409}):
+                try:
+                    prebook_body = response.json() if len(response.content) <= 1_000_000 else None
+                except (ValueError, UnicodeError):
+                    prebook_body = None
+                prebook_error = prebook_body.get('error') if isinstance(prebook_body, dict) else None
+                business = prebook_error.get('code') if isinstance(prebook_error, dict) else None
+                if ((type(business) is int and business == 2001 or type(business) is str and business == '2001')
+                        and prebook_body.get('errors') in (None, []) and prebook_body.get('data') in (None, {})
+                        and prebook_body.get('success') is not True):
+                    raise ProviderError('OFFER_NOT_CONFIRMED',
+                        'Поставщик не подтвердил цену или наличие выбранного тарифа. Обновите варианты.',
+                        False, provider, {'http_status': status, 'business_code': 2001, 'refresh_required': True})
             if status == 429:
                 if provider == "groq" and url == "https://api.groq.com/openai/v1/chat/completions":
                     try:

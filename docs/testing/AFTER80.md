@@ -10,7 +10,9 @@ Core **b9343c0c6459c6d34e8605371c955de95da2f73d** опубликован в об
 
 [Два actual OpenRouter перехода](../verification/actual-selected-hotels-wow-20261027.json) прошли21предметную проверку: WOW-правка с сохранением выбранного первого отеля и ссылка на выбранный UI plan3, отличный от первой карточки. Оба имеют явную типизированную подготовку; это не два новых полных natural диалога. Реальных броней/оплат, paid fallback и local inference нет.
 
-После этих переходов собственный Router-процесс остановлен. Попытки fixed80 на Z.ai4.5 и CF дали по1сообщению/1model/0tools и остановились: HTTP429/business1113account/billing и unknown429 соответственно. Новый Groq-run запущен с60sPOST gap; результата ещё нет.300s для неизвестного429 — engineering wait, не доказанный vendor reset. Ни одна из этих стартовавших попыток не считается80завершёнными диалогами.
+После этих переходов собственный Router-процесс остановлен. Попытки fixed80 на Z.ai4.5 и CF дали по1сообщению/1model/0tools и остановились: HTTP429/business1113account/billing и unknown429 соответственно. Groq fixed80 также остановился на первом429. [Все три попытки](../verification/all80-provider-admission-20261027.json):0целыхдиалогов,по1модельномувызову. Позже два ledgered instruct/no-apply запроса дали200: один schemaPASS, второй envelopeFAIL, не языковая приёмка. [Пробы](../verification/groq-instruct-probes-20261027.json).300s для неизвестного429 — engineering wait, не доказанный vendor reset. Ни одна из этих стартовавших попыток не считается80завершёнными диалогами.
+
+Последний опубликованный checkpointbc32881:4557controlledPASS/0skip после исправления публичного billing429. Native ещёb934; новая2001adapterдиагностика пока targeted, не новая полнаяqualification.
 
 ## Изменения и подтверждённые границы
 

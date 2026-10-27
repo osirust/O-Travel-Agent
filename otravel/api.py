@@ -29,7 +29,7 @@ from .domain import DomainError, Operation, TripState, validate_trip
 from .harness import Harness, TYPED_PREFIX, encode_command, exact_control
 from .inventory import reprice_plan, validate_plan
 from .planning import assemble_plan, validate_quote
-from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields
+from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields, public_offer_failure_fields
 from .fx import CBRFxClient, FxUnavailable
 from .media import MEDIA_CSP_SOURCES, MediaResolver
 from .store import Conflict, NotFound, Store, StoreError
@@ -59,6 +59,8 @@ def _provider_error_public_fields(exc: ProviderError) -> dict:
     if type(retry) is int and 0 <= retry <= 86400:
         result["retry_after_seconds"] = retry
     result.update(public_rate_failure_fields(exc.provider, details))
+    if exc.code == "OFFER_NOT_CONFIRMED":
+        result.update(public_offer_failure_fields(exc.provider, exc.code, details))
     return result
 
 
@@ -207,7 +209,9 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
 
     @app.exception_handler(ProviderError)
     async def provider_error(_request, exc):
-        return error(exc.code, exc.message, 503, exc.retryable, provider_failure=exc)
+        refresh_required = (exc.code == "OFFER_NOT_CONFIRMED"
+            and public_offer_failure_fields(exc.provider, exc.code, exc.details).get("refresh_required") is True)
+        return error(exc.code, exc.message, 409 if refresh_required else 503, exc.retryable, provider_failure=exc)
 
     @app.exception_handler(FxUnavailable)
     async def fx_error(_request, exc):

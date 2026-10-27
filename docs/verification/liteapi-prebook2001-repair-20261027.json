@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-001-LITEAPI-PREBOOK2001-001",
+  "status": "CONTROLLED_ADAPTER_API_PG_ERROR_RECOVERY_SCOPE_CLOSED",
+  "actual_before_fix": "docs/verification/natural-group-fresh-checkout-20261027.json",
+  "repair": "Only fixed POST LiteAPI prebook HTTP400/409 with exact business2001 maps to OFFER_NOT_CONFIRMED, retryablefalse, publicrefresh_requiredtrue/HTTP409. No guessed price delta, automatic retry, replacement or booking. Unknown/auth/rate/other URL/status paths retain prior behavior.",
+  "full": {
+    "tests": 4606,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 160.414,
+    "junit": ".local/evaluation/after80-20261027/full-liteapi2001-final.xml",
+    "sha256": "0303cf2625c39fee19a6e99135de988db510be526f6d205b8259a7ad30284089"
+  },
+  "related_overlapping_tests": {
+    "adapter": 306,
+    "API_PG": 60,
+    "new_adapter_cases": 49
+  },
+  "owned_PG_assertions": [
+    "Old quote revoked even on failed preview",
+    "No new quote/order or automatic source re-search",
+    "Original trip/version preserved",
+    "Refusal stops at the selected prebook",
+    "Raw provider body/IDs are not public"
+  ],
+  "source_sha256": {
+    "otravel/providers.py": "2515ca056c8c3cf9cb1a9e70fcd55fad139e520d2bc2e8d854aac76c18e04290",
+    "otravel/api.py": "5599a495886261e633aa8261b1c767084b1d9e795f291f5eff1301fed2e5492f",
+    "tests/test_liteapi_prebook_checkout.py": "d5a0391e3421412e044c69f29a1fe05bc554ebf28d5a2daf8c3f8e510fd8756f"
+  },
+  "new_supplier_HTTP_after_fix": 0,
+  "payments": 0,
+  "real_bookings": 0,
+  "limitations": [
+    "Current actual supplier refusal was on frozen b934 before this error-contract fix. No new live request is claimed for the corrected response.",
+    "This correction cannot make a rejected provider tariff available. Explicit new search or selection is required.",
+    "Original older409 cause staysUNKNOWN.",
+    "No full80/106 or LIVE_BOOKABLE qualification."
+  ]
+}
