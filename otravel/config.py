@@ -129,7 +129,7 @@ def provider_status() -> dict[str, Any]:
         "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False,
             **({"include_reasoning": False} if os.getenv("GROQ_MODEL") == "openai/gpt-oss-120b" else {}),
             **({"structured_transport": True,
-                "transport_version": 2 if os.getenv("GROQ_TRANSPORT_VERSION") == "2" else 1,
+                "transport_version": int(os.getenv("GROQ_TRANSPORT_VERSION")) if os.getenv("GROQ_TRANSPORT_VERSION") in {"1","2","3"} else 1,
                 "reasoning_effort": os.getenv("GROQ_REASONING_EFFORT") if os.getenv("GROQ_REASONING_EFFORT") in {"none", "default", "low", "medium", "high"} else None}
                 if enabled("GROQ_STRUCTURED_TRANSPORT_ENABLED") else {})},
         "cloudflare": {"configured": bool(os.getenv("CLOUDFLARE_API_TOKEN") and os.getenv("CLOUDFLARE_ACCOUNT_ID")), "model": os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"), "free_tier_confirmed": enabled("CLOUDFLARE_FREE_TIER_CONFIRMED"), "paid_fallback": False},
