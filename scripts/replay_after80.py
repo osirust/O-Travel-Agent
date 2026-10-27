@@ -41,6 +41,8 @@ LLM_PROFILES = {
         "manager": "after80_router_backend.py", "evidence": "docs/verification/after80-router-backend-20261026.json"},
     "groq-qwen": {"provider": "groq", "model": "qwen/qwen3.8-27b",
         "manager": "after80_groq_backend.py", "evidence": "docs/verification/after80-groq-backend-20261026.json"},
+    "groq-gptoss120": {"provider": "groq", "model": "openai/gpt-oss-120b",
+        "manager": "after80_gptoss_backend.py", "evidence": "docs/verification/after80-gptoss-backend-20261027.json"},
 }
 TOOL_RESERVATION = 16  # The verified TripSearch per-run bound, not vendor HTTP requests.
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
@@ -365,10 +367,15 @@ def check_profile(health, status, evidence, llm_profile="zai"):
         bound = evidence.get("limits", {}).get("daily_engineering_bound")
         require(type(bound) is int and bound in {40, 50},
             "router_shared40_or_explicit50_application_limit_required")
-    elif llm_profile == "groq-qwen":
+    elif llm_profile in {"groq-qwen", "groq-gptoss120"}:
         require(type(evidence.get("limits", {}).get("groq_daily_engineering_bound")) is int
             and evidence["limits"]["groq_daily_engineering_bound"] == 1000,
             "explicit_groq_evaluation_limit_required")
+        if llm_profile == "groq-gptoss120":
+            require(status["groq"].get("structured_transport") is True
+                and status["groq"].get("reasoning_effort") == "low"
+                and status["groq"].get("include_reasoning") is False,
+                "explicit_gptoss_strict_hidden_low_profile_required")
     elif llm_profile == "zai47-flash":
         require(type(evidence.get("limits", {}).get("daily_engineering_bound")) is int
             and evidence["limits"]["daily_engineering_bound"] == 2000,

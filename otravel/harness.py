@@ -597,6 +597,23 @@ class Harness:
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_EXTRACTION_VALIDATED", {
                         "based_state_version": session["state_version"], "provider": provider,
                         "model": requested_model, "structured_contract": validated_snapshot})
+                    country_independent_ops_authorized = False
+                    if not readonly and extracted.control.action in {"none", "continue", "wait", "resume"}:
+                        from .country_intake import normalize_country_intake_clarification
+                        country_ops, country_meta = normalize_country_intake_clarification(
+                            session["state"], extracted.operations, run["input_text"], extracted.conflicts,
+                            speech_act=extracted.speech_act)
+                        if country_meta["handled"]:
+                            extracted.operations = [Operation.model_validate(op) for op in country_ops]
+                            extracted.conflicts = country_meta["conflicts"]
+                            extracted.unknowns = list(dict.fromkeys(country_meta["unknowns"] + extracted.unknowns))
+                            extracted.server_questions.extend(country_meta["server_questions"])
+                            extracted.pending_context = {**(extracted.pending_context or {}), **country_meta["pending_context"]}
+                            extracted.pending_context_clear = list(dict.fromkeys(
+                                extracted.pending_context_clear + country_meta["pending_context_clear"]))
+                            extracted.destination_request = country_meta["destination_request"]
+                            extracted.operation_normalizations.extend(country_meta["notes"])
+                            country_independent_ops_authorized = country_meta["authorizes_retain_independent_ops"] is True
                     if not readonly and not extracted.conflicts:
                         from .operation_aliases import normalize_equivalent_return_ops
                         aliases, alias_notes = normalize_equivalent_return_ops(session["state"], extracted.operations, run["input_text"])
@@ -765,7 +782,8 @@ class Harness:
                         # This bounded parser matched a country-only request,
                         # not dates/people or a confirmed city. City guesses are
                         # suggestions and must not mutate a concrete route.
-                        extracted.operations = []
+                        if not country_independent_ops_authorized:
+                            extracted.operations = []
                         extracted.unknowns = [location["clarification"]]
                         extracted.destination_request = country_context
                     if not extracted.conflicts and extracted.control.action != "cancel" and not any(op.type == "undo" for op in extracted.operations):

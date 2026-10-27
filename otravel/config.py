@@ -111,6 +111,7 @@ def provider_status() -> dict[str, Any]:
         "gemini": {"configured": bool(os.getenv("GEMINI_API_KEY")), "free_tier_confirmed": enabled("GEMINI_FREE_TIER_CONFIRMED"), "model": os.getenv("GEMINI_MODEL", "gemini-3.8-flash")},
         "openrouter": {"configured": bool(os.getenv("OPENROUTER_API_KEY")), "model": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"), "backup_model": os.getenv("OPENROUTER_BACKUP_MODEL", ""), "paid_fallback": False},
         "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False,
+            **({"include_reasoning": False} if os.getenv("GROQ_MODEL") == "openai/gpt-oss-120b" else {}),
             **({"structured_transport": True,
                 "reasoning_effort": os.getenv("GROQ_REASONING_EFFORT") if os.getenv("GROQ_REASONING_EFFORT") in {"none", "default", "low", "medium", "high"} else None}
                 if enabled("GROQ_STRUCTURED_TRANSPORT_ENABLED") else {})},

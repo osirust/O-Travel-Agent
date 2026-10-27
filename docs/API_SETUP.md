@@ -55,6 +55,8 @@ GROQ_STRUCTURED_TRANSPORT_ENABLED=true
 
 Флаг по умолчанию выключен. Он меняет только обмен backend с моделью: сервер задаёт допустимые ID, декодирует значения и повторно проверяет каноническую схему. HTTP-контракт frontend остаётся прежним. Для вопросов модель выбирает разделы, а фактические суммы, состав и даты выводит сервер. Это не разрешение на платный fallback и не увеличение квоты. Параметр `reasoning_effort=none` документирован для [instruct-режима Groq Qwen](https://console.groq.com/docs/model/qwen/qwen3.8-27b). Реальную языковую приёмку учитывать отдельно от проверки JSON.
 
+Второй явно выбираемый Groq Free-кандидат — `GROQ_MODEL=openai/gpt-oss-120b`, `GROQ_REASONING_EFFORT=low` с тем же strict-флагом. Backend отправляет `include_reasoning=false` и ограниченный `max_completion_tokens`; `none/default` этому модельному профилю не подходят. Профили не переключаются автоматически, используют прежний общий Groq ledger и требуют подтверждённого Free-аккаунта. Доступность и качество проверяются отдельным прогоном. [Документация GPT-OSS120B](https://console.groq.com/docs/model/openai/gpt-oss-120b), [reasoning](https://console.groq.com/docs/reasoning).
+
 ## Лимиты и ошибки модели
 
 | Настройка | Реализованный предел приложения |

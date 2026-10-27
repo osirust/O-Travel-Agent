@@ -92,6 +92,41 @@ async def test_readonly_model_selects_topics_and_server_constructs_the_fixed_noo
 
 
 @pytest.mark.asyncio
+async def test_explicit_free_gptoss_model_uses_low_effort_hidden_reasoning_and_same_canonical_transport():
+    calls = []
+    def handler(request):
+        calls.append(request)
+        body = json.loads(request.content)
+        assert body['model'] == 'openai/gpt-oss-120b' and body['reasoning_effort'] == 'low'
+        assert body['include_reasoning'] is False and body['stream'] is False
+        assert body['max_completion_tokens'] == 2048
+        assert not set(body).intersection({'max_tokens', 'reasoning_format', 'models', 'provider'})
+        assert body['response_format']['json_schema']['strict'] is True
+        return completion(encode(ANSWER))
+    g = gateway(handler, GROQ_MODEL='openai/gpt-oss-120b', GROQ_REASONING_EFFORT='low')
+    try:
+        actual = await g.extract_operations({'__response_schema': build_operation_schema(sample_trip())})
+        assert actual == ANSWER and len(calls) == 1
+        assert actual.call_metadata['model'] == 'openai/gpt-oss-120b'
+    finally:
+        await g.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('effort', ['none', 'default', True, 'unsupported'])
+async def test_gptoss_does_not_reuse_qwen_specific_effort_or_dispatch_invalid_config(effort):
+    def forbidden(_request):
+        pytest.fail('Invalid GPT-OSS effort must not dispatch HTTP')
+    g = gateway(forbidden, GROQ_MODEL='openai/gpt-oss-120b', GROQ_REASONING_EFFORT=effort)
+    try:
+        with pytest.raises(ProviderError) as error:
+            await g.extract_operations({'__response_schema': build_operation_schema(sample_trip())})
+        assert error.value.code == 'CONFIG_BLOCKED'
+    finally:
+        await g.close()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize('wire', [{'': None}, {'operations': []}, {'sections': []},
     {'sections': ['party'], 'operations': [{'type': 'undo'}]}])
 async def test_malformed_final_wire_is_rejected_once_without_hidden_fallback(wire):
