@@ -1,0 +1,63 @@
+{
+  "permanent_id": "HARNESS-004-LITERAL-COUNTRY-WISH-001",
+  "status": "PURE_RESOLVER_READY_ROOT_HOOK_AND_RETEST_OPEN",
+  "source_actual": {
+    "path": "/home/aegml/checks/groq-v2-owner-20261027-103313/report.json",
+    "sha256_at_capture": "4d2c14ee82436ee4f3de395c3af6d5700a7b6eba0b08249e045b7f5fe5cee7e1",
+    "commit": "5f4d0d8a582fe9bcd865da68f83fa1813f99151f",
+    "scope": "two-turn fresh natural intake, no typed trip seed"
+  },
+  "observed": {
+    "first_step": {
+      "input": "привет",
+      "run_status": "completed",
+      "reply": "Здравствуйте! Готов помочь с вашей поездкой.",
+      "model_calls": 0,
+      "tool_calls": 0,
+      "trip_unchanged": true,
+      "state_version": 0,
+      "pending_question": null
+    },
+    "country_step": {
+      "input": "хочу в Сербию",
+      "run_status": "completed",
+      "reply": "Да, Сербия — страна. Могу помочь обсудить маршрут и условия поездки; ваш вопрос сам по себе не меняет поездку.",
+      "model_calls": 1,
+      "tool_calls": 0,
+      "trip_unchanged": true,
+      "state_version": 0,
+      "pending_question": null
+    },
+    "model": "openai/gpt-oss-120b",
+    "usage": {
+      "input_tokens": 3373,
+      "total_tokens": 3522,
+      "output_tokens": 149
+    },
+    "latency_ms": 1215
+  },
+  "attribution": {
+    "fact": "Literal travel wish received a generic country-inquiry response and no pending city question after a successful model call.",
+    "inference": "The supplied report has no raw model events. The response matches the country ASK branch; exact raw validated JSON is not claimed from this report. Existing normalizer requires speech_act CHANGE and old country guard skips ASK.",
+    "code_fix": "literal_country_wish(before_state,text) in existing country_intake.py; root integrates before model dispatch.",
+    "bounds": "Full literal wish/go-to plus exact known country alias, fresh state only. Country intent plus human city question, no operations or facts generated. Compound, hypothetical, negated, question, control, city and saved-trip input return None."
+  },
+  "qualification": "Pure resolver/related country tests only; root hook/PG/actual smoke has separate results. No original FAIL/score is rewritten.",
+  "calls_by_this_agent": {
+    "model": 0,
+    "API": 0,
+    "PG": 0,
+    "Native": 0
+  },
+  "pure_verification": {
+    "tests": 115,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": "2.165",
+    "excluded_PG_cases": 5,
+    "ruff": "PASS",
+    "artifact": ".local/evaluation/geo-20261027/literal-country-wish-pure-final.xml",
+    "artifact_sha256": "2d39cce11a31d783df350b5150d2db7c75e92734ec8400c0727fe5a02cc7fc83"
+  }
+}

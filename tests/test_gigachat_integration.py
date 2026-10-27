@@ -48,6 +48,7 @@ def synthetic_config_only(monkeypatch):
     monkeypatch.setenv("GIGACHAT_MODEL", MODEL)
     monkeypatch.delenv("GIGACHAT_CA_FILE", raising=False)
     monkeypatch.setattr(providers, "_SECRETS", set())
+    monkeypatch.setattr(providers, "_EPHEMERAL_PUBLIC_SECRETS", set())
 
 
 def wire(canonical=CANONICAL):
@@ -172,9 +173,14 @@ async def test_registered_credential_echo_in_valid_model_contract_is_rejected_be
         await g.close()
 
 
-def test_api_public_clean_removes_runtime_registered_access_token_and_auth_field():
-    providers._SECRETS.add(TOKEN)
-    assert _clean({"note": "echo " + TOKEN, "gigachat_auth_key": AUTH}) == {"note": "echo [REDACTED]"}
+@pytest.mark.asyncio
+async def test_api_public_clean_removes_runtime_registered_access_token_and_auth_field():
+    model = LLMGateway({'LLM_PROVIDER':'gigachat', 'GIGACHAT_AUTH_KEY':AUTH})
+    try:
+        model._register_gigachat_secret(TOKEN)
+        assert _clean({"note": "echo " + TOKEN, "gigachat_auth_key": AUTH}) == {"note": "echo [REDACTED]"}
+    finally:
+        await model.close()
 
 
 def test_settings_status_keep_synthetic_giga_identity_and_independent_daily_budget(monkeypatch):

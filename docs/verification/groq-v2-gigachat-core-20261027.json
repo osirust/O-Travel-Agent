@@ -1,7 +1,9 @@
 {
   "date": "2026-10-27",
-  "status": "FINAL_FULL_PENDING_RELATED_PASS",
+  "status": "CONTROLLED_FULL_PASS_ACTUAL_PROVIDER_QUALIFICATION_OPEN",
   "baseline_commit": "216aeb6e651fa8ceb7188bb1780cf50defab5ff1",
+  "full_source_commit": "5f4d0d8a582fe9bcd865da68f83fa1813f99151f",
+  "later_literal_country_fix_covered_separately": "docs/verification/literal-country-wish-20261027.json",
   "source_file_sha256": {
     "otravel/providers.py": "e1101dcef995bdedc9fae4a391888c42b0a437c291c9ea9a53f20d6400b3d369",
     "otravel/config.py": "43ea7173e22d9354e0319e05dd181c7519e02cf41617a541ebd74a257b4a6abe",
@@ -55,5 +57,14 @@
     "Controlled tests do not qualify actual model quality, external TLS or provider inventory.",
     "Giga TLS stalls before authorization; key/model/balance unknown.",
     "Full80/106 language acceptance remains open; old FAILs are retained."
-  ]
+  ],
+  "final_full": {
+    "junit": ".local/evaluation/after80-20261027/full-groqv2-giga-greeting-final.xml",
+    "sha256": "9057b50f6798a633fdf995ca807f09934be7b17d41ed16a1331ddc4c604af278",
+    "tests": 5385,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 210.578
+  }
 }

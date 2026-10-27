@@ -144,3 +144,30 @@ def normalize_country_intake_clarification(before_state, operations, text, confl
             'country_code': place['country_code'], 'retained_operation_count': len(copied),
             'reclassified_model_conflict_count': len(conflicts), 'facts_source': 'current_literal_declaration'}])
     return copied, meta
+
+
+_WISH_COUNTRY = '|'.join(re.escape(name) for name in sorted(_COUNTRY_ALIASES, key=len, reverse=True))
+_WISH_RU = r'(?:(?:я|мы)\s+)?(?:(?:хочу|хотим)(?:\s+(?:поехать|полететь|отправиться))?|еду|едем|летим|лечу|поеду|поедем|поехать|полететь|отправиться)\s+(?:в|во)\s+'
+_WISH_EN = r'(?:(?:i|we)\s+)?(?:(?:want|would like)\s+to\s+(?:go to|travel to|visit)|go to|travel to|visit)\s+'
+_FULL_COUNTRY_WISH = re.compile(
+    rf'(?:(?:{_WISH_RU}|{_WISH_EN})(?P<country>{_WISH_COUNTRY})|'
+    rf'(?:в|во)\s+(?P<postfix_country>{_WISH_COUNTRY})\s+(?:хочу|хотим))\s*[.!]*')
+
+
+def literal_country_wish(before_state, text):
+    """Bind one complete explicit fresh travel wish, without a model or ops.
+
+    Countries are remembered as country intent, never as bookable cities. A
+    question, hypothetical, extra fact/clause or saved trip stays on the normal
+    interpretation path; this helper neither infers nor deletes any trip fact.
+    """
+    data = before_state.model_dump(mode='json') if hasattr(before_state, 'model_dump') else before_state
+    if not _fresh(data) or not isinstance(text, str) or not 0 < len(text) <= 300:
+        return None
+    match = _FULL_COUNTRY_WISH.fullmatch(_key(text))
+    if match is None:
+        return None
+    location = parse_destination(match['country'] or match['postfix_country'])
+    if location['requested_destination']['kind'] != 'country':
+        return None
+    return {'requested_destination': location['requested_destination'], 'question': location['clarification']}

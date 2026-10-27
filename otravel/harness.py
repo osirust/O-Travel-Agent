@@ -987,6 +987,7 @@ class Harness:
         from .conversational import request_kinds
         from .trip_answers import classify_saved_question, render_saved_answer
         from .greetings import canonical_greeting
+        from .country_intake import literal_country_wish
 
         greeting = canonical_greeting(run["input_text"])
         if greeting is not None:
@@ -998,6 +999,15 @@ class Harness:
             await self._ensure_current_run(session, run)
             return ModelResult(operations=[], control={"action": "none"}, reply=reply,
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+
+        wish = literal_country_wish(session["state"], run["input_text"])
+        if wish is not None:
+            await self._ensure_current_run(session, run)
+            return ModelResult(operations=[], control={"action": "none"}, reply=wish["question"],
+                unknowns=[wish["question"]], server_questions=[wish["question"]], conflicts=[],
+                speech_act="CHANGE", response_source="contextual_slot",
+                destination_request=wish["requested_destination"],
+                pending_context={"requested_destination":wish["requested_destination"]}), None
 
         # A narrow, complete saved-fact question is not a reply to a date target.
         # The date resolver deliberately re-asks on any unrecognised selector;
