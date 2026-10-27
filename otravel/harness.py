@@ -107,12 +107,16 @@ OPERATION_GUIDE = {
         "clear_preference": {"value": {"key": "departure_time"}},
         "upsert_group": {"target_id": "EXISTING_OR_NEW_GROUP_ID", "value": {
             "traveler_ids": ["EXISTING_TRAVELER_ID"], "keep_separate": True}},
+        "set_room_members": {"target_id": "EXISTING_ROOM_ID", "value": {
+            "stay_id": "EXISTING_STAY_ID", "traveler_ids": ["EXISTING_TRAVELER_ID"]}},
     },
     "room_shape": {"id": "STABLE_ROOM_ID", "traveler_ids": ["EXISTING_TRAVELER_ID"]},
     "duration_contract": "Сохраняй явно указанное число ночей в upsert_stay.value.requested_nights, даже если заезд неизвестен. Дни не равны ночам: уточни. Не переписывай явно заданные даты без согласования.",
     "leg_mode_contract": "Изменение вида транспорта: set_leg_mode с target_id существующего плеча и value.mode=flight|train. Это не меняет города, даты или маршрут.",
     "group_contract": "Создай людей перед upsert_group, затем комнаты. Полный setter связывает traveler_ids и group_id атомарно. Не угадывай семьи: неизвестный состав при явном запрете смешивать — пустая keep_separate=true группа и точный вопрос.",
     "room_constraint_contract": "Разные условия номеров сохраняй отдельно: set_constraint.value {key,value,hard,stay_id,room_id}. Для room_id обязателен stay_id; только breakfast/refundable. Не объединяй условия двух номеров в общее условие проживания.",
+    "room_membership_contract": "Для изменения жильцов существующего номера используй set_room_members: target_id=ID номера, value.stay_id=ID проживания, value.traveler_ids=полный состав ТОЛЬКО этого номера. Остальные номера сохраняются. Сначала add_traveler, затем эта операция. upsert_stay.value.rooms заменяет ВЕСЬ список номеров: не передавай туда только изменяемый номер и не выдумывай новые ID существующим номерам.",
+    "selection_contract": "current_selected_plan — действующий выбор пользователя через preview, только идентичности отелей без цен или согласия на покупку. При просьбе сохранить выбранный отель ссылайся на этот выбор, если пользователь не меняет направление/источники. Если trip.stays.hotel_id ещё не задан, закрепи такой явно сохраняемый выбор операцией replace_hotel с его hotel_id. first_shown_plan — история первого показа, она не означает текущий выбор. Нельзя подтверждать старую цену или бронь по этим данным.",
     "known_hard_constraints": ["breakfast", "refundable", "pets_allowed", "pets", "nonstop"],
     "supported_cities": list(CITIES),
     "known_geographic_cities": list(known_cities()),
@@ -149,8 +153,23 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
     def write(key: tuple, value: Any) -> None:
         normalized = json.dumps(value, sort_keys=True, ensure_ascii=False)
         if key in seen and seen[key] != normalized:
-            conflicts.append("В одной реплике предложены разные значения поля «" + ".".join(str(part) for part in key) + "». Уточните итоговое значение.")
+            conflicts.append("Состав одного номера указан по-разному. Уточните итоговый состав."
+                if key[0] == "room" else
+                "В одной реплике предложены разные значения поля «" + ".".join(str(part) for part in key) + "». Уточните итоговое значение.")
         seen[key] = normalized
+
+    def members(value: Any) -> Any:
+        return sorted(value) if isinstance(value, list) and all(isinstance(item, str) for item in value) else value
+
+    for patch in items:
+        if patch.type != "set_room_members":
+            continue
+        for layout in items:
+            if (layout.type == "upsert_stay" and layout.target_id == patch.value.get("stay_id")
+                    and isinstance(layout.value.get("rooms"), list)
+                    and not any(isinstance(room, dict) and room.get("id") == patch.target_id
+                                for room in layout.value["rooms"])):
+                conflicts.append("Полная замена номеров удаляет номер, состав которого вы одновременно изменяете. Уточните итоговое расселение.")
 
     last_stay = state.stays[-1].id if state.stays else None
     for item in items:
@@ -169,6 +188,9 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
             write(("route_policy",), {"kind": value.get("kind"), "end_city": value.get("end_city")})
         elif item.type == "set_leg_mode":
             write(("leg", target, "mode"), value.get("mode"))
+        elif item.type == "set_room_members":
+            write(("stay", value.get("stay_id"), "exists"), True)
+            write(("room", value.get("stay_id"), target, "traveler_ids"), members(value.get("traveler_ids")))
         elif item.type in {"set_preference", "clear_preference"}:
             write(("preference", value.get("key") or target), value if item.type == "set_preference" else {"removed": True})
         elif item.type == "upsert_group":
@@ -180,6 +202,10 @@ def operation_conflicts(state: TripState, operations: list[Operation]) -> list[s
             for key, field in value.items():
                 if key != "id":
                     write(("stay", target, key), canonical_city(field) if key == "city" and field else field)
+                    if key == "rooms" and isinstance(field, list):
+                        for room in field:
+                            if isinstance(room, dict) and isinstance(room.get("id"), str):
+                                write(("room", target, room["id"], "traveler_ids"), members(room.get("traveler_ids")))
                     if target == last_stay and key == "check_out":
                         write(("trip", "return_edit_kind"), "absolute")
         elif item.type in {"add_traveler", "update_traveler", "remove_traveler"}:
@@ -405,7 +431,7 @@ class Harness:
                 if getattr(exc, "llm_meta", None):
                     problem["llm"] = exc.llm_meta
                 if isinstance(exc, ProviderError) and isinstance(exc.details, dict):
-                    problem["details"] = {key: exc.details[key] for key in ("limit_source", "provider_name", "http_status") if key in exc.details}
+                    problem["details"] = {key: exc.details[key] for key in ("limit_source", "provider_name", "http_status", "validation_stage", "domain_error_code") if key in exc.details}
                 with suppress(Exception):
                     readonly_failed = getattr(exc, "readonly_answer", False)
                     reply = ("Не удалось получить объяснение. Поездка и текущий вопрос сохранены."
@@ -443,6 +469,7 @@ class Harness:
         guide = {key: value for key, value in OPERATION_GUIDE.items() if key not in {"supported_operations", "room_shape", "known_geographic_cities"}}
         guide["schema_authoritative"] = "Точные типы операций, поля value и допустимые ID заданы обязательной JSON Schema в system; не придумывай другие."
         context = {"current_message": run["input_text"], "trip": session["state"], "pending_question": session.get("pending_question"), "recent_messages": history, "shown_plans": shown, "reference_now_utc": datetime.now(timezone.utc).isoformat(), "default_timezone": "Europe/Moscow", "operation_contract": guide}
+        context["current_selected_plan"] = await self._selection_reference(session)
         archived = await plan_history(self.store, session["session_id"], session["state_version"])
         context["first_shown_plan"] = archived["first_saved_plan"]
         context["__response_schema"] = build_operation_schema(session["state"])
@@ -582,6 +609,10 @@ class Harness:
                         identities, identity_notes = normalize_room_identities(session["state"], extracted.operations)
                         extracted.operations = [Operation.model_validate(op) for op in identities]
                         extracted.operation_normalizations.extend(identity_notes)
+                        from .room_additions import normalize_sparse_room_additions
+                        patches, patch_notes = normalize_sparse_room_additions(session["state"], extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in patches]
+                        extracted.operation_normalizations.extend(patch_notes)
                     if (not readonly and not extracted.conflicts
                             and extracted.control.action in {"none", "continue", "wait"}):
                         from .preference_intake import ground_lowest_cost, price_preference_operation
@@ -739,13 +770,14 @@ class Harness:
                             else:
                                 context["validation_feedback"] = {"domain_code": error.code,
                                     "message": error.message, "operation_shapes": [{"type": op.type, "fields": sorted(op.value)} for op in extracted.operations],
-                                    "note": "Исправь схему разрешённых операций, не придумывая факты. Если условия невалидны, верни один conflicts/unknowns вместо изменений."}
+                                    "note": "Форма JSON прошла проверку, но изменения несовместимы с сохранённой поездкой. Не удаляй людей, номера или ограничения ради обхода ошибки без просьбы пользователя. Исправь операции, не придумывая факты; если нужно решение пользователя, верни conflicts/unknowns."}
                                 if isinstance(error.details, list):
                                     fields = {"key", "value", "hard", "stay_id", "amount_minor", "currency", "scope", "id", "type", "age", "birth_date", "group_id", "city", "check_in", "check_out", "rooms", "hotel_id", "requested_nights", "mode"}
                                     context["validation_feedback"]["errors"] = [{"type": entry.get("type"),
                                         "loc": [part if isinstance(part, int) or part in fields else "<field>" for part in entry.get("loc", [])]}
                                         for entry in error.details if isinstance(entry, dict) and "loc" in entry]
-                                raise ProviderError("INVALID_LLM_OPERATION", "Операции LLM не прошли проверку схемы.", provider=provider) from None
+                                raise ProviderError("INVALID_LLM_OPERATION", "Предложенные изменения несовместимы с сохранённой поездкой. Состояние не изменено.",
+                                    provider=provider, details={"validation_stage": "domain", "domain_error_code": error.code}) from None
                     if country_context is not None and extracted.speech_act != "ASK" and extracted.control.action not in {"cancel", "request_checkout", "confirm"}:
                         extracted.destination_request = country_context
                         if not extracted.operations and not extracted.conflicts:
@@ -777,7 +809,7 @@ class Harness:
                             "expected_contract": {"required": ["operations", "control", "reply", "unknowns", "conflicts"], "note": "Верни весь корректный JSON-объект. Не повторяй невалидную структуру; не меняй известные поля без запроса."},
                         }
                     details = exc.details if isinstance(exc, ProviderError) and isinstance(exc.details, dict) else {}
-                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits", "business_code", "failure_kind", "daily_quota_confirmed", "reset_basis", "engineering_wait_seconds") if key in details}}
+                    failed = {"provider": provider, "model": requested_model, "code": getattr(exc, "code", "INVALID_LLM_RESPONSE"), "latency_ms": max(0, int((perf_counter() - started) * 1000)), **{key: details[key] for key in ("http_status", "limit_source", "provider_name", "retry_after_seconds", "rate_limits", "business_code", "failure_kind", "daily_quota_confirmed", "reset_basis", "engineering_wait_seconds", "validation_stage", "domain_error_code") if key in details}}
                     if isinstance(gateway, LLMGateway):
                         failed.update(gateway.call_metadata_for_current_call())
                     attempt_meta.append({**failed, "outcome": "failed"})
@@ -837,6 +869,10 @@ class Harness:
                 return current_plans(session["state"], payload["plans"])
         return []
 
+    async def _selection_reference(self, session: dict) -> dict | None:
+        loader = getattr(self.store, "current_selected_plan", None)
+        return await loader(session["session_id"], session["state_version"]) if callable(loader) else None
+
     async def _readonly_context(self, session: dict, run: dict) -> dict:
         from .answering import READONLY_MODE, READONLY_SCHEMA, facts_projection
 
@@ -861,7 +897,8 @@ class Harness:
             if len(history) == 3:
                 break
         facts = facts_projection(session["state"], await self._latest_current_plans(session, run),
-            await self.store.list_orders(session["session_id"]), recent, list(reversed(history)), question=run["input_text"])
+            await self.store.list_orders(session["session_id"]), recent, list(reversed(history)), question=run["input_text"],
+            selection_reference=await self._selection_reference(session))
         await self._ensure_current_run(session, run)
         await self.store.save_event(session["session_id"], run["run_id"], "READONLY_FACTS_PROPOSED", {
             "based_state_version": session["state_version"],
@@ -903,7 +940,8 @@ class Harness:
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
         if "source" in kinds and readonly and kind is None:
             plans = await self._latest_current_plans(session, run)
-            reply = canonical_source_answer(run["input_text"], session["state"], plans)
+            reply = canonical_source_answer(run["input_text"], session["state"], plans,
+                selection_reference=await self._selection_reference(session))
             if reply is not None:
                 await self._ensure_current_run(session, run)
                 return ModelResult(operations=[], control={"action": "none"}, reply=reply,
@@ -1301,8 +1339,10 @@ class Harness:
                 preserved = current_plans(current, shown)
                 if not changes and not questions and preserved and "plans" not in result:
                     result.update(plans=preserved, plans_preserved=True, source_type=preserved[0].get("source_type"))
+                selection = await self._selection_reference(session)
                 rendered = render_response(run["input_text"], current, shown,
-                    changed=bool(changes), party_changed=party_changed)
+                    changed=bool(changes), party_changed=party_changed,
+                    selected_plan_id=selection.get("plan_id") if selection else None)
                 if rendered is not None:
                     reply = rendered["reply"] + (" " + reply if questions else "")
                     result["conversational_response"] = {"kinds": rendered["kinds"], "facts_source": "canonical_state_and_shown_plans"}

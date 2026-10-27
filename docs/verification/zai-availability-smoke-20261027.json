@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-27",
+  "started_at": "2026-10-27T03:08:08.836235+00:00",
+  "provider": "zai",
+  "model": "glm-4.7-flash",
+  "free_standard_confirmed": true,
+  "status": "AVAILABLE_TWO_SLOT_SMOKE_PASS",
+  "key_source": "Master0600_selected_field",
+  "scope": "One direct two-slot extraction availability probe. Not a Harness dialogue, benchmark, quota measurement or application-ledger run.",
+  "synthetic_input": "Из Москвы. Общий бюджет 75000 рублей.",
+  "timeout_seconds": 45,
+  "http_calls": 1,
+  "automatic_retries": 0,
+  "fallback_calls": 0,
+  "local_model_calls": 0,
+  "application_ledger_mutations": 0,
+  "database_mutations": 0,
+  "native_changes": 0,
+  "profile_changes": 0,
+  "supplier_booking_calls": 0,
+  "payment_calls": 0,
+  "source_providers_sha256": "d1b2948e689eb2186c3ab1d8c8b99022ecba2c53ea445c66a1e99b40b676f93d",
+  "http_status": 200,
+  "raw_response_sha256": "71996bc5e9c8a0738432a996f4a33c29b8b4d78be4c93c0cb2d0e7decf3c46af",
+  "checks": {
+    "origin_Moscow": true,
+    "whole_trip_75000_RUB": true,
+    "exactly_two_operations": true
+  },
+  "latency_ms": 2333,
+  "usage": {
+    "input_tokens": 1098,
+    "output_tokens": 129,
+    "total_tokens": 1227
+  },
+  "request_metrics": {
+    "system_utf8_bytes": 4598,
+    "context_utf8_bytes": 337,
+    "schema_utf8_bytes": 634,
+    "schema_sha256": "85bfa1f38d4b3133a896869987895d30d859e9dd3aee34b4f364d1c0ba0a74bb",
+    "prompt_sha256": "f0831861a208ed0c72630f0775f90179baa94414056a53e76d5e15a868c4ecac"
+  },
+  "inference_calls": 1
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "finding_id": "HARNESS-004-SELECTED-PLAN-CONTEXT-001",
+  "date": "2026-10-27",
+  "status": "CLOSED_CONTROLLED_CONTEXT_AND_READONLY_SELECTION_SCOPE_ACTUAL_NLU_OPEN",
+  "base_commit": "73e743715a440f8723e1628fed6a48cf0dcc3e92",
+  "source_scope": "E worktree, source hashes below. Native deployment and actual-model selection probe are separate root-managed steps.",
+  "source_sha256": {
+    "otravel/store.py": "345b9cd4e11bcbe7acfd1b50f04f73d41f4ba259fe87cf0fa910ce66bb05b652",
+    "otravel/selected_plan.py": "5205db059c86f5dee04988d3fbd6d81502872336db6997ea09ec684c7174a9c7",
+    "otravel/harness.py": "6779a013212a38262418324c95ce8519bfec9ecb02191803dc9fc76a6b16e78f",
+    "otravel/answering.py": "ad3019de13e7177b91bc7d33f20a299bad929e1f4f31a30cb278eaf4f3495df4",
+    "otravel/conversational.py": "6e04be342660f83af885bd817fd6de78e6095589df76e1d977922aa05d6802e7",
+    "tests/test_selected_quote_context_20261027.py": "a49e488a6b7efde82115319f230adfaabeafabbf1788901dbd5817f68af86e49",
+    "tests/test_selected_reference_answering.py": "f0a08da0916f1e5b6fbff7ebbfa6f7d1f99b0c65c51494669849abb17f0a5d5b"
+  },
+  "confirmed_defect": {
+    "trigger": "Preview the third of three different shown DEMO plans while TripState stays.hotel_id remain null, then build extraction context for an edit preserving the first hotel.",
+    "before": "The active quote durably contained plan3, but extraction exposed shown_plans and historical first_shown_plan only; no code-owned current selection identified plan3.",
+    "initial_control": "Store quote=plan3 and unpinned TripState were correct; the missing-context assertion failed.",
+    "actual_model_misselection_proven": false,
+    "initial_receipt": {
+      "path": ".local/evaluation/after80-20261027/selected-quote-context-initial.xml",
+      "sha256": "80c917c22a41e590f7221cdf99b47533426c4c03f53596a5a4c5c61ed7ea7490",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.343
+    }
+  },
+  "implementation": {
+    "store_method": "Store.current_selected_plan(session_id, expected_version)",
+    "projection_helper": "otravel.selected_plan.project_current_selection",
+    "context_path": "current_selected_plan",
+    "root_loader": "Harness._selection_reference uses getattr/callable; fake stores without the method yield None.",
+    "projection_fields": [
+      "source",
+      "selection_status",
+      "plan_id",
+      "state_version",
+      "source_type",
+      "hotels",
+      "reference_only",
+      "prices_included"
+    ],
+    "hotel_fields": [
+      "stay_id",
+      "hotel_id",
+      "name",
+      "city",
+      "source_type"
+    ],
+    "excluded_fields": [
+      "quote_id",
+      "quote_version",
+      "consent",
+      "payment",
+      "total_minor",
+      "expires_at"
+    ],
+    "does_not_pin_or_rewrite_preferences": true,
+    "does_not_restore_prices_quotes_or_confirmation": true,
+    "pending_unchanged": true
+  },
+  "sql_boundary": {
+    "read_only": true,
+    "snapshot": "One SELECT joins the owned session with its latest quote using a correlated session-filtered subquery, ordered by created_at/quote_version DESC and LIMIT1.",
+    "latest_before_filter": "Select the latest row before checking status/version/expiry. A later revoked row never reveals an older active row.",
+    "existing_index": "ix_quotes_session",
+    "new_ddl": 0,
+    "row_locks": 0,
+    "http_inside_transaction": 0,
+    "fresh_active_only": true,
+    "historical_expired_selection_fallback": false,
+    "none_barriers": [
+      "No quote",
+      "Latest revoked/ordered/expired quote",
+      "Expected version differs from session",
+      "Quote or plan belongs to another trip/session",
+      "Future, stale or non-integer plan/binding version",
+      "Empty or malformed plan/offers/source",
+      "Unknown stay, conflicting hotel identity or different stay city/dates",
+      "Missing hotel coverage for an owned stay"
+    ]
+  },
+  "verification": {
+    "new_store_projection_cases": {
+      "count": 22,
+      "pg_asgi_cases": 16,
+      "pure_cases": 6,
+      "scope": "Third-preview visibility, unchanged TripState/quote, stale/foreign/malformed guards, latest-revoked barrier, per-session isolation and MIXED bindings."
+    },
+    "store_context_related": {
+      "path": ".local/evaluation/after80-20261027/selected-quote-context-related.xml",
+      "sha256": "5926a1deefa67653a109d47d688cfa75010579f0039ac256922a8fdc9d32ef8f",
+      "tests": 68,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 23.636
+    },
+    "root_readonly_related": {
+      "path": ".local/evaluation/after80-20261027/selection-readonly-root-corrected.xml",
+      "sha256": "ad421749651c7a95157f7f426bce7c0dd71641f3eeb9f7bf839aed6fc733e9c0",
+      "tests": 124,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.069
+    },
+    "new_readonly_selection_cases": {
+      "receipt": {
+        "path": ".local/evaluation/after80-20261027/selected-reference-source-final.xml",
+        "sha256": "e76e05703f74b65945b6fc68c4d19875a6060532958901104ddbf8561868c0a0",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 1.711
+      },
+      "pure_cases": 6,
+      "pg_asgi_cases": 1,
+      "scope": "Explicit ordinal/negative/ambiguous references retain shown positions. Selected plan3 feeds facts and hotel names without extra searches/orders or quote/trip changes."
+    },
+    "root_initial_fixture_failure_preserved": {
+      "receipt": {
+        "path": ".local/evaluation/after80-20261027/selection-readonly-root-initial.xml",
+        "sha256": "e5b496a3844c23c2d6356520a2d8dad8bd94dd269a5488713e453fe81f077af7",
+        "tests": 120,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 2.624
+      },
+      "cause": "The nine-person sample provided only two DEMO plans. Root changed only fixture setup to the one-adult, three-plan trip; the plan3 requirement was retained."
+    },
+    "full_release_suite": {
+      "path": ".local/evaluation/after80-20261027/full-room-and-selection-release.xml",
+      "sha256": "4caf4dc29f733b21be1ad34a7ffafcc99979439286dcfbb5e425d9a8b32128d1",
+      "tests": 4292,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 135.253
+    },
+    "new_helper_and_test_ruff": "PASS",
+    "external_model_calls": 0,
+    "vendor_http_calls": 0,
+    "controlled_adapter_calls": {
+      "store_context_repro": 0,
+      "readonly_pg_case": 1
+    },
+    "test_setup": "Own sessions in isolated otravel_test; typed local DEMO search and preview establish data. Context/selection reads do not start another search or create an order."
+  },
+  "readonly_answering_boundary": {
+    "selection_source": "Code-owned UI preview identity, not historical first displayed card.",
+    "explicit_user_reference_wins": true,
+    "does_not_renumber_plans": true,
+    "prices_source": "Numbers may come from the saved shown-plan inventory only; identity projection contains no prices.",
+    "saved_inventory_prices_are_not_current_quote_or_purchase_authority": true,
+    "actual_llm_coreference_qualified": false
+  },
+  "remaining": [
+    "Actual model dialog: preview plan3, then replace only the second hotel and preserve the first.",
+    "Separate Native deployment/probe of the frozen release.",
+    "This change supplies current selection context; it does not promise universal reference resolution or persist a hotel preference automatically."
+  ],
+  "prior_source_sha256": {
+    "otravel/store.py": "345b9cd4e11bcbe7acfd1b50f04f73d41f4ba259fe87cf0fa910ce66bb05b652",
+    "otravel/selected_plan.py": "5205db059c86f5dee04988d3fbd6d81502872336db6997ea09ec684c7174a9c7",
+    "otravel/harness.py": "35c76c5bedeb9436affee49bfb18152d77dd0e152ee44d40f6f7eadcf789fce4",
+    "otravel/answering.py": "ad3019de13e7177b91bc7d33f20a299bad929e1f4f31a30cb278eaf4f3495df4",
+    "otravel/conversational.py": "0ba552b890386e5ed437a4cb89c14c57c5daa082bfe15bc2797dcc985b699b49",
+    "tests/test_selected_quote_context_20261027.py": "a49e488a6b7efde82115319f230adfaabeafabbf1788901dbd5817f68af86e49",
+    "tests/test_selected_reference_answering.py": "e53f229521053d990dcffa631681e4fec1f90d34dc5c8b73f09f0cef75019a98"
+  },
+  "final_root_integration": {
+    "core_receipt": "room-selection-core-20261027.json",
+    "full": {
+      "path": ".local/evaluation/after80-20261027/full-room-and-selection-release-final2.xml",
+      "sha256": "e78d8c629d7c79bbe26ee37130b4bbf784d1c38939dd30e6e8cd9b2092302ed5",
+      "tests": 4292,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 145.178
+    },
+    "cart_targeted": {
+      "path": ".local/evaluation/after80-20261027/selection-cart-reference-corrected.xml",
+      "sha256": "22550561e2f27a6bab2c95dd308d4a13d6d80105565d67f8fbfd4af0d50cce2d"
+    },
+    "cart_request_uses_normal_extraction": true,
+    "new_actual_model_calls": 0,
+    "checkout_scope": "Suggested preview references selected plan3, no quote/order/consent created by chat"
+  }
+}

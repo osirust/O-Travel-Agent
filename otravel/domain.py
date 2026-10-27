@@ -362,7 +362,7 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
     data = deepcopy(state.model_dump(mode="json"))
     changes: list[dict[str, Any]] = []
     route_changed = False
-    allowed = {"set_origin", "set_budget", "set_search_policy", "set_route_policy", "set_leg_mode", "set_preference", "clear_preference", "add_traveler", "remove_traveler", "upsert_group", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
+    allowed = {"set_origin", "set_budget", "set_search_policy", "set_route_policy", "set_leg_mode", "set_room_members", "set_preference", "clear_preference", "add_traveler", "remove_traveler", "upsert_group", "upsert_stay", "remove_stay", "set_constraint", "clear_constraint", "shift_return", "replace_hotel", "update_traveler"}
     for raw_operation in operations:
         try:
             operation = raw_operation if isinstance(raw_operation, Operation) else Operation.model_validate(raw_operation)
@@ -472,6 +472,17 @@ def apply_operations(state: TripState, operations: list[Operation]) -> tuple[Tri
                     data["stays"].append({"id": identifier, **value})
                 else:
                     existing.update(value)
+            elif kind == "set_room_members":
+                _keys(value, {"stay_id", "traveler_ids"})
+                stay_id = value.get("stay_id")
+                if not isinstance(stay_id, str) or not stay_id:
+                    raise DomainError("missing_target", "Для изменения состава номера укажите точный stay_id проживания.")
+                if "traveler_ids" not in value:
+                    raise DomainError("missing_room_members", "Укажите полный состав выбранного номера в traveler_ids.")
+                stay = _target(data["stays"], stay_id, "проживание")
+                room = _target(stay["rooms"], target, "номер выбранного проживания")
+                members = RoomAllocation.model_validate({"id": room["id"], "traveler_ids": value["traveler_ids"]})
+                room["traveler_ids"] = list(members.traveler_ids)
             elif kind == "set_leg_mode":
                 _keys(value, {"mode"})
                 if not isinstance(value.get("mode"), str) or value["mode"] not in {"flight", "train"}:

@@ -753,6 +753,33 @@ class Store:
                 raise NotFound("Корзина не найдена.")
             return _quote(row)
 
+    async def current_selected_plan(self, session_id: str, expected_version: int) -> dict | None:
+        """Read an owned caller's latest UI selection in one SQL snapshot.
+
+        The latest row is chosen before status/expiry checks: a later failed,
+        revoked or ordered selection must not resurrect an older active row.
+        No row locks, history writes, prices or consent are returned.
+        """
+        _version(expected_version)
+        from .selected_plan import project_current_selection
+
+        latest_id = (select(quotes.c.id).where(quotes.c.session_id == sessions.c.session_id)
+            .order_by(quotes.c.created_at.desc(), quotes.c.quote_version.desc())
+            .limit(1).correlate(sessions).scalar_subquery())
+        query = (select(sessions.c.session_id, sessions.c.trip_id, sessions.c.state_version, sessions.c.state,
+                quotes.c.session_id.label("quote_session_id"), quotes.c.state_version.label("quote_state_version"),
+                quotes.c.status.label("quote_status"), quotes.c.expires_at, quotes.c.plan)
+            .select_from(sessions.outerjoin(quotes, quotes.c.id == latest_id))
+            .where(sessions.c.session_id == session_id).limit(1))
+        async with self.engine.connect() as conn:
+            row = (await conn.execute(query)).mappings().first()
+        if row is None:
+            raise NotFound("Сессия не найдена.")
+        session = {key: row[key] for key in ("session_id", "trip_id", "state_version", "state")}
+        quote = {"session_id": row["quote_session_id"], "state_version": row["quote_state_version"],
+            "status": row["quote_status"], "expires_at": row["expires_at"], "plan": row["plan"]}
+        return project_current_selection(session, quote, expected_version, _now())
+
     async def confirm_quote(self, session_id: str, quote_id: str, quote_version: int,
                             idempotency_key: str, confirmed: bool,
                             expected_state_version: int) -> dict:

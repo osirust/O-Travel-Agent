@@ -20,7 +20,7 @@ CONTROL_ACTIONS = ("continue", "wait", "resume", "cancel", "request_checkout", "
 OPERATION_TYPES = frozenset({
     "set_origin", "set_budget", "set_search_policy", "add_traveler",
     "update_traveler", "remove_traveler", "upsert_stay", "remove_stay",
-    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference", "clear_preference", "set_route_policy", "set_leg_mode", "upsert_group",
+    "replace_hotel", "shift_return", "set_constraint", "clear_constraint", "undo", "set_preference", "clear_preference", "set_route_policy", "set_leg_mode", "set_room_members", "upsert_group",
 })
 
 
@@ -226,8 +226,15 @@ def build_operation_schema(state: TripState | dict[str, Any]) -> dict[str, Any]:
         room = _object({"id": _enum(room_ids), "traveler_ids": members}, ("id", "traveler_ids"))
         operation("upsert_stay", _object({"city": _nullable(city), "check_in": date, "check_out": date,
             "requested_nights": _nullable({"type": "integer", "minimum": 1, "maximum": 365}),
-            "rooms": {"type": "array", "items": room, "maxItems": MVP_LIMITS["rooms_per_stay"]},
+            "rooms": {"type": "array", "items": room, "maxItems": MVP_LIMITS["rooms_per_stay"],
+                "description": "Полная замена раскладки номеров проживания. Все сохраняемые номера должны присутствовать; для изменения состава одного существующего номера используйте set_room_members."},
             "hotel_id": _nullable(_text())}, minProperties=1), all_stays)
+    for stay in state.stays:
+        if stay.rooms:
+            operation("set_room_members", _object({
+                "stay_id": {"type": "string", "const": stay.id},
+                "traveler_ids": members,
+            }, ("stay_id", "traveler_ids")), [room.id for room in stay.rooms])
     if stay_ids:
         operation("remove_stay", _object({}), stay_ids)
         operation("replace_hotel", _object({"hotel_id": _text()}, ("hotel_id",)), stay_ids)

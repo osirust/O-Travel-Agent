@@ -151,6 +151,7 @@ def facts_projection(
     recent: list[dict],
     changes: list[dict],
     question: str = "",
+    selection_reference: dict | None = None,
 ) -> dict:
     valid = current_plans(state, plans)
     people = state.get("travelers") or []
@@ -250,12 +251,14 @@ def facts_projection(
         "latest_changes": deepcopy(changes),
         "recent_messages": recent[-6:],
     }
-    result["sections"] = _fact_sections(state, valid, saved_orders, changes, question)
+    result["current_selected_plan"] = deepcopy(selection_reference)
+    result["sections"] = _fact_sections(state, valid, saved_orders, changes, question, selection_reference)
     return result
 
 
 def _fact_sections(
-    state: dict, plans: list[dict], orders: list[dict], changes: list[dict], question: str
+    state: dict, plans: list[dict], orders: list[dict], changes: list[dict], question: str,
+    selection_reference: dict | None = None,
 ) -> dict[str, str]:
     people = state.get("travelers") or []
     labels = {}
@@ -312,9 +315,15 @@ def _fact_sections(
                 f"Условие {scope}: {name} — {'да' if constraint['value'] else 'нет'} "
                 + ("(обязательно)." if constraint.get("hard") else "(пожелание).")
             )
-    selected = _selected_plan(question, plans) if plans else None
+    selection_id = selection_reference.get("plan_id") if isinstance(selection_reference, dict) else None
+    selected = _selected_plan(question, plans, default_plan_id=selection_id) if plans else None
     shown = [selected] if selected is not None else plans
     options = " ".join(_explain(plan, plans.index(plan) + 1, state) for plan in shown)
+    if selected is not None and selected.get("plan_id") == selection_id:
+        names = [f"{hotel['city']} — {hotel['name']}" for hotel in selection_reference.get("hotels", [])
+                 if isinstance(hotel, dict) and hotel.get("city") and hotel.get("name")]
+        options = (f"В предварительной корзине выбран вариант {plans.index(selected) + 1}. "
+                   + ("Отели: " + "; ".join(names) + ". " if names else "") + options)
     rates = []
     for plan in shown:
         position = plans.index(plan) + 1
@@ -541,14 +550,13 @@ def checked_reply(reply: str, facts: dict, text: str) -> tuple[str, list[str]]:
     return "\n\n".join(facts["sections"][section] for section in dict.fromkeys(selected)), []
 
 
-def canonical_source_answer(text: str, state: dict, plans: list[dict]) -> str | None:
+def canonical_source_answer(text: str, state: dict, plans: list[dict], *, selection_reference: dict | None = None) -> str | None:
     """A bounded source/procedure question never grants a source-policy change."""
-    from .conversational import _selected_plan, request_kinds
+    from .conversational import request_kinds
     if "source" not in request_kinds(text) or not readonly_question(text):
         return None
-    selected = _selected_plan(text, current_plans(state, plans))
-    shown = [selected] if selected is not None else plans
-    reply = facts_projection(state, shown, [], [], [], question=text)["sections"]["source"]
+    reply = facts_projection(state, plans, [], [], [], question=text,
+        selection_reference=selection_reference)["sections"]["source"]
     if re.search(r"тестов\w*\s+оформлен|имитац|как\s+перейти|без\s+покупки", text.casefold()):
         reply += (" Для тестового оформления выберите актуальный план, запросите предварительную корзину "
                   "и отдельно подтвердите показанные сумму и версии. Настоящая бронь и оплата не создаются; "

@@ -228,7 +228,7 @@ class ModelPacer:
     """Conservative monotonic wait after an observed MODEL_CALL_STARTED."""
     def __init__(self, seconds=60, *, llm_profile="groq-qwen", clock=time.monotonic, sleep=time.sleep):
         require(llm_profile in LLM_PROFILES, "unknown_fixed_pacing_profile")
-        minimum = 15 if llm_profile == "cloudflare-nemotron" else 60
+        minimum = 15 if llm_profile in {"cloudflare-nemotron", "zai"} else 60
         require(type(seconds) in {int, float} and math.isfinite(seconds) and minimum <= seconds <= 120,
                 "model_interval_outside_fixed_profile_bound")
         self.llm_profile = llm_profile

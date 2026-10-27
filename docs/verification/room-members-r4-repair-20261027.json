@@ -1,0 +1,177 @@
+{
+  "format": "otravel.room-members.r4-repair.v1",
+  "created_at": "2026-10-27T03:07:21.674769+00:00",
+  "status": "CONTROLLED_TYPED_AND_COMPAT_PASS_ACTUAL_RETEST_PENDING",
+  "finding_id": "HARNESS-004-SPARSE-ROOM-SNAPSHOT-001",
+  "source": {
+    "source": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-024241-806f1173/report.json",
+    "source_commit": "73e743715a440f8723e1628fed6a48cf0dcc3e92",
+    "captured_at": "2026-10-27T02:53:19.815558+00:00",
+    "report_snapshot_sha256": "3f99bc173c9f50a7046666a0a0ecac65472ff44d0e0fb9e1774563cb69475f90"
+  },
+  "actual_evidence": {
+    "case_id": "PF-GROUP-04",
+    "step_id": "04",
+    "raw_operation_count": 6,
+    "raw_json_schema_errors": 0,
+    "raw_extraction_validated": true,
+    "checked_event_present": false,
+    "run_status": "failed",
+    "code": "INVALID_LLM_OPERATION",
+    "semantic_reproduction": "unknown_constraint_room for Istanbul/new-room-1 after saved group separation is restored.",
+    "cause": "The model treated upsert_stay.rooms as a one-room patch. Its arrays contain only the second known room, but the existing operation means full replacement; omitted first rooms and their breakfast references were lost in the candidate, so domain preflight rejected the batch.",
+    "not_the_previous_failure": "No absolute checkout plus relative shift duplication and no unknown room alias occur in this raw output. Previous quote/alias fixes correctly do not rewrite it.",
+    "continuations": {
+      "T05": "Shows the actual unchanged old roster/budget after failed T04. Its factual assertions fail causally; successful history/delta rendering still needs the corrected actual sequence.",
+      "T06": "Hypothetical nonmutation itself is correct; expected child8 is missing because T04 did not apply."
+    }
+  },
+  "typed_primitive": {
+    "operation": "set_room_members",
+    "target_id": "existing room ID local to the selected stay",
+    "value": {
+      "stay_id": "required exact existing stay ID",
+      "traveler_ids": "complete member IDs of that one room"
+    },
+    "effects": "Only that room membership changes; IDs/order/count/hotel/constraints and other rooms remain untouched.",
+    "scope": "The domain resolves stay first, then room. JSON Schema correlates room enums with each stay, including repeated local room IDs across cities.",
+    "atomicity": "The existing complete-batch semantic validation remains in force; unknown/duplicate guests and foreign targets are rejected."
+  },
+  "compatibility": {
+    "function": "normalize_sparse_room_additions",
+    "scope": "Only explicit current person-addition plus room-membership instructions, valid owned-room strict subsets, old members conserved in each shown room, and extras exclusively unique newly-created traveler IDs.",
+    "transformation": "Convert each qualified shown room to set_room_members; preserve all other upsert fields, remove an empty layout setter, never fabricate omitted room rows or guest assignments.",
+    "excluded": [
+      "questions/history/hypothesis/quoted commands/veto",
+      "room removal/merge/reduction/count change",
+      "new/unknown room IDs",
+      "moving or dropping old occupants",
+      "uncreated/duplicated new people",
+      "full layouts",
+      "uncertain target or repeated room setters",
+      "over30 expanded operations"
+    ],
+    "not_default_merge": true
+  },
+  "integration_owned_by_root": {
+    "file": "otravel/harness.py",
+    "hook": "After return/room-identity normalization and before conflicts/domain preflight.",
+    "guide": "Prefer the scoped primitive for a known-room membership edit. upsert_stay.rooms remains a complete layout.",
+    "conflicts": "Scoped stay/room/member writes and full-layout conflicts checked by root.",
+    "error_attribution": "Root separately records validation_stage=domain/domain_error_code and avoids calling semantic reference failures JSON-schema failures."
+  },
+  "files": [
+    {
+      "path": "otravel/domain.py",
+      "sha256": "9e3eac79955822996261d844f63ec0c4514adb69d2bce9203e049666a7db5f8c",
+      "bytes": 37201
+    },
+    {
+      "path": "otravel/llm_contract.py",
+      "sha256": "b56b683ed26afc68294eef420a88da38b5098bc7aee4833915080f5d5e733051",
+      "bytes": 14782
+    },
+    {
+      "path": "otravel/room_additions.py",
+      "sha256": "3c2e55b85c63256d7587992dd608891dc482e91e37918bcc1426953a7c79fe48",
+      "bytes": 7448
+    },
+    {
+      "path": "tests/test_room_members.py",
+      "sha256": "ba9fa88a6fd8d7e48fbb0a106b533bb20eefb49cf1afd6ea5dbd9c9986f56df6",
+      "bytes": 9194
+    },
+    {
+      "path": "tests/test_harness_room_members.py",
+      "sha256": "6386414ea477f1ebe9ba4fe517aba9472a328a12fa573d6755955fa2718b0edd",
+      "bytes": 5201
+    },
+    {
+      "path": "tests/test_llm_contract.py",
+      "sha256": "2e18732c95bf269c608323d8e1b32d567aa6bbb8d5d6853a9fcebe95036afd0d",
+      "bytes": 31391
+    },
+    {
+      "path": "fixtures/regression/compound-openrouter-r4-20261027.json",
+      "sha256": "11ca9e22a08acfa81fc40b9f9be129d0a764cd06449c5368d908a57d83647ce9",
+      "bytes": 36020
+    }
+  ],
+  "hash_scope": "E working-tree bytes, not the native package identity.",
+  "preserved_initial_failures": [
+    {
+      "path": ".local/evaluation/geo-20261027/room-members-r4-initial.xml",
+      "sha256": "893af732a6ec128008cfe13488d593343b55a588be808b0879f9489878349c9d",
+      "bytes": 1934,
+      "tests": 3,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/room-members-r4-pure-initial.xml",
+      "sha256": "75c1fae5e290c5ae1b78479643800495e49d6d1108a2fb5694c736c060a22aee",
+      "bytes": 22663,
+      "tests": 125,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/room-members-r4-intent-initial.xml",
+      "sha256": "03597dad6c230c2f6cb036370dd3cc7796086a3d7b2a42e60c0c0af4430c42ad",
+      "bytes": 11415,
+      "tests": 30,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "verification": {
+    "path": ".local/evaluation/geo-20261027/room-members-r4-related-final.xml",
+    "sha256": "d2e9ecc6a2a3497c07ab3401c4f5812bff4f7692876311206ad428c9f91a4efa",
+    "bytes": 81595,
+    "tests": 366,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_pg_scope": {
+    "cases": 2,
+    "modes": [
+      "actual cached sparse six-op response",
+      "preferred scoped typed primitive"
+    ],
+    "database": "otravel_test",
+    "model_adapter_calls_per_case": 1,
+    "actual_model_http": 0,
+    "actual_supplier_http": 0,
+    "asserted": [
+      "old first rooms and exact room IDs/order retained in both cities",
+      "both Istanbul breakfast scopes retained",
+      "child8 joins second family and second room in both cities",
+      "saved keep_separate remains true",
+      "unchanged first hotel",
+      "selected second-plan Antalya hotel",
+      "budget380000RUB",
+      "return and checkout19Nov exactly plus2days",
+      "old quote confirmation409",
+      "no orders",
+      "subsequent saved budget question retains the new state and uses no additional model call"
+    ]
+  },
+  "schema_wire_cost": "Frozen legacy SHA and25percent size comparison remain unchanged after projecting out only this newly added primitive/description. New feature has a separate <=1500 UTF-8-byte bound on the same two fixed states; byte counts are not provider tokens.",
+  "lint": {
+    "new_helper_and_two_new_tests": "Ruff PASS",
+    "preexisting_domain_contract_files": "Six existing lint diagnostics were not changed as unrelated cleanup."
+  },
+  "closure_condition": "Deploy a new immutable source/package and repeat the actual connected GROUP04 sequence with its strict original business oracles, including later history and pause; preserve r4 FAIL and prior cached PASS as separate evidence.",
+  "not_claimed": [
+    "new actual remote-model PASS",
+    "full80/106 completion",
+    "supplier room-type equivalence or inventory",
+    "native deployment"
+  ],
+  "native_changed_by_this_task": false,
+  "original_actual_results_changed": false
+}

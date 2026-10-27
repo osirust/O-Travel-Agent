@@ -178,7 +178,7 @@ def _party(state: dict) -> str:
     return "Текущий состав: " + "; ".join(parts) + "."
 
 
-def _selected_plan(text: str, plans: list[dict]) -> dict | None:
+def _selected_plan(text: str, plans: list[dict], *, default_plan_id: str | None = None) -> dict | None:
     key = _key(text)
     words = ("перв", "втор", "трет", "четверт", "пят", "шест", "седьм", "восьм", "девят", "десят")
     endings = r"(?:ый|ой|ий|ого|ому|ым|ом|ая|ую|ое|ые|ых|ыми|ьего|ьему|ьим|ьем|ья|ью|ье|ьи|ьих|ьими)"
@@ -203,12 +203,18 @@ def _selected_plan(text: str, plans: list[dict]) -> dict | None:
     descriptions = {"этот", "тот", "наш", "мой", "такой", "текущий", "единственный", "выбранный", "актуальный",
                     "демонстрационный", "тестовый", "готовый", "предложенный", "показанный", "сохраненный", "доступный", "оценочный"}
     for previous in re.findall(r"\b([а-я-]+)\s+" + head + r"\b", key):
-        if (re.search(endings + r"$", previous) and previous not in descriptions
+        known_description = (previous in descriptions or re.fullmatch(
+            r"(?:выбранн|актуальн|предложенн|показанн|сохраненн|текущ)" + endings, previous))
+        if (re.search(endings + r"$", previous) and not known_description
                 and not any(re.fullmatch(word + endings, previous) for word in words)):
             return None  # An unsupported explicit ordinal must not mean 'first'.
     if len(indices) == 1:
         index = indices.pop()
         return plans[index] if index < len(plans) else None
+    if not indices and default_plan_id:
+        matches = [plan for plan in plans if plan.get("plan_id") == default_plan_id]
+        if len(matches) == 1:
+            return matches[0]
     return plans[0] if len(plans) == 1 and not indices else None
 
 
@@ -232,7 +238,7 @@ def _is_demo(plan: dict) -> bool:
 
 
 def render_response(text: str, state: Any, plans: Any, *, changed: bool = False,
-                    party_changed: bool = False) -> dict | None:
+                    party_changed: bool = False, selected_plan_id: str | None = None) -> dict | None:
     kinds = request_kinds(text)
     data = _data(state)
     parts = []
@@ -243,7 +249,7 @@ def render_response(text: str, state: Any, plans: Any, *, changed: bool = False,
     action = None
     if kinds.intersection({"source", "cart"}):
         valid = current_plans(data, plans)
-        selected = _selected_plan(text, valid)
+        selected = _selected_plan(text, valid, default_plan_id=selected_plan_id)
         cart_action = "cart" in kinds and _cart_action_requested(text)
         if not valid:
             parts.append("Актуального показанного плана для этой версии поездки нет; его источник, цены и наличие сейчас не подтверждены.")

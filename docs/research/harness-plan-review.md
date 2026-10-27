@@ -75,6 +75,16 @@
 
 Суммарная новая проверка frozen production:4202PASS/0skip/130.40s. Это не сумма разных overlapping targeted suite и не число языковых диалогов. Следующее действие — deploy этого source и целевой внешний повтор двух проблемных cases.
 
+### Следующий кандидат: room patches и текущий выбор
+
+- **HARNESS-004-SPARSE-ROOM-SNAPSHOT-001 — CONTROLLED_TYPED_AND_COMPAT_PASS / ACTUAL_PENDING.** R4 через внешнюю модель передала validJSON6ops с одним изменённым номером вместо полного rooms snapshot. Добавлен scoped `set_room_members` с обязательным stay_id; он меняет только один существующий номер. Узкая совместимость переводит лишь доказанные addition-only изменения известных номеров, без инференса жильцов/удаления остальных.366related,2PG; [receipt](../verification/room-members-r4-repair-20261027.json).
+- **HARNESS-004-ROOM-COUNT-PATCH-BYPASS-001 — CLOSED_RELATED_CONTROLLED_SCOPE.** Новый primitive включён в count-only guard: просьба о числе номеров не меняет расселение. Явные новые участники и переселения сохраняются.191related; [audit](../verification/room-members-downstream-audit-20261027.json).
+- **HARNESS-004-ROOM-PATCH-LAYOUT-CONFLICT-001 — CLOSED_RELATED_PREFLIGHT_SCOPE.** Разный состав одного номера, fullsetter против patch и удалённый fullsetter target отклоняются независимо от порядка. Конфликт не превращается в last-write-wins; root7pure/PG включают обе последовательности.
+- **HARNESS-004-SEMANTIC-ERROR-ATTRIBUTION-001 — CLOSED_RELATED_ERROR_CONTRACT_SCOPE.** Domainunknown_constraint_room больше не называется ошибкой JSON Schema. Code остаётся совместимым, details/events содержат validation_stage=domain и domain_error_code; изменения не применяются.
+- **HARNESS-004-SELECTED-PLAN-CONTEXT-001 — CLOSED_CONTROLLED_CONTEXT_SCOPE / ACTUAL_NLU_OPEN.** Preview выбранного plan3 был в SQL, но не в контексте модели. Добавлена price-free current selection projection из latestfreshownquote, отдельно от first_shown_plan. Readonly выбраного варианта использует его отели/условия без перенумерации; explicitordinal сильнееdefault.22Store/context+root7checks, исходныеFAIL сохранены; [receipt](../verification/selected-plan-context-20261027.json). Не пинит предпочтения и не возрождает цену/consent.
+
+Общий frozen кандидат:4292PASS/0skip/135.30s; [core](../verification/room-selection-core-20261027.json). R4originalstoppedнаclientreserve9из10, неvendor429; [original](../verification/prefrontend-router-r4-20261027.json). Следующийactual—новаяfreshsession на доступной Z.ai: старуюpausedR4очередь не использоватькакповтор.
+
 ### Исторические доказательства и первоначальные предложения
 
 Следующие датированные записи описывают свои frozen версии. Их старые сроки, счётчики и пометки «ещё не сделано» не заменяют текущую основную матрицу выше.

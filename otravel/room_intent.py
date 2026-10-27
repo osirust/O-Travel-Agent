@@ -6,6 +6,7 @@ stays require clarification; this is not a deferred multi-stay plan executor.
 from __future__ import annotations
 
 import re
+from collections import Counter
 from copy import deepcopy
 
 from .domain import MVP_LIMITS, Operation, TripState
@@ -18,6 +19,9 @@ _COUNT = re.compile(r"\b(?P<count>\d{1,2}|" + "|".join(_COUNTS)
 _NONCURRENT = re.compile(r"\b(?:если|if|бы|допустим|предположим|возможно|может|раньше|прежде|ранее|вчера|прошл\w*|цитата|реклама)\b")
 _NONSET = re.compile(r"\b(?:добав\w*|убер\w*|удал\w*|сократ\w*|увелич\w*|уменьш\w*|проверь|напомни|расскажи|объясни|сравни)\b|\bне\s+(?:нуж\w*|требу\w*|хоч\w*|брониру\w*|дела\w*|став\w*)\b")
 _ALLOCATION_EDIT = re.compile(r"\b(?:пересел\w*|перемест\w*|распредели\w*|назнач\w*)\b|\b(?:в|во)\s+(?:перв\w*|втор\w*|трет\w*|номер\s+\d+)\s+номер\w*\b")
+_ADD_PERSON = re.compile(r"\b(?:добавь(?:те)?|добавить|включи(?:те)?|включить)\b[^.!?;]{0,120}"
+                         r"\b(?:ребен\w*|дет\w*|взросл\w*|участник\w*|путешественник\w*)\b")
+_NO_ADD = re.compile(r"\bне\s+(?:добав\w*|включ\w*|примен\w*)\b")
 
 
 def _key(text: str) -> str:
@@ -36,6 +40,71 @@ def _asserted_counts(text: str) -> tuple[set[int], str]:
             asserted.append(clause)
             counts.update(int(m["count"]) if m["count"].isdigit() else _COUNTS[m["count"]] for m in found)
     return counts, " ".join(asserted)
+
+
+def _declared_new_people(data: dict, operations: list[dict], text: str) -> set[str]:
+    """Only raw same-batch new IDs with an asserted addition, no ID selection."""
+    from .operation_aliases import _without_quoted_spans
+    unquoted = _without_quoted_spans(_key(text))
+    if unquoted is None or _NO_ADD.search(unquoted):
+        return set()
+    asserted = [clause for clause in re.findall(r'[^.!?;]+[.!?;]?', unquoted)
+                if not clause.rstrip().endswith('?') and not _NONCURRENT.search(clause)]
+    if not any(_ADD_PERSON.search(clause) for clause in asserted):
+        return set()
+    existing = {person['id'] for person in data.get('travelers', [])}
+    added = Counter(op['value']['id'] for op in operations if op.get('type') == 'add_traveler'
+        and isinstance(op.get('value'), dict) and isinstance(op['value'].get('id'), str))
+    return {identifier for identifier, count in added.items() if count == 1 and identifier not in existing}
+
+
+def _protect_count_only_memberships(prior: dict, copied: list[dict], count: int,
+                                    added_people: set[str]) -> list[str]:
+    """Keep count-only requests from changing existing guest assignments.
+
+    Both full layout setters and the scoped patch primitive obey this boundary.
+    An explicit same-batch addition may retain raw addition-only memberships at
+    an unchanged room count. Moving/removing old people still needs allocation
+    intent; this code never chooses a room or assigns an unmentioned person.
+    """
+    protected = []
+
+    def addition_only(old: dict, members) -> bool:
+        if not isinstance(members, list) or any(not isinstance(p, str) for p in members):
+            return False
+        proposed, saved = set(members), set(old['traveler_ids'])
+        extra = proposed - saved
+        return (len(proposed) == len(members) and saved.issubset(proposed) and extra.issubset(added_people)
+                and (bool(extra) or members == old['traveler_ids']))
+
+    for op in copied:
+        value = op.get('value')
+        if not isinstance(value, dict):
+            continue
+        target = value.get('stay_id') if op.get('type') == 'set_room_members' else op.get('target_id') or value.get('id')
+        stay = prior.get(target) if isinstance(target, str) else None
+        if stay is None or not any(room.get('traveler_ids') for room in stay.get('rooms', [])):
+            continue
+        old_rooms = {room['id']: room for room in stay['rooms']}
+        unchanged_count = len(old_rooms) == count
+        if op.get('type') == 'set_room_members' and op.get('target_id') in old_rooms:
+            old = old_rooms[op['target_id']]
+            members = value.get('traveler_ids')
+            if unchanged_count and addition_only(old, members):
+                continue
+            if members != old['traveler_ids']:
+                value['traveler_ids'] = deepcopy(old['traveler_ids'])
+                protected.append(target)
+        elif op.get('type') == 'upsert_stay' and 'rooms' in value:
+            proposed = value['rooms']
+            keep_additions = (unchanged_count and isinstance(proposed, list)
+                and all(isinstance(room, dict) and isinstance(room.get('id'), str) for room in proposed)
+                and [room['id'] for room in proposed] == [room['id'] for room in stay['rooms']]
+                and all(addition_only(old_rooms[room['id']], room.get('traveler_ids')) for room in proposed))
+            if not keep_additions and proposed != stay['rooms']:
+                value['rooms'] = deepcopy(stay['rooms'])
+                protected.append(target)
+    return list(dict.fromkeys(protected))
 
 
 def ground_room_count_operations(state: TripState | dict, operations: list, text: str,
@@ -110,6 +179,18 @@ def ground_room_count_operations(state: TripState | dict, operations: list, text
     if not 1 <= count <= MVP_LIMITS["rooms_per_stay"]:
         question("Количество номеров выходит за текущий технический предел прототипа. Уточните допустимое размещение.", count=count)
         return copied, meta
+    added_people = _declared_new_people(data, copied, text)
+    protected = _protect_count_only_memberships(prior, copied, count, added_people)
+    if protected:
+        meta['notes'].append({'code': 'count_only_room_membership_preserved', 'stay_ids': protected,
+                              'requested_room_count': count, 'occupants_inferred': False})
+        # A restored full setter must not leave its destructive count in the
+        # projection and accidentally satisfy an unaddressed multi-stay count.
+        for op in copied:
+            if op.get('type') == 'upsert_stay' and 'rooms' in op.get('value', {}):
+                identifier = op.get('target_id') or op['value'].get('id')
+                if identifier in projected:
+                    projected[identifier]['rooms'] = deepcopy(op['value']['rooms'])
     # Correct already-extracted per-stay room counts require no reinterpretation
     # of global 'two rooms', especially when several cities were mentioned.
     if target is None and projected and all(isinstance(s.get("rooms"), list) and len(s["rooms"]) == count for s in projected.values()):
@@ -119,12 +200,8 @@ def ground_room_count_operations(state: TripState | dict, operations: list, text
         return copied, meta
     old_rooms = prior.get(target, {}).get("rooms") or []
     if any(isinstance(room, dict) and room.get("traveler_ids") for room in old_rooms):
-        # Remove only a destructive proposed replacement of this existing
-        # allocation; retain every unrelated city/date/budget/party operation.
-        for op in copied:
-            if (op.get("type") == "upsert_stay" and (op.get("target_id") or op.get("value", {}).get("id")) == target
-                    and "rooms" in op.get("value", {})):
-                op["value"]["rooms"] = deepcopy(old_rooms)
+        # Memberships have been preserved above for both setter primitives;
+        # unrelated city/date/budget/party operations remain in the batch.
         if len(old_rooms) != count:
             question("В существующих номерах уже распределены участники. Как перераспределить их? "
                      f"Укажите точный состав каждого из {count} запрошенных номеров.", count=count)

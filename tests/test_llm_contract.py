@@ -218,10 +218,24 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
                 return expanded(definitions[node["$ref"].removeprefix("#/$defs/")])
             return {key: expanded(value) for key, value in node.items() if key != "$defs"}
         return [expanded(value) for value in node] if isinstance(node, list) else node
+    # Room membership patches and the explicit full-layout description are new
+    # features. Compare the frozen legacy on its original feature set, and keep
+    # the new correlated primitive's wire cost bounded separately.
+    from otravel.llm_contract import _local_definitions
+    room_projection = expanded(schema)
+    room_variants = room_projection["properties"]["operations"]["items"]["oneOf"]
+    room_projection["properties"]["operations"]["items"]["oneOf"] = [
+        variant for variant in room_variants if variant["properties"]["type"]["const"] != "set_room_members"]
+    for variant in room_projection["properties"]["operations"]["items"]["oneOf"]:
+        if variant["properties"]["type"]["const"] == "upsert_stay":
+            variant["properties"]["value"]["properties"]["rooms"].pop("description")
+    room_projection_raw = json.dumps(_local_definitions(room_projection), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    room_membership_bytes = len(raw) - len(room_projection_raw)
+    assert 0 < room_membership_bytes <= 1500  # UTF-8 engineering budget for these two fixed states.
     # Historical wire comparisons keep the historical geographic feature set.
     # Only the newly curated city enum member is projected out; real schema
     # validation and the full current serialization keep accepting Тбилиси.
-    geographic_projection = expanded(schema)
+    geographic_projection = deepcopy(room_projection)
     removed_city_members = []
     def historical_city_enums(node):
         if isinstance(node, dict):
@@ -237,9 +251,8 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
                 historical_city_enums(value)
     historical_city_enums(geographic_projection)
     assert removed_city_members and set(removed_city_members) == {"Тбилиси"}
-    from otravel.llm_contract import _local_definitions
     historical_geography_raw = json.dumps(_local_definitions(geographic_projection), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    new_curated_geography_bytes = len(raw) - len(historical_geography_raw)
+    new_curated_geography_bytes = len(room_projection_raw) - len(historical_geography_raw)
     assert new_curated_geography_bytes == 17  # UTF-8 JSON bytes, not model tokens.
     assert accepts(response(op("set_origin", {"city": "Тбилиси"})), schema)
     # The older wire contract predates durable nights and the owned leg-mode
@@ -305,7 +318,7 @@ def test_legacy_schema_keeps_25_percent_reduction_and_added_features_have_bounde
     assert len(group_room_raw) == {"empty": 7125, "sample": 8281}[name]
     assert 0 < len(historical_geography_raw) - len(group_room_raw) <= 250  # Nonstop scope bytes, not tokens/product limits.
     assert len(historical_geography_raw) == {"empty": 7332, "sample": 8488}[name]
-    assert len(raw) == {"empty": 7349, "sample": 8505}[name] + new_duration_mode_bytes
+    assert len(raw) == {"empty": 7349, "sample": 8505}[name] + new_duration_mode_bytes + room_membership_bytes
     assert json.dumps(build_operation_schema(state), ensure_ascii=False, separators=(",", ":")).encode() == raw
 
 

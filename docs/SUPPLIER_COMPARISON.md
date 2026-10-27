@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 ```
 
-Ответ `202` содержит запуск; результат читается через `GET /api/v1/runs/{run_id}`. В полном HTTP-ответе предложения находятся в `run.result.result.live_offers`, а сравнение — в `run.result.result.live_offers[i].details.supplier_comparison`. Существующие session ownership, версии, журнал и квота сохраняются. API-ключ поставщика остаётся на сервере.
+Ответ `202` содержит запуск; результат читается через `GET /api/v1/runs/{run_id}`. В полном HTTP-ответе предложения находятся в `run.result.result.live_offers`, а сравнение — в `run.result.result.live_offers[i].details.supplier_comparison`. Здесь `run` — переменная с JSON-ответом; точный JSON Pointer внутри ответа к первому сравнению: `/result/result/live_offers/0/details/supplier_comparison`. Существующие session ownership, версии, журнал и квота сохраняются. API-ключ поставщика остаётся на сервере.
 
 Первоначально детали поддерживают один номер для одного взрослого без детей. Несколько номеров и детские тарифы этой интеграцией пока не подтверждены. Для запроса деталей `q` не нужен: используется `property_token`. URL вместо токена не принимается. Ответ должен подтвердить тот же отель, даты, валюту и состав запроса.
 

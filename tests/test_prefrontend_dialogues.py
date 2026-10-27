@@ -542,16 +542,17 @@ def test_fence_refusal_during_driver_keeps_a_terminal_report_and_never_posts():
     assert writes["/not-created/report.json"]["status"] == "STOPPED_NO_RETRY"
 
 
-@pytest.mark.parametrize("profile", ["groq-qwen", "zai", "openrouter-dots"])
+@pytest.mark.parametrize("profile", ["groq-qwen", "openrouter-dots"])
 def test_cloudflare_short_interval_cannot_be_used_for_other_fixed_profiles(profile):
     with pytest.raises(ValueError, match="profile_bound"):
         runner.ModelPacer(15, llm_profile=profile)
     assert runner.ModelPacer(60, llm_profile=profile).seconds == 60
 
 
-def test_only_exact_cloudflare_profile_can_use_fifteen_second_pacing():
+@pytest.mark.parametrize('profile', ['cloudflare-nemotron', 'zai'])
+def test_only_reviewed_fixed_profiles_can_use_fifteen_second_pacing(profile):
     clock = FakeClock()
-    pacer = runner.ModelPacer(15, llm_profile="cloudflare-nemotron", clock=clock, sleep=clock.sleep)
+    pacer = runner.ModelPacer(15, llm_profile=profile, clock=clock, sleep=clock.sleep)
     pacer.observe([{"event_type": "MODEL_CALL_STARTED"}])
     pacer.before(False)
     assert clock.waits == []
