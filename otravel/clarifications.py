@@ -12,6 +12,7 @@ from typing import Any
 
 from .domain import MVP_LIMITS
 from .geography import parse_destination
+from .party_literals import explicit_no_children
 from .provider_cities import available_search_cities
 
 _ALIASES = {
@@ -629,7 +630,7 @@ def resolve_short_answer(state: Any, pending_question: Any, text: str) -> dict:
     adults = field == "party.adults"
     if adults and key in {"я взрослый", "я взрослая", "я один", "я одна", "один", "одна"}:
         count = 1
-    elif not adults and key in _NO | {"без детей", "детей нет", "не будет", "нет детей"}:
+    elif not adults and explicit_no_children(text, answer=True):
         count = 0
     elif re.fullmatch(r"\d{1,2}", key):
         count = int(key)

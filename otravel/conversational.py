@@ -38,6 +38,9 @@ def request_kinds(text: str) -> set[str]:
 
 
 def explicit_search_request(text: str) -> bool:
+    from .price_queries import whole_trip_price_question
+    if whole_trip_price_question(text):
+        return True
     key = _key(text)
     if (re.search(r"\b(?:если|не ищи|не подбирай|не пересобирай|пока не|не надо)\b", key)
             or re.search(r"\bне\s+(?:иск|ищ|подбира|подобра|пересобира|пересобра|обнов|поиска|най)\w*", key)):

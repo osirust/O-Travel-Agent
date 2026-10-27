@@ -1,0 +1,142 @@
+{
+  "format": "otravel.owner_december_dates.v1",
+  "finding_ids": [
+    "HARNESS-004-ADDRESSED-DATE-PREFIX-001",
+    "HARNESS-004-NEW-YEAR-DATE-CONFIRMATION-001",
+    "HARNESS-004-YEAR-PROPOSAL-REVISION-FENCE-001"
+  ],
+  "status": "CONTROLLED_PURE_API_PG_SCOPE_PASS_FRESH_ACTUAL_RETEST_PENDING",
+  "actual_source": {
+    "path": "/home/aegml/checks/owner-december-20261027-182929/projection.json",
+    "sha256": "ad7f3c61321347d2ed458836f47918f5b0d1817da459b8decccf78fd3f793fed",
+    "turns": 14,
+    "model_calls": 5,
+    "tool_calls": 0,
+    "source_package_sha256": "c07b46abbf1599eac299078d497965a98dfab95ad4f7ba80d2e7244a566ea11f",
+    "source_release_commit": "6ea3d110560a0d4c95ce0021687c7f5505147db6",
+    "raw_changed": false,
+    "observed": [
+      {
+        "turn": 5,
+        "user": "на 28 декабря",
+        "response_source": "llm",
+        "model_check_in": "2026-12-28",
+        "canonical_revision": "1->2"
+      },
+      {
+        "turn": 6,
+        "user": "на 27 декабря",
+        "response_source": "llm",
+        "operations": 0,
+        "model_conflict": "check_in (2026-12-28) позже, чем предложенный check_out (2026-12-27)",
+        "model_explanation_was_correct": true,
+        "final_reply": "На какую дату планируете выезд в городе «Белград»?",
+        "canonical_revision": "2->2"
+      },
+      {
+        "turn": 7,
+        "user": "5 января",
+        "response_source": "contextual_slot",
+        "operations": 0,
+        "final_reply": "Укажите дату выезда полностью: день, месяц и год."
+      },
+      {
+        "turn": 8,
+        "user": "05.01.2027",
+        "response_source": "contextual_slot",
+        "check_out": "2027-01-05",
+        "canonical_revision": "2->3"
+      }
+    ],
+    "causal_attribution": "T6 whole prefix на was not recognized by the deterministic date helper. The model detected the correct conflict; generic conflict humanization lost its explanation. New addressed-prefix handling bypasses this specific failing route; it is not a claim to repair all model conflict rendering."
+  },
+  "code": [
+    {
+      "path": "otravel/date_slots.py",
+      "sha256": "e9d11636174c4ddf8efc72b86b3f5d74f95e69d8d43cac9f0bad2da497e32035"
+    },
+    {
+      "path": "tests/test_date_year_confirmation.py",
+      "sha256": "ba8c96ac90e9a0c5b72dd56ddebc43ee90db69837f0945a6dea22970af9dde11"
+    },
+    {
+      "path": "tests/test_harness_date_year_confirmation.py",
+      "sha256": "f7f2793e9bc186805e6b08d47f986713ff2f717761700c53a407afbe84acf48f"
+    }
+  ],
+  "new_contract": {
+    "scope": "Only an exact fresh server-owned checkout target, known December check-in and unset checkout can offer the adjacent January year candidate. Other missing-year dates retain the full-year/no-guess policy.",
+    "prefix": "Whole bounded на + exact supported date token, only fresh owned date question. No dropping text before a first date, arbitrary extraction, new target selection or year inference.",
+    "invalid_same_month": "27 December in the known check-in year before 28 December is explained with both absolute dates, operations0; never rolled into the next December.",
+    "year_packet": {
+      "context_key": "date_proposal",
+      "owner": "date_slots.year.v1",
+      "kind": "checkout_year_confirmation",
+      "field": "stay.check_out",
+      "outward_target": "actual owned stay ID",
+      "binding": [
+        "trip_id",
+        "strict integer state version",
+        "exact target/field",
+        "baseline check_in/check_out/requested_nights values and types",
+        "recomputed original whole month token",
+        "candidate ISO",
+        "aware reference clock/date/timezone"
+      ]
+    },
+    "confirmation": "Candidate has operations0. Exact yes revalidates provenance/baseline/clock, recurses with absolute ISO after removing the local year packet, then runs full domain validation. Existing duration conflict remains a separate question with operations0.",
+    "negative_answer": "No clears the candidate and leaves all dates unchanged; late yes cannot replay it.",
+    "root_harness_hook": "Parent retains only exact year owner/kind/checkout field/target/trip/current strict integer version. Original deferred target-selection cleanup remains unchanged.",
+    "controls": "Pause/cancel/resume and compound edits are not swallowed as year consent.",
+    "source_or_booking_effects": "No provider search, model request, quote or order is created by the pure helper."
+  },
+  "tests": {
+    "new_pure_cases": 51,
+    "new_api_pg_cases": 3,
+    "test_database": "otravel_test",
+    "initial_related": {
+      "junit": ".local/evaluation/after80-20261027/date-year-pure-initial.xml",
+      "junit_sha256": "c3ad563730f3393f28d776bc15b0e91fc69bd059bf501e90f1ef8a8b34b72e30",
+      "passed": 224,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 8.789
+    },
+    "new_initial_pg": {
+      "junit": ".local/evaluation/after80-20261027/date-year-owner-related-initial.xml",
+      "junit_sha256": "ee65571e67592ac6ba3115b6b875e12f56a446521158d2e8542fda94d92dea08",
+      "passed": 53,
+      "failed": 1,
+      "skipped": 0,
+      "seconds": 8.181
+    },
+    "final_related": {
+      "junit": ".local/evaluation/after80-20261027/date-year-owner-related-final.xml",
+      "junit_sha256": "07f965252ac037978faa098783d5dcf6534333f53695a7af45eb07a85f50b607",
+      "passed": 236,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 22.348
+    },
+    "old_temporal_oracles_changed": false,
+    "counts_are_overlapping_not_additive": true,
+    "ruff": "PASS for changed source and two new tests",
+    "new_initial_pg_failure": "A typed budget revision retained the old year packet. Parent added a strict trip/current-version retention fence; the exact cleanup test passes in final related236.",
+    "pg_assertions": [
+      "Addressed invalid December checkout produces specific date explanation and no revision/model call.",
+      "January candidate survives real Store/API serialization with genuine outward target but no trip change.",
+      "Yes commits one checkout revision and matching return leg, preserving other facts.",
+      "No then late yes never commits checkout.",
+      "Unrelated public typed budget revision clears the old candidate; late yes does not replay it.",
+      "All these paths have no TOOL_CALL_STARTED and no orders."
+    ]
+  },
+  "new_actual_api_model_supplier_calls": 0,
+  "native_other_db_config_mutated": false,
+  "limitations": [
+    "The initial API question/stay is labelled controlled setup; this is not a new complete owner14 actual replay.",
+    "The general model-conflict explanation renderer was not changed by this date patch.",
+    "No automatic year selection for other months, existing checkout, unknown check-in, stale or unaddressed slot.",
+    "Full80/106 acceptance is separate; new requested-year behavior does not silently rewrite old temporal test expectations."
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-NO-CHILD-STATEMENT-SLOT-001",
+  "status": "EXACT_SHARED_LITERAL_AND_SLOT_CHAIN_TESTED_ACTUAL_OWNER_RECHECK_OPEN",
+  "actual_source": {
+    "path": "/home/aegml/checks/owner-december-20261027-182929/projection.json",
+    "sha256": "ad7f3c61321347d2ed458836f47918f5b0d1817da459b8decccf78fd3f793fed",
+    "owner_turns": 14,
+    "actual_model_calls": 5,
+    "actual_tools": 0,
+    "fact": "Binding was already party.children; the exact current no-child statement fell through the short resolver to LLM/noops and children_known stayed false. Original session/export untouched."
+  },
+  "files_sha256": {
+    "otravel/party_literals.py": "21a4152f6ac0f12e55db69663128e519b2f9c6ab93e0d86c8a5bc3284d7e5d90",
+    "otravel/clarifications.py": "1a9a077dd52bb9696df0307d5979fbdc5d0cd1edc7240cc14e9f922180e56d9d",
+    "tests/test_party_no_children.py": "5f674b412d083515934df23d9c34e6eae896bb96849730ab08f336266af8c09a",
+    "tests/test_party_no_children_pg.py": "ef5a26c5a6f0d02a1a9759099019006febfafe6c6e2189bdc8ae776ecaba42c0"
+  },
+  "initial_red": {
+    "tests": 3,
+    "failures": 3,
+    "junit": ".local/evaluation/after80-20261027/no-child-phrase-initial.xml",
+    "sha256": "6e8199f238553dbcb3aa76319918277e8a8d7d0cea53cf06954f9348f72173e0"
+  },
+  "verification": {
+    "pure": {
+      "tests": 203,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 2.048,
+      "junit": ".local/evaluation/after80-20261027/no-child-phrase-pure-final.xml",
+      "sha256": "2712cc81882dff3849fa9410c4a7202468d20705a6f81a70cd5603d645876c78"
+    },
+    "pg_asgi": {
+      "tests": 2,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 4.832,
+      "junit": ".local/evaluation/after80-20261027/no-child-phrase-pg-final.xml",
+      "sha256": "31e92713da1642d042a89053087b34584cac84ebc501bf7dacdb4db09bd3fa17"
+    },
+    "ruff": "PASS"
+  },
+  "contracts": [
+    "Shared party_literals.explicit_no_children defaults to complete current statements; answer=True is only for an already-owned child slot",
+    "Clarifications resolves the real phrase exactly like numeric0: no traveler mutation, knownTrue/count0 metadata, no repeated child question",
+    "Root-owned Harness imports the shared helper; its duplicate whitelist is no longer independent",
+    "Quotes/history/hypotheses/questions and compound edits are not consumed as bound short answers",
+    "Zero reply never deletes an existing child; roster removal needs separate explicit identity handling",
+    "PG chain confirms adult1 then no-child statement with0model/0tool/0newTriprevision and known0 persisted into the next nationality question",
+    "Budget is optional in the existing Domain: test fixtures do not invent a mandatory budget question"
+  ],
+  "preserved_test_fixture_corrections": [
+    {
+      "junit": ".local/evaluation/after80-20261027/no-child-phrase-pg-initial.xml",
+      "fact": "Initial budget-missing fixture expected budget before nationality; nationality has priority."
+    },
+    {
+      "junit": ".local/evaluation/after80-20261027/no-child-phrase-related-final.xml",
+      "pass": 222,
+      "fail": 1,
+      "fact": "Fully specified trip with knownRU had no missing required fact because budget is optional. Corrected fixture uses the actual missing nationality slot; all no-model/no-revision assertions retained."
+    }
+  ],
+  "execution": {
+    "external_http": 0,
+    "actual_llm": 0,
+    "database": "otravel_test ownfixtures only",
+    "original_owner_sql_repairs": 0,
+    "runtime_restarts": 0
+  },
+  "limits": [
+    "The existing quote/year/price paths are outside this helper scope",
+    "No actual owner conversation replay or rollout is claimed by these controlled tests",
+    "No missing child count is inferred as zero; exact statement or owned short answer remains required"
+  ]
+}

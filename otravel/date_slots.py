@@ -29,6 +29,7 @@ _EXPLICIT = re.compile(
     + r")|(?P<attached>" + _ISO.pattern + "|" + _DOT.pattern + "|" + _MONTH_TOKEN + r"))"
 )
 _PROPOSAL_OWNER = "date_slots.v1"
+_YEAR_OWNER = "date_slots.year.v1"
 _ORDINALS = {"первая": 1, "первую": 1, "первой": 1, "вторая": 2, "вторую": 2,
              "второй": 2, "третья": 3, "третью": 3, "третьей": 3}
 _CONTROLS = {"пауза", "стоп", "отмена", "отмени", "продолжай", "продолжить", "resume", "pause", "cancel"}
@@ -186,6 +187,133 @@ def _stored_date(value: Any) -> date | None:
         except ValueError:
             pass
     return None
+
+
+def _addressed_date_prefix(key: str) -> str | None:
+    """A whole-token preposition, never text extraction before the first date."""
+    match = re.fullmatch(r"на\s*(" + "|".join((_ISO.pattern, _DOT.pattern, _MONTH_TOKEN, *_RELATIVE)) + r")", key)
+    return match[1] if match else None
+
+
+def _fresh_date_slot(data: dict, pending: dict, context: dict) -> bool:
+    version, trip_id = data.get("state_version"), data.get("trip_id")
+    target = pending.get("target_id")
+    return (type(version) is int and isinstance(trip_id, str) and bool(trip_id)
+        and type(pending.get("state_version")) is int and pending["state_version"] == version
+        and isinstance(pending.get("question_id"), str) and bool(pending["question_id"])
+        and pending.get("field") in {"stay.check_in", "stay.check_out"}
+        and pending.get("reason") != "user_pause" and isinstance(target, str) and bool(target)
+        and all(source.get("trip_id", trip_id) == trip_id
+            and all(key not in source or type(source[key]) is int and source[key] == version
+                    for key in ("state_version", "based_state_version"))
+            and all(key not in source or source[key] == target for key in ("target_id", "stay_id"))
+            for source in (pending, context)))
+
+
+def _year_date_question(context: dict, target: str | None, text: str, packet: dict | None = None) -> dict:
+    bound = {key: value for key, value in context.items() if key != "date_proposal"}
+    bound.update(field="stay.check_out", target_id=target, stay_id=target)
+    if packet is not None:
+        bound["date_proposal"] = packet
+    return {"handled": True, "operations": [], "question": text, "pending_context": bound,
+            "pending_context_clear": [] if packet is not None else ["date_proposal"]}
+
+
+def _year_source_month(text: str):
+    if not isinstance(text, str) or not 0 < len(text) <= 50:
+        return None
+    key = text.strip().casefold().rstrip(".!").strip()
+    explicit = _EXPLICIT.fullmatch(key)
+    if explicit:
+        if explicit["label"] != "выезд":
+            return None
+        key = explicit["token"] or explicit["attached"]
+    else:
+        key = _addressed_date_prefix(key) or key
+    month = _MONTH.fullmatch(key)
+    return month if month is not None and month[3] is None else None
+
+
+def _year_confirmation_answer(data: dict, pending: dict, context: dict, text: str,
+                              now: datetime, timezone: str) -> dict:
+    """Confirm one bounded Dec→Jan candidate; never use the year as consent."""
+    no = {"handled": False, "operations": []}
+    packet = context.get("date_proposal")
+    key = text.strip().casefold().rstrip(".!").strip()
+    if key in _CONTROLS:
+        return no
+    target = packet.get("target_id") if isinstance(packet, dict) else None
+
+    def expired():
+        return _year_date_question(context, None,
+            "Поездка или дата заезда изменились. Укажите дату выезда заново, включая год.")
+
+    try:
+        required = {"owner", "kind", "trip_id", "based_state_version", "field", "target_id", "before",
+                    "candidate_date", "source_text", "reference_clock", "reference_date", "timezone"}
+        if (not isinstance(packet, dict) or set(packet) != required or packet["owner"] != _YEAR_OWNER
+                or packet["kind"] != "checkout_year_confirmation" or packet["field"] != "stay.check_out"
+                or packet["trip_id"] != data.get("trip_id") or type(packet["based_state_version"]) is not int
+                or type(data.get("state_version")) is not int or packet["based_state_version"] != data["state_version"]
+                or not _fresh_date_slot(data, pending, context) or pending.get("field") != "stay.check_out"
+                or not isinstance(target, str) or not target or pending.get("target_id") != target
+                or any(source.get(key, target) != target for source in (pending, context)
+                       for key in ("target_id", "stay_id")) or packet["timezone"] != timezone):
+            return expired()
+        stays = data.get("stays") or []
+        matches = [stay for stay in stays if isinstance(stay, dict) and stay.get("id") == target]
+        if len(matches) != 1:
+            return expired()
+        stay = matches[0]
+        before = packet["before"]
+        expected_before = _duration_before(stay)
+        if (not isinstance(before, dict) or set(before) != set(expected_before)
+                or any(type(before[key]) is not type(value) or before[key] != value
+                       for key, value in expected_before.items())):
+            return expired()
+        start = _stored_date(stay.get("check_in"))
+        month = _year_source_month(packet["source_text"])
+        if (start is None or stay.get("check_out") is not None or start.month != 12 or month is None
+                or _MONTHS[month[2]] != 1):
+            return expired()
+        candidate = date(start.year + 1, 1, int(month[1]))
+        reference = datetime.fromisoformat(packet["reference_clock"])
+        if (reference.utcoffset() is None or reference.astimezone(ZoneInfo(timezone)).date().isoformat() != packet["reference_date"]
+                or candidate.isoformat() != packet["candidate_date"] or not isinstance(now, datetime)
+                or now.utcoffset() is None or reference > now):
+            return expired()
+        today = now.astimezone(ZoneInfo(timezone)).date()
+        if start < today or candidate <= today:
+            return _year_date_question(context, target,
+                "Предложенные даты уже в прошлом. Укажите новую дату заезда и выезда полностью.")
+    except (KeyError, TypeError, ValueError, OverflowError, ZoneInfoNotFoundError):
+        return expired()
+    if key in {"нет", "не надо", "оставь как было"}:
+        return _year_date_question(context, target,
+            "Дата выезда не изменена. Какую дату выезда выбираете? Укажите день, месяц и год.")
+    if key not in {"да", "подтверждаю", "согласен", "согласна"}:
+        # An unrelated compound edit must reach normal intake; no inferred yes.
+        if _year_source_month(text) is None and not (_ISO.fullmatch(key) or _DOT.fullmatch(key)):
+            return no
+        cleaned = {k: v for k, v in context.items() if k != "date_proposal"}
+        answer = resolve_date_answer(data, {**pending, "context": cleaned}, text, now, timezone)
+    else:
+        cleaned = {k: v for k, v in context.items() if k != "date_proposal"}
+        answer = resolve_date_answer(data, {**pending, "context": cleaned}, candidate.isoformat(), now, timezone)
+    if not answer.get("handled"):
+        return answer
+    new_packet = answer.get("pending_context", {}).get("date_proposal")
+    if new_packet is None:
+        answer["pending_context_clear"] = list(dict.fromkeys(answer.get("pending_context_clear", []) + ["date_proposal"]))
+    if answer.get("operations"):
+        from .domain import DomainError, TripState, apply_operations
+
+        try:
+            apply_operations(TripState.model_validate(data), answer["operations"])
+        except (DomainError, ValueError, OverflowError):
+            return _year_date_question(context, target,
+                "Предложенный выезд не подходит маршруту или длительности. Укажите другую дату полностью.")
+    return answer
 
 
 def _duration_question(data: dict, context: dict, text: str, target: str | None = None, packet: dict | None = None) -> dict:
@@ -357,6 +485,9 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
     data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state if isinstance(state, dict) else {}
     active_field = pending.get("field") or context.get("field")
     proposal_field = context.get("date_proposal", {}).get("field") if isinstance(context.get("date_proposal"), dict) else None
+    if (not explicit and isinstance(context.get("date_proposal"), dict)
+            and context["date_proposal"].get("owner") == _YEAR_OWNER):
+        return _year_confirmation_answer(data, pending, context, text, now, timezone)
     if (not explicit and "date_proposal" in context and isinstance(proposal_field, str)
             and isinstance(active_field, str) and (active_field != proposal_field
                 or pending.get("target_id") is not None or pending.get("stay_id") is not None)):
@@ -381,6 +512,12 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
         key = explicit.group("token") or explicit.group("attached")
     if field not in {"stay.check_in", "stay.check_out"}:
         return unhandled
+    prefixed = _addressed_date_prefix(key)
+    if prefixed is not None and not explicit:
+        # Prefix intake is permitted only by a fresh exact server-owned slot.
+        if not _fresh_date_slot(data, pending, context):
+            return unhandled
+        key = prefixed
     iso, dotted, month = _ISO.fullmatch(key), _DOT.fullmatch(key), _MONTH.fullmatch(key)
     if key not in _RELATIVE and not iso and not dotted and not month:
         return unhandled
@@ -424,8 +561,36 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
     elif not explicit:
         return unhandled
     if month and month[3] is None:
-        # Even if another date is known, do not infer a year or roll a past
-        # month into next year. The follow-up must supply an absolute date.
+        # An addressed Dec→Jan checkout may offer one explicit year candidate,
+        # never commit it. Same-December reverse dates are explained, not rolled.
+        start = _stored_date(stay.get("check_in")) if stay is not None else None
+        fresh = (_fresh_date_slot(data, pending, context) and pending.get("field") == "stay.check_out"
+            and pending.get("target_id") == target)
+        if field == "stay.check_out" and fresh and start is not None:
+            try:
+                same_year = date(start.year, _MONTHS[month[2]], int(month[1]))
+            except (ValueError, OverflowError):
+                return _year_date_question(context, target,
+                    f"Дата «{text.strip()}» не существует в календаре. Укажите корректную дату выезда полностью.")
+            if same_year.month == start.month and same_year <= start:
+                return _year_date_question(context, target,
+                    f"«{text.strip()}» в году заезда — это {same_year.strftime('%d.%m.%Y')}. "
+                    f"Выезд должен быть позже заезда {start.strftime('%d.%m.%Y')}. Укажите более позднюю дату выезда.")
+            if (start.month == 12 and same_year.month == 1 and start >= today
+                    and stay.get("check_out") is None):
+                try:
+                    candidate = date(start.year + 1, 1, int(month[1]))
+                except (ValueError, OverflowError):
+                    return unhandled
+                packet = {"owner": _YEAR_OWNER, "kind": "checkout_year_confirmation",
+                    "trip_id": data.get("trip_id"), "based_state_version": data.get("state_version"),
+                    "field": field, "target_id": target, "before": _duration_before(stay),
+                    "candidate_date": candidate.isoformat(), "source_text": text.strip(),
+                    "reference_clock": now.isoformat(), "reference_date": today.isoformat(), "timezone": timezone}
+                return _year_date_question(context, target,
+                    f"После заезда {start.strftime('%d.%m.%Y')} вы имеете в виду выезд {candidate.strftime('%d.%m.%Y')}? "
+                    "Подтвердите дату с годом: да или нет.", packet)
+        # Other incomplete-year inputs retain the existing no-guess policy.
         bound = {**context, "field": field, "target_id": target, "stay_id": target,
                  "target_selection_required": target is None and len(stays) > 1}
         bound.pop("date_proposal", None)

@@ -52,12 +52,8 @@ def explicit_pause_hint(text: str) -> bool:
 
 
 def explicit_no_children(text: str) -> bool:
-    # A complete explicit clause can establish zero children inside a compound
-    # request. Broader/negated/conditional language still belongs to the model.
-    clauses = re.split(r"[,;.!\n]", text.casefold().replace("ё", "е"))
-    return any(" ".join(part.split()) in {
-        "детей нет", "без детей", "дети не едут", "детей не будет", "детей пока не будет", "детей пока нет",
-    } for part in clauses)
+    from .party_literals import explicit_no_children as parse_no_children
+    return parse_no_children(text)
 
 
 def encode_command(kind: str, session: dict, **fields: Any) -> str:
@@ -1189,6 +1185,7 @@ class Harness:
         from .greetings import canonical_greeting
         from .country_intake import literal_country_wish
         from .conversation_followup import followup_kind, nonanswer_pending_question
+        from .price_queries import saved_price_answer, whole_trip_price_question
 
         greeting = canonical_greeting(run["input_text"])
         if greeting is not None:
@@ -1200,6 +1197,31 @@ class Harness:
             await self._ensure_current_run(session, run)
             return ModelResult(operations=[], control={"action": "none"}, reply=reply,
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+
+        if whole_trip_price_question(run["input_text"]):
+            shown = await self._latest_current_plans(session, run)
+            reply = saved_price_answer(session["state"], shown)
+            pending = session.get("pending_question") or {}
+            context = pending.get("context") or {}
+            pending_field = pending.get("field") if isinstance(pending.get("field"), str) else ""
+            from .conversational import _unanswered
+            awaiting_decision = (context.get("force_clarification") is True
+                or context.get("confirmation_required") is True
+                or any(value is not None and (key.endswith("_proposal") or key in {
+                    "budget_scope_ambiguous", "room_reallocation_required", "room_target_selection_required",
+                    "target_selection_required"}) for key, value in context.items()))
+            if (reply is None and session.get("waiting_reason") == "clarification"
+                    and (awaiting_decision or pending_field != "budget.amount_minor"
+                         and (pending_field.startswith("place.")
+                              or _unanswered(pending_field, pending.get("target_id"), session["state"], context)))):
+                question = pending.get("text") if awaiting_decision or pending_field.startswith("place.") else human_question(pending, session["state"], context)
+                reply = "Чтобы рассчитать стоимость, нужно уточнение. " + question
+            await self._ensure_current_run(session, run)
+            if reply is not None:
+                return ModelResult(operations=[], control={"action": "none"}, reply=reply,
+                    unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+            return ModelResult(operations=[], control={"action": "continue"}, reply="Проверяю стоимость поездки по сохранённым условиям.",
+                unknowns=[], conflicts=[], speech_act="CHANGE", response_source="canonical_price_search"), None
 
         wish = literal_country_wish(session["state"], run["input_text"])
         if wish is not None:
@@ -1974,9 +1996,18 @@ class Harness:
                     clarification_metadata.pop(key,None)
             if binding.get("field") != "leg.mode":
                 clarification_metadata.pop("leg_mode_proposal", None)
+            owned_year_packet = (isinstance(date_packet, dict)
+                and date_packet.get("owner") == "date_slots.year.v1"
+                and date_packet.get("kind") == "checkout_year_confirmation"
+                and date_packet.get("trip_id") == current.trip_id
+                and type(date_packet.get("based_state_version")) is int
+                and date_packet["based_state_version"] == current.state_version
+                and date_packet.get("field") == binding.get("field") == "stay.check_out"
+                and isinstance(binding.get("target_id"), str)
+                and date_packet.get("target_id") == binding["target_id"])
             if (binding.get("field") not in {"stay.check_in", "stay.check_out"}
                     or isinstance(date_packet, dict) and (date_packet.get("field") != binding.get("field")
-                        or binding.get("target_id") is not None)):
+                        or binding.get("target_id") is not None and not owned_year_packet)):
                 # A deferred hotel date cannot intercept an answer to a newer
                 # unrelated slot. This cleanup commits with the new question.
                 clarification_metadata.pop("date_proposal", None)
