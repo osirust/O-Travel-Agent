@@ -1,6 +1,6 @@
 {
   "permanent_id": "HARNESS-004-LITERAL-COUNTRY-WISH-001",
-  "status": "PURE_RESOLVER_READY_ROOT_HOOK_AND_RETEST_OPEN",
+  "status": "DEPLOYED_LITERAL_SCOPE_PASS_ORIGINAL_MODEL_FAIL_RETAINED",
   "source_actual": {
     "path": "/home/aegml/checks/groq-v2-owner-20261027-103313/report.json",
     "sha256_at_capture": "4d2c14ee82436ee4f3de395c3af6d5700a7b6eba0b08249e045b7f5fe5cee7e1",
@@ -9,9 +9,9 @@
   },
   "observed": {
     "first_step": {
-      "input": "привет",
+      "input": "РїСЂРёРІРµС‚",
       "run_status": "completed",
-      "reply": "Здравствуйте! Готов помочь с вашей поездкой.",
+      "reply": "Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ! Р“РѕС‚РѕРІ РїРѕРјРѕС‡СЊ СЃ РІР°С€РµР№ РїРѕРµР·РґРєРѕР№.",
       "model_calls": 0,
       "tool_calls": 0,
       "trip_unchanged": true,
@@ -19,9 +19,9 @@
       "pending_question": null
     },
     "country_step": {
-      "input": "хочу в Сербию",
+      "input": "С…РѕС‡Сѓ РІ РЎРµСЂР±РёСЋ",
       "run_status": "completed",
-      "reply": "Да, Сербия — страна. Могу помочь обсудить маршрут и условия поездки; ваш вопрос сам по себе не меняет поездку.",
+      "reply": "Р”Р°, РЎРµСЂР±РёСЏ вЂ” СЃС‚СЂР°РЅР°. РњРѕРіСѓ РїРѕРјРѕС‡СЊ РѕР±СЃСѓРґРёС‚СЊ РјР°СЂС€СЂСѓС‚ Рё СѓСЃР»РѕРІРёСЏ РїРѕРµР·РґРєРё; РІР°С€ РІРѕРїСЂРѕСЃ СЃР°Рј РїРѕ СЃРµР±Рµ РЅРµ РјРµРЅСЏРµС‚ РїРѕРµР·РґРєСѓ.",
       "model_calls": 1,
       "tool_calls": 0,
       "trip_unchanged": true,
@@ -59,5 +59,23 @@
     "ruff": "PASS",
     "artifact": ".local/evaluation/geo-20261027/literal-country-wish-pure-final.xml",
     "artifact_sha256": "2d39cce11a31d783df350b5150d2db7c75e92734ec8400c0727fe5a02cc7fc83"
-  }
+  },
+  "root_related": {
+    "tests": 155,
+    "failures": 0,
+    "junit": ".local/evaluation/after80-20261027/country-wish-giga-isolation-fixed.xml",
+    "sha256": "45e1bd6e647658dc0daf227ec0c458024bc995ae7694523df9b449e2a8bd3b8a"
+  },
+  "deployed_reproduction": {
+    "source_commit": "701da371fff15535ce2a2449e7b8a461f974482b",
+    "report": "docs/verification/groq-v2-retest-20261027.json",
+    "model_calls_country": 0,
+    "tool_calls_country": 0,
+    "trip_unchanged": true,
+    "country_code": "RS",
+    "city_chosen_automatically": false
+  },
+  "limitations": [
+    "Root closure is the narrow literal wish path; actual model ASK failure is retained and not reclassified as model-quality PASS."
+  ]
 }
