@@ -122,6 +122,7 @@ def environment(engine, database, profile):
         'MAX_GROQ_LLM_CALLS_PER_DAY': '1000',
         'MAX_LLM_CALLS_PER_RUN': '1', 'MAX_LOCAL_LLM_CALLS_PER_DAY': '0',
         'LLM_REQUEST_TIMEOUT': '45', 'LLM_MAX_OUTPUT_TOKENS': '2048', 'LLM_REASONING_ENABLED': 'false',
+        'GROQ_REASONING_EFFORT': 'none', 'GROQ_STRUCTURED_TRANSPORT_ENABLED': 'true',
         'REFERENCE_FX_ENABLED': 'true',
         'OPENROUTER_BACKUP_MODEL': '', 'GEMINI_FREE_TIER_CONFIRMED': 'false', 'GROQ_FREE_TIER_CONFIRMED': 'true',
         'ZAI_FREE_TIER_CONFIRMED': 'false', 'CLOUDFLARE_FREE_TIER_CONFIRMED': 'false',
@@ -164,7 +165,9 @@ def require_ready(engine):
         and status.get('groq', {}).get('configured') is True
         and status.get('groq', {}).get('model') == MODEL
         and status.get('groq', {}).get('free_tier_confirmed') is True
-        and status.get('groq', {}).get('paid_fallback') is False, 'groq_runtime_profile_mismatch')
+        and status.get('groq', {}).get('paid_fallback') is False
+        and status.get('groq', {}).get('structured_transport') is True
+        and status.get('groq', {}).get('reasoning_effort') == 'none', 'groq_runtime_profile_mismatch')
     engine.require(status.get('liteapi', {}).get('configured') is True and status.get('liteapi', {}).get('mode') == 'sandbox'
         and status.get('duffel', {}).get('configured') is True and status.get('duffel', {}).get('mode') == 'sandbox'
         and status.get('serpapi', {}).get('configured') is True and status.get('serpapi', {}).get('free_tier_confirmed') is True
@@ -239,6 +242,8 @@ def start(engine, account):
         "print(json.dumps({'api_file':str(pathlib.Path(otravel.api.__file__).resolve()),'provider':s.llm_mode,"
         "'model':os.environ['GROQ_MODEL'],'daily_limit':s.max_groq_llm_calls_per_day,"
         "'generic_daily_limit':s.max_llm_calls_per_day,"
+        "'groq_transport':s.provider_settings().get('GROQ_STRUCTURED_TRANSPORT_ENABLED'),"
+        "'groq_reasoning_effort':s.provider_settings().get('GROQ_REASONING_EFFORT'),"
         "'run_limit':s.max_llm_calls_per_run,'local_limit':s.max_local_llm_calls_per_day,"
         "'search_mode':s.default_search_mode,'other_model_credentials_present':any(k in os.environ for k in "
         "('OPENROUTER_API_KEY','GEMINI_API_KEY','ZAI_API_KEY','CLOUDFLARE_API_TOKEN','COHERE_API_KEY','NVIDIA_API_KEY','OPENAI_API_KEY','ANTHROPIC_API_KEY'))}))")
@@ -247,7 +252,8 @@ def start(engine, account):
     engine.require(imported.returncode == 0, 'groq_native_import_failed_details_suppressed')
     facts = json.loads(imported.stdout)
     expected = {'api_file': str(SOURCE / 'otravel/api.py'), 'provider': 'groq', 'model': MODEL,
-        'daily_limit': 1000, 'generic_daily_limit': 40, 'run_limit': 1, 'local_limit': 0, 'search_mode': 'HYBRID', 'other_model_credentials_present': False}
+        'daily_limit': 1000, 'generic_daily_limit': 40, 'run_limit': 1, 'local_limit': 0, 'search_mode': 'HYBRID',
+        'groq_transport': 'true', 'groq_reasoning_effort': 'none', 'other_model_credentials_present': False}
     engine.require(facts == expected, 'groq_native_source_or_explicit_limits_mismatch')
     engine.require(engine.source_manifest() == manifest, 'groq_source_changed_before_database_check')
     require_existing_database(engine, database)

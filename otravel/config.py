@@ -65,7 +65,7 @@ class Settings:
     def provider_settings(self) -> dict[str, Any]:
         keys = [
             "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL",
-            "GROQ_API_KEY", "GROQ_MODEL",
+            "GROQ_API_KEY", "GROQ_MODEL", "GROQ_REASONING_EFFORT", "GROQ_STRUCTURED_TRANSPORT_ENABLED",
             "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_MODEL",
             "ZAI_API_KEY", "ZAI_MODEL",
             "LITEAPI_API_KEY", "LITEAPI_MODE", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY",
@@ -110,7 +110,10 @@ def provider_status() -> dict[str, Any]:
                               else os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")},
         "gemini": {"configured": bool(os.getenv("GEMINI_API_KEY")), "free_tier_confirmed": enabled("GEMINI_FREE_TIER_CONFIRMED"), "model": os.getenv("GEMINI_MODEL", "gemini-3.8-flash")},
         "openrouter": {"configured": bool(os.getenv("OPENROUTER_API_KEY")), "model": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"), "backup_model": os.getenv("OPENROUTER_BACKUP_MODEL", ""), "paid_fallback": False},
-        "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False},
+        "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False,
+            **({"structured_transport": True,
+                "reasoning_effort": os.getenv("GROQ_REASONING_EFFORT") if os.getenv("GROQ_REASONING_EFFORT") in {"none", "default", "low", "medium", "high"} else None}
+                if enabled("GROQ_STRUCTURED_TRANSPORT_ENABLED") else {})},
         "cloudflare": {"configured": bool(os.getenv("CLOUDFLARE_API_TOKEN") and os.getenv("CLOUDFLARE_ACCOUNT_ID")), "model": os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"), "free_tier_confirmed": enabled("CLOUDFLARE_FREE_TIER_CONFIRMED"), "paid_fallback": False},
         "zai": {"configured": bool(os.getenv("ZAI_API_KEY")), "model": os.getenv("ZAI_MODEL", "glm-4.7-flash"), "free_tier_confirmed": enabled("ZAI_FREE_TIER_CONFIRMED"), "paid_fallback": False},
         "ollama": {"configured": os.getenv("LLM_PROVIDER") == "ollama", "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b"), "source": "LOCAL_MODEL", "paid_fallback": False},

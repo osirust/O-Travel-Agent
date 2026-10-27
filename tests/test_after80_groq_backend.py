@@ -30,7 +30,8 @@ def profile():
 def readiness():
     value = {name: {'configured': False} for name in ('gemini', 'cloudflare', 'openrouter', 'zai', 'ollama', 'hotelbeds', 'ratehawk', 'travelpayouts')}
     value.update({'_runtime': {'llm_provider': 'groq', 'model': manager.MODEL},
-        'groq': {'configured': True, 'model': manager.MODEL, 'free_tier_confirmed': True, 'paid_fallback': False},
+        'groq': {'configured': True, 'model': manager.MODEL, 'free_tier_confirmed': True, 'paid_fallback': False,
+            'structured_transport': True, 'reasoning_effort': 'none'},
         'liteapi': {'configured': True, 'mode': 'sandbox'}, 'duffel': {'configured': True, 'mode': 'sandbox'},
         'serpapi': {'configured': True, 'free_tier_confirmed': True, 'source_type': 'LIVE_INDICATIVE'},
         'open_meteo': {'configured': True, 'requires_key': False}})
@@ -38,7 +39,8 @@ def readiness():
 
 
 def test_fixed_groq_env_has_explicit1000_independent_pool_generic40_and_no_inherited_secrets(engine, monkeypatch):
-    for key in (*engine.KEYS, 'ZAI_FREE_TIER_CONFIRMED', 'CLOUDFLARE_FREE_TIER_CONFIRMED', 'MAX_GROQ_LLM_CALLS_PER_DAY'):
+    for key in (*engine.KEYS, 'ZAI_FREE_TIER_CONFIRMED', 'CLOUDFLARE_FREE_TIER_CONFIRMED', 'MAX_GROQ_LLM_CALLS_PER_DAY',
+            'GROQ_STRUCTURED_TRANSPORT_ENABLED', 'GROQ_REASONING_EFFORT'):
         monkeypatch.setenv(key, 'DO-NOT-INHERIT')
     env = manager.environment(engine, SimpleNamespace(password='synthetic:#@', ip='172.18.0.2'), {**profile(),
         'ZAI_API_KEY': 'FORBIDDEN', 'OPENROUTER_API_KEY': 'FORBIDDEN', 'GROQ_MODEL': 'paid-model',
@@ -48,6 +50,7 @@ def test_fixed_groq_env_has_explicit1000_independent_pool_generic40_and_no_inher
     assert env['MAX_GROQ_LLM_CALLS_PER_DAY'] == '1000' and env['MAX_LLM_CALLS_PER_DAY'] == '40'
     assert env['OPENROUTER_BACKUP_MODEL'] == '' and env['MAX_LLM_CALLS_PER_RUN'] == '1'
     assert env['MAX_LOCAL_LLM_CALLS_PER_DAY'] == '0' and env['LLM_MAX_OUTPUT_TOKENS'] == '2048'
+    assert env['GROQ_STRUCTURED_TRANSPORT_ENABLED'] == 'true' and env['GROQ_REASONING_EFFORT'] == 'none'
     assert env['REFERENCE_FX_ENABLED'] == 'true'
     assert env['DEFAULT_SEARCH_MODE'] == 'HYBRID' and env['DEFAULT_FLIGHT_PROVIDER'] == 'duffel'
     assert env['DATABASE_URL'].endswith('/otravel_zai_eval') and 'synthetic%3A%23%40' in env['DATABASE_URL']
@@ -106,13 +109,16 @@ def test_unowned_listener_refuses_start_stop_before_reading_keys_db_or_signaling
     forbidden.assert_not_called()
 
 
-@pytest.mark.parametrize('bad', [None, 'model', 'provider', 'free_flag', 'paid', 'other', 'local', 'live', 'missing_false'])
+@pytest.mark.parametrize('bad', [None, 'model', 'provider', 'free_flag', 'paid', 'other', 'local', 'live', 'missing_false',
+    'legacy_transport', 'reasoning'])
 def test_readiness_performs_only_status_gets_and_requires_exact_free_groq(engine, monkeypatch, bad):
     status = readiness()
     if bad == 'model': status['groq']['model'] = 'paid-model'
     elif bad == 'provider': status['_runtime']['llm_provider'] = 'openrouter'
     elif bad == 'free_flag': status['groq']['free_tier_confirmed'] = False
     elif bad == 'paid': status['groq']['paid_fallback'] = True
+    elif bad == 'legacy_transport': status['groq'].pop('structured_transport')
+    elif bad == 'reasoning': status['groq']['reasoning_effort'] = 'default'
     elif bad == 'other': status['zai']['configured'] = True
     elif bad == 'local': status['ollama']['configured'] = True
     elif bad == 'live': status['duffel']['mode'] = 'live'
@@ -178,7 +184,8 @@ def test_start_import_proves_explicit_separate_cap_and_no_startup_model_calls(en
     account = SimpleNamespace(pw_uid=1000, pw_gid=1000)
     facts = {'api_file': str(manager.SOURCE / 'otravel/api.py'), 'provider': 'groq', 'model': manager.MODEL,
         'daily_limit': 1000, 'generic_daily_limit': 40, 'run_limit': 1, 'local_limit': 0,
-        'search_mode': 'HYBRID', 'other_model_credentials_present': False}
+        'search_mode': 'HYBRID', 'groq_transport': 'true', 'groq_reasoning_effort': 'none',
+        'other_model_credentials_present': False}
     if bad == 'generic_limit': facts['generic_daily_limit'] = 1000
     initial = {'sessions': 10, 'agent_runs': 20, 'agent_events': 30, 'model_call_started': 15,
         'pending_or_running': 1 if bad == 'pending_run' else 0}

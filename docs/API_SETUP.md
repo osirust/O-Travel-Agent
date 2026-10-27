@@ -33,7 +33,7 @@ docker compose up -d app
 | Провайдер | Настройки |
 |---|---|
 | OpenRouter | `LLM_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL=dots-studio/dots-3-note-preview:free` или другой явно выбранный `:free` ID. |
-| Groq | `LLM_PROVIDER=groq`, `GROQ_API_KEY`, `GROQ_MODEL=qwen/qwen3.8-27b`, `GROQ_FREE_TIER_CONFIRMED=true`. |
+| Groq | `LLM_PROVIDER=groq`, `GROQ_API_KEY`, `GROQ_MODEL=qwen/qwen3.8-27b`, `GROQ_FREE_TIER_CONFIRMED=true`. Строгий транспорт включается отдельно, как описано ниже. |
 | Gemini | `LLM_PROVIDER=gemini`, `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.8-flash`, `GEMINI_FREE_TIER_CONFIRMED=true`. |
 | Cloudflare | `LLM_PROVIDER=cloudflare`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_MODEL`, `CLOUDFLARE_FREE_TIER_CONFIRMED=true`. |
 | Z.ai | `LLM_PROVIDER=zai`, `ZAI_API_KEY`, `ZAI_MODEL=glm-4.7-flash` или `glm-4.5-flash`, `ZAI_FREE_TIER_CONFIRMED=true`. |
@@ -46,12 +46,22 @@ Z.ai работает через Standard API с отдельным ключом
 
 [Ключи OpenRouter](https://openrouter.ai/settings/keys) · [Groq](https://console.groq.com/keys) · [Gemini](https://aistudio.google.com/api-keys) · [дополнительные аккаунты и условия доступа](LLM_ACCOUNTS.md)
 
+Для явного включения строгой структуры ответа Groq:
+
+```dotenv
+GROQ_REASONING_EFFORT=none
+GROQ_STRUCTURED_TRANSPORT_ENABLED=true
+```
+
+Флаг по умолчанию выключен. Он меняет только обмен backend с моделью: сервер задаёт допустимые ID, декодирует значения и повторно проверяет каноническую схему. HTTP-контракт frontend остаётся прежним. Для вопросов модель выбирает разделы, а фактические суммы, состав и даты выводит сервер. Это не разрешение на платный fallback и не увеличение квоты. Параметр `reasoning_effort=none` документирован для [instruct-режима Groq Qwen](https://console.groq.com/docs/model/qwen/qwen3.8-27b). Реальную языковую приёмку учитывать отдельно от проверки JSON.
+
 ## Лимиты и ошибки модели
 
 | Настройка | Реализованный предел приложения |
 |---|---|
-| `MAX_LLM_CALLS_PER_DAY` | Default 40; для Z.ai может быть явно увеличен до 2000. Остальные обычные удалённые пулы ограничены 40. |
+| `MAX_LLM_CALLS_PER_DAY` | Default 40; для Z.ai до 2000, для OpenRouter допускается явный профиль50. Это предел приложения, не остаток аккаунта. |
 | `MAX_CLOUDFLARE_LLM_CALLS_PER_DAY` | Отдельный Cloudflare-пул: default 40, максимум 2000; переменная передаётся и через Compose. |
+| `MAX_GROQ_LLM_CALLS_PER_DAY` | Отдельный Groq-пул: default40, максимум1000; vendor TPM/TPD всё равно ограничивают доступ. |
 | `MAX_LLM_CALLS_PER_RUN` | Default 2 для Gemini/OpenRouter; Groq/Cloudflare/Z.ai ограничены одной попыткой без автоматического fallback. Readonly-ответ — не более одного вызова. |
 
 Эти числа не увеличивают vendor-квоту. Cloudflare учитывает neurons, а не количество сообщений. Для подтверждённой 3036 известен суточный сброс 00:00 UTC; для неизвестного 429 инженерное ожидание не является обещанием vendor-reset. Z.ai billing/usage без подтверждённого reset не получает выдуманное время восстановления. Не повторяйте автоматически сообщения с новыми UUID после 429: сначала прочитайте результат run и его журнал.
@@ -60,7 +70,7 @@ Z.ai работает через Standard API с отдельным ключом
 
 ## Текущий стенд владельца
 
-На момент этой редакции `http://localhost:8084` — отдельный профиль OpenRouter Dots `:free` с HYBRID, LiteAPI Sandbox, Duffel test и SerpApi Free. Туристические ключи переданы его процессу. Это не старый DEMO-only стенд 85160ef и не переносимый default. `localhost` другого компьютера означает другой сервер; фронтендер запускает свой backend по инструкции выше.
+`http://localhost:8084` — отдельный стенд владельца; модельный профиль меняется между зафиксированными прогонами. Актуальные provider/model берутся из `/api/v1/providers/status` и PROJECT_STATE.md. HYBRID использует LiteAPI Sandbox, Duffel test и SerpApi Free. Это не переносимый default; на другом компьютере фронтендер запускает свой backend по инструкции выше.
 
 Для каждого прогона отдельно фиксируются версия, профиль и состояние квот. Текущий provider проверяется через `/api/v1/providers/status` и metadata run; исторический отчёт Z.ai/DEMO не описывает более позднее развёртывание. Менять параметры чужого активного прогона не следует.
 
@@ -81,4 +91,6 @@ Hotelbeds, RateHawk и Travelpayouts имеют ограниченные read-on
 
 Предложения различают `DEMO`, `SANDBOX`, `LIVE_INDICATIVE` и нормализованный source type; название API не подтверждает наличие мест. Preview обновляет доступные внешние компоненты, но sandbox rate-refresh и indicative search-refresh не равны supplier prebook. Сборы, распределение, вместимость и доступность читаются по фактическим флагам ответа. Подтверждение создаёт только локальный тестовый заказ; реальной оплаты и брони нет.
 
-Валютный переключатель, проверяемая FX-конвертация и отдельный photo API ещё не реализованы. Поле `Budget.currency` само по себе не создаёт сквозной RUB/USD/EUR-поиск. DEMO-каталог рублёвый; несовместимая валюта поставщика отклоняется без выдуманного курса. SSE отсутствует, результаты и события читаются JSON-polling.
+Backend сохраняет исходную валюту поставщика и использует отдельный справочный снимок CBR для поддерживаемого пересчёта RUB/USD/EUR. Курс имеет источник, дату и срок действия; банковские комиссии не угадываются. При отсутствии курса общий сопоставимый итог не подтверждается. Рублёвый DEMO и sandbox не становятся настоящей рыночной ценой.
+
+Отдельный авторизованный [photo API](HOTEL_MEDIA.md) возвращает изображения по ID выбранного отеля; media не меняют экономическое содержимое корзины. Выбор валюты и отображение фото во frontend интегрирует сокомандник. SSE отсутствует: результаты и события читаются JSON-polling.

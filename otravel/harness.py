@@ -815,7 +815,7 @@ class Harness:
                             extracted.unknowns = [location["clarification"]]
                     last_call = getattr(raw_extraction, "call_metadata", None) or getattr(gateway, "last_call", {})
                     actual = {"provider": str(last_call.get("provider", provider)), "model": str(last_call.get("model", requested_model)), "latency_ms": max(0, int((perf_counter() - started) * 1000))}
-                    for metric in ("usage", "request_metrics"):
+                    for metric in ("usage", "request_metrics", "structured_transport"):
                         if isinstance(last_call.get(metric), dict):
                             actual[metric] = last_call[metric]
                     await self.store.save_event(session["session_id"], run["run_id"], "MODEL_OPERATIONS_CHECKED", {

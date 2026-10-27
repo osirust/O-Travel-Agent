@@ -452,6 +452,7 @@ class LLMGateway(_HTTPGateway):
         self.wall_timeout = timeout
         self._request_metrics: ContextVar[dict | None] = ContextVar("otravel_request_metrics", default=None)
         self._response_usage: ContextVar[dict | None] = ContextVar("otravel_response_usage", default=None)
+        self._structured_transport: ContextVar[dict | None] = ContextVar("otravel_structured_transport", default=None)
 
     def request_metrics_for_current_call(self) -> dict | None:
         return self._request_metrics.get()
@@ -462,6 +463,8 @@ class LLMGateway(_HTTPGateway):
             metadata["request_metrics"] = metrics
         if usage := self._response_usage.get():
             metadata["usage"] = usage
+        if transport := self._structured_transport.get():
+            metadata["structured_transport"] = deepcopy(transport)
         return metadata
 
     async def _request(self, provider: str, method: str, url: str, **kwargs: Any) -> dict:
@@ -477,6 +480,7 @@ class LLMGateway(_HTTPGateway):
     async def extract_operations(self, context: dict) -> dict:
         self._request_metrics.set(None)
         self._response_usage.set(None)
+        self._structured_transport.set(None)
         self.last_call = {}
         provider = str(_setting(self.settings, "LLM_PROVIDER", "gemini")).lower()
         mode = context.get("__response_mode")
@@ -508,6 +512,7 @@ class LLMGateway(_HTTPGateway):
         system += "\nRequired output JSON Schema:\n" + json.dumps(output_schema, ensure_ascii=False, separators=(",", ":"))
         metrics = request_stats(system, prompt, output_schema)
         self._request_metrics.set(metrics)
+        groq_transport_role = None
         if provider == "gemini":
             model = str(_setting(self.settings, "GEMINI_MODEL", "gemini-3.8-flash"))
             if model != "gemini-3.8-flash":
@@ -568,13 +573,50 @@ class LLMGateway(_HTTPGateway):
             if not _truth(confirmed):
                 _fail("Человек должен подтвердить Groq Free Tier до вызова.", provider, "CONFIG_BLOCKED")
             key = self._key("GROQ_API_KEY", provider)
+            effort = _setting(self.settings, "GROQ_REASONING_EFFORT")
+            if effort not in (None, "") and (not isinstance(effort, str)
+                    or effort not in {"none", "default", "low", "medium", "high"}):
+                _fail("Нужен допустимый GROQ_REASONING_EFFORT.", provider, "CONFIG_BLOCKED")
+            flag = _setting(self.settings, "GROQ_STRUCTURED_TRANSPORT_ENABLED", False)
+            if type(flag) is bool:
+                structured = flag
+            elif isinstance(flag, str) and flag.lower() in {"", "true", "false", "1", "0", "yes", "no"}:
+                structured = _truth(flag)
+            else:
+                _fail("GROQ_STRUCTURED_TRANSPORT_ENABLED должен быть true/false.", provider, "CONFIG_BLOCKED")
+            wire_format = {"type": "json_object"}
+            if structured:
+                from .groq_transport import (GroqTransportError, build_transport_schema,
+                    build_readonly_transport_schema)
+                try:
+                    wire_schema = (build_readonly_transport_schema() if mode == "readonly_answer_v1"
+                        else build_transport_schema(output_schema))
+                except GroqTransportError:
+                    _fail("Для строгого транспорта нужна каноническая схема текущей поездки.", provider, "CONFIG_BLOCKED")
+                groq_transport_role = "readonly" if mode == "readonly_answer_v1" else "operations"
+                instruction = ("Return ONLY {\"sections\":[the selected section codes]}; the server renders saved facts."
+                    if groq_transport_role == "readonly" else
+                    "Use the strict transport envelope. Each operation contains type, target_id, value_json. "
+                    "value_json is a JSON STRING encoding exactly the operation value OBJECT described above. "
+                    "Preserve omitted fields and explicit null distinctly. Choose only the supplied target aliases; "
+                    "do not invent IDs, field values, guests, dates, prices or consent.")
+                system += "\nWire transport override (the schema above remains the decoded semantic contract):\n" + instruction
+                self._request_metrics.set(request_stats(system, prompt, output_schema))
+                encoded_schema = json.dumps(wire_schema, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+                self._structured_transport.set({"format": "groq_strict_" + groq_transport_role + "_v1",
+                    "wire_schema_sha256": hashlib.sha256(encoded_schema).hexdigest(),
+                    "wire_schema_utf8_bytes": len(encoded_schema),
+                    "validated_output_representation": "decoded_canonical_contract"})
+                wire_format = {"type": "json_schema", "json_schema": {
+                    "name": "otravel_" + groq_transport_role + "_v1", "strict": True, "schema": wire_schema}}
             # JSON mode is requested explicitly; the supplied per-trip schema
             # is still validated on the server below. No paid routing, hidden
             # fallback, reasoning or provider-specific sampling fields are sent.
             body = await self._request(provider, "POST", "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {key}"}, json={"model": model,
                     "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
-                    "response_format": {"type": "json_object"}, "max_tokens": min(2048, max_tokens)})
+                    "response_format": wire_format, "max_tokens": min(2048, max_tokens),
+                    **({"reasoning_effort": effort} if effort not in (None, "") else {})})
             try:
                 choice = body["choices"][0]
                 if choice.get("finish_reason") in {"length", "content_filter", "error"}:
@@ -664,10 +706,26 @@ class LLMGateway(_HTTPGateway):
             if not isinstance(message, dict) or not isinstance(message.get("content"), str):
                 _fail("Локальная модель не вернула JSON-текст.", provider, "INVALID_LLM_RESPONSE")
             content = message["content"]
-        try:
-            result = json.loads(content, parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
-        except (TypeError, ValueError):
-            _fail("Ответ LLM не является корректным JSON.", provider, "INVALID_LLM_RESPONSE")
+        if groq_transport_role is not None:
+            from .groq_transport import (GroqTransportError, decode_transport_response,
+                decode_readonly_transport_response)
+            try:
+                self._structured_transport.get()["wire_final_sha256"] = hashlib.sha256(content.encode("utf-8")).hexdigest()
+                result = (decode_readonly_transport_response(content) if groq_transport_role == "readonly"
+                    else decode_transport_response(content, output_schema))
+            except GroqTransportError as error:
+                canonical = error.details.get("validation_stage") == "canonical_schema"
+                raise ProviderError("INVALID_LLM_OPERATION" if canonical else "INVALID_LLM_RESPONSE",
+                    "Структурированный ответ Groq не прошёл проверку транспорта и операций.", provider=provider,
+                    details={"validation_stage": error.details.get("validation_stage"),
+                        **({"schema_errors": error.details["schema_errors"]} if error.details.get("schema_errors") else {})}) from None
+            except (UnicodeError, AttributeError, TypeError):
+                _fail("Структурированный ответ Groq не прошёл проверку транспорта и операций.", provider, "INVALID_LLM_RESPONSE")
+        else:
+            try:
+                result = json.loads(content, parse_constant=lambda _: (_ for _ in ()).throw(ValueError()))
+            except (TypeError, ValueError):
+                _fail("Ответ LLM не является корректным JSON.", provider, "INVALID_LLM_RESPONSE")
         if (not isinstance(result, dict) or set(_LLM_SCHEMA["required"]) - set(result)
                 or set(result) - set(_LLM_SCHEMA["properties"])
                 or not isinstance(result.get("operations"), list) or not isinstance(result.get("control"), dict)

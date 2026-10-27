@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-GROQ-STRUCTURED-CONTRACT-001",
+  "status": "CONTROLLED_STRICT_TRANSPORT_AND_PG_INTEGRATION_PASS_ACTUAL_DIALOGUE_PENDING",
+  "scope": "Opt-in provider wire encoding only; one canonical operation schema/state remains authoritative. Default SDK JSONobject path unchanged.",
+  "full": {
+    "tests": 4809,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 185.185,
+    "junit": ".local/evaluation/after80-20261027/full-groq-strict-transport-final.xml",
+    "junit_sha256": "d65c2cbd8bfaaa1184279e63755da91815cd4d1625934e24416c27fb5feb346d"
+  },
+  "related_overlapping": {
+    "helper_original_contract": 260,
+    "provider_controller_PG": 326,
+    "real_PG_new_cases": 2,
+    "counts_not_additive": true
+  },
+  "source_sha256": {
+    "otravel/groq_transport.py": "c3d5c4083fdc814ccecd5255e0bb74ba2532ba96985996c748636b136b851aa7",
+    "otravel/providers.py": "7a7b00cad7f52cd2f84f18411b727b64432d6a430ad7b4ec2f798d260c76fcb5",
+    "otravel/harness.py": "7d08ac3133fdcdf625a28d5fb201b060a596feaab03707c320408fa224a3c3f1",
+    "otravel/config.py": "52946b258993db2733a9b697695b4ab4437439a4cc2ceee8450efc06209813a5",
+    "scripts/after80_groq_backend.py": "196daea771871eb30090e28d03f5f132f9abb128e8cc644eeaccba3abd653efe",
+    "docker-compose.yml": "0fb61417179b3134e08b4aec19f7cd46e1b1f0fff6e08c69b3c80138726df57b",
+    ".env.example": "34d553263e197e1b1ba34ddad10e9e249ce5fc4516c1ea03d0bd90191ed5057a"
+  },
+  "checked_properties": [
+    "Per-operation finite target allowsets copied from the snapshot schema; no global nullable ID",
+    "value_json decodes only bounded duplicate-free finite JSON objects, preserving omission vs explicitnull",
+    "Canonical full-schema validation retained after decoding; roomID/stayID and group facts not guessed",
+    "Explicit readonly wire sections becomes fixed no-op contract; no free model-authored sums/consent",
+    "Local-only acyclic references, tree/byte/depth limits, unsafe regex rejected",
+    "No implicit fallback, no budget reset, independent provider ledger and one-attempt policy retained",
+    "New evaluation controller refuses old JSONobject/default-reasoning readiness",
+    "Metadata labels decoded canonical contract and records independent wire schema/final SHA"
+  ],
+  "independent_peer": {
+    "status": "NO_P1_OR_P2_CORRECTNESS_FINDINGS",
+    "legacy_wire_body_comparisons_with_git26c": 4,
+    "default_flags": [
+      false,
+      "false",
+      "0",
+      ""
+    ],
+    "byte_equivalent_JSON_bodies": true,
+    "source_files_changed_by_peer": 0,
+    "external_HTTP": 0,
+    "PostgreSQL": 0,
+    "actual_inference": 0
+  },
+  "Ruff": "Five new helper/provider/PG/readonly test files passed after import-only ordering fixes",
+  "new_real_LLM_HTTP": 0,
+  "local_inference": 0,
+  "payments": 0,
+  "supplier_booking_calls": 0,
+  "limitations": [
+    "Controlled JSON/worker tests do not prove vendor grammar support or natural-language completeness.",
+    "Older no-apply prototypes remain failed/unqualified in groq-json-schema-prototypes-20261027.json.",
+    "Normal fresh-session API dialogues required after pinned committed deployment; full80/106 acceptance remains open."
+  ]
+}
