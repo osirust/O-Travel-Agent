@@ -1,0 +1,2128 @@
+{
+  "date": "2026-10-27",
+  "status": "ACTUAL_PROPERTY_DETAILS_MARKET_RESPONSE_COMPARABILITY_UNPROVEN",
+  "finding_id": "HARNESS-001-COMPARABLE-SUPPLIERS",
+  "scope": "Two bounded direct SerpApi reads of synthetic Dubai travel; market references only. No Native configuration or production changes.",
+  "request": {
+    "engine": "google_hotels",
+    "q": "Hotels in Dubai",
+    "check_in_date": "2026-11-10",
+    "check_out_date": "2026-11-13",
+    "adults": 1,
+    "children": 0,
+    "currency": "RUB"
+  },
+  "http": [
+    {
+      "kind": "search",
+      "http_status": 200,
+      "elapsed_seconds": 3.468,
+      "retrieved_at": "2026-10-27T02:03:49.556826+00:00",
+      "raw_response_sha256": "9ab5d3b01170ab8baeba5843f85d7caee3f7b6600a0ef79eaa54913575725c52",
+      "upstream_as_of": "2026-10-27T02:03:46.286Z"
+    },
+    {
+      "kind": "details",
+      "http_status": 200,
+      "elapsed_seconds": 1.686,
+      "retrieved_at": "2026-10-27T02:03:51.249808+00:00",
+      "raw_response_sha256": "257b25f32b5441fa9c8101643d515dc6397a67900511f57885d77e9d1661d359",
+      "upstream_as_of": "2026-10-27T02:03:49.587Z"
+    }
+  ],
+  "supplier_comparison_status": "OPEN",
+  "verified_comparable_tariffs": false,
+  "source_type": "LIVE_INDICATIVE",
+  "ready_for_real_booking": false,
+  "primary_references": [
+    "https://serpapi.com/google-hotels-api",
+    "https://serpapi.com/google-hotels-property-details"
+  ],
+  "safety": {
+    "maximum_search_requests": 2,
+    "actual_http_calls": 2,
+    "automatic_retries": 0,
+    "model_calls": 0,
+    "supplier_booking_calls": 0,
+    "payment_calls": 0,
+    "native_changes": 0,
+    "production_changes": 0
+  },
+  "selected_property": {
+    "name": "FIVE Jumeirah Village Hotel",
+    "source_property_token_present": true,
+    "property_token_sha256": "b51487e8163ded2b0b04f691a038f8e2e981b290b230a65bd924324ef10dbd31",
+    "search_properties_count": 20
+  },
+  "details_property_identity": {
+    "name": "FIVE Jumeirah Village Hotel",
+    "same_property_token": true,
+    "same_name": true
+  },
+  "distinct_response_seller_names": [
+    "Agoda",
+    "Booking.com",
+    "Clicktrip.com",
+    "Expedia.ca",
+    "FIVE Jumeirah Village Hotel",
+    "HomeToGo",
+    "Hotels.com",
+    "Priceline",
+    "Qantas Hotels",
+    "Traveluro",
+    "Tripening Hotels",
+    "Vio.com"
+  ],
+  "distinct_response_seller_name_count": 12,
+  "seller_rows_count": 15,
+  "seller_rows": [
+    {
+      "section": "featured_prices",
+      "source_name": "Agoda",
+      "num_guests": 3,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Nov 2",
+      "free_cancellation_until_time": "11:59 PM",
+      "total_rate": {
+        "extracted_display_price": 27770,
+        "extracted_lowest": 32245,
+        "extracted_before_taxes_fees": 27770,
+        "extracted_after_taxes_fees": 32245
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9257,
+        "extracted_lowest": 10748,
+        "extracted_before_taxes_fees": 9257,
+        "extracted_after_taxes_fees": 10748
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 4,
+      "rooms_sample": [
+        {
+          "num_guests": 2,
+          "name": "Superior",
+          "total_rate": {
+            "extracted_display_price": 27770,
+            "extracted_lowest": 32246,
+            "extracted_before_taxes_fees": 27770,
+            "extracted_after_taxes_fees": 32246
+          },
+          "rate_per_night": {
+            "extracted_display_price": 9257,
+            "extracted_lowest": 10749,
+            "extracted_before_taxes_fees": 9257,
+            "extracted_after_taxes_fees": 10749
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 2"
+              ],
+              "total_rate": {
+                "extracted_display_price": 27770,
+                "extracted_lowest": 32246,
+                "extracted_before_taxes_fees": 27770,
+                "extracted_after_taxes_fees": 32246
+              },
+              "rate_per_night": {
+                "extracted_display_price": 9257,
+                "extracted_lowest": 10749,
+                "extracted_before_taxes_fees": 9257,
+                "extracted_after_taxes_fees": 10749
+              }
+            },
+            {
+              "num_guests": 1,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "1 guest",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 34558,
+                "extracted_lowest": 39806,
+                "extracted_before_taxes_fees": 34558,
+                "extracted_after_taxes_fees": 39806
+              },
+              "rate_per_night": {
+                "extracted_display_price": 11519,
+                "extracted_lowest": 13269,
+                "extracted_before_taxes_fees": 11519,
+                "extracted_after_taxes_fees": 13269
+              }
+            },
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 41347,
+                "extracted_lowest": 47366,
+                "extracted_before_taxes_fees": 41347,
+                "extracted_after_taxes_fees": 47366
+              },
+              "rate_per_night": {
+                "extracted_display_price": 13782,
+                "extracted_lowest": 15789,
+                "extracted_before_taxes_fees": 13782,
+                "extracted_after_taxes_fees": 15789
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 3,
+          "name": "Superior Double Queen",
+          "total_rate": {
+            "extracted_display_price": 27770,
+            "extracted_lowest": 32246,
+            "extracted_before_taxes_fees": 27770,
+            "extracted_after_taxes_fees": 32246
+          },
+          "rate_per_night": {
+            "extracted_display_price": 9257,
+            "extracted_lowest": 10749,
+            "extracted_before_taxes_fees": 9257,
+            "extracted_after_taxes_fees": 10749
+          },
+          "rates_sample": [
+            {
+              "num_guests": 3,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "3 guests",
+                "Free cancellation until Nov 2"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Double",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 27770,
+                "extracted_lowest": 32246,
+                "extracted_before_taxes_fees": 27770,
+                "extracted_after_taxes_fees": 32246
+              },
+              "rate_per_night": {
+                "extracted_display_price": 9257,
+                "extracted_lowest": 10749,
+                "extracted_before_taxes_fees": 9257,
+                "extracted_after_taxes_fees": 10749
+              }
+            },
+            {
+              "num_guests": 1,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "1 guest",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Double",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 37644,
+                "extracted_lowest": 43242,
+                "extracted_before_taxes_fees": 37644,
+                "extracted_after_taxes_fees": 43242
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12548,
+                "extracted_lowest": 14414,
+                "extracted_before_taxes_fees": 12548,
+                "extracted_after_taxes_fees": 14414
+              }
+            },
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "2 guests",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Double",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 44432,
+                "extracted_lowest": 50802,
+                "extracted_before_taxes_fees": 44432,
+                "extracted_after_taxes_fees": 50802
+              },
+              "rate_per_night": {
+                "extracted_display_price": 14811,
+                "extracted_lowest": 16934,
+                "extracted_before_taxes_fees": 14811,
+                "extracted_after_taxes_fees": 16934
+              }
+            },
+            {
+              "num_guests": 3,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "3 guests",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Double",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 51221,
+                "extracted_lowest": 58362,
+                "extracted_before_taxes_fees": 51221,
+                "extracted_after_taxes_fees": 58362
+              },
+              "rate_per_night": {
+                "extracted_display_price": 17074,
+                "extracted_lowest": 19454,
+                "extracted_before_taxes_fees": 17074,
+                "extracted_after_taxes_fees": 19454
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior Sky",
+          "total_rate": {
+            "extracted_display_price": 30856,
+            "extracted_lowest": 35683,
+            "extracted_before_taxes_fees": 30856,
+            "extracted_after_taxes_fees": 35683
+          },
+          "rate_per_night": {
+            "extracted_display_price": 10285,
+            "extracted_lowest": 11894,
+            "extracted_before_taxes_fees": 10285,
+            "extracted_after_taxes_fees": 11894
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 2"
+              ],
+              "total_rate": {
+                "extracted_display_price": 30856,
+                "extracted_lowest": 35683,
+                "extracted_before_taxes_fees": 30856,
+                "extracted_after_taxes_fees": 35683
+              },
+              "rate_per_night": {
+                "extracted_display_price": 10285,
+                "extracted_lowest": 11894,
+                "extracted_before_taxes_fees": 10285,
+                "extracted_after_taxes_fees": 11894
+              }
+            },
+            {
+              "num_guests": 1,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "1 guest",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 37644,
+                "extracted_lowest": 43242,
+                "extracted_before_taxes_fees": 37644,
+                "extracted_after_taxes_fees": 43242
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12548,
+                "extracted_lowest": 14414,
+                "extracted_before_taxes_fees": 12548,
+                "extracted_after_taxes_fees": 14414
+              }
+            },
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 2",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 44432,
+                "extracted_lowest": 50802,
+                "extracted_before_taxes_fees": 44432,
+                "extracted_after_taxes_fees": 50802
+              },
+              "rate_per_night": {
+                "extracted_display_price": 14811,
+                "extracted_lowest": 16934,
+                "extracted_before_taxes_fees": 14811,
+                "extracted_after_taxes_fees": 16934
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 3,
+          "name": "Junior Suite with Hot Tub",
+          "total_rate": {
+            "extracted_display_price": 36102,
+            "extracted_lowest": 41524,
+            "extracted_before_taxes_fees": 36102,
+            "extracted_after_taxes_fees": 41524
+          },
+          "rate_per_night": {
+            "extracted_display_price": 12034,
+            "extracted_lowest": 13841,
+            "extracted_before_taxes_fees": 12034,
+            "extracted_after_taxes_fees": 13841
+          },
+          "rates_sample": [
+            {
+              "num_guests": 3,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "3 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 36102,
+                "extracted_lowest": 41524,
+                "extracted_before_taxes_fees": 36102,
+                "extracted_after_taxes_fees": 41524
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12034,
+                "extracted_lowest": 13841,
+                "extracted_before_taxes_fees": 12034,
+                "extracted_after_taxes_fees": 13841
+              }
+            },
+            {
+              "num_guests": 1,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "1 guest",
+                "Free cancellation until Nov 2",
+                "breakfast",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 42889,
+                "extracted_lowest": 49084,
+                "extracted_before_taxes_fees": 42889,
+                "extracted_after_taxes_fees": 49084
+              },
+              "rate_per_night": {
+                "extracted_display_price": 14296,
+                "extracted_lowest": 16361,
+                "extracted_before_taxes_fees": 14296,
+                "extracted_after_taxes_fees": 16361
+              }
+            },
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "2 guests",
+                "Free cancellation until Nov 2",
+                "breakfast",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 49679,
+                "extracted_lowest": 56644,
+                "extracted_before_taxes_fees": 49679,
+                "extracted_after_taxes_fees": 56644
+              },
+              "rate_per_night": {
+                "extracted_display_price": 16560,
+                "extracted_lowest": 18881,
+                "extracted_before_taxes_fees": 16560,
+                "extracted_after_taxes_fees": 18881
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "featured_prices",
+      "source_name": "Expedia.ca",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Jun 15",
+      "free_cancellation_until_time": "4:00 AM",
+      "total_rate": {
+        "extracted_display_price": 35740,
+        "extracted_lowest": 41394,
+        "extracted_before_taxes_fees": 35740,
+        "extracted_after_taxes_fees": 41394
+      },
+      "rate_per_night": {
+        "extracted_display_price": 11913,
+        "extracted_lowest": 13798,
+        "extracted_before_taxes_fees": 11913,
+        "extracted_after_taxes_fees": 13798
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 8,
+      "rooms_sample": [
+        {
+          "num_guests": 2,
+          "name": "Junior Suite with Hot Tub",
+          "total_rate": {
+            "extracted_display_price": 35740,
+            "extracted_lowest": 41395,
+            "extracted_before_taxes_fees": 35740,
+            "extracted_after_taxes_fees": 41395
+          },
+          "rate_per_night": {
+            "extracted_display_price": 11913,
+            "extracted_lowest": 13798,
+            "extracted_before_taxes_fees": 11913,
+            "extracted_after_taxes_fees": 13798
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 35740,
+                "extracted_lowest": 41395,
+                "extracted_before_taxes_fees": 35740,
+                "extracted_after_taxes_fees": 41395
+              },
+              "rate_per_night": {
+                "extracted_display_price": 11913,
+                "extracted_lowest": 13798,
+                "extracted_before_taxes_fees": 11913,
+                "extracted_after_taxes_fees": 13798
+              }
+            },
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 49181,
+                "extracted_lowest": 56466,
+                "extracted_before_taxes_fees": 49181,
+                "extracted_after_taxes_fees": 56466
+              },
+              "rate_per_night": {
+                "extracted_display_price": 16394,
+                "extracted_lowest": 18822,
+                "extracted_before_taxes_fees": 16394,
+                "extracted_after_taxes_fees": 18822
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior",
+          "total_rate": {
+            "extracted_display_price": 40933,
+            "extracted_lowest": 47218,
+            "extracted_before_taxes_fees": 40933,
+            "extracted_after_taxes_fees": 47218
+          },
+          "rate_per_night": {
+            "extracted_display_price": 13644,
+            "extracted_lowest": 15739,
+            "extracted_before_taxes_fees": 13644,
+            "extracted_after_taxes_fees": 15739
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 40933,
+                "extracted_lowest": 47218,
+                "extracted_before_taxes_fees": 40933,
+                "extracted_after_taxes_fees": 47218
+              },
+              "rate_per_night": {
+                "extracted_display_price": 13644,
+                "extracted_lowest": 15739,
+                "extracted_before_taxes_fees": 13644,
+                "extracted_after_taxes_fees": 15739
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior Room with 2 Queen Beds",
+          "total_rate": {
+            "extracted_display_price": 40933,
+            "extracted_lowest": 47218,
+            "extracted_before_taxes_fees": 40933,
+            "extracted_after_taxes_fees": 47218
+          },
+          "rate_per_night": {
+            "extracted_display_price": 13644,
+            "extracted_lowest": 15739,
+            "extracted_before_taxes_fees": 13644,
+            "extracted_after_taxes_fees": 15739
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 40933,
+                "extracted_lowest": 47218,
+                "extracted_before_taxes_fees": 40933,
+                "extracted_after_taxes_fees": 47218
+              },
+              "rate_per_night": {
+                "extracted_display_price": 13644,
+                "extracted_lowest": 15739,
+                "extracted_before_taxes_fees": 13644,
+                "extracted_after_taxes_fees": 15739
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior Sky",
+          "total_rate": {
+            "extracted_display_price": 43986,
+            "extracted_lowest": 50642,
+            "extracted_before_taxes_fees": 43986,
+            "extracted_after_taxes_fees": 50642
+          },
+          "rate_per_night": {
+            "extracted_display_price": 14662,
+            "extracted_lowest": 16881,
+            "extracted_before_taxes_fees": 14662,
+            "extracted_after_taxes_fees": 16881
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 43986,
+                "extracted_lowest": 50642,
+                "extracted_before_taxes_fees": 43986,
+                "extracted_after_taxes_fees": 50642
+              },
+              "rate_per_night": {
+                "extracted_display_price": 14662,
+                "extracted_lowest": 16881,
+                "extracted_before_taxes_fees": 14662,
+                "extracted_after_taxes_fees": 16881
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "featured_prices",
+      "source_name": "Booking.com",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Nov 2",
+      "free_cancellation_until_time": "11:59 PM",
+      "total_rate": {
+        "extracted_display_price": 27770,
+        "extracted_lowest": 32246,
+        "extracted_before_taxes_fees": 27770,
+        "extracted_after_taxes_fees": 32246
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9257,
+        "extracted_lowest": 10749,
+        "extracted_before_taxes_fees": 9257,
+        "extracted_after_taxes_fees": 10749
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 3,
+      "rooms_sample": [
+        {
+          "num_guests": 2,
+          "name": "Superior Room with 2 Queen Beds",
+          "total_rate": {
+            "extracted_display_price": 27770,
+            "extracted_lowest": 32246,
+            "extracted_before_taxes_fees": 27770,
+            "extracted_after_taxes_fees": 32246
+          },
+          "rate_per_night": {
+            "extracted_display_price": 9257,
+            "extracted_lowest": 10749,
+            "extracted_before_taxes_fees": 9257,
+            "extracted_after_taxes_fees": 10749
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "2 guests",
+                "Free cancellation until Nov 2",
+                "Balcony"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Single",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 27770,
+                "extracted_lowest": 32246,
+                "extracted_before_taxes_fees": 27770,
+                "extracted_after_taxes_fees": 32246
+              },
+              "rate_per_night": {
+                "extracted_display_price": 9257,
+                "extracted_lowest": 10749,
+                "extracted_before_taxes_fees": 9257,
+                "extracted_after_taxes_fees": 10749
+              }
+            },
+            {
+              "num_guests": 1,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "1 guest",
+                "Free cancellation until Nov 2",
+                "breakfast",
+                "Balcony"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Single",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 36719,
+                "extracted_lowest": 42211,
+                "extracted_before_taxes_fees": 36719,
+                "extracted_after_taxes_fees": 42211
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12240,
+                "extracted_lowest": 14070,
+                "extracted_before_taxes_fees": 12240,
+                "extracted_after_taxes_fees": 14070
+              }
+            },
+            {
+              "num_guests": 3,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "3 guests",
+                "Free cancellation until Nov 2",
+                "Balcony"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Single",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 37027,
+                "extracted_lowest": 42555,
+                "extracted_before_taxes_fees": 37027,
+                "extracted_after_taxes_fees": 42555
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12342,
+                "extracted_lowest": 14185,
+                "extracted_before_taxes_fees": 12342,
+                "extracted_after_taxes_fees": 14185
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 4,
+          "name": "2 Bedroom Sky Villa with Pool",
+          "total_rate": {
+            "extracted_display_price": 77140,
+            "extracted_lowest": 88546,
+            "extracted_before_taxes_fees": 77140,
+            "extracted_after_taxes_fees": 88546
+          },
+          "rate_per_night": {
+            "extracted_display_price": 25713,
+            "extracted_lowest": 29515,
+            "extracted_before_taxes_fees": 25713,
+            "extracted_after_taxes_fees": 29515
+          },
+          "rates_sample": [
+            {
+              "num_guests": 4,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "4 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 77140,
+                "extracted_lowest": 88546,
+                "extracted_before_taxes_fees": 77140,
+                "extracted_after_taxes_fees": 88546
+              },
+              "rate_per_night": {
+                "extracted_display_price": 25713,
+                "extracted_lowest": 29515,
+                "extracted_before_taxes_fees": 25713,
+                "extracted_after_taxes_fees": 29515
+              }
+            },
+            {
+              "num_guests": 5,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "5 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 86397,
+                "extracted_lowest": 98855,
+                "extracted_before_taxes_fees": 86397,
+                "extracted_after_taxes_fees": 98855
+              },
+              "rate_per_night": {
+                "extracted_display_price": 28799,
+                "extracted_lowest": 32952,
+                "extracted_before_taxes_fees": 28799,
+                "extracted_after_taxes_fees": 32952
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 8,
+          "name": "4 Bedroom Sky Villa with Pool",
+          "total_rate": {
+            "extracted_display_price": 148109,
+            "extracted_lowest": 170220,
+            "extracted_before_taxes_fees": 148109,
+            "extracted_after_taxes_fees": 170220
+          },
+          "rate_per_night": {
+            "extracted_display_price": 49370,
+            "extracted_lowest": 56740,
+            "extracted_before_taxes_fees": 49370,
+            "extracted_after_taxes_fees": 56740
+          },
+          "rates_sample": [
+            {
+              "num_guests": 8,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "8 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 148109,
+                "extracted_lowest": 170220,
+                "extracted_before_taxes_fees": 148109,
+                "extracted_after_taxes_fees": 170220
+              },
+              "rate_per_night": {
+                "extracted_display_price": 49370,
+                "extracted_lowest": 56740,
+                "extracted_before_taxes_fees": 49370,
+                "extracted_after_taxes_fees": 56740
+              }
+            },
+            {
+              "num_guests": 9,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "9 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 157366,
+                "extracted_lowest": 180529,
+                "extracted_before_taxes_fees": 157366,
+                "extracted_after_taxes_fees": 180529
+              },
+              "rate_per_night": {
+                "extracted_display_price": 52455,
+                "extracted_lowest": 60176,
+                "extracted_before_taxes_fees": 52455,
+                "extracted_after_taxes_fees": 60176
+              }
+            },
+            {
+              "num_guests": 10,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "10 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 166623,
+                "extracted_lowest": 190837,
+                "extracted_before_taxes_fees": 166623,
+                "extracted_after_taxes_fees": 190837
+              },
+              "rate_per_night": {
+                "extracted_display_price": 55541,
+                "extracted_lowest": 63612,
+                "extracted_before_taxes_fees": 55541,
+                "extracted_after_taxes_fees": 63612
+              }
+            },
+            {
+              "num_guests": 6,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "6 guests",
+                "Free cancellation until Nov 2",
+                "breakfast",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 180200,
+                "extracted_lowest": 205957,
+                "extracted_before_taxes_fees": 180200,
+                "extracted_after_taxes_fees": 205957
+              },
+              "rate_per_night": {
+                "extracted_display_price": 60067,
+                "extracted_lowest": 68652,
+                "extracted_before_taxes_fees": 60067,
+                "extracted_after_taxes_fees": 68652
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "featured_prices",
+      "source_name": "Hotels.com",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Jun 15",
+      "free_cancellation_until_time": "4:00 AM",
+      "total_rate": {
+        "extracted_display_price": 35141,
+        "extracted_lowest": 40798,
+        "extracted_before_taxes_fees": 35141,
+        "extracted_after_taxes_fees": 40798
+      },
+      "rate_per_night": {
+        "extracted_display_price": 11714,
+        "extracted_lowest": 13599,
+        "extracted_before_taxes_fees": 11714,
+        "extracted_after_taxes_fees": 13599
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 8,
+      "rooms_sample": [
+        {
+          "num_guests": 2,
+          "name": "Junior Suite with Hot Tub",
+          "total_rate": {
+            "extracted_display_price": 35142,
+            "extracted_lowest": 40800,
+            "extracted_before_taxes_fees": 35142,
+            "extracted_after_taxes_fees": 40800
+          },
+          "rate_per_night": {
+            "extracted_display_price": 11714,
+            "extracted_lowest": 13600,
+            "extracted_before_taxes_fees": 11714,
+            "extracted_after_taxes_fees": 13600
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 35142,
+                "extracted_lowest": 40800,
+                "extracted_before_taxes_fees": 35142,
+                "extracted_after_taxes_fees": 40800
+              },
+              "rate_per_night": {
+                "extracted_display_price": 11714,
+                "extracted_lowest": 13600,
+                "extracted_before_taxes_fees": 11714,
+                "extracted_after_taxes_fees": 13600
+              }
+            },
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 48358,
+                "extracted_lowest": 55649,
+                "extracted_before_taxes_fees": 48358,
+                "extracted_after_taxes_fees": 55649
+              },
+              "rate_per_night": {
+                "extracted_display_price": 16119,
+                "extracted_lowest": 18550,
+                "extracted_before_taxes_fees": 16119,
+                "extracted_after_taxes_fees": 18550
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior",
+          "total_rate": {
+            "extracted_display_price": 40249,
+            "extracted_lowest": 46538,
+            "extracted_before_taxes_fees": 40249,
+            "extracted_after_taxes_fees": 46538
+          },
+          "rate_per_night": {
+            "extracted_display_price": 13416,
+            "extracted_lowest": 15513,
+            "extracted_before_taxes_fees": 13416,
+            "extracted_after_taxes_fees": 15513
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 40249,
+                "extracted_lowest": 46538,
+                "extracted_before_taxes_fees": 40249,
+                "extracted_after_taxes_fees": 46538
+              },
+              "rate_per_night": {
+                "extracted_display_price": 13416,
+                "extracted_lowest": 15513,
+                "extracted_before_taxes_fees": 13416,
+                "extracted_after_taxes_fees": 15513
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior Room with 2 Queen Beds",
+          "total_rate": {
+            "extracted_display_price": 40249,
+            "extracted_lowest": 46538,
+            "extracted_before_taxes_fees": 40249,
+            "extracted_after_taxes_fees": 46538
+          },
+          "rate_per_night": {
+            "extracted_display_price": 13416,
+            "extracted_lowest": 15513,
+            "extracted_before_taxes_fees": 13416,
+            "extracted_after_taxes_fees": 15513
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 40249,
+                "extracted_lowest": 46538,
+                "extracted_before_taxes_fees": 40249,
+                "extracted_after_taxes_fees": 46538
+              },
+              "rate_per_night": {
+                "extracted_display_price": 13416,
+                "extracted_lowest": 15513,
+                "extracted_before_taxes_fees": 13416,
+                "extracted_after_taxes_fees": 15513
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 2,
+          "name": "Superior Sky",
+          "total_rate": {
+            "extracted_display_price": 43251,
+            "extracted_lowest": 49914,
+            "extracted_before_taxes_fees": 43251,
+            "extracted_after_taxes_fees": 49914
+          },
+          "rate_per_night": {
+            "extracted_display_price": 14417,
+            "extracted_lowest": 16638,
+            "extracted_before_taxes_fees": 14417,
+            "extracted_after_taxes_fees": 16638
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 3",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 guests",
+                "Free cancellation until Nov 3",
+                "breakfast"
+              ],
+              "total_rate": {
+                "extracted_display_price": 43251,
+                "extracted_lowest": 49914,
+                "extracted_before_taxes_fees": 43251,
+                "extracted_after_taxes_fees": 49914
+              },
+              "rate_per_night": {
+                "extracted_display_price": 14417,
+                "extracted_lowest": 16638,
+                "extracted_before_taxes_fees": 14417,
+                "extracted_after_taxes_fees": 16638
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "featured_prices",
+      "source_name": "Priceline",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Nov 2",
+      "free_cancellation_until_time": "11:58 PM",
+      "total_rate": {
+        "extracted_display_price": 27770,
+        "extracted_lowest": 32245,
+        "extracted_before_taxes_fees": 27770,
+        "extracted_after_taxes_fees": 32245
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9257,
+        "extracted_lowest": 10748,
+        "extracted_before_taxes_fees": 9257,
+        "extracted_after_taxes_fees": 10748
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 4,
+      "rooms_sample": [
+        {
+          "num_guests": 2,
+          "name": "Superior",
+          "total_rate": {
+            "extracted_display_price": 27771,
+            "extracted_lowest": 32246,
+            "extracted_before_taxes_fees": 27771,
+            "extracted_after_taxes_fees": 32246
+          },
+          "rate_per_night": {
+            "extracted_display_price": 9257,
+            "extracted_lowest": 10749,
+            "extracted_before_taxes_fees": 9257,
+            "extracted_after_taxes_fees": 10749
+          },
+          "rates_sample": [
+            {
+              "num_guests": 2,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "1 double bed",
+                "2 guests",
+                "Free cancellation until Nov 2",
+                "Balcony"
+              ],
+              "beds": [
+                {
+                  "type": "Double",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 27771,
+                "extracted_lowest": 32246,
+                "extracted_before_taxes_fees": 27771,
+                "extracted_after_taxes_fees": 32246
+              },
+              "rate_per_night": {
+                "extracted_display_price": 9257,
+                "extracted_lowest": 10749,
+                "extracted_before_taxes_fees": 9257,
+                "extracted_after_taxes_fees": 10749
+              }
+            },
+            {
+              "num_guests": 1,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "1 double bed",
+                "1 guest",
+                "Free cancellation until Nov 2",
+                "breakfast",
+                "Balcony"
+              ],
+              "beds": [
+                {
+                  "type": "Double",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 36718,
+                "extracted_lowest": 42212,
+                "extracted_before_taxes_fees": 36718,
+                "extracted_after_taxes_fees": 42212
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12239,
+                "extracted_lowest": 14071,
+                "extracted_before_taxes_fees": 12239,
+                "extracted_after_taxes_fees": 14071
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 3,
+          "name": "Superior Room with 2 Queen Beds",
+          "total_rate": {
+            "extracted_display_price": 37028,
+            "extracted_lowest": 42555,
+            "extracted_before_taxes_fees": 37028,
+            "extracted_after_taxes_fees": 42555
+          },
+          "rate_per_night": {
+            "extracted_display_price": 12343,
+            "extracted_lowest": 14185,
+            "extracted_before_taxes_fees": 12343,
+            "extracted_after_taxes_fees": 14185
+          },
+          "rates_sample": [
+            {
+              "num_guests": 3,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "2 queen beds",
+                "3 guests",
+                "Free cancellation until Nov 2",
+                "Balcony"
+              ],
+              "beds": [
+                {
+                  "type": "Queen",
+                  "count": 2
+                },
+                {
+                  "type": "Single",
+                  "count": 1
+                }
+              ],
+              "total_rate": {
+                "extracted_display_price": 37028,
+                "extracted_lowest": 42555,
+                "extracted_before_taxes_fees": 37028,
+                "extracted_after_taxes_fees": 42555
+              },
+              "rate_per_night": {
+                "extracted_display_price": 12343,
+                "extracted_lowest": 14185,
+                "extracted_before_taxes_fees": 12343,
+                "extracted_after_taxes_fees": 14185
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 4,
+          "name": "2 Bedroom Sky Villa with Pool",
+          "total_rate": {
+            "extracted_display_price": 77140,
+            "extracted_lowest": 88547,
+            "extracted_before_taxes_fees": 77140,
+            "extracted_after_taxes_fees": 88547
+          },
+          "rate_per_night": {
+            "extracted_display_price": 25713,
+            "extracted_lowest": 29516,
+            "extracted_before_taxes_fees": 25713,
+            "extracted_after_taxes_fees": 29516
+          },
+          "rates_sample": [
+            {
+              "num_guests": 4,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "4 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 77140,
+                "extracted_lowest": 88547,
+                "extracted_before_taxes_fees": 77140,
+                "extracted_after_taxes_fees": 88547
+              },
+              "rate_per_night": {
+                "extracted_display_price": 25713,
+                "extracted_lowest": 29516,
+                "extracted_before_taxes_fees": 25713,
+                "extracted_after_taxes_fees": 29516
+              }
+            },
+            {
+              "num_guests": 5,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "5 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 86397,
+                "extracted_lowest": 98855,
+                "extracted_before_taxes_fees": 86397,
+                "extracted_after_taxes_fees": 98855
+              },
+              "rate_per_night": {
+                "extracted_display_price": 28799,
+                "extracted_lowest": 32952,
+                "extracted_before_taxes_fees": 28799,
+                "extracted_after_taxes_fees": 32952
+              }
+            }
+          ]
+        },
+        {
+          "num_guests": 8,
+          "name": "4 Bedroom Sky Villa with Pool",
+          "total_rate": {
+            "extracted_display_price": 148110,
+            "extracted_lowest": 170220,
+            "extracted_before_taxes_fees": 148110,
+            "extracted_after_taxes_fees": 170220
+          },
+          "rate_per_night": {
+            "extracted_display_price": 49370,
+            "extracted_lowest": 56740,
+            "extracted_before_taxes_fees": 49370,
+            "extracted_after_taxes_fees": 56740
+          },
+          "rates_sample": [
+            {
+              "num_guests": 8,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "8 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 148110,
+                "extracted_lowest": 170220,
+                "extracted_before_taxes_fees": 148110,
+                "extracted_after_taxes_fees": 170220
+              },
+              "rate_per_night": {
+                "extracted_display_price": 49370,
+                "extracted_lowest": 56740,
+                "extracted_before_taxes_fees": 49370,
+                "extracted_after_taxes_fees": 56740
+              }
+            },
+            {
+              "num_guests": 9,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "9 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 157366,
+                "extracted_lowest": 180528,
+                "extracted_before_taxes_fees": 157366,
+                "extracted_after_taxes_fees": 180528
+              },
+              "rate_per_night": {
+                "extracted_display_price": 52455,
+                "extracted_lowest": 60176,
+                "extracted_before_taxes_fees": 52455,
+                "extracted_after_taxes_fees": 60176
+              }
+            },
+            {
+              "num_guests": 10,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "10 guests",
+                "Free cancellation until Nov 2",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 166623,
+                "extracted_lowest": 190836,
+                "extracted_before_taxes_fees": 166623,
+                "extracted_after_taxes_fees": 190836
+              },
+              "rate_per_night": {
+                "extracted_display_price": 55541,
+                "extracted_lowest": 63612,
+                "extracted_before_taxes_fees": 55541,
+                "extracted_after_taxes_fees": 63612
+              }
+            },
+            {
+              "num_guests": 6,
+              "free_cancellation": true,
+              "free_cancellation_until_date": "Nov 2",
+              "free_cancellation_until_time": "11:59 PM",
+              "inclusions": [
+                "Suite",
+                "6 guests",
+                "Free cancellation until Nov 2",
+                "breakfast",
+                "Suite"
+              ],
+              "total_rate": {
+                "extracted_display_price": 180199,
+                "extracted_lowest": 205957,
+                "extracted_before_taxes_fees": 180199,
+                "extracted_after_taxes_fees": 205957
+              },
+              "rate_per_night": {
+                "extracted_display_price": 60066,
+                "extracted_lowest": 68652,
+                "extracted_before_taxes_fees": 60066,
+                "extracted_after_taxes_fees": 68652
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "featured_prices",
+      "source_name": "HomeToGo",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Jun 15",
+      "free_cancellation_until_time": "4:00 AM",
+      "total_rate": {
+        "extracted_display_price": 28706,
+        "extracted_lowest": 32240,
+        "extracted_before_taxes_fees": 28706,
+        "extracted_after_taxes_fees": 32240
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9569,
+        "extracted_lowest": 10747,
+        "extracted_before_taxes_fees": 9569,
+        "extracted_after_taxes_fees": 10747
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "FIVE Jumeirah Village Hotel",
+      "num_guests": 2,
+      "total_rate": {
+        "extracted_display_price": 27904,
+        "extracted_lowest": 29152,
+        "extracted_before_taxes_fees": 27904,
+        "extracted_after_taxes_fees": 29152
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9301,
+        "extracted_lowest": 9717,
+        "extracted_before_taxes_fees": 9301,
+        "extracted_after_taxes_fees": 9717
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Booking.com",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Nov 2",
+      "free_cancellation_until_time": "11:59 PM",
+      "total_rate": {
+        "extracted_display_price": 27770,
+        "extracted_lowest": 32246,
+        "extracted_before_taxes_fees": 27770,
+        "extracted_after_taxes_fees": 32246
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9257,
+        "extracted_lowest": 10749,
+        "extracted_before_taxes_fees": 9257,
+        "extracted_after_taxes_fees": 10749
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Priceline",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Nov 2",
+      "free_cancellation_until_time": "11:58 PM",
+      "total_rate": {
+        "extracted_display_price": 27770,
+        "extracted_lowest": 32245,
+        "extracted_before_taxes_fees": 27770,
+        "extracted_after_taxes_fees": 32245
+      },
+      "rate_per_night": {
+        "extracted_display_price": 9257,
+        "extracted_lowest": 10748,
+        "extracted_before_taxes_fees": 9257,
+        "extracted_after_taxes_fees": 10748
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Expedia.ca",
+      "num_guests": 2,
+      "free_cancellation": true,
+      "free_cancellation_until_date": "Jun 15",
+      "free_cancellation_until_time": "4:00 AM",
+      "total_rate": {
+        "extracted_display_price": 35740,
+        "extracted_lowest": 41394,
+        "extracted_before_taxes_fees": 35740,
+        "extracted_after_taxes_fees": 41394
+      },
+      "rate_per_night": {
+        "extracted_display_price": 11913,
+        "extracted_lowest": 13798,
+        "extracted_before_taxes_fees": 11913,
+        "extracted_after_taxes_fees": 13798
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Vio.com",
+      "num_guests": 2,
+      "total_rate": {
+        "extracted_display_price": 37962,
+        "extracted_lowest": 43295,
+        "extracted_before_taxes_fees": 37962,
+        "extracted_after_taxes_fees": 43295
+      },
+      "rate_per_night": {
+        "extracted_display_price": 12654,
+        "extracted_lowest": 14432,
+        "extracted_before_taxes_fees": 12654,
+        "extracted_after_taxes_fees": 14432
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Qantas Hotels",
+      "num_guests": 2,
+      "total_rate": {
+        "extracted_display_price": 43765,
+        "extracted_lowest": 43765
+      },
+      "rate_per_night": {
+        "extracted_display_price": 14588,
+        "extracted_lowest": 14588
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Tripening Hotels",
+      "num_guests": 2,
+      "total_rate": {
+        "extracted_display_price": 42618,
+        "extracted_lowest": 42618
+      },
+      "rate_per_night": {
+        "extracted_display_price": 14206,
+        "extracted_lowest": 14206
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Traveluro",
+      "num_guests": 2,
+      "total_rate": {
+        "extracted_display_price": 35672,
+        "extracted_lowest": 39241,
+        "extracted_before_taxes_fees": 35672,
+        "extracted_after_taxes_fees": 39241
+      },
+      "rate_per_night": {
+        "extracted_display_price": 11891,
+        "extracted_lowest": 13080,
+        "extracted_before_taxes_fees": 11891,
+        "extracted_after_taxes_fees": 13080
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    },
+    {
+      "section": "prices",
+      "source_name": "Clicktrip.com",
+      "num_guests": 2,
+      "total_rate": {
+        "extracted_display_price": 35751,
+        "extracted_lowest": 37472,
+        "extracted_before_taxes_fees": 35751,
+        "extracted_after_taxes_fees": 37472
+      },
+      "rate_per_night": {
+        "extracted_display_price": 11917,
+        "extracted_lowest": 12491,
+        "extracted_before_taxes_fees": 11917,
+        "extracted_after_taxes_fees": 12491
+      },
+      "link_host_only": "www.google.com",
+      "room_count_in_response": 0,
+      "rooms_sample": []
+    }
+  ],
+  "limitation": "Different seller names are response facts, not proof of independent suppliers, identical room/board/cancellation/eligibility, bookable inventory or a globally lowest price.",
+  "missing_comparability_facts": [
+    "Cross-seller room/bed and rate-product equivalence",
+    "Explicit board/inclusions and identical cancellation terms",
+    "Comparable full stay totals including mandatory fees for the same guest count",
+    "Conditional/member/mobile price eligibility",
+    "Supplier inventory and final repricing"
+  ],
+  "response_query_echo": {
+    "engine": "google_hotels",
+    "check_in_date": "2026-11-10",
+    "check_out_date": "2026-11-13",
+    "adults": 1,
+    "children": 0,
+    "currency": "RUB"
+  },
+  "single_guest_room_rate_evidence": [
+    {
+      "supplier_name": "Agoda",
+      "room_name": "Superior",
+      "num_guests": 1,
+      "amount_minor": 3980600,
+      "currency": "RUB",
+      "price_scope": "source_reported_stay_total_after_taxes_fees",
+      "beds": [],
+      "breakfast_included": true,
+      "free_cancellation": true,
+      "cancellation_until_date_text": "Nov 2",
+      "cancellation_until_time_text": "11:59 PM",
+      "cancellation_deadline_verified": false,
+      "inclusions": [
+        "1 guest",
+        "Free cancellation until Nov 2",
+        "breakfast"
+      ],
+      "discount_remarks": [],
+      "benefits": [],
+      "missing_evidence": [
+        "room_product_identity",
+        "supplier_eligibility",
+        "final_mandatory_fees",
+        "bed_configuration",
+        "cancellation_deadline_year_timezone"
+      ],
+      "equivalent": false,
+      "supplier_bookable": false,
+      "reference_rate_id": "serp-rate:c7ac128807bc5764dfe4cbd5"
+    },
+    {
+      "supplier_name": "Agoda",
+      "room_name": "Superior Double Queen",
+      "num_guests": 1,
+      "amount_minor": 4324200,
+      "currency": "RUB",
+      "price_scope": "source_reported_stay_total_after_taxes_fees",
+      "beds": [
+        {
+          "type": "Queen",
+          "count": 2
+        },
+        {
+          "type": "Double",
+          "count": 1
+        }
+      ],
+      "breakfast_included": true,
+      "free_cancellation": true,
+      "cancellation_until_date_text": "Nov 2",
+      "cancellation_until_time_text": "11:59 PM",
+      "cancellation_deadline_verified": false,
+      "inclusions": [
+        "2 queen beds",
+        "1 guest",
+        "Free cancellation until Nov 2",
+        "breakfast"
+      ],
+      "discount_remarks": [],
+      "benefits": [],
+      "missing_evidence": [
+        "room_product_identity",
+        "supplier_eligibility",
+        "final_mandatory_fees",
+        "bed_configuration",
+        "cancellation_deadline_year_timezone"
+      ],
+      "equivalent": false,
+      "supplier_bookable": false,
+      "reference_rate_id": "serp-rate:7b58fb0cd6b72adc934008af"
+    },
+    {
+      "supplier_name": "Agoda",
+      "room_name": "Superior Sky",
+      "num_guests": 1,
+      "amount_minor": 4324200,
+      "currency": "RUB",
+      "price_scope": "source_reported_stay_total_after_taxes_fees",
+      "beds": [],
+      "breakfast_included": true,
+      "free_cancellation": true,
+      "cancellation_until_date_text": "Nov 2",
+      "cancellation_until_time_text": "11:59 PM",
+      "cancellation_deadline_verified": false,
+      "inclusions": [
+        "1 guest",
+        "Free cancellation until Nov 2",
+        "breakfast"
+      ],
+      "discount_remarks": [],
+      "benefits": [],
+      "missing_evidence": [
+        "room_product_identity",
+        "supplier_eligibility",
+        "final_mandatory_fees",
+        "bed_configuration",
+        "cancellation_deadline_year_timezone"
+      ],
+      "equivalent": false,
+      "supplier_bookable": false,
+      "reference_rate_id": "serp-rate:24bc38ffde516990a4f4da63"
+    },
+    {
+      "supplier_name": "Agoda",
+      "room_name": "Junior Suite with Hot Tub",
+      "num_guests": 1,
+      "amount_minor": 4908400,
+      "currency": "RUB",
+      "price_scope": "source_reported_stay_total_after_taxes_fees",
+      "beds": [],
+      "breakfast_included": true,
+      "free_cancellation": true,
+      "cancellation_until_date_text": "Nov 2",
+      "cancellation_until_time_text": "11:59 PM",
+      "cancellation_deadline_verified": false,
+      "inclusions": [
+        "Suite",
+        "1 guest",
+        "Free cancellation until Nov 2",
+        "breakfast",
+        "Suite"
+      ],
+      "discount_remarks": [],
+      "benefits": [],
+      "missing_evidence": [
+        "room_product_identity",
+        "supplier_eligibility",
+        "final_mandatory_fees",
+        "bed_configuration",
+        "cancellation_deadline_year_timezone"
+      ],
+      "equivalent": false,
+      "supplier_bookable": false,
+      "reference_rate_id": "serp-rate:30f4cf49877dda927c0ef1b3"
+    },
+    {
+      "supplier_name": "Booking.com",
+      "room_name": "Superior Room with 2 Queen Beds",
+      "num_guests": 1,
+      "amount_minor": 4221100,
+      "currency": "RUB",
+      "price_scope": "source_reported_stay_total_after_taxes_fees",
+      "beds": [
+        {
+          "type": "Queen",
+          "count": 2
+        },
+        {
+          "type": "Single",
+          "count": 1
+        }
+      ],
+      "breakfast_included": true,
+      "free_cancellation": true,
+      "cancellation_until_date_text": "Nov 2",
+      "cancellation_until_time_text": "11:59 PM",
+      "cancellation_deadline_verified": false,
+      "inclusions": [
+        "2 queen beds",
+        "1 guest",
+        "Free cancellation until Nov 2",
+        "breakfast",
+        "Balcony"
+      ],
+      "discount_remarks": [],
+      "benefits": [],
+      "missing_evidence": [
+        "room_product_identity",
+        "supplier_eligibility",
+        "final_mandatory_fees",
+        "bed_configuration",
+        "cancellation_deadline_year_timezone"
+      ],
+      "equivalent": false,
+      "supplier_bookable": false,
+      "reference_rate_id": "serp-rate:1a50539f70faa52fcfc36a54"
+    },
+    {
+      "supplier_name": "Priceline",
+      "room_name": "Superior",
+      "num_guests": 1,
+      "amount_minor": 4221200,
+      "currency": "RUB",
+      "price_scope": "source_reported_stay_total_after_taxes_fees",
+      "beds": [
+        {
+          "type": "Double",
+          "count": 1
+        }
+      ],
+      "breakfast_included": true,
+      "free_cancellation": true,
+      "cancellation_until_date_text": "Nov 2",
+      "cancellation_until_time_text": "11:59 PM",
+      "cancellation_deadline_verified": false,
+      "inclusions": [
+        "1 double bed",
+        "1 guest",
+        "Free cancellation until Nov 2",
+        "breakfast",
+        "Balcony"
+      ],
+      "discount_remarks": [],
+      "benefits": [],
+      "missing_evidence": [
+        "room_product_identity",
+        "supplier_eligibility",
+        "final_mandatory_fees",
+        "cancellation_deadline_year_timezone"
+      ],
+      "equivalent": false,
+      "supplier_bookable": false,
+      "reference_rate_id": "serp-rate:fe5119fe98d13e9d1c9ef1f2"
+    }
+  ],
+  "normalizer_analysis": {
+    "scope": "Deterministic normalization of the already saved actual response; no new provider call.",
+    "matching_guest_rate_count": 6,
+    "matching_guest_seller_count": 3,
+    "all_matching_rates_have_explicit_breakfast": true,
+    "summary_guest_counts": {
+      "3": 1,
+      "2": 14
+    },
+    "reference_selection_policy": "first_disclosed_matching_guest_stay_total_not_lowest_equivalent",
+    "reference_amount_minor": 3980600,
+    "reference_currency": "RUB",
+    "reference_supplier": "Agoda",
+    "exclusions": {
+      "other_guest_count": 51,
+      "unknown_guest_count": 0,
+      "missing_stay_total_after_taxes": 0,
+      "seller_summary_not_a_room_quote": 15,
+      "truncated_rows": 0,
+      "matching_rate_limit_reached": false
+    },
+    "same_name_not_equivalent_example": {
+      "room_name": "Superior",
+      "seller_A": "Agoda",
+      "seller_A_total_minor": 3980600,
+      "seller_B": "Priceline",
+      "seller_B_total_minor": 4221200,
+      "known_shared_fields": [
+        "Same property token, dates and RUB",
+        "Explicit1guest",
+        "Breakfast included",
+        "Source cancellation textNov2/11:59PM"
+      ],
+      "unproven_fields": [
+        "Agoda bed configuration missing, Priceline reports1double",
+        "Balcony unknown for Agoda, disclosed for Priceline",
+        "Cancellation deadline year/timezone",
+        "Physical room-product identity",
+        "Eligibility and final fees"
+      ]
+    },
+    "equivalent": false,
+    "supplier_bookable": false
+  },
+  "backend_change": {
+    "scope": "E-only explicitproperty_token path; Native remained frozen.",
+    "route": "Existing POST /api/v1/sessions/{session_id}/live/search,kindhotels/providerserpapi",
+    "optional_frontend_field": "result.live_offers[].details.supplier_comparison",
+    "documentation": "docs/SUPPLIER_COMPARISON.md",
+    "fixture": "fixtures/regression/serp-hotel-details-20261027.json",
+    "fixture_sha256": "61f13725d50e115bb43ab2b505dafa4bf4b361c163cc0cbcf6959909e5d2128b",
+    "initial_repro": {
+      "tests": 2,
+      "pass": 1,
+      "fail": 1,
+      "xml": ".local/evaluation/after80-20261027/serp-details-initial.xml"
+    },
+    "related_verification": {
+      "pass": 297,
+      "fail": 0,
+      "xml": ".local/evaluation/after80-20261027/serp-details-related-final.xml"
+    },
+    "post_patch_supplier_http_calls": 0,
+    "native_requalification": "PENDING",
+    "supplier_comparison": "OPEN"
+  }
+}

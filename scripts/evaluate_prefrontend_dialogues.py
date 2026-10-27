@@ -23,8 +23,8 @@ from uuid import uuid4
 from replay_after80 import BLOCKS, HTTP, LLM_PROFILES, Cleaner, check_profile, private_json, require
 
 ROOT = Path(__file__).resolve().parents[1]
-RECIPE = ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027-r3.json"
-RECIPE_SHA256 = "c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5"
+RECIPE = ROOT / "fixtures/evaluation/prefrontend-dialogues-20261027-r4.json"
+RECIPE_SHA256 = "79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea"
 NATIVE_SOURCE = Path("/home/aegml/projects/otravel-after80-20261026")
 TERMINAL = {"completed", "failed", "conflict", "interrupted", "cancelled"}
 ACTION_KINDS = {"message", "queued_message", "resume", "preview", "set_leg_mode", "confirm_stale",

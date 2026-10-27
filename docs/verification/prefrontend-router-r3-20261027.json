@@ -1,0 +1,339 @@
+{
+  "format": "otravel.actual.openrouter.r3.acceptance.v1",
+  "date": "2026-10-27",
+  "status": "COMPLETED_NOT_ALL_PASS",
+  "source_commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+  "package_sha256": "0d452223f0f25967b532f0f3a51d4eca17779142edc83979b0c5569eaad6a0d0",
+  "driver_sha256": "1c565a33599a549c0532211ed274ea036ef7fbdf0adafea13ecf39941db16eb1",
+  "recipe_sha256": "c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5",
+  "source_report": {
+    "path": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-020041-d217d861/report.json",
+    "sha256": "6b42dc0de4f067e45155c4909dace22fae35ce94b9375ef2e5eabb366d4a31ff"
+  },
+  "source_plan": {
+    "path": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-020041-d217d861/plan.json",
+    "sha256": "98d69f2c30695a011f0153e9ab4b326accfa103c70c585c29e50d2593a5372b5"
+  },
+  "profile": {
+    "provider": "openrouter",
+    "model": "dots-studio/dots-3-note-preview:free",
+    "free_confirmed": true,
+    "paid_fallback": false,
+    "local_model": false,
+    "parallel": 1,
+    "pacing_seconds": 60,
+    "max_models": 35,
+    "max_tools": 160
+  },
+  "counts": {
+    "cases": 8,
+    "case_status_counts": {
+      "FAIL": 2,
+      "PASS": 6
+    },
+    "observed_actions": 89,
+    "observed_language_messages": 79,
+    "recorded_step_status_counts": {
+      "PASS": 80,
+      "FAIL": 9,
+      "NOT_REACHED": 1
+    },
+    "model_calls_started": 30,
+    "tool_call_starts": 7,
+    "supplier_wire_count": "NOT_INSTRUMENTED",
+    "simulated_orders": 1,
+    "supplier_booking_calls": 0,
+    "payment_calls": 0
+  },
+  "cases": [
+    {
+      "id": "PF-GEO-01",
+      "status": "FAIL",
+      "recorded_steps": 7,
+      "step_status_counts": {
+        "PASS": 5,
+        "FAIL": 1,
+        "NOT_REACHED": 1
+      },
+      "failing_steps": [
+        {
+          "id": "06",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Турц"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "07",
+          "status": "NOT_REACHED",
+          "failed_predicates": []
+        }
+      ]
+    },
+    {
+      "id": "PF-GEO-02",
+      "status": "PASS",
+      "recorded_steps": 12,
+      "step_status_counts": {
+        "PASS": 12
+      },
+      "failing_steps": []
+    },
+    {
+      "id": "PF-DURATION-03",
+      "status": "PASS",
+      "recorded_steps": 19,
+      "step_status_counts": {
+        "PASS": 19
+      },
+      "failing_steps": []
+    },
+    {
+      "id": "PF-GROUP-04",
+      "status": "FAIL",
+      "recorded_steps": 12,
+      "step_status_counts": {
+        "PASS": 4,
+        "FAIL": 8
+      },
+      "failing_steps": [
+        {
+          "id": "04",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7,
+                8
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 38000000
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-19",
+              "rooms": 2
+            },
+            {
+              "op": "hotel_capture",
+              "city": "Анталья",
+              "capture": "hotel_b_id"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 38000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ]
+        },
+        {
+          "id": "05",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "reply_age",
+              "value": 8
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 38000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ]
+        },
+        {
+          "id": "06",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7,
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "id": "07",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                6,
+                8
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 38000000
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_out": "2026-11-19",
+              "rooms": 2
+            },
+            {
+              "op": "hotel_capture",
+              "city": "Анталья",
+              "capture": "hotel_b_id"
+            }
+          ]
+        },
+        {
+          "id": "08",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "reply_money",
+              "amount_minor": 38000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ]
+        },
+        {
+          "id": "09",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                6,
+                8
+              ]
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_out": "2026-11-19",
+              "rooms": 2
+            },
+            {
+              "op": "hotel_capture",
+              "city": "Анталья",
+              "capture": "hotel_b_id"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "status": "FAIL",
+          "failed_predicates": [
+            {
+              "op": "reply_dates",
+              "values": [
+                "2026-11-10",
+                "2026-11-19"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PF-TRANSPORT-05",
+      "status": "PASS",
+      "recorded_steps": 12,
+      "step_status_counts": {
+        "PASS": 12
+      },
+      "failing_steps": []
+    },
+    {
+      "id": "PF-SOURCE-06",
+      "status": "PASS",
+      "recorded_steps": 10,
+      "step_status_counts": {
+        "PASS": 10
+      },
+      "failing_steps": []
+    },
+    {
+      "id": "PF-SOURCE-07",
+      "status": "PASS",
+      "recorded_steps": 8,
+      "step_status_counts": {
+        "PASS": 8
+      },
+      "failing_steps": []
+    },
+    {
+      "id": "PF-PAUSE-08",
+      "status": "PASS",
+      "recorded_steps": 10,
+      "step_status_counts": {
+        "PASS": 10
+      },
+      "failing_steps": []
+    }
+  ],
+  "attribution": [
+    {
+      "case": "PF-GEO-01",
+      "step": "06",
+      "finding": "H004-GEO-ASK-REPLY-LOSS-001",
+      "cause": "Correct model geography answer was replaced by generic country FAQ. Case prerequisite then blocked later steps."
+    },
+    {
+      "case": "PF-GROUP-04",
+      "step": "04",
+      "finding": "HARNESS-004-COMPOUND-QUOTED-RETURN-001",
+      "cause": "Hotel-name quotes disabled normalization of equivalent return-date operations; whole compound batch was rejected. Subsequent party/date/budget checks are causally affected."
+    },
+    {
+      "case": "PF-GROUP-04",
+      "step": "09",
+      "finding": "ACCEPTANCE-CONTROL-VERSION-ORACLE",
+      "cause": "Only state_version changed under pause CAS; semantic trip unchanged. Original FAIL retained; separately corrected by r4."
+    }
+  ],
+  "bounded_actual_closures": {
+    "late_origin_typo": "PF-GEO-02 12/12 PASS",
+    "demo_command_and_duration": "PF-DURATION-03 19/19 PASS",
+    "selective_hotel_restore_retaining_transport": "PF-TRANSPORT-05 12/12 PASS",
+    "mixed_refresh_checkout_and_order_reply": "PF-SOURCE-06 10/10 PASS",
+    "source_validation_boundary": "PF-SOURCE-07 8/8 PASS; not a simulated upstream outage",
+    "pause_queue_explicit_resume": "PF-PAUSE-08 10/10 PASS"
+  },
+  "limitations": [
+    "Development connected cases, not full original80/106 language acceptance.",
+    "Repair code added after this frozen source needs a new external retest.",
+    "Provider availability at this epoch does not guarantee future free quota."
+  ]
+}

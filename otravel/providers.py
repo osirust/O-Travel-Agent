@@ -1203,13 +1203,20 @@ class TravelGateway(_HTTPGateway):
         if kind == "hotel":
             checkin, checkout = _stay(request, provider)
             query = request.get("q", request.get("city"))
-            if not isinstance(query, str) or not query.strip():
+            property_token = request.get("property_token")
+            if property_token is not None and (not isinstance(property_token, str)
+                    or not re.fullmatch(r"[A-Za-z0-9_-]{5,2048}", property_token)):
+                _fail("Нужен непрозрачный property_token выбранного отеля, без URL.", provider)
+            if property_token is None and (not isinstance(query, str) or not query.strip()):
                 _fail("Нужно направление q/city.", provider)
             rooms = _occupancies(request.get("occupancies"), provider)
             if len(rooms) != 1:
                 _fail("SerpApi hotel search не подтверждает заданную multiroom allocation; используйте другой источник или явный demo.", provider, "UNSUPPORTED_REQUEST")
-            params.update(q=query, check_in_date=checkin, check_out_date=checkout,
+            if property_token is not None and rooms != [{"adults": 1, "children": []}]:
+                _fail("Сравнение продавцов пока проверено только для одного взрослого без детей в одном номере.", provider, "UNSUPPORTED_REQUEST")
+            params.update(check_in_date=checkin, check_out_date=checkout,
                           adults=rooms[0]["adults"], children=len(rooms[0]["children"]))
+            params.update({"property_token": property_token} if property_token is not None else {"q": query})
             if rooms[0]["children"]:
                 params["children_ages"] = ",".join(map(str, rooms[0]["children"]))
         else:
@@ -1229,6 +1236,29 @@ class TravelGateway(_HTTPGateway):
             _fail("Некорректные метаданные поисковой выдачи.", provider, "INVALID_RESPONSE")
         if metadata.get("status") not in (None, "Success"):
             _fail("Поисковая выдача ещё не готова.", provider, "PROVIDER_RESPONSE_ERROR")
+        if kind == "hotel" and request.get("property_token") is not None:
+            if (body.get("property_token") != property_token or body.get("type") != "hotel"
+                    or not isinstance(body.get("name"), str) or not body["name"].strip()):
+                _fail("Ответ не подтвердил выбранный property_token отеля.", provider, "REPRICE_IDENTITY_MISMATCH")
+            echo = body.get("search_parameters")
+            expected = {"engine": "google_hotels", "check_in_date": checkin, "check_out_date": checkout,
+                "adults": 1, "children": 0, "currency": currency}
+            if (not isinstance(echo, dict) or any(type(echo.get(k)) is not type(v) or echo[k] != v for k, v in expected.items())):
+                _fail("Ответ не подтвердил даты, состав гостей и валюту сравнения.", provider, "RESPONSE_QUERY_MISMATCH")
+            from .supplier_comparison import normalize_serp_hotel_details
+            comparison = normalize_serp_hotel_details(body, {**request, "currency": currency, "occupancies": rooms})
+            reference = comparison["selected_reference_rate"]
+            if reference is None:
+                _fail("Нет раскрытой полной поисковой цены номера на запрошенное число гостей; сводная цена продавца её не заменяет.", provider, "NO_MATCHES")
+            exponent = 0 if currency in {"JPY", "KRW", "VND", "CLP", "ISK"} else 3 if currency in {"BHD", "JOD", "KWD", "OMR", "TND"} else 2
+            return [self._offer(provider, [property_token, request], Decimal(reference["amount_minor"]).scaleb(-exponent), currency,
+                body["name"], {"kind": "hotel", "search_request": request, "supplier_comparison": comparison,
+                    "as_of": metadata.get("processed_at", metadata.get("created_at")), "availability_verified": False,
+                    "allocation_verified": False, "supplier_verified": False, "itinerary_complete": False,
+                    "ready_for_real_booking": False,
+                    "provider_data": {"property_token": property_token},
+                    "warning": "Поисковая цена конкретного раскрытого тарифа. Разные условия не означают эквивалентные предложения; бронирование не подтверждено."},
+                "LIVE_INDICATIVE", "INDICATIVE_ROOM_RATE_STAY_TOTAL")]
         if kind == "hotel":
             rows = body.get("properties", [])
         else:
@@ -1394,6 +1424,12 @@ class TravelGateway(_HTTPGateway):
                 if isinstance(old_data, dict) and isinstance(candidate_data, dict) and all(old_data.get(k) == candidate_data.get(k) for k in identity_keys) and any(old_data.get(k) for k in identity_keys):
                     candidate["offer_id"] = offer["offer_id"]
                     candidate["details"].update(reprice_kind="search_refresh_only", search_request=original)
+                    old_comparison = details.get("supplier_comparison")
+                    new_comparison = candidate["details"].get("supplier_comparison")
+                    if isinstance(old_comparison, dict) and isinstance(new_comparison, dict):
+                        old_reference = old_comparison.get("selected_reference_rate") or {}
+                        new_reference = new_comparison.get("selected_reference_rate") or {}
+                        candidate["details"]["comparison_reference_changed"] = old_reference.get("reference_rate_id") != new_reference.get("reference_rate_id")
                     return candidate
             _fail("Выбранное предложение больше не найдено; нужен новый выбор.", provider, "OFFER_UNAVAILABLE")
         if provider == "liteapi":

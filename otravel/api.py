@@ -36,6 +36,29 @@ from .store import Conflict, NotFound, Store, StoreError
 
 
 _PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "api_token", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
+_PUBLIC_PROVIDER_NAMES = frozenset({
+    "gemini", "openrouter", "groq", "zai", "cloudflare", "ollama",
+    "liteapi", "duffel", "serpapi", "open_meteo", "hotelbeds", "ratehawk", "travelpayouts",
+})
+
+
+def _provider_error_public_fields(exc: ProviderError) -> dict:
+    """Optional code-owned diagnostics, never an upstream details projection.
+
+    An absent/unrecognised provider retains the legacy three-field payload.
+    Numeric facts are included only when they are already bounded integers;
+    strings, booleans and arbitrary nested metadata are not interpreted.
+    """
+    if not isinstance(exc.provider, str) or exc.provider not in _PUBLIC_PROVIDER_NAMES:
+        return {}
+    result: dict[str, Any] = {"provider": exc.provider}
+    details = exc.details if isinstance(exc.details, dict) else {}
+    status, retry = details.get("http_status"), details.get("retry_after_seconds")
+    if type(status) is int and 100 <= status <= 599:
+        result["upstream_http_status"] = status
+    if type(retry) is int and 0 <= retry <= 86400:
+        result["retry_after_seconds"] = retry
+    return result
 
 
 def _clean(value: Any) -> Any:
@@ -158,8 +181,12 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     if origins:
         app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type"], allow_credentials=False)
 
-    def error(code: str, message: str, status: int, retryable: bool = False) -> JSONResponse:
-        return JSONResponse({"error": {"code": code, "message": _clean(message), "retryable": retryable}}, status_code=status)
+    def error(code: str, message: str, status: int, retryable: bool = False,
+              *, provider_failure: ProviderError | None = None) -> JSONResponse:
+        payload = {"code": code, "message": _clean(message), "retryable": retryable}
+        if provider_failure is not None:
+            payload.update(_provider_error_public_fields(provider_failure))
+        return JSONResponse({"error": payload}, status_code=status)
 
     @app.exception_handler(RequestValidationError)
     async def invalid_request(_request, _exc):
@@ -179,7 +206,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
 
     @app.exception_handler(ProviderError)
     async def provider_error(_request, exc):
-        return error(exc.code, exc.message, 503, exc.retryable)
+        return error(exc.code, exc.message, 503, exc.retryable, provider_failure=exc)
 
     @app.exception_handler(FxUnavailable)
     async def fx_error(_request, exc):

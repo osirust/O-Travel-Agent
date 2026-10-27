@@ -577,6 +577,11 @@ class Harness:
                         if alias_questions:
                             extracted.conflicts = alias_questions
                             extracted.server_questions.extend(alias_questions)
+                    if not readonly and not extracted.conflicts:
+                        from .room_identity import normalize_room_identities
+                        identities, identity_notes = normalize_room_identities(session["state"], extracted.operations)
+                        extracted.operations = [Operation.model_validate(op) for op in identities]
+                        extracted.operation_normalizations.extend(identity_notes)
                     if (not readonly and not extracted.conflicts
                             and extracted.control.action in {"none", "continue", "wait"}):
                         from .preference_intake import ground_lowest_cost, price_preference_operation

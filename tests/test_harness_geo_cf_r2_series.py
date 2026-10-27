@@ -23,7 +23,9 @@ def assert_no_supplier_effects(events):
 
 @pytest.mark.asyncio
 async def test_twelve_turns_cached_cf_belgrade_conflict_refusal_child_budget_then_accept(api_factory):
-    model = StubLLM([answer('PF-GEO-01', '01'), answer('PF-GEO-01', '06'), answer('PF-GEO-01', '07'),
+    # The captured T6 answer is preserved in the fixture, but the exact owned
+    # assertion now resolves before generation. Keep every business invariant.
+    model = StubLLM([answer('PF-GEO-01', '01'), answer('PF-GEO-01', '07'),
         {'operations': [{'type': 'set_budget', 'value': {'amount_minor': 7_000_000, 'currency': 'RUB'}}]}])
     from test_api import _session
     async with api_factory(model) as (client, _):
@@ -66,7 +68,7 @@ async def test_twelve_turns_cached_cf_belgrade_conflict_refusal_child_budget_the
         assert 'proposed_destination' not in eleventh['pending_question']['context']
         _, twelfth, geography = await assert_turn(client, sid, token, 'Стамбул в Турции? Это вопрос, ничего не меняй.')
         assert twelfth['trip'] == eleventh['trip'] and 'Турц' in geography
-        assert len(model.calls) == 4 and not model.answers
+        assert len(model.calls) == 3 and not model.answers
         assert_no_supplier_effects(await store.list_events(sid))
         assert await store.list_orders(sid) == []
 
@@ -107,7 +109,7 @@ async def test_eight_turns_cached_cf_late_origin_typo_reject_then_accept_preserv
 
 @pytest.mark.asyncio
 async def test_six_turns_explicit_new_country_is_not_rolled_back_by_rejecting_conflicting_city(api_factory):
-    model = StubLLM([answer('PF-GEO-01', '01'), answer('PF-GEO-01', '06'), answer('PF-GEO-01', '07'),
+    model = StubLLM([answer('PF-GEO-01', '01'), answer('PF-GEO-01', '07'),
         {'operations': [{'type': 'set_budget', 'value': {'amount_minor': 6_000_000, 'currency': 'RUB'}}]}])
     from test_api import _session
     async with api_factory(model) as (client, _):
@@ -132,6 +134,6 @@ async def test_six_turns_explicit_new_country_is_not_rolled_back_by_rejecting_co
         assert sixth['trip']['travelers'] == fourth['trip']['travelers']
         assert sixth['trip']['budget'] == fifth['trip']['budget']
         assert sixth['pending_question']['context']['requested_destination'] == {'kind': 'city', 'name': 'Казань', 'country_code': 'RU'}
-        assert len(model.calls) == 4 and not model.answers
+        assert len(model.calls) == 3 and not model.answers
         assert_no_supplier_effects(await store.list_events(sid))
         assert await store.list_orders(sid) == []

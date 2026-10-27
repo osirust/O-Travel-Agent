@@ -461,6 +461,10 @@ def _geography_text(question: str, state: dict) -> str:
             if stay.get("city") in _CITIES
         ]
     text = [f"{city} — {_COUNTRIES[country][0]}." for city, country in dict.fromkeys(cities)]
+    if len(set(cities)) == 1:
+        actual_country = cities[0][1]
+        text.extend(f"Этот город не находится в стране «{_COUNTRIES[code][0]}»."
+                    for code in dict.fromkeys(mentioned_countries) if code != actual_country)
     if len(cities) > 1:
         text.append(
             "Это разные города, они находятся в разных странах."

@@ -378,6 +378,18 @@ def _answer_place(text: str, field: str) -> dict:
     return parse_destination(candidate)["requested_destination"]
 
 
+def _qualified_city_assertion(text: str) -> tuple[dict, dict] | None:
+    """A literal city-in-country answer, never a question or free-form claim."""
+    if any(char in text for char in '?«»"\'“”'):
+        return None
+    match = re.fullmatch(r"(.+?)\s+в\s+(.+)", _key(text))
+    if not match:
+        return None
+    city = parse_destination(match[1])["requested_destination"]
+    country = parse_destination(match[2])["requested_destination"]
+    return (city, country) if city.get('kind') == 'city' and country.get('kind') == 'country' else None
+
+
 def _asserts_proposed_geography(text: str, proposed: dict) -> bool:
     """Only a named proposed city + a recognised country, not arbitrary chat."""
     match = re.fullmatch(r"(.+?)\s+(?:это(?:\s+же)?|находится в|в)\s+(.+)", _key(text))
@@ -576,6 +588,21 @@ def resolve_short_answer(state: Any, pending_question: Any, text: str) -> dict:
     if field in {"origin.city", "destination.city"}:
         if re.search(r"\d|бюджет|потом|подожди|отмен|заброни|добавь", key):
             return unhandled
+        qualified = _qualified_city_assertion(text) if field == 'destination.city' else None
+        if qualified:
+            # The exact current answer to a fresh city slot is handled before
+            # model ASK/CHANGE classification. A correct model geography reply
+            # must not later be replaced by a generic country-only FAQ.
+            version = pending_question.get('state_version') if isinstance(pending_question, dict) else None
+            if type(version) is not int or version != data.get('state_version'):
+                return unhandled
+            place, country = qualified
+            requested = ctx.get('requested_destination')
+            previous_country = requested.get('country_code') if isinstance(requested, dict) else None
+            if not previous_country or (place['country_code'] != country['country_code']
+                    and previous_country != country['country_code']):
+                ctx = {**ctx, 'requested_destination': country}
+            return _city_answer(data, field, target, ctx, place['name'])
         return _city_answer(data, field, target, ctx, text.strip())
     if field == "traveler.age":
         age = _age_answer(text)

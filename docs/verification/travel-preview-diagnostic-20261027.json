@@ -18,7 +18,9 @@
     "preview_retryable": false,
     "preview_public_provider": "not_exported",
     "supplier_order_calls": 0,
-    "events_end_at": "QUOTE_PREVIEW_STARTED"
+    "events_end_at": "QUOTE_PREVIEW_STARTED",
+    "source_report_sha256": "ec1a7f03a4cedf7ff6a7bb3baa23566aff5ec51547f17093457a335660686963",
+    "failure_cause": "UNKNOWN"
   },
   "isolated_selected_flight_refresh": {
     "source": "frozen Native TravelGateway.reprice; no Native files changed",
@@ -70,14 +72,14 @@
     "supplier_booking_calls": 0,
     "payment_calls": 0,
     "native_changes": 0,
-    "new_searches": 0,
+    "new_searches": 2,
     "paid_fallback": false,
     "raw_supplier_ids_or_credentials_exported": false
   },
   "remaining": [
     "The original failed supplier and upstream status were not persisted; original 503 remains unexplained, not retrospectively fixed.",
     "Expose only safe provider/upstream_http_status metadata for future quote-refresh failures, with no raw upstream body, URL or credentials.",
-    "Complete a fresh Native search -> prebook/refresh -> simulated confirmation and idempotency run. Separate successful adapter requests do not constitute that acceptance."
+    "A separate fresh Native search -> prebook/refresh -> simulated confirmation and idempotent repeat passed in actual-group-checkout-20261027.json; the original 503 cause remains UNKNOWN."
   ],
   "frozen_source_file_sha256": "bac8de7b425212fe3dd0d1aa5091694579638ba0ba226897a91f33d5abb3e2d8",
   "fresh_exact_group_hotel_qualification": {
@@ -206,5 +208,31 @@
     "all_checks": true
   },
   "total_diagnostic_http_calls": 7,
-  "automatic_retries": 0
+  "automatic_retries": 0,
+  "request_count_scope": "Historical diagnostic phases only; updating this record performs zero new supplier requests.",
+  "request_phases": {
+    "initial_selected_flight_refresh": {
+      "http_calls": 3,
+      "new_searches": 0,
+      "selected_offer_get_refreshes": 3
+    },
+    "fresh_exact_group_hotel_qualification": {
+      "http_calls": 4,
+      "new_searches": 2,
+      "selected_offer_prebooks": 2
+    },
+    "aggregate": {
+      "http_calls": 7,
+      "new_searches": 2,
+      "selected_offer_get_refreshes": 3,
+      "selected_offer_prebooks": 2
+    }
+  },
+  "superseded_by": {
+    "path": "docs/verification/actual-group-checkout-20261027.json",
+    "public_receipt_sha256": "58e796f5917f627a7fce38e1a5c42ece5fd4fc1f755ca6ad6955af2d5e92a850",
+    "source_report_sha256": "d0d041fd31e2803f58c2d59b0df79b96ecdf044129b51affb1d919263f4de549",
+    "status": "ACTUAL_MIXED_GROUP_SEARCH_PREBOOK_REFRESH_SIMCONFIRM_PASS",
+    "scope": "A separate fresh Native typed mixed group search/preview/simulated-confirmation passed. It does not identify or retrospectively fix the original 503 cause."
+  }
 }

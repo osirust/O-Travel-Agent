@@ -27,8 +27,8 @@ async def assert_turn(client, sid, token, text):
 @pytest.mark.asyncio
 async def test_twelve_turns_country_refusal_typo_additions_and_pause_preserve_owned_trip(api_factory):
     model = StubLLM([
-        {"operations": [{"type": "upsert_stay", "target_id": "hotel", "value": {"city": "Стамбул"}}],
-         "unknowns": ["destination_city"]},
+        # Exact city-in-country now asks through the bound server slot; it
+        # does not consume a model answer before the independent child edit.
         {"operations": [{"type": "add_traveler", "value": {"id": "child", "type": "child", "age": 7}},
             {"type": "upsert_stay", "target_id": "hotel", "value": {"city": "Стамбул"}}]},
         {"operations": [{"type": "update_traveler", "target_id": "child", "value": {"age": 8}}]},
@@ -86,7 +86,7 @@ async def test_twelve_turns_country_refusal_typo_additions_and_pause_preserve_ow
         assert final["trip"]["budget"]["amount_minor"] == 7_000_000
         for field in ("origin", "travelers", "groups", "stays", "legs", "preferences", "constraints"):
             assert final["trip"][field] == paused[field]
-        assert len(model.calls) == 4
+        assert len(model.calls) == 3
         events = await repository.list_events(sid)
         assert not any(e["event_type"] in {"TOOL_CALL_STARTED", "QUOTE_CREATED", "DEMO_ORDER_CREATED"} for e in events)
         assert await repository.list_orders(sid) == []

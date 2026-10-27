@@ -1,0 +1,140 @@
+{
+  "format": "otravel.compound.openrouter-r3-repair.v1",
+  "created_at": "2026-10-27T02:29:54.415678+00:00",
+  "status": "CONTROLLED_FIX_PASS_ACTUAL_TARGETED_RETEST_PENDING",
+  "source": {
+    "commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+    "report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-020041-d217d861/report.json",
+    "report_snapshot_sha256": "0a7b3ea4ece4db9b4f8a5e7b46db3f0e8a09655d9ca6f77c2e6e03db78de0796",
+    "capture_sha256": "59a12783334ca87f31b0e0d61c9ed8c3099ab9bc0b2036d0a3bea2095b621c3c",
+    "note": "Actual epoch continued after capture; this receipt preserves the exact T4 observation and never rewrites original results."
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-COMPOUND-QUOTED-RETURN-001",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_RETEST_PENDING",
+      "actual_evidence": "PF-GROUP-04/T4 raw seven operations included child8/group2/rooms/hotels/budget380k/shift+2 and a matching absolute checkout19Nov. Checked gate added trip.return_edit_kind conflict, so the whole batch remained unchanged.",
+      "cause": "Return-equivalence normalization globally refused any quote in the message; the unrelated displayed hotel name was quoted.",
+      "action": "Remove complete quoted spans only from intent evidence. An independent literal unquoted return clause can prove equivalent before+days and remove exactly the redundant absolute checkout. Unmatched quotes, quoted return instructions, hypothesis, history, negation, conflicting shifts and non-equivalent dates retain conflict/clarification.",
+      "closure": "Cached exact seven-operation input and API/PG case pass after the correction. Repeat the actual deployed GROUP04 case against a new source/package; preserve original T4 failure."
+    },
+    {
+      "id": "HARNESS-004-ROOM-IDENTITY-ALIAS-001",
+      "status": "CONTROLLED_LATENT_FAILURE_FIXED_ACTUAL_RETEST_PENDING",
+      "evidence": "After removing the false return conflict, the original captured batch raised unknown_constraint_room for Istanbul/new-room-1: the model replaced that room ID, losing the saved breakfast scope. This second domain failure was reproduced locally; it was not a second observed production response.",
+      "action": "Repair only unknown room aliases within the same existing stay, unchanged room count and complete unique bijection. Existing traveller intersection must equal one saved room membership exactly, with no drops/duplicates. Keep proposed guests and groups unchanged, retain valid room IDs, preserve constraints and restore canonical old order only after at least one proved unknown alias.",
+      "peer_review": "Initial helper also reordered fully valid setters. Two additional failing negatives confirmed it; final helper returns those exact original setters with no notes, including reverse arrays and valid-ID guest swaps.",
+      "closure": "Exact raw seven-op API/PG rebuild, prior quote409 and strict room/constraint/party/date/budget assertions pass. New-count/no-anchor/ambiguous/partial-match/membership-drop/new-people-only/valid-ID-swap negatives pass. Actual deployed GROUP04 retest remains required."
+    }
+  ],
+  "files": [
+    {
+      "path": "otravel/operation_aliases.py",
+      "sha256": "9b65a7e311122cf8110b63757215c14907a49864203468ddc2d73ad8ff52fe45",
+      "bytes": 7396
+    },
+    {
+      "path": "otravel/room_identity.py",
+      "sha256": "13cbf7d7710901c6cfe4b9b5bf1e9ef93faa6600fc0881a55e897d1fa064d044",
+      "bytes": 5050
+    },
+    {
+      "path": "tests/test_compound_router_r3.py",
+      "sha256": "80df408cee20b4efae4a66d4e793fe3672f6838c1aa25bb03cbd9025ae402aa5",
+      "bytes": 5136
+    },
+    {
+      "path": "tests/test_room_identity.py",
+      "sha256": "ab11d496d974814ccf8a01ff0fbddc6feb606a1394340d34b1f73a70fa786ad6",
+      "bytes": 4893
+    },
+    {
+      "path": "tests/test_harness_compound_router_r3.py",
+      "sha256": "8ca1937f8056b170737137fe56e11ddfa95b2e44c2a16abbef2b1f823ab34d39",
+      "bytes": 4615
+    },
+    {
+      "path": "fixtures/regression/compound-openrouter-r3-20261027.json",
+      "sha256": "aac1903b2a8ca80a073abfd7df69077a2fd84413cb0db7dde6f2fade1d58de76",
+      "bytes": 115718
+    }
+  ],
+  "integration": {
+    "file": "otravel/harness.py",
+    "owner": "root agent",
+    "point": "After MODEL_EXTRACTION_VALIDATED and equivalent-return aliases, before conflict/domain preflight; only non-readonly, conflict-free extraction.",
+    "called_function": "normalize_room_identities(session.state, extracted.operations)"
+  },
+  "hash_scope": "E working-tree bytes, not the native runtime/package.",
+  "preserved_initial_failures": [
+    {
+      "path": ".local/evaluation/geo-20261027/compound-router-r3-initial.xml",
+      "sha256": "e2814408e1c679249f801f9a3ad4ddb28469f8ec563b08d22586a19fc80807d4",
+      "bytes": 1180,
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/compound-router-r3-room-initial.xml",
+      "sha256": "be2a6e6e947a3ccc62c71d6fa4d52d762051df4f6d290e7aec04c9244bbaf6c5",
+      "bytes": 6716,
+      "tests": 16,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/room-identity-peer-initial.xml",
+      "sha256": "1fb65ba78a7db7e21f7cde050b9848fe621b346f26e2e59cd0a2d300c83c5e12",
+      "bytes": 5053,
+      "tests": 15,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "related_verification": {
+    "path": ".local/evaluation/geo-20261027/compound-router-r3-peer-final.xml",
+    "sha256": "19ab93b936c0095de2749df2ac0fafb7afdf95e48adbfd42d37b8764f5486fe1",
+    "bytes": 60019,
+    "tests": 237,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ruff": "PASS five owned production/test files",
+  "api_pg_scope": {
+    "cases": 1,
+    "model_adapter_calls": 1,
+    "actual_model_http": 0,
+    "actual_supplier_http": 0,
+    "source_type": "DEMO",
+    "database": "otravel_test",
+    "source_raw_operation_count": 7,
+    "assertions": [
+      "child8 added to second family",
+      "both cities second rooms contain second adult and child8",
+      "original room IDs and ordering preserved after alias repair",
+      "first family unchanged",
+      "Istanbul selected first-plan hotel retained",
+      "original Istanbul breakfast constraint and room scope retained",
+      "Antalya hotel from second displayed plan selected",
+      "whole-trip budget380000RUB",
+      "Antalya checkout and return19Nov, exactly plus2days",
+      "Antalya requested_nights6",
+      "old quote confirmation409",
+      "no orders",
+      "saved budget/date questions do not mutate state or consume another model call"
+    ]
+  },
+  "limitations": [
+    "representation-only room identities are not supplier room-type/availability comparisons",
+    "the helpers never infer guest membership or group membership",
+    "unsupported or ambiguous inputs retain normal conflict handling",
+    "this is not a new actual remote model PASS or a full original80/106 qualification"
+  ],
+  "native_changed_by_this_task": false,
+  "original_actual_results_changed": false
+}

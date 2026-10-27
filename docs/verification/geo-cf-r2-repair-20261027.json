@@ -18,7 +18,8 @@
       "id": "H004-GEO-LATE-FIELD-TYPO-001",
       "actual": "PF-GEO-02/T4 raw set_origin=Санкт-Петербург was suppressed as unanchored; no typo consent; T5 NOT_REACHED.",
       "action": "Bound one-edit city suggestions to explicit origin/destination field labels even while a date is pending; questions, alternatives, history and veto excluded.",
-      "closure": "Cached real operations and 8-turn PG chain pass. Repeat the frozen dialogue against the deployed remote model; old actual FAIL remains."
+      "closure": "Cached real operations and 8-turn PG chain pass. Repeat the frozen dialogue against the deployed remote model; old actual FAIL remains.",
+      "alias_of": "HARNESS-004-LATE-ORIGIN-TYPO-001"
     },
     {
       "id": "H004-GEO-UNCONFIRMED-CITY-LOSS-001",

@@ -31,9 +31,21 @@ def _integer(value: str) -> int:
     return _NUMBERS[value] if value in _NUMBERS else int(value)
 
 
+def _without_quoted_spans(text: str) -> str | None:
+    """Quotes cannot authorize a date edit or veto an independent sentence.
+
+    A displayed hotel name may be quoted in another clause. Discard complete
+    quoted spans before looking for the current return instruction; unmatched
+    delimiters remain ambiguous and retain the original conservative refusal.
+    """
+    unquoted = re.sub(r'«[^»]*»|“[^”]*”|"[^"]*"|\'[^\']*\'', ' ', text)
+    return None if any(mark in unquoted for mark in ('"', "'", '«', '»', '“', '”')) else unquoted
+
+
 def _literal_shift(text: str) -> int | None:
     normalized = " ".join(text.casefold().replace("ё", "е").split())
-    if _UNCERTAIN.search(normalized) or any(mark in normalized for mark in ('"', "'", "«", "»", "“", "”")):
+    normalized = _without_quoted_spans(normalized)
+    if normalized is None or _UNCERTAIN.search(normalized):
         return None
     clauses = re.split(r"(?<=[.!?;])\s+", normalized)
     shifts = set()

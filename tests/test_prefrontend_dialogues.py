@@ -20,6 +20,12 @@ def frozen_r2():
     return json.loads(raw)
 
 
+def frozen_r3():
+    raw = (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r3.json').read_bytes()
+    assert runner.sha(raw) == 'c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5'
+    return json.loads(raw)
+
+
 def obs():
     snapshot = {"session_id": "s", "state_version": 0, "trip": {"origin": "Москва",
         "travelers": [{"id": "a", "type": "adult"}, {"id": "c", "type": "child", "age": 7}],
@@ -145,7 +151,7 @@ def test_r2_unsupported_city_gold_requires_exact_pending_and_no_fabricated_stay(
 
 
 def test_r3_preserves_r2_and_changes_only_three_confirmed_oracles():
-    old, new = frozen_r2(), runner.load_recipe()
+    old, new = frozen_r2(), frozen_r3()
     assert new['revision'] == 3 and new['supersedes_recipe']['sha256'] == runner.sha(
         (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r2.json').read_bytes())
     assert new['revision_rationale']
@@ -177,7 +183,7 @@ def test_r3_preserves_r2_and_changes_only_three_confirmed_oracles():
 
 
 def test_r3_rejected_alternative_requires_exact_selected_city_and_no_fabricated_stay():
-    case = runner.load_recipe()['cases'][0]['steps'][6]
+    case = frozen_r3()['cases'][0]['steps'][6]
     row = obs()
     row['after']['trip'].update(budget={'amount_minor': 8000000}, stays=[])
     row['after']['pending_question'] = {'context': {'requested_destination': {
@@ -198,6 +204,75 @@ def control_revision_obs():
     row['after']['state_version'] += 1
     row['after']['trip']['state_version'] = row['after']['state_version']
     return row
+
+
+def group_pause_recipe(recipe):
+    return next(step for case in recipe['cases'] if case['id'] == 'PF-GROUP-04'
+        for step in case['steps'] if step['id'] == '09')
+
+
+def test_r4_preserves_frozen_r3_and_changes_only_one_additional_control_revision_oracle():
+    old, new = frozen_r3(), runner.load_recipe()
+    assert new['revision'] == 4
+    assert new['supersedes_recipe']['sha256'] == 'c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5'
+    modified = []
+    for old_case, new_case in zip(old['cases'], new['cases'], strict=True):
+        assert {k: v for k, v in old_case.items() if k != 'steps'} == {
+            k: v for k, v in new_case.items() if k != 'steps'}
+        for before, after in zip(old_case['steps'], new_case['steps'], strict=True):
+            assert {k: v for k, v in before.items() if k != 'checks'} == {
+                k: v for k, v in after.items() if k != 'checks'}
+            if before['checks'] != after['checks']:
+                modified.append((old_case['id'], before['id']))
+                expected = []
+                for check in before['checks']:
+                    expected.extend([{'op': 'trip_unchanged_except_version'}, {'op': 'state_version_delta', 'value': 1}]
+                        if check == {'op': 'unchanged', 'path': '/trip'} else [check])
+                assert after['checks'] == expected
+    assert modified == [('PF-GROUP-04', '09')]
+    # The compound edit and exact unsupported-city consent remain strict.
+    assert old['cases'][3]['steps'][3] == new['cases'][3]['steps'][3]
+    assert old['cases'][0]['steps'][6] == new['cases'][0]['steps'][6]
+
+
+def test_r4_group_pause_accepts_control_revision_but_does_not_rewrite_historical_gold():
+    row = control_revision_obs()
+    row['after']['waiting_reason'] = 'user_pause'
+    old = group_pause_recipe(frozen_r3())['checks']
+    new = group_pause_recipe(runner.load_recipe())['checks']
+    assert any(item['status'] == 'FAIL' for item in runner.grade(old, row))
+    assert all(item['status'] == 'PASS' for item in runner.grade(new, row))
+
+
+@pytest.mark.parametrize('tamper', ['semantic', 'wrapper_version', 'nested_version', 'unpaused'])
+def test_r4_group_pause_requires_unchanged_data_exact_version_and_explicit_pause(tamper):
+    row = control_revision_obs()
+    row['after']['waiting_reason'] = 'user_pause'
+    if tamper == 'semantic':
+        row['after']['trip']['budget']['amount_minor'] -= 2000000
+    elif tamper == 'wrapper_version':
+        row['after']['state_version'] += 1
+    elif tamper == 'nested_version':
+        row['after']['trip']['state_version'] += 1
+    else:
+        row['after']['waiting_reason'] = None
+    checks = group_pause_recipe(runner.load_recipe())['checks']
+    assert any(item['status'] == 'FAIL' for item in runner.grade(checks, row))
+
+
+def test_r4_two_case_ten_call_dry_plan_never_touches_http_or_native(monkeypatch, capsys):
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError('R4 dry plan touched a runtime surface')
+    monkeypatch.setattr(runner, 'LocalHTTP', forbidden)
+    monkeypatch.setattr(runner.NativeFence, 'check', forbidden)
+    monkeypatch.setattr(runner, 'private_json', forbidden)
+    assert runner.main(['--llm-profile', 'openrouter-dots', '--case-id', 'PF-GEO-01',
+        '--case-id', 'PF-GROUP-04', '--max-model-calls', '10']) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result['selected_cases'] == ['PF-GEO-01', 'PF-GROUP-04']
+    assert result['steps'] == 27 and result['max_model_calls'] == 10
+    assert result['recipe_sha256'] == '79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea'
+    assert result['default_dry_run_http_calls'] == 0
 
 
 def test_control_revision_ignores_only_trip_version_and_requires_exact_consistent_delta():
