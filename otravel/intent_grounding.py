@@ -403,6 +403,51 @@ def _typo_place_proposals(text: str) -> list[dict]:
     return proposals
 
 
+def _existing_stay_city_references(data: dict, operations: list[dict], text: str, facts: dict, pending: dict) -> bool:
+    """Multiple scoped stay references do not propose a new route choice."""
+    stays = {stay.get('id'): stay for stay in data.get('stays', []) if isinstance(stay, dict)}
+    cities = {_city(stay.get('city')) for stay in stays.values()}
+    cities.discard(None)
+    destinations = facts['destination']
+    if (len(cities) < 2 or not destinations or not destinations.issubset(cities)
+            or facts['alternative'] or facts['country'] or facts['ambiguous'] or facts['old']
+            or facts['choice'] or facts['multicity'] or pending.get('field') in {'origin.city', 'destination.city'}
+            or facts['origin'] - {_city(data.get('origin'))}):
+        return False
+    for operation in operations:
+        kind, value, target = operation.get('type'), operation.get('value'), operation.get('target_id')
+        if not isinstance(value, dict):
+            return False
+        if kind == 'remove_stay':
+            return False
+        if kind == 'upsert_stay' and (target not in stays or 'city' in value and _city(value['city']) != _city(stays[target].get('city'))):
+            return False
+        if kind == 'set_origin' and _city(value.get('city', value.get('origin'))) != _city(data.get('origin')):
+            return False
+        if kind == 'set_route_policy' and any(value.get(key) != (data.get('route_policy') or {}).get(key)
+                                             for key in value):
+            return False
+    normalized = _unquote(text)
+    route_object = re.search(r'\b(?:измени|поменяй|перестрой|составь|замени|добавь|убери|удали|выбери)\s+'
+        r'(?:(?:весь|всю|новый|новую|еще|одну|один)\s+){0,3}(?:маршрут\w*|направлен\w*|поездк\w*|остановк\w*|город\w*)\b', normalized)
+    travel_wish = re.search(r'\b(?:(?:хочу|хотим)(?:\s+(?:поехать|полететь|отправиться))?|еду|едем|поедем|лечу|летим|полетим)'
+        rf'\s+(?:в|во)\s+(?:{_NAMES})(?![\w-])', normalized)
+    if route_object or travel_wish or _REPLACE.search(normalized) or _INSTEAD.search(normalized):
+        return False
+    scoped = set()
+    for match in re.finditer(r'[^,;.!?\n]+(?:[,;.!?\n]|$)', normalized):
+        clause = match.group().strip()
+        references = {_FORMS[found['city']] for found in _TO.finditer(clause)}.intersection(destinations)
+        if not references:
+            continue
+        if (clause.endswith('?') or _HYPOTHETICAL.search(clause) or _HISTORY.search(clause)
+                or not re.search(r'\b(?:отел\w*|гостиниц\w*|номер\w*|комнат\w*|завтрак\w*|питан\w*|тариф\w*|'
+                                 r'проживан\w*|расселен\w*|заезд\w*|выезд\w*|отмен\w*|питом\w*)\b', clause)):
+            return False
+        scoped.update(references)
+    return scoped == destinations
+
+
 def ground_intent_operations(before_state: Any, operations: list, text: str,
                              pending_context: dict | None = None) -> tuple[list[dict], dict]:
     """Return copied operations and owned notes/questions/context, never commit.
@@ -468,7 +513,11 @@ def ground_intent_operations(before_state: Any, operations: list, text: str,
     if len(origins) > 1:
         ask("Из какого одного города вы отправляетесь? Уточните город отправления.", "origin.city")
     if facts["alternative"] or len(destinations) > 1 and not facts["multicity"]:
-        ask("Выберите один город назначения или явно опишите последовательность остановок.", "destination.city")
+        if _existing_stay_city_references(data, copied, text, facts, facts_pending):
+            meta['replace_geo_unknowns'] = True
+            note('existing_stay_city_scopes_preserved', city_names=sorted(destinations), route_changed=False)
+        else:
+            ask("Выберите один город назначения или явно опишите последовательность остановок.", "destination.city")
     expected = facts_pending.get("requested_destination")
     expected_country = expected.get("country_code") if isinstance(expected, dict) else None
     blocked = False

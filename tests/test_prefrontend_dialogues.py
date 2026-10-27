@@ -26,6 +26,16 @@ def frozen_r3():
     return json.loads(raw)
 
 
+def frozen_r4():
+    raw = (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r4.json').read_bytes()
+    assert runner.sha(raw) == '79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea'
+    return json.loads(raw)
+
+
+def group_ready_fixture():
+    return json.loads((runner.ROOT / 'fixtures/regression/group-readiness-oracle-20261027.json').read_text(encoding='utf-8'))
+
+
 def obs():
     snapshot = {"session_id": "s", "state_version": 0, "trip": {"origin": "Москва",
         "travelers": [{"id": "a", "type": "adult"}, {"id": "c", "type": "child", "age": 7}],
@@ -212,7 +222,7 @@ def group_pause_recipe(recipe):
 
 
 def test_r4_preserves_frozen_r3_and_changes_only_one_additional_control_revision_oracle():
-    old, new = frozen_r3(), runner.load_recipe()
+    old, new = frozen_r3(), frozen_r4()
     assert new['revision'] == 4
     assert new['supersedes_recipe']['sha256'] == 'c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5'
     modified = []
@@ -239,7 +249,7 @@ def test_r4_group_pause_accepts_control_revision_but_does_not_rewrite_historical
     row = control_revision_obs()
     row['after']['waiting_reason'] = 'user_pause'
     old = group_pause_recipe(frozen_r3())['checks']
-    new = group_pause_recipe(runner.load_recipe())['checks']
+    new = group_pause_recipe(frozen_r4())['checks']
     assert any(item['status'] == 'FAIL' for item in runner.grade(old, row))
     assert all(item['status'] == 'PASS' for item in runner.grade(new, row))
 
@@ -256,7 +266,7 @@ def test_r4_group_pause_requires_unchanged_data_exact_version_and_explicit_pause
         row['after']['trip']['state_version'] += 1
     else:
         row['after']['waiting_reason'] = None
-    checks = group_pause_recipe(runner.load_recipe())['checks']
+    checks = group_pause_recipe(frozen_r4())['checks']
     assert any(item['status'] == 'FAIL' for item in runner.grade(checks, row))
 
 
@@ -266,6 +276,8 @@ def test_r4_two_case_ten_call_dry_plan_never_touches_http_or_native(monkeypatch,
     monkeypatch.setattr(runner, 'LocalHTTP', forbidden)
     monkeypatch.setattr(runner.NativeFence, 'check', forbidden)
     monkeypatch.setattr(runner, 'private_json', forbidden)
+    monkeypatch.setattr(runner, 'RECIPE', runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r4.json')
+    monkeypatch.setattr(runner, 'RECIPE_SHA256', '79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea')
     assert runner.main(['--llm-profile', 'openrouter-dots', '--case-id', 'PF-GEO-01',
         '--case-id', 'PF-GROUP-04', '--max-model-calls', '10']) == 0
     result = json.loads(capsys.readouterr().out)
@@ -273,6 +285,61 @@ def test_r4_two_case_ten_call_dry_plan_never_touches_http_or_native(monkeypatch,
     assert result['steps'] == 27 and result['max_model_calls'] == 10
     assert result['recipe_sha256'] == '79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea'
     assert result['default_dry_run_http_calls'] == 0
+
+
+def test_r5_only_appends_five_readiness_checks_to_compound_step_without_weakening_state_oracles():
+    old, new = frozen_r4(), runner.load_recipe()
+    assert new['revision'] == 5 and new['supersedes_recipe']['sha256'] == runner.sha(
+        (runner.ROOT / 'fixtures/evaluation/prefrontend-dialogues-20261027-r4.json').read_bytes())
+    modified = []
+    for old_case, new_case in zip(old['cases'], new['cases'], strict=True):
+        assert {k: v for k, v in old_case.items() if k != 'steps'} == {
+            k: v for k, v in new_case.items() if k != 'steps'}
+        for before, after in zip(old_case['steps'], new_case['steps'], strict=True):
+            assert {k: v for k, v in before.items() if k != 'checks'} == {
+                k: v for k, v in after.items() if k != 'checks'}
+            if before != after:
+                modified.append((old_case['id'], before['id']))
+                assert after['checks'] == before['checks'] + group_ready_fixture()['new_readiness_checks']
+    assert modified == [('PF-GROUP-04', '04')]
+
+
+def test_r5_flags_old_actual_waiting_flow_even_though_r4_state_checks_passed():
+    fixture = group_ready_fixture()
+    assert fixture['source_report']['sha256'] == '958ca19eafe056252d27ed1f53cdbc55f279e263415a6cb6d80d803f5b63e1f3'
+    assert fixture['source_report']['original_step_state_checks_status'] == 'PASS'
+    assert fixture['source_failure_preserved'] is True
+    scores = runner.grade(fixture['new_readiness_checks'], fixture['actual_readiness_observation_projection'])
+    assert len(scores) == 5 and all(score['status'] == 'FAIL' for score in scores)
+
+
+def test_r5_accepts_cached_pg_ready_projection_without_inventing_a_ready_flag_or_new_nlu_pass():
+    fixture = group_ready_fixture()
+    assert fixture['controlled_source']['file_sha256'] == '8fca619a04b09ca3d78547ce241efa158e329ffb1b54f03e55381163067d4531'
+    assert fixture['controlled_source']['actual_model_http'] == 0
+    projection = fixture['controlled_ready_projection']
+    assert len(projection['plans']) >= 1
+    assert all('ready_for_simulated_checkout' not in plan for plan in projection['plans'])
+    assert all(plan['source_type'] == 'DEMO' and type(plan['total_minor']) is int for plan in projection['plans'])
+    assert all(row['status'] == 'PASS' for row in runner.grade(fixture['new_readiness_checks'], projection))
+
+
+@pytest.mark.parametrize('tamper', ['status', 'waiting', 'pending', 'empty_plans', 'explicit_not_ready'])
+def test_r5_readiness_rejects_stalled_or_unready_flow_despite_correct_trip_facts(tamper):
+    fixture = group_ready_fixture()
+    projection = deepcopy(fixture['controlled_ready_projection'])
+    if tamper == 'status':
+        projection['after']['status'] = 'WAITING_USER'
+    elif tamper == 'waiting':
+        projection['after']['waiting_reason'] = 'clarification'
+    elif tamper == 'pending':
+        projection['after']['pending_question'] = {'field': 'destination.city'}
+    elif tamper == 'empty_plans':
+        projection['plans'] = []
+    else:
+        for plan in projection['plans']:
+            plan['ready_for_simulated_checkout'] = False
+    assert any(row['status'] == 'FAIL' for row in runner.grade(fixture['new_readiness_checks'], projection))
 
 
 def test_control_revision_ignores_only_trip_version_and_requires_exact_consistent_delta():

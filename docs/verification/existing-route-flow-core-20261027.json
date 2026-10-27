@@ -1,0 +1,40 @@
+{
+  "status": "FULL_CONTROLLED_EXISTING_ROUTE_FLOW_FIX_PASS_ACTUAL_TRANSITION_PENDING",
+  "date": "2026-10-27",
+  "base_commit": "93f91fda439b85c4825b890bfbe121c62ffdb22f",
+  "full": {
+    "path": ".local/evaluation/after80-20261027/full-flow-isolated-router50-final.xml",
+    "sha256": "271ceac4ef494ded4b9d0e2d574254795ffea1206344c2c494b7eb16e776193f",
+    "tests": 4438,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 164.544
+  },
+  "source": [
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "9072e38639b5994d3dfd03b0edeb72ad18c0b08f2216a12e5108c6f122749e2f"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "a0c5cddfd25262f70c3617d3199e70d5ea40d416b5183546362555180d7b2175"
+    }
+  ],
+  "findings": {
+    "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001": "Existing ordered stay/city component references do not cause a fresh destination choice; new route/unknown city/country/alternatives still clarify.",
+    "HARNESS-005-ROUTER50-CALLER-CLAMP-001": "Only explicit50 opts up OpenRouter; generic2000 for ZAI or100000 does not expand caller-default40."
+  },
+  "old_actual_state_scores": "wow-router-r5-20261027.json preserves12/12oldoracles and separate flowfinding",
+  "new_oracle": "fixtures/evaluation/prefrontend-dialogues-20261027-r5.json",
+  "external_model_http_calls": 0,
+  "external_supplier_http_calls": 0,
+  "payments": 0,
+  "supplier_bookings": 0,
+  "limitations": [
+    "SingleactualT4aftertypedbootstrap next; not a new natural12-turn case.",
+    "Full80/106languageacceptanceOPEN."
+  ],
+  "preserved_failed_full": ".local/evaluation/after80-20261027/full-existing-route-flow-final.xml",
+  "failed_full_reason": "4433PASS/1obsoletegeneric2000routercaptest; isolation restored inimplementation, not weakened: non-explicit50 remains40."
+}

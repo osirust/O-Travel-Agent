@@ -12,7 +12,7 @@ ledger = budget_ledger
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize('requested,expected', [(40, 40), (50, 50), (100000, 50)])
+@pytest.mark.parametrize('requested,expected', [(0, 0), (39, 39), (40, 40), (45, 40), (50, 50), (2000, 40), (100000, 40)])
 async def test_real_gateway_harness_passes_explicit_router_budget_to_durable_guard(requested, expected):
     from otravel.config import Settings
     from otravel.domain import sample_trip
@@ -34,7 +34,7 @@ async def test_real_gateway_harness_passes_explicit_router_budget_to_durable_gua
     async def reserve(sid, runid, limit, provider):
         assert (sid, runid, provider) == ('policy-session', 'policy-run', 'openrouter')
         store.reservations.append(limit)
-        return True
+        return limit > 0
 
     store.reserve_model_call = reserve
     harness = Harness(Settings('unused', 'openrouter', 1, 8000, requested, 1), store, gateway, None)
@@ -42,7 +42,12 @@ async def test_real_gateway_harness_passes_explicit_router_budget_to_durable_gua
         'state': sample_trip().model_dump(mode='json'), 'pending_question': None}
     run = {'run_id': 'policy-run', 'input_message_id': 'policy-message', 'input_text': 'Уточни поездку'}
     try:
-        await harness._extract(session, run)
+        if expected == 0:
+            from otravel.providers import ProviderError
+            with pytest.raises(ProviderError, match='лимит'):
+                await harness._extract(session, run)
+        else:
+            await harness._extract(session, run)
         assert store.reservations == [expected]
     finally:
         await gateway.close()

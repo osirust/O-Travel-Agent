@@ -1,0 +1,89 @@
+{
+  "format": "otravel.actual-wow-t4.attribution.v1",
+  "date": "2026-10-27",
+  "status": "ACTUAL_T4_TYPED_STATE_SCOPE_PASS_WITH_ADDITIONAL_FLOW_FINDING",
+  "source_commit": "93f91fda439b85c4825b890bfbe121c62ffdb22f",
+  "package_sha256": "f82e210d1e98a0f4a2207207e498d0886afe77cf3fa9b3ccbed923f986740f72",
+  "source_report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-050410-a4350103/report.json",
+  "report_snapshot_sha256": "a4971d1bf9e812702952c435232f88b4b73eba39e3f071a7831b32406a1bbef5",
+  "sanitized_projection": {
+    "path": "fixtures/regression/actual-wow-router-r5-20261027.json",
+    "sha256": "35e8d354a1605b04dd6ef4bea0051b3d8b317f02e9e17aeb1f3382d98a0e58d6",
+    "bytes": 51998
+  },
+  "step_projection_sha256": "013052e564c01fb1b465efb6e9a4895c36d2b7f37c79234735e108c4398cfb5e",
+  "case_id": "PF-GROUP-04",
+  "step_id": "04",
+  "case_status_at_capture": "IN_PROGRESS",
+  "whole_case_claimed": false,
+  "original_step_score": "PASS",
+  "original_score_rewritten": false,
+  "raw_to_checked": {
+    "same_operations": true,
+    "operations": 6,
+    "normalizations": [],
+    "typed_room_membership_patches": 2,
+    "group_update": "add_traveler.group_id links the child to the existing second family; no invented group.",
+    "budget": 38000000,
+    "relative_return_shift": 2
+  },
+  "actual_bounded_scopes": [
+    {
+      "finding_id": "HARNESS-004-SPARSE-ROOM-SNAPSHOT-001",
+      "scope_status": "ACTUAL_PREFERRED_TYPED_PRIMITIVE_PATH_PASS",
+      "used": "The real model emitted two correct set_room_members operations with explicit stay_id/room_id correlations.",
+      "not_exercised": "The sparse-array compatibility normalizer was not used; that branch retains its separate cached/controlled evidence."
+    },
+    {
+      "scope": "selected_hotel_context",
+      "scope_status": "ACTUAL_CAPTURE_TO_RAW_TO_CHECKED_TO_STATE_MATCH",
+      "hotel_id": "demo-hotel-antalya-family",
+      "source": "Second actually displayed plan captured by the driver.",
+      "model_choice_repaired": false
+    },
+    {
+      "finding_id": "HARNESS-004-ROOM-IDENTITY-ALIAS-001",
+      "scope_status": "NOT_EXERCISED_BY_THIS_RAW",
+      "note": "Both room addresses were already correct; no alias repair is credited."
+    },
+    {
+      "finding_id": "HARNESS-004-COMPOUND-QUOTED-RETURN-001",
+      "scope_status": "EQUIVALENT_ALIAS_BRANCH_NOT_EXERCISED",
+      "note": "A relative shift was emitted without a duplicate absolute checkout; no return-alias normalization is credited."
+    }
+  ],
+  "state_facts_passed": [
+    "child8 joins second existing family",
+    "second room in both cities holds second adult plus child8",
+    "first family/room identities preserved",
+    "Istanbul hotel and breakfast condition retained",
+    "Antalya hotel matches the actually captured second plan",
+    "whole-trip budget380000RUB",
+    "checkout/return19Nov exactly plus2days"
+  ],
+  "travel_execution": {
+    "policy": "DEMO",
+    "model_attempts_recorded": 1,
+    "tool_starts_recorded": 0,
+    "returned_plans": 0,
+    "external_travel_search_initiated": false,
+    "why": "A server geography clarification left the run WAITING_USER before a new search; no travel tool was started.",
+    "wire_counter": "UNKNOWN_TOOL_EVENTS_ARE_NOT_WIRE_REQUESTS",
+    "not_claimed": "No live supplier or independent wire-counter qualification; this DEMO step was blocked before plan refresh."
+  },
+  "additional_finding": {
+    "id": "HARNESS-004-COMPOUND-CITY-REFERENCE-ASK-001",
+    "status": "OPEN_IN_CAPTURED_ACTUAL_SOURCE",
+    "after_status": "WAITING_USER",
+    "pending_field": "destination.city",
+    "plans": 0,
+    "message": "Выберите один город назначения или явно опишите последовательность остановок.",
+    "score_scope_gap": "The original T4 predicates checked correct state facts but not OPTIONS_READY/pendingNone/current plans. Their PASS remains unchanged."
+  },
+  "capture_activity": {
+    "report_reads": 1,
+    "api_calls": 0,
+    "profile_changes": 0,
+    "runtime_changes": 0
+  }
+}

@@ -246,3 +246,11 @@ QA25-EVAL-INTEGRITY-01: limitedpatterncheck219trackedtextfiles/0strongpatterns,n
 **H004-EXPLICIT-CHANGE-ANSWER-COVERAGE-001 — CONTROLLED_PASS / ACTUAL_PENDING.** Selector party,budget не заменяет просьбу «что изменилось»: добавляется серверная history секция с before→after. Гипотезы/цитаты/история/отрицания не становятся таким запросом; 10newpure/PG внутри81related.
 
 Дополнительный свободный ресурс подтверждёнGET/key:39/50used,11remaining,$0. Только OpenRouter ceiling50 при явном operator request, default40/Gemini40 сохраняются; счётчикине сбрасываются, max_price0/:free/nobackup/creditlimitнеизменны. Новыйfull4403PASS/0skip/147.56s; [core](../verification/initial-layout-router50-core-20261027.json). Это не actualwholelanguagePASS и не quota guarantee.
+
+## Actual WOW: сохранённые state PASS и отдельно найденный flow gap
+
+Внешний PF-GROUP04 на93f91fd прошёл12старыхstate/answer/controloracles,6LLMcalls. RawT4самкорректноиспользовал2scopedset_room_members: compat/aliasrepairsневызывались. [Actual](../verification/wow-router-r5-20261027.json).
+
+**HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001 — CONTROLLED_FLOW_PASS / ACTUAL_FOLLOWUP_PENDING.** ПослеT4городавссылкахнаотельАнтальи/завтракСтамбулавызвалиinitialdestinationASKприужеупорядоченноммаршруте. Stateверен,нонемедленныйпоискблокировался. Guardтеперьразличаетexistingstaycomponentreferencesиrouteproposal; new/unknown/alternative/country/explicitroutechangeвсёещёпроверяются.159related+точныйPGflow→OPTIONS_READY/2DEMOplans/pendingNone, данные/завтрак/выборотелянеизменены; [repair](../verification/existing-city-scope-repair-20261027.json).
+
+R5recipeдобавляетONLY5строгихreadinesschecksкT4, старые12PASSнепереписывает. Последнийfull4438PASS/0skip/164.59s; [core](../verification/existing-route-flow-core-20261027.json). Budget50толькоприexactexplicit50, generic2000ZAIнеподнимаетдругиеcallerdefault40. СледующийactualодинарныйT4сlabelledtypedprestatebootstrap, безложногоclaimновых12естественныхходов.
