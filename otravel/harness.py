@@ -565,6 +565,7 @@ class Harness:
                     min(2000, self.settings.max_cloudflare_llm_calls_per_day) if provider == "cloudflare" else
                     min(1000, self.settings.max_groq_llm_calls_per_day) if provider == "groq" else
                     min(2000, self.settings.max_llm_calls_per_day) if provider == "zai" else
+                    min(50, self.settings.max_llm_calls_per_day) if provider == "openrouter" else
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
                 if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
                     raise ProviderError("MODEL_BUDGET_EXHAUSTED", "Дневной лимит вызовов LLM исчерпан.")

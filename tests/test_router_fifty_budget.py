@@ -2,11 +2,50 @@
 import asyncio
 from unittest.mock import patch
 
+import httpx
 import pytest
+from test_api import _ModelPolicyStore
 from test_local_model_budget import ledger as budget_ledger
 from test_local_model_budget import new_run, reserve, seed
 
 ledger = budget_ledger
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('requested,expected', [(40, 40), (50, 50), (100000, 50)])
+async def test_real_gateway_harness_passes_explicit_router_budget_to_durable_guard(requested, expected):
+    from otravel.config import Settings
+    from otravel.domain import sample_trip
+    from otravel.harness import Harness
+    from otravel.providers import LLMGateway
+
+    class ControlledRouter(LLMGateway):
+        def __init__(self):
+            super().__init__({'LLM_PROVIDER': 'openrouter', 'OPENROUTER_MODEL': 'test/model:free',
+                'OPENROUTER_API_KEY': 'synthetic-unused-router-key', 'OPENROUTER_BACKUP_MODEL': '',
+                'http_transport': httpx.MockTransport(lambda request: pytest.fail('No inference HTTP permitted'))})
+
+        async def extract_operations(self, context):
+            return {'operations': [], 'control': {'action': 'none'}, 'reply': 'Текущие условия сохранены.',
+                'unknowns': [], 'conflicts': [], 'speech_act': 'ASK'}
+
+    gateway, store = ControlledRouter(), _ModelPolicyStore()
+
+    async def reserve(sid, runid, limit, provider):
+        assert (sid, runid, provider) == ('policy-session', 'policy-run', 'openrouter')
+        store.reservations.append(limit)
+        return True
+
+    store.reserve_model_call = reserve
+    harness = Harness(Settings('unused', 'openrouter', 1, 8000, requested, 1), store, gateway, None)
+    session = {'session_id': 'policy-session', 'state_version': 0,
+        'state': sample_trip().model_dump(mode='json'), 'pending_question': None}
+    run = {'run_id': 'policy-run', 'input_message_id': 'policy-message', 'input_text': 'Уточни поездку'}
+    try:
+        await harness._extract(session, run)
+        assert store.reservations == [expected]
+    finally:
+        await gateway.close()
 
 
 @pytest.mark.asyncio
