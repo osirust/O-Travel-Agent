@@ -1,0 +1,150 @@
+{
+  "format": "otravel.bulk32.literal_repairs.v1",
+  "status": "CONTROLLED_EXACT_SOURCE_CONTRACT_PURE_API_PG_PASS_FRESH_ACTUAL_RETEST_PENDING",
+  "finding_ids": [
+    "HARNESS-004-BUDGET-TYPO-DELTA-001",
+    "HARNESS-004-CHECKOUT-DATE-SUFFIX-001",
+    "HARNESS-004-MORNING-TYPO-COMPOUND-001"
+  ],
+  "immutable_actual_sources": {
+    "parent_reported_source": "a36d76efea3f32d299559e6089cd89390f2cc887 / cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+    "records": [
+      {
+        "source_case": "ZAI100-002",
+        "source_turn": 7,
+        "file_sha256": "aa4c80836fa5a3350e5af20e056504ad653aeffb547c58f47d50ccdc77886a13",
+        "original_message": "Урежь обший бюджет на 20 тысяч рублей и напомни теперь возраста обоих детей."
+      },
+      {
+        "source_case": "ZAI100-003",
+        "source_turn": 3,
+        "file_sha256": "3348a00eb2c926563cfbaba1acd5c4b17aa1666c9bb7a8ecb48622c63a3cd8ef",
+        "original_message": "10 ноября 2026 года выезжаем."
+      },
+      {
+        "source_case": "ZAI100-004",
+        "source_turn": 9,
+        "file_sha256": "f1e3b66f986227bef4de5f788de41ca12e28ede5de0a53b240639ad841dc5579",
+        "original_message": "Вылет лучше рано утрам. На какое число у меня сейчас выезд из отеля?"
+      }
+    ]
+  },
+  "fixture": {
+    "path": "fixtures/regression/bulk32-money-date-preference-20261027.json",
+    "sha256": "abe61c41b4265dda1a875e3423a06e353d6555e23d0b2aee4cb8e611d15b7e22",
+    "raw_operations_and_text_changed": false,
+    "opaque_trip_and_question_ids_replaced_by_synthetic_labels": true,
+    "keys_bearer_or_supplier_ids_copied": false
+  },
+  "fixes": [
+    {
+      "id": "HARNESS-004-BUDGET-TYPO-DELTA-001",
+      "actual_failure": "Before 15000000 minor RUB, explicit reduction of 20 thousand; raw and checked amounts were 14800000, so the canonical reply wrongly reported 148000 RUB.",
+      "code": "Recognize the exact modifier typo обший only between a budget command and its budget. Add уреж as an explicit budget command. Ground the current whole-trip RUB base minus the explicit literal: 15000000-2000000=13000000.",
+      "ambiguous_relative": "A schema-valid positive proposed budget with an explicit relative-budget verb but unbound direction is suppressed with a question. Invalid/negative proposals remain for normal validation; old oracles were unchanged.",
+      "preserved": "Children ages5/9 and other operations/facts are unchanged. No new budget intent is initiated."
+    },
+    {
+      "id": "HARNESS-004-CHECKOUT-DATE-SUFFIX-001",
+      "actual_failure": "A fresh owned checkout question received 10 ноября 2026 года выезжаем. The model omitted the date and added an unrequested nonstop=false which the old guard removed. Checkout stayed missing.",
+      "source_spacing": "The actual source has a space between month and year. Glued ноября2026 is a separately labelled controlled variant.",
+      "code": "Accept only a whole absolute calendar answer under the fresh owned slot; the suffix выезжаем/выезжаю belongs only to checkout. Normalize month/year spacing without guessing a year.",
+      "ownership": "Stale/foreign/other field/pause/question/hypothesis/quote/compound/flight-verb cases do not apply dates. No text before the first date is discarded.",
+      "verified_result": "The current turn sets 2026-11-10 and the return leg immediately, with no additional model call or later budget message."
+    },
+    {
+      "id": "HARNESS-004-MORNING-TYPO-COMPOUND-001",
+      "actual_failure": "The model supplied early_morning and the correct checkout date. The preference guard stripped рано утрам and the reply became a generic no-change notice.",
+      "code": "Accept рано утрам only with a positive flight/departure cue; arrival/wakeup/history/hypothesis/quote/negation do not authorize the new typo.",
+      "parent_hook": "Root extends canonical changed_trip_receipt to a validated no-op set_preference plus a saved-fact question. It uses current facts, not model prose.",
+      "negative_canary": "The controlled PG model reply deliberately says 01.01.2099. Both the changed preference and known no-op reply contain canonical 15.11.2026 and exclude2099."
+    }
+  ],
+  "code": [
+    {
+      "path": "otravel/money.py",
+      "sha256": "d25f9269b54105d2a1cdea5802a653989152767e571d01ad15fa6f3bcdbefba1"
+    },
+    {
+      "path": "otravel/date_slots.py",
+      "sha256": "662ba5061922df37048bd53f34d45aa18092989ff14fc2d95b80e96f78221a4d"
+    },
+    {
+      "path": "otravel/preference_grounding.py",
+      "sha256": "23906c52cf1cdcf31153ed75ace6d649e0cd906cb6fd3458fb0f560d44daf02a"
+    },
+    {
+      "path": "tests/test_bulk32_literal_repairs.py",
+      "sha256": "f27fa00fc115da850089d9c10c88393c38af9168b3fef0d4b15951e8055df03c"
+    },
+    {
+      "path": "tests/test_harness_bulk32_literal_repairs.py",
+      "sha256": "3afab74c946a12159d4951e7b11c4eec24f3440412c07374b3e3119848adec8b"
+    }
+  ],
+  "verification": {
+    "exact_initial_red": {
+      "path": ".local/evaluation/after80-20261027/bulk32-three-literals-red.xml",
+      "sha256": "8d7b5bbf2212fab258fdd8cc9f4361d80862cd788f6f873fce51d1b049b35e0d",
+      "passed": 0,
+      "failed": 3,
+      "skipped": 0,
+      "seconds": 1.408
+    },
+    "related_pure_final": {
+      "path": ".local/evaluation/after80-20261027/bulk32-three-literals-related-final.xml",
+      "sha256": "973191fec6a9cd0607f0403bcd264afb5032fee8ff74c5d7b355a30b3fb7067d",
+      "passed": 450,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 9.926
+    },
+    "cached_api_pg_final": {
+      "path": ".local/evaluation/after80-20261027/bulk32-three-literals-pg-final.xml",
+      "sha256": "c25cf163a3d370348779f9f4b684c5268c2e13714e6aae1dd9b955d57831b825",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4.94
+    },
+    "test_db": "otravel_test",
+    "actual_model_or_supplier_http": 0,
+    "ruff": "PASS for three assigned source files and two new test files",
+    "old_oracles_changed": false,
+    "counts_overlap_not_additive": true,
+    "historical_tests": [
+      {
+        "junit": {
+          "path": ".local/evaluation/after80-20261027/bulk32-three-literals-related-initial.xml",
+          "sha256": "f62f8b58a77f93e16f1626a7a58a2dfa99b54ed3d6ae4278722230a0602f0272",
+          "passed": 449,
+          "failed": 1,
+          "skipped": 0,
+          "seconds": 9.337
+        },
+        "cause": "One old scalar-guard fixture proposes invalid negative budget -999. New suppression was restricted to schema-valid positive proposals, restoring normal-validator authority without changing that oracle."
+      },
+      {
+        "junit": {
+          "path": ".local/evaluation/after80-20261027/bulk32-three-literals-pg-initial.xml",
+          "sha256": "b0f007bc1e0fa90ace8d64a7a84505807608909c442db04dc31d667c2d7bffd1",
+          "passed": 2,
+          "failed": 2,
+          "skipped": 0,
+          "seconds": 5.395
+        },
+        "causes": [
+          "Real no-op canonical-date reply loss, fixed by the Root reply hook.",
+          "A new test incorrectly prohibited all tool starts after a changed flight preference. Bounded controlled re-search is legitimate. Only that assumption was removed; canonical date, state and order checks remain strict."
+        ]
+      }
+    ]
+  },
+  "scope_limits": [
+    "Controlled raw-contract/API/PG evidence is not a fresh strong-model replay. Original actual failures remain immutable.",
+    "Money typo scope is the exact same-budget modifier, not arbitrary fuzzy monetary speech or unknown-scope arithmetic.",
+    "The date extension addresses a fresh owned checkout token. A freeform invalid-date edit without pending, such as actual017 November31→December1, is an independent Root finding and is not closed here.",
+    "A changed preference may trigger bounded controlled re-search. These PG tests do not prove real source availability.",
+    "Full80/106 acceptance remains separate. Parent owns the combined frozen-source full suite and actual retest."
+  ]
+}

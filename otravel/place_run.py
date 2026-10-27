@@ -272,6 +272,33 @@ def rebase_place_control(pending, before_state, new_version, *, now=None):
         return None
 
 
+def preserve_place_choice_for_independent_facts(pending, before_state, operations, *, now):
+    """Pure dispatch predicate for a fresh owned unresolved place question.
+
+    Ordinary model unknowns do not consume a displayed identity choice. Only
+    edits leaving that choice's geographic scope intact qualify; the existing
+    maintenance transition performs the actual CAS/rebase without tool calls.
+    This does not grant authority to expired, forged or changed-scope packets.
+    """
+    try:
+        before = TripState.model_validate(before_state)
+        _need(isinstance(pending, dict) and str(pending.get("field", "")).startswith("place.")
+            and isinstance(pending.get("question_id"), str) and bool(pending["question_id"])
+            and type(pending.get("state_version")) is int and pending["state_version"] == before.state_version)
+        instant = _date(now)
+        packet = _read_pending(pending, before.model_dump(mode="json"), instant)
+        _need(packet.get("stage") in {"city_query", "country_choice", "city_choice", "ref_revision_confirm"}
+            and pending.get("target_id") == packet.get("stay_id"))
+        edits = [Operation.model_validate(operation) for operation in operations]
+        current, changes = apply_operations(before, edits)
+        if changes:
+            current.state_version = before.state_version + 1
+        _rebase_owned_pending(pending, before, current, instant)
+        return True
+    except (ValueError, TypeError, KeyError):
+        return False
+
+
 def _pending(question, state, run, *, context=None, field=None, target=None):
     _need(isinstance(question, str) and 0 < len(question.strip()) <= 8192)
     ctx = deepcopy(context or {})
@@ -314,13 +341,15 @@ def _selected_operations(packet, role, target):
 
 async def finish_place_run(harness, session, run, state, *, request=None, selection=None,
                            operations=(), model_meta=None, control="none", remaining_requests=(),
-                           informational=False, precomputed_packet=None) -> None:
+                           informational=False, precomputed_packet=None, independent_notice=None) -> None:
     """Finish one owned resolution run and at most one persistent revision."""
     if informational is not False:
         raise DomainError("place_information_mode_unavailable", "Справочный режим выбора места пока не включён.")
     before = TripState.model_validate(state)
     version = session["state_version"]
     maintenance = request is None and selection is None and precomputed_packet is None
+    _need(independent_notice is None or maintenance and model_meta is None
+        and isinstance(independent_notice, str) and 0 < len(independent_notice.strip()) <= 8192)
     _need(before.state_version == version and before.trip_id == session["state"]["trip_id"]
         and run["session_id"] == session["session_id"] and control in {"none", "continue", "wait", "resume"}
         and not (request is not None and selection is not None)
@@ -382,6 +411,9 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
         else:
             await fence()
             reply = rebound["text"]
+        if independent_notice is not None:
+            reply = independent_notice.strip() + " " + reply
+            result["independent_notice"] = {"source": "canonical_slot", "message": independent_notice.strip()}
         result["place_resolution"] = {"action": "maintained_pending"}
         await harness.store.finish_run(run["run_id"], version,
             current.model_dump(mode="json") if changes else None, "WAITING_USER", reply,

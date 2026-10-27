@@ -1,0 +1,198 @@
+{
+  "format": "otravel.submission_packaging.smoke.v1",
+  "status": "IMMUTABLE_CORE_AND_PUBLIC_PACKAGING_DOCKER_SMOKE_PASS_REAL_JURY_KEYS_PENDING",
+  "base_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "core_package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+  "core_package_files": 76,
+  "parent_full_controlled_pass": 6680,
+  "parent_full_proof": "docs/verification/prefrontend-repair-checkpoint-20261027.json",
+  "core_unchanged_by_overlay": true,
+  "source_context_kind": "gitarchiveofexactcheckpoint,thenonlylistedpackagingfilescopiedwithbefore/afterSHAchecks;mutableEotravelnotused",
+  "packaging_files": [
+    {
+      "path": "scripts/encrypt_jury_secrets.py",
+      "sha256": "5482ed594c728c65b71515460e2bfcc7e0fc7088cb8079944a8efe11229232d7"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "bf060d2835eb67225d0c7168b137b47117daf7048985e4f905b509e15802d1db"
+    },
+    {
+      "path": "docker-compose.yml",
+      "sha256": "6d18776a8ec25ffcf568be055ef9517457aea3b29651e391f11052273a307da1"
+    },
+    {
+      "path": "README.md",
+      "sha256": "773f54d8e9299aceb33fcd3bda57662dcd7a749bd1ad686a69c204a6ac4503d4"
+    },
+    {
+      "path": "docs/SUBMISSION.md",
+      "sha256": "6435d9dbadfad5be4d8ae7c01ea840a1fa8d1cfd914dfbf7d8bbb09711c00ea2"
+    }
+  ],
+  "smoke": {
+    "private_report": "/home/aegml/checks/submission-docker-smoke-20261027-201501-624e8e10/report.json",
+    "report_sha256": "d4f5826c94484a9822d3b3f4be19185bea0c4ba01e35098f782e060dc2170e44",
+    "project": "otravel_submission_4ca6075edb",
+    "port": 18080,
+    "checks": [
+      {
+        "id": "immutable_checkpoint_package_matches",
+        "passed": true
+      },
+      {
+        "id": "packaging_overlay_does_not_change_core",
+        "passed": true
+      },
+      {
+        "id": "all_example_values_empty",
+        "passed": true
+      },
+      {
+        "id": "no_model_or_travel_credentials_in_container",
+        "passed": true
+      },
+      {
+        "id": "single_local_owned_port",
+        "passed": true
+      },
+      {
+        "id": "non_root_runtime",
+        "passed": true
+      },
+      {
+        "id": "health_database_and_booking_guard",
+        "passed": true
+      },
+      {
+        "id": "debug_html_ready",
+        "passed": true
+      },
+      {
+        "id": "swagger_available_as_documented",
+        "passed": true
+      },
+      {
+        "id": "dynamic_flag_reaches_real_runtime",
+        "passed": true
+      },
+      {
+        "id": "keyless_llm_failure_preserves_empty_trip",
+        "passed": true
+      },
+      {
+        "id": "explicit_demo_form_works_after_llm_failure",
+        "passed": true
+      },
+      {
+        "id": "typed_form_changes_one_revision",
+        "passed": true
+      },
+      {
+        "id": "no_generation_provider_calls_or_orders",
+        "passed": true
+      },
+      {
+        "id": "db_trip_and_owner_survive_app_restart",
+        "passed": true
+      },
+      {
+        "id": "only_owned_project_removed",
+        "passed": true
+      }
+    ],
+    "passed_checks": 16,
+    "db_counts": {
+      "sessions": 1,
+      "model_starts": 0,
+      "tool_starts": 0,
+      "orders": 0
+    },
+    "build_up_seconds": 4.472,
+    "elapsed_seconds": 9.735,
+    "fresh_database_volume": true,
+    "build_cache": "ExistingDockerimage/dependencycachewasavailable;thisisnotanuncachedinternet-timingbenchmark.",
+    "image": {
+      "id": "sha256:4f105add1e3d9b81209d3afdd38bc31bc7de9d428f021c80db3412f2d6176b9e",
+      "tags": [
+        "otravel_submission_4ca6075edb-app:latest"
+      ],
+      "user": "app",
+      "project": "otravel_submission_4ca6075edb"
+    },
+    "cleanup": {
+      "containers": {
+        "app": "bd0c6db4784670c7fcaa8b9902c3f49a56f0416b9e6f80fcbb3443e8e2be8845",
+        "db": "76030e52d4f979974f24db64c19bff78c395cb758b1ac83a414873906c05b7da"
+      },
+      "volume": "otravel_submission_4ca6075edb_pgdata",
+      "network_names": [
+        "otravel_submission_4ca6075edb_default"
+      ],
+      "project": "otravel_submission_4ca6075edb"
+    },
+    "only_owned_project_removed": true,
+    "real_model_or_tour_provider_calls": 0,
+    "actual_orders": 0,
+    "runtime_caps_in_smoke": {
+      "model_day": 0,
+      "model_run": 0
+    },
+    "restart": "Ownappcontainerrestartretainedtrip/revision/ownerBearerwithsameDBvolume."
+  },
+  "all_blank_example_default_config": {
+    "status": "EMPTY_EXAMPLE_DEFAULTS_COMPOSE_CONFIG_PASS",
+    "dynamic": "true",
+    "port": "8080",
+    "run_cap": "2",
+    "default_search": "DEMO",
+    "actual_containers_started": 0,
+    "actual_provider_calls": 0
+  },
+  "public_helper": {
+    "sha256": "5482ed594c728c65b71515460e2bfcc7e0fc7088cb8079944a8efe11229232d7",
+    "source_default": "/home/aegml/projects/otravel/.local/submission/jury.env",
+    "Master_read": false,
+    "synthetic_controls": 23,
+    "controls_file": ".local/submission/public-age-controls-final-20261027.json",
+    "controls_sha256": "ecaa655e5fbcf3b1d96c5c84db4330be9a7facd7c062bd63965f294d22e1db95",
+    "ruff": "PASS",
+    "official_recipient_sha256": "4c665c3e34c86188bfbad780f9b1c36c4de5e37be7e3b35a2cbca179bce6b1f8",
+    "root_secrets_env_age_created": false
+  },
+  "example": {
+    "variables": 68,
+    "all_values_empty": true,
+    "DYNAMIC_GEOGRAPHY_ENABLED_included": true,
+    "PUBLIC_docs_flag": "No such environment gate exists in the qualified core;none was invented. Local/docsremainsavailableasdocumented.",
+    "local_env_APP_PORT_8081_touched": false
+  },
+  "historical_attempts": [
+    {
+      "path": "/home/aegml/checks/submission-docker-smoke-20261027-200811-cb8d8c32/report.json",
+      "status": "SMOKE_FAILED",
+      "cause": "PrivateSQLprobeusedeventsratherthanactualagent_eventstablename;applicationwashealthy.",
+      "product_assertions_relaxed": false,
+      "owned_cleanup_verified": true
+    },
+    {
+      "path": "/home/aegml/checks/submission-docker-smoke-20261027-201036-bb106f86/report.json",
+      "status": "SMOKE_PASS",
+      "note": "Finalrerunfollowedimport-onlyRuffcorrectioninpublichelper;runtimecoreunchanged."
+    }
+  ],
+  "actual_key_encryption_or_push": false,
+  "git_commit_or_tag_created_by_actor": false,
+  "not_completed": [
+    "Dedicatedjury-onlyLLMkeysandliveAPIvalidationforthosekeys.",
+    "Realjury.env encryption,organiserdecryptionandGitpublicationofsecrets.env.age.",
+    "Publicincognitovideo.",
+    "Finalfrontendintegrationandfreshfinalarchivequalification.",
+    "submissiontagonfinalmaincommit."
+  ],
+  "limitations": [
+    "Thisisbackend/temporarydebugUIpackaging,notfinalfrontendbrowseracceptance.",
+    "Full6680controlledproofandactualprovider/corpusresultsremainseparatefromthe16packagingsmokechecks.",
+    "No filesfromNativeMaster,WindowsPostgres,otherWSL,otherDockerprojectsorVPNwerechanged."
+  ]
+}

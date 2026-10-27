@@ -170,7 +170,8 @@ def build_operation_schema(state: TripState | dict[str, Any], *,
     # A room ID is local to its stay. Existing IDs are retained; new aliases can
     # be reused across different stays, exactly as RoomAllocation permits.
     room_ids = list(dict.fromkeys(room.id for stay in state.stays for room in stay.rooms))
-    room_ids += _candidates("room", set(room_ids), MVP_LIMITS["rooms_per_stay"])
+    new_room_ids = _candidates("room", set(room_ids), MVP_LIMITS["rooms_per_stay"])
+    room_ids += new_room_ids
     date = _nullable(_text(pattern=DATE_PATTERN))
     city = _enum(known_cities())
     group = _nullable(_enum(all_groups)) if all_groups else {"type": "null"}
@@ -237,7 +238,7 @@ def build_operation_schema(state: TripState | dict[str, Any], *,
             operation("set_room_members", _object({
                 "stay_id": {"type": "string", "const": stay.id},
                 "traveler_ids": members,
-            }, ("stay_id", "traveler_ids")), [room.id for room in stay.rooms])
+            }, ("stay_id", "traveler_ids")), [room.id for room in stay.rooms] + (new_room_ids if dynamic_places else []))
     if stay_ids:
         operation("remove_stay", _object({}), stay_ids)
         operation("replace_hotel", _object({"hotel_id": _text()}, ("hotel_id",)), stay_ids)

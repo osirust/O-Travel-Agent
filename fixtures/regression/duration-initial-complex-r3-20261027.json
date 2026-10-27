@@ -1,0 +1,247 @@
+{
+  "finding_id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+  "scope": "Cached actual Groq initial response and later known-failed retry projection; not a new model run",
+  "source_package_sha256": "ddc54528e15b02f1d20119120948bfc2fabbef6bcc95e39401b962e83a7707c3",
+  "source_report_sha256": "5b897ff5bdbdd73040920019a42184f0e2303cb837c9cd58ae172c9d71b1adaf",
+  "source_transform": [
+    "Only initial before_trip.trip_id replaced by stable fixture ID; raw model operations, text and contract hashes preserved.",
+    "No capabilities, account IDs, quotes, provider keys, HTTP headers or URLs copied.",
+    "Contract values are semantic PostgreSQL JSONB projections: key order may differ from the original in-memory snapshot; recorded source contract SHA remains provenance, not a reproducible byte hash of this projection."
+  ],
+  "before_trip": {
+    "legs": [],
+    "stays": [],
+    "budget": null,
+    "groups": [],
+    "origin": null,
+    "trip_id": "cached-duration-initial",
+    "travelers": [],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 0
+  },
+  "input": "Хочу поездку: из Казани в Стамбул, заезд 10 ноября 2026, выезд 13 ноября 2026; затем Анталья, заезд 13 ноября 2026, выезд 17 ноября 2026; вернуться в Казань 17 ноября 2026. Едут два взрослых и ребёнок 7 лет. В каждом городе нужен один номер для всех троих. Бюджет на всю поездку 1 200 000 рублей. Гражданство для гостиничного поиска — Россия.",
+  "raw_contract": {
+    "value": {
+      "reply": "Запрос получен, внесены указанные изменения.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Казань"
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "currency": "RUB",
+            "amount_minor": 120000000
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-1",
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-2",
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-3",
+            "age": 7,
+            "type": "child"
+          },
+          "target_id": null
+        },
+        {
+          "type": "upsert_group",
+          "value": {
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "keep_separate": false
+          },
+          "target_id": "new-group-1"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-13",
+            "requested_nights": 3
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Анталья",
+            "rooms": [
+              {
+                "id": "new-room-2",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-13",
+            "check_out": "2026-11-17",
+            "requested_nights": 4
+          },
+          "target_id": "new-stay-2"
+        },
+        {
+          "type": "set_search_policy",
+          "value": {
+            "guest_nationality": "RU"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "f819b8347d64fb0d437aaadbe5ce2fb9925d00a3fc1207062e107eeb7bcc7bc6",
+    "captured": true,
+    "utf8_bytes": 1384
+  },
+  "followup": {
+    "input": "Теперь добавь ещё одного ребёнка 4 лет, существующие два взрослых и ребёнок 7 лет остаются. В КАЖДОМ городе сделай два номера: в первом — первый из существующих взрослых и оба ребёнка, во втором — второй существующий взрослый один. Уменьши общий бюджет на 20 000 рублей. Возвращение в Казань перенеси на 19 ноября 2026, и выезд из отеля Антальи тоже на 19 ноября 2026. Даты Стамбула 10–13 ноября и остальные требования сохрани.",
+    "raw_contract": {
+      "value": {
+        "reply": "Добавлен ребёнок 4 года, изменены комнаты в обоих городах и уменьшён бюджет. Необходимо уточнить, как изменить дату обратного рейса, так как операция изменения даты leg отсутствует.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [
+          "Как изменить дату обратного рейса (leg‑f060b4de‑6f01‑4bbe‑a448‑a438e8d0c59c) на 2026‑11‑19?"
+        ],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-4",
+              "age": 4,
+              "type": "child",
+              "group_id": "new-group-1"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Стамбул",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-3",
+                    "new-traveler-4"
+                  ]
+                },
+                {
+                  "id": "new-room-3",
+                  "traveler_ids": [
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-13"
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Анталья",
+              "rooms": [
+                {
+                  "id": "new-room-2",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-3",
+                    "new-traveler-4"
+                  ]
+                },
+                {
+                  "id": "new-room-4",
+                  "traveler_ids": [
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-19"
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 118000000
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "sha256": "91f453d0515745c931cd8f1544c878277ab1b23acb55bfad19d2e926c70e1f0d",
+      "captured": true,
+      "utf8_bytes": 1404
+    },
+    "source_report_sha256": "d43fcd011fd2655060baaaf43948ed0e0441f25a99b571ab041d743dc140349b"
+  },
+  "source_projection_digests": {
+    "initial_contract_value_canonical_sha256": "969f4c861b063e95a760fc0c6631ca2facdf0c4d8411d5969ad35d893a704e56",
+    "followup_contract_value_canonical_sha256": "73d671cbca24d05b35d0ab53b129eb6cd3aa00e4cc07585f501663665c88ef14"
+  }
+}

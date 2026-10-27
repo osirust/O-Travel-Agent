@@ -1,26 +1,35 @@
-"""Fill omitted labelled initial stay dates from a fresh owned single target.
+"""Reject impossible asserted hotel dates, then repair owned initial omissions.
 
 No wish word, model inference, implicit year, new destination, persistence or
-HTTP. This helper follows ordinary intent grounding and only repairs missing
-dates; it is not a general date editor or a permission grant for other setters.
+HTTP. Current impossible calendar literals conflict independently of the target.
+Valid-date repairs still require the fresh owned single target; this is not a
+general date editor or a permission grant for other setters.
 """
 from __future__ import annotations
 
 import re
+from calendar import monthrange
 from copy import deepcopy
-from datetime import datetime
+from datetime import date, datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from .date_slots import _EXPLICIT, _MONTH, _calendar
+from .date_slots import _EXPLICIT, _MONTH, _MONTHS, _calendar
 from .domain import DomainError, TripState, apply_operations
 
 _QUOTED = re.compile(r'«[^»]*»|“[^”]*”|"[^"\n]*"|(?<!\w)\'[^\'\n]*\'(?!\w)|`[^`]*`')
 _NONCURRENT = re.compile(r"\b(?:если|бы|допустим|предположим|возможно|наверное|например|либо|или|раньше|ранее|"
     r"прежде|вчера|цитирую|говорил\w*|писал\w*|обсуждал\w*|if|suppose|previously|hypothetically)\b", re.IGNORECASE)
-_INFO = re.compile(r"^\s*(?:объясни|расскажи|напомни|поясни|почему|как|где|когда|можно|можешь|what|why|can)\b", re.IGNORECASE)
+_INFO = re.compile(r"^\s*(?:объясни|расскажи|напомни|поясни|скажи|покажи|назови|перечисли|проверь|"
+    r"почему|как|где|когда|можно|можешь|what|why|can)\b", re.IGNORECASE)
 _NO_EDIT = re.compile(r"\b(?:не\s+(?:меняй|изменяй|трогай|задавай|сохраняй|используй)\s+(?:даты|дату|заезд|выезд)|"
     r"(?:убери|удали|очисти|сбрось)\s+(?:даты|дату|заезд|выезд))\b", re.IGNORECASE)
 _FIELDS = {'заезд': 'check_in', 'выезд': 'check_out'}
+_CALENDAR_MONTH = re.compile(r'([0-9]{1,2})\s*(' + '|'.join(_MONTHS)
+    + r')(?:\s*([0-9]{4})(?:\s*года)?)?')
+_CALENDAR_TOKEN = r'(?:[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\.[0-9]{2}\.[0-9]{4}|' + _CALENDAR_MONTH.pattern + r')'
+_DATE_ASSERTION = re.compile(r'(?:(?:перенеси|перенесите|передвинь|сдвинь|измени|поменяй|установи|задай|поставь|сделай)'
+    r'\s+(?:только\s+)?)?(?:(?:дату|дата)\s+)?(?P<label>заезда?|выезда?)'
+    r'(?:\s*:\s*|\s+(?:на\s*)?|(?=[0-9]))(?P<token>' + _CALENDAR_TOKEN + r')')
 
 
 def _current(text):
@@ -67,6 +76,44 @@ def _dates(text, today, meta):
     return values
 
 
+def _invalid_current_hotel_date(current):
+    """Reject an impossible asserted literal, independent of target ownership.
+
+    No date/target is chosen. Month bounds use the maximum possible length,
+    so February29 without a year is possible/undecided, never guessed invalid.
+    """
+    for sentence in re.split(r'[,;!\n]|(?<!\d)\.|\.(?!\d)', current):
+        pieces = re.split(r'\s+(?:и|а|но)\s+(?=(?:установи|задай|поставь|уменьши|увеличь|сократи|снизь|урежь|'
+            r'перенеси|измени|напомни|бюджет|заезд|выезд)\b)', sentence)
+        for piece in pieces:
+            match = _DATE_ASSERTION.fullmatch(' '.join(piece.split()))
+            if match is None:
+                continue
+            token = match['token']
+            month = _CALENDAR_MONTH.fullmatch(token)
+            invalid = False
+            if month:
+                day, number = int(month[1]), _MONTHS[month[2]]
+                if month[3] is None:
+                    invalid = not 1 <= day <= monthrange(2000, number)[1]
+                else:
+                    try:
+                        date(int(month[3]), number, day)
+                    except (ValueError, OverflowError):
+                        invalid = True
+            else:
+                try:
+                    _calendar(token, date(2000, 1, 1))
+                except (ValueError, OverflowError):
+                    invalid = True
+            if invalid:
+                field = 'check_in' if match['label'].startswith('заезд') else 'check_out'
+                label = 'заезда' if field == 'check_in' else 'выезда'
+                reason = f'Дата «{token}» не существует в календаре. Укажите корректную дату {label}.'
+                return field, token, reason
+    return None
+
+
 def ground_explicit_stay_dates(state, text, operations, *, pending, now, timezone='Europe/Moscow'):
     """Return copied dict operations plus omission/contradiction diagnostics.
 
@@ -77,7 +124,19 @@ def ground_explicit_stay_dates(state, text, operations, *, pending, now, timezon
     copied = [op.model_dump(mode='json') if hasattr(op, 'model_dump') else deepcopy(op) for op in operations]
     meta = {'recovered': False, 'notes': [], 'conflicts': [], 'unknowns': []}
     current = _current(text)
-    if current is None or not re.search(r'\b(?:заезд|выезд)\b',current):
+    if current is None:
+        return copied, meta
+    invalid = _invalid_current_hotel_date(current)
+    if invalid is not None:
+        field, token, reason = invalid
+        meta['conflicts'] = [reason]
+        meta['unknowns'] = [reason]
+        meta['pending_context_clear'] = ['date_proposal', 'duration_proposal', 'duration_days']
+        meta['notes'].append({'finding_id': 'HARNESS-004-INVALID-CALENDAR-ROLLOVER-001',
+            'code': 'asserted_calendar_literal_invalid', 'field': 'stay.' + field, 'literal': token,
+            'whole_batch_conflict': True, 'state_changed': False})
+        return copied, meta
+    if not re.search(r'\b(?:заезд|выезд)\b',current):
         return copied, meta
     try:
         if not isinstance(now, datetime) or now.utcoffset() is None:

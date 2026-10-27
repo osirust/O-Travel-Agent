@@ -52,7 +52,7 @@ _TRANSACTION_PURPOSE = re.compile(
 _CURRENT_OFFER = re.compile(r"\b(?:выбранн\w*|текущ\w*|перв\w*|втор\w*|этот|этого)\s+(?:\w+\s+){0,2}"
     r"(?:вариант\w*|предложен\w*|тариф\w*|отел\w*)\b", re.IGNORECASE)
 _BUDGET_COMMAND = re.compile(r"\b(?:подтвержда\w*|установ\w*|постав\w*|зада\w*|измени\w*|меняю|"
-    r"увелич\w*|уменьш\w*|сократ\w*|сниз\w*|повы\w*|добав\w*|прибав\w*|верни)\b", re.IGNORECASE)
+    r"увелич\w*|уменьш\w*|сократ\w*|сниз\w*|уреж\w*|повы\w*|добав\w*|прибав\w*|верни)\b", re.IGNORECASE)
 
 
 def _purpose_spans(text: str) -> list[re.Match]:
@@ -93,7 +93,7 @@ def _budget_part_in_transaction(text: str) -> str | bool | None:
             continue
         start = marker.start()
         for command in _BUDGET_COMMAND.finditer(clause[:marker.start()]):
-            if re.fullmatch(r"\s*(?:(?:общий|общему|новый|текущий|мой|наш|именно|только|к)\s*)*",
+            if re.fullmatch(r"\s*(?:(?:общий|общему|обший|новый|текущий|мой|наш|именно|только|к)\s*)*",
                             clause[command.end():marker.start()]):
                 start = command.start()
         other_purposes = _purpose_spans(tail)
@@ -117,7 +117,7 @@ def _budget_guard_context(text: str) -> tuple[str, bool]:
             continue
         marker = markers[-1]
         affirmative = any(not _negated_literal(clause, command.start()) and re.fullmatch(
-            r"\s*(?:(?:общий|общему|новый|текущий|мой|наш|именно|только|к)\s*)*",
+            r"\s*(?:(?:общий|общему|обший|новый|текущий|мой|наш|именно|только|к)\s*)*",
             clause[command.end():marker.start()]) for command in _BUDGET_COMMAND.finditer(clause[:marker.start()]))
         if affirmative:
             # Do not split competing budget verbs ('уменьши и увеличь бюджет').
@@ -162,7 +162,7 @@ def _direction(prefix: str) -> int:
     for pattern, direction in ((_REDUCE, -1), (_INCREASE, 1)):
         for verb in pattern.finditer(head):
             between = head[verb.end():]
-            if re.fullmatch(r"\s*(?:(?:к|общий|общему|весь|наш|мой|на|whole|total)\s*)*", between):
+            if re.fullmatch(r"\s*(?:(?:к|общий|общему|обший|весь|наш|мой|на|whole|total)\s*)*", between):
                 directions.append(direction)
     return directions[0] if len(directions) == 1 else 0
 
@@ -380,7 +380,7 @@ def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[l
     guard_context, affirmative_budget = _budget_guard_context(normalized)
     if (_HISTORY.search(guard_context) or _RANGE.search(guard_context)
             or re.search(r"\b(?:если|например|допустим|предположим)\b", normalized)
-            or re.search(r"\bне\s+(?:меняй|меняю|изменяй|трогай|увеличивай|уменьшай|уменьшать|уменьш|сокращай|снижай)\b", guard_context)):
+            or re.search(r"\bне\s+(?:меняй|меняю|изменяй|трогай|увеличивай|уменьшай|уменьшать|уменьш|сокращай|снижай|уреж\w*)\b", guard_context)):
         return result, []
     if affirmative_budget:
         normalized = guard_context
@@ -460,6 +460,10 @@ def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[l
         pass
     elif re.search(r"\bна\s*$", prefix) or _direction(prefix) and re.search(r"\b(?:бюджет\w*|лимит\w*)\s*(?:еще)?\s*$", prefix):
         direction = _direction(prefix)
+        if (not direction and type(value.get("amount_minor")) is int and value["amount_minor"] > 0
+                and _MARKER.search(prefix) and (_REDUCE.search(prefix) or _INCREASE.search(prefix))):
+            return _suppressed(result, reason="relative_budget_direction_unbound",
+                question="Уточните: нужно уменьшить или увеличить именно общий бюджет поездки на указанную сумму?")
         if not direction or type(base) is not int or not current_rub:
             return result, []
         if _get(budget, "scope", "whole_trip") != "whole_trip":

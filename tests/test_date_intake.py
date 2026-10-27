@@ -83,7 +83,7 @@ def test_stale_foreign_or_unowned_pending_never_binds_missing_dates(change):
 
 
 @pytest.mark.parametrize('scope', ['no_pending', 'stale_pending', 'multiple_stays'])
-def test_invalid_dates_outside_owned_initial_question_do_not_inject_a_new_question(scope):
+def test_informational_invalid_dates_outside_owned_question_do_not_inject_a_new_question(scope):
     before, ops = state(), null_setter()
     owned = pending(before)
     if scope == 'no_pending':
@@ -94,7 +94,7 @@ def test_invalid_dates_outside_owned_initial_question_do_not_inject_a_new_questi
         before, _ = apply_operations(before, [Operation(type='upsert_stay', target_id='other',
             value={'city': 'Казань'})])
         owned = pending(before)
-    result, meta = ground_explicit_stay_dates(before, 'Заезд 31.02.2027, выезд 07.03.2027.', ops,
+    result, meta = ground_explicit_stay_dates(before, 'Объясни, возможен ли заезд 31.02.2027 и выезд 07.03.2027.', ops,
         pending=owned, now=NOW)
     assert result == ops and not meta['recovered']
     assert meta['unknowns'] == [] and meta['conflicts'] == []
@@ -185,6 +185,7 @@ def test_a_missing_aware_clock_or_unknown_timezone_does_not_guess_calendar_conte
     assert result == ops and not meta['recovered']
 def test_unrelated_input_does_not_emit_date_normalization_notes():
     from datetime import UTC, datetime
+
     from otravel.date_intake import ground_explicit_stay_dates
     from otravel.domain import TripState
     operations,meta=ground_explicit_stay_dates(TripState(),

@@ -7,6 +7,7 @@ inventory or a new actual inference.
 import hashlib
 import json
 import os
+from datetime import date
 
 import pytest
 from sqlalchemy.engine import make_url
@@ -56,7 +57,9 @@ async def test_exact_cached_world_compound_recovers_explicit_RU_without_repeatin
         stay, = state['stays']
         assert (stay['city'], stay['place_id']) == ('Buenos Aires', 'geo:openmeteo:3435910')
         assert state['location_refs'] == before['trip']['location_refs']
-        assert (stay['check_in'], stay['check_out'], stay['requested_nights']) == ('2026-11-10', '2026-11-17', 7)
+        assert (stay['check_in'], stay['check_out']) == ('2026-11-10', '2026-11-17')
+        assert (date.fromisoformat(stay['check_out']) - date.fromisoformat(stay['check_in'])).days == 7
+        assert stay.get('requested_nights') is None, 'The source names dates, not a separate hard duration.'
         assert stay['rooms'] == [{'id': 'new-room-1', 'traveler_ids': ['new-traveler-1']}]
         assert (after.get('pending_question') or {}).get('field') != 'search.guest_nationality'
         reply = await _reply(client, sid, token, run)

@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-28",
+  "status": "FULL_CONTROLLED_PASS_ACTUAL_CORPUS_AND_COMPLEX_REBUILD_OPEN",
+  "package_sha256": "b170deda2396b53451e13f60d6af7da711ab9681f6bdee18d48f54f2339eb793",
+  "full": {
+    "passed": 6884,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_seconds": 400.98,
+    "source_unchanged": true,
+    "tests_sha256": "6a356d609ca5b28cad846f4e01a925f7fe7ae51dadf4986f28246d7219a5501f",
+    "private_terminal": ".local/evaluation/after80-20261027/full-final-prefrontend-r12-terminal.json"
+  },
+  "historical_r11": {
+    "passed": 6881,
+    "failed": 3,
+    "scope": "Three outdated assertions: nonempty example provider and implicit hard nights inferred only from explicit dates. Original files and failed XML retained; revised assertions have explicit-duration positive controls.",
+    "revision_proof": "docs/verification/r11-policy-assertions-revision-20261028.json"
+  },
+  "new_repairs": [
+    "bounded Z.ai schema repair with persistent caps",
+    "same-batch new room membership references",
+    "model-invented hard night counts",
+    "budget typo and relative amount scale",
+    "addressed checkout suffix",
+    "morning typo and saved date reply",
+    "independent facts preserve owned place choices",
+    "unrequested traveler removal",
+    "nonapply clause is not a hard pause",
+    "impossible calendar date cannot silently roll over"
+  ],
+  "actual": {
+    "original80": "Replay in progress on immutable a36d76/cd021, separately from this new core; semantic defects remain open.",
+    "original106": "Not fully executed; controlled pytest count is not a source-case pass count.",
+    "complex_rebuild": "R5 in progress with explicit geographical clarifications; earlier R1-R4 failures retained.",
+    "gigachat": "OAuth 200 via verified diagnostic DNS binding; inference API TLS timeout, generation 0."
+  },
+  "submission": {
+    "public_helper": "scripts/encrypt_jury_secrets.py",
+    "official_recipient_verified": true,
+    "example_values_empty": true,
+    "docker_smoke_scope": "a36d76/cd021 core plus packaging overlay; not automatically this new core",
+    "jury_key_created": false,
+    "ciphertext_created": false,
+    "reason": "Official rule requires a separate jury key; browser access was stopped because current URL could not be determined reliably."
+  },
+  "supplier_book_pay": 0,
+  "local_qwen": 0,
+  "paid": 0,
+  "staged_package": {
+    "tested_package_sha256": "b170deda2396b53451e13f60d6af7da711ab9681f6bdee18d48f54f2339eb793",
+    "staged_package_sha256": "bfb5f662637d3fd9e9f9c1990d53b991bbce508ce7ff641094c3991a0a2b3fee",
+    "package_files": 78,
+    "only_allowed_crlf_normalization": [
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

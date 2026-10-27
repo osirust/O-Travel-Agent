@@ -210,6 +210,25 @@ def _fresh_date_slot(data: dict, pending: dict, context: dict) -> bool:
             for source in (pending, context)))
 
 
+def _owned_calendar_answer(key: str, field: str) -> str | None:
+    """Whole addressed absolute token, optionally with a checkout verb suffix.
+
+    No clause before a date is discarded; an explicit year is required for this
+    new grammar. Current date/proposal parsing still owns incomplete years.
+    """
+    if field == "stay.check_out":
+        suffix = re.fullmatch(r"(.{1,40})\s+(?:выезжаем|выезжаю)", key)
+        if suffix:
+            key = suffix[1]
+    if _ISO.fullmatch(key) or _DOT.fullmatch(key):
+        return key
+    compact = re.fullmatch(r"([0-9]{1,2})\s+(" + "|".join(_MONTHS)
+        + r")\s*([0-9]{4})(?:\s*года)?", key)
+    if compact:
+        return f"{compact[1]} {compact[2]} {compact[3]} года"
+    return None
+
+
 def _year_date_question(context: dict, target: str | None, text: str, packet: dict | None = None) -> dict:
     bound = {key: value for key, value in context.items() if key != "date_proposal"}
     bound.update(field="stay.check_out", target_id=target, stay_id=target)
@@ -293,10 +312,11 @@ def _year_confirmation_answer(data: dict, pending: dict, context: dict, text: st
             "Дата выезда не изменена. Какую дату выезда выбираете? Укажите день, месяц и год.")
     if key not in {"да", "подтверждаю", "согласен", "согласна"}:
         # An unrelated compound edit must reach normal intake; no inferred yes.
-        if _year_source_month(text) is None and not (_ISO.fullmatch(key) or _DOT.fullmatch(key)):
+        replacement = _owned_calendar_answer(key, "stay.check_out")
+        if _year_source_month(text) is None and replacement is None:
             return no
         cleaned = {k: v for k, v in context.items() if k != "date_proposal"}
-        answer = resolve_date_answer(data, {**pending, "context": cleaned}, text, now, timezone)
+        answer = resolve_date_answer(data, {**pending, "context": cleaned}, replacement or text, now, timezone)
     else:
         cleaned = {k: v for k, v in context.items() if k != "date_proposal"}
         answer = resolve_date_answer(data, {**pending, "context": cleaned}, candidate.isoformat(), now, timezone)
@@ -484,6 +504,8 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
     context = deepcopy(pending.get("context")) if isinstance(pending.get("context"), dict) else {}
     data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state if isinstance(state, dict) else {}
     active_field = pending.get("field") or context.get("field")
+    if not explicit and _fresh_date_slot(data, pending, context):
+        key = _owned_calendar_answer(key, active_field) or key
     proposal_field = context.get("date_proposal", {}).get("field") if isinstance(context.get("date_proposal"), dict) else None
     if (not explicit and isinstance(context.get("date_proposal"), dict)
             and context["date_proposal"].get("owner") == _YEAR_OWNER):

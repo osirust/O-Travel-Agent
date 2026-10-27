@@ -655,7 +655,7 @@ class Harness:
         attempts = max(0, min(2, self.settings.max_llm_calls_per_run))
         if readonly:
             attempts = min(1, attempts)
-        if provider in {"ollama", "groq", "cloudflare", "zai", "gigachat"}:
+        if provider in {"ollama", "groq", "cloudflare", "gigachat"}:
             # Keep local and tightly capped free providers to one generation;
             # a malformed answer does not trigger an immediate full-context repair.
             attempts = min(1, attempts)
@@ -691,7 +691,10 @@ class Harness:
                     min(50 if self.settings.max_llm_calls_per_day == 50 else 40,
                         self.settings.max_llm_calls_per_day) if provider == "openrouter" else
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
-                if not await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider):
+                reserved = (await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit,
+                    provider, run_attempt_limit=attempts) if provider == "zai" else
+                    await self.store.reserve_model_call(session["session_id"], run["run_id"], daily_limit, provider))
+                if not reserved:
                     raise ProviderError("MODEL_BUDGET_EXHAUSTED", "Дневной лимит вызовов LLM исчерпан.")
                 await self._ensure_current_run(session, run)
                 requested_model = _requested_model(gateway, provider)
@@ -903,6 +906,11 @@ class Harness:
                         auxiliary, auxiliary_notes = ground_auxiliary_operations(session["state"], extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in auxiliary]
                         extracted.operation_normalizations.extend(auxiliary_notes)
+                        from .traveler_removal_grounding import guard_traveler_removal_operations
+                        removal_ops, removal_meta = guard_traveler_removal_operations(session["state"],
+                            extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in removal_ops]
+                        extracted.operation_normalizations.extend(removal_meta["notes"])
                         from .preference_grounding import guard_preference_operations
                         preference_ops,preference_meta=guard_preference_operations(session["state"],
                             extracted.operations,run["input_text"])
@@ -935,6 +943,13 @@ class Harness:
                             extracted.conflicts.extend(date_meta["conflicts"])
                             extracted.unknowns.extend(date_meta["unknowns"])
                             extracted.server_questions.extend(date_meta["unknowns"])
+                            extracted.pending_context_clear = list(dict.fromkeys([
+                                *extracted.pending_context_clear, *date_meta.get("pending_context_clear", [])]))
+                        from .duration_grounding import guard_unasked_duration_operations
+                        duration_ops, duration_meta = guard_unasked_duration_operations(session["state"],
+                            extracted.operations, run["input_text"], model_generated=True)
+                        extracted.operations = [Operation.model_validate(op) for op in duration_ops]
+                        extracted.operation_normalizations.extend(duration_meta["notes"])
                         if extracted.speech_act=="CHANGE" and not extracted.conflicts:
                             from .nationality_intake import ground_explicit_nationality
                             nationality_ops,nationality_meta=ground_explicit_nationality(session["state"],
@@ -1057,6 +1072,9 @@ class Harness:
                     if isinstance(exc, ProviderError) and exc.code == "INVALID_LLM_OPERATION" and exc.details.get("schema_errors"):
                         context["validation_feedback"] = {"errors": exc.details["schema_errors"],
                             "note": "Выбери точный существующий target_id из enum и разрешённую структуру value. Не придумывай типы операций или имена полей."}
+                        rejected = exc.details.get("rejected_structured_contract")
+                        if provider == "zai" and isinstance(rejected, dict) and rejected.get("captured") is True:
+                            context["validation_feedback"]["rejected_contract"] = rejected["value"]
                     if isinstance(exc, ValidationError):
                         allowed_locations = {"operations", "control", "action", "type", "target_id", "value", "reply", "unknowns", "conflicts"}
                         context["validation_feedback"] = {
@@ -1604,6 +1622,14 @@ class Harness:
                     raise DomainError("conflicting_operations", conflicts[0], conflicts)
                 if any(operation.type == "undo" for operation in operations) and command["search"]:
                     raise DomainError("undo_requires_separate_search", "После undo выполните отдельный новый поиск.")
+                if (self.settings.dynamic_geography_enabled and self.place_resolution is not None
+                        and str((session.get("pending_question") or {}).get("field", "")).startswith("place.")
+                        and not any(operation.type in {"undo", "set_search_policy"} for operation in operations)):
+                    from .place_run import finish_place_run, preserve_place_choice_for_independent_facts
+                    if preserve_place_choice_for_independent_facts(session.get("pending_question"), state,
+                            operations, now=self.place_resolution._now()):
+                        await finish_place_run(self, session, run, state, operations=operations, model_meta=None)
+                        return
                 candidate, changes, undo_meta = await self._apply_or_undo(session, state, operations)
                 new_state = candidate if changes else None
                 search = command["search"]
@@ -1686,14 +1712,20 @@ class Harness:
                     control="wait" if extracted.control.action=="wait" and explicit_pause_hint(run["input_text"]) and not resumed_after_input else "none",
                     remaining_requests=extracted.place_requests[1:],precomputed_packet=extracted.place_packet)
                 return
-            if (self.settings.dynamic_geography_enabled and self.place_resolution is not None and not conflicts
-                    and extracted.speech_act=="CHANGE" and extracted.control.action in {"none","continue","wait","resume"}
-                    and not extracted.unknowns
-                    and not (extracted.response_source=="contextual_slot" and extracted.pending_context is not None and extracted.unknowns)
-                    and str((session.get("pending_question") or {}).get("field","")).startswith("place.")):
+            from .place_run import preserve_place_choice_for_independent_facts
+            place_maintenance = (self.settings.dynamic_geography_enabled and self.place_resolution is not None and not conflicts
+                and extracted.speech_act=="CHANGE" and extracted.control.action in {"none","continue","wait","resume"}
+                and str((session.get("pending_question") or {}).get("field","")).startswith("place."))
+            preserve_identity_choice = bool(place_maintenance and preserve_place_choice_for_independent_facts(
+                session.get("pending_question"), state, extracted.operations, now=self.place_resolution._now()))
+            if (place_maintenance and (not extracted.unknowns or preserve_identity_choice)
+                    and not (extracted.response_source=="contextual_slot" and extracted.pending_context is not None
+                        and extracted.unknowns and not preserve_identity_choice)):
                 from .place_run import finish_place_run
                 await finish_place_run(self,session,run,state,operations=extracted.operations,model_meta=model_meta,
-                    control="wait" if extracted.control.action=="wait" and explicit_pause_hint(run["input_text"]) and not resumed_after_input else "none")
+                    control="wait" if extracted.control.action=="wait" and explicit_pause_hint(run["input_text"]) and not resumed_after_input else "none",
+                    independent_notice=extracted.reply if preserve_identity_choice and model_meta is None
+                        and extracted.response_source=="contextual_slot" and extracted.unknowns else None)
                 return
             if model_meta is None and extracted.response_source == "canonical_destination_keep":
                 if conflicts:
@@ -1810,11 +1842,22 @@ class Harness:
                     result.update(no_changes=True, notice="Поездка и показанные варианты не изменены.")
                 elif extracted.control.action == "wait" and not resumed_after_input:
                     missing = [issue["message"] for issue in validate_trip(candidate) if issue["code"].startswith("missing_")]
-                    if (questions or missing) and not explicit_pause_hint(run["input_text"]):
+                    if explicit_pause_hint(run["input_text"]):
+                        status, waiting_reason = "WAITING_USER", "user_pause"
+                    elif questions or missing:
                         questions = questions or missing
                         status, waiting_reason = "WAITING_USER", "clarification"
                     else:
-                        status, waiting_reason = "WAITING_USER", "user_pause"
+                        # Model 'wait' is not a user pause. In particular a
+                        # hypothetical 'пока ничего не меняй' must not queue
+                        # every later real message behind an invented resume.
+                        search = undo_meta is None and bool(changes or explicit_search_request(run["input_text"])
+                            or extracted.response_source == "contextual_slot" and extracted.pending_context is not None)
+                        if not search:
+                            status, waiting_reason, preserve_pending = session["status"], session.get("waiting_reason"), True
+                            result.update(no_changes=True, notice="Поездка и текущие варианты сохранены. Явная пауза не запрашивалась.")
+                        extracted.operation_normalizations.append({"finding_id": "HARNESS-004-UNREQUESTED-PAUSE-001",
+                            "code": "model_wait_does_not_create_user_pause", "user_pause": False})
                 elif questions:
                     status, waiting_reason = "WAITING_USER", "clarification"
                 elif extracted.control.action in {"request_checkout", "confirm"}:
@@ -1989,7 +2032,10 @@ class Harness:
             from .answering import changed_trip_receipt, wants_saved_facts
             subject = (result.get("conversation") or {}).get("subject") or {}
             literal_preference = any(note.get("finding_id") == "AFTER80-PRICE-INTAKE-001" for note in extracted.operation_normalizations)
-            if ((changes or literal_preference) and wants_saved_facts(run["input_text"])
+            known_preference_noop = (not changes and any(op.type == "set_preference" and any(
+                saved.key == op.value.get("key") and saved.value == op.value.get("value")
+                for saved in current.preferences) for op in extracted.operations))
+            if ((changes or literal_preference or known_preference_noop) and wants_saved_facts(run["input_text"])
                     and subject.get("kind") not in {"country", "city"}):
                 shown = result.get("plans") if "plans" in result else await self._latest_current_plans(session, run)
                 receipt, sections = changed_trip_receipt(run["input_text"], current.model_dump(mode="json"),

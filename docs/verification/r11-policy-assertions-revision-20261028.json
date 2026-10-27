@@ -1,0 +1,99 @@
+{
+  "format": "otravel.r11_policy_oracle_revision.v1",
+  "status": "POLICY_ASSERTIONS_CORRECTED_TARGETED_PASS_NEW_WHOLE_R12_PENDING",
+  "core_unchanged_by_this_actor": true,
+  "core_sha256_after_checks": "b170deda2396b53451e13f60d6af7da711ab9681f6bdee18d48f54f2339eb793",
+  "core_package_files": 78,
+  "original_full_r11": {
+    "path": ".local/evaluation/after80-20261027/full-final-prefrontend-r11-initial.xml",
+    "sha256": "7aa2c773792778ff2747958a1d5a85cc1538ae7bcbad8e2bcb6668e99a542c17",
+    "passed": 6881,
+    "failed": 3,
+    "skipped": 0,
+    "seconds": 399.506
+  },
+  "original_xml_changed": false,
+  "historical_sources": [
+    {
+      "source": "tests/test_gigachat_compose_contract.py",
+      "historical": "fixtures/evaluation/historical-tests/test_gigachat_compose_contract.py.before-r11-policy-20261028.txt",
+      "sha256": "7abbd9be6b90f83696b5e7af3b4459d617e2b6d4c96d82820620e2efea84c1d4"
+    },
+    {
+      "source": "tests/test_world_actual_compound_cached.py",
+      "historical": "fixtures/evaluation/historical-tests/test_world_actual_compound_cached.py.before-r11-policy-20261028.txt",
+      "sha256": "8c06c09c4aab6a104f3e2d9832995b18053271b62be9749220e4a897a759eb55"
+    },
+    {
+      "source": "tests/test_world_actual_nationality_cached.py",
+      "historical": "fixtures/evaluation/historical-tests/test_world_actual_nationality_cached.py.before-r11-policy-20261028.txt",
+      "sha256": "9b2d66f6e71e854b037a3dc5c34697a7f5e501249a6ba80c69a0a3f1229ca3f2"
+    }
+  ],
+  "changes": [
+    {
+      "file": "tests/test_gigachat_compose_contract.py",
+      "policy": "The official submission instruction requires all .env.example values empty. Runtime defaults belong to Compose, not values embedded in that public template.",
+      "new_assertions": [
+        "All example values are empty and all required GigaChat field names remain present.",
+        "Compose still defaults LLM_PROVIDER to openrouter, Giga Freemium to false, Giga model to GigaChat-3-Ultra and budget to40.",
+        "CA remains /app/certs/gigachat-root-ca.pem; no native /home path or Windows drive path.",
+        "Existing Docker COPY/readable certificate and opt-in Groq transport safety assertions remain unchanged."
+      ]
+    },
+    {
+      "files": [
+        "tests/test_world_actual_compound_cached.py",
+        "tests/test_world_actual_nationality_cached.py"
+      ],
+      "verified_source_text": "Из Москвы, один взрослый, без детей. Заезд 10 ноября 2026, выезд 17 ноября 2026, один номер для меня. Бюджет на всю поездку 300 тысяч рублей. Гражданство Россия.",
+      "source_duration_language_present": false,
+      "policy": "Two explicit dates imply a seven-night calculated span, not an additional hard requested_nights constraint invented by the model.",
+      "new_assertions": [
+        "Exact canonical dates stay2026-11-10/2026-11-17.",
+        "Derived calendar span is exactly7nights.",
+        "requested_nights is absent/None because the original input has no separate duration instruction.",
+        "Original raw operations, canonical raw hash, city/refs/party/rooms/budget/nationality/source-error safety assertions remain unchanged."
+      ],
+      "separate_positive_control": "tests/test_world_r4_dates_cached.py::test_controlled_R4_with_explicit_seven_nights_retains_the_hard_duration adds the labelled extra user clause На7ночей and requires requested_nights7; it passed in the related batch."
+    }
+  ],
+  "targeted": {
+    "path": ".local/evaluation/after80-20261027/r11-policy-targeted-final.xml",
+    "sha256": "60648cd8edee88f1a782175f6c3f4ff329fbf3d4887e0c2399a36550b9e63010",
+    "passed": 106,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 10.102
+  },
+  "targeted_scope": [
+    "Three revised files",
+    "WorldR4 dates-only and explicit7night controls",
+    "duration_grounding controls",
+    "date_intake controls"
+  ],
+  "files": [
+    {
+      "path": "tests/test_gigachat_compose_contract.py",
+      "sha256": "e2fc588eb837ac1f0c49352d4d2b06c140874863daacecf4558da6ea3ab5979a"
+    },
+    {
+      "path": "tests/test_world_actual_compound_cached.py",
+      "sha256": "cb1bc75d2fc65a5c5a0d3793f03a5ec2e56c4344ec98370a3bab542409a9af31"
+    },
+    {
+      "path": "tests/test_world_actual_nationality_cached.py",
+      "sha256": "4378ec9dcf5c297760401f55497e6fc77dd62941261880fa385dfca67e648fca"
+    }
+  ],
+  "ruff": "PASS for all three revised files",
+  "real_model_supplier_calls": 0,
+  "test_database": "otravel_test",
+  "browser_actions": 0,
+  "production_source_changes": 0,
+  "limits": [
+    "The106 targeted checks are unit/controlledAPI/PG cases, not execution of the106 original natural-language corpus.",
+    "FullR11 remains6881PASS/3FAIL and is never relabelled as fullPASS. Parent will run a new frozen wholeR12.",
+    "No plaintext key, Master, actual key encryption or Git publication was used by this policy revision."
+  ]
+}

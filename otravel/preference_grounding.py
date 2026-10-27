@@ -25,6 +25,7 @@ _PRICE = re.compile(r"\b(?:миним\w*\s+(?:цен\w*|стоим\w*)|мини�
     r"сам\w*\s+дешев\w*|подешевле|price_priority|lowest_total|lowest\s+(?:cost|price)|cheapest)\b")
 _BARE_PRICE = re.compile(r"(?:миним\w*\s+(?:общ\w*\s+)?(?:цен\w*|стоим\w*)|подешевле)")
 _MORNING = re.compile(r"\b(?:рано\s+утром|ранн\w*\s+утр\w*|утренн\w*\s+(?:вылет\w*|рейс\w*)|early\s+morning)\b")
+_MORNING_TYPO = re.compile(r"\bрано\s+утрам\b")
 _TIME_SUBJECT = re.compile(r"\b(?:вылет\w*|перелет\w*|рейс\w*|departure_time|departure_window|flight|departure)\b")
 _TIME_REFERENCE = re.compile(r"\b(?:утр\w*|ранн\w*\s+(?:вылет\w*|рейс\w*)|время\s+(?:вылета|отправления)|departure_time|departure_window|morning)\b")
 _ARRIVAL = re.compile(r"\b(?:заезд\w*|выезд\w*|заселен\w*|выселен\w*|check.?in|check.?out)\b")
@@ -97,7 +98,8 @@ def _authority(state, text):
             continue
         if _PRICE.search(clause) and (_AFFIRM.search(clause) or _BARE_PRICE.fullmatch(clause) or explicit_lowest_cost(clause)):
             positive.add("price_priority")
-        if _MORNING.search(clause) and not (_ARRIVAL.search(clause) and not _TIME_SUBJECT.search(clause)):
+        morning = _MORNING.search(clause) or _MORNING_TYPO.search(clause) and _TIME_SUBJECT.search(clause)
+        if morning and not (_ARRIVAL.search(clause) and not _TIME_SUBJECT.search(clause)):
             facts = _facts(state, clause, {})
             if _TIME_SUBJECT.search(clause) or _AFFIRM.search(clause) or len(facts["origin"]) == 1:
                 positive.add("departure_time")

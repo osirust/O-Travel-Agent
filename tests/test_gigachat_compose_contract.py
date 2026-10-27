@@ -43,13 +43,20 @@ def test_compose_forwards_selected_gigachat_fields_and_defaults_to_verified_bund
 def test_example_does_not_select_or_authorize_gigachat_or_embed_a_native_path():
     env = example_fields()
     assert FIELDS <= set(env)
-    assert env['LLM_PROVIDER'] == 'openrouter'
-    assert env['GIGACHAT_AUTH_KEY'] == '' and env['GIGACHAT_FREEMIUM_CONFIRMED'] == 'false'
+    assert env and all(value == '' for value in env.values()), 'Organisers require every example value to be empty.'
+    assert env['LLM_PROVIDER'] == ''
+    assert env['GIGACHAT_AUTH_KEY'] == '' and env['GIGACHAT_FREEMIUM_CONFIRMED'] == ''
     assert env['GIGACHAT_CA_FILE'] == ''
-    assert env['GIGACHAT_MODEL'] == 'GigaChat-3-Ultra'
-    assert env['MAX_GIGACHAT_LLM_CALLS_PER_DAY'] == '40'
+    assert env['GIGACHAT_MODEL'] == ''
+    assert env['MAX_GIGACHAT_LLM_CALLS_PER_DAY'] == ''
     # Forwarding GigaChat must retain the existing opt-in Groq v2 contract.
     shipped = compose_fields()
+    assert shipped['LLM_PROVIDER'] == '${LLM_PROVIDER:-openrouter}'
+    assert shipped['GIGACHAT_FREEMIUM_CONFIRMED'] == '${GIGACHAT_FREEMIUM_CONFIRMED:-false}'
+    assert shipped['GIGACHAT_MODEL'] == '${GIGACHAT_MODEL:-GigaChat-3-Ultra}'
+    assert shipped['MAX_GIGACHAT_LLM_CALLS_PER_DAY'] == '${MAX_GIGACHAT_LLM_CALLS_PER_DAY:-40}'
+    assert shipped['GIGACHAT_CA_FILE'] == '${GIGACHAT_CA_FILE:-/app/certs/gigachat-root-ca.pem}'
+    assert '/home/' not in shipped['GIGACHAT_CA_FILE'] and not re.search(r'[A-Z]:[\\/]', shipped['GIGACHAT_CA_FILE'])
     assert shipped['GROQ_TRANSPORT_VERSION'] == '${GROQ_TRANSPORT_VERSION:-1}'
     assert shipped['GROQ_STRUCTURED_TRANSPORT_ENABLED'] == '${GROQ_STRUCTURED_TRANSPORT_ENABLED:-false}'
 

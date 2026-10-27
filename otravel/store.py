@@ -1092,7 +1092,7 @@ class Store:
                 "role": role, "based_state_version": expected_version, "max_calls": 1})
 
     async def reserve_model_call(self, session_id: str, run_id: str,
-                                 limit: int, provider: str) -> bool:
+                                 limit: int, provider: str, *, run_attempt_limit: int | None = None) -> bool:
         """Reserve an actual attempt in remote/local/test durable budget buckets.
 
         This is an application budget, not a query of the provider's allowance.
@@ -1103,8 +1103,9 @@ class Store:
         These are engineering ceilings, not vendor quota promises. Cloudflare and Z.ai have separate
         default 40/day caller limits; dedicated evaluation may explicitly raise
         them up to 2000/day. Cloudflare uses its own explicit setting, so raising
-        the generic Z.ai limit does not expand it. Both are 1/run, with no remote attempt
-        allowed before or after them in that run. Ollama has
+        the generic Z.ai limit does not expand it. Both default to1/run. Z.ai
+        can explicitly opt into2 same-provider attempts; mixing another remote
+        provider before or after it remains forbidden. Ollama has
         an independent hard 500/day and 1/run local bucket; it is not a test
         adapter. Caller limits can reduce but never increase these ceilings.
         Injected test adapters share a third bucket excluding both actual buckets.
@@ -1114,6 +1115,8 @@ class Store:
         """
         if type(limit) is not int or limit < 0:
             raise StoreError("Лимит должен быть целым неотрицательным.", "invalid_budget_limit")
+        if run_attempt_limit is not None and (type(run_attempt_limit) is not int or not 0 <= run_attempt_limit <= 2):
+            raise StoreError("Лимит попыток должен быть целым числом от0до2.", "invalid_budget_limit")
         if not isinstance(provider, str) or not (
             provider in REAL_MODEL_PROVIDERS or provider in LOCAL_MODEL_PROVIDERS or provider == "injected_test_adapter"
             or provider.startswith("test_")
@@ -1136,6 +1139,10 @@ class Store:
                     event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
                 effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare"} else 1000 if provider in {"groq", "gigachat"} else 50 if provider == "openrouter" else 40)
                 per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
+                if provider == "zai" and run_attempt_limit is not None:
+                    per_run_limit = run_attempt_limit
+                elif run_attempt_limit is not None:
+                    per_run_limit = min(per_run_limit, run_attempt_limit)
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = min(limit, 500), 1
@@ -1161,6 +1168,13 @@ class Store:
                 ))).scalar_one()
                 if run_count >= per_run_limit:
                     return False
+                if provider == "zai" and run_count:
+                    other_remote = (await conn.execute(select(func.count()).select_from(events).where(
+                        events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
+                        event_provider.in_(sorted(REAL_MODEL_PROVIDERS - {"zai"})),
+                    ))).scalar_one()
+                    if other_remote:
+                        return False
                 if provider in REAL_MODEL_PROVIDERS and provider not in SINGLE_ATTEMPT_REMOTE_PROVIDERS and run_count:
                     prior_single_attempt = (await conn.execute(select(func.count()).select_from(events).where(
                         events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,

@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from copy import deepcopy
+from datetime import date
 
 import pytest
 from sqlalchemy.engine import make_url
@@ -79,7 +80,9 @@ async def test_cached_actual_compound_preserves_verified_world_city_and_all_inde
         assert stay['id'] == 'new-stay-1' and stay['city'] == 'Buenos Aires'
         assert stay['place_id'] == 'geo:openmeteo:3435910' and stay['hotel_id'] is None
         assert state['location_refs'] == before_refs
-        assert (stay['check_in'], stay['check_out'], stay['requested_nights']) == ('2026-11-10', '2026-11-17', 7)
+        assert (stay['check_in'], stay['check_out']) == ('2026-11-10', '2026-11-17')
+        assert (date.fromisoformat(stay['check_out']) - date.fromisoformat(stay['check_in'])).days == 7
+        assert stay.get('requested_nights') is None, 'The source names dates, not a separate hard duration.'
         assert stay['rooms'] == [{'id': 'new-room-1', 'traveler_ids': [person['id']]}]
         assert state['budget'] == {'currency': 'RUB', 'amount_minor': 30000000, 'scope': 'whole_trip'}
         assert [(leg['origin'], leg['destination'], leg['departure_date']) for leg in state['legs']] == [

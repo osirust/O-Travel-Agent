@@ -1,0 +1,99 @@
+{
+  "checked_at": "2026-10-27T20:27:09.325142+00:00",
+  "scope": "APP_ONLY_DNS_OVERRIDE_VERIFIED_TLS_ORIGINAL_SNI",
+  "ip_provenance": "System and independent Cloudflare DoH agreed in prior same-session public probe",
+  "oauth_responses": [
+    200
+  ],
+  "model_list_responses": [],
+  "generation_calls": 0,
+  "trace": [
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "connection.connect_tcp.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "connection.connect_tcp.complete"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "connection.start_tls.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "connection.start_tls.complete"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.send_request_headers.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.send_request_headers.complete"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.send_request_body.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.send_request_body.complete"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.receive_response_headers.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.receive_response_headers.complete"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.receive_response_body.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.receive_response_body.complete"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.response_closed.started"
+    },
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "event": "http11.response_closed.complete"
+    },
+    {
+      "host": "api.giga.chat",
+      "event": "connection.connect_tcp.started"
+    },
+    {
+      "host": "api.giga.chat",
+      "event": "connection.connect_tcp.complete"
+    },
+    {
+      "host": "api.giga.chat",
+      "event": "connection.start_tls.started"
+    },
+    {
+      "host": "api.giga.chat",
+      "event": "connection.start_tls.failed"
+    }
+  ],
+  "network_or_vpn_changes": 0,
+  "global_trust_changes": 0,
+  "token_persisted": false,
+  "tls_verify": true,
+  "hostname_check": true,
+  "billing_changes": 0,
+  "status": "NOT_READY_FOR_INFERENCE",
+  "error": {
+    "code": "REQUEST_TIMEOUT",
+    "message": "GigaChat не ответил за отведённое время.",
+    "http_status": null,
+    "retryable": true,
+    "details": {}
+  },
+  "token_cached_in_ram": true
+}

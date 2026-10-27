@@ -1,0 +1,126 @@
+{
+  "format": "otravel.invalid_calendar_rollover.v1",
+  "finding_id": "HARNESS-004-INVALID-CALENDAR-ROLLOVER-001",
+  "status": "CONTROLLED_EXACT_ACTUAL_CONTRACT_PURE_API_PG_PASS_FRESH_ACTUAL_RETEST_PENDING",
+  "actual_failure": {
+    "source_case": "ZAI100-017",
+    "source_turn": 8,
+    "source_file_sha256": "a89b4dcd760bdac7c5523f073c94b83a07aa0a891447cdc9399db0d4a7f8aabb",
+    "source_reported_by_parent": "a36d76ef / cd021acb (immutable bulk runtime)",
+    "exact_input": "Перенеси только выезд на 31 ноября 2026 года.",
+    "before_checkout": "2026-11-30",
+    "raw_and_checked_checkout": "2026-12-01",
+    "raw_requested_nights": 6,
+    "old_tool_start_events": 5,
+    "numeric_vendor_http_count": "NOT_INFERRED_FROM_TOOL_EVENTS",
+    "raw_model_and_source_reports_changed": false,
+    "cause": "An impossible asserted November31 was silently changed by the model to December1. The old initial-date helper returned early because no fresh pending question existed; typed ISO validation then accepted the wrong valid date."
+  },
+  "fixture": {
+    "path": "fixtures/regression/bulk017-invalid-calendar-20261027.json",
+    "sha256": "c22c7dc5ae7d017ec722f2073d15c9680f98141cb6336601e74a68461b4cabc8",
+    "source_raw_and_user_input_unchanged": true,
+    "only_trip_opaque_id_replaced": true,
+    "credentials_bearer_supplier_ids_copied": false
+  },
+  "implementation": {
+    "file": "otravel/date_intake.py",
+    "sha256": "ea470d73d0ce9d72eeddaa3bf95b17e46deedfc850a12cc7124e8c7f35895383",
+    "position": "After current-text/quotation/speech-context filtering, BEFORE clock/state/target/pending ownership checks.",
+    "authority": "A whole current positive hotel-date declaration or bounded edit imperative, not arbitrary date text.",
+    "effect": "Return the original raw operations for audit plus a canonical human calendar conflict/unknown. Parent blocks the entire batch, including an independent budget edit; no nearest-date replacement is made.",
+    "calendar": "Full ISO/dot/Russian-month dates use actual Gregorian validity. Yearless month bounds use the maximum possible length: February29 stays possible/undecided;November31 andFebruary30 cannot exist in any year. No travel year is guessed.",
+    "non_current": "Quoted, hypothetical, historical, prohibited and informational inputs do not become asserted hotel-date changes. Leading say/show/explain style requests are conservatively excluded.",
+    "parent_hook": "Root merges the same human reason into conflicts/unknowns/server_questions and consumes pending_context_clear.",
+    "old_proposals": "date_proposal,duration_proposal,duration_days are withdrawn after the new invalid explicit edit, preventing late yes from confirming an unrelated old candidate.",
+    "not_a_general_editor": "Valid date edits still use existing owner/intent/date logic; this guard does not grant a target or normalize arbitrary free-form language."
+  },
+  "controlled_checks": {
+    "new_pure_cases": 31,
+    "new_api_pg_cases": 3,
+    "database": "otravel_test",
+    "red_exact_actual": {
+      "path": ".local/evaluation/after80-20261027/current-calendar-actual-red.xml",
+      "sha256": "c47fb23219f910d61fc959d669c2e9608310a9ce5122babf21faa886b5fce8ce",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "seconds": 1.31
+    },
+    "pg": {
+      "path": ".local/evaluation/after80-20261027/current-calendar-pg-initial.xml",
+      "sha256": "066ddb21638202b2513dfff9b3b75ad1334b8fc6c8eb260e0075360df07439e6",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 4.547
+    },
+    "final_related": {
+      "path": ".local/evaluation/after80-20261027/current-calendar-related-policy-final.xml",
+      "sha256": "d0340fceeb60c6e09ddfb28af3be21f477a42dccec23864af1e56511035721cd",
+      "passed": 346,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 21.478
+    },
+    "ruff": "PASS changed source/two new tests/two narrowly revised policy tests",
+    "real_model_or_supplier_http": 0,
+    "assertions": [
+      "Exact recorded raw rollover operations no longer change November30, revision or other canonical facts; the real persisted reply explains November31 is invalid.",
+      "A labelled independent-budget variation conflicts as one batch; budget and an existing DEMO quote remain unchanged, with no reprice/tool start/order.",
+      "A preexisting year candidate is withdrawn; a later yes cannot apply that old checkout.",
+      "Yearless possible leap day and a real2028February29 are not incorrectly declared invalid.",
+      "The unrelated date/month/ownership/quote-control and three BULK regressions remain green in the combined cohort."
+    ],
+    "scope_label": "Controlled adapters plus real API/Store/PG; not a fresh strong-model inference score."
+  },
+  "intended_policy_revisions": [
+    {
+      "file": "tests/test_date_intake.py",
+      "historical_copy": "fixtures/evaluation/historical-tests/date-intake-before-current-calendar-policy-20261027.py.txt",
+      "historical_sha256": "d5392039a8ed4593062fd75d9d437e5d5b8f9b6cf0ec29cffafc19a44fb3ed09",
+      "action": "Three parametrized no-owner/stale/multiple-stay negatives now use informational non-edit date text. New separate asserted impossible-date counterparts must conflict independently of ownership. No raw-null exception was added to hide the new rule."
+    },
+    {
+      "file": "tests/test_world_r4_dates_cached.py",
+      "historical_copy": "fixtures/evaluation/historical-tests/world-r4-dates-before-unasked-duration-policy-20261028.py.txt",
+      "historical_sha256": "eb195f28ebfa1d809a21981a7a5bde34cd2badfe3907a62d2075e973788fe0a8",
+      "action": "Original R4 text has explicit10/17November dates but no separate hard-duration instruction. Root duration guard now removes model-derived requested_nights7. The two cases retain exact dates and seven calculated nights while requiring no invented hard-duration field. A separate labelled control adds На7ночей and must retain requested_nights7. Pure helper/raw fixture expectations were unchanged."
+    }
+  ],
+  "historical_related_failure": {
+    "junit": {
+      "path": ".local/evaluation/after80-20261027/current-calendar-related-final.xml",
+      "sha256": "7ce1779e162c1e2caa62e21dfda5fcfc2cd6bb1bd6bc896cc4020f9bc37e2839",
+      "passed": 343,
+      "failed": 2,
+      "skipped": 0,
+      "seconds": 21.853
+    },
+    "reason": "343PASS/2FAIL were outdated R4 hard-duration assumptions after a separate approved Root duration guard; exact date values were already correct. Historical XML and source bytes remain preserved."
+  },
+  "changed_test_files": [
+    {
+      "path": "tests/test_current_calendar_guard.py",
+      "sha256": "d804428b10eafca3d9db9a4d2d0bca646e2b26bc8cb3c49e8073bea5a1d63e10"
+    },
+    {
+      "path": "tests/test_harness_current_calendar_guard.py",
+      "sha256": "60594aca7342dd0d1a242087e660baa56a2339f5bf76d2330fd935e4f74f4384"
+    },
+    {
+      "path": "tests/test_date_intake.py",
+      "sha256": "cb364280f7ebdb70f323f2bbb50dd48521c1a5d80e8f783cd816878c38d164f4"
+    },
+    {
+      "path": "tests/test_world_r4_dates_cached.py",
+      "sha256": "17aa236f77ca863033a6378e8766506201f52cce7accd31d6d585112045b9e2e"
+    }
+  ],
+  "limits": [
+    "No new strong-model actual replay was performed by this actor; old bulk runtime/source evidence is immutable.",
+    "The parser intentionally handles bounded explicit current hotel-date assertions; it is not proof of all calendar wording or all natural-language date edits.",
+    "The existing quote test uses a declared DEMO/high-budget readiness setup; it does not establish live source pricing.",
+    "Root owns the combined frozen-source full suite, actual rollout and main plan finding status."
+  ]
+}

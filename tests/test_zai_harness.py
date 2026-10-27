@@ -19,7 +19,8 @@ RESULT = {"operations": [], "control": {"action": "none"}, "reply": "Уточн�
 
 
 class BudgetPolicyStore(_ModelPolicyStore):
-    async def reserve_model_call(self, session_id, run_id, limit, provider):
+    async def reserve_model_call(self, session_id, run_id, limit, provider, *, run_attempt_limit=None):
+        assert run_attempt_limit is None or run_attempt_limit in {1, 2}
         self.reservations.append({"limit": limit, "provider": provider})
         return True
 
@@ -44,10 +45,10 @@ class ControlledZAIGateway(LLMGateway):
         return self.outcome if self.outcome is not None else RESULT
 
 
-def setup(outcome=None, limit=40, **overrides):
+def setup(outcome=None, limit=40, run_attempts=1, **overrides):
     gateway = ControlledZAIGateway(outcome, **overrides)
     store = BudgetPolicyStore()
-    harness = Harness(Settings("unused", gateway.settings["LLM_PROVIDER"], 1, 8000, limit, 2), store, gateway, None)
+    harness = Harness(Settings("unused", gateway.settings["LLM_PROVIDER"], 1, 8000, limit, run_attempts), store, gateway, None)
     session = {"session_id": "policy-session", "state_version": 0,
         "state": sample_trip().model_dump(mode="json"), "pending_question": None}
     run = {"run_id": "policy-run", "input_message_id": "policy-message", "input_text": "Объясни поездку"}
@@ -133,7 +134,7 @@ async def test_zai_unapproved_configuration_stops_before_reservation_or_model(ov
     ProviderError("INVALID_LLM_OPERATION", "Synthetic schema", provider="zai", details={"schema_errors": []}),
     {"operations": []},
 ])
-async def test_zai_never_repairs_or_uses_router_backup_in_same_run(outcome):
+async def test_zai_with_one_attempt_never_repairs_or_uses_router_backup(outcome):
     gateway, store, harness, session, run = setup(outcome, limit=2000)
     try:
         with pytest.raises((ProviderError, ValidationError)) as error:

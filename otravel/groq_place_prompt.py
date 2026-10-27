@@ -99,6 +99,21 @@ def build_place_operation_hints(original_dynamic_schema: dict,
                 non_open = props["oneOf"][1]["properties"]
                 if non_open.pop("end_place_id", None) != {"type": "null"}:
                     _fail("unreviewed_place_endpoint_grammar")
+        # V3 may address a server-issued creation alias after upsert_stay has
+        # created that room in the same atomic batch. The legacy fingerprint
+        # retains its existing-only target allowsets. Value grammar is identical.
+        owned_rooms = {room.id for stay in state.stays for room in stay.rooms}
+        same_batch_rooms = []
+        old_room_variants = old_by_kind.get("set_room_members", [])
+        for choice in by_kind.get("set_room_members", []):
+            stay_id = choice["properties"]["value"]["properties"]["stay_id"]["const"]
+            matches = [variant for variant in old_room_variants
+                if variant["properties"]["value"]["properties"]["stay_id"]["const"] == stay_id]
+            if len(matches) != 1:
+                _fail("unreviewed_same_batch_room_stay")
+            same_batch_rooms.extend(target for target in choice["properties"]["target_id"]["enum"]
+                if target not in owned_rooms and target not in same_batch_rooms)
+            choice["properties"]["target_id"] = deepcopy(matches[0]["properties"]["target_id"])
         if projected != old:
             _fail("unreviewed_place_projection")
         # This retains the old _CITY_ENUM_SHA256 and every reviewed value
@@ -120,6 +135,11 @@ def build_place_operation_hints(original_dynamic_schema: dict,
             "resolve_place: target_id!:null; role!:origin|destination|route_end,kind!:country|city,"
             "query!:text[2,160],country_iso2:ISO2|null,stay_id!:destination->$stays;others->null"
         )
+        if same_batch_rooms:
+            text += "\nSAME_BATCH_ROOM_ALIASES=" + json.dumps(same_batch_rooms, separators=(",", ":"))
+            text += ("\nset_room_members may target one of these aliases for an existing stay only AFTER "
+                "upsert_stay created that exact room in that stay earlier in this batch. "
+                "The setter never creates a room; missing or foreign room targets are rejected atomically.")
         if len(text.encode("utf-8")) > 65_536:
             _fail("dynamic_place_hint_byte_limit")
         meta = {"version": "groq_operation_value_hints_v3_places", "projection_equivalent_json_schema": False,
