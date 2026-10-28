@@ -936,7 +936,11 @@ class Harness:
                             pass  # The normal domain-to-clarification path handles invalid place values below.
                     if not extracted.conflicts and extracted.control.action != "cancel":
                         if any(note.get("code") == "explicit_budget_literal_completed" for note in extracted.operation_normalizations):
-                            money_notes = []  # Already grounded from the selected asserted clause, excluding quoted/question amounts.
+                            # Scalar grounding is already complete, but a literal
+                            # amount does not settle reserve or unpriced extras.
+                            from .budget_requirements import guard_budget_requirements
+                            extracted.operations, money_notes = guard_budget_requirements(
+                                TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
                         else:
                             extracted.operations, money_notes = ground_budget_operations(
                                 TripState.model_validate(session["state"]), extracted.operations, run["input_text"])
@@ -998,6 +1002,16 @@ class Harness:
                         extracted.server_questions.extend(removal_meta["conflicts"] + removal_meta["unknowns"])
                         if removal_meta.get("pending_context") is not None:
                             extracted.pending_context = {**(extracted.pending_context or {}), **removal_meta["pending_context"]}
+                        from .party_preservation import guard_current_party_operations
+                        party_ops, party_meta = guard_current_party_operations(session["state"],
+                            extracted.operations, run["input_text"], session.get("pending_question"))
+                        extracted.operations = [Operation.model_validate(op) for op in party_ops]
+                        extracted.operation_normalizations.extend(party_meta["notes"])
+                        extracted.conflicts.extend(party_meta["conflicts"])
+                        extracted.unknowns.extend(party_meta["unknowns"])
+                        extracted.server_questions.extend(party_meta["conflicts"] + party_meta["unknowns"])
+                        if party_meta.get("pending_context") is not None:
+                            extracted.pending_context = {**(extracted.pending_context or {}), **party_meta["pending_context"]}
                         from .preference_grounding import guard_preference_operations
                         preference_ops,preference_meta=guard_preference_operations(session["state"],
                             extracted.operations,run["input_text"])
@@ -1352,6 +1366,20 @@ class Harness:
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
 
         from .room_child_age_intake import resolve_room_child_age_replacement
+        from .party_preservation import resolve_owned_party_census_answer
+        party_answer = (resolve_owned_party_census_answer(session["state"], session.get("pending_question"),
+            run["input_text"]) if session.get("waiting_reason") == "clarification" else {"handled": False})
+        if party_answer["handled"]:
+            await self._ensure_current_run(session, run)
+            question = party_answer.get("question")
+            await self.store.save_event(session["session_id"], run["run_id"], "CONTEXT_ANSWER_PROPOSED", {
+                "based_state_version": session["state_version"], "source": "owned_closed_party_census",
+                "operations": party_answer["operations"]})
+            return ModelResult(operations=[Operation.model_validate(op) for op in party_answer["operations"]],
+                control={"action": "none"}, reply=question or "Состав поездки сохранён.",
+                unknowns=[question] if question else [], server_questions=[question] if question else [],
+                conflicts=[], speech_act="CHANGE", response_source="contextual_slot",
+                pending_context=party_answer.get("pending_context")), None
         room_age = (resolve_room_child_age_replacement(session["state"], run["input_text"])
                     if session.get("waiting_reason") != "user_pause" else {"handled": False})
         if room_age["handled"]:
@@ -1824,6 +1852,16 @@ class Harness:
                 extracted.candidate_operations.extend(extracted.operations)
                 extracted.operations=[]
                 extracted.operation_normalizations.append({"code":"non_change_speech_does_not_authorize_edits"})
+            if (extracted.speech_act == "CHANGE" and extracted.control.action != "cancel"
+                    and session.get("waiting_reason") != "user_pause"):
+                from .financial_requirements import guard_financial_requirements
+                financial_ops, financial_meta = guard_financial_requirements(session["state"],
+                    extracted.operations, run["input_text"])
+                extracted.operations = [Operation.model_validate(op) for op in financial_ops]
+                extracted.operation_normalizations.extend(financial_meta["notes"])
+                extracted.conflicts.extend(financial_meta["conflicts"])
+                extracted.unknowns.extend(financial_meta["unknowns"])
+                extracted.server_questions.extend(financial_meta["conflicts"] + financial_meta["unknowns"])
             question_binding_proposal = extracted.pending_context
             if (model_meta is not None and model_meta.get("response_role") == "readonly_answer_v1"
                     and extracted.response_source == "readonly_answer"):
@@ -1952,6 +1990,8 @@ class Harness:
                     exc.llm_meta = model_meta
                     raise
                 new_state = candidate if changes else None
+                from .conversational import owned_room_target_reask
+                owned_room_reask = owned_room_target_reask(session, candidate, run["input_text"], extracted.unknowns) if not changes else None
                 if extracted.unknowns:
                     from .clarification_policy import classify_model_clarifications, fulfilled_return_clarifications
                     extracted.unknowns, completed_questions = fulfilled_return_clarifications(state, candidate,
@@ -1996,7 +2036,7 @@ class Harness:
                     else:
                         status, waiting_reason = session["status"], session.get("waiting_reason")
                         preserve_pending = True
-                    result.update(no_changes=True, notice="Поездка и показанные варианты не изменены.")
+                    result.update(no_changes=True, notice=owned_room_reask or "Поездка и показанные варианты не изменены.")
                 elif extracted.control.action == "wait" and not resumed_after_input:
                     missing = [issue["message"] for issue in validate_trip(candidate) if issue["code"].startswith("missing_")]
                     if explicit_pause_hint(run["input_text"]):
@@ -2311,7 +2351,11 @@ class Harness:
             interpretation_protected = any(note.get("code") in {
                 "unknown_initial_party_categories_preserved", "alias_question_single_stay_removal_suppressed",
                 "traveler_addition_prohibited", "traveler_addition_instruction_conflict",
-                "unasked_existing_adult_age_removed"}
+                "unasked_existing_adult_age_removed", "budget_reserve_requires_spendable_limit",
+                "unpriced_cost_scope_retained", "unpriced_cost_clear_not_authorized",
+                "unrequested_temporal_requirement_weakening_suppressed", "current_financial_requirements_conflict",
+                "literal_temporal_cancellation_requirement_saved", "unrequested_temporal_requirement_creation_suppressed",
+                "party_identity_clarification_required", "unrequested_party_addition_suppressed"}
                 for note in extracted.operation_normalizations)
             result["model_reply"] = None if interpretation_protected else extracted.reply
             if interpretation_protected:

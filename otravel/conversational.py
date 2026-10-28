@@ -59,6 +59,52 @@ def information_noop(text: str, speech_act: str) -> bool:
     return bool(request_kinds(text) or "?" in text or speech_act in {"ASK", "PROPOSE"})
 
 
+def owned_room_target_reask(session: dict, state: Any, text: str, unknowns: list[str]) -> str | None:
+    """Repeat one fresh server-owned room target question, never model prose.
+
+    A room-allocation follow-up cannot be answered before a destination exists.
+    This only changes the visible no-op reply; the caller keeps the exact saved
+    pending question/version. All other questions and edits retain their path.
+    """
+    question = "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание."
+    data = _data(state)
+    pending = session.get("pending_question") or {}
+    context = pending.get("context") or {}
+    version = data.get("state_version")
+    count = context.get("requested_room_count")
+    if (session.get("status") != "WAITING_USER" or session.get("waiting_reason") != "clarification"
+            or session.get("trip_id") != data.get("trip_id") or session.get("state") != data
+            or type(version) is not int or type(session.get("state_version")) is not int
+            or session["state_version"] != version or type(pending.get("state_version")) is not int
+            or pending["state_version"] != version or pending.get("reason") != "clarification"
+            or pending.get("field") != "stay.rooms" or pending.get("target_id") is not None
+            or not isinstance(pending.get("question_id"), str) or not pending["question_id"]
+            or context.get("room_target_selection_required") is not True
+            or type(count) is not int or count < 1 or data.get("stays")
+            or any(key in context and (type(context[key]) is not int or context[key] != version)
+                for key in ("state_version", "based_state_version"))
+            or context.get("trip_id") not in (None, data.get("trip_id"))
+            or any(context.get(key) is not None for key in ("target_id", "stay_id", "date_proposal", "duration_proposal"))
+            or pending.get("text") != question or pending.get("questions") != [question]
+            or unknowns != [question] or not isinstance(text, str) or not 0 < len(text) <= 250):
+        return None
+    key = _key(text)
+    match = re.search(r"\b(?:уточни(?:те)?|скажи(?:те)?|подскажи(?:те)?)\s*,?\s*каки[хе]\s+"
+        r"(?:участник\w*|люд\w*|гост\w*)\s+(?:(?:еще|нужно|надо|осталось)\s+){0,4}"
+        r"(?:распредел\w*|рассел\w*|размест\w*)\s*[.!?]*$", key)
+    if match is None:
+        return None
+    head = key[:match.start()].strip(" .!")
+    if head:
+        declaration = re.fullmatch(r"нужн[оы]\s+(?P<count>[1-9][0-9]?)\s+"
+            r"(?:номер(?:а|ов)?|комнат(?:а|ы)?)(?P<families>,\s*семьи\s+не\s+смешивать)?", head)
+        if (declaration is None or int(declaration["count"]) != count
+                or declaration["families"] and not any(group.get("keep_separate") is True
+                    for group in data.get("groups", []))):
+            return None
+    return question
+
+
 def should_search(text: str, *, changed: bool, action: str, response_source: str,
                   speech_act: str, undo: bool = False) -> bool:
     if undo:

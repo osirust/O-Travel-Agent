@@ -1,0 +1,189 @@
+{
+  "id": "FINAL40-GEO-DATE-BOOKING-FIX-20261028",
+  "created_at_utc": "2026-10-28T16:45:10.836607+00:00",
+  "base_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "scope": "Related deterministic helpers, controlled directory wire and real isolated PostgreSQL/ASGI; not a new live-model run or full 40/106 acceptance.",
+  "status": "RELATED_CONTROLLED_PASS_ACTUAL_RETAKE_PENDING",
+  "files": {
+    "otravel/date_slots.py": {
+      "sha256": "b36785c5114a8090c2373da32f34bfdc31f59290bf5f628c69f5e5f2817dad6c",
+      "lf_sha256": "b36785c5114a8090c2373da32f34bfdc31f59290bf5f628c69f5e5f2817dad6c"
+    },
+    "otravel/intent_grounding.py": {
+      "sha256": "8449046c324dab5142b03f7d960ec240319e3ad8dabd2b2d09d427c951bdf84b",
+      "lf_sha256": "ce41b769f6e8c44564f2ac21b09526b6e97a44b524ff9b34f58ca6a69efc74cf"
+    },
+    "otravel/answering.py": {
+      "sha256": "282ad9d4d7490f045945f44c6467c0e8039bdd46b79b576b03606cfae8cc4148",
+      "lf_sha256": "282ad9d4d7490f045945f44c6467c0e8039bdd46b79b576b03606cfae8cc4148"
+    },
+    "otravel/llm_schema_feedback.py": {
+      "sha256": "28a515fad33d174454aa9db4964851a33e680635cb5d6c7a0b44e7d4dbb19c45",
+      "lf_sha256": "28a515fad33d174454aa9db4964851a33e680635cb5d6c7a0b44e7d4dbb19c45"
+    },
+    "fixtures/regression/final40-geo-date-booking-20261028.json": {
+      "sha256": "591538e9c5b69a3cafa5229356168628c9a18cd3d91947faf20932bdf39dbde1",
+      "lf_sha256": "591538e9c5b69a3cafa5229356168628c9a18cd3d91947faf20932bdf39dbde1"
+    },
+    "tests/test_final40_geo_date_booking.py": {
+      "sha256": "2ea574ebfcbdb7519eb15fcf515abc4076be40c2e3720e955994ea3a5215f5b1",
+      "lf_sha256": "2ea574ebfcbdb7519eb15fcf515abc4076be40c2e3720e955994ea3a5215f5b1"
+    },
+    "tests/test_final40_country_pair_boundary.py": {
+      "sha256": "457bd7b174665c6b0176d71143a6641f6a202d877938ab18e3d14cdf6cceb93b",
+      "lf_sha256": "457bd7b174665c6b0176d71143a6641f6a202d877938ab18e3d14cdf6cceb93b"
+    },
+    "tests/test_final40_geo_date_booking_pg.py": {
+      "sha256": "288a350bedd26a3275eeb2e9fe56b354466cc47ebec26a70134d417c92b0a59b",
+      "lf_sha256": "288a350bedd26a3275eeb2e9fe56b354466cc47ebec26a70134d417c92b0a59b"
+    }
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-FINAL40-OWNED-CHECKOUT-SUFFIX-001",
+      "action": "Recognize only the fresh, exactly targeted closed checkout answer with protected unchanged check-in; return one date-only upsert_stay before model inference.",
+      "verification": "All five captured failing contexts now resolve only check_out. PostgreSQL/ASGI commits one version with no model/tool calls and unchanged unrelated facts.",
+      "status": "RELATED_CONTROLLED_PASS"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-GEO-CANONICAL-LITERAL-001",
+      "action": "Actual captured Kazan apostrophe case is handled by the date-only path, without normalizing model city strings or weakening the original schema. Nullable enum diagnostic now exposes a bounded server-owned leaf error.",
+      "verification": "Original invalid city remains invalid; date-only patch passes original schema. No arbitrary operation alias/coercion was added.",
+      "status": "RELATED_DATE_ONLY_SCOPE_PASS_GENERAL_CITY_REPAIR_OPEN"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-GEO-COUNTRY-FILTER-001",
+      "action": "A complete current explicit city/country comma pair obtains a pinned CLDR country filter for the exact role/query. Bare, foreign-role, historical, quoted, conditional and compound inputs grant no new authority.",
+      "verification": "Controlled actual directory request carries CA/RU; foreign rows despite the filter are refused; one candidate still requires explicit selection. Trip updates and admissions remain zero.",
+      "status": "RELATED_CONTROLLED_SOURCE_BOUNDARY_PASS"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-BOOKING-RESTORE-UNDO-001",
+      "action": "A narrow complete booking restoration question follows the existing canonical saved-order path, never undo of an unrelated trip edit.",
+      "verification": "Real isolated PostgreSQL tests with no orders and an existing BOOKED_DEMO preserve all trip/status/pending/order fields and consume zero model calls. Mixed trip edits and real order requests stay outside this narrow path.",
+      "status": "RELATED_CONTROLLED_PG_PASS"
+    }
+  ],
+  "initial_red": {
+    "path": ".local/evaluation/p1-geodate-readonly-red-20261028/RED_RECEIPT.json",
+    "tests": 63,
+    "passed": 46,
+    "failed": 17,
+    "source_unchanged": true,
+    "fixture_sha256": "1f983f205d31dedefaf1a0bae9ff379d4536e0b67e578831d63af170aeafc3d2"
+  },
+  "final_related": {
+    "path": ".local/evaluation/final40-geo-date-booking-related-final-20261028.xml",
+    "sha256": "5d99c8c552fbfb41ff5857eceaf75cab3c3797981885519d58b99818547209e4",
+    "tests": 612,
+    "passed": 612,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "controlled_boundary": {
+    "path": ".local/evaluation/final40-geo-date-booking-boundary-v2-20261028.xml",
+    "sha256": "2ca335d92437f54a74a5d7fb52c37255a97720fb8c354c092c4f50a24a07bd4f",
+    "tests": 67,
+    "passed": 67,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "postgresql_api": {
+    "path": ".local/evaluation/final40-geo-date-booking-pg-v2-20261028.xml",
+    "sha256": "d3213513cb3002c883160e03fb354c4366d88322fd07e1aeb446384e28c7dc2f",
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "preserved_intermediate_results": [
+    {
+      "path": ".local/evaluation/final40-geo-date-booking-boundary-20261028.xml",
+      "failed": 4,
+      "cause": "New test assumed a changed state, while no-change finish_run correctly stores state=None. Test corrected to require state=None and use original state identity; APP was not changed for this."
+    },
+    {
+      "path": ".local/evaluation/final40-geo-date-booking-pg-20261028.xml",
+      "failed": 1,
+      "cause": "New test prohibited pure planning preflight by replacing _search_trip. Removed that test-only prohibition and asserted zero MODEL_CALL_STARTED/TOOL_CALL_STARTED events instead; APP was not changed for this."
+    },
+    {
+      "path": ".local/evaluation/final40-geo-date-booking-related-20261028.xml",
+      "passed": 611,
+      "cause": "Before one additional negative multi-geography query guard. Final related result is separately retained."
+    }
+  ],
+  "captured_source_files": [
+    {
+      "case_id": "FINAL40-031",
+      "sha256": "740598e9c00f30ae445c9981a13759f94644ce8449d3004016dd91508827d591",
+      "source_file_name": "FINAL40-031.json"
+    },
+    {
+      "case_id": "FINAL40-032",
+      "sha256": "81afdffc81d0222ac3bc7f50ed950e229d92043801f1e464802a16c597c99cb8",
+      "source_file_name": "FINAL40-032.json"
+    },
+    {
+      "case_id": "FINAL40-039",
+      "sha256": "061f8a3d9edbb1903ea1965308123be5e89cce961362d08743d4d3156f684d66",
+      "source_file_name": "FINAL40-039.json"
+    },
+    {
+      "case_id": "FINAL40-040",
+      "sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+      "source_file_name": "FINAL40-040.json"
+    },
+    {
+      "case_id": "FINAL40-013",
+      "sha256": "b16841dfce47575eae57035f451a7aa80d0fd8c040754fac6e19625c1a2550d3",
+      "source_file_name": "FINAL40-013.json"
+    },
+    {
+      "case_id": "FINAL40-001",
+      "sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+      "source_file_name": "FINAL40-001.json"
+    },
+    {
+      "case_id": "FINAL40-005",
+      "sha256": "97b2bc117f4b3fadde60327a8aeeeb78a0259fec1c312b1b6e4e7ef0d30d4a5f",
+      "source_file_name": "FINAL40-005.json"
+    },
+    {
+      "case_id": "FINAL40-007",
+      "sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+      "source_file_name": "FINAL40-007.json"
+    },
+    {
+      "case_id": "FINAL40-016",
+      "sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+      "source_file_name": "FINAL40-016.json"
+    },
+    {
+      "case_id": "FINAL40-024",
+      "sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+      "source_file_name": "FINAL40-024.json"
+    }
+  ],
+  "external_model_http": 0,
+  "external_supplier_http": 0,
+  "local_model_inference": 0,
+  "live_runtime_db_access": 0,
+  "new_test_cases": 71,
+  "new_pg_cases": 3,
+  "real_supplier_bookings": 0,
+  "payments": 0,
+  "ruff": "PASS for all four edited helpers and three new test modules",
+  "git_diff_check": "PASS; only existing Windows LF/CRLF conversion notices",
+  "limitations": [
+    "Live 8084 was not changed by this task.",
+    "No new 40/80 or real model run was started.",
+    "Bare city-country text without an explicit current role is intentionally not granted country authority.",
+    "Arbitrary city spelling normalization and unsupported operation coercion remain forbidden.",
+    "This does not close other financial, party, unsupported-hard-condition or general-answer findings.",
+    "Global final source pin/full regression/installation/publication belongs to the parent after all agent freezes."
+  ]
+}

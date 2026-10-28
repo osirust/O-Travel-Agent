@@ -295,5 +295,19 @@ def resolve_room_count_answer(state: dict, pending: dict | None, text: str) -> d
         return no
     count = int(match["count"]) if match["count"].isdigit() else _COUNTS[match["count"]]
     ops, meta = ground_room_count_operations(state, [], f"Нужны {count} номера.", pending)
+    # One known adult, one addressed stay and one explicitly requested room
+    # have a unique allocation. Reuse existing IDs; never infer a family split.
+    people = state.get("travelers", [])
+    stays = state.get("stays", [])
+    if (count == 1 and len(people) == len(stays) == 1 and people[0].get("type") == "adult"
+            and not meta["unknowns"] and not any(room.get("traveler_ids") for room in stays[0].get("rooms", []))):
+        if not ops and len(stays[0].get("rooms", [])) == 1:
+            ops = [{"type": "upsert_stay", "target_id": target,
+                "value": {"rooms": deepcopy(stays[0]["rooms"])}}]
+        for operation in ops:
+            rooms = operation.get("value", {}).get("rooms")
+            if (operation.get("type") == "upsert_stay" and operation.get("target_id") == target
+                    and isinstance(rooms, list) and len(rooms) == 1 and rooms[0].get("traveler_ids") == []):
+                rooms[0]["traveler_ids"] = [people[0]["id"]]
     context = {**(pending.get("context") or {}), **(meta["pending_context"] or {}), "field": "stay.rooms", "target_id": target}
     return {"handled": True, "operations": ops, "question": next(iter(meta["unknowns"]), None), "pending_context": context}

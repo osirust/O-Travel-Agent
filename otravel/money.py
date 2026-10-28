@@ -342,7 +342,7 @@ def _near_budget(text: str, start: int, end: int, *, scaled_context: bool = Fals
     return "", False
 
 
-def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[list, list[dict]]:
+def _ground_budget_scalars(state: Any, operations: list, text: str) -> tuple[list, list[dict]]:
     """Copy operations and correct one unambiguous proposed budget scalar.
 
     Bare unscaled amounts require an existing RUB budget. Shorthand scales can
@@ -487,3 +487,10 @@ def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[l
     return result, [{"field": "budget.amount_minor", "before": before, "after": minor,
                      "mode": mode, "literal": phrase, "currency": "RUB",
                      "source": "explicit_rub_literal" if explicit_rub else "existing_rub_budget_context" if current_rub else "proposed_rub_budget_context"}]
+
+
+def ground_budget_operations(state: Any, operations: list, text: str) -> tuple[list, list[dict]]:
+    result, notes = _ground_budget_scalars(state, operations, text)
+    from .budget_requirements import guard_budget_requirements
+    result, requirement_notes = guard_budget_requirements(state, result, text)
+    return result, notes + requirement_notes

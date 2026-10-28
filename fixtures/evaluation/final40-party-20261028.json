@@ -1,0 +1,815 @@
+{
+  "format": "otravel.final40.party_captured_red.v1",
+  "baseline_git_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "setup": "Explicit canonical before-trip and rebased owned pending question; recorded model output with controlled adapter; no fresh NLU qualification",
+  "rows": [
+    {
+      "id": "FINAL40-024:T4",
+      "source_file_sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+      "source_pointer": "/turns/3",
+      "user": "Нет, ребёнок не едет.",
+      "user_sha256": "a4c5639b72aad717e6b99993bd4c7cd4aaddb99f60da0e52041d206473738900",
+      "before_trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": 5
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7000000
+        },
+        "groups": [],
+        "origin": null,
+        "trip_id": "db68b57b-9fd9-4408-924f-d8b6ee2e998f",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-3",
+            "age": 6,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 3
+      },
+      "before_pending": {
+        "text": "На какую дату планируете заезд в городе «Казань»?",
+        "field": "stay.check_in",
+        "reason": "clarification",
+        "context": {
+          "requested_destination": {
+            "kind": "city",
+            "name": "Казань",
+            "country_code": "RU"
+          }
+        },
+        "questions": [
+          "На какую дату планируете заезд в городе «Казань»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "eeef06d5-37b2-46e2-a326-3221b0699bca-question",
+        "state_version": 3,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Казань",
+          "country_code": "RU"
+        }
+      },
+      "before_status": "WAITING_USER",
+      "before_waiting": "clarification",
+      "raw_contract": {
+        "reply": "Понял, ребёнок не едет. Текущий состав: 2 взрослых. На какую дату планируете заезд в городе «Казань»?",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": null
+            },
+            "target_id": "new-traveler-3"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "checked_contract": {
+        "reply": "Понял, ребёнок не едет. Текущий состав: 2 взрослых. На какую дату планируете заезд в городе «Казань»?",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": null
+            },
+            "target_id": "new-traveler-3"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "captured_after_trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": 5
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7000000
+        },
+        "groups": [],
+        "origin": null,
+        "trip_id": "db68b57b-9fd9-4408-924f-d8b6ee2e998f",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-3",
+            "age": null,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 4
+      },
+      "captured_reply": [
+        "Текущий состав: 2 взрослых; 1 ребёнок (возраст не указан). Сколько лет будет ребёнку на дату поездки?"
+      ]
+    },
+    {
+      "id": "FINAL40-029:T4",
+      "source_file_sha256": "39f2563d2663c9e7c478cd9086aefc00fb2143c8d16707ac648d44e78e5c0754",
+      "source_pointer": "/turns/3",
+      "user": "Выбираем Тбилиси, Грузия.",
+      "user_sha256": "32139f02995ac46175f35a805319d5031c2483978a5f8959ca0b7e61252b9c01",
+      "before_trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Тбилиси",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": 7
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "3a7bf4bf-c4fe-48e3-b1c3-f5ba7b64924f",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "before_pending": {
+        "text": "Тбилиси — город в стране «Грузия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "requested_destination": {
+            "kind": "city",
+            "name": "Тбилиси",
+            "country_code": "GE"
+          }
+        },
+        "questions": [
+          "Тбилиси — город в стране «Грузия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "bb96f70a-68d9-4c9e-94a5-6bc7e9bc05b9-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Тбилиси",
+          "country_code": "GE"
+        }
+      },
+      "before_status": "RECOVERABLE_ERROR",
+      "before_waiting": "clarification",
+      "raw_contract": {
+        "reply": "Выбрано направление: Тбилиси, Грузия. Добавлены Москва как город отправления, один взрослый турист и проживание на 7 ночей. Необходимо уточнить даты заезда и выезда, а также количество номеров.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [
+          "На какую дату планируете заезд в Тбилиси?",
+          "На какую дату планируете выезд из Тбилиси?",
+          "Сколько гостиничных номеров вам нужно?"
+        ],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Москва"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Тбилиси",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "place_id": null,
+              "check_out": null,
+              "requested_nights": 7
+            },
+            "target_id": "new-stay-1"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "checked_contract": {
+        "reply": "Выбрано направление: Тбилиси, Грузия. Добавлены Москва как город отправления, один взрослый турист и проживание на 7 ночей. Необходимо уточнить даты заезда и выезда, а также количество номеров.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [
+          "Тбилиси — город в стране «Грузия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
+          "Из какого города вы отправляетесь? Город отправления пока не указан.",
+          "На какую дату планируете заезд в Тбилиси?",
+          "На какую дату планируете выезд из Тбилиси?",
+          "Сколько гостиничных номеров вам нужно?"
+        ],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Тбилиси",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null,
+              "requested_nights": 7
+            },
+            "target_id": "new-stay-1"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "captured_after_trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Тбилиси",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": 7
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "3a7bf4bf-c4fe-48e3-b1c3-f5ba7b64924f",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 2
+      },
+      "captured_reply": [
+        "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. Тбилиси — город в стране «Грузия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?"
+      ]
+    },
+    {
+      "id": "FINAL40-026:T3",
+      "source_file_sha256": "58cd0f2b58e7f71c9a21a05a845e8891409634c79d6b58a9a2d45478a01980d2",
+      "source_pointer": "/turns/2",
+      "user": "Я имел в виду четверо всего, включая ребёнка.",
+      "user_sha256": "f6b776f91bc2fca5a15c52b11d68167794dfddf90020d8e85b48307e6550caa3",
+      "before_trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": 2
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "4a25d4fe-9f47-4e08-a6ef-fa86aa9653c3",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-3",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-4",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 2
+      },
+      "before_pending": {
+        "text": "На какую дату планируете заезд в городе «Казань»?",
+        "field": "stay.check_in",
+        "reason": "clarification",
+        "context": {
+          "requested_destination": {
+            "kind": "city",
+            "name": "Казань",
+            "country_code": "RU"
+          }
+        },
+        "questions": [
+          "На какую дату планируете заезд в городе «Казань»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "323fccf2-dc6f-49f6-aa49-8bf88fba8ba3-question",
+        "state_version": 2,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Казань",
+          "country_code": "RU"
+        }
+      },
+      "before_status": "WAITING_USER",
+      "before_waiting": "clarification",
+      "raw_contract": {
+        "reply": "Понял. Теперь ваш состав: 4 взрослых.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "update_traveler",
+            "value": {
+              "type": "adult"
+            },
+            "target_id": "new-traveler-4"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "checked_contract": {
+        "reply": "Понял. Теперь ваш состав: 4 взрослых.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "update_traveler",
+            "value": {
+              "type": "adult"
+            },
+            "target_id": "new-traveler-4"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "captured_after_trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": 2
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "4a25d4fe-9f47-4e08-a6ef-fa86aa9653c3",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-3",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-4",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 2
+      },
+      "captured_reply": [
+        "На какую дату планируете заезд в городе «Казань»?"
+      ]
+    },
+    {
+      "id": "FINAL40-001:T12",
+      "source_file_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+      "source_pointer": "/turns/11",
+      "user": "1",
+      "user_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "before_trip": {
+        "legs": [
+          {
+            "id": "leg-f80f12f7-41d2-476c-9615-f823397d002b",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Sochi",
+            "departure_date": "2026-11-12",
+            "destination_place_id": "geo:openmeteo:491422"
+          },
+          {
+            "id": "leg-5e49430f-1348-43f1-af23-8591dc455a26",
+            "mode": "flight",
+            "origin": "Sochi",
+            "destination": "Москва",
+            "departure_date": "2026-11-19",
+            "origin_place_id": "geo:openmeteo:491422"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Sochi",
+            "rooms": [],
+            "check_in": "2026-11-12",
+            "hotel_id": null,
+            "place_id": "geo:openmeteo:491422",
+            "check_out": "2026-11-19"
+          }
+        ],
+        "budget": null,
+        "groups": [
+          {
+            "id": "new-group-1",
+            "traveler_ids": [
+              "new-traveler-1"
+            ],
+            "keep_separate": false
+          }
+        ],
+        "origin": "Москва",
+        "trip_id": "32df6ef0-05a5-4139-b9ef-ea16269cf588",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": "new-group-1",
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "location_refs": {
+          "geo:openmeteo:491422": {
+            "latitude": 43.59699,
+            "place_id": "geo:openmeteo:491422",
+            "timezone": "Europe/Moscow",
+            "longitude": 39.72477,
+            "ref_version": 1,
+            "country_iso2": "RU",
+            "country_name": "Russia",
+            "feature_code": "PPLA2",
+            "canonical_name": "Sochi",
+            "geographic_source": {
+              "provider": "openmeteo",
+              "external_id": 491422
+            },
+            "provider_bindings": {
+              "duffel": null,
+              "liteapi": null
+            },
+            "source_fact_sha256": "e31662d7247d082e113cbd10ecb6a040efd73fee168fd94936d5209c5bf5e9de",
+            "administrative_areas": [
+              {
+                "name": "Krasnodar Krai",
+                "level": 1,
+                "external_id": 542415
+              },
+              {
+                "name": "Sochi City",
+                "level": 2,
+                "external_id": 6695246
+              }
+            ]
+          }
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 5
+      },
+      "before_pending": {
+        "text": "Сколько гостиничных номеров вам нужно в городе «Sochi»?",
+        "field": "stay.rooms",
+        "reason": "clarification",
+        "context": {},
+        "questions": [
+          "Сколько гостиничных номеров вам нужно в городе «Sochi»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "c35c31c1-7801-441d-8fb8-c46425e2f466-question",
+        "state_version": 5
+      },
+      "captured_after_trip": {
+        "legs": [
+          {
+            "id": "leg-f80f12f7-41d2-476c-9615-f823397d002b",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Sochi",
+            "departure_date": "2026-11-12",
+            "destination_place_id": "geo:openmeteo:491422"
+          },
+          {
+            "id": "leg-5e49430f-1348-43f1-af23-8591dc455a26",
+            "mode": "flight",
+            "origin": "Sochi",
+            "destination": "Москва",
+            "departure_date": "2026-11-19",
+            "origin_place_id": "geo:openmeteo:491422"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Sochi",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ],
+            "check_in": "2026-11-12",
+            "hotel_id": null,
+            "place_id": "geo:openmeteo:491422",
+            "check_out": "2026-11-19"
+          }
+        ],
+        "budget": null,
+        "groups": [
+          {
+            "id": "new-group-1",
+            "traveler_ids": [
+              "new-traveler-1"
+            ],
+            "keep_separate": false
+          }
+        ],
+        "origin": "Москва",
+        "trip_id": "32df6ef0-05a5-4139-b9ef-ea16269cf588",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": "new-group-1",
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "location_refs": {
+          "geo:openmeteo:491422": {
+            "latitude": 43.59699,
+            "place_id": "geo:openmeteo:491422",
+            "timezone": "Europe/Moscow",
+            "longitude": 39.72477,
+            "ref_version": 1,
+            "country_iso2": "RU",
+            "country_name": "Russia",
+            "feature_code": "PPLA2",
+            "canonical_name": "Sochi",
+            "geographic_source": {
+              "provider": "openmeteo",
+              "external_id": 491422
+            },
+            "provider_bindings": {
+              "duffel": null,
+              "liteapi": null
+            },
+            "source_fact_sha256": "e31662d7247d082e113cbd10ecb6a040efd73fee168fd94936d5209c5bf5e9de",
+            "administrative_areas": [
+              {
+                "name": "Krasnodar Krai",
+                "level": 1,
+                "external_id": 542415
+              },
+              {
+                "name": "Sochi City",
+                "level": 2,
+                "external_id": 6695246
+              }
+            ]
+          }
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 6
+      },
+      "captured_reply": [
+        "Гражданство какой страны использовать для поиска отеля?"
+      ]
+    }
+  ]
+}

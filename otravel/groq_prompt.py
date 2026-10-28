@@ -26,8 +26,13 @@ _EXPECTED_SHAPES: dict[str, set[str]] = {
     "upsert_stay": {"6ada9f2b7d6bd104d92fe8d3b161e92cd3cb7c9e39aeecc6d03debee8b972239"},
     "shift_return": {"d399253b15ff119a1612b2329ee83a3b8f76714c9d576b08a13a0df98d82f78b"},
     "set_constraint": {"e8b544e9388d081a7728de22269ac1199a0fd15e0e8ffdcdc3eb7906d454c565",
-        "a88919d6fe96f6150001137cb3d18f351f6694b86a9ba30f2bc68d152c30ef6d"},
-    "clear_constraint": {"52c9944c93c6f3afd75babc225041abfa01b48801a52332fe5dc79dc1ef8ac50"},
+        "a88919d6fe96f6150001137cb3d18f351f6694b86a9ba30f2bc68d152c30ef6d",
+        # Saved-only temporal bool, with/without the existing scalar branch.
+        # Every field/type/room/flight guard is otherwise the reviewed grammar.
+        "ea95648151697dd6f1b29cf60a4cbdbb86cfece4e56704c5acc791d6c294494c",
+        "35a15df315c426ddfeba28f8131926f11502fc877a26a05cf9f32ccaee5dfdad"},
+    "clear_constraint": {"52c9944c93c6f3afd75babc225041abfa01b48801a52332fe5dc79dc1ef8ac50",
+        "0c4801c72636088bc99cde2ba136835fa6fe5972c30f7318bace3bf84157cbb4"},
     "undo": {"d746974fa9afd5e951f76f9af38954b0ad7f436f2120dc974da65e5ee39f856f"},
     "set_leg_mode": {"069644c9fc065c9e1cc9b46397cd9ca8e30065abf0692d90e3017ad96943d582"},
     "update_traveler": {"ef7b266a4b0ff409a7a195d8b26da5560314e6017d4386dad24311235087f33f"},
@@ -210,13 +215,16 @@ def build_compact_operation_hints(original_dynamic_schema: dict) -> tuple[str, d
         registries["room_stay"] = room_stay
         registries["preference_keys"] = _enum(by_kind["clear_preference"][0][1]["properties"]["key"], resolve)
         scalar = []
+        temporal_saved = False
         constraint = by_kind["set_constraint"][0][1]
         for branch in constraint.get("oneOf", []):
             props = resolve(branch).get("properties", {})
             if resolve(props.get("value", {})).get("type") == ["boolean", "string", "number", "null"]:
                 scalar.extend(_enum(props["key"], resolve))
+            elif resolve(props.get("value", {})).get("type") == "boolean":
+                temporal_saved = "free_cancel_until_checkin" in _enum(props["key"], resolve)
         registries["scalar_keys"] = list(dict.fromkeys(scalar))
-        if set(scalar) & {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}:
+        if set(scalar) & {"breakfast", "refundable", "free_cancel_until_checkin", "pets_allowed", "pets", "nonstop"}:
             _fail("reserved_scalar_constraint_key")
         for kind, value, _ in variants:
             _check_registry_refs(kind, value, resolve, registries)
@@ -230,8 +238,14 @@ def build_compact_operation_hints(original_dynamic_schema: dict) -> tuple[str, d
             "Wire action fixes type/target. Room IDs are stay-local; room_stay=[stay_id,allowed room targets]. "
             "Server checks all bounds, key/value/scope rules, dates, capacities and references; retain context guide semantics.\n"
         )
+        signatures = _SIGNATURES
+        if temporal_saved:
+            guide += ("free_cancel_until_checkin is an existing unverified hard requirement, not supplier refund evidence. "
+                "Do not clear/weaken it without a current explicit waiver for its exact saved stay/room.\n")
+            signatures = {**_SIGNATURES, "set_constraint": _SIGNATURES["set_constraint"].replace(
+                "breakfast|refundable|", "breakfast|refundable|free_cancel_until_checkin|", 1)}
         text = guide + "IDS=" + _encoded(registries).decode() + "\n" + "\n".join(
-            f"{kind}: {_SIGNATURES[kind]}" for kind in by_kind)
+            f"{kind}: {signatures[kind]}" for kind in by_kind)
         if len(text.encode()) > 65_536:
             _fail("compact_hint_byte_limit")
         meta = {"version": _VERSION, "projection_equivalent_json_schema": False,

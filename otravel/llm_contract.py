@@ -247,8 +247,16 @@ def build_operation_schema(state: TripState | dict[str, Any], *,
     # Existing unsupported conditions can still be edited as typed scalar values.
     # A new unsupported key belongs in unknowns, not an invented operation. No
     # arbitrary object is permitted: the only structured value is a known pet.
-    existing_unknown_keys = [c.key for c in state.constraints if c.key not in {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}]
-    condition_values = [{"properties": {"key": _enum(("breakfast", "refundable", "pets_allowed", "nonstop")),
+    # Only the server's literal guard creates a new temporal requirement. Once
+    # persisted, the model may propose a strictly typed edit/removal which the
+    # same current-message guard still checks; a fresh schema cannot invent it.
+    temporal_saved = any(c.key == "free_cancel_until_checkin" for c in state.constraints)
+    bool_condition_keys = (("breakfast", "refundable", "free_cancel_until_checkin", "pets_allowed", "nonstop")
+        if temporal_saved else ("breakfast", "refundable", "pets_allowed", "nonstop"))
+    room_condition_keys = (("breakfast", "refundable", "free_cancel_until_checkin")
+        if temporal_saved else ("breakfast", "refundable"))
+    existing_unknown_keys = [c.key for c in state.constraints if c.key not in {"breakfast", "refundable", "free_cancel_until_checkin", "pets_allowed", "pets", "nonstop"}]
+    condition_values = [{"properties": {"key": _enum(bool_condition_keys),
         "value": {"type": "boolean"}}},
         {"properties": {"key": {"const": "pets"},
             "value": _object({"kind": _enum(("dog", "cat")),
@@ -257,7 +265,7 @@ def build_operation_schema(state: TripState | dict[str, Any], *,
         condition_values.append({"properties": {"key": _enum(list(dict.fromkeys(existing_unknown_keys))),
             "value": {"type": ["boolean", "string", "number", "null"]}}})
     room_scope = {"if": {"required": ["room_id"], "properties": {"room_id": {"type": "string"}}},
-        "then": {"required": ["stay_id"], "properties": {"key": _enum(("breakfast", "refundable")),
+        "then": {"required": ["stay_id"], "properties": {"key": _enum(room_condition_keys),
             "stay_id": _enum(all_stays)}}}
     flight_scope = {"if": {"required": ["key"], "properties": {"key": {"const": "nonstop"}}},
         "then": {"properties": {"stay_id": {"type": "null"}, "room_id": {"type": "null"}}}}

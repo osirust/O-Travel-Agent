@@ -144,10 +144,12 @@ class Constraint(Model):
 
     @model_validator(mode="after")
     def room_scope(self) -> Constraint:
+        if self.key == "free_cancel_until_checkin" and type(self.value) is not bool:
+            raise ValueError("free_cancel_until_checkin требует true/false; это требование, а не подтверждённый срок тарифа.")
         if self.key == "nonstop" and (type(self.value) is not bool or self.stay_id is not None or self.room_id is not None):
             raise ValueError("nonstop задаётся true/false для перелётов всей поездки, без привязки к отелю или номеру.")
-        if self.room_id is not None and (not self.stay_id or self.key not in {"breakfast", "refundable"}):
-            raise ValueError("Условие конкретного номера требует stay_id и поддерживается только для breakfast/refundable.")
+        if self.room_id is not None and (not self.stay_id or self.key not in {"breakfast", "refundable", "free_cancel_until_checkin"}):
+            raise ValueError("Условие конкретного номера требует stay_id и поддерживается только для breakfast/refundable/free_cancel_until_checkin.")
         return self
 
 
@@ -665,7 +667,7 @@ def apply_operations(state: TripState, operations: list[Operation], *,
                 if not key:
                     raise DomainError("missing_constraint", "Укажите key удаляемого условия.")
                 # Validate the scope even for an idempotent absent-key clear.
-                Constraint.model_validate({**value, "key": key, "value": False if key == "nonstop" else None})
+                Constraint.model_validate({**value, "key": key, "value": False if key in {"nonstop", "free_cancel_until_checkin"} else None})
                 data["constraints"] = [item for item in data["constraints"] if (item["key"], item.get("stay_id"), item.get("room_id")) != (key, value.get("stay_id"), value.get("room_id"))]
             candidate = TripState.model_validate(data, context={"defer_derived_route": True})
             data = candidate.model_dump(mode="json")

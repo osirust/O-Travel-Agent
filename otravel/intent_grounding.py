@@ -397,6 +397,41 @@ def _facts(data: dict, text: str, pending: dict, operations=()) -> dict:
     return result
 
 
+def _current_choice_country_pair(text: str, role: str, query: str) -> str | None:
+    """A complete current literal pair filters a directory, never admits a city.
+
+    Unlike the curated-city role grammar, this accepts an arbitrary exact query
+    string solely to verify its adjacent country from the pinned CLDR source.
+    A bare pair, another role, a question or any extra clause grants nothing.
+    """
+    if (not isinstance(query, str) or not 2 <= len(query.strip()) <= 160
+            or any(char in query for char in (",", ";", "\n", "\r"))
+            or any(char in text for char in (";", "\n", "\r", "?", '"', "«", "»", "“", "”", "`"))):
+        return None
+    prefixes = {
+        "destination": r"(?:выбираю|выбираем|выбрали|назначение|направление|город назначения)\s*[:=-]?\s*(?:город\s+)?",
+        "origin": r"(?:город отправления|отправление|город вылета)\s*[:=-]?\s*",
+    }
+    prefix = prefixes.get(role)
+    if prefix is None:
+        return None
+    key = _key(text).strip(" .!")
+    match = re.fullmatch(prefix + re.escape(_key(query).strip()) + r"\s*,\s*(?P<country>[^,]+)", key)
+    if match is None:
+        return None
+    literal = match["country"].strip()
+    if re.fullmatch(r"[a-z]{2}", literal) and not text.rsplit(",", 1)[-1].strip(" .!").isupper():
+        return None
+    from .country_lexicon import CountryLexiconError, _lexicon
+
+    try:
+        _rows, aliases, _pattern = _lexicon()
+    except CountryLexiconError:
+        return None
+    countries = aliases.get(literal, set())
+    return next(iter(countries)) if len(countries) == 1 else None
+
+
 def current_city_country_hint(state, text, role, query):
     """One current literal city-country pair, only for its exact query/role.
 
@@ -405,11 +440,14 @@ def current_city_country_hint(state, text, role, query):
     """
     if role not in {"origin", "destination"} or not isinstance(text, str) or not 0 < len(text) <= 4000:
         return None
-    city = _city(query)
-    if city is None:
-        return None
     data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state
     if not isinstance(data, dict):
+        return None
+    literal_country = _current_choice_country_pair(text, role, query)
+    if literal_country is not None:
+        return literal_country
+    city = _city(query)
+    if city is None:
         return None
     facts = _facts(data, text, {"field": role + ".city"})
     if (facts[role] != {city} or len(facts["country"]) != 1 or facts["ambiguous"]

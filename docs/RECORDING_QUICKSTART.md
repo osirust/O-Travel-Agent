@@ -4,16 +4,20 @@
 
 1. Получить ветку `backend/harness-foundation` репозитория `ostrovok-hackathon-2026/aegml`.
 2. Положить полученный приватно конфиг рядом с `docker-compose.yml` под именем `.env` (не `.env.txt`). Не загружать этот файл в Git или в переписку.
-3. В этом же файле указать свой ключ поддерживаемого LLM-провайдера. Для проверенного варианта:
+3. В этом же файле указать формат, адрес, модель и ключ своего LLM API:
 
 ```dotenv
-LLM_PROVIDER=zai
-ZAI_MODEL=glm-4.5-flash
-ZAI_API_KEY=ВСТАВИТЬ_СВОЙ_КЛЮЧ
-ZAI_FREE_TIER_CONFIRMED=true
+LLM_PROVIDER=external
+LLM_API_FORMAT=openai
+LLM_BASE_URL=https://your-llm-server.example/v1
+LLM_MODEL=your-model-id
+LLM_API_KEY=YOUR_API_KEY
+LLM_EXTERNAL_API_CONFIRMED=true
 ```
 
-`true` подтверждает собственный бесплатный Standard API аккаунт; подписка Coding Plan и другой endpoint не заменяют этот API. Ключи разных поставщиков не взаимозаменяемы. Работоспособность другой модели проверяется отдельно.
+Для родного Gemini используйте `LLM_API_FORMAT=gemini`, для Anthropic — `anthropic`, с соответствующим адресом API. Все три примера и необязательные настройки есть в [README](../README.md#как-подключить-llm-жюри). OpenAI-совместимый формат подходит и для других производителей моделей. Ключи разных поставщиков не взаимозаменяемы; конкретная модель должна соблюдать JSON-контракт операций.
+
+Проверенный отдельный вариант: `LLM_PROVIDER=zai`, `ZAI_MODEL=glm-4.5-flash`, `ZAI_API_KEY` и `ZAI_FREE_TIER_CONFIRMED=true`. Последнее подтверждает бесплатный Standard API вашего аккаунта; Coding Plan использует другой режим доступа.
 
 4. В терминале из папки проекта выполнить:
 
@@ -50,4 +54,4 @@ docker compose up --build
 
 Другие реализованные адаптеры: OpenRouter (`OPENROUTER_API_KEY`, `OPENROUTER_MODEL` с суффиксом `:free`), Groq (`GROQ_API_KEY`, `GROQ_MODEL`, `GROQ_FREE_TIER_CONFIRMED=true`), Cloudflare (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_MODEL`, `CLOUDFLARE_FREE_TIER_CONFIRMED=true`), Gemini и GigaChat. Выбирать адаптер через `LLM_PROVIDER`. GigaChat в среде владельца пока не прошёл TLS-соединение с inference API, поэтому для записи не рекомендован как единственный вариант.
 
-Для сдачи секреты передаются по [официальной инструкции](SUBMISSION.md) в бинарном `secrets.env.age`. Приватный `.env` записывающего и зашифрованный комплект проверяющих — разные артефакты. Перед сдачей отдельно согласовать, предоставляют ли проверяющие LLM-ключ сами; наличие только туристических ключей не гарантирует работу свободного диалога на их компьютере.
+Для сдачи секреты передаются по [официальной инструкции](SUBMISSION.md) в бинарном `secrets.env.age`. Приватный `.env` записывающего и зашифрованный комплект проверяющих — разные артефакты. Туристические ключи проекта уже подготовлены; **свой LLM-доступ добавляет принимающая сторона**. Без него доступны формы и DEMO, а свободный диалог сообщает о недоступной модели.

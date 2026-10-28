@@ -63,7 +63,23 @@ def operation_schema_feedback(value: dict, schema: dict, *, limit: int = 3) -> l
         diagnostic = _narrow(matching[0], operation)
         if isinstance(schema.get('$defs'), dict):
             diagnostic['$defs'] = deepcopy(schema['$defs'])
+        errors = []
         for error in Draft202012Validator(diagnostic).iter_errors(operation):
+            if error.validator == 'anyOf':
+                # A nullable scalar may fail the actual enum and the null type
+                # simultaneously. Report only the server enum, not a misleading
+                # instruction to replace the value with null. Validation stays
+                # entirely with the original complete schema.
+                pending = list(error.context)
+                while pending:
+                    leaf = pending.pop(0)
+                    if leaf.context:
+                        pending.extend(leaf.context)
+                    elif leaf.validator == 'enum':
+                        errors.append(leaf)
+                continue
+            errors.append(error)
+        for error in errors:
             if error.validator in {'oneOf', 'anyOf'}:
                 continue
             entry = {'path': ['operations', index, *list(error.absolute_path)], 'rule': error.validator}

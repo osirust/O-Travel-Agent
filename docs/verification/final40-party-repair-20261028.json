@@ -1,0 +1,173 @@
+{
+  "format": "otravel.final40_party_repair.v1",
+  "created_at_utc": "2026-10-28T16:47:32.264596+00:00",
+  "status": "SCOPED_CONTROLLED_REGRESSIONS_GREEN_ACTUAL_NLU_PENDING",
+  "baseline_git": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "changed_files_sha256": {
+    "otravel/party_preservation.py": "06f9dcaaff095b51c2b3dade9e237d4bf3bc4384b0d664850ca2d6e829e14b82",
+    "otravel/room_intent.py": "a26a8caf4e01bdc195c177c66c335d5eb27bb5747a1c226a5e1f5c75a2db980b",
+    "tests/test_final40_party_preservation.py": "6eb96e0738e48b8fe087201751b6e2b1f5a4d1706270426d5a0c1ce4dc36f24b",
+    "tests/test_final40_party_preservation_pg.py": "d8487228dbb73a9abc96db283f16fa0078b4063d395b8985024d43340a315725",
+    "fixtures/evaluation/final40-party-20261028.json": "87f86f1221939bf80841a6b7f809dbe2da4f466015deed3d94feb6955558e93d"
+  },
+  "central_hooks": {
+    "owner": "root",
+    "file": "otravel/harness.py",
+    "locations": "guard_current_party_operations after existing removal grounding; resolve_owned_party_census_answer before model/readonly under waiting_reason=clarification",
+    "not_edited_by_this_agent": true
+  },
+  "red": {
+    "tests": 16,
+    "pass": 12,
+    "fail": 4,
+    "error": 0,
+    "skip": 0,
+    "junit_sha256": "8df16a506c9abfc127aea13c6cbe12559dea2f3c7b9fd98dd0fe5f0c35749a34",
+    "package_mapping_sha256": "ce4c4a69472f4e66ef466cb6567664569725ff6ea8264f15d20ca236cdba2d75",
+    "private_directory": "/home/aegml/checks/final40-party-red-91e6-20261028",
+    "fixture_sha256": "87f86f1221939bf80841a6b7f809dbe2da4f466015deed3d94feb6955558e93d",
+    "original_failure_evidence_preserved": true
+  },
+  "green": {
+    "combined_controlled_tests": 111,
+    "pass": 111,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "duration_seconds": 10.271,
+    "junit_sha256": "af32d3c1d807ef398a471ba76a3df5cd637218ec4d32f7130b01305460cb181d",
+    "package_mapping_sha256": "3f571fbad01be6e157e79e43137eba8e990cbb48c38380672e8bf049e30d36d9",
+    "source_file_count": 95,
+    "source_unchanged_during_run": true,
+    "private_directory": "/home/aegml/checks/final40-party-green-20261028",
+    "terminal": "green-controlled-v5-terminal.json",
+    "original_private_16_tests_reused_sha256": "35ff5be64f58b526057eecc5176adba743914af56b4265a40be2dfa5d7a77e79",
+    "repo_new_pure_tests": 68,
+    "repo_new_controlled_file_cases": 19,
+    "existing_related_pg_cases": 8,
+    "original_private_cases": 16,
+    "additional_related_pure_run": {
+      "pass": 188,
+      "fail": 0,
+      "duration_seconds": 6.74,
+      "targets": [
+        "tests/test_final40_party_preservation.py",
+        "tests/test_room_intent.py",
+        "tests/test_party_no_children.py",
+        "tests/test_traveler_removal_grounding.py",
+        "tests/test_traveler_addition_grounding.py"
+      ],
+      "overlaps_68_cases_with_combined_run": true
+    }
+  },
+  "failed_preparation_runs_retained": [
+    {
+      "artifact": "green-controlled-terminal.json",
+      "result": "61PASS/3ERROR",
+      "cause": "Three unchanged existing PG fixtures require database name otravel_test. The initial newly-created private DB was party_red. Only subsequent isolated setup changed; no fixture safety condition weakened."
+    },
+    {
+      "artifact": "green-controlled-v2-terminal.json",
+      "result": "90PASS/1FAIL",
+      "cause": "Unchanged existing test attempted diagnostic write to an absent private .local directory. Created only that private directory; no app/test assertion altered."
+    },
+    {
+      "artifact": "red-initial.xml",
+      "result": "11PASS/5FAIL",
+      "cause": "Four genuine semantic failures plus one overly strict new private no-mutation oracle. The controlled contradictory CHANGE response to a question was safely rejected. Original failure retained; corrected private oracle accepts only explicit safe rejection while still requiring unchanged party and zero orders."
+    }
+  ],
+  "authority_controls": [
+    "quoted and hypothetical nonparticipation",
+    "question and history",
+    "local hotel/transport scope",
+    "adversarial model remove/age clear without whole-trip authority",
+    "ambiguous two children",
+    "foreign child ID",
+    "explicit unique age/known ID",
+    "plural children canonical removal",
+    "already-paused queue0model",
+    "unrequested adult in child-only addition/count",
+    "dependent new-ID membership",
+    "fresh/stale/foreign pending field/version",
+    "inclusive total clarification without adult identity conversion",
+    "one-room ID preservation and ambiguous-layout refusals",
+    "closed compound intake does not swallow fourth edit"
+  ],
+  "captured_sources": [
+    {
+      "id": "FINAL40-024:T4",
+      "user": "Нет, ребёнок не едет.",
+      "source_file_sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+      "source_pointer": "/turns/3"
+    },
+    {
+      "id": "FINAL40-029:T4",
+      "user": "Выбираем Тбилиси, Грузия.",
+      "source_file_sha256": "39f2563d2663c9e7c478cd9086aefc00fb2143c8d16707ac648d44e78e5c0754",
+      "source_pointer": "/turns/3"
+    },
+    {
+      "id": "FINAL40-026:T3",
+      "user": "Я имел в виду четверо всего, включая ребёнка.",
+      "source_file_sha256": "58cd0f2b58e7f71c9a21a05a845e8891409634c79d6b58a9a2d45478a01980d2",
+      "source_pointer": "/turns/2"
+    },
+    {
+      "id": "FINAL40-001:T12",
+      "user": "1",
+      "source_file_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+      "source_pointer": "/turns/11"
+    }
+  ],
+  "changes": [
+    {
+      "finding_id": "HARNESS-004-F40-CHILD-REMOVAL-MISREAD-024-001",
+      "source_case_turn": "FINAL40-024:T4",
+      "change": "A closed current whole-trip nonparticipation statement removes the unique current child or explicitly identified known child using canonical remove_traveler. A wrong age=null update is replaced; rooms/groups are cleaned by domain removal. Persist children_known/count for the remaining party.",
+      "qualification": "CAPTURED_CONTRACT_PG_REGRESSION_GREEN; actual fresh NLU retake pending"
+    },
+    {
+      "finding_id": "HARNESS-004-F40-UNREQUESTED-PARTY-029-001",
+      "source_case_turn": "FINAL40-029:T4",
+      "change": "Suppress new people without a current asserted party fact or a fresh matching party slot. A child-count slot cannot grant adult addition. Dependent room/group references cause explicit clarification without guessed identity mapping.",
+      "qualification": "CAPTURED_CONTRACT_PG_REGRESSION_GREEN; actual fresh NLU retake pending"
+    },
+    {
+      "finding_id": "HARNESS-004-F40-INCLUSIVE-PARTY-CENSUS-026-001",
+      "source_case_turn": "FINAL40-026:T3",
+      "change": "An inconsistent inclusive total with a child produces a concrete party.composition clarification and preserves prior identities instead of silently keeping4AD or choosing an adult to convert.",
+      "qualification": "CAPTURED_CONTRACT_PG_REGRESSION_GREEN; actual fresh NLU retake pending"
+    },
+    {
+      "finding_id": "HARNESS-004-F40-SOLO-ROOM-ALLOCATION-001",
+      "source_case_turn": "FINAL40-001:T12",
+      "change": "An owned fresh one-room answer with exactly one known adult and one stay uses that existing person ID in the sole room; existing empty room IDs are retained. Stale/foreign targets, multiple people/stays/rooms and nonempty allocations are not reassigned.",
+      "qualification": "EXACT_OWNED_RESOLVER_AND_PG_RELATED_GREEN"
+    },
+    {
+      "finding_id": "HARNESS-004-F40-CLOSED-PARTY-CENSUS-SLOT-001",
+      "source_case_turn": "Related generated party continuation; authored adversarial model double",
+      "change": "Before LLM extraction, a fresh owned party question accepts only a complete closed adult-count/zero-child reply, including sentence-separated literals. Optional third one-room clause is handled only for the unique one-adult/one-stay layout through canonical room_intent. Any extra budget/date/hotel/other clause is unhandled in full; no partial swallowing.",
+      "qualification": "CONTROLLED_ZERO_MODEL_PG3_CASES_GREEN; original invalid model operation/schema evidence retained and not reclassified as a model PASS"
+    }
+  ],
+  "boundaries": {
+    "model_http": 0,
+    "supplier_http": 0,
+    "production_db_access": false,
+    "master_or_user_env_read": false,
+    "own_tmpfs_pg_only": true,
+    "guarded_own_pg_cleanup": true,
+    "application_runtime_or_vpn_changed": false,
+    "git_staged_or_committed": false,
+    "cannot_claim": [
+      "full40/80/106/116 semantic PASS",
+      "new model quality result",
+      "tour provider availability",
+      "actual order/UI qualification",
+      "all original schema failures repaired"
+    ]
+  },
+  "next": "Root full integrated regression and bounded actual canary on final immutable source; agent helper files frozen after this receipt."
+}

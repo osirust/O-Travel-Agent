@@ -576,6 +576,9 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     @app.post("/api/v1/sessions/{session_id}/checkout/preview")
     async def preview(session_id: str, body: Preview, authorization: str | None = Header(default=None)):
         session = await owned(session_id, authorization)
+        from .budget_requirements import budget_scope_unresolved
+        if budget_scope_unresolved(session):
+            raise Conflict('Сначала уточните сумму и состав общего бюджета поездки.', 'budget_scope_unresolved')
         if body.state_version != session["state_version"]:
             raise Conflict("Версия поездки изменилась.", "stale_state")
         plan = await saved_plan(session, body.plan_id)
@@ -636,7 +639,10 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
 
     @app.post("/api/v1/sessions/{session_id}/checkout/confirm")
     async def confirm(session_id: str, body: Confirm, authorization: str | None = Header(default=None)):
-        await owned(session_id, authorization)
+        session = await owned(session_id, authorization)
+        from .budget_requirements import budget_scope_unresolved
+        if budget_scope_unresolved(session):
+            raise Conflict('Сначала уточните сумму и состав общего бюджета поездки.', 'budget_scope_unresolved')
         return _clean(await repository.confirm_quote(session_id, body.quote_id, body.quote_version, body.idempotency_key, body.confirmed, body.state_version))
 
     @app.get("/api/v1/sessions/{session_id}/orders")

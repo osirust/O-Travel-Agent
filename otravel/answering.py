@@ -784,11 +784,31 @@ def canonical_unit_capability_answer(text: str, state: dict) -> str | None:
             "Этот лимит не применён; общий бюджет поездки не заменён ценой за ночь. " + _budget(state))
 
 
+def booking_restore_question(text: str) -> bool:
+    """A complete question about an order, never undo of unrelated trip edits."""
+    if not isinstance(text, str) or not 0 < len(text) <= 400:
+        return False
+    key = " ".join(text.casefold().replace("ё", "е").split())
+    subject = r"(?:бронирование|бронь|заказ)"
+    possessive = r"(?:(?:мое|мою|моя|мой|наше|нашу|наша|наш)\s+)?"
+    restore = r"(?:вернуть|восстановить)"
+    patterns = (
+        possessive + subject + r"\s+(?:отменилось|отменилась|отменился|отменено|отменена|отменен)\s*,?\s*"
+        r"(?:можно|можешь|можете|как)\s+(?:ли\s+)?" + restore
+        + r"\s+(?:его|ее|это)\s*(?:как\s+было)?\s*\?",
+        r"(?:можно|можешь|можете)\s+(?:ли\s+)?" + restore + r"\s+" + possessive + subject + r"\s*\?",
+        r"как\s+" + restore + r"\s+(?:отмененное|отмененную|отмененный)\s+" + subject + r"\s*\?",
+    )
+    return any(re.fullmatch(pattern, key) is not None for pattern in patterns)
+
+
 def order_status_question(text: str, subject: str | None = None) -> bool:
     """A narrow order-status query; a model subject selects a topic, not facts."""
     key = " ".join(text.casefold().replace("ё", "е").split())
     if not key or len(key) > 1500 or explicit_search_request(text):
         return False
+    if booking_restore_question(text):
+        return True
     if re.search(r"\b(?:если|допустим|предположим|гипотетическ\w*|будет)\b", key):
         return False
     clean = _NO_CHANGE.sub("", key)
@@ -825,6 +845,10 @@ def canonical_order_status_answer(text: str, state: dict, orders: list[dict], *,
     reply = facts_projection(state, [], orders, [], [], question=text)["sections"]["orders"]
     if not orders:
         reply += " Настоящая бронь в этом приложении не создавалась; оплаты поставщику не было."
+    if booking_restore_question(text):
+        reply += (" Восстановление бронирования не отменяет правки поездки. "
+                  "Уточните, о каком заказе и сервисе идёт речь; внешние брони здесь не восстанавливаются. "
+                  "Состав и параметры поездки не изменены.")
     return reply
 
 

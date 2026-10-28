@@ -21,3 +21,7 @@ fixtures/regression/actual010-search-blocker.json -text whitespace=cr-at-eol
 fixtures/regression/actual012-search-blocker.json -text whitespace=cr-at-eol
 fixtures/regression/new80-geo-date-corrections-20261028.json -text whitespace=cr-at-eol
 secrets.env.age -text
+# Preserve the final dialogue repair evidence across Windows/Linux checkouts.
+fixtures/evaluation/final40-party-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/final40-geo-date-booking-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/final40-owned-room-reask-20261028.json -text whitespace=cr-at-eol

@@ -254,6 +254,29 @@ def _owned_checkout_correction(data, pending, context, text):
     return f"{number} {match['month']} {match['year']}"
 
 
+def _owned_checkout_preserving_start(data, pending, context, text):
+    """A closed checkout answer; the negative tail protects only check-in.
+
+    This is not a general clause extractor. The current owned question must
+    identify the exact stay/version, and no independent edit can be discarded.
+    The ordinary calendar/duration validator still owns the resulting token.
+    """
+    if (pending.get("field") != "stay.check_out" or not _fresh_date_slot(data, pending, context)
+            or any(name in context for name in ("date_proposal", "duration_proposal"))
+            or not isinstance(text, str) or not 0 < len(text) <= 150
+            or any(char in text for char in ("\n", "\r", "?", ";"))):
+        return None
+    key = text.strip().casefold().replace("ё", "е")
+    token = f"{_ISO.pattern}|{_DOT.pattern}|{_MONTH_TOKEN}"
+    match = re.fullmatch(r"выезд\s+(?P<token>" + token
+        + r")\.\s*заезд\s+не\s+(?:меняем|меняй|трогай)\s*[.!]?", key)
+    if match is None:
+        return None
+    value = match["token"]
+    month = _MONTH.fullmatch(value)
+    return None if month is not None and month[3] is None else value
+
+
 def _year_date_question(context: dict, target: str | None, text: str, packet: dict | None = None) -> dict:
     bound = {key: value for key, value in context.items() if key != "date_proposal"}
     bound.update(field="stay.check_out", target_id=target, stay_id=target)
@@ -528,6 +551,9 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
     pending = pending if isinstance(pending, dict) else {}
     context = deepcopy(pending.get("context")) if isinstance(pending.get("context"), dict) else {}
     data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state if isinstance(state, dict) else {}
+    owned_checkout = _owned_checkout_preserving_start(data, pending, context, text)
+    if owned_checkout is not None:
+        return resolve_date_answer(state, pending, owned_checkout, now, timezone)
     correction = _owned_checkout_correction(data, pending, context, text)
     if correction is not None:
         return resolve_date_answer(state, pending, correction, now, timezone)
