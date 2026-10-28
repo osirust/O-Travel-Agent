@@ -38,6 +38,17 @@ _DURATION_COUNTS = {"одна": 1, "одну": 1, "один": 1, "две": 2, "�
     "четыре": 4, "пять": 5, "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10}
 _DURATION_TOKEN = r"[0-9]{1,3}|" + "|".join(_DURATION_COUNTS)
 _DURATION = re.compile(r"(?:на\s*)?(?P<count>" + _DURATION_TOKEN + r")\s*(?P<unit>ночь|ночи|ночей|день|дня|дней|nights?|days?)")
+_CORRECTION_DAYS = dict(zip(("первое", "второе", "третье", "четвертое", "пятое", "шестое", "седьмое",
+    "восьмое", "девятое", "десятое", "одиннадцатое", "двенадцатое", "тринадцатое", "четырнадцатое",
+    "пятнадцатое", "шестнадцатое", "семнадцатое", "восемнадцатое", "девятнадцатое", "двадцатое",
+    "двадцать первое", "двадцать второе", "двадцать третье", "двадцать четвертое", "двадцать пятое",
+    "двадцать шестое", "двадцать седьмое", "двадцать восьмое", "двадцать девятое", "тридцатое",
+    "тридцать первое"), range(1, 32)))
+_CORRECTION_DAY = "|".join(re.escape(day) for day in sorted(_CORRECTION_DAYS, key=len, reverse=True))
+_CHECKOUT_CORRECTION = re.compile(r"(?:(?:извини|извени|простите)\s*,?\s*)?(?:я\s+)?"
+    r"(?:имел|имела|имею)\s+в\s+виду\s+(?P<day>[0-9]{1,2}|" + _CORRECTION_DAY + r")\s+"
+    r"(?P<month>" + "|".join(_MONTHS) + r")\s+(?P<year>[0-9]{4})(?:\s+года)?"
+    r"(?:\.\s*это\s+окончательный\s+выезд(?:\s*;\s*заезд\s+не\s+(?:меняем|меняй|трогай))?)?\s*[.!]*")
 
 
 def _calendar(token: str, today: date) -> date:
@@ -227,6 +238,20 @@ def _owned_calendar_answer(key: str, field: str) -> str | None:
     if compact:
         return f"{compact[1]} {compact[2]} {compact[3]} года"
     return None
+
+
+def _owned_checkout_correction(data, pending, context, text):
+    """A complete corrective date answer to a fresh owned checkout question."""
+    if (pending.get("field") != "stay.check_out" or not _fresh_date_slot(data, pending, context)
+            or not isinstance(text, str) or not 0 < len(text) <= 250):
+        return None
+    key = " ".join(text.casefold().replace("ё", "е").split())
+    match = _CHECKOUT_CORRECTION.fullmatch(key)
+    if match is None:
+        return None
+    day = match["day"]
+    number = int(day) if day.isascii() and day.isdigit() else _CORRECTION_DAYS[day]
+    return f"{number} {match['month']} {match['year']}"
 
 
 def _year_date_question(context: dict, target: str | None, text: str, packet: dict | None = None) -> dict:
@@ -503,6 +528,9 @@ def resolve_date_answer(state: Any, pending: Any, text: Any, now: datetime,
     pending = pending if isinstance(pending, dict) else {}
     context = deepcopy(pending.get("context")) if isinstance(pending.get("context"), dict) else {}
     data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state if isinstance(state, dict) else {}
+    correction = _owned_checkout_correction(data, pending, context, text)
+    if correction is not None:
+        return resolve_date_answer(state, pending, correction, now, timezone)
     active_field = pending.get("field") or context.get("field")
     if not explicit and _fresh_date_slot(data, pending, context):
         key = _owned_calendar_answer(key, active_field) or key

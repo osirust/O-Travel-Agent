@@ -103,8 +103,14 @@ def _country_rebase(ref, before, after, request, coordinator, authority):
     return result
 
 
-def _prepare_request(value, before, current, pending, coordinator):
+def _prepare_request(value, before, current, pending, coordinator, *, source_text=None):
     result = _request(value, current)
+    if result["kind"] == "city" and result.get("country_iso2") is None:
+        from .intent_grounding import current_city_country_hint
+
+        hint = current_city_country_hint(before, source_text, result["role"], result["query"])
+        if hint is not None:
+            result["country_iso2"] = hint
     authority = _owned_country(pending)
     supplied = result.get("country_ref")
     if (supplied is None and result["kind"] == "city" and isinstance(authority, dict)
@@ -423,7 +429,8 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
 
     try:
         _need(len(queue) <= MAX_REMAINING_REQUESTS)
-        queue = [_prepare_request(value, before, current, old_pending, harness.place_resolution) for value in queue]
+        queue = [_prepare_request(value, before, current, old_pending, harness.place_resolution,
+            source_text=run.get("input_text")) for value in queue]
         if precomputed_packet is not None:
             packet = deepcopy(precomputed_packet)
             _need(isinstance(packet, dict) and packet.get("action") in {"ask", "no_match", "unavailable"}
@@ -446,7 +453,8 @@ async def finish_place_run(harness, session, run, state, *, request=None, select
                 _need(False)
             prepared, chosen, selection_pending = None, None, None
         elif request is not None:
-            prepared = _prepare_request(request, before, current, old_pending, harness.place_resolution)
+            prepared = _prepare_request(request, before, current, old_pending, harness.place_resolution,
+                source_text=run.get("input_text"))
             chosen, selection_pending = None, None
         else:
             chosen, selection_pending = _prepare_selection(selection, old_pending, before, current, harness)

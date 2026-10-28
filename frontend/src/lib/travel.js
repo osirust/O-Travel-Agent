@@ -137,6 +137,15 @@ export function checkoutAllowed(snapshot, plan, busy = false) {
     && Number.isSafeInteger(plan.total_minor));
 }
 
+export function serverPlanReviewAction(snapshot, plan, { busy = false, previewing = false, confirmationPending = false, hasComponentSelection = false } = {}) {
+  if (!plan) return null;
+  return {
+    disabled: !checkoutAllowed(snapshot, plan, busy) || previewing || confirmationPending,
+    label: hasComponentSelection ? 'Проверить целый план агента' : 'Посмотреть условия примера',
+    explanation: hasComponentSelection ? 'Проверка относится к отдельному плану агента. Выбранные карточки в корзине его не изменяют.' : null,
+  };
+}
+
 export function safeHotelMedia(media) {
   if (!media?.isActualPropertyPhoto || media.kind !== 'HOTEL' || !media.url) return null;
   try {

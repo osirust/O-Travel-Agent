@@ -1022,6 +1022,8 @@ class Harness:
                             extracted.conflicts.extend(date_meta["conflicts"])
                             extracted.unknowns.extend(date_meta["unknowns"])
                             extracted.server_questions.extend(date_meta["unknowns"])
+                            if date_meta.get("pending_context") is not None:
+                                extracted.pending_context = {**(extracted.pending_context or {}), **date_meta["pending_context"]}
                             extracted.pending_context_clear = list(dict.fromkeys([
                                 *extracted.pending_context_clear, *date_meta.get("pending_context_clear", [])]))
                         from .duration_grounding import guard_unasked_duration_operations
@@ -1029,6 +1031,11 @@ class Harness:
                             extracted.operations, run["input_text"], model_generated=True)
                         extracted.operations = [Operation.model_validate(op) for op in duration_ops]
                         extracted.operation_normalizations.extend(duration_meta["notes"])
+                        from .price_date_recall import guard_price_date_recall_operations
+                        recall_ops, recall_meta = guard_price_date_recall_operations(session["state"],
+                            extracted.operations, run["input_text"], model_generated=True)
+                        extracted.operations = [Operation.model_validate(op) for op in recall_ops]
+                        extracted.operation_normalizations.extend(recall_meta["notes"])
                         if extracted.speech_act=="CHANGE" and not extracted.conflicts:
                             from .nationality_intake import ground_explicit_nationality
                             nationality_ops,nationality_meta=ground_explicit_nationality(session["state"],
@@ -2213,6 +2220,21 @@ class Harness:
                 result["search_explanation"] = explanation
                 if explanation["text"]:
                     reply += "\n\n" + explanation["text"]
+        if (not run["input_text"].startswith(TYPED_PREFIX)
+                and waiting_reason != "user_pause" and not extracted.conflicts
+                and "plans" in result and result.get("tool_calls_used", 0) > 0):
+            from .search_blocker_feedback import canonical_search_blocker_feedback
+            blocker_feedback = canonical_search_blocker_feedback(current, result)
+            if blocker_feedback["text"]:
+                reply = blocker_feedback["text"] + ("\n\n" + reply if reply else "")
+                result["blocker_feedback"] = blocker_feedback["summary"]
+            if blocker_feedback["question"] and not questions:
+                questions = [blocker_feedback["question"]]
+                question_binding_proposal = blocker_feedback["pending_context"]
+                clarification_metadata.update(blocker_feedback["pending_context"])
+                status, waiting_reason, preserve_pending = "WAITING_USER", "clarification", False
+                result["questions"] = list(questions)
+                reply += "\n\n" + questions[0]
         pending = session.get("pending_question") if preserve_pending else {"question_id": f"{run['run_id']}-question", "text": questions[0], "questions": questions, "state_version": current.state_version, "reason": "clarification"} if questions else None
         if pending is not None and not preserve_pending:
             from .question_binding import final_question_binding

@@ -1,0 +1,85 @@
+{
+  "format": "otravel.new80_geo_date_repair.v1",
+  "checked_at_utc": "2026-10-28T12:35:59.115892+00:00",
+  "status": "RELATED_CONTROLLED_PG_AND_HELPER_ASSERTIONS_PASS",
+  "source": {
+    "corpus_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "actual_evaluated_package_sha256": "374ff73fa2d51aff52fedc8ae6f1aeb92c43668ffc8e2c521bcd1596c971e520",
+    "fixture": "fixtures/regression/new80-geo-date-corrections-20261028.json",
+    "captured_boundaries": [
+      "ZAI100-013:T3",
+      "ZAI100-015:T7",
+      "ZAI100-017:T8",
+      "ZAI100-017:T9"
+    ]
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+      "fact": "Current explicit SaintPetersburg inRussia lost its RU filter; an already named saved city later became a country-only question.",
+      "change": "Use only a current positive paired literal for the exact city query and role to filter verified source lookup. Recognize affirmative named city+country as both facts. No candidate auto-selection or source identity admission is added.",
+      "tests": "Captured013 source request reaches controlled coordinator withRU; captured015 checkout+1 retainscity/dates/party/room/budget and does not reopen country-only question. Negative history/hypothesis/quote/alternative/wrong-city-role cases remain ungrounded.",
+      "status": "CLOSED_RELATED_CONTROLLED_SCOPE_ACTUAL_REMOTE_RETEST_PENDING"
+    },
+    {
+      "id": "HARNESS-004-N80-INVALID-DATE-FOLLOWUP-TARGET-017-001",
+      "fact": "Rejecting31November created an unbound checkout question; a subsequent explicit1December correction was ignored.",
+      "change": "Current impossible calendar assertion proposes an exact server-owned field/target only for one valid stay with no conflicting operation target. The harness merges that proposal. A closed corrective answer to a fresh owned checkout slot accepts an explicitly stated full ordinal date; stale/foreign/hypothetical/extra-edit inputs remain unhandled.",
+      "tests": "Actual captured31Nov response leaves trip unchanged and persistsstayID; subsequent full correction to1Dec sets onlycheckout and returnleg in one revision, with only the first controlled model call. Actual newmodel calls are0.",
+      "status": "CLOSED_RELATED_CONTROLLED_SCOPE_ACTUAL_REMOTE_RETEST_PENDING"
+    }
+  ],
+  "verification": {
+    "initial_new_helpers": {
+      "passed": 27,
+      "failed": 4,
+      "total": 31,
+      "junit_sha256": "725e474f597d1b1c1e78348718bc1562adc8ad7242455412f4e34dca98754b68"
+    },
+    "new_helpers_after_fix": {
+      "passed": 31,
+      "failed": 0,
+      "junit_sha256": "f3d7686d3257bab3bad92970fec0024b65e55049862ff848342bf856002bfce5"
+    },
+    "fresh_isolated_pg_and_related": {
+      "executed": 534,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "pg_report_sha256": "0872dfe513f6ee3b645681cdcd7febd5f20ce5f8a3ac691959fc2b6a80fb9c95",
+    "pg_junit_sha256": "bea277263043ea06a16a8bc4976f51ca98f2434dd85f8d9c1c15c8b9a20ac6bb",
+    "source_snapshot_sha256": "d8cd0d04d9540e4726308265f1ad96e7f7929c71df2790a801919649f7e2ea91",
+    "new_actual_cached_pg_methods": 3,
+    "vendor_http_calls": 0,
+    "actual_llm_calls": 0,
+    "shared_database_modified": false,
+    "owned_resources_removed": true,
+    "ruff": "PASS all4helpers+2newtestmodules"
+  },
+  "code_sha256": {
+    "otravel/place_run.py": "ec156a3a63cce101e37886614a33d3755081e8374c1300e6aed5ca23ac0dee47",
+    "otravel/intent_grounding.py": "f06526ec87a5e30327048ea57c1836d01027ee96470cfd3aa67baf7bee4bbf9b",
+    "otravel/date_intake.py": "f10f160e3706ca5f7600f4149c548825e81a3191196f2a1879ad168e49964b13",
+    "otravel/date_slots.py": "dc3dbfafd82693d5e80ab3711727c0f9d98cecf3a80445b194e699f2be6640bf",
+    "tests/test_new80_geo_date_helpers.py": "cb3d2ebe1342f1850721c22bbb5bbba01e9d50961d8f6348d41a33de85a0bd48",
+    "tests/test_new80_geo_date_helpers_pg.py": "118e23f62b18fa0dfa988696d7ad1f2d1ec099b67181de26a41185e311a7a879",
+    "fixtures/regression/new80-geo-date-corrections-20261028.json": "041b55d6cb831dc1a0158c88e466aa835eaa2d2d5b872487beda6f217dbe566c"
+  },
+  "harness_hook": {
+    "path": "otravel/harness.py",
+    "snapshot_sha256": "8b06192ff4cf0c46924d321a02c58ce8abc26be1b8ceb5ed42e296039a64760f",
+    "scope": "Root-owned pending_context merge after date_meta server questions, exercised by cachedPG017 chain; helper author did not edit harness.py."
+  },
+  "peer_adjudication": {
+    "013T5": "Dependent historical bare-date follow-up; model resolve_place(RU) alone is not authority and its suppression is not a separately proven bug.",
+    "014_single_candidate": "Mandatory candidate-selection policy was not weakened or labeled a defect."
+  },
+  "limitations": [
+    "No fresh remote model or provider request in this repair qualification.",
+    "Controlled cached contracts establish exact harness/PG behavior, not full80 dialogue semantic acceptance or source106 coverage.",
+    "Geo lookup still requires verified results and explicit owned candidate admission; country hints do not become supplier IDs.",
+    "Other calendar/editing phrasing, arbitrary multiline corrections and multiple-stay selection remain governed by existing guards.",
+    "EXPLICIT-INVALID-DATE-IGNORED-016 and date-relative correction018 are separate open scope; this patch does not claim to fix them."
+  ]
+}

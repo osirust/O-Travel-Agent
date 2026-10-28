@@ -22,8 +22,8 @@ _DEFAULT_WEIGHT = Preference.model_fields["weight"].default
 _AFFIRM = re.compile(r"\b(?:ищи|найди|поищи|подбери|выбирай|хочу|хотим|нужен|нужна|нужно|"
     r"предпочитаю|предпочитаем|предпочтительн\w*|желател\w*|поставь|установи|добавь|включи|choose|find|prefer|want|set)\b")
 _PRICE = re.compile(r"\b(?:миним\w*\s+(?:цен\w*|стоим\w*)|миним\w*\s+общ\w*\s+стоим\w*|"
-    r"сам\w*\s+дешев\w*|подешевле|price_priority|lowest_total|lowest\s+(?:cost|price)|cheapest)\b")
-_BARE_PRICE = re.compile(r"(?:миним\w*\s+(?:общ\w*\s+)?(?:цен\w*|стоим\w*)|подешевле)")
+    r"сам\w*\s+дешев\w*|под[еи]шевле|price_priority|lowest_total|lowest\s+(?:cost|price)|cheapest)\b")
+_BARE_PRICE = re.compile(r"(?:миним\w*\s+(?:общ\w*\s+)?(?:цен\w*|стоим\w*)|под[еи]шевле)")
 _MORNING = re.compile(r"\b(?:рано\s+утром|ранн\w*\s+утр\w*|утренн\w*\s+(?:вылет\w*|рейс\w*)|early\s+morning)\b")
 _MORNING_TYPO = re.compile(r"\bрано\s+утрам\b")
 _TIME_SUBJECT = re.compile(r"\b(?:вылет\w*|перелет\w*|рейс\w*|departure_time|departure_window|flight|departure)\b")

@@ -48,6 +48,9 @@ _ONTO = re.compile(rf"\bна\s+(?P<city>{_NAMES})(?![\w-])")
 _CHOICE = re.compile(rf"\b(?:выбираю|выбираем|выбрали|назначение|направление|город назначения)\s*[:=-]?\s*(?:именно\s+)?(?P<city>{_NAMES})(?![\w-])")
 _ORIGIN_FIELD = re.compile(rf"\b(?:отправление|город отправления|город вылета)\s*(?:теперь\s*)?[:=-]?\s*(?P<city>{_NAMES})(?![\w-])")
 _COUNTRY_TO = re.compile(rf"\b(?:в|во|to|v|vo)\s+(?P<qualifier>страну\s+)?(?P<country>{_COUNTRY_NAMES})(?![\w-])")
+_QUALIFIED_CITY_PAIR = re.compile(rf"(?<![\w-])(?P<city>{_NAMES})\s+(?:в|во|in)\s+(?P<country>{_COUNTRY_NAMES})(?![\w-])")
+_QUALIFIED_CITY_CONFIRMATION = re.compile(rf"(?:(?:да|верно|правильно)\s+)?(?:именно\s+)?"
+    rf"(?P<city>{_NAMES})\s+(?:в|во|in)\s+(?P<country>{_COUNTRY_NAMES})")
 _AMBIGUOUS_NAMES = "|".join(re.escape(name) for name in sorted(_AMBIGUOUS, key=len, reverse=True))
 _AMBIGUOUS_TO = re.compile(rf"\b(?:в|во|to|in|направление|назначение|выбираю)\s+(?P<name>{_AMBIGUOUS_NAMES})(?![\w-])")
 _REPLACE = re.compile(rf"\b(?:замени|заменяем|меняем|поменяй)\s+(?P<old>{_NAMES})\s+на\s+(?P<new>{_NAMES})(?![\w-])")
@@ -346,6 +349,11 @@ def _facts(data: dict, text: str, pending: dict, operations=()) -> dict:
                 leading = _CITY.match(clause)
                 if leading and (_FROM.search(clause[leading.end():]) or _COUNTRY_TO.search(clause[leading.end():])):
                     result["destination"].add(_FORMS[leading["city"]])
+                qualified = _QUALIFIED_CITY_CONFIRMATION.fullmatch(clause)
+                if qualified:
+                    role = "origin" if pending.get("field") == "origin.city" else "destination"
+                    result[role].add(_FORMS[qualified["city"]])
+                    result["choice"] = True
                 chain = re.fullmatch(rf"(?P<a>{_NAMES})\s*(?:→|->|-)\s*(?P<b>{_NAMES})", clause)
                 if chain:
                     result["origin"].add(_FORMS[chain["a"]]); result["destination"].add(_FORMS[chain["b"]])
@@ -387,6 +395,30 @@ def _facts(data: dict, text: str, pending: dict, operations=()) -> dict:
             result["alternative"] = True
     result["current"] = bool(result["origin"] or result["destination"] or result["country"] or result["ambiguous"] or result["alternative"])
     return result
+
+
+def current_city_country_hint(state, text, role, query):
+    """One current literal city-country pair, only for its exact query/role.
+
+    A hint filters a future verified source query; it never admits a CityRef,
+    selects a candidate or borrows a country from history/model output.
+    """
+    if role not in {"origin", "destination"} or not isinstance(text, str) or not 0 < len(text) <= 4000:
+        return None
+    city = _city(query)
+    if city is None:
+        return None
+    data = state.model_dump(mode="json") if hasattr(state, "model_dump") else state
+    if not isinstance(data, dict):
+        return None
+    facts = _facts(data, text, {"field": role + ".city"})
+    if (facts[role] != {city} or len(facts["country"]) != 1 or facts["ambiguous"]
+            or facts["alternative"] or facts["multicity"]):
+        return None
+    country = next(iter(facts["country"]))
+    pairs = {(_FORMS[match["city"]], _COUNTRIES[match["country"]])
+             for match in _QUALIFIED_CITY_PAIR.finditer(_unquote(text))}
+    return country if pairs == {(city, country)} else None
 
 
 def _target(data: dict, operations: list[dict], facts: dict, pending: dict) -> str | None:

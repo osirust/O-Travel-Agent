@@ -1,0 +1,21 @@
+{
+  "scope": "ACTUAL_HTTP_BACKEND_PHOTO_DTO_NOT_RENDERED_UI",
+  "llm_requests": 0,
+  "supplier_searches": 1,
+  "booking_or_payment": 0,
+  "run_status": "completed",
+  "offers": 20,
+  "bound_photo_items": 20,
+  "photo_urls": 100,
+  "source_type": "LIVE_INDICATIVE",
+  "currency": "USD",
+  "price_minor_integers": true,
+  "identity_binding": true,
+  "first_photo_head": {
+    "status": 200,
+    "content_type": "image/jpeg"
+  },
+  "trip_version_unchanged": true,
+  "source_mapping_sha256": "374ff73fa2d51aff52fedc8ae6f1aeb92c43668ffc8e2c521bcd1596c971e520",
+  "initial_driver_failure_preserved": "INVALID_REQUEST before supplier HTTP because test used check_in/check_out instead of provider request checkin/checkout"
+}

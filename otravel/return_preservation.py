@@ -19,7 +19,7 @@ _KEEP = re.compile(r"\b(?:сохрани(?:те)?|сохранить|сохра�
     r"остав(?:ь(?:те)?|ить|ляем|ляй(?:те)?|им)|keep|preserve|retain)\b|"
     r"\b(?:не|do\s+not)\s+(?:меня\w*|изменя\w*|трог\w*|сдвига\w*|перенос\w*|change|move|shift)\b")
 _EDIT = re.compile(r"\b(?:перенес\w*|перенос\w*|сдвин\w*|сдвига\w*|измен\w*|меня\w*|поменя\w*|"
-    r"передвин\w*|исправ\w*|продли\w*|сократ\w*|увелич\w*|уменьш\w*|добав\w*|move|shift|change|extend|shorten)\b")
+    r"сдела\w*|передвин\w*|исправ\w*|продли\w*|сократ\w*|увелич\w*|уменьш\w*|добав\w*|move|shift|change|extend|shorten)\b")
 _DURATION = re.compile(r"\b(?:дн\w*|день|дня|дней|ноч\w*|недел\w*|days?|nights?|weeks?)\b")
 _NONCURRENT = re.compile(r"\b(?:если|бы|допустим|предположим|возможно|может|наверное|гипотетически|"
     r"ранее|прежде|вчера|говорил\w*|просил\w*|писал\w*|цитата|if|would|previously|suppose)\b")

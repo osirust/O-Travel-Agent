@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { restoreHotelMedia, hotelMediaGallery } from '../src/lib/hotelPages.js';
 import { filterHotels, sortHotels, EMPTY_HOTEL_FILTERS } from '../src/lib/hotelFilters.js';
-import { componentRequest } from '../src/lib/travel.js';
+import { componentRequest, serverPlanReviewAction } from '../src/lib/travel.js';
 import { createTripDraft, buildTripOperations } from '../src/lib/tripDraft.js';
 import { messageText } from '../src/lib/chat.js';
 
@@ -10,6 +10,22 @@ const snapshot = { session_id: 'session-one', state_version: 4 };
 const offer = { offer_id: 'offer-one', provider: 'serpapi', amount_minor: 27600, currency: 'USD', price_kind: 'INDICATIVE_STAY_TOTAL', details: { kind: 'hotel', provider_data: { property_token: 'property-one' } } };
 const photo = { url: 'https://lh3.googleusercontent.com/grass-cs/a=s600', source: 'SERPAPI', kind: 'HOTEL', isActualPropertyPhoto: true, hotelId: 'property-one', sourceHotelId: 'property-one', gallery: [], metadata: { rating: 4.7, review_count: 82 } };
 function run(media, extra = {}) { return { run_id: 'run-one', session_id: snapshot.session_id, status: 'completed', result: { state_version: 4, result: { live_offers: [offer], live_media: { items: [{ offer_id: offer.offer_id, media }] } } }, ...extra }; }
+
+test('local component selections keep the separate whole-trip quote action and its version guards', () => {
+  const state = { ...snapshot, trip_id: 'trip-one', waiting_reason: null };
+  const plan = { plan_id: 'plan-one', trip_id: state.trip_id, state_version: 4, total_minor: 150000, currency: 'USD', ready_for_simulated_checkout: true, blockers: [] };
+  const before = JSON.stringify({ state, plan });
+  assert.equal(serverPlanReviewAction(state, plan).disabled, false);
+  const selected = serverPlanReviewAction(state, plan, { hasComponentSelection: true });
+  assert.equal(selected.disabled, false);
+  assert.equal(selected.label, 'Проверить целый план агента');
+  assert.match(selected.explanation, /отдельному плану агента/);
+  assert.equal(serverPlanReviewAction(state, null, { hasComponentSelection: true }), null);
+  for (const invalid of [{ ...plan, state_version: 3 }, { ...plan, ready_for_simulated_checkout: false }, { ...plan, blockers: [{ code: 'partial' }] }]) assert.equal(serverPlanReviewAction(state, invalid, { hasComponentSelection: true }).disabled, true);
+  assert.equal(serverPlanReviewAction(state, plan, { hasComponentSelection: true, confirmationPending: true }).disabled, true);
+  assert.equal(serverPlanReviewAction({ ...state, waiting_reason: 'user_pause' }, plan, { hasComponentSelection: true }).disabled, true);
+  assert.equal(JSON.stringify({ state, plan }), before);
+});
 
 test('property photos use the current matching sidecar without mutating an economic offer', () => {
   const before = JSON.stringify(offer);

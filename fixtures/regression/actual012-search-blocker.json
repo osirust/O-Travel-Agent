@@ -1,0 +1,1602 @@
+{
+  "case": "ZAI100-012",
+  "turn": 8,
+  "source_case": "/home/aegml/.local/evaluation/new80-zai45-20261028-071538-645fdb70/ZAI100-012.json",
+  "source_case_sha256": "5b524f80f939d31d53848a518dc5af2bf575155f1ba1eb3ba6588ec23e2d0e20",
+  "user": "Обший лимит 145 тысяч рублей на всех троих. Сколько взрослых ты теперь учитываешь?",
+  "before": {
+    "session_id": "3bbe3fe5-bf30-4550-9cff-01ebcda0ad13",
+    "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+    "state_version": 5,
+    "trip_version": 5,
+    "status": "OPTIONS_READY",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [
+        {
+          "id": "leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3",
+          "mode": "flight",
+          "origin": "Санкт-Петербург",
+          "destination": "Анталья",
+          "departure_date": "2026-12-03"
+        },
+        {
+          "id": "leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f",
+          "mode": "flight",
+          "origin": "Анталья",
+          "destination": "Санкт-Петербург",
+          "departure_date": "2026-12-10"
+        }
+      ],
+      "stays": [
+        {
+          "id": "new-stay-1",
+          "city": "Анталья",
+          "rooms": [
+            {
+              "id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ]
+            }
+          ],
+          "check_in": "2026-12-03",
+          "hotel_id": null,
+          "check_out": "2026-12-10"
+        }
+      ],
+      "budget": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 15000000
+      },
+      "groups": [],
+      "origin": "Санкт-Петербург",
+      "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+      "travelers": [
+        {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        {
+          "id": "new-traveler-2",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        {
+          "id": "new-traveler-3",
+          "age": 18,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "route_policy": {
+        "kind": "round_trip",
+        "end_city": null
+      },
+      "search_policy": {
+        "mode": "HYBRID",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "duffel",
+        "guest_nationality": "RU"
+      },
+      "state_version": 5
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "after": {
+    "session_id": "3bbe3fe5-bf30-4550-9cff-01ebcda0ad13",
+    "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+    "state_version": 6,
+    "trip_version": 6,
+    "status": "TRIP_DRAFT",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [
+        {
+          "id": "leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3",
+          "mode": "flight",
+          "origin": "Санкт-Петербург",
+          "destination": "Анталья",
+          "departure_date": "2026-12-03"
+        },
+        {
+          "id": "leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f",
+          "mode": "flight",
+          "origin": "Анталья",
+          "destination": "Санкт-Петербург",
+          "departure_date": "2026-12-10"
+        }
+      ],
+      "stays": [
+        {
+          "id": "new-stay-1",
+          "city": "Анталья",
+          "rooms": [
+            {
+              "id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ]
+            }
+          ],
+          "check_in": "2026-12-03",
+          "hotel_id": null,
+          "check_out": "2026-12-10"
+        }
+      ],
+      "budget": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 14500000
+      },
+      "groups": [],
+      "origin": "Санкт-Петербург",
+      "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+      "travelers": [
+        {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        {
+          "id": "new-traveler-2",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        {
+          "id": "new-traveler-3",
+          "age": 18,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "route_policy": {
+        "kind": "round_trip",
+        "end_city": null
+      },
+      "search_policy": {
+        "mode": "HYBRID",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "duffel",
+        "guest_nationality": "RU"
+      },
+      "state_version": 6
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "assistant": [
+    "Текущий состав: 3 взрослых; дети в сохранённом составе не указаны.\n\nСохранённый маршрут: Санкт-Петербург → Анталья → Санкт-Петербург.\n\nОстановка 1, Анталья: заезд 03.12.2026, выезд 10.12.2026; 7 ночей. Переезд 1, Санкт-Петербург → Анталья: отправление 03.12.2026. Переезд 2, Анталья → Санкт-Петербург: отправление 10.12.2026.\n\nТекущий состав: 3 взрослых; дети в сохранённом составе не указаны.\n\nСохранённый бюджет на всю поездку: 145 000,00 RUB.\n\nВ текущем расчёте: проживание — тестовые тарифы (SANDBOX); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+  ],
+  "raw_contract": {
+    "value": {
+      "reply": "Я учитываю трёх взрослых: два взрослых с неуказанным возрастом и одного, которому исполнится 18 лет. Бюджет изменён на 145 000 рублей на всю поездку.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 14500000
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "fc9234e0bb7b0774d9f93a11346899ce6671d28bafc0095e5c29b661aa9cfd42",
+    "captured": true,
+    "utf8_bytes": 511
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Я учитываю трёх взрослых: два взрослых с неуказанным возрастом и одного, которому исполнится 18 лет. Бюджет изменён на 145 000 рублей на всю поездку.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 14500000
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "6beba40c5e85da3d4914f88adb623e92a810f410e56cf508407604f912605d0b",
+    "captured": true,
+    "utf8_bytes": 511
+  },
+  "search_result": {
+    "llm": {
+      "model": "glm-4.5-flash",
+      "usage": {
+        "input_tokens": 6436,
+        "total_tokens": 6593,
+        "output_tokens": 157
+      },
+      "attempts": [
+        {
+          "model": "glm-4.5-flash",
+          "usage": {
+            "input_tokens": 6436,
+            "total_tokens": 6593,
+            "output_tokens": 157
+          },
+          "outcome": "response",
+          "provider": "zai",
+          "latency_ms": 12819,
+          "request_metrics": {
+            "prompt_sha256": "3b50a9cf6c15bb7653bcb21fcac54b77f9effbf5036ba93c22769e5d7141ede9",
+            "schema_sha256": "3caf86d678de7b28e3d05fe66dcb427d90b401652f87c16d480eafc2e6e8fb36",
+            "schema_utf8_bytes": 10615,
+            "system_utf8_bytes": 15589,
+            "context_utf8_bytes": 12020
+          }
+        }
+      ],
+      "provider": "zai",
+      "latency_ms": 12819,
+      "request_metrics": {
+        "prompt_sha256": "3b50a9cf6c15bb7653bcb21fcac54b77f9effbf5036ba93c22769e5d7141ede9",
+        "schema_sha256": "3caf86d678de7b28e3d05fe66dcb427d90b401652f87c16d480eafc2e6e8fb36",
+        "schema_utf8_bytes": 10615,
+        "system_utf8_bytes": 15589,
+        "context_utf8_bytes": 12020
+      }
+    },
+    "plans": [],
+    "fx_error": null,
+    "warnings": [
+      "Live transfer gateway не подключён; трансферы могут быть только явно обозначенными DEMO fallback-компонентами.",
+      "liteapi:cf4e71774645568effd01e82: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+      "duffel:c796c6bffe9fc17bc124155c: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+      "duffel:260716ea2f181098102bc883: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+      "Сумма является simulated estimate; DEMO/SANDBOX не подтверждают реальные цены и наличие.",
+      "Справочный пересчёт ЦБ на 2026-10-28; банковские комиссии и курс оплаты неизвестны. Это reference estimate для simulated checkout, не цена покупки."
+    ],
+    "questions": [],
+    "price_kind": "simulated_estimate",
+    "violations": [
+      {
+        "code": "budget_exceeded",
+        "details": {
+          "total_minor": 14899378,
+          "budget_minor": 14500000
+        },
+        "message": "Корзина превышает общий бюджет."
+      }
+    ],
+    "model_reply": "Я учитываю трёх взрослых: два взрослых с неуказанным возрастом и одного, которому исполнится 18 лет. Бюджет изменён на 145 000 рублей на всю поездку.",
+    "source_type": "MIXED",
+    "partial_plan": {
+      "offers": [
+        {
+          "details": {
+            "kind": "hotel",
+            "rates": [
+              {
+                "name": "Standard Triple",
+                "perks": [],
+                "rateId": "I42FUVCPJZBFOR2FGNDUWTSSKVDVSWKUJ5GVEV2HKFNEIQKOLJKUONC2IRGU6SSYI5ATGR2HJZJFMUCRLFJUOTKSKFDUSM2EINGVEUKHJY3EIRKNIJJUOWKZKRCU2SSRKBJFGVZULAZFMS2OGZDEKVSMGRFUUS2VIU3UEVCJIVMUKRZXIJKUOVK2IRJTORCKJNBFIVSLKNCDIR2FGNKFGTK2KJDTIWSEKNHUUUKHJUZUIUKXKNLUWRSOINDU2WSTI5KTEVCNJZFEIR2ZGNCFGTCKKRDUSMSUJNHFEVSQKJEEMRKSKNHVAUK2IRAU2USXI5CVSRCFJZJFER2BLFCECN2CKJIFESSEINGUUVSHII3EIUKOIJLUOSJTIRCU6QSEJFDEKU2HKRJVGSK2JBBUOTKSKFDUSM2DGJGUUUKGKVNEITKJIJJEOQJVIRAU2QSEPQ4DINRSGYXDEOD4PRAUS7D4PR6FG5DBNZSGC4TEEBKHE2LQNRSXYMBOGAYHYMBOGAYHY7BQFYYDA7BQFYYDA",
+                "remarks": "",
+                "boardName": "All Inclusive",
+                "boardType": "AI",
+                "priceType": "commission",
+                "adultCount": 3,
+                "childCount": 0,
+                "commission": [
+                  {
+                    "amount": 0,
+                    "currency": "RUB"
+                  }
+                ],
+                "promotions": null,
+                "retailRate": {
+                  "total": [
+                    {
+                      "amount": 84626.28,
+                      "currency": "RUB"
+                    }
+                  ],
+                  "initialPrice": [
+                    {
+                      "amount": 84626.28,
+                      "currency": "RUB"
+                    }
+                  ],
+                  "taxesAndFees": [
+                    {
+                      "amount": 7637.89,
+                      "currency": "RUB",
+                      "included": true,
+                      "description": "Sales tax"
+                    },
+                    {
+                      "amount": 746.13,
+                      "currency": "RUB",
+                      "included": true,
+                      "description": "Accommodation Tax"
+                    }
+                  ],
+                  "suggestedSellingPrice": [
+                    {
+                      "amount": 97320.22,
+                      "source": "",
+                      "currency": "RUB"
+                    }
+                  ]
+                },
+                "childrenAges": [],
+                "maxOccupancy": 3,
+                "paymentTypes": [
+                  "NUITEE_PAY"
+                ],
+                "occupancyNumber": 1,
+                "providerCommission": {
+                  "amount": 0,
+                  "currency": ""
+                },
+                "cancellationPolicies": {
+                  "hotelRemarks": [],
+                  "refundableTag": "NRFN",
+                  "cancelPolicyInfos": []
+                }
+              }
+            ],
+            "issues": [
+              {
+                "code": "board_mixed_or_unknown",
+                "path": "rates.boardType",
+                "message": "Питание комнат различается или не подтверждено кодами BI/RO."
+              }
+            ],
+            "binding": {
+              "city": "Анталья",
+              "checkin": "2026-12-03",
+              "stay_id": "new-stay-1",
+              "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+              "checkout": "2026-12-10",
+              "hotel_id": "lp4f7bd",
+              "room_ids": [
+                "new-room-1"
+              ],
+              "state_version": 6,
+              "room_assignments": [
+                {
+                  "room_id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2",
+                    "new-traveler-3"
+                  ]
+                }
+              ]
+            },
+            "checkin": "2026-12-03",
+            "checkout": "2026-12-10",
+            "hotel_id": "lp4f7bd",
+            "warnings": [
+              "Питание комнат различается или не подтверждено кодами BI/RO."
+            ],
+            "room_facts": [
+              {
+                "occupancy_number": 1,
+                "capacity_verified": true,
+                "reported_capacity": 3,
+                "guest_counts_match": true
+              }
+            ],
+            "occupancies": [
+              {
+                "adults": 3,
+                "children": []
+              }
+            ],
+            "source_type": "SANDBOX",
+            "supplier_id": "2",
+            "fees_included": true,
+            "supplier_name": "nuitee",
+            "search_request": {
+              "checkin": "2026-12-03",
+              "checkout": "2026-12-10",
+              "currency": "RUB",
+              "hotelIds": [
+                "lp55de7",
+                "lp4f7bd",
+                "lp22e91"
+              ],
+              "occupancies": [
+                {
+                  "adults": 3,
+                  "children": []
+                }
+              ],
+              "guestNationality": "RU"
+            },
+            "native_offer_id": "AwJ2MQAAAABq4veAN4-X6bX8JYBDHtEp7PQ4dV8CQjEQn3ct-K-1m8TbxJcNMKHG8sRKlGF3dpyORDGeJztDO2Ccg3pXP4W99aECcqg9vZeQb85BgYg1OjQqdzstMknYTyV9qO8g65IoFjHgGRE5FZuCBV7MSo_tr2n2YFjfEONGUQs0rJJM7bzMbWaxlvNkB_MDrLYZHYvfktVWUQD5T7S_zJFHU2o6akAUHBYi8IIzzGYoBV_GmBqK-nzjUZVXxzy-suGzymTEly7o1wdETkDhX5c0JSytkmmqxoyULiPmZ5A8678QQzeVkIk6_r-6YC26SlwvrWDutv-NHPuOWz0E04vzWuYIBU8DK-1apqqHv61wWIBL19YHNCU-NBT3qpj8WXFh8nlW87gLo7QeyIsZ1gGi9Uxf7Lbq7mhCeIwyZiveqb4s6BYeGnOWmRwc6PjiJFB7lvAqlWkWdoTLAXYI_xXxfee6vLK0RFZRDY85AKA04Sdj-uw5iqKF842cf23os_fRPjkJVcNnQq2fIMzNIxWwJHIvkP7qaCr_M0U0TzMoKtjcv-vXoYyLfCQ0nlYtuwiSdMpFZQ4LSMFUpVjJm5Vl62u32ceUxMPpzhLUOszZlJs608zJ9dszHUEIrRrGRqMbaJexr105pU0wOsYYBmdgw27esHe18-Wg9Ykewj-tttF7fp_8yXw4vqS3BzC3gsO6WvYrWkZmK-bKJJA3ieDNji97wumaoIigCG9JaG7uF3hau8jHyrGbu9RxA0xbx4XHr4lkG-q-57lxbZpboHUGbpsXK4KyuEwd9yACJMyqPVIW7DTekO34lNXTASOaEUtb4w6CnGh4jGB_h1wFjJ0bkye_TU2WbZY5Jes8bFm4sPwiir_5--j7x4hFu8w5DdjmBB5uoJecTflwSkiJjAMganE2zKc-JHcBAnXK2QFK9AOVTFeudoyprNvMXuLJYc2FNnUNVjNJvilovpnXDwUhcyY_xxTEYw99ytJ4LoKJh3-eQUWjutXCcKqjR_tg-KebdvUECiAP7iB8cl0ETz71rL0e_V8iCdSOhdV3k4nFiRp1UFJYIRTLAw6t9mzpGgGYVzqcWw==",
+            "capacity_verified": true,
+            "supplier_verified": false,
+            "allocation_verified": true,
+            "constraint_evidence": {
+              "refundable": false
+            },
+            "cancellation_by_room": [
+              {
+                "refundable_tag": "NRFN",
+                "occupancy_number": 1,
+                "cancellation_deadline": null,
+                "free_cancellation_now": false,
+                "cancellation_charge_applies_now": null
+              }
+            ],
+            "mandatory_fees_known": true,
+            "refundable_from_tags": false,
+            "availability_verified": false,
+            "cancellation_deadline": null,
+            "free_cancellation_now": false,
+            "ready_for_real_booking": false,
+            "refundable_tag_verified": true
+          },
+          "currency": "RUB",
+          "offer_id": "liteapi:cf4e71774645568effd01e82",
+          "provider": "liteapi",
+          "expires_at": "2026-10-28T07:41:58.740618+00:00",
+          "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+          "description": "lp4f7bd",
+          "source_type": "SANDBOX",
+          "amount_minor": 8462628,
+          "retrieved_at": "2026-10-28T07:36:58.740618+00:00"
+        },
+        {
+          "details": {
+            "kind": "flight",
+            "slices": [
+              {
+                "id": "sli_0000BBrcTTemYxQFzPJD2v",
+                "origin": {
+                  "id": "arp_led_ru",
+                  "city": {
+                    "id": "cit_led_ru",
+                    "name": "St Petersburg",
+                    "type": "city",
+                    "latitude": null,
+                    "city_name": null,
+                    "iata_code": "LED",
+                    "icao_code": null,
+                    "longitude": null,
+                    "time_zone": null,
+                    "iata_city_code": "LED",
+                    "iata_country_code": "RU"
+                  },
+                  "name": "Pulkovo Airport",
+                  "type": "airport",
+                  "latitude": 59.801607,
+                  "city_name": "St. Petersburg",
+                  "iata_code": "LED",
+                  "icao_code": "ULLI",
+                  "longitude": 30.26517,
+                  "time_zone": "Europe/Moscow",
+                  "iata_city_code": "LED",
+                  "iata_country_code": "RU"
+                },
+                "duration": "PT3H58M",
+                "segments": [
+                  {
+                    "id": "seg_0000BBrcTTemYxQFzPJD2u",
+                    "media": [],
+                    "stops": [],
+                    "origin": {
+                      "id": "arp_led_ru",
+                      "city": {
+                        "id": "cit_led_ru",
+                        "name": "St Petersburg",
+                        "type": "city",
+                        "latitude": null,
+                        "city_name": null,
+                        "iata_code": "LED",
+                        "icao_code": null,
+                        "longitude": null,
+                        "time_zone": null,
+                        "iata_city_code": "LED",
+                        "iata_country_code": "RU"
+                      },
+                      "name": "Pulkovo Airport",
+                      "type": "airport",
+                      "latitude": 59.801607,
+                      "city_name": "St. Petersburg",
+                      "iata_code": "LED",
+                      "icao_code": "ULLI",
+                      "longitude": 30.26517,
+                      "time_zone": "Europe/Moscow",
+                      "iata_city_code": "LED",
+                      "iata_country_code": "RU"
+                    },
+                    "aircraft": null,
+                    "distance": "2546.665626980493",
+                    "duration": "PT3H58M",
+                    "passengers": [
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrcTTVD8XlZVipZ7y",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      },
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrcTTVD8XlZVipZ7z",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      },
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrcTTVD8XlZVipZ80",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      }
+                    ],
+                    "arriving_at": "2026-12-03T05:30:00",
+                    "destination": {
+                      "id": "arp_ayt_tr",
+                      "city": null,
+                      "name": "Antalya Airport",
+                      "type": "airport",
+                      "latitude": 36.901516,
+                      "city_name": "Antalya",
+                      "iata_code": "AYT",
+                      "icao_code": "LTAI",
+                      "longitude": 30.801188,
+                      "time_zone": "Europe/Istanbul",
+                      "iata_city_code": "AYT",
+                      "iata_country_code": "TR"
+                    },
+                    "departing_at": "2026-12-03T01:32:00",
+                    "origin_terminal": "2",
+                    "marketing_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "operating_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "destination_terminal": "1",
+                    "marketing_carrier_flight_number": "0812",
+                    "operating_carrier_flight_number": "0812"
+                  }
+                ],
+                "ngs_shelf": 1,
+                "conditions": {
+                  "priority_boarding": null,
+                  "priority_check_in": null,
+                  "advance_seat_selection": null,
+                  "change_before_departure": {
+                    "allowed": false,
+                    "penalty_amount": null,
+                    "penalty_currency": null
+                  }
+                },
+                "destination": {
+                  "id": "arp_ayt_tr",
+                  "city": null,
+                  "name": "Antalya Airport",
+                  "type": "airport",
+                  "latitude": 36.901516,
+                  "city_name": "Antalya",
+                  "iata_code": "AYT",
+                  "icao_code": "LTAI",
+                  "longitude": 30.801188,
+                  "time_zone": "Europe/Istanbul",
+                  "iata_city_code": "AYT",
+                  "iata_country_code": "TR"
+                },
+                "origin_type": "airport",
+                "comparison_key": "BIgr+A==",
+                "fare_brand_name": "Basic",
+                "destination_type": "airport"
+              }
+            ],
+            "binding": {
+              "origin": "Санкт-Петербург",
+              "leg_ids": [
+                "leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3"
+              ],
+              "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+              "destination": "Анталья",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "state_version": 6,
+              "departure_date": "2026-12-03"
+            },
+            "fees_scope": "base_fare_including_taxes_excluding_optional_services",
+            "group_quote": true,
+            "search_request": {
+              "adults": 3,
+              "slices": [
+                {
+                  "origin": "LED",
+                  "destination": "AYT",
+                  "departure_date": "2026-12-03"
+                }
+              ],
+              "children": 0,
+              "currency": "RUB",
+              "passengers": [
+                {
+                  "type": "adult"
+                },
+                {
+                  "type": "adult"
+                },
+                {
+                  "type": "adult"
+                }
+              ]
+            },
+            "native_offer_id": "off_034ndWfnlKg1qkgEmLC8Yq",
+            "passengers_count": 3,
+            "passenger_evidence": {
+              "reason": "type_age_multiset_match",
+              "source": "response.passengers",
+              "status": "verified",
+              "passengers": [
+                {
+                  "id": "pas_0000BBrcTTVD8XlZVipZ7y",
+                  "age": null,
+                  "type": "adult"
+                },
+                {
+                  "id": "pas_0000BBrcTTVD8XlZVipZ7z",
+                  "age": null,
+                  "type": "adult"
+                },
+                {
+                  "id": "pas_0000BBrcTTVD8XlZVipZ80",
+                  "age": null,
+                  "type": "adult"
+                }
+              ]
+            },
+            "constraint_evidence": {
+              "nonstop": true
+            },
+            "mandatory_fees_known": true,
+            "availability_verified": false,
+            "nonstop_evidence_source": "response.slices.segments.stops",
+            "received_passengers_count": 3,
+            "requested_passengers_count": 3
+          },
+          "currency": "EUR",
+          "offer_id": "duffel:c796c6bffe9fc17bc124155c",
+          "provider": "duffel",
+          "expires_at": "2026-10-28T08:06:58.976654Z",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "description": "Тестовый авиатариф Duffel",
+          "source_type": "SANDBOX",
+          "amount_minor": 35343,
+          "retrieved_at": "2026-10-28T07:36:59.274212+00:00"
+        },
+        {
+          "details": {
+            "kind": "flight",
+            "slices": [
+              {
+                "id": "sli_0000BBrcTymAudqZSaVR9v",
+                "origin": {
+                  "id": "arp_ayt_tr",
+                  "city": null,
+                  "name": "Antalya Airport",
+                  "type": "airport",
+                  "latitude": 36.901516,
+                  "city_name": "Antalya",
+                  "iata_code": "AYT",
+                  "icao_code": "LTAI",
+                  "longitude": 30.801188,
+                  "time_zone": "Europe/Istanbul",
+                  "iata_city_code": "AYT",
+                  "iata_country_code": "TR"
+                },
+                "duration": "PT3H58M",
+                "segments": [
+                  {
+                    "id": "seg_0000BBrcTymAudqZSaVR9e",
+                    "media": [],
+                    "stops": [],
+                    "origin": {
+                      "id": "arp_ayt_tr",
+                      "city": null,
+                      "name": "Antalya Airport",
+                      "type": "airport",
+                      "latitude": 36.901516,
+                      "city_name": "Antalya",
+                      "iata_code": "AYT",
+                      "icao_code": "LTAI",
+                      "longitude": 30.801188,
+                      "time_zone": "Europe/Istanbul",
+                      "iata_city_code": "AYT",
+                      "iata_country_code": "TR"
+                    },
+                    "aircraft": null,
+                    "distance": "2546.665626980493",
+                    "duration": "PT3H58M",
+                    "passengers": [
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrcTyZPg5dep0XFGI",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      },
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrcTyZPg5dep0XFGX",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      },
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrcTyZlelvEq6hWnb",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      }
+                    ],
+                    "arriving_at": "2026-12-10T10:56:00",
+                    "destination": {
+                      "id": "arp_led_ru",
+                      "city": {
+                        "id": "cit_led_ru",
+                        "name": "St Petersburg",
+                        "type": "city",
+                        "latitude": null,
+                        "city_name": null,
+                        "iata_code": "LED",
+                        "icao_code": null,
+                        "longitude": null,
+                        "time_zone": null,
+                        "iata_city_code": "LED",
+                        "iata_country_code": "RU"
+                      },
+                      "name": "Pulkovo Airport",
+                      "type": "airport",
+                      "latitude": 59.801607,
+                      "city_name": "St. Petersburg",
+                      "iata_code": "LED",
+                      "icao_code": "ULLI",
+                      "longitude": 30.26517,
+                      "time_zone": "Europe/Moscow",
+                      "iata_city_code": "LED",
+                      "iata_country_code": "RU"
+                    },
+                    "departing_at": "2026-12-10T06:58:00",
+                    "origin_terminal": "2",
+                    "marketing_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "operating_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "destination_terminal": "1",
+                    "marketing_carrier_flight_number": "0812",
+                    "operating_carrier_flight_number": "0812"
+                  }
+                ],
+                "ngs_shelf": 1,
+                "conditions": {
+                  "priority_boarding": null,
+                  "priority_check_in": null,
+                  "advance_seat_selection": null,
+                  "change_before_departure": {
+                    "allowed": false,
+                    "penalty_amount": null,
+                    "penalty_currency": null
+                  }
+                },
+                "destination": {
+                  "id": "arp_led_ru",
+                  "city": {
+                    "id": "cit_led_ru",
+                    "name": "St Petersburg",
+                    "type": "city",
+                    "latitude": null,
+                    "city_name": null,
+                    "iata_code": "LED",
+                    "icao_code": null,
+                    "longitude": null,
+                    "time_zone": null,
+                    "iata_city_code": "LED",
+                    "iata_country_code": "RU"
+                  },
+                  "name": "Pulkovo Airport",
+                  "type": "airport",
+                  "latitude": 59.801607,
+                  "city_name": "St. Petersburg",
+                  "iata_code": "LED",
+                  "icao_code": "ULLI",
+                  "longitude": 30.26517,
+                  "time_zone": "Europe/Moscow",
+                  "iata_city_code": "LED",
+                  "iata_country_code": "RU"
+                },
+                "origin_type": "airport",
+                "comparison_key": "B1A7Pg==",
+                "fare_brand_name": "Basic",
+                "destination_type": "airport"
+              }
+            ],
+            "binding": {
+              "origin": "Анталья",
+              "leg_ids": [
+                "leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f"
+              ],
+              "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+              "destination": "Санкт-Петербург",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "state_version": 6,
+              "departure_date": "2026-12-10"
+            },
+            "fees_scope": "base_fare_including_taxes_excluding_optional_services",
+            "group_quote": true,
+            "search_request": {
+              "adults": 3,
+              "slices": [
+                {
+                  "origin": "AYT",
+                  "destination": "LED",
+                  "departure_date": "2026-12-10"
+                }
+              ],
+              "children": 0,
+              "currency": "RUB",
+              "passengers": [
+                {
+                  "type": "adult"
+                },
+                {
+                  "type": "adult"
+                },
+                {
+                  "type": "adult"
+                }
+              ]
+            },
+            "native_offer_id": "off_034ndWoMbVBDI0J44gWI4W",
+            "passengers_count": 3,
+            "passenger_evidence": {
+              "reason": "type_age_multiset_match",
+              "source": "response.passengers",
+              "status": "verified",
+              "passengers": [
+                {
+                  "id": "pas_0000BBrcTyZPg5dep0XFGI",
+                  "age": null,
+                  "type": "adult"
+                },
+                {
+                  "id": "pas_0000BBrcTyZPg5dep0XFGX",
+                  "age": null,
+                  "type": "adult"
+                },
+                {
+                  "id": "pas_0000BBrcTyZlelvEq6hWnb",
+                  "age": null,
+                  "type": "adult"
+                }
+              ]
+            },
+            "constraint_evidence": {
+              "nonstop": true
+            },
+            "mandatory_fees_known": true,
+            "availability_verified": false,
+            "nonstop_evidence_source": "response.slices.segments.stops",
+            "received_passengers_count": 3,
+            "requested_passengers_count": 3
+          },
+          "currency": "EUR",
+          "offer_id": "duffel:260716ea2f181098102bc883",
+          "provider": "duffel",
+          "expires_at": "2026-10-28T08:07:04.419815Z",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "description": "Тестовый авиатариф Duffel",
+          "source_type": "SANDBOX",
+          "amount_minor": 34767,
+          "retrieved_at": "2026-10-28T07:37:04.843814+00:00"
+        },
+        {
+          "city": "Анталья",
+          "date": "2026-12-03",
+          "kind": "transfer",
+          "name": "DEMO — Синтетический трансфер",
+          "is_demo": true,
+          "currency": "RUB",
+          "offer_id": "demo-transfer-a8e71dfe5719999e0d17",
+          "breakdown": [
+            {
+              "kind": "demo_transfer_passenger",
+              "quantity": 3,
+              "unit_minor": 40000,
+              "amount_minor": 120000
+            }
+          ],
+          "max_pet_kg": 20,
+          "price_kind": "synthetic",
+          "source_type": "DEMO",
+          "total_minor": 120000,
+          "availability": "synthetic_not_live",
+          "component_id": "transfer-new-stay-1",
+          "pets_allowed": true,
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-2",
+            "new-traveler-3"
+          ]
+        }
+      ],
+      "plan_id": "assembled-111eb69b3a7ec11ee4892914",
+      "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+      "blockers": [
+        {
+          "code": "budget_exceeded",
+          "details": {
+            "total_minor": 14899378,
+            "budget_minor": 14500000
+          },
+          "message": "Корзина превышает общий бюджет."
+        }
+      ],
+      "coverage": {
+        "covered": [
+          "hotel:new-stay-1:new-room-1",
+          "leg:leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f",
+          "leg:leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3",
+          "transfer:new-stay-1"
+        ],
+        "missing": [],
+        "complete": true,
+        "required": [
+          "hotel:new-stay-1:new-room-1",
+          "leg:leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3",
+          "leg:leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f",
+          "transfer:new-stay-1"
+        ],
+        "overlapping": []
+      },
+      "currency": "RUB",
+      "warnings": [
+        "liteapi:cf4e71774645568effd01e82: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+        "duffel:c796c6bffe9fc17bc124155c: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+        "duffel:260716ea2f181098102bc883: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+        "Сумма является simulated estimate; DEMO/SANDBOX не подтверждают реальные цены и наличие.",
+        "Справочный пересчёт ЦБ на 2026-10-28; банковские комиссии и курс оплаты неизвестны. Это reference estimate для simulated checkout, не цена покупки."
+      ],
+      "comparison": {
+        "changes": [
+          {
+            "after": {
+              "currency": "RUB",
+              "offer_id": "liteapi:cf4e71774645568effd01e82",
+              "source_type": "SANDBOX",
+              "amount_minor": 8462628,
+              "snapshot_hash": "0776eea8aa7f560ae75191d9df48c9a8b939031f084f9b98549568717bc827c2",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 8462628
+            },
+            "before": {
+              "currency": "RUB",
+              "offer_id": "liteapi:cf4e71774645568effd01e82",
+              "source_type": "SANDBOX",
+              "amount_minor": 8462628,
+              "snapshot_hash": "e2796e683f345e3a3c45731dee7cff27dd32e6f9bd0c4ac3f5a16fca3c4a3dfc",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 8462628
+            },
+            "component_id": "hotel:new-stay-1:new-room-1"
+          },
+          {
+            "after": {
+              "currency": "EUR",
+              "offer_id": "duffel:260716ea2f181098102bc883",
+              "source_type": "SANDBOX",
+              "amount_minor": 34767,
+              "snapshot_hash": "c993ea4fd2b677a2d01748303691ab5844455f4db48b83c4687eac64ae46e2b9",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 3132427
+            },
+            "before": {
+              "currency": "EUR",
+              "offer_id": "duffel:6459c1a54411ae1a5065ccf3",
+              "source_type": "SANDBOX",
+              "amount_minor": 34620,
+              "snapshot_hash": "64b816c2d3fedc16538a37a4911d682d1c7f47f8c02ae9d7a8ee6b2e7bed77b5",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 3119182
+            },
+            "component_id": "leg:leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f"
+          },
+          {
+            "after": {
+              "currency": "EUR",
+              "offer_id": "duffel:c796c6bffe9fc17bc124155c",
+              "source_type": "SANDBOX",
+              "amount_minor": 35343,
+              "snapshot_hash": "9cd2fe551f13d137ec7b7446e1b9bd3c98c391ec91c24f9ddf66bdd3e12b6b85",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 3184323
+            },
+            "before": {
+              "currency": "EUR",
+              "offer_id": "duffel:d90949bb96896be3409a2af8",
+              "source_type": "SANDBOX",
+              "amount_minor": 36372,
+              "snapshot_hash": "13ac7331c4e314b9cbf948baf8fb6778be2d07ac541c293d4cc2bb216b6d86b0",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 3277034
+            },
+            "component_id": "leg:leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3"
+          }
+        ],
+        "currency": "RUB",
+        "delta_minor": -79466,
+        "source_changed": false,
+        "after_total_minor": 14899378,
+        "before_total_minor": 14978844,
+        "requires_new_confirmation": true
+      },
+      "components": [
+        {
+          "covers": [
+            "hotel:new-stay-1:new-room-1"
+          ],
+          "binding": {
+            "city": "Анталья",
+            "checkin": "2026-12-03",
+            "stay_id": "new-stay-1",
+            "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+            "checkout": "2026-12-10",
+            "hotel_id": "lp4f7bd",
+            "room_ids": [
+              "new-room-1"
+            ],
+            "state_version": 6,
+            "room_assignments": [
+              {
+                "room_id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2",
+                  "new-traveler-3"
+                ]
+              }
+            ]
+          },
+          "currency": "RUB",
+          "provider": "liteapi",
+          "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+          "source_type": "SANDBOX",
+          "amount_minor": 8462628,
+          "component_id": "liteapi:cf4e71774645568effd01e82",
+          "demo_fallback": false,
+          "snapshot_hash": "0776eea8aa7f560ae75191d9df48c9a8b939031f084f9b98549568717bc827c2",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 8462628
+        },
+        {
+          "covers": [
+            "leg:leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3"
+          ],
+          "binding": {
+            "origin": "Санкт-Петербург",
+            "leg_ids": [
+              "leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3"
+            ],
+            "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+            "destination": "Анталья",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "state_version": 6,
+            "departure_date": "2026-12-03"
+          },
+          "currency": "EUR",
+          "provider": "duffel",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "source_type": "SANDBOX",
+          "amount_minor": 35343,
+          "component_id": "duffel:c796c6bffe9fc17bc124155c",
+          "demo_fallback": false,
+          "snapshot_hash": "9cd2fe551f13d137ec7b7446e1b9bd3c98c391ec91c24f9ddf66bdd3e12b6b85",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 3184323
+        },
+        {
+          "covers": [
+            "leg:leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f"
+          ],
+          "binding": {
+            "origin": "Анталья",
+            "leg_ids": [
+              "leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f"
+            ],
+            "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+            "destination": "Санкт-Петербург",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "state_version": 6,
+            "departure_date": "2026-12-10"
+          },
+          "currency": "EUR",
+          "provider": "duffel",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "source_type": "SANDBOX",
+          "amount_minor": 34767,
+          "component_id": "duffel:260716ea2f181098102bc883",
+          "demo_fallback": false,
+          "snapshot_hash": "c993ea4fd2b677a2d01748303691ab5844455f4db48b83c4687eac64ae46e2b9",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 3132427
+        },
+        {
+          "covers": [
+            "transfer:new-stay-1"
+          ],
+          "binding": {
+            "city": "Анталья",
+            "date": "2026-12-03",
+            "stay_id": "new-stay-1",
+            "trip_id": "862ae117-d5e5-4914-a96b-8f682c6c50a6",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "state_version": 6
+          },
+          "currency": "RUB",
+          "provider": "demo_inventory",
+          "price_kind": "synthetic",
+          "source_type": "DEMO",
+          "amount_minor": 120000,
+          "component_id": "demo-transfer-a8e71dfe5719999e0d17",
+          "demo_fallback": true,
+          "snapshot_hash": "5e8f49c1c9700746ab7c0c33090baa403f034706b7365421c736729f74e1271f",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 120000
+        }
+      ],
+      "price_kind": "simulated_estimate",
+      "state_hash": "d2c8f882ab3804095aff03b404b180751d9e6a77a4a8007a161c7c4112cd82a3",
+      "violations": [
+        {
+          "code": "budget_exceeded",
+          "details": {
+            "total_minor": 14899378,
+            "budget_minor": 14500000
+          },
+          "message": "Корзина превышает общий бюджет."
+        }
+      ],
+      "fx_snapshot": {
+        "as_of": "2026-10-28",
+        "provider": "cbr",
+        "expires_at": "2026-10-28T13:36:59.292016+00:00",
+        "source_url": "https://www.cbr.ru/scripts/XML_daily.asp?[QUERY_REDACTED]",
+        "snapshot_id": "cbr-cc31d8ca0ea2247e2feaa45074ddf737428626eaad343a42e150d516b1ed58cf",
+        "ttl_seconds": 21600,
+        "fees_unknown": true,
+        "requested_on": "2026-10-28",
+        "retrieved_at": "2026-10-28T07:36:59.292016+00:00",
+        "source_quotes": {
+          "EUR": {
+            "nominal": 1,
+            "value_rub": "90.0977"
+          },
+          "RUB": {
+            "nominal": 1,
+            "value_rub": "1"
+          },
+          "USD": {
+            "nominal": 1,
+            "value_rub": "80.5307"
+          }
+        },
+        "reference_only": true,
+        "schema_version": 1,
+        "raw_source_sha256": "14a0b8431fcac03a87d9a8e0a42fe9e44b6c524e8c36766f37f5173a72699e50",
+        "rates_rub_per_unit": {
+          "EUR": "90.0977",
+          "RUB": "1",
+          "USD": "80.5307"
+        },
+        "max_source_age_days": 7,
+        "real_booking_supported": false
+      },
+      "source_type": "MIXED",
+      "total_minor": 14899378,
+      "checkout_mode": "SIMULATED",
+      "snapshot_hash": "111eb69b3a7ec11ee4892914f781c43a45d060650f064c746afe394504e192dd",
+      "state_version": 6,
+      "fx_snapshot_id": "cbr-cc31d8ca0ea2247e2feaa45074ddf737428626eaad343a42e150d516b1ed58cf",
+      "booking_created": false,
+      "currency_totals": {
+        "EUR": 70110,
+        "RUB": 8582628
+      },
+      "fx_fees_unknown": true,
+      "room_assignments": {
+        "new-stay-1": [
+          {
+            "room_id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ]
+      },
+      "source_snapshots": [
+        {
+          "offer_id": "liteapi:cf4e71774645568effd01e82",
+          "expires_at": "2026-10-28T07:41:58.740618+00:00",
+          "source_type": "SANDBOX",
+          "retrieved_at": "2026-10-28T07:36:58.740618+00:00",
+          "snapshot_hash": "0776eea8aa7f560ae75191d9df48c9a8b939031f084f9b98549568717bc827c2"
+        },
+        {
+          "offer_id": "duffel:c796c6bffe9fc17bc124155c",
+          "expires_at": "2026-10-28T08:06:58.976654Z",
+          "source_type": "SANDBOX",
+          "retrieved_at": "2026-10-28T07:36:59.274212+00:00",
+          "snapshot_hash": "9cd2fe551f13d137ec7b7446e1b9bd3c98c391ec91c24f9ddf66bdd3e12b6b85"
+        },
+        {
+          "offer_id": "duffel:260716ea2f181098102bc883",
+          "expires_at": "2026-10-28T08:07:04.419815Z",
+          "source_type": "SANDBOX",
+          "retrieved_at": "2026-10-28T07:37:04.843814+00:00",
+          "snapshot_hash": "c993ea4fd2b677a2d01748303691ab5844455f4db48b83c4687eac64ae46e2b9"
+        },
+        {
+          "offer_id": "demo-transfer-a8e71dfe5719999e0d17",
+          "expires_at": null,
+          "source_type": "DEMO",
+          "retrieved_at": null,
+          "snapshot_hash": "5e8f49c1c9700746ab7c0c33090baa403f034706b7365421c736729f74e1271f"
+        }
+      ],
+      "fx_reference_only": true,
+      "known_subtotal_minor": 14899378,
+      "ready_for_real_booking": false,
+      "ready_for_simulated_checkout": false
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "max_tool_calls": 16,
+    "answer_sections": [
+      "route",
+      "dates",
+      "party",
+      "budget"
+    ],
+    "response_source": "llm",
+    "tool_calls_used": 5,
+    "comparison_scope": "first_600_returned_offers_per_component_not_global_market_minimum",
+    "component_errors": [],
+    "search_explanation": {
+      "text": "В текущем расчёте: проживание — тестовые тарифы (SANDBOX); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика.",
+      "summary": {
+        "format": "otravel.hybrid_search_explanation.v1",
+        "status": "partial",
+        "reasons": [],
+        "applicable": true,
+        "uses_sandbox": true,
+        "contains_demo": true,
+        "source_counts": {
+          "DEMO": 1,
+          "SANDBOX": 3
+        },
+        "uses_indicative": false,
+        "omitted_reason_count": 0,
+        "real_booking_confirmed": false
+      }
+    },
+    "selection_diagnostics": [
+      {
+        "kind": "hotel",
+        "provider": "liteapi",
+        "scan_limit": 600,
+        "component_id": "new-stay-1",
+        "eligible_rows": 470,
+        "scan_truncated": false,
+        "rejected_reasons": [
+          "mandatory_fees_unknown"
+        ],
+        "source_rows_examined": 477,
+        "source_rows_received": 477,
+        "source_rows_not_examined": 0
+      },
+      {
+        "kind": "flight",
+        "provider": "duffel",
+        "scan_limit": 600,
+        "component_id": "leg-9398eb1b-ed33-4974-bbd3-90ebfc2106c3",
+        "eligible_rows": 11,
+        "scan_truncated": false,
+        "rejected_reasons": [],
+        "source_rows_examined": 11,
+        "source_rows_received": 11,
+        "source_rows_not_examined": 0
+      },
+      {
+        "kind": "flight",
+        "provider": "duffel",
+        "scan_limit": 600,
+        "component_id": "leg-1e455f73-a6da-4a41-906f-d1a59f3ee12f",
+        "eligible_rows": 16,
+        "scan_truncated": false,
+        "rejected_reasons": [],
+        "source_rows_examined": 16,
+        "source_rows_received": 16,
+        "source_rows_not_examined": 0
+      }
+    ],
+    "ready_for_real_booking": false,
+    "conversational_response": {
+      "kinds": [
+        "receipt"
+      ],
+      "facts_source": "canonical_changed_state_and_shown_plans"
+    },
+    "operation_normalizations": []
+  }
+}

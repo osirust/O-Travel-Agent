@@ -135,6 +135,16 @@ def ground_explicit_stay_dates(state, text, operations, *, pending, now, timezon
         meta['notes'].append({'finding_id': 'HARNESS-004-INVALID-CALENDAR-ROLLOVER-001',
             'code': 'asserted_calendar_literal_invalid', 'field': 'stay.' + field, 'literal': token,
             'whole_batch_conflict': True, 'state_changed': False})
+        try:
+            before = TripState.model_validate(state.model_dump(mode='json') if hasattr(state, 'model_dump') else state)
+        except (ValueError, TypeError):
+            before = None
+        if before is not None and len(before.stays) == 1:
+            stay = before.stays[0]
+            setters = [op for op in copied if isinstance(op, dict) and op.get('type') == 'upsert_stay']
+            if (all(isinstance(op, dict) and isinstance(op.get('value', {}), dict) for op in copied)
+                    and all((op.get('target_id') or op.get('value', {}).get('id')) == stay.id for op in setters)):
+                meta['pending_context'] = {'field': 'stay.' + field, 'target_id': stay.id}
         return copied, meta
     if not re.search(r'\b(?:заезд|выезд)\b',current):
         return copied, meta
