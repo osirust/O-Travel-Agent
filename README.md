@@ -143,7 +143,6 @@ PostgreSQL хранит поездку и её версии, сообщения,
 
 Последняя правка интерфейса прошла **41 frontend-тест и production build**. [Браузерная проверка](docs/verification/r27-final-visible-ui-20261028.json) подтверждает свежий диалог, фото, галерею и восстановление страницы.
 
-- [Запуск и запись демонстрации](docs/RECORDING_QUICKSTART.md)
 - [Контракт frontend/backend](docs/FRONTEND_CONTRACT.md)
 - [Фотографии и их привязка](docs/HOTEL_MEDIA.md)
 - [Подготовка сдачи и шифрование](docs/SUBMISSION.md)
