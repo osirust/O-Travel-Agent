@@ -1,0 +1,91 @@
+{
+  "format": "otravel.native_recipient_r26_release.v1",
+  "status": "SOURCE_INSTALLED_SERVER_READY_STATE_PRESERVED_NOT_DIALOGUE_ACCEPTANCE",
+  "checked_at_utc": "2026-10-28T14:29:02.021802+00:00",
+  "release_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "package_sha256": "34a1cf1f7adedbf6311a6983340982283df39a4448363cca7a21b3e26c3ab0af",
+  "package_files": 93,
+  "git_archive_sha256": "32caebc34a2b093428c7bc8427ab610aa934eaa0ddb9200a99e7dfc1770cf289",
+  "immutable_git_files_verified": 1103,
+  "source": "/home/aegml/projects/otravel-recipient-release-r26-20261028",
+  "backend_url": "http://localhost:8084",
+  "frontend_url": "http://localhost:18082/#studio",
+  "health": {
+    "status": "ok",
+    "database": "ready",
+    "application": "backend",
+    "supplier_booking": false
+  },
+  "runtime": {
+    "llm_provider": "external",
+    "model": "glm-4.5-flash"
+  },
+  "external_adapter": {
+    "api_format": "openai",
+    "configured": true,
+    "endpoint_confirmed": true,
+    "endpoint_or_key_in_public_status": false,
+    "known_selected_upstream": "Z.ai glm-4.5-flash confirmed project free profile",
+    "api_keys_in_source_or_identity_or_readiness_or_logs": false,
+    "dotenv_copied": false
+  },
+  "limits": {
+    "daily": 200,
+    "per_run": 2,
+    "local": 0,
+    "llm_request_timeout": 45,
+    "paid_fallback": false,
+    "max_output_tokens": 4096,
+    "readonly_max_output_tokens": 512,
+    "unknown_vendor_quota_not_reset": true
+  },
+  "database": "otravel_zai_eval",
+  "database_counts_before": {
+    "agent_events": 7561,
+    "agent_runs": 1154,
+    "demo_orders": 6,
+    "messages": 2311,
+    "quotes": 78,
+    "sessions": 205,
+    "pending_or_running": 0,
+    "model_call_started": 837
+  },
+  "database_counts_after": {
+    "agent_events": 7561,
+    "agent_runs": 1154,
+    "demo_orders": 6,
+    "messages": 2311,
+    "quotes": 78,
+    "sessions": 205,
+    "pending_or_running": 0,
+    "model_call_started": 837
+  },
+  "historical_state_and_ledger_fingerprints_unchanged": true,
+  "pending_work_before_stop_and_after_start": 0,
+  "guarded_old_process_stop": {
+    "old_process_alive": true,
+    "signals": 1,
+    "signal": "SIGTERM",
+    "target": "pidfd",
+    "old_identity_unchanged": true,
+    "old_source_changed": false
+  },
+  "old_source_overwritten": false,
+  "new_source_location_separate": true,
+  "database_created": false,
+  "hba_modified": false,
+  "startup_model_http": 0,
+  "startup_supplier_http": 0,
+  "startup_new_order": 0,
+  "llm_keys_exported_to_recipient": 0,
+  "real_booking_or_payment": false,
+  "foreign_process_signals": 0,
+  "vpn_or_global_trust_changes": false,
+  "private_controller": ".local/recipient_release_r26_8084_20261028.py",
+  "controller_sha256": "1fd5c4c443abc7cf793edc5a0a9b54082e9f280d7076523f71a8fc7b3e34538d",
+  "limitations": [
+    "Readiness/status HTTP is not a new model generation or full tour/checkout test",
+    "Gemini/Anthropic native wire formats retain their controlled-test scope; runtime here selects OpenAI-format Z.ai",
+    "Full R26 regression result is recorded separately; the release source was not edited during installation"
+  ]
+}

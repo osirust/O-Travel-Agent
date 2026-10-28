@@ -1,0 +1,143 @@
+{
+  "source_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "source_package_sha256": "9d143cf06126b98967ac9e41a2a4036fbbd64897dacaf0d502f7b3f90e0e3765",
+  "physical_model_http": 352,
+  "physical_nonmodel_http": 313,
+  "caps": {
+    "model": 500,
+    "nonmodel": 800,
+    "physical_send_cutoff_utc": "2026-10-28T16:29:00Z"
+  },
+  "stories": 40,
+  "original_messages": 129,
+  "original_ids": 106,
+  "original_exact": true,
+  "generated_messages": 308,
+  "user_turns": 437,
+  "turn_statuses": {
+    "completed": 415,
+    "failed": 22
+  },
+  "failed_codes": {
+    "INVALID_LLM_OPERATION": 19,
+    "INVALID_LLM_RESPONSE": 2,
+    "REQUEST_TIMEOUT": 1
+  },
+  "original_setup_not_injected": [
+    "BOOK-02",
+    "BOOK-03",
+    "BOOK-04",
+    "BOOK-08",
+    "HOTEL-02",
+    "HOTEL-03",
+    "MONEY-02",
+    "MONEY-03",
+    "SYSTEM-01",
+    "SYSTEM-02",
+    "SYSTEM-03",
+    "SYSTEM-04",
+    "SYSTEM-09",
+    "SYSTEM-10",
+    "UX-01",
+    "UX-02"
+  ],
+  "semantic_status": "PARTIAL_OR_UNBOUND_OR_FAILED_NOT106PASS",
+  "db_pending": 0,
+  "db_active": 0,
+  "review_epochs_exact_current": true,
+  "priority_groups": [
+    {
+      "rank": 1,
+      "risk": "P0 refund deadline and unmodeled hard requests",
+      "ids": [
+        "HARNESS-004-FINAL40-REFUND-DEADLINE-001",
+        "HARNESS-004-FINAL40-UNMODELED-HARD-REQUEST-001"
+      ]
+    },
+    {
+      "rank": 2,
+      "risk": "P1 preserve party, children, family membership",
+      "ids": [
+        "HARNESS-004-F40-CHILD-REMOVAL-MISREAD-024-001",
+        "HARNESS-004-F40-UNREQUESTED-PARTY-029-001",
+        "HARNESS-004-F40-INCLUSIVE-PARTY-CENSUS-026-001",
+        "HARNESS-004-FINAL40-FAMILY-MAPPING-001"
+      ]
+    },
+    {
+      "rank": 3,
+      "risk": "P1 budget literal/reserve and included-cost scope",
+      "ids": [
+        "HARNESS-004-FINAL40-BUDGET-RESERVE-001",
+        "HARNESS-004-FINAL40-BUDGET-COMPONENT-SCOPE-001"
+      ]
+    },
+    {
+      "rank": 4,
+      "risk": "P1 no-flight request and child birthday",
+      "ids": [
+        "HARNESS-004-FINAL40-TRANSPORT-MODE-001",
+        "HARNESS-004-FINAL40-CHILD-BIRTHDAY-001"
+      ]
+    },
+    {
+      "rank": 5,
+      "risk": "P1 schema recovery and owned-date patch",
+      "ids": [
+        "HARNESS-004-FINAL40-UNSUPPORTED-POISON-001",
+        "HARNESS-004-FINAL40-GEO-CANONICAL-LITERAL-001",
+        "HARNESS-004-F40-OWNED-CHECKOUT-REPAIR-031-001",
+        "HARNESS-004-R25-ACTUAL-INTAKE-INVALID-OPERATION-001"
+      ]
+    },
+    {
+      "rank": 6,
+      "risk": "P1 pending/answer/room-allocation feedback",
+      "ids": [
+        "HARNESS-004-FINAL40-MISSING-CITY-PENDING-001",
+        "HARNESS-004-FINAL40-ANSWER-DISCARD-001",
+        "HARNESS-004-F40-ASK-CLARIFICATION-DROPPED-025-001",
+        "HARNESS-004-FINAL40-ROOM-COVERAGE-001"
+      ]
+    },
+    {
+      "rank": 7,
+      "risk": "P1 booking restore must not undo unrelated edit",
+      "ids": [
+        "HARNESS-003-F40-BOOKING-RESTORE-UNDO-024-001"
+      ]
+    },
+    {
+      "rank": 8,
+      "risk": "P1 conflicting dates/constraints and country context",
+      "ids": [
+        "HARNESS-004-FINAL40-COMPOUND-DATE-CONFLICT-001",
+        "HARNESS-004-F40-CONTRADICTORY-CONSTRAINTS-021-001",
+        "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+        "HARNESS-004-FINAL40-GEO-COUNTRY-FILTER-001"
+      ]
+    }
+  ],
+  "status": "CAPTURE_AND_READONLY_REVIEW_COMPLETE_NOT_ALL_SEMANTIC_PASS",
+  "source_report_sha256": "6dac2b478660293f759a007344cbd2b6bad161ef0844a2ba4bbf80ddeeef953a",
+  "layer_notes": [
+    "All40sessions and437turns read by two reviewers with exact current snapshots.",
+    "Completed is a run lifecycle status, not a semantic pass.",
+    "16faultsetups were not injected; original inputs were not repeated.",
+    "Photo identity_bound false in early probes was an evaluator projection error; original flags retained.",
+    "The006localorder was technically idempotent but failed the requested cancellation-deadline condition.",
+    "No application fixes before the owner cutoff19:30MSK."
+  ],
+  "actual_scope": {
+    "native_source_totals_correct": "33/33",
+    "reference_fx_math_correct": "26/26",
+    "media_dto_identity": 16,
+    "actual_lite_property_items": 10,
+    "actual_lite_head_200": 9,
+    "none_placeholder_dto": 7,
+    "serp_hotel_offers": 20,
+    "open_meteo_current_7day": "actual HTTP, not forecast for arbitrary futuretrip",
+    "supplier_booking_or_payment": false,
+    "local_qwen": false
+  }
+}

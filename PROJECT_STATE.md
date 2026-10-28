@@ -1,36 +1,39 @@
-# O!Travel Agent — R26,28 октября,17:20МСК
+# O!Travel Agent — проверки до19:30, исправления до22:00МСК
 
-## Цель владельца
+## Последняя команда владельца
 
-Опубликовать готовый понятный README/код/универсальный LLM конфиг/туристические ключи, затем ТОЛЬКО40 финальных свежих адаптивных диалогов из сложностей80+106, мелкие исправления и финальная передача для видео до22:00МСК. Старый80 не продолжать. Выдуманные результаты не писать.
+ТОЛЬКО40финальныхдиалоговизсложностей80+106,потомточечныеисправления. До19:30МСКпроверки/диагностика,с19:30до22:00исправления/relatedchecks/finalupload;новыефункциине добавлять. ПонятныйготовыйREADMEсобложкой/реальнымскриншотом/videoURLplaceholder/onecommand/APIконфигомужевGit. НевыдумыватьPASS.
 
-## Текущая поставка
+## Поставка R26
 
-Готов кандидатR26 вE:/work/aegml (branchbackend/harness-foundation). Baseae7d2b45 опубликованобоимprivate. УниверсальныйLLM:LLM_PROVIDER=external,LLM_API_FORMAT=openai|gemini|anthropic,LLM_BASE_URL/LLM_MODEL/LLM_API_KEY/LLM_EXTERNAL_API_CONFIRMED. Existingprovidersсохранены;rootREADMEготовсцветнымSVG/realscreenshot/video-placeholder/onecommandlocalhost8080. Newapp93-fileEpackage2985d0ced59e8261f69befbe8804337da9036624397b5071bf9723d054dfa08f заморожен.
+Обаprivate remotes branchbackend/harness-foundation: CODE91e6ee4cb2855bcc8cc8febaded66de5f411c14d. Git/Cpackage93files34a1cf1f7adedbf6311a6983340982283df39a4448363cca7a21b3e26c3ab0af; E2985d0ced59e8261f69befbe8804337da9036624397b5071bf9723d054dfa08f. 17EOLnormalizationsverified. SourceAPP/testsНЕменялисьпоследо19:30.
 
-## Проверки
+- FullR6:7664PASS/0fail/0skip,543.48s,315testfiles,source/testsUNCHANGED. .local/evaluation/integrated-release-full-20261028-r6.terminal.json;publicdocs/verification/r26-full-checkpoint-20261028.json. ПредыдущиеR4mixedsourceprivacyFAIL/R5newPGpolltimeoutсохранены;тольконовыйexternaltestwait10sbounded,семантика/legacyhelpersнеослаблены.
+- Универсальныйexternal:openai/Gemini/Anthropicnativewire;URL/model/key/format/manualconfirmationв.env,392relatedPASS/49new/5PG;2actualFREEZaiHTTP/10checksPASSfreshunseededintake+readonly. Gemini/Anthropicliveключейнет,wire/PGonly.
+- CleanDocker30/30+externalunknownmodelcontrolledHTTP25/25,однакомандаdockercomposeup--build/fresh3services/PGvolume/nonroot/DEMOorderidempotence/restart;0Master/realkeys/modelinference/tourHTTP. Ownresourcescleaned. Combinedproofdocs/verification/final-clean-compose-and-external-wire-20261028.json. Fixtureinitialwrongmodeopenai_compatibleFAILсохранён,исправленТОЛЬКОprivatequalifierнаdocumentedexternal.
+- Nativehttp://localhost:18082/#studio→8084NEWsource/home/aegml/projects/otravel-recipient-release-r26-20261028,external/openai/glm4.5/json_object4096/200day2runEFFECTIVE45s,local0fallback0. Controller.local/recipient_release_r26_8084_20261028.py;readiness/home/aegml/checks/recipient-release-r26-8084-20261028/readiness.json. DBotravel_zai_eval/state/ledger/205sessions1154runs...сохранены,startup0inference. GOpidfdstopoldR25exactonlyone;foreignsignals0.
+- ActualUI20hotels/photoJPEG/priceunitsPASS;MIXEDplan54495.83RUBready→previewLite409business2001OFFER_NOT_CONFIRMED,quote/order0;непродавливали. CBR503изR25вэтотattemptнеповторился. FXtimeout10→20sпослеactualXML200за11.098s,137relatedPASS. Frontend38unit/build+BOOKEDstatePW3tabs/noautosearch/noinfinitespinnerverified,notactualorderUIyet.
 
-- BaseR25full7592PASS/0fail/0skip. R26related392PASS/49new/5newPG; actualexternal-openai→FREEZai2HTTP200/10checksPASS/freshunseededintakeМосква→Стамбул+AD1/readonlyunchanged. Gemini/Anthropic толькоcontrolledwire/API/PG,живыхключейнет.
-- Realgeo546relatedPASS; old534stubscopegapиactualFAIL сохранены. НоваяboundaryverifiedCLDRcountry_refтолькоизCURRENTliteralpair; actualZai1legacycorrectRU,companion1actualOpenMeteoRUonly/noautoadmit.0реальныхзаказов/оплат.
-- CBRsourceGET200XML11.098s,old10stimeoutмал;bounded20s/безretry/безсменыисточника,137relatedPASS. Неclaimдоказаннуюпричинукаждого503. R25UIполучилMIXED54101.20RUBreadyplan/actualSerpphotos20/правильныйpreviewrequest,ноCBR503→quote/order0;нуженfreshR26confirm.
-- Frontend38unit/buildPASS; API→photoactualJPEG/identity/minorunitsPASS. BOOKED_DEMOнеавтопоиск/невечныйspinner:controlledPW3tabs/reload0POST,explicittripeditresumessearch. SourceUIbundleобновлёнвownrunningcontainer,никакогоdenied-startbypass.
-- FullR4:7663PASS/1oldprivacyFAIL/mixedsourceНЕqualified. Privacyfieldsсохраненыpath/rule,extraRepairHintsотдельно,oldassertsнеослаблены. FullR5:7663PASS/1newPGbounded-polltimeout;APP/testsunchanged. НовыйexternalPGwaitтолькоэтогомодуля10smonotonicс темижеassertions,legacyhelperнеизменён;62targetedPASS. ТеперьfullR6нужен/запускается; неclaimвесьR26PASS.
+## Финальные40 ЗАВЕРШЕНЫ, все437ходовпрочитаны
 
-## Ключи
+Код91e6immutable,40SID,106IDs/129originalverbatim/0повторов+308GEN=437turns;415completed/22failed(19INVALID_LLM_OPERATION/2INVALID_LLM_RESPONSE/1timeout),352actualZaiHTTP/313nonmodelHTTP. NOT_ALL_SEMANTIC_PASS;16faultsetupsBLOCKED.0active/pending. ДваBOOKED_DEMOсsame-keyretry;006семантическиНЕподходящийrefunddeadline11Nov/checkin12Nov,этоP0. 16mediaDTOidentitycorrect:9DTOс10actualLitehotelitems,9HEADJPEG200;7NONEplaceholdersнеactualphoto. RelatedSerp20offers+20media+1JPEGHEAD/OpenMeteo7dayPASS.33/33nativeSourceTotalsи26/26FXmathправильны,ошибкаBudget1200—неFX.
 
-secrets.env.age бинарный2109B,78имёнenv,recipientофициальныйage1932fu7f70rwyfhaxflyfszz4gf6avxwc95wc0yjwm6zns9tspycqpgdnc0. Внутри3проектныхLiteAPI-sandbox/Duffel-test/SerpApi ключа появномуразрешениювладельца;LLMключей0. scripts/encrypt_jury_secrets.py --external-llm-key --confirm-project-travel-keys;режимневыдаётсязаnewjury-onlyLLMkeys. ПослеdecryptжюриукажетсвойLLMendpoint/model/key/format. 11helpers+privatechecksPASS. НикакогоMasterexport.
+Sourceout/home/aegml/.local/evaluation/final40-adaptive-20261028-142306-fbeb5460/ ;readonlycensusE:.local/evaluation/final40-final-census-20261028/REPORT{.json,.md},JSONsha6dac2b478660293f759a007344cbd2b6bad161ef0844a2ba4bbf80ddeeef953a. Reader001–020:E:.local/evaluation/final40-readonly-audit-001-020-20261028/REPORT.json(20SHA208turn35probes). Reader021–040:Cout/manual-review-021-040-frontend-contract-20261028.json(20SHA229turn;6ee0226d...). ВсеcurrentSHAсовпали. EarlyactorNatBugожидалневерныйpendingfield(search_policyвместоsearch.guest_nationality)→nohotelsНЕappbug;propercontinuationsисправилитолькоactorбезoriginalreplay. Первичныеphotoidentity_boundfalse—wrongoraclepath(top-levelkind/hotelId),readonlyaddendaнепереписалиFAIL. Старый80остановлен066T3:557inputs/526completed31failed/463model559sources,не80PASS;непродолжать. ВСЕ40actorsужеестественноended.
 
-Privateconfigдлязаписывающего `/home/aegml/delivery/otravel-recording-20261028/recording.env`600/aegml:3tourkeys/Zai45profile/LLMkeyEMPTY. Получательдобавляетсвойключ;онможетвыбратьexternalпоREADME. Requestedtimeoutтеперь45(старый90всёравнобылclamp45для2attempts/120slease). Userconfighashпередизменениемпроверен,пользовательскиеправкинеперезаписаны.
+## До19:30 — толькоprivateRED, APPнеизменять
 
-## Стенды / активные задачи
+RootBudgetRED:.local/test_final40_budget_safety_red_20261028.py:4FAIL3PASS; .local/test_final40_budget_api_red_20261028.py:2genuinePGFAIL. Exact020T4'Хочу уложиться в100тысяч сзапасом...20%'→120000minor(1200RUB).003T5food/baggageincostscopeпотеряны. RootownershipпослеGO money.py/newbudget_requirements/api preview/confirm/harnesscentralhooks.
 
-http://localhost:18082/#studio→native8084R25ae7d2/28acfd1b,Zai45,HYBRIDLite/Duffel/FX/dynamic,200/day2/run,effective45s. DBотрavel_zai_evalсохранена203sessions/1149runs/7520events/834modelstartsнаstartup;0startupinference. ПослеR26commitнуженimmutableinstall/updatesource;неперезаписыватьliveизEвслепую.
+frontend_contractpartyREDprivate /home/aegml/checks/final40-party-red-91e6-20261028/:4genuineFAIL12PASS. Targets024CHнеедет→ageNullвместоremove;029cityonly→invent1AD;026inclusive4withCH→4AD;001soloAD+room1→emptytraveler_ids. Будущиеhelpersparty_preservation/room_intent(rootGOhook),НЕharness/domain. НуженrootGO19:30.
 
-- RootfullR6runner `.local/verify_integrated_release_20261028.py r6`, 315testfiles (когдастартуетзаписатьexecsession). R5terminal `.local/evaluation/integrated-release-full-20261028-r5.terminal.json`.
-- corpus_acceptance готовит `.local/submission/final_r26_clean_compose_20261028.py` (ТОЛЬКОплан);нуженROOTGOсGitSHA/package,ownfreshproject/PGvolume,ports18084/18085,0Master/realAPI,exact3services/health/UI/DEMO/forms/quote+idempotentorder/restart/nonroot/owncleanup. ЛюбойautoDENYSTOP,no обход.
-- dialogue_replay готовmanifestFINAL40/FRESH/106IDs129verbatim/26×3+14×2/5cabinextras,2workerssingleproducer,sharedbound500LLM/800sources. SOURCEFINALCOMMITещёждёт—полный40НЕстартовал.16setupзависимымBLOCKEDеслинетреальногоinject;нефальсифицироватьcoverage. КлассUI/live-searchесть;wholetripNLUcabincanonicalпокаunsupportedнеобещать.
-- Старый80ownerSTOP066T3knownterminal:557inputs/526completed/31failed/0queued,463LLM559sources;66attemptedIDs,НЕ80PASS. Всеprivateprogress/tokenvault/initialFAIL/source374сохранены. Старых80actorsнет.
+corpus_acceptancefinancialRED E:.local/evaluation/final40-p0-safety-prep-20261028/:5primaryFAIL+1P2FAIL12controlsPASS.006deadline boolнеобозначаетuntilcheckin;021freeCancel+NR/023nonstop+transferпротиворечия. Минимумserverpersistenthardkeyfree_cancel_until_checkin=true+existingunknown-hardblock→noREADY/noquote;необещатьpositivedeadlinequalification. helperfinancial_requirements(state,ops,text)->ops/meta,root_harnesshook. planning/inventoryalreadyblockunknownhard;Domain/llm_contractownershipсогласовать. День/ТЗ/rail/birthdayтребуютpersistedunverifiedconditionеслинеуспеваемподдержать.
 
-## Следующие шаги
+llm_api_adapterP1RED E:.local/evaluation/p1-geodate-readonly-red-20261028/:17FAIL46PASS,63tests.НужноownedcheckoutclosedslotpreLLM(не4update_stayunknown),same-placeKazan'copy,date-onlyomitcity;current'Выбираем[город]QUERY,COUNTRY'LondonCanada/SochiRussiafilter;bookingrestoreбезUNRELATEDtripUNDO024T11. Futureownershipplace_run/place_resolution/intent_grounding/date_slots/date_intake/readonlyhelpers/llm_schema_feedback;НЕproviders/harnessбезrootGO.
 
-R26commit/pushREADME+age+code→ROOTGOcleanDocker/40→immutableR26native/actualUIrefresh+confirm→исправленияпо40→finalmain/video/submissiontag. ВидеоURLпокаplaceholder;самуфункциональностьпроверять,неподменятьmockPASСреальнымиAPI. GigaTLSнечинитьмаршрутамибезявнойкоманды. AEGYXR16INDEX81paused/A524/Ubuntu24.04/WindowsPG/PEM/httpd8080не трогать;noWSLshutdown/prune. localQwen/paid/realbooking0.
+После19:30rootраздаст3узкихGO,самBudget+centralhooks,исправитьsafety/data-firstдо22. Неотмечатьвсе27recordsзакрытымиотчужоготеста. НужныотносительноисходногоFAILновыеexactresults/negativecontrols/actualtargetedretakes,fullfinalcheckпопоследнемуsource. НИКАКОГОнового40/80.
+
+## Передача/ограничения
+
+secrets.env.age2109B78envnames,officialrecipientage1932fu7f70rwyfhaxflyfszz4gf6avxwc95wc0yjwm6zns9tspycqpgdnc0;3ownerprojectLiteSandbox/DuffelTest/Serpkeys,LLMkeys0. CLI--external-llm-key--confirm-project-travel-keys,невыдаватьзаnewjury-onlyLLMkey. Private/600aegml finalfile/home/aegml/delivery/otravel-recording-20261028/recording-final.env(78names/externalblankkey),oldrecording.env69Zai-profileнеперезаписан,recipientсамLLM. READMEbridgeLinuxhost.docker.internal/testverified. PublicvideoURLпокаplaceholder/main/tagSUBMISSIONнефинализированы;existingPR3drafthead91e6изменёнtitle/body,attached. GitHubconnector404privaterepo;ghCLIнет;толькоexistingGitcredentialRAMRESTscript.local/github_release_pr_20261028.py черезGCMнезалогинитьповторно/непечатьтокен.ДругиеartifactPR1/3attached. НаGitHubосновнаяветкаещёold545e692,рабочаяветкаиREADMEактуальны.
+
+AEGYXR16INDEX81paused/A524/Ubuntu24.04/WindowsPG/PEM/httpd8080не трогать;noWSLshutdown/prune/globaltrust/VPN. GigaAPI-TLSнеисправлен и0inference;нечинитьмаршрутыбезuserGO. localQwen/paid/realbooking0. Ближайшеечитатьэтотфайл+AGENTS/PRODUCT_DECISIONS+mainplan+latestowner;неповторятьclosedDocker/testsбезизменения.

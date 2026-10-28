@@ -1,3 +1,25 @@
+# Текущая ревизия R26 / финальные40 / исправления до22:00МСК
+
+**Код91e6ee4 / Cpackage34a1cf1f /93files.** FullR6 **7664PASS/0fail/0skip**,315testfiles,source/testsunchanged. УниверсальныйLLMexternal3formats:392related,49new/5PG,2actualFREEZai/10checksPASS. Чистаяпоставкаоднойкомандой:CORE30/30 иcontrolledunknown-modelHTTP25/25. READMEсобложкой/realscreenshot/video-placeholder/one.envsetup;secrets.env.age78names/3tourkeys/0LLMkey,получательподключаетсвоюLLM. [Full](../verification/r26-full-checkpoint-20261028.json),[Compose+wire](../verification/final-clean-compose-and-external-wire-20261028.json).
+
+**Финальные40закончены:**437ходов=129original/106IDs+308GEN,415completed/22failed,352LLM/313sourceHTTP,0active/pending. Все437прочитаны,40snapshotSHAсовпали. **NOT_ALL_SEMANTIC_PASS**,16setupBLOCKED. [Census](../verification/final40-diagnostic-census-20261028.json). Старый80остановленпоownerна066T3,непродолжать/непересчитыватькак80PASS.
+
+**Ownerdeadline:**до19:30МСКreadonlyдиагностика/REDрепродукциибезAPPправок;19:30–22:00толькоисправленияподтверждённыхошибок,relatedchecks иитоговаяпубликация. Новый40/новыефункциинезапускать. ИсторическиеPASS/FAILниженепереписывать.
+
+| ПостоянныеID / приоритет | Факт / доказательство | Точное действие после19:30 | Условие закрытия |
+| --- | --- | --- | --- |
+| HARNESS-004-FINAL40-BUDGET-RESERVE-001; BUDGET-COMPONENT-SCOPE-001 | 020T4 100тыс+20%→120000minor;003T5food/bagsнеучтены. PrivateRootRED4+2PG,baselinecontrols3PASS. | Детерминированнонеприниматьнепривязаннуюсумму;резервснеяснойбазойуточнять. Необъявлятьобщийбюджетвыполненнымприunpricedcosts. | Exact020/003RED→GREEN,validpercent/scalar/negativesremainPASS;новыйactualsamecaseбезневернойсуммы/falsecompleteprice. |
+| HARNESS-004-FINAL40-REFUND-DEADLINE-001; F40-CONTRADICTORY-CONSTRAINTS-021-001 | 006T3deadlineтребовалсядо12Nov,sourceдо11Nov,ready/ordered;021/023противоречиянеуточнены. Private5primaryRED+12controls. | Сохранитьотдельноеhardусловие;поканеподтверждено—blockREADY/quote/order. Прямыеконфликтыневыбиратьмолча. | Exactbadplan+validate_quoteблокированы,скоуп/negationcontrols,никакихложныхuntilcheckinclaims. |
+| HARNESS-004-F40-CHILD-REMOVAL-MISREAD-024-001; UNREQUESTED-PARTY-029-001; INCLUSIVE-PARTY-CENSUS-026-001; FINAL40-ROOM-COVERAGE-001 | CHнеедет→ageNull;cityonly→invent1AD;inclusive4→4AD;soloADroomempty. Private4RED/12PASS. | Currentownedpartyhelper:удалитьоднозначногоCH,невыдумыватьAD,уточнитьcategorycensus;soloassignmentтолькоприединственности. | ExactcasePGповтор+negativehypo/quote/pause/foreignperson/многодетей;party/rooms/quoteversionsсогласованы. |
+| HARNESS-004-F40-OWNED-CHECKOUT-REPAIR-031-001; FINAL40-GEO-CANONICAL-LITERAL-001; N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001; FINAL40-GEO-COUNTRY-FILTER-001 | update_stayunknown/Kazan’copy;currentгород+countrycommaтеряетfilter. Private17RED46controls. | FreshownedclosedcheckoutparserдоLLM;currentpairedgenericcountryCLDRproof,optionalгород,безautochoice/authorityrelaxation. | Exact031/032/039/040/013+LondonCA/SochiRU;role/stale/hypo/foreigncandidatecontrolsPASS. |
+| HARNESS-003-F40-BOOKING-RESTORE-UNDO-024-001 | Orders0,вопросовосстановленииbookingUNDOоткатываетchildage. | Routingкreadonlyorderstatus/clarification,никогдаtripundoбезявнойссылкинаправкутрипа. | Exact024T11state/versionнеизменны,legittripundoещёработает. |
+| HARNESS-004-FINAL40-UNSUPPORTED-POISON-001; ANSWER-DISCARD-001; F40-ASK-CLARIFICATION-DROPPED-025-001 | Staleeveningmalformedprefломаетvalidparty;ASKсмыслтеряетсявnochange. | Послеsafety/datafix—узкаяrepair/ownedslot/factualresponse,неcoerceunsupportedconstraintsиmodelprices. | Capturedraw+negativeконтроли;валидныеуточнения/каноническиеответысохранены. |
+| HARNESS-004-FINAL40-TRANSPORT-MODE-001; CHILD-BIRTHDAY-001; UNMODELED-HARD-REQUEST-001 | Railonly/birthday/otherhardfactsтеряются. | Удержатьнепроверенноеhardтребование/уточнениевместоfalsefulfillment;необещатьновыйrailAPI. | Неподходящаяflight/ageсборканеREADY;эквивалентныеданныеподтвержденытолькоисточником/явнымuserfact. |
+
+ВсеэтиIDна19:20OPEN. Model/source/UItestsнетождественны. Полныедоказательстваиостальные27recordsвprivate40census+reviewreports,путивPROJECT_STATE.md. Историяпредыдущихревизийсохраненаниже.
+
+---
+
 # Основная матрица — интеграция frontend и исправления R25, 28 октября
 
 **Текущая цель: готовая связка frontend/backend и проверяемый путь поездки до 22:00 МСК.** Ветка frontend `544d0a6` соединена с backend коммитом **`1f3be31`**. Последующие узкие исправления входят в текущий кандидат; их наличие ещё не означает установку и приёмку этого кандидата.
