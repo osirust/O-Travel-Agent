@@ -1,0 +1,102 @@
+{
+  "format": "otravel.final-zai47-cloudflare-asgi.actual.v1",
+  "status": "ALL_LAST_SIX_ORIGINAL_INPUTS_SUBMITTED_MIXED_ONE_FAILED_FIVE_COMPLETED",
+  "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "execution_mode": "Private ASGI lifespan, genuine remote LLM requests and ordinary persistent API/Store. No recorded model reply injection.",
+  "same_database": "otravel_nemotron_9_eval_20261028",
+  "no_database_reset_or_core_or_master_env_change": true,
+  "zai_phase": {
+    "path": "/home/aegml/.local/evaluation/after80-zai47-final-asgi-epoch1-20261028-034503-1c325031",
+    "progress_sha256": "bc1ecfa4a84bde24deab3836baba098ecc84ab3edf1de0bde88709eddd09c25f",
+    "model": "glm-4.7-flash",
+    "submitted": 1,
+    "input_ids": [
+      "ZAI100-080:T3"
+    ],
+    "run_status": "failed",
+    "error_code": "RATE_LIMITED",
+    "actual_http": {
+      "format": "otravel.zai47-final-asgi.http-admission.v1",
+      "models": 1,
+      "sources": 0,
+      "last_model_at": 1793159115.9343247,
+      "max_models": 10,
+      "max_sources": 387
+    },
+    "native_before": 70,
+    "native_after": 71,
+    "known_unsubmitted_after": [
+      "ZAI100-080:T4",
+      "ZAI100-080:T5",
+      "ZAI100-080:T6",
+      "ZAI100-080:T7",
+      "ZAI100-080:T8"
+    ],
+    "resend_or_hidden_fallback": false
+  },
+  "cloudflare_phase": {
+    "path": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+    "progress_sha256": "7074fdab36f27b1ce261752c33e05f6ebd2127c2725cba1616fbbd9b4a15a1da",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "submitted": 5,
+    "completed": 5,
+    "actual_model_http": 1,
+    "actual_supplier_http": 0,
+    "hard_model_cap": 6,
+    "worker_free_confirmed": true,
+    "reasoning_switch": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "turn_model_counts": {
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0
+    },
+    "native_before": 71,
+    "native_after": 72,
+    "remaining_inputs": [],
+    "official_model_url": "https://developers.cloudflare.com/workers-ai/models/nemotron-3-120b-a12b/",
+    "official_pricing_url": "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+    "official_model_and_pricing_checked_by_root_date": "2026-10-28",
+    "pricing_docs_updated": "2026-10-20",
+    "workers_free_neurons_per_day": 10000,
+    "neurons_per_million_input_tokens": 45455,
+    "neurons_per_million_output_tokens": 136364,
+    "master_model_absent_decision": "Root explicitly selected the existing allowlisted currently verified adapter model for this phase; no guessed default or global Master change.",
+    "resend_or_hidden_fallback": false
+  },
+  "aggregate_related_native_model_http": {
+    "old_nemo": 39,
+    "groq": 23,
+    "new_nemo": 8,
+    "zai": 1,
+    "cloudflare": 1,
+    "total": 72,
+    "operator_cap": 80
+  },
+  "aggregate_related_supplier_http": 113,
+  "supplier_cap": 500,
+  "quotes": 0,
+  "orders": 0,
+  "pending": 0,
+  "source_unchanged_in_both_phases": true,
+  "080_projection": {
+    "path": "/mnt/e/work/aegml/.local/evaluation/final080-safe-projection-20261028/ZAI100-080-full-eight-turns.json",
+    "sha256": "77918e8c914871cc35641d6279e305ceaa3eeda86e2c47b532b313a4d5f938f5",
+    "original_turns": 8,
+    "completed": 6,
+    "failed": 2
+  },
+  "vendor_router_remaining": "UNKNOWN after final8; last authenticated metadata before used42/remaining8, then8 requests. Not queried again.",
+  "limits": [
+    "COMPLETED means runtime processing ended, not that every user request was met.",
+    "Earlier failed080T2 and080T3 remain failures; their original POSTs were not resent.",
+    "Full corpus inventory across older phases, queued messages and semantic review are separate.",
+    "Account identifiers, keys, headers, capabilities and hidden reasoning are excluded."
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "format": "otravel.r27.final_visible_ui.v1",
+  "created_at_utc": "2026-10-28T17:58:10.078877+00:00",
+  "status": "VISIBLE_NATURAL_TRIP_HOTELS_GALLERY_RELOAD_MOBILE_PASS_SOURCE_EMPTY_RETAINED",
+  "scope": "One fresh visible natural browser conversation and its hotel gallery, reload and mobile projection. No full40/106 semantic acceptance or all-provider success claim.",
+  "backend": {
+    "code_commit": "a95eca834c2708006f51fd68b15faedd2e527629",
+    "package_sha256": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+    "provider": "cloudflare",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "evidence_kind": "Existing native readiness metadata plus parent visible-UI run; documentation task made no runtime request/change.",
+    "frontend_mini_did_not_modify_backend_or_database": true
+  },
+  "natural_interaction": {
+    "origin": "Visible new browser user message; no API trip seed, as qualified by the parent browser run.",
+    "user_text_sha256": "33279380c0b781392828fc1102c896ae1e3e4a39ca3de27c92ef38b7036613ae",
+    "route": "Москва → Стамбул → Москва",
+    "check_in": "2026-11-10",
+    "check_out": "2026-11-13",
+    "party": "1adult/0children",
+    "rooms": 1,
+    "budget_rub": 100000,
+    "agent_reply_rendered": true,
+    "assembled_source_type": "MIXED",
+    "visible_component_labels": [
+      "SANDBOX hotel",
+      "SANDBOX flight",
+      "DEMO transfer"
+    ],
+    "supplier_booking_or_payment": false
+  },
+  "hotels_and_gallery": {
+    "source": "SerpApi Google Hotels search data",
+    "cards": 20,
+    "displayed_property": "Skalion Hotel",
+    "first_image": {
+      "decoded": true,
+      "natural_width": 5614,
+      "natural_height": 3740
+    },
+    "gallery_button_present": true,
+    "second_image": {
+      "natural_width": 5615,
+      "natural_height": 3742
+    },
+    "limit": "Rendered source property images and indicative cards; no confirmed inventory, real booking or price guarantee."
+  },
+  "reload": {
+    "natural_trip_restored": true,
+    "hotel_cards_after_reload": 20,
+    "image_decoded": true,
+    "new_bundle": "index-EBmwD5Kp.js",
+    "bundle_sha256": "b17f640466b8b31a47e08d5d6204cf75c33f157509b17ef984fc2a1d88458233",
+    "same_frontend_process_start": true,
+    "container_started_recreated_or_stopped": false,
+    "old_assets_deleted": false,
+    "html_and_js_status": 200,
+    "nginx_configuration": "PASS"
+  },
+  "source_empty_result": {
+    "provider": "SerpApi Google Flights",
+    "code": "NO_MATCHES",
+    "retained_real_source_empty": true,
+    "specific_explanation_visible_after_reload": true,
+    "generic_error_visible_after_mini": false,
+    "message": "Google Flights не вернул предложений по этому маршруту и датам. Это не доказывает, что рейсов нет. Проверьте маршрут и даты или попробуйте поиск позже.",
+    "canonical_history_not_rewritten": true,
+    "attribution": "A real empty search response remains an empty response. It does not establish missing flights or a money/unit bug and is not counted as API success."
+  },
+  "mobile": {
+    "viewport_width": 390,
+    "document_scroll_width": 390,
+    "decoded_images": 9,
+    "horizontal_overflow": false
+  },
+  "javascript_errors": {
+    "desktop_page_errors": 0,
+    "desktop_console_errors": 0,
+    "reload_page_errors": 0,
+    "reload_console_errors": 0,
+    "mobile_page_errors": 0,
+    "mobile_console_errors": 0
+  },
+  "frontend_validation": {
+    "proof": "docs/verification/frontend-source-no-matches-projection-20261028.json",
+    "proof_sha256": "8b2787318520dea5509449b2e36045a9c61ffa0b3eda762c1675e429b91db525",
+    "unit_tests": 41,
+    "unit_pass": 41,
+    "unit_fail": 0,
+    "unit_skip": 0,
+    "production_build": "PASS",
+    "rendered_reload": "PASS",
+    "scope": "Frontend-only view fix/unit/build/static asset publication; not a new full backend test run. Existing backend R8 proof remains separate."
+  },
+  "evidence": {
+    "visible_reports": [
+      {
+        "name": "desktop-report.json",
+        "sha256": "ccc5e9886e86bb55ae738d35a24d0ee6cb0d413d3498d8aaa5910630c2df85ef"
+      },
+      {
+        "name": "final-ui-report.json",
+        "sha256": "c3bd117d857cacbd121d4dae7bbf6dc9070448e5d1d428f6cf69c2d853aac708"
+      },
+      {
+        "name": "mobile-report.json",
+        "sha256": "d87bc02c1244c79058081e07247f56b7259b39013e2ef2452e7de9de555bdf82"
+      },
+      {
+        "name": "reload-after-mini.json",
+        "sha256": "44ca26f374121c263b33e0a15035732d98355af682e226ebc6c51013653e791e"
+      }
+    ],
+    "asset_publication": {
+      "name": "frontend-source-error-asset-publication-20261028.json",
+      "sha256": "614350856840aac12e59923db78e3b82f61ab6ebcfad48fca6eeff28cc21fc47"
+    },
+    "backend_readiness_sha256": "bf81e3694dfc92fa778cf02170f6e87195f63ef0139ae24e7650f45cd614331e"
+  },
+  "data_minimization": [
+    "No property photo URLs, session/run identifiers, tokens, access values or account details copied to this public receipt."
+  ],
+  "documentation_task": {
+    "app_edits": 0,
+    "test_edits": 0,
+    "runtime_edits": 0,
+    "git_stage_commit_push": 0,
+    "browser_actions": 0,
+    "http": 0
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "format": "otravel.geo.openrouter-r3-repair.v1",
+  "created_at": "2026-10-27T02:12:57.653473+00:00",
+  "status": "CONTROLLED_FIX_PASS_ACTUAL_RETEST_PENDING",
+  "finding_id": "H004-GEO-ASK-REPLY-LOSS-001",
+  "source": {
+    "commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+    "report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-020041-d217d861/report.json",
+    "capture_sha256": "255365ad827e76b373571505acf21319dfc8c58b6adc1fa457ac74c5dde75753",
+    "report_snapshot_sha256": "9d40b199ac2a4566c19ff0f36e13cc282c0070e422c9a2c1fece25d7fa501357",
+    "note": "The original epoch continued after capture. Its final report may add later steps; no original result was overwritten."
+  },
+  "actual_cause": {
+    "case_id": "PF-GEO-01",
+    "step_id": "06",
+    "text": "Стамбул в Сербии",
+    "actual_model_calls": 1,
+    "not_a_zero_model_canonical_hook_failure": true,
+    "raw_model_reply_correctly_explained_istanbul_turkey": true,
+    "raw_speech_act": "ASK",
+    "raw_control": "none",
+    "raw_operations": [],
+    "raw_information_subject": "Сербия",
+    "harness_effect": "ASK without operations bypassed geography grounding; country-only FAQ replaced the correct raw reply and did not create country-change consent.",
+    "selected_before_and_after": {
+      "kind": "city",
+      "name": "Белград",
+      "country_code": "RS"
+    }
+  },
+  "action": [
+    "Resolve only a full known CITY в known COUNTRY literal without question/quotes against a destination.city pending question whose explicit version equals the trip.",
+    "Use the existing server-owned country proposal path before generation; keep the exact old city when the asserted country matches it.",
+    "Different explicitly asserted conflicting countries remain selected country intents; a correct city-country pair still needs consent before changing an old country.",
+    "Question-mark variants remain canonical read-only FAQ. Single known city with a wrong mentioned country explicitly states the actual country and refutes that country."
+  ],
+  "condition_for_actual_closure": "Repeat the exact deployed remote-model dialogue and question-mark variants on a new immutable source/package. T6 must create consent without discarding Belgrade; no+child, budget, accept, pause and FAQ must retain their case-specific invariants. Do not relabel the old actual FAIL.",
+  "bounded_actual_closures": [
+    {
+      "finding_id": "H004-GEO-LATE-FIELD-TYPO-001",
+      "status": "ACTUAL_RELATED_LATE_ORIGIN_TYPO_SCOPE_PASS",
+      "source_commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+      "case_id": "PF-GEO-02",
+      "passed_steps": 12,
+      "total_steps": 12,
+      "model": "OpenRouter dots-studio/dots-3-note-preview:free",
+      "recipe": {
+        "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r3.json",
+        "sha256": "c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5",
+        "bytes": 76525
+      },
+      "evidence": {
+        "path": ".local/evaluation/geo-20261027/openrouter-r3-attribution-snapshot.json",
+        "sha256": "124f58b79145a56d4abb9b0a96bd955e077dff46d7d340516bffd697d0476a2b",
+        "bytes": 9675
+      },
+      "source_report_snapshot_sha256": "e8443612700853da594e43495e74d69f836bb8b295d3d3c370d572d67f7d47a8",
+      "scope": "The complete r3 case including late origin typo suggestion and confirmation passed its frozen content/state oracles on source43050b8. This closes only that bounded actual late-origin typo regression.",
+      "does_not_close": [
+        "PF-GEO-01/T6 ASK reply replacement",
+        "all geographic NLU",
+        "the whole current epoch",
+        "original80/106"
+      ],
+      "alias_of": "HARNESS-004-LATE-ORIGIN-TYPO-001"
+    }
+  ],
+  "single_completed_case_attribution_snapshot": {
+    "path": ".local/evaluation/geo-20261027/openrouter-r3-attribution-snapshot.json",
+    "report_status": "IN_PROGRESS",
+    "completed": [
+      {
+        "id": "PF-GEO-01",
+        "status": "FAIL",
+        "steps": 7,
+        "pass_steps": 5
+      },
+      {
+        "id": "PF-GEO-02",
+        "status": "PASS",
+        "steps": 12,
+        "pass_steps": 12
+      },
+      {
+        "id": "PF-DURATION-03",
+        "status": "PASS",
+        "steps": 19,
+        "pass_steps": 19
+      }
+    ],
+    "new_other_completed_failures": false,
+    "repeated_polling": false
+  },
+  "files": [
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "ab0f9c80a480677756ac44475b0681521b74c215a0b81baed211c71ba732ece7",
+      "bytes": 42161
+    },
+    {
+      "path": "otravel/answering.py",
+      "sha256": "379dbce5b192230ba039e17dec540ded858e53252cf807f1de7e03a91f926a14",
+      "bytes": 36749
+    },
+    {
+      "path": "tests/test_geo_openrouter_r3.py",
+      "sha256": "db14a9efaecd3bb926ad36afa47da852347a362a7ff8b3b0dc40538294224bbc",
+      "bytes": 4340
+    },
+    {
+      "path": "tests/test_harness_geo_openrouter_r3.py",
+      "sha256": "88b16ccac2a53ba099c73a661637701390c670982cfb6d1f2a74689a95eed70c",
+      "bytes": 3994
+    },
+    {
+      "path": "tests/test_harness_geo_dialogues_20261027.py",
+      "sha256": "fce8160f0e60d4a0039f0eb41b58950114c67469833ce3b5031331a50156bf9f",
+      "bytes": 16067
+    },
+    {
+      "path": "tests/test_harness_geo_cf_r2_series.py",
+      "sha256": "42025e67a79ba3d74cab9b30e52e002bc82d19d074167ffc7f19d8a655cf1c8c",
+      "bytes": 10004
+    },
+    {
+      "path": "fixtures/regression/geography-openrouter-r3-20261027.json",
+      "sha256": "d5a182e852084f9aa7c3da2058c8e82315a9eea38f20ae4996c45f87fbe4429e",
+      "bytes": 5801
+    }
+  ],
+  "hash_scope": "E working-tree bytes, not a native package identity.",
+  "preserved_initial_failures": [
+    {
+      "path": ".local/evaluation/geo-20261027/openrouter-r3-initial.xml",
+      "sha256": "ec903a0411ac524923c769547c24ca1f68c914e459c7d62fc665ed786f46a777",
+      "bytes": 798,
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/openrouter-r3-expanded-initial.xml",
+      "sha256": "b77f03b3f24e43b075e818212be14a17087d4316c6d8eace717ae91c3346238a",
+      "bytes": 4141,
+      "tests": 9,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/openrouter-r3-pg-initial.xml",
+      "sha256": "10cc380c3fbf37b5357097f7532c775ce06328fd942b27e7c07c1a34b84bbe7e",
+      "bytes": 3613,
+      "tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/openrouter-r3-related-initial.xml",
+      "sha256": "1575d075d6d55ecce56bd49d6a0353185b67a38cfa7d958e887bde9b582561bb",
+      "bytes": 105448,
+      "tests": 456,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "verification": {
+    "path": ".local/evaluation/geo-20261027/openrouter-r3-related-final.xml",
+    "sha256": "4102c6590e09f5428eb4ef3e34377bd31fee86fbbb5aad53259af02eb9608099",
+    "bytes": 104970,
+    "tests": 462,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ruff": "PASS six related production/test files",
+  "new_pg_scope": {
+    "cases": 3,
+    "literal_cases": 1,
+    "question_cases_with_without_pending": 2,
+    "model_calls_in_new_turns": 0,
+    "tool_calls_in_new_turns": 0,
+    "orders": 0,
+    "controlled_setup_quotes": 2,
+    "active_quotes_preserved": 2,
+    "seed_pending_used": true,
+    "database": "otravel_test",
+    "actual_remote_model_http": 0,
+    "actual_supplier_http": 0
+  },
+  "existing_long_series": {
+    "preserved_business_oracles": true,
+    "expected_adapter_consumption_updated": "Exact qualified literal now uses no adapter call. Removed only that unused queued response from three existing doubles; state/child/budget/consent assertions remain strict."
+  },
+  "untouched": [
+    "native runtime/profile/package",
+    "harness.py",
+    "order helpers",
+    "keys",
+    "original actual reports",
+    "r1/r2/r3 acceptance recipes"
+  ],
+  "not_claimed": [
+    "new actual NLU PASS",
+    "all80/106 completion",
+    "live supplier search qualification",
+    "frontend readiness"
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "status": "PASS",
+  "commit": "cb0eadc198ecd03e35bee244d0203197341a9d86",
+  "tree": "c1ce1ebfc38eae5a941732e926fb99a3ee7e38cc",
+  "started_at_utc": "2026-10-25T22:21:43.185109+00:00",
+  "project": "otravel-cleanstart-20261026-c",
+  "port": 8085,
+  "base_url": "http://127.0.0.1:8085",
+  "checks": [
+    {
+      "name": "isolation_preflight",
+      "passed": true,
+      "supplier_keys_empty": 18,
+      "false_confirmation_flags": 9
+    },
+    {
+      "name": "health_debug_and_provider_status",
+      "passed": true,
+      "debug_assets": 2,
+      "configured_keyed_providers": 0,
+      "open_meteo_keyless_not_called": true
+    },
+    {
+      "name": "health",
+      "passed": true,
+      "http_status": 200,
+      "database": "ready",
+      "supplier_booking": false
+    },
+    {
+      "name": "session_authorization",
+      "passed": true,
+      "missing_token_status": 401,
+      "invalid_token_status": 403,
+      "other_session_token_status": 403
+    },
+    {
+      "name": "complex_demo_loaded",
+      "passed": true,
+      "origin": "Казань",
+      "stay_cities": [
+        "Стамбул",
+        "Анталья"
+      ],
+      "legs": 3,
+      "groups": 2,
+      "travelers": 9,
+      "rooms_per_stay": [
+        3,
+        3
+      ]
+    },
+    {
+      "name": "demo_search",
+      "passed": true,
+      "plans": 2,
+      "offers_in_selected_plan": 7,
+      "selected_total_minor": 33340000,
+      "currency": "RUB",
+      "source_type": "DEMO"
+    },
+    {
+      "name": "quote_preview",
+      "passed": true,
+      "quote_version": 1,
+      "state_version": 1,
+      "repriced": true,
+      "reprice_kind": "deterministic_demo_not_live"
+    },
+    {
+      "name": "simulated_order_and_idempotency",
+      "passed": true,
+      "status": "BOOKED_DEMO",
+      "created_at_supplier": false,
+      "order_count": 1,
+      "exact_retry_status": 200,
+      "changed_payload_status": 409,
+      "second_operation_status": 409
+    },
+    {
+      "name": "stale_quote_after_control",
+      "passed": true,
+      "confirmation_status": 409,
+      "order_count": 0,
+      "state_preserved": true
+    },
+    {
+      "name": "no_model_or_live_tools",
+      "passed": true,
+      "audited_events": 18,
+      "external_call_events": 0,
+      "free_text_messages_sent": 0,
+      "live_search_requests_sent": 0
+    },
+    {
+      "name": "final_external_call_audit",
+      "passed": true,
+      "audited_events": 19,
+      "external_call_events": 0,
+      "free_text_messages_sent": 0
+    }
+  ],
+  "personal_credentials_read": false,
+  "tokens_recorded": false,
+  "supplier_booking": false,
+  "qualification_override": {
+    "internal_network": false,
+    "synthetic_database_fixture": true,
+    "allowlisted_cli_environment": true,
+    "env_file": "/dev/null",
+    "model_caps": {
+      "per_day": 0,
+      "per_run": 0,
+      "local_per_day": 0
+    }
+  },
+  "attempt": 3,
+  "previous_failed_attempt_report": "docs/verification/clean-start-20261026.json",
+  "restart_evidence_same_source": "docs/verification/clean-start-20261026-attempt2.json",
+  "prior_tooling_notes": [
+    "PowerShell unquoted tree argument corrected; no app execution occurred.",
+    "Archive env-name precheck found only committed .env.example template, allowed and excluded by .dockerignore."
+  ],
+  "engine_id": "7286b49d-87ad-4ae3-a753-2400a6c6b651",
+  "old_identity_before": {
+    "containers": {
+      "app": {
+        "id": "503688e3877933a8c4b0dc755892fed0b0937cbc15ade3618fa5143ddd1fc115",
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "mounts": [],
+        "pid": 303918,
+        "started_at": "2026-10-25T18:57:34.437471914Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "db": {
+        "id": "1819611d2a68dbfeba2c922823376bda2fab170273893015d18b194922a42eef",
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "otravel_pgdata",
+            "Source": "/var/lib/docker/volumes/otravel_pgdata/_data",
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "pid": 25351,
+        "started_at": "2026-10-25T12:41:50.396283284Z",
+        "ports": {},
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "native_listeners": {
+      "8083": {
+        "pid": 304542,
+        "start_ticks": 2525877,
+        "cwd": "/home/aegml/projects/otravel",
+        "exe": "/usr/bin/python3.12",
+        "argv_sha256": "27bfab7d71599a1b3f155e647ce7e7da83825b0f7d77618172bc9eb6d1afa95c"
+      },
+      "8084": {
+        "pid": 421782,
+        "start_ticks": 3488716,
+        "cwd": "/home/aegml/projects/otravel-zai-eval",
+        "exe": "/usr/bin/python3.12",
+        "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+      }
+    }
+  },
+  "stage": "complete",
+  "archive_sha256": "ebb7e56407cf483dd4bdaa7826c1ed91983035b4f1218c9bb7457eb9a3df97ae",
+  "source_context": {
+    "path": "/home/aegml/projects/otravel-cleanstart-20261026-cb0eadc",
+    "manifest_sha256": "c1944a731567a8f0a57c55d013e2ad4e8134ae48b5b15fcfcebe69f10f339e6d",
+    "file_count": 270
+  },
+  "build_and_start": {
+    "exit_code": 0,
+    "duration_seconds": 11.02,
+    "single_compose_up_build_command": true,
+    "fresh_project_and_volume": true,
+    "unique_image_tag": "otravel-agent:cleanstart-20261026-cb0eadc-c",
+    "build_cache_allowed": true
+  },
+  "owned_containers": {
+    "app": "85c25edaf7c5e09f979fa9e2df3867bfc847afa00f62763ab8c7d6ee1d6fa899",
+    "db": "c1e2abc2c60adfc26f12374f27b7ae6879a045e018cb153fcb1be89212332b5d"
+  },
+  "runtime_isolation": {
+    "app_port_bindings": {
+      "8080/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8085"
+        }
+      ]
+    },
+    "db_published_ports": 0,
+    "network_id": "4f21a4ca1e6be8b8a660a2a3e6bd6b5619a22d54b7949606fe29d52a128a7e04",
+    "network_internal": false,
+    "project_label": "otravel-cleanstart-20261026-c"
+  },
+  "image_id": "sha256:b2f8f214a77e1b00fb3ad0f5f90f41526ee324adb56eb782e84eca932207ca4b",
+  "postgres_image_id": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+  "volume": {
+    "Name": "otravel-cleanstart-20261026-c_pgdata",
+    "Driver": "local",
+    "CreatedAt": "2026-10-26T01:21:45+03:00",
+    "Labels": {
+      "com.docker.compose.config-hash": "87dc4512301d55e4af7bd26e2533a100f7f4a4b40ac7a335a63b5f70b23b1d27",
+      "com.docker.compose.project": "otravel-cleanstart-20261026-c",
+      "com.docker.compose.version": "5.6.1",
+      "com.docker.compose.volume": "pgdata"
+    }
+  },
+  "old_identity_after": {
+    "containers": {
+      "app": {
+        "id": "503688e3877933a8c4b0dc755892fed0b0937cbc15ade3618fa5143ddd1fc115",
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "mounts": [],
+        "pid": 303918,
+        "started_at": "2026-10-25T18:57:34.437471914Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "db": {
+        "id": "1819611d2a68dbfeba2c922823376bda2fab170273893015d18b194922a42eef",
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "otravel_pgdata",
+            "Source": "/var/lib/docker/volumes/otravel_pgdata/_data",
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "pid": 25351,
+        "started_at": "2026-10-25T12:41:50.396283284Z",
+        "ports": {},
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "native_listeners": {
+      "8083": {
+        "pid": 304542,
+        "start_ticks": 2525877,
+        "cwd": "/home/aegml/projects/otravel",
+        "exe": "/usr/bin/python3.12",
+        "argv_sha256": "27bfab7d71599a1b3f155e647ce7e7da83825b0f7d77618172bc9eb6d1afa95c"
+      },
+      "8084": {
+        "pid": 421782,
+        "start_ticks": 3488716,
+        "cwd": "/home/aegml/projects/otravel-zai-eval",
+        "exe": "/usr/bin/python3.12",
+        "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+      }
+    }
+  },
+  "completed_at_utc": "2026-10-25T22:21:55.531050+00:00",
+  "limitations": [
+    "DEMO only; no actual LLM/NLU or supplier API qualification.",
+    "No restart repeated here; app/db graceful restarts passed in attempt2 on identical source. No data-loss/crash recovery or existing-schema migration qualification.",
+    "Private-free qualification override and ordinary base Compose bridge; not a universal README/OS/offline-start guarantee."
+  ],
+  "cleanup": {
+    "own_compose_down": true,
+    "volume_preserved": true,
+    "image_preserved": true,
+    "volume_removed": false
+  },
+  "old_identity_after_cleanup": {
+    "containers": {
+      "app": {
+        "id": "503688e3877933a8c4b0dc755892fed0b0937cbc15ade3618fa5143ddd1fc115",
+        "image": "sha256:e3bea0c1da2c42898137b4faa2aeaa77842467ec5ce089ed07f597f2036e8091",
+        "mounts": [],
+        "pid": 303918,
+        "started_at": "2026-10-25T18:57:34.437471914Z",
+        "ports": {
+          "8080/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8081"
+            }
+          ]
+        },
+        "config_hash": "8c566656dbbb435487fd621e24420c7272f0d34c5041919fc285e8af459e6b93"
+      },
+      "db": {
+        "id": "1819611d2a68dbfeba2c922823376bda2fab170273893015d18b194922a42eef",
+        "image": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe",
+        "mounts": [
+          {
+            "Type": "volume",
+            "Name": "otravel_pgdata",
+            "Source": "/var/lib/docker/volumes/otravel_pgdata/_data",
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "rw",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "pid": 25351,
+        "started_at": "2026-10-25T12:41:50.396283284Z",
+        "ports": {},
+        "config_hash": "680084a861498d51f0c71e58f89a9c319e235b2f2521106927de1f411c3352b4"
+      }
+    },
+    "native_listeners": {
+      "8083": {
+        "pid": 304542,
+        "start_ticks": 2525877,
+        "cwd": "/home/aegml/projects/otravel",
+        "exe": "/usr/bin/python3.12",
+        "argv_sha256": "27bfab7d71599a1b3f155e647ce7e7da83825b0f7d77618172bc9eb6d1afa95c"
+      },
+      "8084": {
+        "pid": 421782,
+        "start_ticks": 3488716,
+        "cwd": "/home/aegml/projects/otravel-zai-eval",
+        "exe": "/usr/bin/python3.12",
+        "argv_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+      }
+    }
+  }
+}

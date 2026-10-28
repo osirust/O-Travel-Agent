@@ -1,0 +1,162 @@
+{
+  "format": "otravel.final_clean_compose.v1",
+  "status": "CORE_DELIVERY_PASS",
+  "git_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "expected_package_sha256": "34a1cf1f7adedbf6311a6983340982283df39a4448363cca7a21b3e26c3ab0af",
+  "package_file_count": 93,
+  "project": "otravel_clean_a09da2a0dedb",
+  "web_url": "http://127.0.0.1:18084",
+  "backend_url": "http://127.0.0.1:18085",
+  "master_credentials_read": false,
+  "real_llm_or_tour_credentials": false,
+  "old_preview_or_native8084_modified": false,
+  "checks": [
+    {
+      "id": "exact_git_package_pin",
+      "status": "PASS"
+    },
+    {
+      "id": "empty_public_env_example",
+      "status": "PASS"
+    },
+    {
+      "id": "app_loopback_port",
+      "status": "PASS"
+    },
+    {
+      "id": "web_loopback_port",
+      "status": "PASS"
+    },
+    {
+      "id": "postgres_not_published",
+      "status": "PASS"
+    },
+    {
+      "id": "all_real_service_credentials_absent",
+      "status": "PASS"
+    },
+    {
+      "id": "own_db_password_from_private_env",
+      "status": "PASS"
+    },
+    {
+      "id": "host_gateway_config_present",
+      "status": "PASS"
+    },
+    {
+      "id": "fresh_owned_three_services_one_volume",
+      "status": "PASS"
+    },
+    {
+      "id": "app_uid_nonroot10001",
+      "status": "PASS"
+    },
+    {
+      "id": "all_container_healthchecks_ready",
+      "status": "PASS"
+    },
+    {
+      "id": "backend_health_and_no_supplier_booking",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend_static_html",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend_bundled_assets_present",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend_asset_0",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend_asset_1",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend_api_proxy_health",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend_api_v1_proxy",
+      "status": "PASS"
+    },
+    {
+      "id": "keyless_error_is_structured_and_keeps_state",
+      "status": "PASS"
+    },
+    {
+      "id": "explicit_demo_form_ready_after_keyless_error",
+      "status": "PASS"
+    },
+    {
+      "id": "typed_form_rebuilds_one_revision",
+      "status": "PASS"
+    },
+    {
+      "id": "current_demo_price_preview",
+      "status": "PASS"
+    },
+    {
+      "id": "explicit_one_booked_demo_order",
+      "status": "PASS"
+    },
+    {
+      "id": "identical_confirmation_is_idempotent",
+      "status": "PASS"
+    },
+    {
+      "id": "exactly_one_durable_demo_order",
+      "status": "PASS"
+    },
+    {
+      "id": "trip_owner_version_survive_restart",
+      "status": "PASS"
+    },
+    {
+      "id": "one_order_survives_restart",
+      "status": "PASS"
+    },
+    {
+      "id": "no_model_or_vendor_http_attempts_in_keyless_demo_phase",
+      "status": "PASS"
+    },
+    {
+      "id": "source_package_unchanged_by_build_and_lifecycle",
+      "status": "PASS"
+    },
+    {
+      "id": "only_owned_stack_and_volume_removed",
+      "status": "PASS"
+    }
+  ],
+  "git_archive_sha256": "32caebc34a2b093428c7bc8427ab610aa934eaa0ddb9200a99e7dfc1770cf289",
+  "initial_command": [
+    "docker",
+    "compose",
+    "up",
+    "--build"
+  ],
+  "parameters_source": "COMPOSE_ENV_FILES=private.env; uniqueCOMPOSE_PROJECT_NAME",
+  "real_model_http": 0,
+  "real_tour_http": 0,
+  "demo_orders": 1,
+  "started_at_utc": "2026-10-28T14:26:58.057082+00:00",
+  "finished_at_utc": "2026-10-28T14:27:57.904386+00:00",
+  "checked_at_utc": "2026-10-28T14:34:16.179842+00:00",
+  "scope": "EXACT_GIT_ARCHIVE_FRESH_THREE_SERVICE_ONE_COMMAND_KEYLESS_DELIVERY",
+  "own_resources_removed": true,
+  "automatic_start_denial": false,
+  "private_report_sha256": "db7175863866263268a52fa44171127ef227f490051f33ac33e2f6a01622d2f4",
+  "private_one_command_log_sha256": "44c40c3989f99fcc91f503f9476db738290746f6c4f3d448ead83ee84d953800",
+  "qualifier_sha256": "ae65554e8d8fa876a868c679e0d4409bb1a68959196e01a7e8533dea13f8a6d2",
+  "limitations": [
+    "Different isolated host ports preserve important existing host8080; default8080 is documented Compose mapping, not this host test.",
+    "HTML/assets/proxy HTTP checks are not a new rendered browser/photo QA.",
+    "KeylessDEMO/forms and one idempotent local order are qualified; no actual model or tourism API credential was present.",
+    "Optional external unknown-model synthetic HTTP transport proof is separate and never called model inference.",
+    "Dependency/OS/source-wide security qualification is outside this functional receipt."
+  ]
+}

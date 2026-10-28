@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-COUNTRY-LITERAL-LEXICON-001",
+  "status": "PURE_FOUNDATION_TESTED_ROLE_INTEGRATION_OPEN",
+  "files_sha256": {
+    "otravel/country_lexicon.py": "7f778a640034c7df03f281edf391e476ac569b254c93b2d9c161a37cbec8049e",
+    "otravel/data/cldr_territories_ru_en.json": "74dd233f299cb6f5f3a620dd53f62d1a778aff4bb4799872725b384109eb5fa4",
+    "otravel/data/UNICODE-CLDR-LICENSE.txt": "220ba0e1c43b99530d2d5bdb892a99dca0989414f51ab695ecd90163eaa1ec3b",
+    "otravel/data/CLDR-ATTRIBUTION.md": "238763dd469dc9596e0965d5ad9cd05b1e0a087bc57911801e738571e6ba2e99",
+    "tests/test_country_lexicon.py": "d150c73d510c538b27765ee9fc94cc66058fef1fbc2a818321daade862ffc4a5"
+  },
+  "source": {
+    "repository": "unicode-org/cldr-json",
+    "commit": "7d2b9cb11cec08f4d333ad73209deb3df0711c3b",
+    "license": "Unicode-3.0",
+    "license_file": "UNICODE-CLDR-LICENSE.txt",
+    "selection": "Current RU/EN two-letter territory labels with CLDR alpha3 and numeric code below900; exactly249 entries. No macroregions, deprecated-only or reserved codes.",
+    "source_files": {
+      "ru": {
+        "url": "https://raw.githubusercontent.com/unicode-org/cldr-json/7d2b9cb11cec08f4d333ad73209deb3df0711c3b/cldr-json/cldr-localenames-full/main/ru/territories.json",
+        "sha256": "305ba1f9eecb1b0151ab081a111aaa8a5898d38c9d57bfbfa125734e508a2389"
+      },
+      "en": {
+        "url": "https://raw.githubusercontent.com/unicode-org/cldr-json/7d2b9cb11cec08f4d333ad73209deb3df0711c3b/cldr-json/cldr-localenames-full/main/en/territories.json",
+        "sha256": "1326fb3bcdf8b8cf63df73ea02ea7f8bf7a8362cbb60bd12bcdb53f3ad22bf04"
+      },
+      "mapping": {
+        "url": "https://raw.githubusercontent.com/unicode-org/cldr-json/7d2b9cb11cec08f4d333ad73209deb3df0711c3b/cldr-json/cldr-core/supplemental/codeMappings.json",
+        "sha256": "e046ac4c62c07f0949cc02a55fe55d4f0a1817d7d5c9b977a77e9b8298cd46c7"
+      },
+      "license": {
+        "url": "https://raw.githubusercontent.com/unicode-org/cldr-json/7d2b9cb11cec08f4d333ad73209deb3df0711c3b/LICENSE",
+        "sha256": "220ba0e1c43b99530d2d5bdb892a99dca0989414f51ab695ecd90163eaa1ec3b"
+      }
+    }
+  },
+  "iso_territory_count": 249,
+  "verification": {
+    "tests": 31,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 0.996,
+    "junit": ".local/evaluation/after80-20261027/country-lexicon-final.xml",
+    "ruff": "PASS"
+  },
+  "contract": "literal_country_mentions(text) -> list[{code,name,span:(original_start,original_end)}]",
+  "facts": [
+    "Unicode official CLDR names, short/variant forms and code mappings pinned to an immutable commit; full license retained",
+    "Numeric/alpha3/current-label intersection yields249 ISO territory codes, excludes macroregions/reserved/deprecated-only labels",
+    "Russian forms are bounded source-label ending rules; full token and longest-name matching, no fuzzy or city guessing",
+    "Nationality/passport/history/quoted/hypothetical/negated clauses are conservatively excluded",
+    "Obvious source/origin countries excluded; uppercase ASCII ISO codes avoid English in/us pronoun collisions",
+    "Ambiguous Georgia without an explicit country cue is not a unique country claim",
+    "Source asset hash checked before use; failure raises CountryLexiconError instead of partial or invented data"
+  ],
+  "execution": {
+    "runtime_network": 0,
+    "travel_http": 0,
+    "llm": 0,
+    "sql": 0,
+    "profile_changes": 0,
+    "state_mutations": 0,
+    "public_source_research": "Official GitHub/Unicode reads only"
+  },
+  "limits": [
+    "A unique mention alone does not bind destination role or authorize state mutation; caller must establish its role from current instruction/pending context",
+    "No universal declension, arbitrary transliteration, typo correction, geo-disambiguation, city coverage, provider availability or independent-country sovereignty inference",
+    "Future source updates must regenerate the data and reviewed hash; resource packaging must include JSON and Unicode license",
+    "Existing answering/coordinator files remain frozen; this receipt does not qualify integrated actual NLU"
+  ]
+}

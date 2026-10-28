@@ -1,0 +1,64 @@
+{
+  "format": "otravel.after80.bulk.calendar-pause-findings.v1",
+  "date": "2026-10-27",
+  "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+  "private_evidence_folder": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5",
+  "findings": [
+    {
+      "id": "HARNESS-004-NONAPPLY-CLAUSE-FALSE-PAUSE-001",
+      "related_prior_id": "HARNESS-004-NONPLACE-HYPOTHETICAL-PAUSE-001",
+      "status": "OPEN_ACTUAL_MODEL_CHANGE_WAIT_CAUSES_HARD_PAUSE",
+      "case_id": "ZAI100-012",
+      "turn": 6,
+      "input": "К поездке ему исполнится восемнадцать. Что ещё нужно уточнить перед изменением состава? Пока ничего не меняй.",
+      "raw_contract": {"speech_act": "CHANGE", "operations": [], "unknowns": [], "control": {"action": "wait"}},
+      "raw_checked_contract_sha256": "1c0ffce77276df9d9de55c6b885874e47495ed4271962e0b41aa8be6d6dcd66a",
+      "actual": "Hard user_pause, no pending question, response requires literal continue. Later explicit composition change, budget change and request for a plan remain queued.",
+      "queued_original_turns": [7, 8, 9],
+      "attribution": "The model mislabeled a question/nonapplication clause as CHANGE+wait. Existing protection for declared ASK/PROPOSE is not proof for this input provenance. Not applying the hypothetical update should not automatically impose a global resume-only barrier unless an explicit pause is requested.",
+      "closure": "Cached/PG preserves trip for the question, avoids a false hard pause and allows the later explicit change. Genuine user pause still persists and requires explicit resume; no implicit/invented resume. Then fresh actual."
+    },
+    {
+      "id": "HARNESS-004-INVALID-CALENDAR-ROLLOVER-001",
+      "related_prior_id": "A80-058-T11-INVALID_CALENDAR_SILENT_NORMALIZATION",
+      "status": "OPEN_ACTUAL_INVALID_LITERAL_SILENT_DATE_MUTATION",
+      "case_id": "ZAI100-017",
+      "turn": 8,
+      "input": "Перенеси только выезд на 31 ноября 2026 года.",
+      "before_checkout": "2026-11-30",
+      "raw_checked_checkout": "2026-12-01",
+      "raw_contract_sha256": "8b5f50d07840c7d4c11e6a65e0234701015d68a40c4364e007b696bbe4a30c81",
+      "checked_contract_sha256": "0e9315c1e4bf139ee14cd0a97d03c7fbc51d80491b63087fc5e65204284607d2",
+      "normalization_note": "date_intake_pending_not_fresh",
+      "actual": "The model rolled an impossible November31 literal to December1, saved the new date/requested_nights6 and performed five search tools without asking the user to correct the date.",
+      "scope": "Explicit date-edit intent on an existing trip with no addressed pending slot. A valid model ISO date does not prove fidelity to the invalid literal.",
+      "closure": "Recognize the impossible current calendar literal, preserve the previous trip and ask for a valid date before source search. Quotes/history/questions remain informational; real explicit valid date edits and ownership stay unchanged. Cached PG plus fresh actual."
+    }
+  ],
+  "new_model_or_tourism_calls_for_audit": 0,
+  "native_or_production_source_changed_by_audit": false,
+  "resource_stop": {
+    "case_id": "ZAI100-017",
+    "turn": 9,
+    "code": "REQUEST_TIMEOUT",
+    "latency_ms": 10090,
+    "quota_exhaustion": "NOT_ESTABLISHED_NOT_429",
+    "original_last_turn_in_case": true,
+    "next_unsubmitted_case": "ZAI100-018",
+    "original_failed_post_repeated": false
+  },
+  "immutable_partial_inventory": {
+    "folder": "/home/aegml/.local/evaluation/after80-a36-combined-inventory-20261027-204046",
+    "sha256": "3b4c1827f645aee6354021281cb9e0adc2c38664c0c8708d527eb5045c839fa5",
+    "observed_cases": 17,
+    "observed_original_inputs": 151,
+    "terminal_run_observations": 148,
+    "queued_case012_inputs": 3,
+    "new_model_calls_in_pilot_and_bulk": 120,
+    "tool_calls": 129,
+    "source_inventory_cases": 80,
+    "source_inventory_inputs": 697,
+    "full_behavioral_status": "INCOMPLETE_ORACLES_NOT_80PASS"
+  }
+}

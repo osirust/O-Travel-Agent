@@ -1,0 +1,20 @@
+{
+  "finding_id": "HARNESS-005-ROUTER50-CALLER-CLAMP-001",
+  "status": "CLOSED_RELATED_ROUTING_TEST_SCOPE_ACTUAL_RETEST_PENDING",
+  "date": "2026-10-27",
+  "source_core_commit": "48096848401b74463f0d2e041524fa6e32fa40b1",
+  "fact": "Controller/Store admitted an explicit50 bound but Harness._extract still clamped the caller to40. The next compound turn stopped locally with MODEL_BUDGET_EXHAUSTED; no external request was made for that turn.",
+  "change": "OpenRouter caller passes min(50, configured bound); default40/Gemini40, durable usage and per-run/free-model guards remain.",
+  "verification": {
+    "junit": ".local/evaluation/after80-20261027/router50-harness-clamp.xml",
+    "tests": 88,
+    "failures": 0,
+    "skipped": 0,
+    "new_routing_cases": ["default40", "explicit50", "oversized caller clamped50"],
+    "gateway": "Actual LLMGateway subclass exercises production class branch; HTTP forbidden and extraction controlled",
+    "external_inference_calls": 0,
+    "native_counter_resets": 0
+  },
+  "original_actual_report_private": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-045719-1c7b732e/report.json",
+  "original_outcome": "One model request admitted before local ceiling blocked the next; existing40 reservations retained"
+}

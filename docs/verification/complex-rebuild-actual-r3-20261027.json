@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-10-27",
+  "status": "ACTUAL_COMPOUND_BLOCKED_TWO_DISTINCT_VALIDATION_FAILURES",
+  "source_package_sha256": "ddc54528e15b02f1d20119120948bfc2fabbef6bcc95e39401b962e83a7707c3",
+  "original_oracles_sha256": "dbc83f9de0675181871a9bc17b603bdd2afd6dc94766258a884529aab49646f4",
+  "additional_age_birthdate_oracles_sha256": "04f1f4d23e4cf266739407d955562da6295197d308d99594495c3aa3dc6a1396",
+  "originals_modified": false,
+  "initial_attempt": {
+    "private_evidence_folder": "/home/aegml/checks/complex-actual-r3-20261027-194302",
+    "report_sha256": "5b897ff5bdbdd73040920019a42184f0e2303cb837c9cd58ae172c9d71b1adaf",
+    "status": "ACTOR_STOPPED_AFTER_FAILED_COMPOUND",
+    "initial_intake_and_preview": "PASS",
+    "user_turns": 2,
+    "model_http_statuses": [200, 400],
+    "source_http_requests": 14,
+    "compound_model_error": "json_validate_failed",
+    "compound_state_version_unchanged": 1,
+    "compound_applied": false,
+    "failure": {
+      "finding_id": "HARNESS-004-GROQ-SAME-BATCH-ROOM-TARGET-001",
+      "status": "OPEN_ACTUAL_WIRE_CONTRACT_FAILURE",
+      "fact": "Модель указала новые комнаты в полных upsert_stay rooms, затем добавила избыточные set_room_members для этих новых комнат. Strict wire enum разрешал set_room_members только для существующих комнат, поэтому Groq отклонил генерацию HTTP 400 до server decoding.",
+      "provider_error_type": "invalid_request_error",
+      "provider_error_code": "json_validate_failed",
+      "failed_generation_bytes": 2758,
+      "failed_generation_applied": false,
+      "guard_outcome": "Отклонение операции вне wire enum корректно; исходное состояние сохранено.",
+      "next_action": "Проверить согласованность подсказок о новых комнатах и схемы существующих целей. Не исполнять failed_generation, не расширять произвольно ownership и не исправлять результат молча вне схемы.",
+      "closure_condition": "Сохранённый rejected output учитывается в проверках контракта; корректный способ создания и назначения новых комнат проходит controlled positive/negative cases и свежий actual compound-прогон."
+    }
+  },
+  "known_failed_supplement": {
+    "private_evidence_folder": "/home/aegml/checks/complex-actual-r3-supplement-20261027-195112",
+    "report_sha256": "d43fcd011fd2655060baaaf43948ed0e0441f25a99b571ab041d743dc140349b",
+    "execution_authority": "Root разрешил ровно одну новую реплику с тем же compound после однозначно завершённого HTTP400 json_validate_failed. Это не повтор HTTP-запроса с неизвестным результатом.",
+    "native_preconditions_before_new_message": {
+      "state_version": 1,
+      "exact_original_state_match": true,
+      "child_age4_absent": true,
+      "orders": 0,
+      "original_native_run_status": "failed",
+      "fresh_client_message_id": true
+    },
+    "new_user_messages": 1,
+    "new_model_http_statuses": [200],
+    "new_source_http_requests": 0,
+    "status": "STOPPED_SERVER_DOMAIN_REJECTION",
+    "error_code": "INVALID_LLM_OPERATION",
+    "validation_stage": "domain",
+    "domain_error_code": "duration_mismatch",
+    "input_tokens": 5790,
+    "output_tokens": 1387,
+    "state_version_after": 1,
+    "state_unchanged": true,
+    "further_retries": 0,
+    "failure": {
+      "finding_id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+      "status": "OPEN_ACTUAL_DOMAIN_DURATION_FAILURE",
+      "raw_contract_sha256": "91f453d0515745c931cd8f1544c878277ab1b23acb55bfad19d2e926c70e1f0d",
+      "fact": "Новый валидный wire ответ содержал ребёнка 4 лет, правильные два номера в каждом городе, бюджет 118000000 minor RUB и выезд из Антальи 19 ноября. В upsert_stay не было requested_nights; сохранилось прежнее значение 4, тогда как даты 13–19 означают 6 ночей. Domain отклонил весь batch.",
+      "before": {
+        "check_in": "2026-11-13",
+        "check_out": "2026-11-17",
+        "requested_nights": 4
+      },
+      "raw_update": {
+        "check_out": "2026-11-19",
+        "requested_nights_key_present": false
+      },
+      "initial_user_explicit_night_count": false,
+      "provenance_note": "Изначальная реплика задавала даты 13–17 ноября. Поле requested_nights=4 добавила модель, а отдельного пользовательского жёсткого требования четырёх ночей не было.",
+      "pure_reproduction": {
+        "artifact": "offline-duration-mismatch-diagnostic.json",
+        "source": "Исходный captured raw batch и исходное состояние из immutable DDC snapshot",
+        "domain_error_code": "duration_mismatch",
+        "input_state_unchanged": true,
+        "new_model_source_database_calls": 0
+      },
+      "next_action": "Корректно согласовывать явно адресованное изменение даты с устаревшей производной длительностью, сохраняя реальные пользовательские duration-ограничения и неоднозначные случаи. Отклонённый batch не применялся.",
+      "closure_condition": "Regression исходного captured batch с проверкой явного города/даты, происхождения длительности и атомарности плюс negatives для настоящего конфликта длительности; затем свежий actual rebuild, поиск для четырёх путешественников, фото, refresh и один simulated order."
+    }
+  },
+  "cumulative_limits_and_outcome": {
+    "actual_model_requests": 3,
+    "max_model_requests_authorized": 4,
+    "actual_source_requests": 14,
+    "max_source_requests_authorized": 64,
+    "confirmed_orders": 0,
+    "new_child_applied": false,
+    "supplier_booking_payment_requests": 0,
+    "failed_generation_applied": false,
+    "local_model_requests": 0,
+    "paid_fallback": false,
+    "runtime_8084_8086_or_vpn_changed": false,
+    "four_person_source_search": "NOT_EXECUTED",
+    "four_person_actual_flight_chronology": "NOT_EXECUTED_NO_NEW_OFFERS",
+    "photos_refresh_order_after_rebuild": "NOT_EXECUTED"
+  },
+  "qualification": "Ни первоначальная HTTP400 попытка, ни supplemental domain failure не упражнили новое post-apply подавление уже удовлетворённого return-date уточнения: выполнение остановилось раньше. Прохождение initial трёхместной поездки не подменяет четырёхместную пересборку и полную приёмку корпуса."
+}

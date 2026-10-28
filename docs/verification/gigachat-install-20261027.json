@@ -1,0 +1,70 @@
+{
+  "status": "RUNNING_LOCAL_BACKEND_EXTERNAL_INFERENCE_UNQUALIFIED",
+  "source_commit": "5f4d0d8a582fe9bcd865da68f83fa1813f99151f",
+  "source_package_sha256": "eed0ad2dd123c4619f0a4c2681f0c501a5e6a0d8c733825958f5db356dc1bef7",
+  "source_archive_sha256": "6c0291b9e18ff76fc0da17e482a4cf0ec7e3dfc882320461fe56a389381e7328",
+  "source": "/home/aegml/projects/otravel-gigachat-20261027",
+  "database": "otravel_gigachat_eval",
+  "port": 8085,
+  "preflight": {
+    "source_absent": true,
+    "port8085_listeners": 0,
+    "database_absent": true,
+    "docker_project": "otravel",
+    "docker_service": "db",
+    "archive_sha256": "6c0291b9e18ff76fc0da17e482a4cf0ec7e3dfc882320461fe56a389381e7328",
+    "archive_files": 640,
+    "source_commit": "5f4d0d8a582fe9bcd865da68f83fa1813f99151f",
+    "unsafe_members": 0,
+    "symlinks": 0,
+    "master_selected_DB_fields_only": true,
+    "management_helper_identity": {
+      "scripts/gigachat_backend.py": {
+        "working_sha256": "48043ed97acbedf981e903d0146929e927cfb31ed7aac15395d716df89a4508b",
+        "committed_sha256": "48043ed97acbedf981e903d0146929e927cfb31ed7aac15395d716df89a4508b",
+        "same_bytes_after_python_universal_newlines_only": true
+      },
+      "scripts/local_backend.py": {
+        "working_sha256": "ceff3395c431b0af31f08ca4dadc22fcbed35f6b3e8cc0733acb64297caad689",
+        "committed_sha256": "aef1fa0d62707bb48e4f502839fb643ab22e2cc5b70be26e0acae7f41b721ebf",
+        "same_bytes_after_python_universal_newlines_only": true
+      }
+    }
+  },
+  "public_ca_sha256": "936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504",
+  "master_update": {
+    "changed_public_fields": [
+      "GIGACHAT_CA_FILE"
+    ],
+    "other_fields_opaque_bytes_preserved": true,
+    "owner_uid_preserved": true,
+    "group_gid_preserved": true,
+    "mode": "0600",
+    "secret_values_recorded": false
+  },
+  "startup_model_calls": 0,
+  "OAuth_calls_by_installer_or_controller": 0,
+  "model_list_calls": 0,
+  "generation_calls": 0,
+  "tourism_API_calls": 0,
+  "TLS_probes": 0,
+  "private_folder": "/home/aegml/checks/gigachat-install-5f4d0d8-20261027-eol-verified-attempt2",
+  "runtime_evidence": "docs/verification/gigachat-backend-20261027.json",
+  "other_ports_or_databases_mutated": false,
+  "limits": [
+    "Local RUNNING does not qualify external TLS/auth/model/balance/inference.",
+    "No change to8084 or its Native source/profile/database by this installer."
+  ],
+  "windows_loopback_checks": {
+    "/health": {
+      "status": 200,
+      "bytes": 83
+    },
+    "/debug": {
+      "status": 200,
+      "bytes": 3630
+    }
+  },
+  "windows_check_provider_auth_calls": 0,
+  "windows_check_generation_calls": 0
+}

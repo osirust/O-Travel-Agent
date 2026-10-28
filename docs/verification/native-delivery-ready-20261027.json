@@ -1,0 +1,45 @@
+{
+  "status": "NATIVE8084_READY_FOR_OWNER_DIALOGUES",
+  "code_commit": "6ea3d110560a0d4c95ce0021687c7f5505147db6",
+  "functional_checkpoint_commit": "cced386115bc9d32106f1cb791d3f3381c46372d",
+  "url": "http://localhost:8084/debug",
+  "bind": "127.0.0.1",
+  "database": "otravel_zai_eval",
+  "source": "/home/aegml/projects/otravel-after80-20261026",
+  "package_sha256": "c07b46abbf1599eac299078d497965a98dfab95ad4f7ba80d2e7244a566ea11f",
+  "exact_start_manifest_matches": true,
+  "manager": ".local/after80_world_backend.py",
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "transport_version": 3,
+  "dynamic_geography_enabled": true,
+  "local_model_calls": 0,
+  "paid_fallback": false,
+  "functional_full_suite": {
+    "tests": 6448,
+    "failures": 0,
+    "skipped": 0,
+    "junit": ".local/evaluation/after80-20261027/full-delivery-prefrontend-r5-initial.xml"
+  },
+  "post_full_readiness_metadata_patch": {
+    "scope": "One provider_status version field; no extraction/search/checkout logic change",
+    "tests": 58,
+    "failures": 0,
+    "junit": ".local/evaluation/after80-20261027/world-transport-status-fix.xml"
+  },
+  "native_probe": {
+    "health": 200,
+    "debug": 200,
+    "reported_transport_version": 3,
+    "country_AR_city_question": true,
+    "country_model_calls": 0,
+    "orders_created": 0,
+    "private_folder": "/home/aegml/checks/world-native-ready-20261027-181916"
+  },
+  "credential_metadata_unchanged": true,
+  "supplier_booking": false,
+  "payments": 0,
+  "old_promotion_and_status_failures_retained": true,
+  "actual_r5_scope": "See world-single-city-actual-r5-20261027.json; one city/room/adult, MIXED sandbox+DEMO",
+  "full80_106_language_acceptance": "OPEN"
+}

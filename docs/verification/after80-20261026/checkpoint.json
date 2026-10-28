@@ -1,0 +1,397 @@
+{
+  "status": "CONTROLLED_CHECKPOINT_BEFORE_ACTUAL_REPLAY",
+  "recorded_at": "2026-10-26T11:56:38.239015+00:00",
+  "source_dialogues_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "reviewed_dialogues": 80,
+  "reviewed_user_turns": 697,
+  "original_observed_model_calls": 597,
+  "excluded_original_ids": [
+    "ZAI100-081",
+    "ZAI100-082"
+  ],
+  "reviewed_cases": {
+    "ZAI100-001": {
+      "turn_count": 11,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-002": {
+      "turn_count": 11,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-003": {
+      "turn_count": 10,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-004": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-005": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-006": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-007": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-008": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-009": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-010": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-011": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-012": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-013": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-014": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-015": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-016": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-017": {
+      "turn_count": 9,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-018": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-019": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-020": {
+      "turn_count": 8,
+      "audit_file": "audit-001-020.json"
+    },
+    "ZAI100-021": {
+      "turn_count": 9,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-022": {
+      "turn_count": 9,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-023": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-024": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-025": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-026": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-027": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-028": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-029": {
+      "turn_count": 10,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-030": {
+      "turn_count": 9,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-031": {
+      "turn_count": 9,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-032": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-033": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-034": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-035": {
+      "turn_count": 10,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-036": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-037": {
+      "turn_count": 9,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-038": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-039": {
+      "turn_count": 8,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-040": {
+      "turn_count": 9,
+      "audit_file": "audit-021-040.json"
+    },
+    "ZAI100-041": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-042": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-043": {
+      "turn_count": 10,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-044": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-045": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-046": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-047": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-048": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-049": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-050": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-051": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-052": {
+      "turn_count": 11,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-053": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-054": {
+      "turn_count": 9,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-055": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-056": {
+      "turn_count": 10,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-057": {
+      "turn_count": 8,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-058": {
+      "turn_count": 13,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-059": {
+      "turn_count": 11,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-060": {
+      "turn_count": 9,
+      "audit_file": "audit-041-060.json"
+    },
+    "ZAI100-061": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-062": {
+      "turn_count": 10,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-063": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-064": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-065": {
+      "turn_count": 10,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-066": {
+      "turn_count": 9,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-067": {
+      "turn_count": 10,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-068": {
+      "turn_count": 9,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-069": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-070": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-071": {
+      "turn_count": 9,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-072": {
+      "turn_count": 9,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-073": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-074": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-075": {
+      "turn_count": 10,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-076": {
+      "turn_count": 9,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-077": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-078": {
+      "turn_count": 10,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-079": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    },
+    "ZAI100-080": {
+      "turn_count": 8,
+      "audit_file": "audit-061-080.json"
+    }
+  },
+  "raw_contracts_in_export": false,
+  "attribution_limit": "State/reply observations are confirmed; model-vs-grounding cause is qualified where raw contracts are absent.",
+  "controlled_tests": {
+    "passed": 2477,
+    "failed": 0,
+    "skipped": 0,
+    "evidence": "full-integrated-final1.xml",
+    "real_model_calls": 0,
+    "real_supplier_http": 0
+  },
+  "working_package_file_sha256": {
+    "otravel/__init__.py": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a",
+    "otravel/answering.py": "95930e8a21ee6ad32fad0066a6f392478af137179f404f296835c5ce83369e07",
+    "otravel/api.py": "e649e6f7ca726217621a2f0aa4db359a799169471b638c427d14fd824413730b",
+    "otravel/clarifications.py": "8717c520130d41b84c8090cd8afbd6f9585242be251a5cca449a8c72da71f3ac",
+    "otravel/config.py": "6f5c122777ca848783556d2bac320edca55891ab5226ae4c7d206b5102b798fb",
+    "otravel/conversational.py": "7cc44e7bb0bfdf3c7e9ad6e8d50ce7f958c3d55d3c906fd5d91ab9d643035228",
+    "otravel/date_slots.py": "ade1429adfb254754169c20da00a234079dbb160dcbf9f5f4a7c9f4a19373c89",
+    "otravel/domain.py": "0c6514ab35c8d146af01999a72976cd27254fc4d10f989bb4e012d11960b2123",
+    "otravel/geography.py": "080c064d1686b8cd7f3780855655c4e94840ff098e84b8dfc83b58b21c3c67f5",
+    "otravel/group_semantics.py": "0531844b8ff279da8d81a9eab6681d1a5e943d0484ecb4627a4946f895faed57",
+    "otravel/harness.py": "151d2101fbbd2b3afa513e6920a8477f4885234bd1601589c5e57720186b9660",
+    "otravel/history.py": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb",
+    "otravel/intent_grounding.py": "4dfe021717c5203c8f62bf238d413f83aed5b473d5c01b12b00c93279bd2bfec",
+    "otravel/inventory.py": "dddfa4053557e07f83b5abc6f23e94109347b5e41eaba4b42e83d2b513b53935",
+    "otravel/llm_contract.py": "86b800503576ca663db824e4878ceb5d3de43ebff747d6ad6be5361eccac8a55",
+    "otravel/money.py": "72785b2fd9228e25c0b44d2e7c799d25cf9be3bd4cb380530737a14af5ecac4d",
+    "otravel/observability.py": "1d4fa461551248c4355013b9c4b8288641946183781c919a1d08001a2cffb3be",
+    "otravel/orchestrator.py": "f877b8c68226d8f3098f66279093e4075c3efc95995611a38e0bc82f28f11f50",
+    "otravel/planning.py": "5fa7c1b79768f560fe3d86c0cce2c2805262f7e3d5c23ac77e0c98b0d803f986",
+    "otravel/provider_facts.py": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55",
+    "otravel/providers.py": "0574e12c6bca0f61c097cf64ddbcc9c8d28b68568e7e22b801d9384bd596c3e8",
+    "otravel/route_intake.py": "73ea603b9eb0acd243d23b7eba6ed532bf7d2e7bd220d72eb6c152fc5da83dfd",
+    "otravel/store.py": "947f5201a38d7756804843358cedd9d3766d68fbb24cdc29b8db35904cf0d8f1",
+    "otravel/travel_runtime.py": "5a79b86140bf11b80f0dd8a128076d93bdb2767aa21b88460d91d30e9b71d05d",
+    "otravel/trip_answers.py": "29a023ec8a734e897b54571685964fa30e1e9eb47e18dd2cdf169be4a1b86c29"
+  },
+  "implemented_scopes": [
+    "money and exact minor units",
+    "role-bound geography and current-message intent",
+    "one-way/open-jaw routes",
+    "exact preference cancellation",
+    "atomic group membership/separation",
+    "room-scoped fare requirements",
+    "omitted removal guard",
+    "nonstop response evidence",
+    "model-selected canonical answer sections",
+    "durable answer-role budget/CAS/quote barriers",
+    "HYBRID policy for new trips with explicit nationality",
+    "static ID cache/travel-429 cooldown"
+  ],
+  "actual_replay_status": "NOT_STARTED",
+  "actual_80_pass": false,
+  "not_claimed": [
+    "all possible language input fixed",
+    "universal model understanding",
+    "live/bookable full trip",
+    "independent supplier comparison",
+    "room-specific actual rate evidence mapping",
+    "native EUR flight converted to RUB without explicit FX",
+    "production booking or payment"
+  ],
+  "next": "Commit safe checkpoint, deploy new C-backed 8084, run strong API pilot and actual HYBRID conversations."
+}

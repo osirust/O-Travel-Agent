@@ -1,0 +1,87 @@
+{
+  "id": "HARNESS-004-FINAL40-OWNED-ASK-DISCARD-040-001",
+  "created_at_utc": "2026-10-28T17:14:26.900411+00:00",
+  "scope": "One fresh room-target clarification re-ask; controlled renderer, pure boundaries and isolated PostgreSQL/ASGI. Not universal reply support or new actual model/source qualification.",
+  "status": "RELATED_CONTROLLED_PASS_GLOBAL_FINAL_SUITE_PENDING",
+  "source_case": "FINAL40-040",
+  "source_file_sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+  "source_pointer": "/turns/5",
+  "checked_pointer": "/turns/5/source_events/4/payload/structured_contract/value",
+  "user_sha256": "848e983bacfb2127bef2d419856352d1bc4a6e411844468f4ec9076e491599e2",
+  "original_observed_reply": [
+    "Поездка и показанные варианты не изменены."
+  ],
+  "expected_reply": "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание.",
+  "change": "A narrow informational no-op path repeats only the current exact server-owned room-target question. It never displays the model reply. A fresh matching session/trip/version/field/context, matching checked unknown and a current allocation follow-up are required. Pending, state and version remain unchanged.",
+  "files": {
+    "otravel/conversational.py": {
+      "sha256": "e196e5d5e459dbe55c774e147c7d0012677ee4e8c2a66a7cb3fa320bfbf028e3",
+      "lf_sha256": "e196e5d5e459dbe55c774e147c7d0012677ee4e8c2a66a7cb3fa320bfbf028e3"
+    },
+    "otravel/harness.py": {
+      "sha256": "fdfa81df421db19393a329028e467676fdb5cff121344e58ec0014eb1c29bb31",
+      "lf_sha256": "7ef439937cc526a1416eef267378fc6e233f78a2091571fb8999850de886c8a7"
+    },
+    "fixtures/regression/final40-owned-room-reask-20261028.json": {
+      "sha256": "7e3ede18051cd9a4cdcac2a07e3f63a095ade513f4db62af47777e48f2ddd677",
+      "lf_sha256": "7e3ede18051cd9a4cdcac2a07e3f63a095ade513f4db62af47777e48f2ddd677"
+    },
+    "tests/test_final40_owned_room_reask.py": {
+      "sha256": "e11e5fbb7affb5d15d974980a9b22c6c788e211b8f89334040687004cdebab8e",
+      "lf_sha256": "e11e5fbb7affb5d15d974980a9b22c6c788e211b8f89334040687004cdebab8e"
+    },
+    "tests/test_final40_owned_room_reask_pg.py": {
+      "sha256": "13360bf73c73ea379b272782dda00ab0ef444e9cd1dd34e14b9ac529f3fb3214",
+      "lf_sha256": "13360bf73c73ea379b272782dda00ab0ef444e9cd1dd34e14b9ac529f3fb3214"
+    }
+  },
+  "related": {
+    "path": ".local/evaluation/final40-owned-room-reask-related-20261028.xml",
+    "sha256": "75ae507788d7eaabe4d7807141a19cde303bd3a7d25568aad1d471361ce61638",
+    "tests": 155,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pure": {
+    "path": ".local/evaluation/final40-owned-room-reask-pure-20261028.xml",
+    "sha256": "348e805af38b20f3dbb5f097e8971fc04f9ec0cebc4b55a1e2f84545416007d8",
+    "tests": 22,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "postgresql_api": {
+    "path": ".local/evaluation/final40-owned-room-reask-pg-20261028.xml",
+    "sha256": "622e3362e408ef20a2ce31a74efb934a9de8bb7d8a3305299de037f867ebfd5d",
+    "tests": 1,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_tests": 23,
+  "new_pg_tests": 1,
+  "verified": [
+    "Fresh source case repeats the existing fixed question instead of generic no-change.",
+    "PG preserves the complete trip/status/pending/version and all orders; no supplier lookup.",
+    "A controlled unsafe model reply with invented price/purchase claims is not displayed.",
+    "Stale/bool/foreign/paused slots, another field/question, changed room count or a new budget cannot authorize this re-ask."
+  ],
+  "external_model_http": 0,
+  "external_supplier_http": 0,
+  "live_runtime_db_access": 0,
+  "real_orders": 0,
+  "payments": 0,
+  "private_receipt_loss": {
+    "original_red_receipt_recovered": false,
+    "original_expected_sha256": "f58c0fc76c4ed6a2c86f101897134cb6d6eff5051ddaafdbc494e961354dd0da",
+    "fact": "The private controlled probe accidentally overwrote its RED file on a GREEN rerun. Original failing tool output and unchanged captured FINAL40 source/checked pointers remain. The overwritten GREEN was renamed; it is not represented as the original RED file.",
+    "status_record": ".local/evaluation/final40-owned-ask-discard-20261028/RECEIPT_STATUS.json"
+  },
+  "limits": [
+    "Other general ASK/PROPOSE answers are unchanged.",
+    "Existing stored clarification remains exact; no new question role or transition is introduced.",
+    "The source case was replayed after extraction with controlled adapter output, not through a fresh real LLM.",
+    "The parent owns combined source freeze/full-suite/installation and publication."
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-27",
+  "status": "GROQ_GENERATION_REACHABLE_SOME_CONTRACT_FAILURE_NOT_DIALOGUE_ACCEPTANCE",
+  "source_commit": "b9343c0c6459c6d34e8605371c955de95da2f73d",
+  "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+  "scope": "One explicit new no-apply Harness._extract probe per changed configuration, own claimed durable run; original session unchanged. No resends or provider fallback.",
+  "attempts": [
+    {
+      "report_sha256": "67d161b58dfbc02e08377cb8311d22e734c083478f4ec3248d9c3619fd91e80b",
+      "private_report": "/home/aegml/checks/groq-diagnostic-1024-20261027-d50219df/report.json",
+      "status": "ACTUAL_1024_STRUCTURED_EXTRACTION_PASS",
+      "http_status": 200,
+      "http_attempts": 1,
+      "model_starts": 1,
+      "wire_output_limit": 1024,
+      "wire_reasoning_effort": "none",
+      "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+      "schema_utf8_bytes": 7760,
+      "llm": {
+        "provider": "groq",
+        "model": "qwen/qwen3.8-27b",
+        "latency_ms": 861,
+        "usage": {
+          "input_tokens": 4164,
+          "output_tokens": 114,
+          "total_tokens": 4278
+        },
+        "request_metrics": {
+          "system_utf8_bytes": 11724,
+          "context_utf8_bytes": 7452,
+          "schema_utf8_bytes": 7760,
+          "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+          "prompt_sha256": "3aaaec7a2d8ad42134cc583db8e0083fccd57e7664a492c53bd311b2073f36de"
+        },
+        "attempts": [
+          {
+            "provider": "groq",
+            "model": "qwen/qwen3.8-27b",
+            "latency_ms": 861,
+            "usage": {
+              "input_tokens": 4164,
+              "output_tokens": 114,
+              "total_tokens": 4278
+            },
+            "request_metrics": {
+              "system_utf8_bytes": 11724,
+              "context_utf8_bytes": 7452,
+              "schema_utf8_bytes": 7760,
+              "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+              "prompt_sha256": "3aaaec7a2d8ad42134cc583db8e0083fccd57e7664a492c53bd311b2073f36de"
+            },
+            "outcome": "response"
+          }
+        ]
+      },
+      "error_code": null,
+      "diagnostic_state_unchanged": true,
+      "original_session_unchanged": true,
+      "diagnostic_operations_applied": false,
+      "tools": 0,
+      "orders": 0
+    },
+    {
+      "report_sha256": "ca64d23f0d201206fa91cf9ad0bf0ee68d7c72c8f51fee32be0fd5ce56412346",
+      "private_report": "/home/aegml/checks/groq-diagnostic-2048-20261027-8642de6c/report.json",
+      "status": "ACTUAL_2048_PROVIDER_FAILURE",
+      "http_status": 200,
+      "http_attempts": 1,
+      "model_starts": 1,
+      "wire_output_limit": 2048,
+      "wire_reasoning_effort": "none",
+      "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+      "schema_utf8_bytes": 7760,
+      "llm": {
+        "provider": "groq",
+        "model": "qwen/qwen3.8-27b",
+        "attempts": [
+          {
+            "provider": "groq",
+            "model": "qwen/qwen3.8-27b",
+            "code": "INVALID_LLM_RESPONSE",
+            "latency_ms": 1182,
+            "request_metrics": {
+              "system_utf8_bytes": 11724,
+              "context_utf8_bytes": 7452,
+              "schema_utf8_bytes": 7760,
+              "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+              "prompt_sha256": "1400526773d0b841e9c42a2a588d5a639467257bc85f24c03d1bed4c209863dc"
+            },
+            "usage": {
+              "input_tokens": 4164,
+              "output_tokens": 262,
+              "total_tokens": 4426
+            },
+            "outcome": "failed"
+          }
+        ]
+      },
+      "error_code": "INVALID_LLM_RESPONSE",
+      "diagnostic_state_unchanged": true,
+      "original_session_unchanged": true,
+      "diagnostic_operations_applied": false,
+      "tools": 0,
+      "orders": 0
+    }
+  ],
+  "interpretation": [
+    "Both receivedHTTP200; the documented instruct parameter permits this specific generation request.",
+    "1024 passed structural validation only; factual completeness and reply quality are not qualified.",
+    "2048 reachedHTTP200 but failed the basic extraction-envelope contract.",
+    "Original429 cause remainsUNKNOWN; changed output cap and mode plus time do not prove a unique cause.",
+    "No full natural dialogue or source-search path was exercised by these no-apply diagnostics."
+  ],
+  "primary_sources": [
+    "https://console.groq.com/docs/model/qwen/qwen3.8-27b",
+    "https://console.groq.com/docs/rate-limits"
+  ],
+  "new_model_calls": 2,
+  "actual_travel_HTTP": 0,
+  "supplier_booking_calls": 0,
+  "payments": 0,
+  "local_inference": 0
+}

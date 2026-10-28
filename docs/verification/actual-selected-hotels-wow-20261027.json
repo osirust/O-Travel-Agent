@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-27",
+  "status": "ACTUAL_RELATED_SELECTION_AND_WOW_TRANSITIONS_PASS",
+  "commit": "b9343c0c6459c6d34e8605371c955de95da2f73d",
+  "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+  "model": "dots-studio/dots-3-note-preview:free",
+  "provider": "openrouter",
+  "model_calls": 2,
+  "new_generation_attempts_each": 1,
+  "local_inference": 0,
+  "paid_calls": 0,
+  "supplier_booking_calls": 0,
+  "payments": 0,
+  "findings_closed_related_actual": [
+    "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001",
+    "HARNESS-004-SELECTED-HOTEL-KEEP-PIN-001"
+  ],
+  "evidence": [
+    {
+      "private_report": "/home/aegml/checks/one-wow-transition-1-189b1864/report.json",
+      "report_sha256": "b8f11fe0df65041750412e90d993fbb0cf5ce50ce016e910cfc6505813bf1fe9",
+      "status": "ACTUAL_ONE_TURN_WOW_READY_PASS",
+      "checks": {
+        "completed": true,
+        "ready_status": true,
+        "pending_none": true,
+        "new_plans": true,
+        "budget380000": true,
+        "party": true,
+        "first_selected_hotel_kept": true,
+        "second_hotel_changed": true,
+        "checkout_and_return19": true,
+        "room_ids_order_kept": true,
+        "breakfast_constraints_kept": true,
+        "child_second_family_room": true,
+        "orders0": true
+      },
+      "model_calls": 1,
+      "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+      "scope": "Actual single LLM/harness transition after explicit typed pre-turn state bootstrap. Not a new whole natural conversation.",
+      "run.json_sha256": "d0960670a9b23245577add0041cbc038231951bc9dcb124573c3d581c64fef57"
+    },
+    {
+      "private_report": "/home/aegml/checks/selected-third-actual-7ab280dc/report.json",
+      "report_sha256": "4b82e31258f62fc6d39317a67d5ef4f6aefb9d74ce7106571dc72c6f0ed77a6e",
+      "status": "ACTUAL_SELECTED_THIRD_PLAN_REFERENCE_PASS",
+      "checks": {
+        "completed": true,
+        "selected_first_hotel_not_first_card": true,
+        "second_hotel_from_requested_card": true,
+        "party_budget_unchanged": true,
+        "dates_rooms_unchanged": true,
+        "ready_without_pending": true,
+        "plans_available": true,
+        "orders0": true
+      },
+      "model_calls": 1,
+      "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+      "scope": "Typed DEMO requirements and explicit UI preview plan3; one actual model edit. No whole-dialogue or real-price claim.",
+      "run.json_sha256": "5550243bcb775b8b4166c16de21e8131a684a00a898632e5c55bf5f9f7098b73"
+    }
+  ],
+  "limitations": [
+    "Typed pre-turn/setup requirements; not two whole fresh natural dialogues.",
+    "DEMO proposals; not supplier price or live availability qualification.",
+    "Full80/106 and optional-question actual repetition remain open.",
+    "Original whole-dialogue and omitted-pin FAIL reports remain unchanged."
+  ]
+}

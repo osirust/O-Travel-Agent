@@ -1,0 +1,98 @@
+{
+  "format": "otravel.dynamic_transfer_demo.v1",
+  "finding_id": "HARNESS-001-VERIFIED-PLACE-DEMO-TRANSFER-001",
+  "status": "IMPLEMENTED_CONTROLLED_SEARCH_REFRESH_CONFIRM_PASS_ACTUAL_ACCEPTANCE_SEPARATE",
+  "policy_authorization": "Existing owner-approved HYBRID live/demo mixing and synthetic catalogue; no new implicit real service or zero-priced exclusion.",
+  "scope": {
+    "eligible_mode": "HYBRID",
+    "requires_existing_demo_fallback_true": true,
+    "requires_exact_selected_city_ref": true,
+    "requires_complete_valid_external_hotel_and_flight_components": true,
+    "fallback_component_kind": "transfer_only",
+    "world_demo_hotels_or_flights_enabled": false,
+    "new_domain_or_llm_fields": false,
+    "source_type": "DEMO",
+    "provider": "demo_place_transfer",
+    "catalogue": "verified_place_transfer_demo_v1",
+    "price_kind": "synthetic",
+    "notice": "Демонстрационный трансфер; стоимость и наличие вымышлены. Трансфер поставщика не бронируется."
+  },
+  "finite_rule": {
+    "native_currency": "RUB",
+    "per_passenger_minor": 40000,
+    "per_supported_pet_minor": 100000,
+    "pet_limit_kg": 20,
+    "seats_per_synthetic_vehicle": 4,
+    "vehicle_count": "ceil(canonical_traveler_count/4)",
+    "max_travelers": "existing engineering bound10",
+    "one_offer_per_exact_stay": true,
+    "mandatory_supplier_fees_removed_or_satisfied_by_demo": false,
+    "unknown_hard_constraints_satisfied": false
+  },
+  "binding": [
+    "trip_id/state_version",
+    "stay_id",
+    "place_id/place_ref_version/place_ref_sha256/country_iso2",
+    "check_in and check_out",
+    "all canonical traveler IDs/types/ages",
+    "vehicle count/capacity",
+    "explicit integer price breakdown"
+  ],
+  "trust_boundary": "The catalogue is pure and does not grant real geography authority. Public selection and current catalogue admission remain server-owned; no HTTP occurs in this generator.",
+  "refresh_path": "API preview validate_quote -> external component refresh + deterministic reprice_plan for DEMO -> assemble_plan exact catalogue -> validate_quote -> new quote -> explicit idempotent simulated confirm.",
+  "verified_controls": [
+    "Only an otherwise complete transfer gap is filled; failed hotels, flight identity, unknown fees/allocation or unsupported hard criteria stay blocking.",
+    "All transfer prices participate in the hard whole-trip budget; native RUB amounts are preserved and foreign budget projection requires reference FX.",
+    "US city named Москва cannot use name-based Russian DEMO hotel or flight snapshots.",
+    "Two homonymous physical references retain different place/country identities.",
+    "One offer covers each eligible stay, all passengers exactly once and sufficient explicitly synthetic vehicle capacity.",
+    "Foreign dates/stays/passengers/place/country/price/capacity changes are rejected as unknown DEMO snapshots.",
+    "Synthetic provider/catalogue/ID namespace cannot be relabelled SANDBOX/LIVE with fabricated supplier flags and TTL.",
+    "Policy false preserves the old incomplete branch and a policy revision invalidates old quote consent.",
+    "A real supplier fee-evidence loss during refresh blocks quote and old confirmation; the synthetic transfer does not repair it.",
+    "Search, refresh and repeated simulated confirmation create exactly one BOOKED_DEMO order without a supplier booking."
+  ],
+  "files": {
+    "otravel/inventory.py": "27b808499ecd40fe7268ea98f1d2e2c1b04b8ac4c2f594ebaee6c3da323204fa",
+    "otravel/planning.py": "b2d1a1ba78ef3c9867fedf4f794c395a5c4faea9ae96f5c10df50836722a5246",
+    "otravel/orchestrator.py": "f1002f01b02445dcb3c8301078ef94c1e7ab5d34562e51ba9df383e2510c85de",
+    "tests/test_dynamic_transfer_demo.py": "f8e5f9e585f916bb836a6bd9dfca7919612b5b50e801b216c4a12f97a72cec14",
+    "tests/test_dynamic_transfer_checkout.py": "8485faec06a868715c4c20b73ee16c69c76a81205befcac10b6a604bf8108245",
+    "tests/test_dynamic_place_suppliers.py": "b1b7d5b608f8f6bc4ccd60314262769bc08ee59f6eaed162855cdf482fe49d63"
+  },
+  "verification": {
+    "new_case_specific_pure_checks": 30,
+    "new_real_pg_api_cases": 3,
+    "final_related_total": 188,
+    "passed": 188,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 6.94,
+    "junit": ".local/evaluation/after80-20261027/dynamic-transfer-related-final.xml",
+    "junit_sha256": "6f4d1a7804c7297ee8c3617a230717314d4b41fa5a8b8d606b741d582e035650",
+    "new_test_files_ruff": "PASS",
+    "source_import_lint": "PASS",
+    "test_database": "otravel_test",
+    "other_databases_or_native_services_changed": false,
+    "actual_model_or_vendor_http_calls_by_tests": 0
+  },
+  "preserved_failures_and_policy_history": {
+    "old_three_partial_supplier_tests": "Only set demo_fallback=False to retain their unchanged old no-fallback and air-identity assertions; policyTrue has separate new MIXED checks.",
+    "old_6185_checkpoint_and_actual_partial_receipts": "UNMODIFIED",
+    "initial_related_policy_mismatch": ".local/evaluation/after80-20261027/dynamic-transfer-demo-initial.xml",
+    "source_label_first_incomplete_control": ".local/evaluation/after80-20261027/dynamic-transfer-source-label-red.xml",
+    "source_label_complete_red": ".local/evaluation/after80-20261027/dynamic-transfer-source-label-complete-red.xml",
+    "source_label_complete_red_sha256": "fb3812f83ba18466dcb45e60001889b8843e3077dc14dea35f94ffc1a6671e4b",
+    "source_label_complete_red_result": "Three forged labels bypassed the own catalogue and produced no blockers before the small namespace guard. This is a reproduced internal assembler contract gap, not a demonstrated public endpoint exploit."
+  },
+  "documentation": {
+    "path": "docs/testing/DYNAMIC_TRANSFER_DEMO.md",
+    "sha256": "c08890c6954a8694abeb5268a691108ab4e59d08d89d4eb3417dfa2e06d517c9"
+  },
+  "limits": [
+    "Mixed/demo completion is not a real transfer offer, live availability or payment; ready_for_real_booking remains false.",
+    "Standalone self-arranged transfer/budget exclusion is deferred; no unknown expense was silently removed from whole-trip budget.",
+    "The operator's actual world run uses its own immutable package and is reported separately; this receipt does not convert historical PARTIAL into PASS.",
+    "No source corpus80/106/D250 acceptance is implied by these188 controlled tests."
+  ]
+}

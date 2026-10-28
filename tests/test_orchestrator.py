@@ -143,18 +143,22 @@ def test_missing_liteapi_nationality_never_resolves_or_searches_hotels():
     state.search_policy.guest_nationality = None
     gateway = FakeTravel()
     result = search(gateway, state)
-    assert all(method == "search_flights" for method, _, _ in gateway.calls)
-    assert any(issue["code"] == "MISSING_NATIONALITY" for issue in result["component_errors"])
-    assert result["plans"]
-    assert all(c["source_type"] == "DEMO" for c in result["plans"][0]["components"] if c["binding"].get("room_ids"))
+    assert gateway.calls == [] and result["tool_calls_used"] == 0
+    assert any(issue["code"] == "missing_nationality" for issue in result["violations"])
+    assert result["questions"] == ["Гражданство какой страны использовать для поиска отеля?"]
+    assert result["plans"] == [] and result["source_type"] == "INCOMPLETE"
+    assert state.search_policy.guest_nationality is None
 
 
 def test_missing_nationality_without_fallback_is_a_blocking_question():
     state = hybrid(demo_fallback=False)
     state.search_policy.guest_nationality = None
-    result = search(FakeTravel(), state)
-    assert result["questions"] and "guest_nationality" in result["questions"][0]
+    gateway = FakeTravel()
+    result = search(gateway, state)
+    assert result["questions"] == ["Гражданство какой страны использовать для поиска отеля?"]
     assert result["plans"] == []
+    assert gateway.calls == [] and result["tool_calls_used"] == 0
+    assert state.search_policy.guest_nationality is None
 
 
 def test_serpapi_multiroom_does_not_invent_a_room_count_parameter():

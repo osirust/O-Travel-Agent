@@ -1,0 +1,739 @@
+{
+  "format": "otravel.regression.new80_geo_date.v1",
+  "exported_at_utc": "2026-10-28T12:23:45.925027+00:00",
+  "source_corpus_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "source_physical_package_sha256": "374ff73fa2d51aff52fedc8ae6f1aeb92c43668ffc8e2c521bcd1596c971e520",
+  "scope": "Whitelisted canonical before/pending, original text and captured structured model contract; controlled replay is not a new model inference.",
+  "cases": [
+    {
+      "id": "ZAI100-013:T3",
+      "source_case_sha256": "ea825365071964540f492fa7c55700a51d69908eea8bf6deec433d8cdbf3ec83",
+      "source_pointer": "/turns/2",
+      "before_trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "59d43163-1587-4eaa-ad2c-719ab50192ec",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 1
+      },
+      "before_pending": {
+        "text": "Какой город в стране «Сербия» вы выбираете для поездки?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": true,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Какой город в стране «Сербия» вы выбираете для поездки?"
+        ],
+        "target_id": null,
+        "question_id": "fdf16aad-ae02-433b-bf6c-06bbd282d656-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": true,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "user": "Тогда Сербию отменяем, выбираю Санкт-Петербург в России. Москву оставь городом отправления.",
+      "model_contracts": {
+        "MODEL_EXTRACTION_VALIDATED": {
+          "reply": "Отлично, я учёл ваш выбор: Санкт-Петербург в России как пункт назначения. Город отправления остаётся Москва.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "resolve_place",
+              "value": {
+                "kind": "city",
+                "role": "destination",
+                "query": "Санкт-Петербург",
+                "stay_id": "new-stay-1"
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        },
+        "MODEL_OPERATIONS_CHECKED": {
+          "reply": "Отлично, я учёл ваш выбор: Санкт-Петербург в России как пункт назначения. Город отправления остаётся Москва.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Санкт-Петербург"
+              },
+              "target_id": "new-stay-1"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "observed_pending": {
+        "text": "Выберите конкретное место по номеру или ID: 1. Санкт-Петербург (RU, Санкт-Петербург); 2. Санкт-Петербург (MS, Parish of Saint Peter).",
+        "field": "place.resolution",
+        "reason": "clarification",
+        "context": {
+          "field": "place.resolution",
+          "target_id": "new-stay-1",
+          "place_resolution": {
+            "role": "destination",
+            "owner": "place_resolution.v1",
+            "query": "Санкт-Петербург",
+            "stage": "city_choice",
+            "stay_id": "new-stay-1",
+            "trip_id": "59d43163-1587-4eaa-ad2c-719ab50192ec",
+            "candidates": [
+              {
+                "key": {
+                  "role": "destination",
+                  "count": 5,
+                  "query": "санкт-петербург",
+                  "language": "ru",
+                  "provider": "openmeteo",
+                  "operation": "search_city",
+                  "country_iso2": null
+                },
+                "kind": "city",
+                "label": "Санкт-Петербург",
+                "source_id": 498817,
+                "fact_sha256": "b2242a20f0e47093fef0df194dc42038f3bfd3b4918a0af706024ef2e0108385",
+                "candidate_id": "pc-ce35256484047c609b0c94295cd46f30",
+                "country_iso2": "RU",
+                "country_name": "Россия",
+                "response_sha256": "1fe9e7df6e3843357ab930791c8ec919e47397e685391b82def566d2a2caa184",
+                "administrative_areas": [
+                  {
+                    "name": "Санкт-Петербург",
+                    "level": 1,
+                    "external_id": 536203
+                  }
+                ]
+              },
+              {
+                "key": {
+                  "role": "destination",
+                  "count": 5,
+                  "query": "санкт-петербург",
+                  "language": "ru",
+                  "provider": "openmeteo",
+                  "operation": "search_city",
+                  "country_iso2": null
+                },
+                "kind": "city",
+                "label": "Санкт-Петербург",
+                "source_id": 3578038,
+                "fact_sha256": "bc4233f6e8bd90db778d207a7d84dbc5de4fe2e210014c0bd5200cbbbc2b6ece",
+                "candidate_id": "pc-2ab59430727bde098b86815b700b7042",
+                "country_iso2": "MS",
+                "country_name": null,
+                "response_sha256": "1fe9e7df6e3843357ab930791c8ec919e47397e685391b82def566d2a2caa184",
+                "administrative_areas": [
+                  {
+                    "name": "Parish of Saint Peter",
+                    "level": 1,
+                    "external_id": 3578039
+                  }
+                ]
+              }
+            ],
+            "expires_at": "2026-10-28T07:53:11.272264+00:00",
+            "country_ref": null,
+            "resolution_id": "pr-146aeab886fd43779a6658bc6fa68858",
+            "state_version": 2
+          },
+          "place_remaining_requests": []
+        },
+        "questions": [
+          "Выберите конкретное место по номеру или ID: 1. Санкт-Петербург (RU, Санкт-Петербург); 2. Санкт-Петербург (MS, Parish of Saint Peter)."
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "8c903a1a-4165-4de8-8649-c4fdb47dd91c-place-question",
+        "state_version": 2
+      },
+      "observed_assistant": [
+        "Выберите конкретное место по номеру или ID: 1. Санкт-Петербург (RU, Санкт-Петербург); 2. Санкт-Петербург (MS, Parish of Saint Peter)."
+      ]
+    },
+    {
+      "id": "ZAI100-015:T7",
+      "source_case_sha256": "85be4f3520e050850b24d6f266bb6719c97e65e3e591d2ed2d79ef5634d076dd",
+      "source_pointer": "/turns/6",
+      "before_trip": {
+        "legs": [
+          {
+            "id": "leg-0ce204b2-3706-4bd2-8f31-fcceabd4abc2",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Санкт-Петербург",
+            "departure_date": "2026-12-05"
+          },
+          {
+            "id": "leg-25323a0f-1f03-4416-860a-5053791994b7",
+            "mode": "flight",
+            "origin": "Санкт-Петербург",
+            "destination": "Казань",
+            "departure_date": "2026-12-11"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Санкт-Петербург",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ],
+            "check_in": "2026-12-05",
+            "hotel_id": null,
+            "check_out": "2026-12-11"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 9000000
+        },
+        "groups": [],
+        "origin": "Казань",
+        "trip_id": "9ee6cdb6-9dcc-409f-81fb-3e958f0f7b05",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 5
+      },
+      "before_pending": null,
+      "user": "Да, именно Санкт-Петербург в России. Дату выезда перенеси на один день позже, заезд прежний.",
+      "model_contracts": {
+        "MODEL_EXTRACTION_VALIDATED": {
+          "reply": "Дату выезда перенесена на один день позже.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "shift_return",
+              "value": {
+                "days": 1
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        },
+        "MODEL_OPERATIONS_CHECKED": {
+          "reply": "Дату выезда перенесена на один день позже.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [
+            "Какой город в стране «Россия» вы выбираете для поездки?"
+          ],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "shift_return",
+              "value": {
+                "days": 1
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "observed_pending": {
+        "text": "Какой город в стране «Россия» вы выбираете для поездки?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "requested_destination": {
+            "kind": "country",
+            "name": "Россия",
+            "country_code": "RU",
+            "suggested_cities": [
+              {
+                "name": "Москва",
+                "available": true,
+                "country_code": "RU"
+              },
+              {
+                "name": "Санкт-Петербург",
+                "available": true,
+                "country_code": "RU"
+              },
+              {
+                "name": "Сочи",
+                "available": true,
+                "country_code": "RU"
+              },
+              {
+                "name": "Казань",
+                "available": true,
+                "country_code": "RU"
+              },
+              {
+                "name": "Белгород",
+                "available": false,
+                "country_code": "RU"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Какой город в стране «Россия» вы выбираете для поездки?"
+        ],
+        "target_id": null,
+        "question_id": "06800e87-fae1-4282-8295-9d6609cb38e9-question",
+        "state_version": 6,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Россия",
+          "country_code": "RU",
+          "suggested_cities": [
+            {
+              "name": "Москва",
+              "available": true,
+              "country_code": "RU"
+            },
+            {
+              "name": "Санкт-Петербург",
+              "available": true,
+              "country_code": "RU"
+            },
+            {
+              "name": "Сочи",
+              "available": true,
+              "country_code": "RU"
+            },
+            {
+              "name": "Казань",
+              "available": true,
+              "country_code": "RU"
+            },
+            {
+              "name": "Белгород",
+              "available": false,
+              "country_code": "RU"
+            }
+          ]
+        }
+      },
+      "observed_assistant": [
+        "Какой город в стране «Россия» вы выбираете для поездки?"
+      ]
+    },
+    {
+      "id": "ZAI100-017:T8",
+      "source_case_sha256": "04c3a1eedc2027c1cf4f6e819e5ac24f0b972eeed5cc5aba0d842e61d227c920",
+      "source_pointer": "/turns/7",
+      "before_trip": {
+        "legs": [
+          {
+            "id": "leg-6b179149-aa72-4297-8c2e-1b039965f5ef",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Москва",
+            "departure_date": "2026-11-25"
+          },
+          {
+            "id": "leg-e8499ea0-fd6b-47ac-825b-4456ad12da82",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Казань",
+            "departure_date": "2026-11-30"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Москва",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ],
+            "check_in": "2026-11-25",
+            "hotel_id": null,
+            "check_out": "2026-11-30"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Казань",
+        "trip_id": "0dacee55-c941-44ca-ad72-3a82c9f05f2f",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 4
+      },
+      "before_pending": null,
+      "user": "Перенеси только выезд на 31 ноября 2026 года.",
+      "model_contracts": {
+        "MODEL_EXTRACTION_VALIDATED": {
+          "reply": "Я перенес выезд из Москвы на 1 декабря 2026 года (31 ноября не существует). Теперь ваше пребывание в Москве будет с 25 по 1 декабря.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Москва",
+                "rooms": [
+                  {
+                    "id": "new-room-1",
+                    "traveler_ids": [
+                      "new-traveler-1",
+                      "new-traveler-2"
+                    ]
+                  }
+                ],
+                "check_in": "2026-11-25",
+                "check_out": "2026-12-01"
+              },
+              "target_id": "new-stay-1"
+            },
+            {
+              "type": "set_leg_mode",
+              "value": {
+                "mode": "flight"
+              },
+              "target_id": "leg-e8499ea0-fd6b-47ac-825b-4456ad12da82"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        },
+        "MODEL_OPERATIONS_CHECKED": {
+          "reply": "Я перенес выезд из Москвы на 1 декабря 2026 года (31 ноября не существует). Теперь ваше пребывание в Москве будет с 25 по 1 декабря.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [
+            "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда."
+          ],
+          "conflicts": [
+            "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда."
+          ],
+          "operations": [
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Москва",
+                "rooms": [
+                  {
+                    "id": "new-room-1",
+                    "traveler_ids": [
+                      "new-traveler-1",
+                      "new-traveler-2"
+                    ]
+                  }
+                ],
+                "check_in": "2026-11-25",
+                "check_out": "2026-12-01"
+              },
+              "target_id": "new-stay-1"
+            },
+            {
+              "type": "set_leg_mode",
+              "value": {
+                "mode": "flight"
+              },
+              "target_id": "leg-e8499ea0-fd6b-47ac-825b-4456ad12da82"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "observed_pending": {
+        "text": "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда.",
+        "field": "stay.check_out",
+        "reason": "clarification",
+        "context": {
+          "force_clarification": true
+        },
+        "questions": [
+          "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда."
+        ],
+        "target_id": null,
+        "question_id": "d307d1b4-0bb9-4e23-9327-bc0dd37e4bd2-question",
+        "state_version": 4
+      },
+      "observed_assistant": [
+        "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда."
+      ]
+    },
+    {
+      "id": "ZAI100-017:T9",
+      "source_case_sha256": "04c3a1eedc2027c1cf4f6e819e5ac24f0b972eeed5cc5aba0d842e61d227c920",
+      "source_pointer": "/turns/8",
+      "before_trip": {
+        "legs": [
+          {
+            "id": "leg-6b179149-aa72-4297-8c2e-1b039965f5ef",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Москва",
+            "departure_date": "2026-11-25"
+          },
+          {
+            "id": "leg-e8499ea0-fd6b-47ac-825b-4456ad12da82",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Казань",
+            "departure_date": "2026-11-30"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Москва",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ],
+            "check_in": "2026-11-25",
+            "hotel_id": null,
+            "check_out": "2026-11-30"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Казань",
+        "trip_id": "0dacee55-c941-44ca-ad72-3a82c9f05f2f",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 4
+      },
+      "before_pending": {
+        "text": "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда.",
+        "field": "stay.check_out",
+        "reason": "clarification",
+        "context": {
+          "force_clarification": true
+        },
+        "questions": [
+          "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда."
+        ],
+        "target_id": null,
+        "question_id": "d307d1b4-0bb9-4e23-9327-bc0dd37e4bd2-question",
+        "state_version": 4
+      },
+      "user": "Извени, имел в виду первое декабря 2026. Это окончательный выезд; заезд не меняем.",
+      "model_contracts": {
+        "MODEL_EXTRACTION_VALIDATED": {
+          "reply": "Понял, вы хотите перенести выезд на 1 декабря 2026 года. Эта дата существует в календаре, и я сохраню это изменение.",
+          "control": {
+            "action": "wait"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        },
+        "MODEL_OPERATIONS_CHECKED": {
+          "reply": "Понял, вы хотите перенести выезд на 1 декабря 2026 года. Эта дата существует в календаре, и я сохраню это изменение.",
+          "control": {
+            "action": "wait"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      },
+      "observed_pending": {
+        "text": "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда.",
+        "field": "stay.check_out",
+        "reason": "clarification",
+        "context": {
+          "force_clarification": true
+        },
+        "questions": [
+          "Дата «31 ноября 2026 года» не существует в календаре. Укажите корректную дату выезда."
+        ],
+        "target_id": null,
+        "question_id": "d307d1b4-0bb9-4e23-9327-bc0dd37e4bd2-question",
+        "state_version": 4
+      },
+      "observed_assistant": [
+        "Поездка и текущие варианты сохранены. Явная пауза не запрашивалась."
+      ]
+    }
+  ]
+}

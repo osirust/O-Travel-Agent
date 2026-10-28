@@ -1,0 +1,112 @@
+{
+  "format": "otravel.initial-room-layout.repair.v1",
+  "created_at": "2026-10-27T04:51:04.329808+00:00",
+  "finding_id": "HARNESS-004-MULTISTAY-INITIAL-ROOMS-001",
+  "status": "BOUNDED_CONTROLLED_INITIAL_LAYOUT_PASS_ACTUAL_RETEST_PENDING",
+  "source": {
+    "source": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-042827-a828a6e1/report.json",
+    "source_report_sha256": "5764905788055b6314ce2e86344c846b56f643ae64d3342f33904ebfbc14e4e4",
+    "source_app_commit": "aefa56ca2f34dfae674299e7cd7b9ac7d8aaad7d",
+    "source_package_sha256": "1f0ac0cfae63cfe17510ae930b2953308c5c1ccd8ef8c63376b0af6069504c50",
+    "provider": "zai",
+    "model": "glm-4.5-flash"
+  },
+  "original_failure": "Actual GLM45 T1 omitted both room arrays in eleven schema-valid operations while its reply asserted two rooms per city. The room-count guard deliberately returned at the ordinal allocation cue; search asked the supplied room count again. Original source remains immutable.",
+  "action": {
+    "helper": "complete_initial_room_layouts",
+    "integration": "Root-owned harness hook after group separation/removal guards and before final semantic preflight.",
+    "evidence_required": [
+      "at least two fresh new roomless stays",
+      "literal universal city scope and exact room count",
+      "same count of nonempty keep-separate groups",
+      "complete known traveler partition in those groups",
+      "complete unique room ordinal to adult ordinal mapping",
+      "literal occupant references exactly equal one known group per room",
+      "unique child identification; multiple children require explicit unique age"
+    ],
+    "generated": "Only bounded server room aliases and the proved memberships on each new stay. Existing people/groups/ages/constraints and layouts are not rewritten.",
+    "ambiguity": "Do not allocate; return a meaningful membership/target clarification and preserve the already known room count.",
+    "qualification": "Single-city or non-universal requests are outside this helper and retain their existing intake path without a new ASK.",
+    "both_versus_each": "Both cities qualifies exactly two stays. With three stays it asks which two, without allocating. Each city may qualify three stays with the same complete proof.",
+    "id_scope": "Room IDs are local to the stay; the same new-room-1/new-room-2 aliases may repeat across cities."
+  },
+  "files": [
+    {
+      "path": "otravel/initial_room_layout.py",
+      "sha256": "d070ff776ac5481e1e9782ee7a245c04d0eb05c3e8da08e5a2dc85251fd23945",
+      "bytes": 11546
+    },
+    {
+      "path": "tests/test_initial_room_layout.py",
+      "sha256": "7c8d79301701fc22f04b98d097153933aacea071c75022cdf1245844795e9664",
+      "bytes": 9997
+    },
+    {
+      "path": "tests/test_harness_initial_room_layout.py",
+      "sha256": "53e1a7119ad96b71e965b353446bc616c23dd3526c528867e04a654482b718cc",
+      "bytes": 6160
+    },
+    {
+      "path": "fixtures/regression/initial-rooms-glm45-20261027.json",
+      "sha256": "fa7ad966380e08623582eb98f5108a28ac39757880fc50245cc0bf8d797ee916",
+      "bytes": 13839
+    }
+  ],
+  "hash_scope": "E working-tree bytes, not a loaded native package identity.",
+  "initial_failure_preserved": {
+    "path": ".local/evaluation/geo-20261027/initial-room-layout-initial.xml",
+    "sha256": "fe45c4ffcda81a4589bc2a933a58da3df28c79004f0964872a6bb5409978dfd0",
+    "bytes": 1135,
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope2_initial_failures_preserved": {
+    "path": ".local/evaluation/geo-20261027/initial-room-layout-scope2-initial.xml",
+    "sha256": "4f6729bf0fcbdca6fc8bb44a0d0245dabf0f66000a30e28b1f737ae53252fbf1",
+    "bytes": 15026,
+    "tests": 21,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0
+  },
+  "verification": {
+    "path": ".local/evaluation/geo-20261027/initial-room-layout-scope2-final.xml",
+    "sha256": "9707f00dab409eace12cc344740264fb54558e09c83fc160607366c253076152",
+    "bytes": 55345,
+    "tests": 227,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ruff": "PASS helper and two new test files",
+  "pg_scope": {
+    "cases": 2,
+    "database": "otravel_test",
+    "actual_llm_http": 0,
+    "actual_supplier_http": 0,
+    "positive": "Exact captured initial eleven-op response reaches OPTIONS_READY with two cities, two complete family rooms per city and at least two DEMO plans.",
+    "continuation": "A separately labelled controlled typed extraction uses the resulting owned room/stay IDs for the WOW change: child8 joins second family/room in both cities, first family and breakfast remain, Antalya hotel is from shown plan2, budget380000RUB, return/checkout19Nov, old quote409, no order.",
+    "not_an_actual_second_model_response": true,
+    "negative": "Missing the second ordinal clause retains empty layouts and asks complete membership while keeping known count2."
+  },
+  "negative_boundaries": [
+    "no universal city scope",
+    "incomplete or duplicate ordinal mapping",
+    "unknown adult ordinal",
+    "room count does not equal known group count",
+    "negation/hypothesis/question/quoted layout",
+    "absent or incomplete groups",
+    "multiple children without unique addressing",
+    "existing or already-proposed layouts"
+  ],
+  "closure_condition": "Run a new immutable deployed source with an actual strong-model initial two-city group dialogue and continue to WOW step4. Require both room counts and complete allocations, not metadata/text claims; preserve this original FAIL and all earlier cached PASS.",
+  "production_runtime_changed_by_author": false,
+  "not_claimed": [
+    "new actual NLU PASS",
+    "full80/106 completion",
+    "general free-form room allocation",
+    "live supplier availability"
+  ]
+}

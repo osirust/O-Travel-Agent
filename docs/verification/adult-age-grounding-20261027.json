@@ -1,0 +1,39 @@
+{
+  "format": "otravel.adult-age-grounding.verification.v1",
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-UNASKED-ADULT-AGE-001",
+  "status": "SOURCE_AND_CACHED_PURE_DOMAIN_TESTED_ACTUAL_RERUN_PENDING",
+  "source_actual": {
+    "folder": "/home/aegml/checks/complex-actual-r1-20261027-191441",
+    "raw_contract_sha256": "435467412e696a687a7bba4d6271be79fb9b016f5b39cc0e2b81c4711c27c6fe",
+    "observed": "The user supplied two adults and a child aged seven. The model added age30 to each adult without that fact being supplied. The original raw/checked snapshots are preserved."
+  },
+  "change": {
+    "interface": "guard_adult_age_operations(before_state, operations, text) -> (copied_operations, notes_unknowns_conflicts)",
+    "scope": "Only add_traveler adult proposals whose ID is not already in the trip and whose age is an integer >=18.",
+    "rule": "Remove only age when no explicit current adult age or DOB is present. Never fabricate or cast an age. Existing traveler state, updates, child ages, unrelated operations and IDs remain unchanged.",
+    "normalization_code": "unasked_new_adult_age_removed",
+    "non_current_authority": "Quotes, questions, hypothetical/history/negated clauses do not authorize the age. The peer-reproduced 'when I was30' history construction has explicit regression coverage."
+  },
+  "verification": {
+    "pure_domain": {"passed": 31, "failed": 0, "seconds": 1.41},
+    "cached_actual": "Exact raw10-operation R1 batch: only the two age30 fields are removed; child7, two stays, two rooms, dates, budget and all other operations retain their original values. Domain application produces adult ages null/null and child age7.",
+    "ruff": "PASS",
+    "new_model_calls": 0,
+    "new_tourism_http": 0,
+    "postgres_tests_by_this_agent": 0,
+    "harness_hook": "Integrated by Root; full-suite and fresh actual confirmation are separate."
+  },
+  "files": {
+    "otravel/adult_age_grounding.py": "90277d8249b60f29764cf8fd7c092ff0bd9c31781c37dccff189a24a095ca064",
+    "tests/test_adult_age_grounding.py": "f5b3368ec68d5206580966bf54db6c451e4c074254406ec3f69e9f8b320bc9d5",
+    "fixtures/regression/adult-age-complex-r1-20261027.json": "e866940eca0077cd007b4bae2b387ed0caf25c4ac78083f7b82e188dffb4cec2",
+    ".local/evaluation/after80-20261027/adult-age-grounding-green.xml": "50916b67926c652d9287b09367fe9d07bc150de22efae0b5146e18093620020d"
+  },
+  "limits": [
+    "Explicit adult ages are preserved; this guard does not prove age-to-person attribution when multiple ages are supplied.",
+    "Invented DOB fields, age edits through update_traveler and all malformed age shapes remain outside this narrow guard and require the existing validators or separate findings.",
+    "The initial test fixture used an incorrect .state accessor on the tuple returned by apply_operations; that fixture error was corrected before the31-pass result. It was not a production guard failure.",
+    "Pure/cached tests do not claim successful full80/106 NLU execution."
+  ]
+}

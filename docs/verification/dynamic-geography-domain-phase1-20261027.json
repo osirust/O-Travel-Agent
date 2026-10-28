@@ -1,0 +1,68 @@
+{
+  "id": "DYNAMIC-GEO-PHASE1-DOMAIN-001",
+  "status": "PURE_DOMAIN_TESTED / PUBLIC_PROVENANCE_AND_WORLD_FLOW_OPEN",
+  "source_base": "0bf71be",
+  "scope": "Immutable geographic DTO, optional canonical trip references and pure atomic domain edits. No provider/catalog/API/LLM integration is claimed.",
+  "files": [
+    {
+      "path": "otravel/place_refs.py",
+      "sha256": "33fd37842e3683e63270eb26c712964768e8aa952426f0cdcea9b41976a6af55"
+    },
+    {
+      "path": "otravel/domain.py",
+      "sha256": "ab0459a54557764a553ee0dfa9802e4f6e15aff558ec5c131dfc3ece4af10255"
+    },
+    {
+      "path": "tests/test_place_refs.py",
+      "sha256": "a6b6e461fbd7b402ef2cf2a83c0c76762a79fc3b2cfa8b62e469ba1dae77cdd5"
+    }
+  ],
+  "implemented": [
+    "Frozen extra-forbid CityRefSnapshot and nested Open-Meteo/admin/LiteAPI/Duffel bindings; strict positive Int32 source ID and deterministic geo:openmeteo:<id>.",
+    "Exact country ISO, provider-country consistency, populated-place PPL* feature, finite WGS84 coordinates and optional verified-IANA timezone; missing labels/timezones do not create inferred facts.",
+    "Empty location_refs and None endpoint IDs are excluded, preserving old JSON serialization.",
+    "Parent trip graph validates key/ref identity, exact display label/ref pair, and ordered route endpoint identities, including same-name cities in different countries.",
+    "apply_operations server-only resolved_places argument validates and merges snapshots before intermediate edits; no operation can write snapshot records.",
+    "Derived route rebuilding propagates endpoint refs by position, matches identities instead of labels, and retains corresponding existing modes/IDs.",
+    "Same selected physical ID with changed snapshot/version is rejected to prevent implicit catalog refresh from rewriting a trip."
+  ],
+  "verification": {
+    "targeted": {
+      "path": ".local/evaluation/geo-20261027/place-refs-expanded.xml",
+      "sha256": "360573028f73a32f4262fc416a85d529aa463bbd9b7ad683a615fb6b3bdcaa05",
+      "tests": "79",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.783"
+    },
+    "broader": {
+      "path": ".local/evaluation/geo-20261027/place-refs-related.xml",
+      "sha256": "7265992050915fc45a3eb6ce689ab32b9ffbdf2d634572a7faf44c9b58ad3d90",
+      "tests": "484",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "8.307"
+    },
+    "legacy_exact_bytes": {
+      "path": ".local/evaluation/geo-20261027/place-ref-legacy-byte-proof.json",
+      "sha256": "94c899af6507617ae448139e97d08f020e751379800acd549823930595d8edb6",
+      "empty_json_sha256": "8177763b3f451edf9d64c8cd6995426274b6a7269639ae7eb436322a3f6bcce7",
+      "sample_json_sha256": "23b0e858d4e93ea9b478aa9622bb0357d65ee64a2448021eee5b908ce467cf3f"
+    },
+    "ruff": "PASS",
+    "database_calls": 0,
+    "model_calls": 0,
+    "provider_http_calls": 0,
+    "native_changes": 0
+  },
+  "open_boundaries": [
+    "DTO structural validation does not prove snapshot provenance. Before enabling/deploying public global-city input, API/Store must verify exact snapshot id/version/payload against the durable catalog; unverified initial_trip refs must be refused.",
+    "Current LLM schema/wire and provider adapters are unchanged; no global conversational search or availability claim.",
+    "Public legacy route_edges triples preserve compatibility but cannot alone disambiguate homonymous physical endpoints; downstream dynamic provider code must consume owned place refs.",
+    "Explicit re-selection of a newer catalog version within an existing trip needs a separate authorized transition; automatic refresh is deliberately refused.",
+    "MAX_LOCATION_REFS32 is an engineering bound, not world geographic coverage or an approved product cap.",
+    "The controlled fixture geography is declared test data; these pure checks are not actual provider-resolved CityRef evidence."
+  ]
+}

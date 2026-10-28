@@ -1,0 +1,372 @@
+{
+  "started_at_utc": "2026-10-25T21:38:18.623975+00:00",
+  "base_url": "http://127.0.0.1:8084",
+  "code_commit": "85160effde07ff891295ba437754b328ebdf258a",
+  "scope": "one bounded actual API conversation; not full100 acceptance",
+  "turns": [
+    {
+      "user": "Из Москвы в Стамбул с 10 по 14 ноября 2026 года. Один взрослый, детей нет. Нужен один номер, общий бюджет 100 тысяч рублей, вылет рано утром.",
+      "run_id": "1e8f23f3-ca32-436e-9b99-c235c1c0f488",
+      "run_status": "completed",
+      "state_version_before": 0,
+      "state_version_after": 1,
+      "checks": {
+        "run_completed": true,
+        "origin_moscow": true,
+        "destination_istanbul": true,
+        "one_adult": true,
+        "no_children": true,
+        "budget_expected": true
+      },
+      "pending_question": null,
+      "waiting_reason": null,
+      "llm": {
+        "model": "glm-4.5-flash",
+        "usage": {
+          "input_tokens": 3868,
+          "total_tokens": 4244,
+          "output_tokens": 376
+        },
+        "attempts": [
+          {
+            "model": "glm-4.5-flash",
+            "usage": {
+              "input_tokens": 3868,
+              "total_tokens": 4244,
+              "output_tokens": 376
+            },
+            "outcome": "response",
+            "provider": "zai",
+            "latency_ms": 13442,
+            "request_metrics": {
+              "prompt_sha256": "365989a3b0874aedcb7cc4e981d60ebb393bfb2d7a78aa356f9c148c51e9c437",
+              "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+              "schema_utf8_bytes": 5573,
+              "system_utf8_bytes": 10074,
+              "context_utf8_bytes": 4186
+            }
+          }
+        ],
+        "provider": "zai",
+        "latency_ms": 13442,
+        "request_metrics": {
+          "prompt_sha256": "365989a3b0874aedcb7cc4e981d60ebb393bfb2d7a78aa356f9c148c51e9c437",
+          "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+          "schema_utf8_bytes": 5573,
+          "system_utf8_bytes": 10074,
+          "context_utf8_bytes": 4186
+        }
+      },
+      "response_source": "llm",
+      "assistant_message": {
+        "id": "1aed3b50-7faf-45af-8978-fee53838549e",
+        "role": "assistant",
+        "text": "Подобрано DEMO-планов: 3. Все цены и наличие вымышлены; бронь не создана.",
+        "run_id": "1e8f23f3-ca32-436e-9b99-c235c1c0f488",
+        "sequence": 4,
+        "created_at": "2026-10-25T21:38:31.636658+00:00",
+        "session_id": "675dd8a3-9b63-498c-aa67-f08a49647b74",
+        "client_message_id": null
+      },
+      "error": null,
+      "trip": {
+        "legs": [
+          {
+            "id": "leg-e96722e3-17d8-429d-a12a-13aa73ffe32a",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Стамбул",
+            "departure_date": "2026-11-10"
+          },
+          {
+            "id": "leg-30803d97-0d3e-42e6-9b70-ae216afef8e9",
+            "mode": "flight",
+            "origin": "Стамбул",
+            "destination": "Москва",
+            "departure_date": "2026-11-14"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ],
+            "check_in": "2026-11-10",
+            "hotel_id": null,
+            "check_out": "2026-11-14"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 10000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "d0a61269-fd45-4829-9060-7f22e8b03afd",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [
+          {
+            "key": "departure_time",
+            "value": "early_morning",
+            "weight": 1.0
+          }
+        ],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      }
+    },
+    {
+      "user": "Сократи общий бюджет на 20 тысяч рублей. Даты, город, состав, номер и вылет рано утром оставь прежними.",
+      "run_id": "e064ee2c-767e-4a9a-b202-fc20a569b8f6",
+      "run_status": "completed",
+      "state_version_before": 1,
+      "state_version_after": 2,
+      "checks": {
+        "run_completed": true,
+        "origin_moscow": true,
+        "destination_istanbul": true,
+        "one_adult": true,
+        "no_children": true,
+        "budget_expected": true
+      },
+      "pending_question": null,
+      "waiting_reason": null,
+      "llm": {
+        "model": "glm-4.5-flash",
+        "usage": {
+          "input_tokens": 6544,
+          "total_tokens": 6667,
+          "output_tokens": 123
+        },
+        "attempts": [
+          {
+            "model": "glm-4.5-flash",
+            "usage": {
+              "input_tokens": 6544,
+              "total_tokens": 6667,
+              "output_tokens": 123
+            },
+            "outcome": "response",
+            "provider": "zai",
+            "latency_ms": 33664,
+            "request_metrics": {
+              "prompt_sha256": "cdec3c6a17f3e611e47d4c0bcf941c6df3a80b2229383253bdcd1c2f44ae2df5",
+              "schema_sha256": "f273cb0c64ee7f4ef12cfa611a0f4e10866505b4b98a0656901d8e258bc92d24",
+              "schema_utf8_bytes": 6771,
+              "system_utf8_bytes": 11380,
+              "context_utf8_bytes": 10482
+            }
+          }
+        ],
+        "provider": "zai",
+        "latency_ms": 33664,
+        "request_metrics": {
+          "prompt_sha256": "cdec3c6a17f3e611e47d4c0bcf941c6df3a80b2229383253bdcd1c2f44ae2df5",
+          "schema_sha256": "f273cb0c64ee7f4ef12cfa611a0f4e10866505b4b98a0656901d8e258bc92d24",
+          "schema_utf8_bytes": 6771,
+          "system_utf8_bytes": 11380,
+          "context_utf8_bytes": 10482
+        }
+      },
+      "response_source": "llm",
+      "assistant_message": {
+        "id": "7fdedb18-b6bb-4c73-b7ad-35967598b14c",
+        "role": "assistant",
+        "text": "Подобрано DEMO-планов: 3. Все цены и наличие вымышлены; бронь не создана.",
+        "run_id": "e064ee2c-767e-4a9a-b202-fc20a569b8f6",
+        "sequence": 6,
+        "created_at": "2026-10-25T21:39:05.014072+00:00",
+        "session_id": "675dd8a3-9b63-498c-aa67-f08a49647b74",
+        "client_message_id": null
+      },
+      "error": null,
+      "trip": {
+        "legs": [
+          {
+            "id": "leg-e96722e3-17d8-429d-a12a-13aa73ffe32a",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Стамбул",
+            "departure_date": "2026-11-10"
+          },
+          {
+            "id": "leg-30803d97-0d3e-42e6-9b70-ae216afef8e9",
+            "mode": "flight",
+            "origin": "Стамбул",
+            "destination": "Москва",
+            "departure_date": "2026-11-14"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ],
+            "check_in": "2026-11-10",
+            "hotel_id": null,
+            "check_out": "2026-11-14"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "d0a61269-fd45-4829-9060-7f22e8b03afd",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [
+          {
+            "key": "departure_time",
+            "value": "early_morning",
+            "weight": 1.0
+          }
+        ],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 2
+      }
+    },
+    {
+      "user": "Подожди, я ещё дополню.",
+      "run_id": "f805c076-f686-433b-8386-f066f43d2774",
+      "run_status": "completed",
+      "state_version_before": 2,
+      "state_version_after": 3,
+      "checks": {
+        "run_completed": true,
+        "origin_moscow": true,
+        "destination_istanbul": true,
+        "one_adult": true,
+        "no_children": true,
+        "budget_expected": true,
+        "user_pause_persisted": true
+      },
+      "pending_question": null,
+      "waiting_reason": "user_pause",
+      "llm": null,
+      "response_source": null,
+      "assistant_message": {
+        "id": "5deb16f8-d617-4230-9d8d-90b803def399",
+        "role": "assistant",
+        "text": "Жду явного «продолжай».",
+        "run_id": "f805c076-f686-433b-8386-f066f43d2774",
+        "sequence": 8,
+        "created_at": "2026-10-25T21:39:05.106359+00:00",
+        "session_id": "675dd8a3-9b63-498c-aa67-f08a49647b74",
+        "client_message_id": null
+      },
+      "error": null,
+      "trip": {
+        "legs": [
+          {
+            "id": "leg-e96722e3-17d8-429d-a12a-13aa73ffe32a",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Стамбул",
+            "departure_date": "2026-11-10"
+          },
+          {
+            "id": "leg-30803d97-0d3e-42e6-9b70-ae216afef8e9",
+            "mode": "flight",
+            "origin": "Стамбул",
+            "destination": "Москва",
+            "departure_date": "2026-11-14"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ],
+            "check_in": "2026-11-10",
+            "hotel_id": null,
+            "check_out": "2026-11-14"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "d0a61269-fd45-4829-9060-7f22e8b03afd",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [
+          {
+            "key": "departure_time",
+            "value": "early_morning",
+            "weight": 1.0
+          }
+        ],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 3
+      }
+    }
+  ],
+  "session_id": "675dd8a3-9b63-498c-aa67-f08a49647b74",
+  "repeated_get_same_trip": true,
+  "status": "PASS_BOUND_CONVERSATION_ONLY"
+}

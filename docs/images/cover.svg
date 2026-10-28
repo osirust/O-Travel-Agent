@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="O!Travel Agent — интеллектуальный конструктор путешествий">
+  <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#142b8c"/><stop offset="1" stop-color="#3158ff"/></linearGradient></defs>
+  <rect width="1200" height="300" rx="28" fill="url(#bg)"/>
+  <circle cx="1070" cy="30" r="180" fill="#ffffff" opacity=".05"/><circle cx="1170" cy="290" r="240" fill="#cffa80" opacity=".08"/>
+  <rect x="54" y="55" width="76" height="76" rx="22" fill="#fff"/>
+  <circle cx="87" cy="93" r="20" fill="none" stroke="#3158ff" stroke-width="9"/>
+  <path d="M112 73v24" stroke="#3158ff" stroke-width="7" stroke-linecap="round"/><circle cx="112" cy="110" r="4" fill="#3158ff"/>
+  <g fill="#fff" font-family="Segoe UI,Arial,sans-serif"><text x="154" y="104" font-size="48" font-weight="700">O!Travel Agent</text><text x="56" y="168" font-size="25" opacity=".92">Интеллектуальный конструктор путешествий</text></g>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="600"><rect x="56" y="214" width="178" height="38" rx="19" fill="#cffa80"/><text x="81" y="239" fill="#12256e">Диалог и маршрут</text><rect x="250" y="214" width="218" height="38" rx="19" fill="#fff" opacity=".15"/><text x="274" y="239" fill="#fff">Пересборка поездки</text><rect x="484" y="214" width="228" height="38" rx="19" fill="#fff" opacity=".15"/><text x="508" y="239" fill="#fff">Живые и тестовые API</text></g>
+</svg>

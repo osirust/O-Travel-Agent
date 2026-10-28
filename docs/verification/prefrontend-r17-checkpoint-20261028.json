@@ -1,0 +1,109 @@
+{
+  "format": "otravel.prefrontend.r17.release.v1",
+  "created_at_utc": "2026-10-28T01:36:18.920448+00:00",
+  "status": "CONTROLLED_FULL_PASS_ACTUAL_LANGUAGE_AND_SUBMISSION_GAPS_RETAINED",
+  "package_sha256": "451adca3ceb724c65a2b27ceda938f4413d58f59f79ec5df3aaefb832c49cf4a",
+  "full": {
+    "passed": 7301,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_seconds": 430.79,
+    "source_unchanged": true,
+    "tests_sha256": "839ebc2bb8d6b028cebc0fd20fed5cf5b4d421421ae9146e288d8490e48e5231",
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r17-initial.xml",
+    "xml_sha256": "d70b3b9baa93b51e375844b1ffc6ce254d6040bf86b2bb57f3b21cac3703e9ba"
+  },
+  "historical_full": [
+    {
+      "revision": "R14",
+      "passed": 7098,
+      "failed": 0
+    },
+    {
+      "revision": "R15",
+      "passed": 7154,
+      "failed": 0
+    },
+    {
+      "revision": "R16",
+      "passed": 7236,
+      "failed": 2,
+      "scope": "New closed reader shadowed legacy saved renderer fault injection and omitted proposal event.",
+      "repair": "Existing recognized queries retain the legacy renderer; new queries emit SAVED_FACTS_ANSWER_PROPOSED and renderer failure is a safe no-model answer.",
+      "original_tests_unchanged": true,
+      "targeted_after_repair_passed": 2
+    }
+  ],
+  "repairs": {
+    "explicit_no_add": "docs/verification/no-add-intent-repair-20261028.json",
+    "closed_canonical_reminders": "docs/verification/closed-saved-fact-answers-20261028.json",
+    "exact_059_no_model": "docs/verification/closed-reminder-actual059-20261028.json",
+    "existing_adult_age_guard": "docs/verification/existing-adult-age059-20261028.json"
+  },
+  "actual_r14_functional": {
+    "proof": "docs/verification/complex-rebuild-r14-recorded-real-travel-20261028.json",
+    "checks_passed": 27,
+    "actual_supplier_http_successes": 19,
+    "recorded_adapter_calls": 1,
+    "fresh_llm_calls": 0,
+    "booked_demo_orders": 1,
+    "price_minor_rub": 37252372,
+    "source_types": [
+      "SANDBOX",
+      "DEMO"
+    ],
+    "not_live_bookable": true
+  },
+  "actual_groq_r14": {
+    "cases": 2,
+    "checks_passed": 10,
+    "real_model_calls": 2,
+    "tool_starts": 5,
+    "tool_completed": 4,
+    "tool_failed": 1,
+    "failed_tool": {
+      "provider": "liteapi",
+      "code": "PROVIDER_RESPONSE_ERROR"
+    },
+    "scope": "Historical typed setup, two exact inputs, not full dialogues."
+  },
+  "language_limits": {
+    "original_80": "619 original a36 inputs plus separate failed072T1 onR12;77 not submitted. Different source/model epochs, not uniform acceptance.",
+    "original_106": "Not completely executed; pytest count does not equal language-case count.",
+    "nemotron_micro": "3 schema-valid HTTP200 responses; raw semantic mistakes. R15 whole-Harness duplicate RED retained; R16/R17 guarded repair is controlled, not actual provider repair."
+  },
+  "submission": {
+    "ciphertext_created": false,
+    "main_key_exported": false,
+    "block": "Official separate jury key still needed; browser access stopped because the current URL could not be reliably determined.",
+    "video_frontend_submission_tag": "Not completed; final tag belongs on final main after integration."
+  },
+  "gigachat": {
+    "oauth_http": 200,
+    "generation_successes": 0,
+    "api_tls_timeout": true,
+    "vpn_or_tls_verification_changed": false
+  },
+  "current_scope_paid": 0,
+  "current_scope_local_qwen": 0,
+  "supplier_book_pay": 0,
+  "staged_package": {
+    "tested_package_sha256": "451adca3ceb724c65a2b27ceda938f4413d58f59f79ec5df3aaefb832c49cf4a",
+    "staged_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "package_files": 84,
+    "only_allowed_crlf_normalization": [
+      "otravel/budget_intake.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/intent_grounding.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py",
+      "otravel/route_policy_intent.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

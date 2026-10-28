@@ -1,0 +1,149 @@
+{
+  "format": "otravel.regression.actual_order_reply.v1",
+  "finding_id": "HARNESS-004-ORDER-REPLY-SUPPRESSED-001",
+  "source": {
+    "report_sha256": "ec5c7e7dc701a2228f1f0de3e58bec60774f28c9eedc94dabc3f016fc749d3d9",
+    "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+    "package_sha256": "2d9f2d88d0b673236ec860518e7c783b61f8cb2837b31eaac36eadf95a08b714",
+    "recipe_sha256": "fc40e7aab1083633fb09fd3702772c6af50618b0dde04a38481ec73d7a9bb64e",
+    "case_id": "PF-SOURCE-06",
+    "step_id": "10",
+    "provider": "cloudflare",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b"
+  },
+  "input_text": "Есть ли у нас тестовый заказ и создана ли настоящая бронь?",
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-8ebcbbaf-cee7-47a8-b4da-dbfb197bade4",
+        "mode": "flight",
+        "origin": "Москва",
+        "destination": "Казань",
+        "departure_date": "2026-11-20"
+      },
+      {
+        "id": "leg-6cc02d9f-ec59-4466-89b6-f1becd4fdcb4",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Москва",
+        "departure_date": "2026-11-23"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Казань",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1"
+            ]
+          }
+        ],
+        "check_in": "2026-11-20",
+        "hotel_id": null,
+        "check_out": "2026-11-23",
+        "requested_nights": 3
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 12000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Москва",
+    "trip_id": "7ce31f77-41d5-4ee4-aaad-2321dd652abe",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 2
+  },
+  "captured_source_validated_contracts": {
+    "MODEL_EXTRACTION_VALIDATED": {
+      "value": {
+        "reply": "Тестовый заказ есть, но настоящей брони нет — ответы тестового API и демонстрационные расчёты не создают реального бронирования.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [],
+        "speech_act": "ASK",
+        "information_subject": "тестовый заказ и настоящая бронь"
+      },
+      "source_capture_sha256": "ab56fbfc8c82a3bb3f7946a5ebcbe13c967a0395aa233d5e16d57130bae7782e",
+      "source_capture_utf8_bytes": 428
+    },
+    "MODEL_OPERATIONS_CHECKED": {
+      "value": {
+        "reply": "Тестовый заказ есть, но настоящей брони нет — ответы тестового API и демонстрационные расчёты не создают реального бронирования.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [],
+        "speech_act": "ASK",
+        "information_subject": "тестовый заказ и настоящая бронь"
+      },
+      "source_capture_sha256": "ab56fbfc8c82a3bb3f7946a5ebcbe13c967a0395aa233d5e16d57130bae7782e",
+      "source_capture_utf8_bytes": 428
+    }
+  },
+  "raw_transport_response": "NOT_CAPTURED_NOT_RECONSTRUCTED",
+  "shown_reply": "Поездка и показанные варианты не изменены.",
+  "order_facts_subset": [
+    {
+      "order_id": "regression-synthetic-order-1",
+      "status": "BOOKED_DEMO",
+      "is_demo": true,
+      "booking_created_at_supplier": false,
+      "plan": {
+        "total_minor": 1985578,
+        "currency": "RUB",
+        "source_type": "MIXED",
+        "checkout_mode": "SIMULATED",
+        "ready_for_simulated_checkout": true,
+        "ready_for_real_booking": false
+      }
+    }
+  ],
+  "source_scope": "Exact observed input, trip, captured validated contracts and shown reply; orders are a whitelist projection with synthetic order ID.",
+  "regression_setup_scope": "A controlled PG reproduction must create its own BOOKED_DEMO order through a labelled DEMO bootstrap. These source facts do not seed or impersonate a native supplier order.",
+  "expected": {
+    "trip_semantic_change": false,
+    "additional_order": false,
+    "test_order_exists": true,
+    "supplier_booking_created": false,
+    "answer_from": "canonical own Store orders, not model-authored booking claims"
+  }
+}

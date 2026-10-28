@@ -1,0 +1,834 @@
+{
+  "format": "otravel.geo.actual-cached.v1",
+  "source": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-012305-e541d0e5/report.json",
+  "source_sha256": "ec5c7e7dc701a2228f1f0de3e58bec60774f28c9eedc94dabc3f016fc749d3d9",
+  "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "scope": "Whitelisted actual observations; original report unchanged. Cached replay is not a new remote LLM call.",
+  "cases": [
+    {
+      "case_id": "PF-GEO-01",
+      "step_id": "01",
+      "text": "Хочу в Сербию. Отправление из Москвы. Один взрослый, детей нет, общий бюджет 80000 рублей. Даты ещё не выбрал.",
+      "recipe_text": "Хочу в Сербию. Отправление из Москвы. Один взрослый, детей нет, общий бюджет 80000 рублей. Даты ещё не выбрал.",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "a321b828-6d4a-4e7d-a564-f5c6a02e0698",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "before_pending": null,
+      "actual_pending": {
+        "text": "Какой город в стране «Сербия» вы выбираете для поездки?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Какой город в стране «Сербия» вы выбираете для поездки?"
+        ],
+        "target_id": null,
+        "question_id": "d0881957-8b96-4201-b78f-59a5aec8c253-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "actual_reply": "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. Какой город в стране «Сербия» вы выбираете для поездки?",
+      "raw_validated": [
+        {
+          "reply": "Принято: отправление из Москвы, бюджет 80000 рублей, один взрослый без детей. Уточните, пожалуйста, город назначения в Сербии и даты поездки.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [
+            "Город назначения в Сербии",
+            "Дата заезда",
+            "Дата выезда"
+          ],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              },
+              "target_id": null
+            },
+            {
+              "type": "set_budget",
+              "value": {
+                "scope": "whole_trip",
+                "currency": "RUB",
+                "amount_minor": 8000000
+              },
+              "target_id": null
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult"
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      ]
+    },
+    {
+      "case_id": "PF-GEO-01",
+      "step_id": "05",
+      "text": "Белгород.",
+      "recipe_text": "Белгород.",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "a321b828-6d4a-4e7d-a564-f5c6a02e0698",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "before_pending": {
+        "text": "Какой город в стране «Сербия» вы выбираете для поездки?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Какой город в стране «Сербия» вы выбираете для поездки?"
+        ],
+        "target_id": null,
+        "question_id": "3ba5b2f8-ecd5-4b74-9874-a251ae7a2f29-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "actual_pending": {
+        "text": "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "contextual_correction": {
+            "basis": "requested_country",
+            "country_code": "RS",
+            "original_text": "Белгород.",
+            "interpreted_city": "Белград"
+          },
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "questions": [
+          "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+        ],
+        "target_id": null,
+        "question_id": "60e7f325-b48c-4596-a55e-16dbcecb748f-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Белград",
+          "country_code": "RS"
+        }
+      },
+      "actual_reply": "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+      "raw_validated": []
+    },
+    {
+      "case_id": "PF-GEO-01",
+      "step_id": "06",
+      "text": "Стамбул в Сербии",
+      "recipe_text": "Стамбул в Сербии",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "a321b828-6d4a-4e7d-a564-f5c6a02e0698",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "before_pending": {
+        "text": "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "contextual_correction": {
+            "basis": "requested_country",
+            "country_code": "RS",
+            "original_text": "Белгород.",
+            "interpreted_city": "Белград"
+          },
+          "requested_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          }
+        },
+        "questions": [
+          "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+        ],
+        "target_id": null,
+        "question_id": "60e7f325-b48c-4596-a55e-16dbcecb748f-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Белград",
+          "country_code": "RS"
+        }
+      },
+      "actual_pending": {
+        "text": "Город «Стамбул» находится в стране «Турция». Вы подтверждаете выбор этого города и смену страны назначения?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "proposal_field": "destination.city",
+          "proposed_destination": {
+            "kind": "city",
+            "name": "Стамбул",
+            "country_code": "TR"
+          },
+          "confirmation_required": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Город «Стамбул» находится в стране «Турция». Вы подтверждаете выбор этого города и смену страны назначения?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "6803aae8-b2f2-4f8a-8a61-d4719d7470cc-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "actual_reply": "Город «Стамбул» находится в стране «Турция». Вы подтверждаете выбор этого города и смену страны назначения?",
+      "raw_validated": [
+        {
+          "reply": "Принято: отправление из Москвы, бюджет 80000 RUB, один взрослый, маршрут туда-обратно. Уточните, пожалуйста, город назначения в Сербии для поездки.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [
+            "destination.city"
+          ],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              },
+              "target_id": null
+            },
+            {
+              "type": "set_route_policy",
+              "value": {
+                "kind": "round_trip",
+                "end_city": null
+              },
+              "target_id": null
+            },
+            {
+              "type": "set_budget",
+              "value": {
+                "scope": "whole_trip",
+                "currency": "RUB",
+                "amount_minor": 8000000
+              },
+              "target_id": null
+            },
+            {
+              "type": "update_traveler",
+              "value": {
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              },
+              "target_id": "new-traveler-1"
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      ]
+    },
+    {
+      "case_id": "PF-GEO-01",
+      "step_id": "07",
+      "text": "Нет, добавь ребёнка семи лет. Существующий взрослый остаётся.",
+      "recipe_text": "Нет, добавь ребёнка семи лет. Существующий взрослый остаётся.",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "a321b828-6d4a-4e7d-a564-f5c6a02e0698",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "before_pending": {
+        "text": "Город «Стамбул» находится в стране «Турция». Вы подтверждаете выбор этого города и смену страны назначения?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "proposal_field": "destination.city",
+          "proposed_destination": {
+            "kind": "city",
+            "name": "Стамбул",
+            "country_code": "TR"
+          },
+          "confirmation_required": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Город «Стамбул» находится в стране «Турция». Вы подтверждаете выбор этого города и смену страны назначения?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "6803aae8-b2f2-4f8a-8a61-d4719d7470cc-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "actual_pending": {
+        "text": "Какой город в стране «Сербия» вы выбираете для поездки?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Какой город в стране «Сербия» вы выбираете для поездки?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "3f9a9035-a244-4f0b-b93d-25670eeb19d7-question",
+        "state_version": 2,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "actual_reply": "Текущий состав: 1 взрослый; 1 ребёнок (7 лет). Какой город в стране «Сербия» вы выбираете для поездки?",
+      "raw_validated": [
+        {
+          "reply": "Добавлен ребёнок 7 лет. Взрослый остаётся без изменений.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-2",
+                "age": 7,
+                "type": "child"
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      ]
+    },
+    {
+      "case_id": "PF-GEO-02",
+      "step_id": "01",
+      "text": "Из Мосвкы в Анталью хочу. Один взрослый без детей, общий бюджет 90000 рублей. Дат пока нет.",
+      "recipe_text": "Из Мосвкы в Анталью хочу. Один взрослый без детей, общий бюджет 90000 рублей. Дат пока нет.",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "f921d979-7889-4cc8-8aaf-d01bc07eafc3",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "before_pending": null,
+      "actual_pending": {
+        "text": "Похоже, в названии города отправления опечатка. Вы имеете в виду город «Москва», Россия?",
+        "field": "origin.city",
+        "reason": "clarification",
+        "context": {
+          "proposal_field": "origin.city",
+          "proposed_destination": {
+            "kind": "city",
+            "name": "Москва",
+            "country_code": "RU"
+          },
+          "confirmation_required": true,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Анталья",
+            "country_code": "TR"
+          }
+        },
+        "questions": [
+          "Похоже, в названии города отправления опечатка. Вы имеете в виду город «Москва», Россия?"
+        ],
+        "target_id": null,
+        "question_id": "6b7d75a5-d367-4de4-b2b2-360ae2b4f943-question",
+        "state_version": 1,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Анталья",
+          "country_code": "TR"
+        }
+      },
+      "actual_reply": "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. Похоже, в названии города отправления опечатка. Вы имеете в виду город «Москва», Россия?",
+      "raw_validated": [
+        {
+          "reply": "Принято: вылет из Москвы в Анталью, один взрослый, бюджет 90 000 ₽. Даты и детали уточним дальше.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              },
+              "target_id": null
+            },
+            {
+              "type": "set_budget",
+              "value": {
+                "scope": "whole_trip",
+                "currency": "RUB",
+                "amount_minor": 9000000
+              },
+              "target_id": null
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      ]
+    },
+    {
+      "case_id": "PF-GEO-02",
+      "step_id": "04",
+      "text": "Теперь отправление Санкт-Петербрг. Направление и бюджет оставь прежними.",
+      "recipe_text": "Теперь отправление Санкт-Петербрг. Направление и бюджет оставь прежними.",
+      "before_state": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Анталья",
+            "rooms": [],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 9000000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "f921d979-7889-4cc8-8aaf-d01bc07eafc3",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 2
+      },
+      "before_pending": {
+        "text": "На какую дату планируете заезд в городе «Анталья»?",
+        "field": "stay.check_in",
+        "reason": "clarification",
+        "context": {
+          "requested_origin": {
+            "kind": "city",
+            "name": "Москва",
+            "country_code": "RU"
+          },
+          "requested_destination": {
+            "kind": "city",
+            "name": "Анталья",
+            "country_code": "TR"
+          }
+        },
+        "questions": [
+          "На какую дату планируете заезд в городе «Анталья»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "4ff7bce7-cac6-4175-bb31-81dff34d86ad-question",
+        "state_version": 2,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Анталья",
+          "country_code": "TR"
+        }
+      },
+      "actual_pending": {
+        "text": "На какую дату планируете заезд в городе «Анталья»?",
+        "field": "stay.check_in",
+        "reason": "clarification",
+        "context": {
+          "requested_origin": {
+            "kind": "city",
+            "name": "Москва",
+            "country_code": "RU"
+          },
+          "requested_destination": {
+            "kind": "city",
+            "name": "Анталья",
+            "country_code": "TR"
+          }
+        },
+        "questions": [
+          "На какую дату планируете заезд в городе «Анталья»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "902d05e8-2a9b-456e-8941-cb56b903e4a9-question",
+        "state_version": 2,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Анталья",
+          "country_code": "TR"
+        }
+      },
+      "actual_reply": "На какую дату планируете заезд в городе «Анталья»?",
+      "raw_validated": [
+        {
+          "reply": "Отправление изменено на Санкт-Петербург. Направление и бюджет оставлены без изменений.",
+          "control": {
+            "action": "continue"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Санкт-Петербург"
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      ]
+    }
+  ]
+}

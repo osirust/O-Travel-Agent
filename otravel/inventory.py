@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+import json
+from collections import Counter
 from copy import deepcopy
 from datetime import date
 from hashlib import sha256
-import json
 from typing import Any
 
-from .domain import CITIES, DomainError, TripState, validate_trip
-
+from .domain import CITIES, MVP_LIMITS, DomainError, TripState, route_edges, validate_trip
 
 CITY_DATA = {
     "Москва": ("moscow", 500_000), "Санкт-Петербург": ("petersburg", 450_000),
@@ -28,7 +28,14 @@ RATES = (
     {"id": "flex", "breakfast": True, "refundable": True},
 )
 NOTICE = "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся."
-SUPPORTED_CONSTRAINTS = {"breakfast", "refundable", "pets_allowed", "pets"}
+PLACE_TRANSFER_NOTICE = "Демонстрационный трансфер; стоимость и наличие вымышлены. Трансфер поставщика не бронируется."
+PLACE_TRANSFER_CATALOGUE = "verified_place_transfer_demo_v1"
+PLACE_TRANSFER_PROVIDER = "demo_place_transfer"
+PLACE_TRANSFER_ID_PREFIX = "demo-place-transfer-"
+REGISTERED_TRANSFER_CATALOGUE = "registered_city_transfer_demo_v1"
+REGISTERED_TRANSFER_PROVIDER = "demo_registered_transfer"
+REGISTERED_TRANSFER_ID_PREFIX = "demo-registered-transfer-"
+SUPPORTED_CONSTRAINTS = {"breakfast", "refundable", "pets_allowed", "pets", "nonstop"}
 
 
 def _error(code: str, message: str, **details: Any) -> dict[str, Any]:
@@ -92,8 +99,9 @@ def _allocation(state: TripState, stay: Any, capacity: int) -> list[dict[str, An
     return rooms if place(0) else None
 
 
-def _constraints(state: TripState, stay_id: str | None = None) -> list[Any]:
-    return [item for item in state.constraints if item.hard and (item.stay_id is None or item.stay_id == stay_id)]
+def _constraints(state: TripState, stay_id: str | None = None, room_id: str | None = None) -> list[Any]:
+    return [item for item in state.constraints if item.hard and (item.stay_id is None or item.stay_id == stay_id)
+            and (item.room_id is None or item.room_id == room_id)]
 
 
 def _pet_request(state: TripState) -> tuple[list[dict[str, Any]], list[str]]:
@@ -126,6 +134,16 @@ def _hotel_offer(state: TripState, stay: Any, hotel: dict[str, Any], rate: dict[
     assignments = _allocation(state, stay, hotel["capacity"])
     if assignments is None:
         return None
+    scoped = any(c.hard and c.room_id is not None and c.stay_id == stay.id for c in state.constraints)
+    room_rates = []
+    for room in assignments:
+        conditions = _constraints(state, stay.id, room["room_id"])
+        options = [candidate for candidate in (rate, *[r for r in RATES if r != rate])
+                   if all(c.key not in {"breakfast", "refundable"} or candidate[c.key] == c.value for c in conditions)]
+        if not options:
+            return None
+        room_rates.append({"room_id": room["room_id"], "rate_type": options[0]["id"],
+                           "breakfast": options[0]["breakfast"], "refundable": options[0]["refundable"]})
     nights = (stay.check_out - stay.check_in).days
     # Seasonal adjustment is fictional and deterministic, not a market model.
     season = 130 if stay.check_in.month in {6, 7, 8} else 120 if stay.check_in.month == 12 else 90 if stay.check_in.month == 11 else 100
@@ -133,6 +151,7 @@ def _hotel_offer(state: TripState, stay: Any, hotel: dict[str, Any], rate: dict[
     breakdown: list[dict[str, Any]] = []
     people = {person.id: person for person in state.travelers}
     for room in assignments:
+        room_rate = next(r for r in room_rates if r["room_id"] == room["room_id"])
         breakdown.append(_line("room_nights", base, nights, room_id=room["room_id"]))
         adults = sum(people[identifier].type == "adult" for identifier in room["traveler_ids"])
         breakdown.append(_line("extra_adult_nights", 120_000, max(0, adults - 2) * nights, room_id=room["room_id"]))
@@ -142,28 +161,29 @@ def _hotel_offer(state: TripState, stay: Any, hotel: dict[str, Any], rate: dict[
             if person.type == "child":
                 unit = 0 if age < 2 else 60_000 if age < 12 else 100_000
                 breakdown.append(_line("child_nights", unit, nights, traveler_id=identifier, age=age))
-            if rate["breakfast"]:
+            if room_rate["breakfast"]:
                 breakdown.append(_line("breakfast_days", 70_000 if person.type == "adult" else 40_000, nights, traveler_id=identifier))
-        if rate["refundable"]:
+        if room_rate["refundable"]:
             breakdown.append(_line("flexible_rate_nights", base * 15 // 100, nights, room_id=room["room_id"]))
     if pets:
         breakdown.append(_line("pet_stay_fee", 200_000, len(pets)))
     total = sum(item["amount_minor"] for item in breakdown)
     hotel_id = f"demo-hotel-{CITY_DATA[stay.city][0]}-{hotel['suffix']}"
-    identifier = "demo-stay-" + _digest([stay.model_dump(mode="json"), [person.model_dump(mode="json") for person in state.travelers], pets, hotel_id, rate["id"], total])
-    return {"offer_id": identifier, "component_id": stay.id, "kind": "hotel", "name": hotel["name"], "hotel_id": hotel_id, "city": stay.city, "check_in": stay.check_in.isoformat(), "check_out": stay.check_out.isoformat(), "nights": nights, "rate_type": rate["id"], "breakfast": rate["breakfast"], "refundable": rate["refundable"], "pets_allowed": hotel["pets_allowed"], "max_pet_kg": hotel["max_pet_kg"], "room_assignments": assignments, "breakdown": breakdown, "total_minor": total, "currency": "RUB", "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True, "availability": "synthetic_not_live"}
+    rate_id = rate["id"] if not scoped else room_rates[0]["rate_type"] if len({r["rate_type"] for r in room_rates}) == 1 else "mixed"
+    identifier = "demo-stay-" + _digest([stay.model_dump(mode="json"), [person.model_dump(mode="json") for person in state.travelers], pets, hotel_id, room_rates if scoped else rate["id"], total])
+    result = {"offer_id": identifier, "component_id": stay.id, "kind": "hotel", "name": hotel["name"], "hotel_id": hotel_id, "city": stay.city, "check_in": stay.check_in.isoformat(), "check_out": stay.check_out.isoformat(), "nights": nights, "rate_type": rate_id, "breakfast": rate["breakfast"], "refundable": rate["refundable"], "pets_allowed": hotel["pets_allowed"], "max_pet_kg": hotel["max_pet_kg"], "room_assignments": assignments, "breakdown": breakdown, "total_minor": total, "currency": "RUB", "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True, "availability": "synthetic_not_live"}
+    if scoped:
+        result["room_rates"] = room_rates
+        for key in ("breakfast", "refundable"):
+            values = {r[key] for r in room_rates}
+            result[key] = room_rates[0][key] if len(values) == 1 else None
+    return result
 
 
 def _route(state: TripState) -> list[tuple[str, str, date, str]]:
-    route = []
-    origin = state.origin
-    for index, stay in enumerate(state.stays):
-        mode = state.legs[index].mode if len(state.legs) == len(state.stays) + 1 else "flight"
-        route.append((origin, stay.city, stay.check_in, mode))
-        origin = stay.city
-    mode = state.legs[-1].mode if len(state.legs) == len(state.stays) + 1 else "flight"
-    route.append((origin, state.origin, state.stays[-1].check_out, mode))
-    return route
+    edges = route_edges(state)
+    return [(origin, destination, day, state.legs[index].mode if len(state.legs) == len(edges) else "flight")
+            for index, (origin, destination, day) in enumerate(edges)]
 
 
 def _transport_offers(state: TripState, pets: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -182,17 +202,204 @@ def _transport_offers(state: TripState, pets: list[dict[str, Any]]) -> list[dict
             breakdown.append(_line("demo_passenger", unit, 1, traveler_id=person.id, age=age))
         if pets:
             breakdown.append(_line("demo_pet_transport", 300_000, len(pets)))
-        offers.append({"offer_id": "demo-transport-" + _digest([index, origin, destination, mode, day.isoformat(), breakdown]), "component_id": state.legs[index].id if len(state.legs) == len(state.stays) + 1 else f"leg-{index}", "kind": mode, "name": "DEMO — Синтетический перелёт" if mode == "flight" else "DEMO — Синтетический поезд", "origin": origin, "destination": destination, "departure_date": day.isoformat(), "arrival_date": day.isoformat(), "age_basis": "departure_date", "traveler_ids": [person.id for person in state.travelers], "pets_allowed": True, "max_pet_kg": 20, "breakdown": breakdown, "total_minor": sum(item["amount_minor"] for item in breakdown), "currency": "RUB", "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True, "availability": "synthetic_not_live"})
+        offers.append({"offer_id": "demo-transport-" + _digest([index, origin, destination, mode, day.isoformat(), breakdown]), "component_id": state.legs[index].id if len(state.legs) == len(route_edges(state)) else f"leg-{index}", "kind": mode, "name": "DEMO — Синтетический перелёт" if mode == "flight" else "DEMO — Синтетический поезд", "origin": origin, "destination": destination, "departure_date": day.isoformat(), "arrival_date": day.isoformat(), "age_basis": "departure_date", "traveler_ids": [person.id for person in state.travelers], "pets_allowed": True, "max_pet_kg": 20, "breakdown": breakdown, "total_minor": sum(item["amount_minor"] for item in breakdown), "currency": "RUB", "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True, "availability": "synthetic_not_live"})
+        if mode == "flight":
+            offers[-1].update(nonstop=True, segment_count=1, stops_count=0, route_facts_source="synthetic_demo_catalogue")
     for stay in state.stays:
         breakdown = [_line("demo_transfer_passenger", 40_000, len(state.travelers))]
         offers.append({"offer_id": "demo-transfer-" + _digest([stay.id, stay.city, stay.check_in.isoformat(), breakdown]), "component_id": f"transfer-{stay.id}", "kind": "transfer", "name": "DEMO — Синтетический трансфер", "city": stay.city, "date": stay.check_in.isoformat(), "traveler_ids": [person.id for person in state.travelers], "pets_allowed": True, "max_pet_kg": 20, "breakdown": breakdown, "total_minor": sum(item["amount_minor"] for item in breakdown), "currency": "RUB", "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True, "availability": "synthetic_not_live"})
     return offers
 
 
-def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]]:
+def bounded_transport_catalog(state: TripState | dict) -> dict[str, Any]:
+    """Independent native-RUB DEMO transport, never a hotel/pin substitution.
+
+    It is a catalogue of canonical snapshots, not a complete checkout plan.
+    Hotel availability/rates/pins cannot remove valid transport components;
+    route/domain/coverage and transport constraints still fail closed.
+    """
+    state = TripState.model_validate(state)
+    issues = [item for item in validate_trip(state)
+              if item["code"] not in {"missing_budget", "unsupported_budget"}]
+    pets, pet_questions = _pet_request(state)
+    questions = [item["message"] for item in issues if item["code"].startswith("missing_")] + pet_questions
+    blocking = [item for item in issues if not item["code"].startswith("missing_")]
+    cities = [state.origin, state.route_policy.end_city, *[stay.city for stay in state.stays],
+              *[city for leg in state.legs for city in (leg.origin, leg.destination)]]
+    outside = list(dict.fromkeys(city for city in cities if city and city not in CITIES))
+    if outside:
+        blocking.append(_error("unsupported_city", "Текущее покрытие DEMO-транспорта не включает это направление.", cities=outside))
+    for constraint in state.constraints:
+        if not constraint.hard:
+            continue
+        if constraint.key not in SUPPORTED_CONSTRAINTS:
+            blocking.append(_error("unsupported_constraint", "DEMO-транспорт не подтверждает неизвестное обязательное условие.", key=constraint.key))
+        elif constraint.key in {"breakfast", "refundable", "pets_allowed", "nonstop"} and type(constraint.value) is not bool:
+            blocking.append(_error("invalid_constraint", "Для обязательного условия нужно true/false.", key=constraint.key))
+    if any(pet["weight_kg"] > 20 for pet in pets):
+        blocking.append(_error("transport_pets", "Животное не соответствует пределу DEMO-транспорта 20 кг."))
+    base = {"offers": [], "questions": list(dict.fromkeys(questions)), "violations": blocking,
+            "source_type": "DEMO", "price_kind": "synthetic", "scope": "transport_only", "warnings": [NOTICE]}
+    if questions or blocking:
+        return base
+    domestic = set(CITIES[:4])
+    if any(mode == "train" and (origin not in domestic or destination not in domestic) for origin, destination, _, mode in _route(state)):
+        base["violations"].append(_error("unsupported_transport", "DEMO-поезда поддерживаются только между четырьмя российскими городами."))
+        return base
+    offers = _transport_offers(state, pets)
+    if any(offer["kind"] == "flight" and (offer.get("nonstop") is not True or offer.get("segment_count") != 1
+            or offer.get("stops_count") != 0 or offer.get("route_facts_source") != "synthetic_demo_catalogue") for offer in offers):
+        base["violations"].append(_error("flight_facts_mismatch", "Не подтверждены свойства конечного DEMO-перелёта."))
+        return base
+    base["offers"] = offers
+    return base
+
+
+def bounded_place_transfer_catalog(state: TripState | dict) -> dict[str, Any]:
+    """Finite synthetic transfer snapshots for explicitly selected place refs.
+
+    The server's persistent selection boundary supplies the canonical refs;
+    this pure catalogue neither verifies live geography nor makes HTTP calls.
+    It never creates a hotel/flight or joins a city/country by its display name.
+    The existing HYBRID+demo_fallback policy is required even for validation.
+    """
+    state = TripState.model_validate(state)
+    base = {"offers": [], "questions": [], "violations": [], "source_type": "DEMO",
+        "price_kind": "synthetic", "scope": "verified_place_transfers_only", "warnings": [PLACE_TRANSFER_NOTICE]}
+    if state.search_policy.mode != "HYBRID" or not state.search_policy.demo_fallback or not state.location_refs:
+        return base
+    issues = [issue for issue in validate_trip(state)
+        if issue["code"] not in {"missing_budget", "unsupported_budget"}]
+    pets, questions = _pet_request(state)
+    base["questions"] = list(dict.fromkeys([i["message"] for i in issues if i["code"].startswith("missing_")] + questions))
+    base["violations"] = [i for i in issues if not i["code"].startswith("missing_")]
+    for condition in state.constraints:
+        if condition.hard and condition.key not in SUPPORTED_CONSTRAINTS:
+            base["violations"].append(_error("unsupported_constraint",
+                "Демонстрационный трансфер не подтверждает неизвестное обязательное условие.", key=condition.key))
+        elif (condition.hard and condition.key in {"breakfast", "refundable", "pets_allowed", "nonstop"}
+                and type(condition.value) is not bool):
+            base["violations"].append(_error("invalid_constraint", "Для обязательного условия нужно true/false.", key=condition.key))
+    if any(pet["weight_kg"] > 20 for pet in pets):
+        base["violations"].append(_error("transport_pets", "Демонстрационный трансфер поддерживает животных до20кг."))
+    people = [person.id for person in state.travelers]
+    if not 1 <= len(people) <= MVP_LIMITS["travelers"]:
+        base["violations"].append(_error("transfer_capacity", "Число пассажиров вне конечного профиля DEMO-трансфера."))
+    if base["questions"] or base["violations"]:
+        return base
+    seats_per_vehicle = 4
+    vehicles = (len(people) + seats_per_vehicle - 1) // seats_per_vehicle
+    for stay in state.stays:
+        ref = state.location_refs.get(stay.place_id) if stay.place_id is not None else None
+        if ref is None or stay.city != ref.canonical_name or stay.check_in is None or stay.check_out is None:
+            base["violations"].append(_error("transfer_place_unverified",
+                "Для этого DEMO-трансфера нужны точная выбранная географическая ссылка и даты.", stay_id=stay.id))
+            continue
+        breakdown = [_line("demo_transfer_passenger", 40_000, len(people))]
+        if pets:
+            breakdown.append(_line("demo_transfer_pet", 100_000, len(pets)))
+        identity = {"catalogue": PLACE_TRANSFER_CATALOGUE, "trip_id": state.trip_id,
+            "state_version": state.state_version, "stay_id": stay.id, "place_id": ref.place_id,
+            "place_ref_sha256": ref.snapshot_sha256(), "check_in": stay.check_in.isoformat(),
+            "check_out": stay.check_out.isoformat(), "travelers": [p.model_dump(mode="json") for p in state.travelers],
+            "pets": pets, "breakdown": breakdown, "vehicle_count": vehicles, "seats_per_vehicle": seats_per_vehicle}
+        base["offers"].append({"offer_id": PLACE_TRANSFER_ID_PREFIX + _digest(identity),
+            "provider": PLACE_TRANSFER_PROVIDER, "component_id": "transfer-" + stay.id,
+            "catalogue": PLACE_TRANSFER_CATALOGUE, "kind": "transfer", "name": PLACE_TRANSFER_NOTICE,
+            "trip_id": state.trip_id, "state_version": state.state_version, "stay_id": stay.id,
+            "city": ref.canonical_name, "country_iso2": ref.country_iso2, "place_id": ref.place_id,
+            "place_ref_version": ref.ref_version, "place_ref_sha256": ref.snapshot_sha256(),
+            "date": stay.check_in.isoformat(), "check_out": stay.check_out.isoformat(),
+            "traveler_ids": people.copy(), "vehicle_count": vehicles, "seats_per_vehicle": seats_per_vehicle,
+            "capacity": vehicles * seats_per_vehicle, "capacity_source": "synthetic_demo_profile",
+            "pets_allowed": True, "max_pet_kg": 20, "breakdown": breakdown,
+            "total_minor": sum(line["amount_minor"] for line in breakdown), "currency": "RUB",
+            "fees_included": True, "fees_scope": "synthetic_transfer_rule_all_inclusive",
+            "source_type": "DEMO", "price_kind": "synthetic", "is_demo": True,
+            "availability": "synthetic_not_live", "booking_created_at_supplier": False})
+    return base
+
+
+def bounded_registered_transfer_catalog(state: TripState | dict) -> dict[str, Any]:
+    """Synthetic transfers for the explicit fixed LiteAPI/Duffel registry only.
+
+    Does not extend hotel/flight DEMO coverage, invent CityRefs, or assert any
+    location, availability, distance or supplier transfer fact. Dynamic refs
+    continue to use the separate exact-ref catalogue unchanged.
+    """
+    from .provider_cities import available_search_cities, flight_iata, liteapi_city_query
+
+    state = TripState.model_validate(state)
+    base = {"offers": [], "questions": [], "violations": [], "source_type": "DEMO",
+        "price_kind": "synthetic", "scope": "registered_city_transfers_only", "warnings": [PLACE_TRANSFER_NOTICE]}
+    policy = state.search_policy
+    if (state.location_refs or policy.mode != "HYBRID" or not policy.demo_fallback
+            or policy.hotel_provider != "liteapi" or policy.flight_provider != "duffel"):
+        return base
+    issues = [issue for issue in validate_trip(state)
+        if issue["code"] not in {"missing_budget", "unsupported_budget"}]
+    pets, questions = _pet_request(state)
+    base["questions"] = list(dict.fromkeys([issue["message"] for issue in issues
+        if issue["code"].startswith("missing_")] + questions))
+    base["violations"] = [issue for issue in issues if not issue["code"].startswith("missing_")]
+    for condition in state.constraints:
+        if condition.hard and condition.key not in SUPPORTED_CONSTRAINTS:
+            base["violations"].append(_error("unsupported_constraint",
+                "Демонстрационный трансфер не подтверждает неизвестное обязательное условие.", key=condition.key))
+        elif (condition.hard and condition.key in {"breakfast", "refundable", "pets_allowed", "nonstop"}
+                and type(condition.value) is not bool):
+            base["violations"].append(_error("invalid_constraint", "Для обязательного условия нужно true/false.", key=condition.key))
+    if any(pet["weight_kg"] > 20 for pet in pets):
+        base["violations"].append(_error("transport_pets", "Демонстрационный трансфер поддерживает животных до20кг."))
+    if not 1 <= len(state.travelers) <= MVP_LIMITS["travelers"]:
+        base["violations"].append(_error("transfer_capacity", "Число пассажиров вне конечного профиля DEMO-трансфера."))
+    allowed = set(available_search_cities(state))
+    if any(stay.city not in allowed or liteapi_city_query(stay.city) is None or flight_iata(stay.city) is None
+            or stay.place_id is not None for stay in state.stays):
+        base["violations"].append(_error("transfer_city_unregistered",
+            "Этот DEMO-трансфер ограничен явно зарегистрированными направлениями LiteAPI/Duffel."))
+    if base["questions"] or base["violations"]:
+        return base
+    people = [person.id for person in state.travelers]
+    seats, vehicles = 4, (len(people) + 3) // 4
+    # This existing deterministic generator is a price rule, never an external
+    # route. Only its transfer rows leave this function.
+    for original in _transport_offers(state, pets):
+        if original["kind"] != "transfer":
+            continue
+        stay = next(stay for stay in state.stays if original["component_id"] == "transfer-" + stay.id)
+        country, provider_city = liteapi_city_query(stay.city)
+        identity = {"catalogue": REGISTERED_TRANSFER_CATALOGUE, "trip_id": state.trip_id,
+            "state_version": state.state_version, "stay_id": stay.id, "city": stay.city,
+            "check_in": stay.check_in.isoformat(), "check_out": stay.check_out.isoformat(),
+            "travelers": [person.model_dump(mode="json") for person in state.travelers],
+            "pets": pets, "breakdown": original["breakdown"], "vehicles": vehicles, "seats_per_vehicle": seats}
+        offer = {**original, "offer_id": REGISTERED_TRANSFER_ID_PREFIX + _digest(identity),
+            "provider": REGISTERED_TRANSFER_PROVIDER, "catalogue": REGISTERED_TRANSFER_CATALOGUE,
+            "name": PLACE_TRANSFER_NOTICE, "trip_id": state.trip_id, "state_version": state.state_version,
+            "stay_id": stay.id, "check_out": stay.check_out.isoformat(), "country_iso2": country,
+            "registry_city_label": provider_city, "registry_iata_code": flight_iata(stay.city),
+            "vehicle_count": vehicles, "seats_per_vehicle": seats, "capacity": vehicles * seats,
+            "capacity_source": "synthetic_demo_profile", "booking_created_at_supplier": False,
+            "fees_included": True, "fees_scope": "synthetic_transfer_rule_all_inclusive"}
+        if pets:
+            offer["breakdown"].append(_line("demo_transfer_pet", 100_000, len(pets)))
+            offer["total_minor"] = sum(item["amount_minor"] for item in offer["breakdown"])
+            # Pet charges participate in the canonical identity as well.
+            identity["breakdown"] = offer["breakdown"]
+            offer["offer_id"] = REGISTERED_TRANSFER_ID_PREFIX + _digest(identity)
+        base["offers"].append(offer)
+    return base
+
+
+def validate_plan(state: TripState, plan: dict[str, Any], *, check_budget: bool = True) -> list[dict[str, Any]]:
     violations = validate_trip(state)
+    if not check_budget:
+        violations = [issue for issue in violations if issue["code"] not in {"missing_budget", "unsupported_budget"}]
     if not isinstance(plan, dict):
         return violations + [_error("invalid_plan", "План должен быть объектом.")]
+    if check_budget and plan.get("catalogue_only") is True:
+        return [_error("catalogue_not_checkout", "Каталог исходных DEMO-компонентов не является готовой корзиной.")]
     offers = plan.get("offers", [])
     if not isinstance(offers, list) or not offers:
         return violations + [_error("missing_offers", "В плане отсутствуют компоненты.")]
@@ -219,7 +426,7 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
             violations.append(_error("invalid_source", "DEMO-предложение не может объявляться реальным."))
     if type(plan.get("total_minor")) is not int or plan["total_minor"] != total or plan.get("currency") != "RUB":
         violations.append(_error("invalid_total", "Сумма плана не совпадает с компонентами."))
-    if state.budget and total > state.budget.amount_minor:
+    if check_budget and state.budget and total > state.budget.amount_minor:
         violations.append(_error("budget_exceeded", "План превышает общий бюджет.", total_minor=total, budget_minor=state.budget.amount_minor))
     people = {person.id: person for person in state.travelers}
     separate = {group.id for group in state.groups if group.keep_separate}
@@ -236,9 +443,38 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
         offer = matches[0]
         known_hotel = next((hotel for hotel in HOTELS if stay.city in CITY_DATA and offer.get("hotel_id") == f"demo-hotel-{CITY_DATA[stay.city][0]}-{hotel['suffix']}"), None)
         known_rate = next((rate for rate in RATES if rate["id"] == offer.get("rate_type")), None)
-        if known_hotel is None or known_rate is None:
-            violations.append(_error("unknown_rate", "Отель или тариф отсутствует в конечном DEMO-каталоге."))
-        elif any(offer.get(key) != known_rate[key] for key in ("breakfast", "refundable")) or any(offer.get(key) != known_hotel[key] for key in ("pets_allowed", "max_pet_kg")):
+        facts = {}
+        room_rates = offer.get("room_rates")
+        if room_rates is None:
+            if known_rate is None:
+                violations.append(_error("unknown_rate", "Тариф отсутствует в конечном DEMO-каталоге."))
+            else:
+                facts = {room.id: known_rate for room in stay.rooms}
+                if any(offer.get(key) is not known_rate[key] for key in ("breakfast", "refundable")):
+                    violations.append(_error("property_facts_mismatch", "Свойства тарифа не совпадают с данными каталога."))
+            if any(c.hard and c.stay_id == stay.id and c.room_id is not None for c in state.constraints):
+                violations.append(_error("missing_room_rate_evidence", "Для условий конкретного номера нужны его собственные тарифные факты.", stay_id=stay.id))
+        elif (not isinstance(room_rates, list) or any(not isinstance(r, dict) or not isinstance(r.get("room_id"), str) for r in room_rates)
+              or Counter(r.get("room_id") for r in room_rates) != Counter(room.id for room in stay.rooms)):
+            violations.append(_error("invalid_room_rates", "Тарифы должны однозначно покрывать каждый номер остановки.", stay_id=stay.id))
+        else:
+            for row in room_rates:
+                original_rate = next((r for r in RATES if r["id"] == row.get("rate_type")), None)
+                if original_rate is None or any(row.get(key) is not original_rate[key] for key in ("breakfast", "refundable")):
+                    violations.append(_error("property_facts_mismatch", "Тариф конкретного номера не совпадает с каталогом.", stay_id=stay.id, room_id=row.get("room_id")))
+                else:
+                    facts[row["room_id"]] = original_rate
+            if len(facts) == len(stay.rooms):
+                rate_ids = {row["id"] for row in facts.values()}
+                aggregate_rate = next(iter(rate_ids)) if len(rate_ids) == 1 else "mixed"
+                expected = {key: next(iter(values)) if len(values) == 1 else None
+                            for key in ("breakfast", "refundable")
+                            for values in [{row[key] for row in facts.values()}]}
+                if offer.get("rate_type") != aggregate_rate or any(offer.get(key) is not value for key, value in expected.items()):
+                    violations.append(_error("property_facts_mismatch", "Общие свойства не совпадают с тарифами отдельных номеров."))
+        if known_hotel is None:
+            violations.append(_error("unknown_rate", "Отель отсутствует в конечном DEMO-каталоге."))
+        elif any(offer.get(key) != known_hotel[key] for key in ("pets_allowed", "max_pet_kg")):
             violations.append(_error("property_facts_mismatch", "Свойства предложения не совпадают с данными каталога."))
         if stay.hotel_id and offer.get("hotel_id") != stay.hotel_id:
             violations.append(_error("selected_hotel_mismatch", "Выбранный отель подменён другим."))
@@ -263,10 +499,14 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
             groups = {person.group_id for person in members}
             if len(groups) > 1 and groups.intersection(separate):
                 violations.append(_error("group_allocation", "Семьи с условием раздельного размещения смешаны.", stay_id=stay.id))
-        for constraint in _constraints(state, stay.id):
+        for constraint in [c for c in state.constraints if c.hard and (c.stay_id is None or c.stay_id == stay.id)]:
             if constraint.key not in SUPPORTED_CONSTRAINTS:
                 violations.append(_error("unsupported_constraint", "DEMO не умеет подтверждать это жёсткое условие.", key=constraint.key))
-            elif constraint.key in {"breakfast", "refundable", "pets_allowed"} and offer.get(constraint.key) != constraint.value:
+            elif constraint.key in {"breakfast", "refundable"} and any(
+                    facts.get(room.id, {}).get(constraint.key) is not constraint.value
+                    for room in stay.rooms if constraint.room_id is None or constraint.room_id == room.id):
+                violations.append(_error("constraint_violation", "Тариф номера нарушает обязательное условие.", key=constraint.key, stay_id=stay.id, room_id=constraint.room_id))
+            elif constraint.key == "pets_allowed" and offer.get(constraint.key) != constraint.value:
                 violations.append(_error("constraint_violation", "Тариф нарушает обязательное условие.", key=constraint.key, stay_id=stay.id))
     # A route and transfer cannot omit a member of the group.
     required_routes = [(a, b, day.isoformat(), mode) for a, b, day, mode in _route(state)] if state.origin and state.stays and all(stay.city and stay.check_in and stay.check_out for stay in state.stays) else []
@@ -277,6 +517,9 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
     for offer in offers:
         if offer.get("kind") in {"flight", "train", "transfer"} and sorted(offer.get("traveler_ids", [])) != sorted(people):
             violations.append(_error("transport_occupancy", "В транспорте потерян или добавлен участник."))
+        if offer.get("kind") == "flight" and (offer.get("nonstop") is not True or offer.get("segment_count") != 1
+                or offer.get("stops_count") != 0 or offer.get("route_facts_source") != "synthetic_demo_catalogue"):
+            violations.append(_error("flight_facts_mismatch", "Свойства перелёта не совпадают с конечным DEMO-каталогом."))
         if pets and offer.get("kind") in {"flight", "train", "transfer"} and (offer.get("pets_allowed") is not True or offer.get("max_pet_kg") != 20 or any(pet["weight_kg"] > 20 for pet in pets)):
             violations.append(_error("transport_pets", "Животное не соответствует DEMO-правилам транспорта."))
     transfers = [offer for offer in offers if offer.get("kind") == "transfer"]
@@ -286,8 +529,12 @@ def validate_plan(state: TripState, plan: dict[str, Any]) -> list[dict[str, Any]
 
 
 class DemoInventory:
-    def search_trip(self, state: TripState) -> dict[str, Any]:
+    def search_trip(self, state: TripState, *, catalogue_only: bool = False) -> dict[str, Any]:
         issues = validate_trip(state)
+        if catalogue_only:
+            # Discover native RUB components, then enforce the user's actual
+            # currency/budget only after all selected sources are assembled.
+            issues = [issue for issue in issues if issue["code"] not in {"missing_budget", "unsupported_budget"}]
         pets, pet_questions = _pet_request(state)
         questions = [item["message"] for item in issues if item["code"].startswith("missing_")] + pet_questions
         blocking = [item for item in issues if not item["code"].startswith("missing_")]
@@ -299,7 +546,7 @@ class DemoInventory:
         for constraint in state.constraints:
             if constraint.hard and constraint.key not in SUPPORTED_CONSTRAINTS:
                 blocking.append(_error("unsupported_constraint", "DEMO не подтверждает это жёсткое условие.", key=constraint.key))
-            if constraint.hard and constraint.key in {"breakfast", "refundable", "pets_allowed"} and type(constraint.value) is not bool:
+            if constraint.hard and constraint.key in {"breakfast", "refundable", "pets_allowed", "nonstop"} and type(constraint.value) is not bool:
                 blocking.append(_error("invalid_constraint", "Для этого условия нужно true/false.", key=constraint.key))
         base = {"plans": [], "questions": list(dict.fromkeys(questions)), "warnings": [NOTICE], "violations": blocking, "source_type": "DEMO", "price_kind": "synthetic", "limits_status": "proposed_implementation_guards_not_owner_approved"}
         if questions or blocking:
@@ -329,7 +576,9 @@ class DemoInventory:
             offers += _transport_offers(state, pets)
             total = sum(offer["total_minor"] for offer in offers)
             plan = {"plan_id": "demo-plan-" + _digest([state.trip_id, state.state_version, [offer["offer_id"] for offer in offers]]), "trip_id": state.trip_id, "state_version": state.state_version, "offers": offers, "total_minor": total, "currency": "RUB", "violations": [], "warnings": [NOTICE, "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."], "room_assignments": {offer["component_id"]: offer["room_assignments"] for offer in offers if offer["kind"] == "hotel"}, "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras", "source_type": "DEMO", "price_kind": "synthetic", "booking_created": False}
-            violations = validate_plan(state, plan)
+            if catalogue_only:
+                plan["catalogue_only"] = True
+            violations = validate_plan(state, plan, check_budget=not catalogue_only)
             if not violations:
                 base["plans"].append(plan)
         base["plans"].sort(key=lambda plan: (plan["total_minor"], plan["plan_id"]))

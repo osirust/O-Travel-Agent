@@ -1,0 +1,80 @@
+{
+  "status": "PASS_CONTROLLED_SOURCE_DERIVED_GATEWAY_PG_ASGI_CHAIN",
+  "date": "2026-10-27",
+  "scope": "New E Serp property-details path with real isolated PostgreSQL and sanitized actual source fixture; all supplier HTTP intercepted, no Native change",
+  "fixture": {
+    "path": "fixtures/regression/serp-hotel-details-20261027.json",
+    "sha256": "61f13725d50e115bb43ab2b505dafa4bf4b361c163cc0cbcf6959909e5d2128b",
+    "source_search_sha256": "9ab5d3b01170ab8baeba5843f85d7caee3f7b6600a0ef79eaa54913575725c52",
+    "source_details_sha256": "257b25f32b5441fa9c8101643d515dc6397a67900511f57885d77e9d1661d359"
+  },
+  "chain": [
+    "POST /api/v1/sessions: fresh own session",
+    "POST /api/v1/sessions/{id}/live/search: hotels/serpapi/property_token, explicit one adult/no children/date/currency",
+    "Harness -> TravelGateway -> httpx.MockTransport source-derived detail response",
+    "Store.finish_run -> real PostgreSQL JSONB",
+    "GET /api/v1/runs/{id}: owner-auth public response",
+    "Fresh public GET plus direct Store.get_run: exact nested comparison equality"
+  ],
+  "public_pointer": "/result/result/live_offers/0/details/supplier_comparison",
+  "positive_checks": {
+    "run_status": "completed",
+    "one_selected_property": "FIVE Jumeirah Village Hotel",
+    "same_property_token": true,
+    "currency": "RUB",
+    "amount_minor": 3980600,
+    "price_kind": "INDICATIVE_ROOM_RATE_STAY_TOTAL",
+    "price_source": "Explicit room-rate num_guests1, not seller or room parent summary for2/3guests",
+    "requested_guests": 1,
+    "matching_rate_count": 6,
+    "other_guest_rates_excluded": 51,
+    "seller_count": 12,
+    "matching_sellers": ["Agoda", "Booking.com", "Priceline"],
+    "selected_reference_supplier": "Agoda",
+    "selected_reference_room": "Superior",
+    "source_type": "LIVE_INDICATIVE",
+    "equivalent": false,
+    "supplier_bookable": false,
+    "ready_for_real_booking": false,
+    "availability_verified": false,
+    "allocation_verified": false,
+    "cancellation_deadline_verified": false,
+    "missing_bed_configuration_preserved": true,
+    "store_and_public_comparison_equal": true,
+    "repeat_get_equal": true,
+    "trip_and_state_version_unchanged": true
+  },
+  "negative_check": {
+    "wrong_response_property_token": "failed run REPRICE_IDENTITY_MISMATCH",
+    "substituted_live_offer_returned": false,
+    "trip_unchanged": true,
+    "automatic_retry": false
+  },
+  "counts": {
+    "tests_passed": 2,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 1.65,
+    "intercepted_supplier_GETs": 2,
+    "real_external_HTTP": 0,
+    "actual_LLM_calls": 0,
+    "quote_rows_for_own_sessions": 0,
+    "order_rows_for_own_sessions": 0,
+    "Native_changes": 0
+  },
+  "evidence": {
+    "test": "tests/test_serp_property_details_api.py",
+    "test_sha256": "a3f133083b9a1960bc9a5b58572280a3e2452449a1ac9befca34015c2309883b",
+    "junit": ".local/evaluation/after80-20261026/serp-details-api-20261027.xml",
+    "junit_sha256": "9d4013f3e167f1196543b55c2d5ab1ce5f474bf69354168a972abcb3a1f772e6",
+    "ruff": "PASS",
+    "database": "otravel_test",
+    "api_source_sha256_unchanged": "277bcc566ee7f603d66b264b3b549caf5a4365a54543b49a6d284c2b24271275"
+  },
+  "not_claimed": [
+    "New actual SerpApi requests or deployment",
+    "Verified equivalent tariffs, final mandatory fees or bookability",
+    "A complete trip plan or quote from the standalone indicative component",
+    "Current vendor quotas or remaining account credits"
+  ]
+}

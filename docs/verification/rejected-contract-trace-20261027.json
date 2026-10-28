@@ -1,0 +1,61 @@
+{
+  "format": "otravel.rejected_contract_trace.v1",
+  "scope": "Final structured JSON failing canonical operation schema, with realLLMGateway/worker/publicAPI/real isolatedPG and intercepted vendorHTTP. Not a new modelquality/internet test.",
+  "status": "CONTROLLED_RELATED_API_PG_PASS_PARENT_FROZEN_FULL_PENDING",
+  "test_file": "tests/test_rejected_contract_trace_pg.py",
+  "test_sha256": "9c0d4910abc30c1e3296a4b4463dcd52115071db43c4974f81872a6806bca1bb",
+  "junit": ".local/evaluation/after80-20261027/rejected-contract-trace-pg-initial.xml",
+  "junit_sha256": "86d6e437b98a3b0aa3b284651145b301292b8ad239fc53abab0eb50c9a74aecf",
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 3.335,
+  "test_database": "otravel_test",
+  "source_hash_scope": "No package-level pre/post source manifest was taken by this narrow test actor; parent owns the combined immutable-source full proof.",
+  "cases": [
+    {
+      "case": "schema-invalid finalJSON",
+      "provider": "zai/glm-4.5-flash",
+      "wire": "httpx.MockTransport200; realgatewayparser/schemaValidator",
+      "invalid_operation": {
+        "type": "set_budget",
+        "value": {
+          "amount_minor": true,
+          "currency": "RUB"
+        }
+      },
+      "result": "INVALID_LLM_OPERATION",
+      "verified": [
+        "MODEL_CALL_FAILED persists a captured final structured contract rather than only numeric counters.",
+        "Strict boolean remains boolean in snapshot; nothing was silently coerced/applied.",
+        "schema_errors contains only path/rule and <=3 entries.",
+        "Snapshot excludes provider reasoning_content and credentials.",
+        "One attempted gatewaycall, unchanged canonicaltrip/version, no TOOL_CALL_STARTED/order."
+      ]
+    },
+    {
+      "case": "same invalidschema plus registeredcredential echo",
+      "result": "INVALID_LLM_RESPONSE",
+      "verified": [
+        "Credential echo is rejected before schema snapshot capture.",
+        "No rejected_structured_contract persisted in MODEL_CALL_FAILED.",
+        "Neither syntheticcredential nor hiddenreasoning marker appears in publicrun or persistedevents.",
+        "No trip/version mutation, sourcecall, successful response event or order."
+      ]
+    }
+  ],
+  "actual_external_http_calls": 0,
+  "actual_model_inference_calls": 0,
+  "native_or_other_db_changed": false,
+  "ruff": "PASS newtestfile",
+  "read_only_peer": {
+    "planning_intent": "No P1 found in the reviewed fresh-goalASK normalization: no operations or canonicalfacts are invented, explicitpause and cancel/confirm controls are excluded, raw modelmeaning is separately traceable. General semantics beyond the explicit freshwish scope is not qualified by this statement.",
+    "capture_safety": "Registeredcredential gate precedes capture; model_snapshot existing final-field allowlist/sizebound and parent re-sanitization remain in use.",
+    "scope_limitation": "StrictGroq transport decode/canonical-schema exceptions before result construction still do not attach this rejected finalJSON snapshot; top-level malformed/nonJSON responses likewise are not covered by the new canonical-validation branch. Do not claim all INVALID_LLM_OPERATION origins/providers now have a captured final contract."
+  },
+  "edits_by_this_actor": [
+    "new testfile",
+    "newverificationreceipt"
+  ],
+  "existing_production_or_parent_tests_edited": false
+}

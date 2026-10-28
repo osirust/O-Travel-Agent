@@ -1,0 +1,18 @@
+{
+  "status": "CONTROLLED_FULL_PASS_ACTUAL_ACCEPTANCE_PENDING",
+  "tests": 3914,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 120.869,
+  "junit_sha256": "482c92012db3bba3c37f2a1f83e9d958164f06b8f8a6dae623aca1a8bc9883fd",
+  "actual_8_dialogues": "NOT_RUN",
+  "native_group_prebook_checkout": "NOT_RUN_NEW_PACKAGE",
+  "cold_start_new_package": "NOT_RUN",
+  "local_qwen_calls": 0,
+  "initial_failures_preserved": [
+    "full-core-final.xml",
+    "full-release-candidate.xml"
+  ],
+  "scope": "Domain/API/PG/mock-adapter regression qualification only"
+}

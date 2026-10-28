@@ -1,0 +1,78 @@
+{
+  "format": "otravel.final40_financial_wrong_stay_waiver.v1",
+  "checked_at_utc": "2026-10-28T16:55:39.403939+00:00",
+  "finding_id": "FINANCIAL-REVIEW-WRONG-STAY-WAIVER-001",
+  "status": "CONTROLLED_CURRENT_SCOPE_BINDING_REPAIRED_ACTUAL_NLU_RETEST_OPEN",
+  "base_release_git": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "source_scope": "Current working tree, not yet a new Git/installed runtime assertion.",
+  "parent_receipt_retained": {
+    "path": "docs/verification/final40-financial-requirements-repair-20261028.json",
+    "sha256": "312efab3a22be62e0871a9f7d609716c92737a34b08e2e82c3c733c937a72442"
+  },
+  "original_peer_evidence": {
+    "path": ".local/evaluation/final-financial-readonly-peer-20261028/FINDINGS.json",
+    "sha256": "f8ea1116419f47c961631a75af98492e27d4a78327271ada6e4a58208c5373d9",
+    "old_helper_sha256": "76b6e5fe7db8978ab9bde9fc8985f602a3eee9941300b67bf94b9cd6017115cb"
+  },
+  "before": "Two saved temporal-hard requirements on Istanbul/Antalya. Current userwaives Istanbul, modelclear targets Antalya; earlier helper accepted wrong-stay clear. Room ordinal guard did not cover namedstay.",
+  "change": "Removal authority now derives from CURRENT asserted waiver clause, closed knowncityaliases or exact savedcity name and savedscopes. A modeltarget alone is not authority. Wrongstay/false/soft, repeatedcityvisits, unmatchednamedplace and ambiguousmultiscopes are preserved with clarification. Explicit allhotels waiver permits clearing all savedscopes; a single savedscope can be uniquely waived. Existing room ordinal scope guard remains.",
+  "files": [
+    {
+      "path": "otravel/financial_requirements.py",
+      "sha256": "1dfd8c6e79760f941dd1df62e8d28cf0519d7a5484a6922a920b19952d97454a"
+    },
+    {
+      "path": "tests/test_financial_requirements.py",
+      "sha256": "214e9ed0a73fe6865496a57b1aad0645c9c36ccaea99a531f5dac355a6896439"
+    },
+    {
+      "path": "tests/test_financial_requirements_pg.py",
+      "sha256": "5df7a27beef898251f077b336029dde59021bb9cfe4681cee6fc30b9d0a34992"
+    }
+  ],
+  "dependency": {
+    "path": "otravel/route_intake.py",
+    "sha256": "73ea603b9eb0acd243d23b7eba6ed532bf7d2e7bd220d72eb6c152fc5da83dfd",
+    "use": "Existing closed literal cityaliases only; no geographyHTTP or modelhint."
+  },
+  "checks": {
+    "retained_new_red": {
+      "sha256": "67b80260475f00319c8b5fc8de3f2394311e78fa9473fa81e661bd6660399d69",
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0
+    },
+    "new_pure_count": 68,
+    "api_pg_count": 5,
+    "fresh_own_pg_combined": {
+      "sha256": "19493c9f0c69f13656641a1c3af1db8267a6bb82b33d31cb585cb393ca5aa045",
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "related_pure": {
+      "sha256": "15e8453d9f080a3dda3d6b4c43325f70a997e9fb816f987dbb53ac1f9bc3bc81",
+      "tests": 415,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "counts_overlap": "68newpure tests appear in both73ownPG and415related; counts are not distinct source106 scenarios.",
+    "own_pg_source_tests_unchanged": true,
+    "cleanup": "Own fresh PostgreSQLcontainer and its anonymousvolume removed after label/ID checks.",
+    "pg_result": "WrongAntalya modelclear under literalIstanbul request leaves all tripfields/version unchanged; repeated correctIstanbul clear creates exactlyone newrevision, Antalya requirement remains, orders0."
+  },
+  "real_model_or_supplier_http": 0,
+  "master_reads": 0,
+  "production_database_access": 0,
+  "runtime8084_changes": 0,
+  "git_stage_commit_push": 0,
+  "limitations": [
+    "Controlled literal/domain/persistence proof, not fresh actualLLM NLU or full40/106 acceptance.",
+    "Positive arbitrary suppliercancellationdeadline verification is still unsupported; saved hardkey continues to block readyquote until explicitwaiver.",
+    "OriginalP2 nonstopfalse auxiliaryfalsepositive remains open in the retained originalregression suite.",
+    "Other monetary/hypotheticalbudget fixes belong to parent; this receipt does not qualify them."
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "format": "otravel.verification_receipt.v1",
+  "date": "2026-10-27",
+  "permanent_id": "HARNESS-004-COUNTRY-COMPOUND-INTAKE-001",
+  "status": "CACHED_TARGETED_REPAIR_TESTED_ACTUAL_REMOTE_RETEST_OPEN",
+  "source_actual_failure": {
+    "report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-073849-75554e48/report.json",
+    "sha256_at_capture": "693d8d6c27a4ffa91812c1905511f282e2827d463d93d4f65b98badc232d4278",
+    "case_id": "PF-GEO-01",
+    "step_id": "01"
+  },
+  "fact": "The actual Groq output supplied three valid independent operations (Moscow origin, RUB80000 whole-trip budget, one adult), but mislabeled a country requiring a city as a conflict. Validated and checked operations matched; the conflict branch blocked the whole batch, losing all three facts and yielding a generic clarification with field null.",
+  "causal_path": [
+    "The model country-not-city conflict bypassed all not-conflicts grounding guards.",
+    "The final process conflict branch correctly blocks real contradictions, but this missing city was not a contradictory fact.",
+    "A separate country-only branch previously erased every operation. The compound actual input did not match that bounded parser; the authorized independent-op flag now prevents unconditional clearing only for literal-validated fresh intake."
+  ],
+  "action": {
+    "helper": "normalize_country_intake_clarification in otravel/country_intake.py",
+    "hook_owner": "Parent integrated harness.py after MODEL_EXTRACTION_VALIDATED and before conflict gates; later operation/domain preflight remains mandatory.",
+    "scope": "Fresh intake only; exactly one literal current destination country, no rival current city/country choice, no hypothetical/historical/negated country intent. Only already-proposed set_origin/set_budget/add_traveler-adult operations are retained after independent literal verification.",
+    "country_conflict_reclassification": "Only bounded country-not-city/missing-city model conflict forms; monetary, party, date, true contradiction and other conflict strings are not cleared.",
+    "no_inference": "No new operation, city, age, family, room, date, price, consent or booking is invented. Origin/budget/adult operation values are copied unchanged.",
+    "clarification": "Code-owned destination.city context/requested country and human city question; country is never inserted as a bookable city.",
+    "source_calls": "No Native lifecycle, inference endpoint, tourist API or real booking/payment was contacted."
+  },
+  "verification": {
+    "strict_related": {
+      "tests": 229,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": "11.547",
+      "scope": "Controlled cached output on isolated otravel_test plus pure tests. Not fresh actual NLU.",
+      "files": [
+        "test_country_intake.py",
+        "test_intent_grounding.py",
+        "test_geography.py",
+        "test_harness_country_answer.py",
+        "test_harness_geo_dialogues_20261027.py",
+        "test_geo_context_canaries.py",
+        "test_harness_review.py::test_conflicts_block_patch_but_preserve_explicit_wait"
+      ]
+    },
+    "new_cases": "43 pure checks, exact cached initial-country regression, three genuine conflict atomic boundaries, one connected ten-turn conversation.",
+    "connected_series": "Captured country compound -> country FAQ through valid read-only selector -> contextual Belgorod/Serbia typo -> Istanbul/Serbia proposal -> rejection plus child7 and RUB70000 -> stale yes does not revive proposal -> Antalya proposal -> acceptance -> check-in14Nov -> check-out19Nov. Every run must complete; 3 controlled model responses, no tool/order creation.",
+    "policy_scope": "Pure exact helper uses captured HYBRID state. PG conversation starts with default local session policy; incomplete destination prevents search. No live HYBRID supplier acceptance is claimed.",
+    "negatives": "Country variants RS/TR/RU/AE/GE; rejected country/hypothesis/history/quoted instruction; competing current countries/cities; conflicting adult/budget declarations; unanchored operations; nonfresh trips; ASK/PROPOSE remain outside repair; real conflicts still block the entire batch.",
+    "ruff": "country_intake.py and test_country_intake.py passed Ruff.",
+    "sql_scope": "Only isolated otravel_test, no Native DB; read-only own test run diagnostics performed separately."
+  },
+  "preserved_failures": [
+    {
+      "artifact": ".local/evaluation/geo-20261027/country-compound-initial.xml",
+      "result": "1FAIL, exact cached raw reproduced origin=None before fix."
+    },
+    {
+      "artifact": ".local/evaluation/geo-20261027/country-compound-pure.xml",
+      "result": "1FAIL42PASS: initial helper missed second country without repeated preposition; explicit scoped country-code equality fixed this, original result retained."
+    },
+    {
+      "artifact": ".local/evaluation/geo-20261027/country-compound-targeted.xml",
+      "result": "1FAIL47PASS: controlled chain FAQ consumed a later model fixture; no production-data defect established."
+    },
+    {
+      "artifact": ".local/evaluation/geo-20261027/country-compound-related-final.xml",
+      "result": "228PASS1timeout: owned read-only run started4.390979s after creation and was interrupted by test teardown. Exact scheduling cause UNKNOWN; not evidence of a model data bug."
+    }
+  ],
+  "test_fixture_corrections": "Early positive chain runs did not require each run to complete and supplied invalid read-only prose. Final fixture returns the allowed geography section selector with information_subject=null; completed is asserted for every turn. Earlier state-only positive chain results do not qualify the strict ten-turn flow.",
+  "closure_condition": "Controlled fresh-intake regression and genuine conflict boundaries pass without inferred facts or supplier calls. This closes only the bounded cached repair scope; parent must repeat the actual strong-model country compound against the deployed source. Full80/106 language acceptance and whole-world intent understanding remain OPEN.",
+  "limitations": [
+    "No fresh strong-model call was made after repair.",
+    "No new actual provider search, price, reprice or booking evidence is supplied by this receipt.",
+    "Known timeout evidence remains preserved; no production timer was changed.",
+    "Helper intentionally refuses unsupported or ambiguous operations instead of broad conflict clearing."
+  ],
+  "artifacts": [
+    {
+      "path": "otravel/country_intake.py",
+      "sha256": "8854637ce4f4e0daecc1971bc00e4fe90f0739f0614d24e0464430d580009154",
+      "bytes": 8112
+    },
+    {
+      "path": "tests/test_country_intake.py",
+      "sha256": "b780379f70d387b73c26d55711fd8e3ece8751719a01d5e7c20eda11dfc9af34",
+      "bytes": 15048
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "3c45ab32f4e8f017cf7117677b7bbc566e91880ebdd124b2e563d30eaf6dc773",
+      "bytes": 122101
+    },
+    {
+      "path": "fixtures/regression/country-compound-intake-groq-20261027.json",
+      "sha256": "5243db9da4ff2bf4b33fb969f0e11e40f0fecb3f28a8ac75ffcb5852d76a8e9f",
+      "bytes": 6487
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/country-compound-related-strict-final.xml",
+      "sha256": "14acbfba10303731d616485393e7afa28e6340e113a32739c07173106d5ebf00",
+      "bytes": 53968
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/country-compound-initial.xml",
+      "sha256": "8b2f41fd3e53cf95283ec3d25f70a33f1853b3a4dcfa49ee1d907e0f5b689bd3",
+      "bytes": 709
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/country-compound-pure.xml",
+      "sha256": "70d7e97bb595b7a4ca12a08713d8b4d81d4339e516c05d62632da8555e58edd5",
+      "bytes": 14588
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/country-compound-targeted.xml",
+      "sha256": "170adba0c2150873404e7256335da5a01d1cf850556713b8878078efdf5df4c5",
+      "bytes": 13399
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/country-compound-related-final.xml",
+      "sha256": "9746a46d182ac26c6f9d9073a265b2d593a4cf9126436fbb0ad3404e1fae24df",
+      "bytes": 54767
+    },
+    {
+      "path": ".local/evaluation/geo-20261027/country-compound-timeout-query.json",
+      "sha256": "66d6f025f8efce1a3be6e4b814d0a48502cc3d7c8f9246126e71c939793d5312",
+      "bytes": 4676
+    }
+  ]
+}

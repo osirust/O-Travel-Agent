@@ -1,0 +1,52 @@
+{
+  "status": "STOPPED_NOT_QUALIFIED",
+  "fixture_sha256": "624bbcee11e9189a4b6227255344c5f31de7d5bd3904f01f8c13b8b84e1ad4d7",
+  "searches": 2,
+  "caps": {
+    "search": 2,
+    "preview": 1,
+    "confirm_including_exact_retry": 2,
+    "server_tools_per_search_run": 16
+  },
+  "expected_sources": "two SANDBOX hotels; transport/transfer may be explicit DEMO; no FX invention",
+  "supplier_http_count": "UNKNOWN_PUBLIC_API_DOES_NOT_EXPOSE_WIRE_COUNTER",
+  "llm_calls": 0,
+  "started_at": "2026-10-26T13:25:26.199744+00:00",
+  "source_commit_parent_verified": "6009644be59d2f5bcb998df41ee1355fa468b6d3",
+  "manifest_sha256": "e2bdb67f1eca8ec74822313b01d589494c5c5a2b40f6a95cdd54a7bbf664b017",
+  "scope": "typed API, no NLU; actual sandbox component refresh, simulated order",
+  "limitations": [
+    "Durable tool invocations include static lookup cache hits and are not supplier HTTP counts.",
+    "Preview supplier reprices are not emitted as search TOOL events; wire count remains unknown.",
+    "Rejected FX reason does not independently expose the raw rejected currency; no fake FX.",
+    "Sandbox hotels plus demo transport is not a live/bookable trip."
+  ],
+  "failure_code": "initial_trip_not_saved",
+  "completed_at": "2026-10-26T13:25:26.240410+00:00",
+  "local_HTTP_count": 3,
+  "local_HTTP_ledger": [
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:25:26.209049+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:25:26.222280+00:00",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "kind": "session",
+      "at": "2026-10-26T13:25:26.232788+00:00",
+      "status": 201
+    }
+  ],
+  "POST_counts": {
+    "session": 1
+  },
+  "all_personal_credentials_read": false,
+  "raw_evidence_private": true
+}

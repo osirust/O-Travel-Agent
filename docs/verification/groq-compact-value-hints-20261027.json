@@ -1,0 +1,118 @@
+{
+  "status": "PURE_HELPER_AND_INDEPENDENT_REVIEW_PASS_RUNTIME_AND_ACTUAL_NLU_OPEN",
+  "baseline_source_commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+  "baseline_source_package_sha256": "15158e2655681f16c967b14515a73ad72b135f62088e02bad811105759f61cd5",
+  "helper": {
+    "file": "otravel/groq_prompt.py",
+    "sha256": "a7ca7c73100dd31c4509a933ca4114a79ad2d555c37719bcea744205e7e53650",
+    "interface": "build_compact_operation_hints(original_dynamic_schema) -> (guidance_text, metadata)",
+    "guidance_is_equivalent_json_schema": false,
+    "original_server_validator_required": true,
+    "strict_wire_exact_type_and_target_required": true,
+    "checks": [
+      "bounded local-only original schema validation via groq_transport._compile",
+      "reviewed normalized structural fingerprints per operation value grammar",
+      "unknown operation/value fields, required/nullability/bounds/enums/condition changes fail closed",
+      "exact reviewed city-universe hash, without repeating all city names in model hints",
+      "complete dynamic ID registries and cross-branch consistency",
+      "per-stay room target bindings, no ID-prefix ownership guesses",
+      "exactly one variant per kind except explicitly projected per-stay set_room_members",
+      "nonempty legacy scalar enum disjoint from reserved typed keys"
+    ]
+  },
+  "pure_tests": {
+    "new_passed": 48,
+    "related_guide_codec_passed": 260,
+    "skipped": 0,
+    "ruff": "PASS",
+    "new_junit": ".local/evaluation/after80-20261027/groq-prompt-hints.xml",
+    "related_junit": ".local/evaluation/after80-20261027/groq-prompt-guide-codec-related.xml",
+    "test_file": "tests/test_groq_prompt.py",
+    "test_sha256": "d7393ad4fd1998766344c05607d9533ae23b6cd5378d5325bb7e5010ecc94ddd"
+  },
+  "independent_review": {
+    "reviewer": "/root/travel_checkout/readonly_transport_tests",
+    "status": "PASS_CHECKED_SCOPE",
+    "closed_findings": [
+      "GP-CITY-ENUM-01: changed city universe rejected",
+      "GP-ROUTE-NULL-01: optional end_city/null behavior accurately described",
+      "GP-MULTIVARIANT-01: extra creation variant cannot hide aliases",
+      "GP-SCALAR-ENUM-01: empty/reserved legacy scalar keys rejected"
+    ],
+    "negative_and_collision_controls": [
+      "new-traveler-1 existing ID not classified as creation alias",
+      "same room ID reused across stays retains both bindings",
+      "valid legacy enum remains supported"
+    ]
+  },
+  "saved_t4_measurement": {
+    "case": "PF-GROUP-04",
+    "step": "04",
+    "schema_metadata": {
+      "version": "groq_operation_value_hints_v1",
+      "projection_equivalent_json_schema": false,
+      "original_schema_sha256": "511479134a8beeadbfc714c994975be70a92b0baf97d36fbc91c08e07d95af8f",
+      "original_schema_canonical_sha256": "e56ca98e157e72e8732fa2dbd6bea3e1ff7e957e905dcd80e3cdb894496743c3",
+      "hints_sha256": "d8235df1857969dbcd08256b976ed43214f70551c6bc70789b9ebda8f52df4ce",
+      "hints_utf8_bytes": 3046,
+      "operation_types": [
+        "set_origin",
+        "set_budget",
+        "set_preference",
+        "clear_preference",
+        "set_route_policy",
+        "set_leg_mode",
+        "set_search_policy",
+        "add_traveler",
+        "update_traveler",
+        "remove_traveler",
+        "upsert_group",
+        "upsert_stay",
+        "set_room_members",
+        "remove_stay",
+        "replace_hotel",
+        "shift_return",
+        "set_constraint",
+        "clear_constraint",
+        "undo"
+      ],
+      "operation_variant_count": 20,
+      "reviewed_city_enum_sha256": "7d429976f57f4837e90ff5ef10df22bf5adfd3f35597ca5107d338bd5bfb0f48",
+      "server_original_schema_required": true,
+      "wire_exact_type_targets_required": true
+    },
+    "canonical_schema_utf8_bytes": 10093,
+    "compact_hints_utf8_bytes": 3046,
+    "saved_system_payload_utf8_bytes": 7047,
+    "registry_entry_counts": {
+      "groups": 9,
+      "new_people": 7,
+      "people": 10,
+      "preference_keys": 2,
+      "room_stay": 2,
+      "rooms": 9,
+      "scalar_keys": 0,
+      "stays": 4
+    },
+    "private_schema_sha256": "f1b0c1249ed85c2f794ee0b28516ed14fba40657f591c709c5dbce6d9952bdc3",
+    "private_hint_artifact_sha256": "264e92b83296e7a9664475108ef6cb8811c4560be43e50d30cfc632fad96123f",
+    "original_http413_cause": "UNKNOWN",
+    "byte_counts_are_not_token_counts": true
+  },
+  "calls": {
+    "real_models": 0,
+    "tourism_api": 0,
+    "other_vendor_http": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "native_source_profile_changes": 0,
+  "integration_constraints": [
+    "Only opt-in Groq strict version2 operation role may use guidance in place of the full system schema.",
+    "Custom LLM_SYSTEM_PROMPT must not be rewritten; version1 and other providers remain unchanged.",
+    "Original complete dynamic schema, semantic value decoding and domain validation remain authoritative.",
+    "No defaults, casts, value/ID guesses, registry truncation or proposal application occur here.",
+    "The helper does not drop trip/current message/pending/history/plans/prices/selection/time data.",
+    "This does not establish request quota, availability or actual model semantic correctness."
+  ]
+}

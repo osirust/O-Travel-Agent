@@ -1,0 +1,360 @@
+{
+  "scope": "EXACT_SANITIZED_RAW_OPERATIONS_AND_MINIMAL_CONTROLLED_BEFORE;NO_ACTUAL_NEW_NLU",
+  "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "causal_export_sha256": "a5067ad6d9e3eb8b60480a8e3a215dd3fe3c49b6f654add5181ae618189e961a",
+  "cases": [
+    {
+      "case_id": "ZAI100-040",
+      "turn": 6,
+      "input": "Бюджет 75 тысяч на двоих за поездку. Не в Сочи: я выбрал Казань. Сочи упоминаю только чтобы исключить, не меняй направление.",
+      "before": {
+        "trip_id": "private-controlled-ZAI100-040",
+        "state_version": 3,
+        "origin": "Санкт-Петербург",
+        "budget": null,
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "check_in": null,
+            "check_out": "2026-11-02",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ]
+          }
+        ]
+      },
+      "raw_operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 7500000
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_constraint",
+          "value": {
+            "key": "breakfast",
+            "hard": true,
+            "value": true,
+            "room_id": "new-room-1",
+            "stay_id": "new-stay-1"
+          },
+          "target_id": null
+        }
+      ],
+      "raw_contract_sha256": "97c7b0b85f540e3aed674946c4a5abfcabbcf17dea3d536b9476a1120c298e43",
+      "observed_checked_operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 7500000
+          },
+          "target_id": null
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Сочи"
+          },
+          "target_id": "new-stay-1"
+        }
+      ],
+      "source_sha256": "475082015fd03a5eb13d0f5616c3680ea1c2a97df1a9c51519c9d9431ca7a7fd"
+    },
+    {
+      "case_id": "ZAI100-052",
+      "turn": 5,
+      "input": "Дата выезда из Антальи — 16.11.2026. Заезд остаётся 08.11.2026.",
+      "before": {
+        "trip_id": "private-controlled-ZAI100-052",
+        "state_version": 3,
+        "origin": "Москва",
+        "budget": null,
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Анталья",
+            "check_in": "2026-11-08",
+            "check_out": "2026-11-16",
+            "rooms": []
+          }
+        ]
+      },
+      "raw_operations": [
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Анталья",
+            "check_in": "2026-11-08",
+            "check_out": "2026-11-16",
+            "requested_nights": 8
+          },
+          "target_id": "new-stay-1"
+        }
+      ],
+      "raw_contract_sha256": "59a176188590971572c4182f41ef816f025a3880901d7b552ff2446bd2be69b6",
+      "observed_checked_operations": [
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Анталья",
+            "check_in": "2026-11-08",
+            "check_out": "2026-11-16",
+            "requested_nights": 8
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Анталья"
+          },
+          "target_id": null
+        }
+      ],
+      "source_sha256": "55e49d56ed522918d4089b2c7a4c70894613bd481d106f4d09634c3edcdc4e97"
+    },
+    {
+      "case_id": "ZAI100-056",
+      "turn": 8,
+      "input": "Выезд из Стамбула 05.12.2026.",
+      "before": {
+        "trip_id": "private-controlled-ZAI100-056",
+        "state_version": 4,
+        "origin": "Казань",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8500000
+        },
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "check_in": "2026-11-29",
+            "check_out": "2026-12-04",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "raw_operations": [
+        {
+          "type": "set_leg_mode",
+          "value": {
+            "mode": "flight"
+          },
+          "target_id": "leg-45c41aff-4978-46c8-abdc-2ceb0fa488bf"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ],
+            "check_in": "2026-11-29",
+            "check_out": "2026-12-05"
+          },
+          "target_id": "new-stay-1"
+        }
+      ],
+      "raw_contract_sha256": "59834019301cf56cceeddb1ebc45c3a7bc4a03d80206e5a6697c2b1588fb2b70",
+      "observed_checked_operations": [
+        {
+          "type": "set_leg_mode",
+          "value": {
+            "mode": "flight"
+          },
+          "target_id": "leg-45c41aff-4978-46c8-abdc-2ceb0fa488bf"
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ],
+            "check_in": "2026-11-29",
+            "check_out": "2026-12-05"
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Стамбул"
+          },
+          "target_id": null
+        }
+      ],
+      "source_sha256": "3f97d5b0f1efde7fbc83a4337c8a8f0b18e3d292f65f1903c18891499d231af1"
+    },
+    {
+      "case_id": "ZAI100-059",
+      "turn": 9,
+      "input": "Выезд из Дубая 10.11.2026, заезд остаётся 05.11.2026.",
+      "before": {
+        "trip_id": "private-controlled-ZAI100-059",
+        "state_version": 7,
+        "origin": "Казань",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 15000000
+        },
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": 18
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": 18
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Дубай",
+            "check_in": "2026-11-05",
+            "check_out": "2026-11-10",
+            "requested_nights": 5,
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "raw_operations": [
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Дубай",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ],
+            "check_in": "2026-11-05",
+            "check_out": "2026-11-10",
+            "requested_nights": 5
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "set_leg_mode",
+          "value": {
+            "mode": "flight"
+          },
+          "target_id": "leg-3b0e9aae-2499-4b08-933b-cf16f4fc1df7"
+        }
+      ],
+      "raw_contract_sha256": "f1fe2b65c447ce43967b65fd2cbb74360bb5b0d23c195bf581d6694a8f0d74c9",
+      "observed_checked_operations": [
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Дубай",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ],
+            "check_in": "2026-11-05",
+            "check_out": "2026-11-10",
+            "requested_nights": 5
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "set_leg_mode",
+          "value": {
+            "mode": "flight"
+          },
+          "target_id": "leg-3b0e9aae-2499-4b08-933b-cf16f4fc1df7"
+        },
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Дубай"
+          },
+          "target_id": null
+        }
+      ],
+      "source_sha256": "4ca647affa08c8e3084ebd5b4c45e8d3bd5adfdb657de6306f090bef44c7b47e"
+    }
+  ]
+}

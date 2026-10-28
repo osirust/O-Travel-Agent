@@ -10,7 +10,7 @@ from typing import Any
 
 
 MODEL_FIELDS = frozenset({"operations", "control", "reply", "unknowns", "conflicts", "speech_act", "information_subject"})
-PRIVATE_FIELDS = frozenset({"api_key", "apikey", "authorization", "password", "access_token", "refresh_token", "secret", "headers",
+PRIVATE_FIELDS = frozenset({"api_key", "apikey", "api_token", "authorization", "password", "access_token", "refresh_token", "secret", "headers",
     "reasoning", "reasoning_content", "thinking", "raw_response", "raw_request"})
 
 
@@ -86,18 +86,60 @@ def groq_rate_facts(headers: Mapping, body: Any) -> dict:
         retry = result.get("tokens_reset_seconds" if result["quota_kind"] == "tokens" else "requests_reset_seconds")
     if retry is not None:
         result["retry_after_seconds"] = retry
+    # Error counters are diagnostics only. The documented token window must
+    # be explicit; neither arbitrary numbers nor an organisation/model name
+    # infer a quota, reset time, retry policy, or provider allowance.
+    message = error.get("message") if isinstance(error, Mapping) else None
+    if isinstance(message, str) and len(message) <= 4096 and error.get("type") != "requests":
+        windows = list(re.finditer(r"\btokens(?:\s+per\s+(minute|day))?\s*\(\s*(TPM|TPD)\s*\)\s*:",
+                                  message, re.IGNORECASE))
+        if len(windows) == 1:
+            window = windows[0]
+            period, unit = window[1], window[2].upper()
+            consistent_window = period is None or period.casefold() == {"TPM": "minute", "TPD": "day"}[unit]
+            values = {}
+            valid = consistent_window
+            counters = message[window.end():]
+            fields = list(re.finditer(r"\b(Limit|Requested|Used)\b(?:\s*:\s*|\s+)([^\s,;]+)",
+                                      counters, re.IGNORECASE))
+            if len(fields) != len(re.findall(r"\b(?:Limit|Requested|Used)\b", counters, re.IGNORECASE)):
+                valid = False
+            for match in fields:
+                label, raw = match[1].casefold(), match[2]
+                if match.end() + 1 < len(counters) and counters[match.end()] in {",", ";"} and counters[match.end() + 1].isdigit():
+                    valid = False
+                    break
+                if re.match(r"\s+[0-9]", counters[match.end():]):
+                    valid = False
+                    break
+                # A sentence-ending dot is punctuation; fractional/exponent/
+                # signed values still fail the full bounded integer match.
+                raw = raw.removesuffix(".")
+                if re.fullmatch(r"[0-9]{1,12}", raw) is None:
+                    valid = False
+                    break
+                number = int(raw)
+                if label in values and values[label] != number:
+                    valid = False
+                    break
+                values[label] = number
+            if valid and {"limit", "requested"}.issubset(values):
+                result.update(token_window=unit, token_limit_from_error=values["limit"],
+                              tokens_requested_from_error=values["requested"])
+                if "used" in values:
+                    result["tokens_used_from_error"] = values["used"]
     return result
 
 
 def model_snapshot(value: Mapping, settings: Mapping | None = None, *, limit: int = 65536) -> dict:
     """Preserve the structured contract for attribution, excluding hidden data."""
     secrets = [item for key, item in (settings or {}).items() if isinstance(item, str) and item
-        and re.search(r"(?:API_KEY|API_SECRET|ACCESS_TOKEN|PASSWORD)$", str(key), re.I)]
+        and re.search(r"(?:API_KEY|AUTH_KEY|API_SECRET|ACCESS_TOKEN|API_TOKEN|PASSWORD)$", str(key), re.I)]
     def clean(item):
         if isinstance(item, Mapping):
             return {str(key): clean(part) for key, part in item.items()
                 if str(key).casefold().replace("-", "_") not in PRIVATE_FIELDS
-                and not str(key).casefold().endswith(("_api_key", "_api_secret", "_access_token", "_password", "_secret", "_refresh_token"))}
+                and not str(key).casefold().replace("-", "_").endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_password", "_secret", "_refresh_token", "_auth_key"))}
         if isinstance(item, (list, tuple)):
             return [clean(part) for part in item]
         if isinstance(item, str):

@@ -1,0 +1,1697 @@
+{
+  "source_commit": "54cdd31c4d6e3c1136b59a66215ee5fe5f6a730a",
+  "scope": "independent_docker_demo_http_examples",
+  "responses": {
+    "health": {
+      "status": "ok",
+      "database": "ready",
+      "application": "backend",
+      "supplier_booking": false
+    },
+    "provider_status": {
+      "_runtime": {
+        "llm_provider": "openrouter",
+        "model": "dots-studio/dots-3-note-preview:free"
+      },
+      "gemini": {
+        "configured": false,
+        "free_tier_confirmed": false,
+        "model": "gemini-3.8-flash"
+      },
+      "openrouter": {
+        "configured": false,
+        "model": "dots-studio/dots-3-note-preview:free",
+        "backup_model": "",
+        "paid_fallback": false
+      },
+      "groq": {
+        "configured": false,
+        "model": "qwen/qwen3.8-27b",
+        "free_tier_confirmed": false,
+        "paid_fallback": false
+      },
+      "cloudflare": {
+        "configured": false,
+        "model": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+        "free_tier_confirmed": false,
+        "paid_fallback": false
+      },
+      "zai": {
+        "configured": false,
+        "model": "glm-4.7-flash",
+        "free_tier_confirmed": false,
+        "paid_fallback": false
+      },
+      "ollama": {
+        "configured": false,
+        "model": "qwen3.5:4b",
+        "source": "LOCAL_MODEL",
+        "paid_fallback": false
+      },
+      "liteapi": {
+        "configured": false,
+        "mode": "sandbox"
+      },
+      "duffel": {
+        "configured": false,
+        "mode": "sandbox"
+      },
+      "serpapi": {
+        "configured": false,
+        "free_tier_confirmed": false,
+        "source_type": "LIVE_INDICATIVE"
+      },
+      "open_meteo": {
+        "configured": true,
+        "requires_key": false
+      },
+      "hotelbeds": {
+        "configured": false,
+        "status": "onboarding_required"
+      },
+      "ratehawk": {
+        "configured": false,
+        "status": "partner_access_required"
+      },
+      "travelpayouts": {
+        "configured": false,
+        "status": "cached_indicative_data_only"
+      }
+    },
+    "new_session": {
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+      "state_version": 0,
+      "trip_version": 0,
+      "status": "NEW",
+      "waiting_reason": null,
+      "pending_question": null,
+      "trip": {
+        "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+        "state_version": 0,
+        "origin": null,
+        "travelers": [],
+        "groups": [],
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "demo_fallback": true,
+          "guest_nationality": null
+        },
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        }
+      },
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control",
+        "checkout/preview"
+      ]
+    },
+    "accepted": {
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "run_id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+      "status": "pending",
+      "duplicate": false,
+      "poll_url": "/api/v1/runs/022412a7-5379-41b8-826e-ab509b6b8ec4"
+    },
+    "completed_run": {
+      "run_id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "status": "completed",
+      "based_version": 0,
+      "result": {
+        "run": {
+          "id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+          "error": null,
+          "result": null,
+          "run_id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+          "status": "completed",
+          "created_at": "2026-10-26T16:27:16.401380+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+          "started_at": "2026-10-26T16:27:16.414097+00:00",
+          "finished_at": null,
+          "based_version": 0,
+          "current_status": "completed",
+          "input_message_id": "1f9b1eb8-505c-4bc5-a7c5-f912c482a1fe",
+          "request_expected_version": 0
+        },
+        "error": null,
+        "reply": "Подобрано DEMO-планов: 3. Все цены и наличие вымышлены; бронь не создана.",
+        "state": {
+          "legs": [
+            {
+              "id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+              "mode": "flight",
+              "origin": "Москва",
+              "destination": "Казань",
+              "departure_date": "2026-11-13"
+            },
+            {
+              "id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+              "mode": "flight",
+              "origin": "Казань",
+              "destination": "Москва",
+              "departure_date": "2026-11-18"
+            }
+          ],
+          "stays": [
+            {
+              "id": "frontend-stay-1",
+              "city": "Казань",
+              "rooms": [
+                {
+                  "id": "frontend-room-1",
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "hotel_id": null,
+              "check_out": "2026-11-18"
+            }
+          ],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 7500000
+          },
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+          "travelers": [
+            {
+              "id": "frontend-adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 1
+        },
+        "result": {
+          "plans": [
+            {
+              "offers": [
+                {
+                  "city": "Казань",
+                  "kind": "hotel",
+                  "name": "DEMO — Центральный эскиз",
+                  "nights": 5,
+                  "is_demo": true,
+                  "check_in": "2026-11-13",
+                  "currency": "RUB",
+                  "hotel_id": "demo-hotel-kazan-central",
+                  "offer_id": "demo-stay-cd41453ac17c6c4a2252",
+                  "breakdown": [
+                    {
+                      "kind": "room_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 5,
+                      "unit_minor": 315000,
+                      "amount_minor": 1575000
+                    },
+                    {
+                      "kind": "extra_adult_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 0,
+                      "unit_minor": 120000,
+                      "amount_minor": 0
+                    }
+                  ],
+                  "breakfast": false,
+                  "check_out": "2026-11-18",
+                  "rate_type": "basic",
+                  "max_pet_kg": 0,
+                  "price_kind": "synthetic",
+                  "refundable": false,
+                  "source_type": "DEMO",
+                  "total_minor": 1575000,
+                  "availability": "synthetic_not_live",
+                  "component_id": "frontend-stay-1",
+                  "pets_allowed": false,
+                  "room_assignments": [
+                    {
+                      "room_id": "frontend-room-1",
+                      "capacity": 4,
+                      "traveler_ids": [
+                        "frontend-adult-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "flight",
+                  "name": "DEMO — Синтетический перелёт",
+                  "origin": "Москва",
+                  "is_demo": true,
+                  "nonstop": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transport-dbbed535fa731ab96bf4",
+                  "age_basis": "departure_date",
+                  "breakdown": [
+                    {
+                      "age": null,
+                      "kind": "demo_passenger",
+                      "quantity": 1,
+                      "unit_minor": 900000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 900000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "destination": "Казань",
+                  "source_type": "DEMO",
+                  "stops_count": 0,
+                  "total_minor": 900000,
+                  "arrival_date": "2026-11-13",
+                  "availability": "synthetic_not_live",
+                  "component_id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ],
+                  "segment_count": 1,
+                  "departure_date": "2026-11-13",
+                  "route_facts_source": "synthetic_demo_catalogue"
+                },
+                {
+                  "kind": "flight",
+                  "name": "DEMO — Синтетический перелёт",
+                  "origin": "Казань",
+                  "is_demo": true,
+                  "nonstop": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transport-43aa831b7f8bc760eeb0",
+                  "age_basis": "departure_date",
+                  "breakdown": [
+                    {
+                      "age": null,
+                      "kind": "demo_passenger",
+                      "quantity": 1,
+                      "unit_minor": 900000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 900000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "destination": "Москва",
+                  "source_type": "DEMO",
+                  "stops_count": 0,
+                  "total_minor": 900000,
+                  "arrival_date": "2026-11-18",
+                  "availability": "synthetic_not_live",
+                  "component_id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ],
+                  "segment_count": 1,
+                  "departure_date": "2026-11-18",
+                  "route_facts_source": "synthetic_demo_catalogue"
+                },
+                {
+                  "city": "Казань",
+                  "date": "2026-11-13",
+                  "kind": "transfer",
+                  "name": "DEMO — Синтетический трансфер",
+                  "is_demo": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transfer-c7c3f5cfc8734d534dcf",
+                  "breakdown": [
+                    {
+                      "kind": "demo_transfer_passenger",
+                      "quantity": 1,
+                      "unit_minor": 40000,
+                      "amount_minor": 40000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "source_type": "DEMO",
+                  "total_minor": 40000,
+                  "availability": "synthetic_not_live",
+                  "component_id": "transfer-frontend-stay-1",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ]
+                }
+              ],
+              "plan_id": "demo-plan-40f51d7e067ba1e78b57",
+              "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+              "currency": "RUB",
+              "warnings": [
+                "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+                "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+              ],
+              "price_kind": "synthetic",
+              "violations": [],
+              "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+              "source_type": "DEMO",
+              "total_minor": 3415000,
+              "state_version": 1,
+              "booking_created": false,
+              "room_assignments": {
+                "frontend-stay-1": [
+                  {
+                    "room_id": "frontend-room-1",
+                    "capacity": 4,
+                    "traveler_ids": [
+                      "frontend-adult-1"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "offers": [
+                {
+                  "city": "Казань",
+                  "kind": "hotel",
+                  "name": "DEMO — Тихий сад",
+                  "nights": 5,
+                  "is_demo": true,
+                  "check_in": "2026-11-13",
+                  "currency": "RUB",
+                  "hotel_id": "demo-hotel-kazan-garden",
+                  "offer_id": "demo-stay-ec828eaca1f9bce83b65",
+                  "breakdown": [
+                    {
+                      "kind": "room_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 5,
+                      "unit_minor": 346500,
+                      "amount_minor": 1732500
+                    },
+                    {
+                      "kind": "extra_adult_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 0,
+                      "unit_minor": 120000,
+                      "amount_minor": 0
+                    },
+                    {
+                      "kind": "breakfast_days",
+                      "quantity": 5,
+                      "unit_minor": 70000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 350000
+                    }
+                  ],
+                  "breakfast": true,
+                  "check_out": "2026-11-18",
+                  "rate_type": "breakfast",
+                  "max_pet_kg": 10,
+                  "price_kind": "synthetic",
+                  "refundable": false,
+                  "source_type": "DEMO",
+                  "total_minor": 2082500,
+                  "availability": "synthetic_not_live",
+                  "component_id": "frontend-stay-1",
+                  "pets_allowed": true,
+                  "room_assignments": [
+                    {
+                      "room_id": "frontend-room-1",
+                      "capacity": 4,
+                      "traveler_ids": [
+                        "frontend-adult-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "flight",
+                  "name": "DEMO — Синтетический перелёт",
+                  "origin": "Москва",
+                  "is_demo": true,
+                  "nonstop": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transport-dbbed535fa731ab96bf4",
+                  "age_basis": "departure_date",
+                  "breakdown": [
+                    {
+                      "age": null,
+                      "kind": "demo_passenger",
+                      "quantity": 1,
+                      "unit_minor": 900000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 900000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "destination": "Казань",
+                  "source_type": "DEMO",
+                  "stops_count": 0,
+                  "total_minor": 900000,
+                  "arrival_date": "2026-11-13",
+                  "availability": "synthetic_not_live",
+                  "component_id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ],
+                  "segment_count": 1,
+                  "departure_date": "2026-11-13",
+                  "route_facts_source": "synthetic_demo_catalogue"
+                },
+                {
+                  "kind": "flight",
+                  "name": "DEMO — Синтетический перелёт",
+                  "origin": "Казань",
+                  "is_demo": true,
+                  "nonstop": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transport-43aa831b7f8bc760eeb0",
+                  "age_basis": "departure_date",
+                  "breakdown": [
+                    {
+                      "age": null,
+                      "kind": "demo_passenger",
+                      "quantity": 1,
+                      "unit_minor": 900000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 900000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "destination": "Москва",
+                  "source_type": "DEMO",
+                  "stops_count": 0,
+                  "total_minor": 900000,
+                  "arrival_date": "2026-11-18",
+                  "availability": "synthetic_not_live",
+                  "component_id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ],
+                  "segment_count": 1,
+                  "departure_date": "2026-11-18",
+                  "route_facts_source": "synthetic_demo_catalogue"
+                },
+                {
+                  "city": "Казань",
+                  "date": "2026-11-13",
+                  "kind": "transfer",
+                  "name": "DEMO — Синтетический трансфер",
+                  "is_demo": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transfer-c7c3f5cfc8734d534dcf",
+                  "breakdown": [
+                    {
+                      "kind": "demo_transfer_passenger",
+                      "quantity": 1,
+                      "unit_minor": 40000,
+                      "amount_minor": 40000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "source_type": "DEMO",
+                  "total_minor": 40000,
+                  "availability": "synthetic_not_live",
+                  "component_id": "transfer-frontend-stay-1",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ]
+                }
+              ],
+              "plan_id": "demo-plan-4379c68843a850920c3a",
+              "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+              "currency": "RUB",
+              "warnings": [
+                "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+                "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+              ],
+              "price_kind": "synthetic",
+              "violations": [],
+              "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+              "source_type": "DEMO",
+              "total_minor": 3922500,
+              "state_version": 1,
+              "booking_created": false,
+              "room_assignments": {
+                "frontend-stay-1": [
+                  {
+                    "room_id": "frontend-room-1",
+                    "capacity": 4,
+                    "traveler_ids": [
+                      "frontend-adult-1"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "offers": [
+                {
+                  "city": "Казань",
+                  "kind": "hotel",
+                  "name": "DEMO — Семейный берег",
+                  "nights": 5,
+                  "is_demo": true,
+                  "check_in": "2026-11-13",
+                  "currency": "RUB",
+                  "hotel_id": "demo-hotel-kazan-family",
+                  "offer_id": "demo-stay-c9f7a467041ca39ce5df",
+                  "breakdown": [
+                    {
+                      "kind": "room_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 5,
+                      "unit_minor": 393750,
+                      "amount_minor": 1968750
+                    },
+                    {
+                      "kind": "extra_adult_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 0,
+                      "unit_minor": 120000,
+                      "amount_minor": 0
+                    },
+                    {
+                      "kind": "breakfast_days",
+                      "quantity": 5,
+                      "unit_minor": 70000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 350000
+                    },
+                    {
+                      "kind": "flexible_rate_nights",
+                      "room_id": "frontend-room-1",
+                      "quantity": 5,
+                      "unit_minor": 59062,
+                      "amount_minor": 295310
+                    }
+                  ],
+                  "breakfast": true,
+                  "check_out": "2026-11-18",
+                  "rate_type": "flex",
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "refundable": true,
+                  "source_type": "DEMO",
+                  "total_minor": 2614060,
+                  "availability": "synthetic_not_live",
+                  "component_id": "frontend-stay-1",
+                  "pets_allowed": true,
+                  "room_assignments": [
+                    {
+                      "room_id": "frontend-room-1",
+                      "capacity": 4,
+                      "traveler_ids": [
+                        "frontend-adult-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "flight",
+                  "name": "DEMO — Синтетический перелёт",
+                  "origin": "Москва",
+                  "is_demo": true,
+                  "nonstop": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transport-dbbed535fa731ab96bf4",
+                  "age_basis": "departure_date",
+                  "breakdown": [
+                    {
+                      "age": null,
+                      "kind": "demo_passenger",
+                      "quantity": 1,
+                      "unit_minor": 900000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 900000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "destination": "Казань",
+                  "source_type": "DEMO",
+                  "stops_count": 0,
+                  "total_minor": 900000,
+                  "arrival_date": "2026-11-13",
+                  "availability": "synthetic_not_live",
+                  "component_id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ],
+                  "segment_count": 1,
+                  "departure_date": "2026-11-13",
+                  "route_facts_source": "synthetic_demo_catalogue"
+                },
+                {
+                  "kind": "flight",
+                  "name": "DEMO — Синтетический перелёт",
+                  "origin": "Казань",
+                  "is_demo": true,
+                  "nonstop": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transport-43aa831b7f8bc760eeb0",
+                  "age_basis": "departure_date",
+                  "breakdown": [
+                    {
+                      "age": null,
+                      "kind": "demo_passenger",
+                      "quantity": 1,
+                      "unit_minor": 900000,
+                      "traveler_id": "frontend-adult-1",
+                      "amount_minor": 900000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "destination": "Москва",
+                  "source_type": "DEMO",
+                  "stops_count": 0,
+                  "total_minor": 900000,
+                  "arrival_date": "2026-11-18",
+                  "availability": "synthetic_not_live",
+                  "component_id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ],
+                  "segment_count": 1,
+                  "departure_date": "2026-11-18",
+                  "route_facts_source": "synthetic_demo_catalogue"
+                },
+                {
+                  "city": "Казань",
+                  "date": "2026-11-13",
+                  "kind": "transfer",
+                  "name": "DEMO — Синтетический трансфер",
+                  "is_demo": true,
+                  "currency": "RUB",
+                  "offer_id": "demo-transfer-c7c3f5cfc8734d534dcf",
+                  "breakdown": [
+                    {
+                      "kind": "demo_transfer_passenger",
+                      "quantity": 1,
+                      "unit_minor": 40000,
+                      "amount_minor": 40000
+                    }
+                  ],
+                  "max_pet_kg": 20,
+                  "price_kind": "synthetic",
+                  "source_type": "DEMO",
+                  "total_minor": 40000,
+                  "availability": "synthetic_not_live",
+                  "component_id": "transfer-frontend-stay-1",
+                  "pets_allowed": true,
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ]
+                }
+              ],
+              "plan_id": "demo-plan-3ae0df3d73868d50a2d5",
+              "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+              "currency": "RUB",
+              "warnings": [
+                "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+                "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+              ],
+              "price_kind": "synthetic",
+              "violations": [],
+              "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+              "source_type": "DEMO",
+              "total_minor": 4454060,
+              "state_version": 1,
+              "booking_created": false,
+              "room_assignments": {
+                "frontend-stay-1": [
+                  {
+                    "room_id": "frontend-room-1",
+                    "capacity": 4,
+                    "traveler_ids": [
+                      "frontend-adult-1"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "warnings": [
+            "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся."
+          ],
+          "questions": [],
+          "price_kind": "synthetic",
+          "violations": [],
+          "source_type": "DEMO",
+          "limits_status": "proposed_implementation_guards_not_owner_approved",
+          "max_tool_calls": 16,
+          "tool_calls_used": 0
+        },
+        "run_id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+        "status": "OPTIONS_READY",
+        "changes": [
+          {
+            "after": "Москва",
+            "field": "origin",
+            "before": null,
+            "operation": "set_origin",
+            "target_id": null
+          },
+          {
+            "after": [
+              {
+                "id": "frontend-adult-1",
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              }
+            ],
+            "field": "travelers",
+            "before": [],
+            "operation": "add_traveler",
+            "target_id": null
+          },
+          {
+            "after": [
+              {
+                "id": "frontend-stay-1",
+                "city": "Казань",
+                "rooms": [
+                  {
+                    "id": "frontend-room-1",
+                    "traveler_ids": [
+                      "frontend-adult-1"
+                    ]
+                  }
+                ],
+                "check_in": "2026-11-13",
+                "hotel_id": null,
+                "check_out": "2026-11-18"
+              }
+            ],
+            "field": "stays",
+            "before": [],
+            "operation": "upsert_stay",
+            "target_id": "frontend-stay-1"
+          },
+          {
+            "after": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 7500000
+            },
+            "field": "budget",
+            "before": null,
+            "operation": "set_budget",
+            "target_id": null
+          },
+          {
+            "after": [
+              {
+                "id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+                "mode": "flight",
+                "origin": "Москва",
+                "destination": "Казань",
+                "departure_date": "2026-11-13"
+              },
+              {
+                "id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+                "mode": "flight",
+                "origin": "Казань",
+                "destination": "Москва",
+                "departure_date": "2026-11-18"
+              }
+            ],
+            "field": "legs",
+            "before": [],
+            "operation": "rebuild_route",
+            "target_id": null
+          }
+        ],
+        "message": {
+          "id": "b557c4a9-5dea-4bf4-bba0-d0bbfbdcbc3d",
+          "role": "assistant",
+          "text": "Подобрано DEMO-планов: 3. Все цены и наличие вымышлены; бронь не создана.",
+          "run_id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+          "sequence": 2,
+          "created_at": "2026-10-26T16:27:16.430962+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047"
+        },
+        "session": {
+          "state": {
+            "legs": [
+              {
+                "id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+                "mode": "flight",
+                "origin": "Москва",
+                "destination": "Казань",
+                "departure_date": "2026-11-13"
+              },
+              {
+                "id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+                "mode": "flight",
+                "origin": "Казань",
+                "destination": "Москва",
+                "departure_date": "2026-11-18"
+              }
+            ],
+            "stays": [
+              {
+                "id": "frontend-stay-1",
+                "city": "Казань",
+                "rooms": [
+                  {
+                    "id": "frontend-room-1",
+                    "traveler_ids": [
+                      "frontend-adult-1"
+                    ]
+                  }
+                ],
+                "check_in": "2026-11-13",
+                "hotel_id": null,
+                "check_out": "2026-11-18"
+              }
+            ],
+            "budget": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 7500000
+            },
+            "groups": [],
+            "origin": "Москва",
+            "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+            "travelers": [
+              {
+                "id": "frontend-adult-1",
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              }
+            ],
+            "constraints": [],
+            "preferences": [],
+            "route_policy": {
+              "kind": "round_trip",
+              "end_city": null
+            },
+            "search_policy": {
+              "mode": "DEMO",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "serpapi",
+              "guest_nationality": null
+            },
+            "state_version": 1
+          },
+          "status": "OPTIONS_READY",
+          "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+          "created_at": "2026-10-26T16:27:16.386789+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+          "updated_at": "2026-10-26T16:27:16.427750+00:00",
+          "state_version": 1,
+          "waiting_reason": null,
+          "pending_question": null
+        },
+        "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+        "created_at": "2026-10-26T16:27:16.386789+00:00",
+        "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+        "updated_at": "2026-10-26T16:27:16.427750+00:00",
+        "state_version": 1,
+        "waiting_reason": null,
+        "pending_question": null,
+        "assistant_message": {
+          "id": "b557c4a9-5dea-4bf4-bba0-d0bbfbdcbc3d",
+          "role": "assistant",
+          "text": "Подобрано DEMO-планов: 3. Все цены и наличие вымышлены; бронь не создана.",
+          "run_id": "022412a7-5379-41b8-826e-ab509b6b8ec4",
+          "sequence": 2,
+          "created_at": "2026-10-26T16:27:16.430962+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047"
+        }
+      },
+      "error": null,
+      "llm": null,
+      "created_at": "2026-10-26T16:27:16.401380+00:00",
+      "finished_at": "2026-10-26T16:27:16.432169+00:00",
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control"
+      ]
+    },
+    "trip_snapshot": {
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+      "state_version": 1,
+      "trip_version": 1,
+      "status": "OPTIONS_READY",
+      "waiting_reason": null,
+      "pending_question": null,
+      "trip": {
+        "legs": [
+          {
+            "id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Казань",
+            "departure_date": "2026-11-13"
+          },
+          {
+            "id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Москва",
+            "departure_date": "2026-11-18"
+          }
+        ],
+        "stays": [
+          {
+            "id": "frontend-stay-1",
+            "city": "Казань",
+            "rooms": [
+              {
+                "id": "frontend-room-1",
+                "traveler_ids": [
+                  "frontend-adult-1"
+                ]
+              }
+            ],
+            "check_in": "2026-11-13",
+            "hotel_id": null,
+            "check_out": "2026-11-18"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7500000
+        },
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+        "travelers": [
+          {
+            "id": "frontend-adult-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control",
+        "checkout/preview"
+      ]
+    },
+    "quote": {
+      "id": "5d026c0f-4c91-4b88-9d9a-fadd28282404",
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "quote_version": 1,
+      "state_version": 1,
+      "plan": {
+        "offers": [
+          {
+            "city": "Казань",
+            "kind": "hotel",
+            "name": "DEMO — Центральный эскиз",
+            "nights": 5,
+            "is_demo": true,
+            "check_in": "2026-11-13",
+            "currency": "RUB",
+            "hotel_id": "demo-hotel-kazan-central",
+            "offer_id": "demo-stay-cd41453ac17c6c4a2252",
+            "breakdown": [
+              {
+                "kind": "room_nights",
+                "room_id": "frontend-room-1",
+                "quantity": 5,
+                "unit_minor": 315000,
+                "amount_minor": 1575000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "frontend-room-1",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              }
+            ],
+            "breakfast": false,
+            "check_out": "2026-11-18",
+            "rate_type": "basic",
+            "max_pet_kg": 0,
+            "price_kind": "synthetic",
+            "refundable": false,
+            "source_type": "DEMO",
+            "total_minor": 1575000,
+            "availability": "synthetic_not_live",
+            "component_id": "frontend-stay-1",
+            "pets_allowed": false,
+            "room_assignments": [
+              {
+                "room_id": "frontend-room-1",
+                "capacity": 4,
+                "traveler_ids": [
+                  "frontend-adult-1"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Москва",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-dbbed535fa731ab96bf4",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 900000,
+                "traveler_id": "frontend-adult-1",
+                "amount_minor": 900000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Казань",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 900000,
+            "arrival_date": "2026-11-13",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "frontend-adult-1"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-13",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Казань",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-43aa831b7f8bc760eeb0",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 900000,
+                "traveler_id": "frontend-adult-1",
+                "amount_minor": 900000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Москва",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 900000,
+            "arrival_date": "2026-11-18",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "frontend-adult-1"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-18",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "city": "Казань",
+            "date": "2026-11-13",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-c7c3f5cfc8734d534dcf",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 1,
+                "unit_minor": 40000,
+                "amount_minor": 40000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 40000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-frontend-stay-1",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "frontend-adult-1"
+            ]
+          }
+        ],
+        "plan_id": "demo-plan-40f51d7e067ba1e78b57",
+        "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+        "currency": "RUB",
+        "repriced": true,
+        "warnings": [
+          "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+          "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+        ],
+        "price_kind": "synthetic",
+        "violations": [],
+        "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+        "source_type": "DEMO",
+        "total_minor": 3415000,
+        "reprice_kind": "deterministic_demo_not_live",
+        "state_version": 1,
+        "booking_created": false,
+        "room_assignments": {
+          "frontend-stay-1": [
+            {
+              "room_id": "frontend-room-1",
+              "capacity": 4,
+              "traveler_ids": [
+                "frontend-adult-1"
+              ]
+            }
+          ]
+        }
+      },
+      "status": "active",
+      "expires_at": "2026-10-26T16:37:16.539425+00:00",
+      "created_at": "2026-10-26T16:27:16.539425+00:00",
+      "quote_id": "5d026c0f-4c91-4b88-9d9a-fadd28282404"
+    },
+    "simulated_order": {
+      "id": "0d4fb74d-0dd8-4b85-8f68-b9a5402f9eec",
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "quote_id": "5d026c0f-4c91-4b88-9d9a-fadd28282404",
+      "quote_version": 1,
+      "state_version": 2,
+      "plan": {
+        "offers": [
+          {
+            "city": "Казань",
+            "kind": "hotel",
+            "name": "DEMO — Центральный эскиз",
+            "nights": 5,
+            "is_demo": true,
+            "check_in": "2026-11-13",
+            "currency": "RUB",
+            "hotel_id": "demo-hotel-kazan-central",
+            "offer_id": "demo-stay-cd41453ac17c6c4a2252",
+            "breakdown": [
+              {
+                "kind": "room_nights",
+                "room_id": "frontend-room-1",
+                "quantity": 5,
+                "unit_minor": 315000,
+                "amount_minor": 1575000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "frontend-room-1",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              }
+            ],
+            "breakfast": false,
+            "check_out": "2026-11-18",
+            "rate_type": "basic",
+            "max_pet_kg": 0,
+            "price_kind": "synthetic",
+            "refundable": false,
+            "source_type": "DEMO",
+            "total_minor": 1575000,
+            "availability": "synthetic_not_live",
+            "component_id": "frontend-stay-1",
+            "pets_allowed": false,
+            "room_assignments": [
+              {
+                "room_id": "frontend-room-1",
+                "capacity": 4,
+                "traveler_ids": [
+                  "frontend-adult-1"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Москва",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-dbbed535fa731ab96bf4",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 900000,
+                "traveler_id": "frontend-adult-1",
+                "amount_minor": 900000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Казань",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 900000,
+            "arrival_date": "2026-11-13",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "frontend-adult-1"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-13",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Казань",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-43aa831b7f8bc760eeb0",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 900000,
+                "traveler_id": "frontend-adult-1",
+                "amount_minor": 900000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Москва",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 900000,
+            "arrival_date": "2026-11-18",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "frontend-adult-1"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-18",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "city": "Казань",
+            "date": "2026-11-13",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-c7c3f5cfc8734d534dcf",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 1,
+                "unit_minor": 40000,
+                "amount_minor": 40000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 40000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-frontend-stay-1",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "frontend-adult-1"
+            ]
+          }
+        ],
+        "plan_id": "demo-plan-40f51d7e067ba1e78b57",
+        "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+        "currency": "RUB",
+        "repriced": true,
+        "warnings": [
+          "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+          "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+        ],
+        "price_kind": "synthetic",
+        "violations": [],
+        "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+        "source_type": "DEMO",
+        "total_minor": 3415000,
+        "reprice_kind": "deterministic_demo_not_live",
+        "state_version": 1,
+        "booking_created": false,
+        "room_assignments": {
+          "frontend-stay-1": [
+            {
+              "room_id": "frontend-room-1",
+              "capacity": 4,
+              "traveler_ids": [
+                "frontend-adult-1"
+              ]
+            }
+          ]
+        }
+      },
+      "status": "BOOKED_DEMO",
+      "created_at": "2026-10-26T16:27:16.550446+00:00",
+      "order_id": "0d4fb74d-0dd8-4b85-8f68-b9a5402f9eec",
+      "is_demo": true,
+      "booking_created_at_supplier": false
+    },
+    "saved_budget_run": {
+      "run_id": "dc85f68c-f820-46d2-abe2-c71fac8e59f1",
+      "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+      "status": "completed",
+      "based_version": 2,
+      "result": {
+        "run": {
+          "id": "dc85f68c-f820-46d2-abe2-c71fac8e59f1",
+          "error": null,
+          "result": null,
+          "run_id": "dc85f68c-f820-46d2-abe2-c71fac8e59f1",
+          "status": "completed",
+          "created_at": "2026-10-26T16:27:16.573238+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+          "started_at": "2026-10-26T16:27:16.581889+00:00",
+          "finished_at": null,
+          "based_version": 2,
+          "current_status": "completed",
+          "input_message_id": "b48ca388-2612-4228-a3a5-57cc88c9b2f9",
+          "request_expected_version": 2
+        },
+        "error": null,
+        "reply": "Сохранённый бюджет на всю поездку: 75 000,00 RUB.",
+        "state": {
+          "legs": [
+            {
+              "id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+              "mode": "flight",
+              "origin": "Москва",
+              "destination": "Казань",
+              "departure_date": "2026-11-13"
+            },
+            {
+              "id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+              "mode": "flight",
+              "origin": "Казань",
+              "destination": "Москва",
+              "departure_date": "2026-11-18"
+            }
+          ],
+          "stays": [
+            {
+              "id": "frontend-stay-1",
+              "city": "Казань",
+              "rooms": [
+                {
+                  "id": "frontend-room-1",
+                  "traveler_ids": [
+                    "frontend-adult-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "hotel_id": null,
+              "check_out": "2026-11-18"
+            }
+          ],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 7500000
+          },
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+          "travelers": [
+            {
+              "id": "frontend-adult-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 2
+        },
+        "result": {
+          "notice": "Сохранённый бюджет на всю поездку: 75 000,00 RUB.",
+          "no_changes": true,
+          "response_source": "canonical_saved_answer",
+          "conversational_response": {
+            "model_calls": 0,
+            "facts_source": "canonical_state_and_shown_plans"
+          }
+        },
+        "run_id": "dc85f68c-f820-46d2-abe2-c71fac8e59f1",
+        "status": "BOOKED_DEMO",
+        "changes": [],
+        "message": {
+          "id": "b28f959f-c4ed-47ca-9467-83d06ea9e44d",
+          "role": "assistant",
+          "text": "Сохранённый бюджет на всю поездку: 75 000,00 RUB.",
+          "run_id": "dc85f68c-f820-46d2-abe2-c71fac8e59f1",
+          "sequence": 4,
+          "created_at": "2026-10-26T16:27:16.609275+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047"
+        },
+        "session": {
+          "state": {
+            "legs": [
+              {
+                "id": "leg-138782bb-b64e-4307-8005-dbfb40f62b3d",
+                "mode": "flight",
+                "origin": "Москва",
+                "destination": "Казань",
+                "departure_date": "2026-11-13"
+              },
+              {
+                "id": "leg-039dcfe5-663a-4160-a8c8-4027351ecd36",
+                "mode": "flight",
+                "origin": "Казань",
+                "destination": "Москва",
+                "departure_date": "2026-11-18"
+              }
+            ],
+            "stays": [
+              {
+                "id": "frontend-stay-1",
+                "city": "Казань",
+                "rooms": [
+                  {
+                    "id": "frontend-room-1",
+                    "traveler_ids": [
+                      "frontend-adult-1"
+                    ]
+                  }
+                ],
+                "check_in": "2026-11-13",
+                "hotel_id": null,
+                "check_out": "2026-11-18"
+              }
+            ],
+            "budget": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 7500000
+            },
+            "groups": [],
+            "origin": "Москва",
+            "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+            "travelers": [
+              {
+                "id": "frontend-adult-1",
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              }
+            ],
+            "constraints": [],
+            "preferences": [],
+            "route_policy": {
+              "kind": "round_trip",
+              "end_city": null
+            },
+            "search_policy": {
+              "mode": "DEMO",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "serpapi",
+              "guest_nationality": null
+            },
+            "state_version": 2
+          },
+          "status": "BOOKED_DEMO",
+          "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+          "created_at": "2026-10-26T16:27:16.386789+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+          "updated_at": "2026-10-26T16:27:16.608720+00:00",
+          "state_version": 2,
+          "waiting_reason": null,
+          "pending_question": null
+        },
+        "trip_id": "a5d9d5cb-0ab8-4094-851c-a4401f1d5fb4",
+        "created_at": "2026-10-26T16:27:16.386789+00:00",
+        "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047",
+        "updated_at": "2026-10-26T16:27:16.608720+00:00",
+        "state_version": 2,
+        "waiting_reason": null,
+        "pending_question": null,
+        "assistant_message": {
+          "id": "b28f959f-c4ed-47ca-9467-83d06ea9e44d",
+          "role": "assistant",
+          "text": "Сохранённый бюджет на всю поездку: 75 000,00 RUB.",
+          "run_id": "dc85f68c-f820-46d2-abe2-c71fac8e59f1",
+          "sequence": 4,
+          "created_at": "2026-10-26T16:27:16.609275+00:00",
+          "session_id": "16db44b2-f8ff-4c2d-b886-aacb5ed85047"
+        }
+      },
+      "error": null,
+      "llm": null,
+      "created_at": "2026-10-26T16:27:16.573238+00:00",
+      "finished_at": "2026-10-26T16:27:16.609763+00:00",
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control"
+      ]
+    }
+  },
+  "requests": {
+    "typed_commands": {
+      "expected_version": 0,
+      "search": true,
+      "operations": [
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Москва"
+          }
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "frontend-adult-1",
+            "type": "adult"
+          }
+        },
+        {
+          "type": "upsert_stay",
+          "target_id": "frontend-stay-1",
+          "value": {
+            "city": "Казань",
+            "check_in": "2026-11-13",
+            "check_out": "2026-11-18",
+            "rooms": [
+              {
+                "id": "frontend-room-1",
+                "traveler_ids": [
+                  "frontend-adult-1"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "amount_minor": 7500000,
+            "currency": "RUB",
+            "scope": "whole_trip"
+          }
+        },
+        {
+          "type": "set_search_policy",
+          "value": {
+            "mode": "DEMO"
+          }
+        }
+      ]
+    },
+    "saved_budget_question": "Какой у нас сейчас бюджет?"
+  }
+}

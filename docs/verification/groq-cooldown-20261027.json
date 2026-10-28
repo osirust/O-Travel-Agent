@@ -1,0 +1,9 @@
+{
+  "finding_id": "HARNESS-004-GROQ-COOLDOWN-001",
+  "status": "CONTROLLED_PG_PASS_ACTUAL_RETEST_PENDING",
+  "checks": 143,
+  "initial_failures": 3,
+  "evidence_sha256": "9e741a4e03c70721f6b4389bba171876c466bfb385999252f22c74276a79fbf4",
+  "behavior": "Unclassified direct Groq 429 waits300seconds as engineering policy; explicit retry_after respected; TPD/account/auth/credit restrictions remain provider-scoped; no automatic requests or model switch",
+  "actual_http_calls_in_tests": 0
+}

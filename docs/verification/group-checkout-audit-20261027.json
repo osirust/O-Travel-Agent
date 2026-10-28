@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "status": "READ_ONLY_RETAINED_GROUP_CHECKOUT_AUDIT_PASS_WITH_OPEN_SUPPLIER_COMPARISON",
+  "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "package_sha256": "2d9f2d88d0b673236ec860518e7c783b61f8cb2837b31eaac36eadf95a08b714",
+  "evidence": {
+    "positive_public_receipt": {
+      "path": "docs/verification/actual-group-checkout-20261027.json",
+      "sha256": "58e796f5917f627a7fce38e1a5c42ece5fd4fc1f755ca6ad6955af2d5e92a850",
+      "source_report_sha256": "d0d041fd31e2803f58c2d59b0df79b96ecdf044129b51affb1d919263f4de549"
+    },
+    "diagnostic_public_receipt": {
+      "path": "docs/verification/travel-preview-diagnostic-20261027.json",
+      "sha256": "b5ac6a22c74685debf87f95fa9dcda8175e4138cee00b3a93a801b4b3bd27530"
+    },
+    "original_failed_source_report_sha256": "ec1a7f03a4cedf7ff6a7bb3baa23566aff5ec51547f17093457a335660686963",
+    "frozen_planning_source_sha256": "46e849a164d0b10a11ea595afbb4a341efb1f1b718cb9612fd168cb2156b5f1f"
+  },
+  "audit_scope": "Existing saved responses and a deterministic rebuild using the frozen Native planning module. No new API, model, booking, database or Native mutations.",
+  "checks": {
+    "source_receipt_hash_matches_private_actual_report": true,
+    "required_component_count_is_9": true,
+    "covered_exact_required_set": true,
+    "every_component_covered_once": true,
+    "all_travelers_exactly_once_per_stay_and_families_separate": true,
+    "two_hotel_selected_prebooks_verified": true,
+    "three_flight_group_responses_verified": true,
+    "fx_arithmetic_matches_total": true,
+    "frozen_pure_rebuild_matches_total": true,
+    "frozen_pure_rebuild_no_blockers_or_violations": true,
+    "quote_deadline_not_after_any_external_offer": true,
+    "one_simulated_order_and_exact_idempotent_repeat": true,
+    "sources_remain_mixed_and_real_booking_false": true,
+    "no_model_calls_in_fixture": true
+  },
+  "typed_fixture": {
+    "travelers": 4,
+    "groups": 2,
+    "stays": 2,
+    "hotel_rooms": 4,
+    "flight_legs": 3,
+    "demo_transfers": 2,
+    "constraints": [],
+    "consequence": "This case does not qualify breakfast, refundability, luggage, detailed room/bed preferences or arbitrary hard constraints."
+  },
+  "currency": "RUB",
+  "total_minor": 34669738,
+  "coverage_units": {
+    "required": 9,
+    "selected_offers": 7,
+    "meaning": "One two-room hotel offer covers two room component IDs; seven selected offers cover nine required components."
+  },
+  "birthday_scope": "Actual source request/response ages are6/12 on the first stay/flight, then7/12. Raw dates of birth and passenger IDs are not exported.",
+  "fx_scope": "CBR reference conversion; banking/payment FX and commissions remain unknown, not executable purchase rates.",
+  "source_count_scope": "Six durable search tool starts are not a count of supplier HTTP requests; wire count for the successful Native flow was not instrumented.",
+  "original_503": {
+    "preserved": true,
+    "failure_cause": "UNKNOWN",
+    "new_positive_run_does_not_establish_cause": true
+  },
+  "supplier_comparison": {
+    "status": "OPEN",
+    "verified_comparable_different_real_suppliers": false,
+    "selected_hotel_supplier_identities": [
+      {
+        "supplier_name": "nuitee",
+        "supplier_id": "2"
+      }
+    ],
+    "selected_hotel_source_type": "SANDBOX",
+    "supplier_verified": false,
+    "retained_older_actual_hotel_evidence": "Dubai/Istanbul prebook samples and actual-group-flow-20261026 also retain only nuitee/2; repeated serialization is not a different supplier.",
+    "duffel_reason_not_comparable": "The three offers price three different flight legs, not competing sellers of the same hotel/date/room product.",
+    "serp_retention_limit": "Three saved market hotel samples have listed_sellers=[]; the other17 results were counted but their full offers were not retained.",
+    "missing_facts": [
+      "At least two distinct response-sourced sellers for one canonical property and query",
+      "Equivalent room/bed, occupancy, board, cancellation and eligibility conditions",
+      "Comparable full mandatory-fee stay totals in one currency at a recorded time"
+    ],
+    "minimal_future_step_not_executed": "Use one Google Hotels Property Details request with a retained property_token and fixed dates/guests/currency; if no token survives locally, first repeat one property search, then one details request. Keep LIVE_INDICATIVE and unknown conditions explicit.",
+    "primary_reference": "https://serpapi.com/google-hotels-property-details"
+  },
+  "new_actions": {
+    "supplier_http_calls": 0,
+    "model_calls": 0,
+    "supplier_booking_calls": 0,
+    "payment_calls": 0,
+    "native_changes": 0,
+    "production_changes": 0
+  },
+  "not_qualified": [
+    "Production live bookability or real supplier orders",
+    "Full80/106 language corpus",
+    "All hard-constraint types",
+    "Cause of original preview503"
+  ]
+}

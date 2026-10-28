@@ -15,5 +15,8 @@ artifacts/
 *.log
 .coverage
 .local/
+node_modules/
+frontend/test-results/
 *.pem
+!certs/gigachat-root-ca.pem
 *.key

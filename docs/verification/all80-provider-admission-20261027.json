@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-27",
+  "status": "ALL80_EXECUTIONS_STARTED_THREE_PROFILES_STOPPED_AT_FIRST_PROVIDER_FAILURE",
+  "commit": "b9343c0c6459c6d34e8605371c955de95da2f73d",
+  "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+  "selected_dialogues_each": 80,
+  "selected_user_turns_each": 697,
+  "profiles": [
+    {
+      "folder": "/home/aegml/.local/evaluation/after80-replay-20261027-061531-0555c795",
+      "progress_sha256": "c7643f25731f70bba2cbff88552f4b1665070a019a24793f18a5ccf9360e4c22",
+      "case_sha256": "d1d5ff792b495dc78062fe5ad761345f0ac1c7e6012ca8375e4e5692f7cef2e4",
+      "status": "STOPPED_PARTIAL",
+      "model_calls": 1,
+      "travel_tools": 0,
+      "completed_whole_dialogues": 0,
+      "first_run_status": "failed",
+      "attempt": {
+        "code": "RATE_LIMITED",
+        "model": "glm-4.5-flash",
+        "outcome": "failed",
+        "provider": "zai",
+        "latency_ms": 772,
+        "http_status": 429,
+        "reset_basis": null,
+        "failure_kind": "billing",
+        "limit_source": "unknown",
+        "business_code": 1113,
+        "request_metrics": {
+          "prompt_sha256": "e60c34659a7ab2c3fe85e1b7cf4dcace1f89438d927ee0aa767a099d8713e9ae",
+          "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+          "schema_utf8_bytes": 7760,
+          "system_utf8_bytes": 11724,
+          "context_utf8_bytes": 7452
+        },
+        "daily_quota_confirmed": false,
+        "engineering_wait_seconds": null
+      },
+      "trip_unchanged": true
+    },
+    {
+      "folder": "/home/aegml/.local/evaluation/after80-replay-20261027-061801-de4dac61",
+      "progress_sha256": "165049680b82c88eed44b0ebff46b0a560d753b6b0fac61369c8b7742a87eac9",
+      "case_sha256": "d77e5922305a90c09fea33cbd56e24eae72c5b4e1b34f262481b007bfd9952e6",
+      "status": "STOPPED_PARTIAL",
+      "model_calls": 1,
+      "travel_tools": 0,
+      "completed_whole_dialogues": 0,
+      "first_run_status": "failed",
+      "attempt": {
+        "code": "RATE_LIMITED",
+        "model": "@cf/nvidia/nemotron-3-120b-a12b",
+        "outcome": "failed",
+        "provider": "cloudflare",
+        "latency_ms": 259,
+        "http_status": 429,
+        "reset_basis": null,
+        "failure_kind": "unknown",
+        "limit_source": "unknown",
+        "business_code": null,
+        "request_metrics": {
+          "prompt_sha256": "fd0bc10991cff7a7bc230127800b6dca84081b48fa41e15a5fba4eca9b403ab7",
+          "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+          "schema_utf8_bytes": 7760,
+          "system_utf8_bytes": 11724,
+          "context_utf8_bytes": 7452
+        },
+        "daily_quota_confirmed": false,
+        "engineering_wait_seconds": 300
+      },
+      "trip_unchanged": true
+    },
+    {
+      "folder": "/home/aegml/.local/evaluation/after80-replay-20261027-061900-4365f05e",
+      "progress_sha256": "72915736e26c83bfcb8257e50f53758be9bbd7586e13c95736dd431e0288d016",
+      "case_sha256": "f268b70e3425d97085cde248f56addfc7a14c81102a609f89882f99caea1ec12",
+      "status": "STOPPED_PARTIAL",
+      "model_calls": 1,
+      "travel_tools": 0,
+      "completed_whole_dialogues": 0,
+      "first_run_status": "failed",
+      "attempt": {
+        "code": "RATE_LIMITED",
+        "model": "qwen/qwen3.8-27b",
+        "outcome": "failed",
+        "provider": "groq",
+        "latency_ms": 516,
+        "http_status": 429,
+        "rate_limits": {
+          "quota_kind": "tokens",
+          "token_limit": 8000,
+          "request_limit": 1000,
+          "tokens_remaining": 8000,
+          "requests_remaining": 1000
+        },
+        "limit_source": "unknown",
+        "request_metrics": {
+          "prompt_sha256": "f37727e9be2ba184dff2bbf5cbbba93968fb63c4df377b6f52f175537cdf372d",
+          "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+          "schema_utf8_bytes": 7760,
+          "system_utf8_bytes": 11724,
+          "context_utf8_bytes": 7452
+        }
+      },
+      "trip_unchanged": true
+    }
+  ],
+  "model_attempts_total": 3,
+  "travel_tool_starts_total": 0,
+  "real_orders": 0,
+  "payments": 0,
+  "automatic_retries": 0,
+  "billing_changed": false,
+  "local_inference": 0,
+  "interpretation": [
+    "Z.ai1113 means insufficient balance or no resource package; no recharge and no same-account retry.",
+    "Cloudflare and Groq429 do not prove a daily exhausted quota or a vendor reset time.",
+    "Groq remaining8000TPM/1000RPD headers do not explain which limit rejected the request.",
+    "No whole dialogue completed; these are provider-admission evidence, not semantic FAIL/PASS."
+  ],
+  "primary_sources": [
+    "https://docs.z.ai/api-reference/api-code",
+    "https://console.groq.com/docs/rate-limits"
+  ]
+}

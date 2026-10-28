@@ -1,0 +1,249 @@
+{
+  "format": "otravel.initial_clarification_loss.v1",
+  "finding_id": "HARNESS-004-INITIAL-CLARIFICATION-LOSS-001",
+  "status": "OPEN_ACTUAL_REPRODUCED_ROOT_REPAIR_PENDING",
+  "source_release_commit": "a63c2fcbbc84385db5fd978e972b60e1d98e59b5",
+  "runtime_package_sha256": "9706a5a7d2b0dbdc5481b9c43638dd34072b33150dfa36d753f39b14f76c6242",
+  "private_report": "/home/aegml/checks/original106-pilot4-a63-hybrid-20261027-190955-003645f5/report.json",
+  "private_report_sha256": "a6ac77f447cbc21b85b5fa14fff130e65c379f9fba9ca1ac9ae54e122b509ba4",
+  "private_summary": "/home/aegml/checks/original106-pilot4-a63-hybrid-20261027-190955-003645f5/summary.json",
+  "private_summary_sha256": "68807e3b8899515a3de07961c37045b285e3328b33b6c5d49d0fc2d85a64702a",
+  "driver_sha256": "5671827126a2808c3602ec351fbabe28015f5fd7b3b350e9bf002a6e70e79836",
+  "fixed_profile": "zai/glm-4.5-flash/free/single-attempt/no-fallback/local0",
+  "pacing_seconds": 2,
+  "actual_pilot": {
+    "original_source_ids": [
+      "NLU-01",
+      "NLU-03",
+      "NLU-06",
+      "NLU-09"
+    ],
+    "source_cases_executed": 4,
+    "original_messages_executed": 4,
+    "model_attempts": 4,
+    "successful_model_responses": 4,
+    "vendor_numeric_model_http_statuses": "NOT_CAPTURED_NO_200_CLAIM",
+    "tool_attempts": 0,
+    "orders": 0,
+    "public_loopback_http_attempts": 76,
+    "machine_predicates_passed": 33,
+    "machine_predicates_failed": 1,
+    "manual_unbound_checks": 8,
+    "fully_bound_cases": 0,
+    "whole106_status": "NOT_RUN_UNBOUND",
+    "case_grades": [
+      {
+        "source_id": "NLU-01",
+        "subset_status": "FAIL_BOUND_CHECKS",
+        "whole_case_status": "BLOCKED_ORACLE",
+        "checks": [
+          {
+            "check_id": "missing_fields_recorded",
+            "passed": false
+          },
+          {
+            "check_id": "completed_run",
+            "passed": true
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "passed": true
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "passed": true
+          },
+          {
+            "check_id": "no_order_created",
+            "passed": true
+          },
+          {
+            "check_id": "origin_not_invented",
+            "passed": true
+          },
+          {
+            "check_id": "destination_not_committed_without_choice",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "source_id": "NLU-03",
+        "subset_status": "PASS_BOUND_CHECKS",
+        "whole_case_status": "BLOCKED_ORACLE",
+        "checks": [
+          {
+            "check_id": "family_occupancy_not_assumed",
+            "passed": true
+          },
+          {
+            "check_id": "budget_scope_not_silently_changed",
+            "passed": true
+          },
+          {
+            "check_id": "completed_run",
+            "passed": true
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "passed": true
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "passed": true
+          },
+          {
+            "check_id": "no_order_created",
+            "passed": true
+          },
+          {
+            "check_id": "missing_parameters_have_question",
+            "passed": true
+          },
+          {
+            "check_id": "origin_not_invented",
+            "passed": true
+          },
+          {
+            "check_id": "explicit_destination_sochi",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "source_id": "NLU-06",
+        "subset_status": "PASS_BOUND_CHECKS",
+        "whole_case_status": "BLOCKED_ORACLE",
+        "checks": [
+          {
+            "check_id": "origin_st_petersburg",
+            "passed": true
+          },
+          {
+            "check_id": "destination_istanbul",
+            "passed": true
+          },
+          {
+            "check_id": "total_budget_120000",
+            "passed": true
+          },
+          {
+            "check_id": "need_missing_fields_question",
+            "passed": true
+          },
+          {
+            "check_id": "completed_run",
+            "passed": true
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "passed": true
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "passed": true
+          },
+          {
+            "check_id": "no_order_created",
+            "passed": true
+          },
+          {
+            "check_id": "party_not_invented",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "source_id": "NLU-09",
+        "subset_status": "PASS_BOUND_CHECKS",
+        "whole_case_status": "BLOCKED_ORACLE",
+        "checks": [
+          {
+            "check_id": "origin_moscow",
+            "passed": true
+          },
+          {
+            "check_id": "adult_count_1",
+            "passed": true
+          },
+          {
+            "check_id": "destination_not_assumed",
+            "passed": true
+          },
+          {
+            "check_id": "completed_run",
+            "passed": true
+          },
+          {
+            "check_id": "no_structured_offers_before_missing_parameters",
+            "passed": true
+          },
+          {
+            "check_id": "no_supplier_tool_calls",
+            "passed": true
+          },
+          {
+            "check_id": "no_order_created",
+            "passed": true
+          },
+          {
+            "check_id": "missing_parameters_have_question",
+            "passed": true
+          },
+          {
+            "check_id": "budget_not_invented",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  "exact_failure": {
+    "source_id": "NLU-01",
+    "original_message": "Хочу в тепло осенью, где недорого.",
+    "original_message_utf8_sha256": "16467a7ec6c04d5c6f583451b86cdc23ab57eaeeed4408ef21de90d44fed9792",
+    "raw_speech_act": "ASK",
+    "raw_control": {
+      "action": "continue"
+    },
+    "raw_operations": [],
+    "raw_unknowns": [
+      "Откуда вы планируете отправляться?",
+      "Какой бюджет вы рассматриваете?",
+      "В какие конкретные даты вы хотите поехать?",
+      "Сколько человек будет путешествовать?"
+    ],
+    "raw_conflicts": [],
+    "raw_reply": "Понятно, вы ищете теплое место для поездки осенью по доступной цене. Чтобы помочь вам найти подходящие варианты, мне нужно уточнить несколько деталей:",
+    "response_source": "llm",
+    "no_changes": true,
+    "notice": "Поездка и показанные варианты не изменены.",
+    "canonical_facts_after": {
+      "origin": null,
+      "travelers": [],
+      "groups": [],
+      "stays": [],
+      "legs": [],
+      "budget": null,
+      "constraints": [],
+      "preferences": []
+    },
+    "session_status_after": "NEW",
+    "waiting_reason_after": null,
+    "pending_question_after": null,
+    "failed_bound_check": "missing_fields_recorded"
+  },
+  "attribution": "The actual model produced four meaningful clarification questions. The Harness no-change ASK route returned only the introductory reply, discarded unknowns and persisted no pending clarification. This is not a model omission, provider rate limit, invented destination or a failed travel API.",
+  "required_action": "Root-owned Harness initial travel-intake path must preserve needed questions as a durable addressed clarification without turning informational ASK/PROPOSE into a trip edit.",
+  "closing_conditions": [
+    "Exact cached actual contract through real API/Store yields a nonempty owned durable pending question and clarification status, with empty canonical facts, no source call and no order.",
+    "A fresh bounded strong-model/API replay on the repaired exact source also evaluates the unchanged frozen NLU-01 predicate.",
+    "Read-only informational geography, source/order questions, hypothetical acts and pause/cancel controls keep their existing no-mutation guarantees."
+  ],
+  "limitations": [
+    "These34 predicates are a partial typed subset of four original cases; eight original semantic obligations remain UNBOUND.",
+    "Missing plans/offers arrays mean no such structures were returned; they do not prove an independently observed empty global backend inventory.",
+    "No API/client oracle was changed to turn this failure into PASS.",
+    "The separate initial preflight0model DEMO-default client error remains preserved in its own folder; it is not this application defect."
+  ]
+}

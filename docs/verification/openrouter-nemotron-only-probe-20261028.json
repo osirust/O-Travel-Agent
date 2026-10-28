@@ -1,0 +1,109 @@
+{
+  "verification_id": "HARNESS-004-OPENROUTER-NEMOTRON-ONLY-PROBE-20261028",
+  "status": "THREE_HTTP200_SEMANTIC_RISKS_CONFIRMED_NO_COMPARATIVE_RANKING",
+  "source_package_sha256": "3eca7197628416b4614650ba473121af5aa695298fec28b5e349053799b77564",
+  "phase_authority": "Separate Root-authorized alternative-model probe after first Gemma429. Same selected key, no new account/key/IP, no quota reset.",
+  "model": "nvidia/nemotron-3.5-super-vl:free",
+  "runtime_guard": {
+    "output_max_tokens": 2048,
+    "wall_timeout_seconds": 45,
+    "reasoning_enabled": false,
+    "allow_fallbacks": false,
+    "require_parameters": true,
+    "max_price_all_zero": true,
+    "attempts_per_case": 1,
+    "global_generation_cap": 3
+  },
+  "context_sha256": {
+    "budget_delta_saved_child": "28acb63803fd7ccc6ae001fa2c17a9ce016044f47ce4195cefdfaeef2b5a1e9b",
+    "current_hypothesis_noapply": "0878c4dff59ee059311bf13eb0d424bacec676a84e574259f801779f0728122b",
+    "two_city_owned_two_rooms": "8a17756c8b8e46a0ad8139119d7f748347e5964e82654b7a687b9c1c383d6411"
+  },
+  "provider": {
+    "actual_http_requests": 3,
+    "http_statuses": [
+      200,
+      200,
+      200
+    ],
+    "latencies_ms": [
+      1558,
+      3929,
+      7997
+    ],
+    "canonical_json_schema_passed": 3,
+    "request_retries": 0
+  },
+  "semantic_results": [
+    {
+      "case": "budget_delta_saved_child",
+      "status": "FAIL_BUDGET_DELTA",
+      "before_minor": 120000000,
+      "requested_decrease_minor": 2000000,
+      "expected_minor": 118000000,
+      "model_minor": 100000000,
+      "currency": "RUB",
+      "saved_child_age_and_nonbudget_facts_unchanged": true
+    },
+    {
+      "case": "current_hypothesis_noapply",
+      "status": "NOAPPLY_BOUND_PASS_WITH_UNNEEDED_CLARIFICATION",
+      "raw_operations_count": 0,
+      "speech_act": "CHANGE",
+      "control": "wait",
+      "asks_unneeded_new_budget": true,
+      "pure_empty_operation_projection_preserves_state": true,
+      "original_strict_grader_failure_kept_privately": true,
+      "full_harness_execution": false
+    },
+    {
+      "case": "two_city_owned_two_rooms",
+      "status": "RAW_DOMAIN_FAIL_AND_DUPLICATE_CHILD",
+      "canonical_json_schema": "PASS",
+      "raw_domain_error": "invalid_operation: selected place display name differs from verified location_ref",
+      "raw_creates_duplicate_child_age4": true,
+      "harness_normalization_not_executed": true,
+      "room_id_scope_note": "Room IDs are scoped by stay. Scalar reuse across different stays is not by itself an error."
+    }
+  ],
+  "key_before": {
+    "http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_daily_limit": 50,
+    "free_daily_remaining": 50,
+    "at": "2026-10-28T00:14:44.008017+00:00"
+  },
+  "key_after": {
+    "http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_daily_limit": 50,
+    "free_daily_remaining": 50,
+    "at": "2026-10-28T00:14:57.998665+00:00"
+  },
+  "quota_interpretation": "Counter remained50 before/after. This is observed metadata, not evidence of unlimited requests or an allowance to evade limits. All3 actual requests are recorded separately.",
+  "conclusion": "Nemotron served all3 requests quickly with valid finalJSON, but raw budget arithmetic and duplicate-person/locale-reference behavior failed. It is an available candidate requiring Harness guards, not a qualified strong-model replacement or a winner over unavailable Gemma.",
+  "limitations": [
+    "Small model-only API probe, not80-dialogue/106-scenario or end-to-end Harness acceptance.",
+    "Gemma did not produce a semantic result; no paired quality ranking exists.",
+    "Original strict noapply scoring is preserved; supplementary review clarifies the non-mutation property without new generation.",
+    "No hidden reasoning, account identifiers, keys, headers, raw source URLs or session capabilities are published."
+  ],
+  "private_report_sha256": "9244fa1a42b3b801708b55e28b7689f6f06ac910836d3edbaf1e94bdb6d59727",
+  "private_semantic_addendum_sha256": "1930f9c757254853357a65da6054a0b88bcb689bd62f73887fabca0fb137dfec",
+  "actions": {
+    "new_generations": 3,
+    "tourism_http": 0,
+    "database_connections": 0,
+    "state_mutations": 0,
+    "runtime_changes": 0,
+    "paid_requests": 0,
+    "local_models": 0,
+    "quota_resets": 0
+  }
+}

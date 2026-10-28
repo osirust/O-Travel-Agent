@@ -1,0 +1,137 @@
+{
+  "id": "DYNAMIC-GEO-PHASE3-SUPPLIERREFS-001",
+  "status": "CONTROLLED_ADAPTER_AND_ORCHESTRATION_TESTED / ACTUAL_WORLD_SUPPLIER_FLOW_OPEN",
+  "scope": "Server-owned CityRef integration for LiteAPI sandbox and Duffel test; no new actual network, LLM, DB or Native changes.",
+  "files": [
+    {
+      "path": "otravel/provider_cities.py",
+      "sha256": "621f8a2b50f9fb2ad94ecc4b0f117d7a2b7c224261ff8d500e703179d86f1566"
+    },
+    {
+      "path": "otravel/orchestrator.py",
+      "sha256": "38443118412ffb25d0d606eee3e1bd6ca4401a8d38046add7250891d59106103"
+    },
+    {
+      "path": "otravel/providers.py",
+      "sha256": "776451e5d5ebeb1d6ce8c4db0566224eac456816601a293576c9421698e6d4b4"
+    },
+    {
+      "path": "tests/test_dynamic_place_suppliers.py",
+      "sha256": "aa4eec34cbd514f7620ca394dd43c7d00546add692e3435b38e23b68f04364bb"
+    }
+  ],
+  "owned_providers_scope": {
+    "class": "TravelGateway",
+    "lf_normalized_tail_sha256": "09e0d00a84b579eda22139c9001c1344369d4649276b52108f6d0d0203e21c19",
+    "llm_gateway_top_edited": false,
+    "whole_provider_file_formatted": false
+  },
+  "interfaces": {
+    "list_countries": "list_countries()->list[{country_iso2,name}], one sandbox GET /v3.0/data/countries, strict code/name response fields, bounded<=300.",
+    "hotel_lookup": "resolve_hotels(legacy_city_string OR {city?:exact_name,place_ref:server_snapshot},limit<=10). Legacy string behavior unchanged; a ref lookup performs at most one HTTP request.",
+    "air_lookup": "resolve_air_place({place_ref:server_snapshot})->status RESOLVED|AMBIGUOUS|NO_MATCH|UNVERIFIED, place_id/country/refSHA, optional confirmed IATA/provider ID, identity and availability flags.",
+    "private_requests": "Only internal server orchestration injects place_ref for hotel requests and place_refs={origin?,destination?} for a single flight leg; these are never supplier payload fields."
+  },
+  "verified_controlled_behavior": [
+    "HYBRID request capabilities append structurally valid owned ref names; DEMO registry remains the original seven synthetic cities.",
+    "Dynamic hotel lookup requires exact normalized city, exact country and finite coordinates within a 50km consistency radius from the selected geographic point. Missing or contradictory metadata is blocked; no nearest-town substitution.",
+    "Legacy aliases are accepted only when their fixed seed country matches the selected snapshot country; a Moscow/US ref never inherits the Moscow/RU mapping.",
+    "Hotel rates require fresh same-gateway identity evidence for all requested IDs. Conflicting included rate metadata and unrequested IDs are not promoted to the selected geography.",
+    "A pinned dynamic hotel must be among the verified lookup IDs; another result is never silently substituted.",
+    "Air resolution prefers an unambiguous exact metro city. Spatial evidence comes from city coordinates, an explicit linked airport within the same country/radius, or an already verified matching provider binding. Unknown or ambiguous associations remain blockers.",
+    "No airport timezone is copied into city state. No candidate airport is chosen by nearest distance.",
+    "Dynamic flight requests require fresh matched IATA/ref evidence and a response confirming the requested route/date; a 200 response with missing slices is not enough.",
+    "Orchestration resolves dynamic endpoint IDs explicitly under the shared tool budget, memoizes by physical ref ID plus snapshot SHA, and retains actual components when another component fails.",
+    "Any trip containing dynamic refs disables synthetic fallback for the whole route. DEMO mode with refs returns structured incomplete output; existing unreferenced seven-city behavior remains unchanged."
+  ],
+  "verification": {
+    "core_related": {
+      "path": ".local/evaluation/geo-20261027/place-suppliers-core-expanded-final.xml",
+      "sha256": "cc1d4b9353f0b73e9d940eedbd85b88e43264af109b12e1ad97bb5f3b4aa79cc",
+      "tests": "287",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "5.379"
+    },
+    "adapter_media": {
+      "path": ".local/evaluation/geo-20261027/place-suppliers-adapter-final.xml",
+      "sha256": "1cb4814c4534f72afe28e8ea25ab4394ab1c5dbea735dfffc8114f6e0d7ccc37",
+      "tests": "109",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.941"
+    },
+    "new_initial_preserved": {
+      "path": ".local/evaluation/geo-20261027/place-suppliers-initial.xml",
+      "sha256": "420a94886f52fecf10f877bffd15aef9347134752838c35f70ba97b75bfb6d03",
+      "tests": "36",
+      "failures": "3",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.333"
+    },
+    "initial_failure_attribution": "Three initial orchestration fixture failures used inherited Oct25 offers against declared Oct27 test clock. The existing stale-source guard correctly rejected them. Fixture timestamps were corrected; assertions were not weakened.",
+    "actual_format_mock_pipeline": {
+      "http_wires": 5,
+      "methods": [
+        "hotel lookup",
+        "hotel rates",
+        "air-place resolution",
+        "outbound flight offers",
+        "return flight offers"
+      ],
+      "returned_components": 3,
+      "sources": [
+        "SANDBOX"
+      ],
+      "result": "partial; transfer missing; no cart/order"
+    },
+    "two_homonym_ref_case": {
+      "air_resolution_calls": 2,
+      "all_explicit_calls": 9,
+      "middle_edge_iata": "COR -> ODB",
+      "source_facts": "declared controlled fixture, not actual supplier evidence"
+    },
+    "ruff_new_registry_and_tests": "PASS",
+    "actual_http_requests": 0,
+    "model_calls": 0,
+    "database_calls": 0,
+    "native_changes": 0
+  },
+  "engineering_bounds": {
+    "city_coordinate_consistency_km": 50,
+    "identity_memory_seconds": 3600,
+    "identity_memory_entries": 64,
+    "country_rows": 300,
+    "duffel_place_rows": 100
+  },
+  "limits": [
+    "50km is a consistency guard, not a municipal boundary, best nearby choice, supplier availability guarantee or approved product coverage cap.",
+    "Physical identity, hotel ID metadata, fare eligibility and supplier inventory availability remain separate facts.",
+    "Country-list field parsing is supported by official documentation, not a newly executed actual countries call.",
+    "No natural-language global model flow, actual world hotel/flight availability, booking, payment or successful whole-cart checkout is claimed.",
+    "Missing transfer integration keeps a global trip partial; no global synthetic catalogue or false READY result is created.",
+    "API/Store must authenticate client-supplied ref snapshots before internal private request injection; structural gateway DTO checks alone are not catalog provenance.",
+    "Ruff changed no LLMGateway code; existing orchestrator fault-boundary lint rules are not claimed as repository-wide lint closure."
+  ],
+  "primary_sources": [
+    {
+      "url": "https://docs.liteapi.travel/reference/get_data-hotels",
+      "supports": "country/city/coordinate hotel metadata and country/city lookup"
+    },
+    {
+      "url": "https://docs.liteapi.travel/reference/post_hotels-rates",
+      "supports": "included hotel metadata fields for rate searches"
+    },
+    {
+      "url": "https://docs.liteapi.travel/reference/get_data-countries",
+      "supports": "reference country codes/names endpoint"
+    },
+    {
+      "url": "https://duffel.com/docs/api/places/schema",
+      "supports": "city/airport place type, IATA/country, coordinates and explicit metro associations"
+    }
+  ]
+}

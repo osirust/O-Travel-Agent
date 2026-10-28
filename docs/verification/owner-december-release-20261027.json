@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-27",
+  "status": "CONTROLLED_FULL_AND_FOLLOWUP_TESTED_ACTUAL_REPEAT_OPEN",
+  "full_initial": {
+    "passed": 6581,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 415.21,
+    "source_unchanged": true,
+    "package_sha256": "074743bd0cf6df9f116e67239b4b94be5450e0ec7d7857b27705eb71a4c230b7",
+    "tests_sha256": "f154d44ac9dbd55e5d3618b1932ec0d46c4c0cab33a1690db017ee528db50dc6",
+    "private_terminal": ".local/evaluation/after80-20261027/full-owner-december-r6-terminal.json"
+  },
+  "followup": {
+    "reason": "Independent pure probe reproduced price routing crash on legacy pending field=null. Normalize absent field before _unanswered; retain mixed edits and missing-fact checks. Ruff-only import/UTC cleanup also applied.",
+    "passed": 103,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 11.05,
+    "package_sha256": "6b8de209267a53a1bf4a757d990c42b1948ca489ea75a160f16e032e0694a63f",
+    "private_junit": ".local/evaluation/after80-20261027/owner-december-followup-targeted.xml",
+    "ruff": "PASS"
+  },
+  "full_after_followup": "RUNNING_SEPARATE_TERMINAL_REQUIRED",
+  "actual_repeat": "OPEN_SEPARATE_SOURCE_API_PROOF_REQUIRED",
+  "original_80_actual_acceptance": "NOT_COMPLETED",
+  "original_106_actual_acceptance": "NOT_COMPLETED",
+  "local_qwen_calls": 0,
+  "paid_calls": 0,
+  "supplier_booking_or_payment": 0,
+  "staged_package": {
+    "tested_package_sha256": "6b8de209267a53a1bf4a757d990c42b1948ca489ea75a160f16e032e0694a63f",
+    "staged_package_sha256": "9706a5a7d2b0dbdc5481b9c43638dd34072b33150dfa36d753f39b14f76c6242",
+    "package_files": 74,
+    "only_allowed_crlf_normalization": [
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

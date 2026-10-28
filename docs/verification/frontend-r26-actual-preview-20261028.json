@@ -1,0 +1,114 @@
+{
+  "format": "otravel.frontend_r26_actual_preview.v1",
+  "checked_at_utc": "2026-10-28T14:37:11.970506+00:00",
+  "status": "REAL_SOURCE_UI_AND_SAFE_SUPPLIER_REFUSAL_VERIFIED_CHECKOUT_FINISH_PENDING",
+  "backend_core": "91e6ee4",
+  "configured_runtime": "external/openai/glm-4.5-flash; not called",
+  "frontend_asset": "index-De37d6ef.js",
+  "url": "http://localhost:18082/#studio",
+  "scope": "New isolated browser profile/session; explicit typed fixture1adult/1room/Istanbul10–13Nov/RU/whole-trip1mRUB. Real UI actions and providers, no natural-language intake substitution.",
+  "fixture_before": {
+    "origin": "Москва",
+    "destination": "Стамбул",
+    "check_in": "2026-11-10",
+    "check_out": "2026-11-13",
+    "adults": 1,
+    "children": 0,
+    "rooms": 1,
+    "guest_nationality": "RU",
+    "budget_minor": 100000000,
+    "currency": "RUB",
+    "policy": "HYBRID"
+  },
+  "whole_trip_search": {
+    "status": "completed",
+    "plan_count": 1,
+    "source_type": "MIXED",
+    "total_minor": 5449583,
+    "currency": "RUB",
+    "components": [
+      {
+        "kind": "hotel",
+        "source_type": "SANDBOX",
+        "provider": "liteapi"
+      },
+      {
+        "kind": "flight",
+        "source_type": "SANDBOX",
+        "provider": "duffel"
+      },
+      {
+        "kind": "flight",
+        "source_type": "SANDBOX",
+        "provider": "duffel"
+      },
+      {
+        "kind": "transfer",
+        "source_type": "DEMO"
+      }
+    ],
+    "violations": [],
+    "logical_tool_events": 5,
+    "real_booking_claimed": false
+  },
+  "hotel_cards": {
+    "actual_serp_search_posts": 1,
+    "offers": 20,
+    "source_type": "LIVE_INDICATIVE",
+    "property_binding_verified": true,
+    "real_cdn_photo_decoded": true,
+    "width": 1600,
+    "height": 1066,
+    "photo_url_sha256": "8cf1770d6256fdee87464b9179cfd2231926ca6899ecf353a21f0b736bcd53ce",
+    "second_gallery_photo_decoded": true,
+    "amount_minor": 433200,
+    "currency": "RUB",
+    "rendered_price": "4 332 ₽"
+  },
+  "quote_navigation": {
+    "standalone_hotel_selected": true,
+    "separate_server_plan_button_visible_enabled": true,
+    "separate_plan_explanation_visible": true,
+    "preview_post_current_selected_server_plan_and_version": true,
+    "standalone_cart_did_not_replace_server_plan": true
+  },
+  "preview": {
+    "status": 409,
+    "error": {
+      "code": "OFFER_NOT_CONFIRMED",
+      "message": "Поставщик не подтвердил цену или наличие выбранного тарифа. Обновите варианты.",
+      "retryable": false,
+      "provider": "liteapi",
+      "upstream_http_status": 409,
+      "business_code": 2001,
+      "refresh_required": true
+    },
+    "fx_source_unavailable_this_attempt": false,
+    "fx_observation_scope": "Preview proceeded to supplier reprice and returned LiteAPI business2001. No direct CBR HTTP status/timing was instrumented in the browser; this does not prove the cause of every historical503.",
+    "safe_refusal": true,
+    "quote_created": false,
+    "user_consent_submitted": false,
+    "local_order_created": false,
+    "idempotent_confirmation_retry_executed": false,
+    "supplier_booking_or_payment": false,
+    "automatic_or_manual_preview_retry": false
+  },
+  "model_http": 0,
+  "exact_supplier_fx_metadata_http": "UNKNOWN_NOT_EQUAL_TO_LOGICAL_TOOL_COUNT",
+  "handled_browser_transport_error": [
+    "Failed to load resource: the server responded with a status of 409 (Conflict)"
+  ],
+  "post_order_actual_spinner_and_reload": "NOT_EXECUTED_NO_ORDER",
+  "historical_evidence_preserved": [
+    "frontend-r25-actual-handoff-20261028.json retains the previous503 and failed language intake",
+    "frontend-booked-empty-state-20261028.json records controlled booked-state rendering, not an actual completed order"
+  ],
+  "private_report_sha256": "f57d4a10bc9efeaa148d147f36270bef8f97c0ab373291568931516e6e4d0624",
+  "private_screenshot": "C:\\Users\\ggdro\\AppData\\Local\\Temp\\otravel-frontend-contract-20261028\\r26-photo-1440.png",
+  "limitations": [
+    "This is not a complete quote/consent/order PASS: no valid quote was returned.",
+    "LiteAPI2001 is an actual selected-offer refusal, not evidence that its availability guard is defective. A fresh or different offer/scenario requires a separate bounded attempt.",
+    "A valid quote is required before consent or confirmation; none was fabricated.",
+    "Actual R26 natural-language quality was not retested; this probe deliberately used0LLM."
+  ]
+}

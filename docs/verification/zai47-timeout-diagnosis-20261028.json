@@ -1,0 +1,58 @@
+{
+  "finding_id": "HARNESS-004-ZAI47-WALL-TIMEOUT-001",
+  "status": "ENGINEERING_CUTOFF_CONFIRMED_SLOW_RESPONSE_CAUSE_UNKNOWN",
+  "scope": "Read-only configuration and existing attempt metadata; no new inference or runtime changes.",
+  "same_effective_configuration": {
+    "llm_request_timeout_seconds": 45,
+    "http_connect_timeout_max_seconds": 10,
+    "max_output_tokens": 2048,
+    "reasoning_enabled": false,
+    "model_attempts_per_run": 2,
+    "provider_response_bytes_limit": 5000000,
+    "provider_source_sha256": "34d0bec71a0059824e6bd5bc75f07cdf9319db394e828268b2b2061bcd1a4ec1"
+  },
+  "independent_8088": {
+    "model": "glm-4.7-flash",
+    "source": "R12 committed3f369a9",
+    "first_attempt_latency_ms": 45002,
+    "model_event_elapsed_seconds": 45.016,
+    "whole_turn_seconds": 47.496,
+    "error": "REQUEST_TIMEOUT",
+    "outcome": "No complete model response within45-second LLMGateway wall deadline",
+    "model_http_attempts": 1,
+    "tourism_calls": 0,
+    "evaluation_poll_deadline_seconds": 300,
+    "evaluation_http_timeout_seconds": 15
+  },
+  "R5_comparison": {
+    "same_model_and_timeout": true,
+    "successful_response_latencies_ms": [
+      14251,
+      5178,
+      6236,
+      8332
+    ],
+    "also_observed_request_timeout_ms": 45008,
+    "warning": "R5 cumulative5 model attempts include one failed timeout; they are not five successful generations."
+  },
+  "configuration_meaning": {
+    "LLM_TIMEOUT_SECONDS": "Not a recognized setting in these pinned profiles/code",
+    "MAX_MODEL_SECONDS_PER_RUN": "Not a recognized setting in these pinned profiles/code",
+    "LLM_REQUEST_TIMEOUT": "Recognized but remote provider code clamps it to45 seconds; changing only environment to90 does not extend the boundary",
+    "seconds120": "Geographic-call remaining time and stale-run recovery; not a configurable total model inference deadline"
+  },
+  "conclusion": "8088 did not use a shorter model timeout than successful R5 attempts. The model gateway45-second wall boundary was reached; the300-second test poll was not the cause. Provider outage, queueing, model load or network cause cannot be distinguished from these records.",
+  "limitations": [
+    "No completed provider response/usage/HTTP status for the timed-out attempt.",
+    "No new provider benchmark or retry was performed.",
+    "No inference quality or full dialogue acceptance follows from latency results."
+  ],
+  "actions": {
+    "new_model_calls": 0,
+    "external_http": 0,
+    "runtime_changes": 0,
+    "quota_resets": 0,
+    "master_or_full_env_read": false
+  },
+  "private_readonly_receipt_sha256": "ddece255a6cbdd1f7838e9aa7b21d097b355cc257af6a965de86871629d38219"
+}

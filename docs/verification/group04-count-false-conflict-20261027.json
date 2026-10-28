@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-GROUP-COUNT-FALSE-CONFLICT-001",
+  "status": "OPEN_ACTUAL_MODEL_SEMANTIC_FALSE_CONFLICT",
+  "source_commit": "b50d73a74509afb9198a142b0a439789fce726c1",
+  "package_sha256": "886d18200a5b117b86481986b9da6f3bf972ae117b91776b2c8affb481729c92",
+  "source_report_sha256": "693d8d6c27a4ffa91812c1905511f282e2827d463d93d4f65b98badc232d4278",
+  "fixture": "fixtures/regression/group04-count-false-conflict-20261027.json",
+  "fixture_sha256": "a537e253cd3164ae51204277d55fffdbaca7ac3aec809cdfd2a2745e683e360b",
+  "actual_scope": "Initial GROUP-04 declarative request on GroqQwen strict transport. Structural JSON and local operation shape passed; no new API requests are made by this attribution.",
+  "model": "qwen/qwen3.8-27b",
+  "provider": "groq",
+  "latency_ms": 1842,
+  "usage": {
+    "input_tokens": 4540,
+    "total_tokens": 5087,
+    "output_tokens": 547
+  },
+  "structured_transport": {
+    "format": "groq_strict_operations_v1",
+    "wire_final_sha256": "812f429b4a9c02d400ed4552b8102d9b18986d3a2620df11c92512e691e70d72",
+    "wire_schema_sha256": "4b03cc55a3481a8cc923f76c7a1f2fe8edd897cd5ec72f5c759a3aa30ffb9fd1",
+    "wire_schema_utf8_bytes": 3682,
+    "validated_output_representation": "decoded_canonical_contract"
+  },
+  "observations": {
+    "decoded_operation_count": 8,
+    "checked_operations_unchanged": true,
+    "operation_types": {
+      "set_origin": 1,
+      "set_search_policy": 1,
+      "add_traveler": 3,
+      "upsert_group": 2,
+      "set_budget": 1
+    },
+    "missing_stays": true,
+    "missing_explicit_istanbul_breakfast_constraint": true,
+    "model_conflict_count": 1,
+    "canonical_trip_unchanged": true,
+    "state_version_delta": 0,
+    "tool_starts": 0,
+    "orders_created": 0,
+    "model_proposal_saved_claim_is_not_a_store_result": true,
+    "actual_user_reply": "Что нужно уточнить о поездке, чтобы продолжить?"
+  },
+  "consistency_witness": {
+    "travelers": 3,
+    "separate_families": 2,
+    "family_member_counts": [
+      2,
+      1
+    ],
+    "requested_rooms_per_stay": 2,
+    "lodging_stops_in_input": 2,
+    "requested_room_bookings_total": 4,
+    "literal_mapping": [
+      "First adult with the child in the first room",
+      "Second adult in the second room"
+    ],
+    "family_room_count_contradiction_proven": false,
+    "supplier_capacity_or_availability_proven": false,
+    "meaning": "The input allocation is consistent as a requirement. Real capacity/availability must be established by inventory, not invented by the model."
+  },
+  "controlled_pure_attribution_already_performed": {
+    "server_operation_conflicts": [],
+    "candidate_people": 3,
+    "candidate_groups": 2,
+    "candidate_stays": 0,
+    "ground_initial_route_added_stays": 0,
+    "ground_initial_route_reason": "Deliberately limited to a single initial route; multiple-city/then/return input is excluded.",
+    "complete_initial_room_layouts_added_rooms": 0,
+    "complete_initial_room_layouts_reason": "Requires at least two already proposed stays; this model output contains none.",
+    "ground_intent_operations_added_stays": 0,
+    "ground_intent_operations_reason": "Multi-city proposals are preserved when supplied, not synthesized from this missing-route batch.",
+    "production_gate": "Every later grounding phase is additionally gated by not model.conflicts.",
+    "does_not_establish_a_safe_repair_from_current_helpers": true,
+    "calls": {
+      "model": 0,
+      "vendor_http": 0,
+      "database": 0
+    },
+    "persistent_mutations": 0
+  },
+  "prompt_review": {
+    "causal_prompt_bug_proven": false,
+    "missing_general_clarity": "The operation guide explains group setters and existing-room edits but does not explicitly distinguish per-stay room counts from a trip-wide pool or forbid invented one-person room capacities.",
+    "proposed_general_addendum": "Conflicts are incompatible CURRENT user facts or affected saved facts, not missing or unsupported information. An unknown destination, search coverage, availability or room capacity is not by itself a contradiction. A requested room count applies separately to EACH stay; room ordinals and IDs are local to that stay, not a trip-wide room pool. Several travelers may share a room. A complete explicit assignment that keeps separate families apart is compatible when its per-stay room count is sufficient; do not invent a supplier capacity or a one-person-per-room rule. Keep all explicit cities, dates and scoped constraints in proposed operations even if another field needs clarification. Retain genuine conflicts; known independent proposals may be returned for SERVER REVIEW, never described as saved or executed.",
+    "replace_conflicting_existing_instruction": "The old instruction to return conflicts and NO operations must be reconciled with review-only partial proposals. Do not append contradictory instructions.",
+    "new_prompt_applied_by_this_task": false
+  },
+  "policy_boundary": [
+    "Do not blanket-clear model conflicts merely because the extracted batch is schema-valid or operation_conflicts is empty: the model may have omitted one side of a real contradiction.",
+    "Do not synthesize the missing multi-city stays/dates/breakfast using an unqualified case-specific regex.",
+    "Keep raw/checked proposals as uncommitted review evidence. Only a separately tested proof or actual improved extraction may change the outcome.",
+    "Unknown coverage or capacity belongs to clarification/tool validation, not an invented contradiction."
+  ],
+  "closure_requires": [
+    "Fresh actual GROUP-04 intake on a frozen prompt/model produces both stays/dates, complete two-room allocations, the3-person/two-family roster,400000RUB and required Istanbul breakfast without false conflict.",
+    "True mutually incompatible CURRENT facts still block unsafe application; missing capacity does not become a fabricated claim.",
+    "Retain this original FAIL and distinguish new actual model/prompt results from cached structural tests."
+  ],
+  "changes": {
+    "production_code": 0,
+    "native": 0,
+    "model_calls": 0,
+    "vendor_http": 0,
+    "database": 0
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "format": "otravel.external_llm.universal_transport.v1",
+  "checked_at_utc": "2026-10-28T13:56:10.382226+00:00",
+  "status": "THREE_CONTROLLED_WIRE_FORMATS_PLUS_ACTUAL_OPENAI_TRANSPORT_PASS",
+  "core_configuration": {
+    "LLM_PROVIDER": "external",
+    "LLM_API_FORMAT": [
+      "openai",
+      "gemini",
+      "anthropic"
+    ],
+    "LLM_BASE_URL": "recipient endpoint base, optionally full chat/messages endpoint",
+    "LLM_MODEL": "recipient model ID",
+    "LLM_API_KEY": "recipient secret, server-only",
+    "LLM_EXTERNAL_API_CONFIRMED": "true"
+  },
+  "optional_configuration": {
+    "LLM_JSON_MODE": [
+      "prompt",
+      "json_object",
+      "json_schema"
+    ],
+    "LLM_TOKEN_LIMIT_FIELD": [
+      "max_tokens",
+      "max_completion_tokens"
+    ],
+    "LLM_AUTH_STYLE": [
+      "auto",
+      "bearer",
+      "api-key",
+      "x-api-key",
+      "none"
+    ],
+    "LLM_ANTHROPIC_VERSION": "2023-06-01 default"
+  },
+  "checks": {
+    "new_tests": 49,
+    "new_pg_api_cases": 5,
+    "related_final_total": 392,
+    "failed": 0,
+    "skipped": 0,
+    "new_modules_ruff": "PASS"
+  },
+  "preserved_guards": [
+    "Explicit endpoint/account confirmation before HTTP",
+    "No URL credentials/query/fragment or redirects",
+    "Default certificate verification retained",
+    "Server config only, not user message URL selection",
+    "Existing context/output bounds, canonical JSON schema/role/target validation retained",
+    "Secret echo rejection before diagnostic snapshots",
+    "No implicit model/provider fallback",
+    "Durable remote quota bucket, default40/day hardmax2000/day, max2/run, readonly1/run",
+    "Bad/missing config recoverable with unchanged trip and no HTTP"
+  ],
+  "route_schema_repair": {
+    "guidance": "Destination is a stay/place, never route_policy.end_city; round_trip returns to origin with null end_city/end_place_id",
+    "feedback": "Matching server-schema branch gives bounded expected_type/const/enum/required fields; raw invalid values are never coerced/accepted",
+    "legacy_schema_errors_shape_preserved": true,
+    "new_detail_field": "schema_repair_hints",
+    "max_detail_entries": 3
+  },
+  "historical_failures": [
+    "Initial4 PG failures: unregistered external provider in durable Store; real provider registration and precall validation repaired",
+    "Initial3 new diagnostic failures: extracted branch lacked root $defs; definitions copied from unchanged server schema, not removed"
+  ],
+  "actual_receipt": "docs/verification/external-llm-actual-openai-20261028.json",
+  "wire_sources": [
+    "https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create",
+    "https://ai.google.dev/api/generate-content",
+    "https://platform.claude.com/docs/en/api/messages/create",
+    "https://platform.claude.com/docs/en/manage-claude/authentication"
+  ],
+  "limitations": [
+    "Protocol compatibility does not guarantee every unknown model understands the trip schema",
+    "Native Gemini/Anthropic live access was not available and is not claimed",
+    "Provider pricing/quota remains recipient responsibility; confirmation is not a claim that unknown endpoints are free",
+    "Remote per-attempt timeout still bounded by existing45s lease-safe default; no timeout/lease expansion added"
+  ],
+  "files": {
+    "otravel/external_llm.py": "c8818fbc74d88c6b28d5d0ff5593ffcafe27ece5373810cfdbe398f138298fa6",
+    "otravel/llm_schema_feedback.py": "a674b199a843d2a62aaf24cdb132487cba0781978202863eeba514de9d0cbb23",
+    "otravel/providers.py": "841e966f6e22fbfffbbab309630904189cefe75d32f37fcaaa902087524eb76d",
+    "otravel/config.py": "d776bfa0104d6c0a859dff08286515153de443783cbae955d204e5c571529bdd",
+    "otravel/harness.py": "e00cb787f112e7d4c723f9077126e8a780432f54b986147058f1bd4d32103041",
+    "otravel/store.py": "b3c90dd6dcb7e0351441038b4185bf596e686f33526e437412801575890a94d3",
+    "docker-compose.yml": "f9ca4ef741f3fc8948ac5347bdddaa54bfeefe6b2b96d3f2276de0b761d15fb4",
+    ".env.example": "e9fc1a3c55fff4255ab68fc67e90bff9d8dec3f328cc51ccb97049383839e9c9",
+    "tests/test_external_llm.py": "c9ee0de8193e2de324a5cb71aa401bce8281536933b82c342844337e67e4a207",
+    "tests/test_external_llm_api.py": "2663a7c6b182ae629eb9f421dec3529110f12668589df29b929c58de66fbf37e"
+  }
+}

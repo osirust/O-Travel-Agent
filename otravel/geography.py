@@ -13,7 +13,6 @@ import unicodedata
 from collections.abc import Iterable
 from typing import Any
 
-
 _COUNTRIES = {
     "RS": ("Сербия", "Serbia", "Сербию", "Сербии", "Сербией", "Republic of Serbia"),
     "RU": ("Россия", "Russia", "России", "Россию", "Россией", "РФ", "Russian Federation", "Российская Федерация", "Российскую Федерацию"),
@@ -55,6 +54,7 @@ _CITIES = {
     "Белград": ("RS", ("Belgrade", "Beograd", "Белграде")),
     "Нови-Сад": ("RS", ("Novi Sad", "Нови Сад", "Нови-Саде", "Новом Саде")),
     "Белгород": ("RU", ("Belgorod", "Белгороде")),
+    "Тбилиси": ("GE", ("Tbilisi",)),
 }
 _AMBIGUOUS = {
     "georgia": "Вы имеете в виду страну Грузию или штат Джорджия в США? Уточните город.",

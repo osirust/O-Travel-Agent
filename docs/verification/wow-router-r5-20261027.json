@@ -1,0 +1,54 @@
+{
+  "status": "ALL12_LISTED_ORACLES_PASS_WITH_ADDITIONAL_IMMEDIATE_SEARCH_BLOCK_FINDING",
+  "date": "2026-10-27",
+  "source_core_commit": "93f91fda439b85c4825b890bfbe121c62ffdb22f",
+  "package_sha256": "f82e210d1e98a0f4a2207207e498d0886afe77cf3fa9b3ccbed923f986740f72",
+  "profile": {
+    "provider": "openrouter",
+    "model": "dots-studio/dots-3-note-preview:free",
+    "daily_engineering_bound": 50,
+    "parallel": 1,
+    "pacing_seconds": 60,
+    "paid_fallback": false,
+    "local_model": false
+  },
+  "source_report_sha256": "958ca19eafe056252d27ed1f53cdbc55f279e263415a6cb6d80d803f5b63e1f3",
+  "private_folder": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-050410-a4350103",
+  "counts": {
+    "whole_dialogues": 1,
+    "listed_steps": 12,
+    "listed_step_statuses": {
+      "PASS": 12
+    },
+    "model_calls": 6,
+    "tool_starts": 0,
+    "supplier_bookings": 0,
+    "payments": 0
+  },
+  "passed_scope": [
+    "Natural initial multi-city party/group/room setup",
+    "Actual new scoped room member operations add child8 to family2/room2 in both cities",
+    "Budget400000 to380000 RUB, selected first hotel/breakfast retained, second hotel selected, return+2days",
+    "Explicit before-after answer, hypothetical nonmutation, budget+10percent, stale quote409, pause/queued/resume/date answer"
+  ],
+  "actual_compound_operation_attribution": {
+    "raw_and_checked_same": true,
+    "normalizations": [],
+    "new_set_room_members_used": true,
+    "sparse_or_room_alias_or_return_alias_used": false
+  },
+  "additional_finding": {
+    "id": "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001",
+    "observed_after_t4_status": "WAITING_USER",
+    "observed_after_t4_waiting_reason": "clarification",
+    "shown_plans_after_t4": 0,
+    "fact": "Existing hotel/city mentions produced an unnecessary destination/sequence clarification after the correct state update, delaying immediate re-search.",
+    "old_oracle_gap": "T4 checked state and comparison but did not require immediate OPTIONS_READY/plans. Preserve its original PASS; add separate flow assertions in a new recipe.",
+    "status": "OPEN_REPAIR_AND_ACTUAL_FOLLOWUP_PENDING"
+  },
+  "limitations": [
+    "All travel data in this dialogue DEMO; external supplier checkout is proven by a separate actual-source case.",
+    "Not original80/106 full-language acceptance.",
+    "Typed primitive actual PASS does not qualify unused compatibility branches."
+  ]
+}

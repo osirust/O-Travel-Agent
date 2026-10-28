@@ -1,0 +1,62 @@
+{
+  "format": "otravel.verification_receipt.v1",
+  "date": "2026-10-27",
+  "permanent_id": "GIGACHAT-PUBLIC-CA-CLIENT-TRUST-001",
+  "status": "PUBLIC_CA_ASSET_VERIFIED_DOCKER_COPY_DECLARED_RUNTIME_CONNECTIVITY_OPEN",
+  "asset": {
+    "path": "certs/gigachat-root-ca.pem",
+    "bytes": 2088,
+    "sha256": "936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504",
+    "original_CRLF_lines": 32,
+    "DER_sha256": "d26d2d0231b7c39f92cc738512ba54103519e4405d68b5bd703e9788ca8ecf31",
+    "source_url": "https://gu-st.ru/content/lending/russian_trusted_root_ca_pem.crt",
+    "source_HTTPS_verification": true,
+    "download_record": "docs/verification/gigachat-readiness-20261027.json",
+    "subject": "C=RU, O=The Ministry of Digital Development and Communications, CN=Russian Trusted Root CA",
+    "issuer": "Same as subject (root CA)",
+    "validity_UTC": {
+      "not_before": "2022-03-01T21:04:15Z",
+      "not_after": "2032-02-27T21:04:15Z"
+    },
+    "certificate_blocks": 1,
+    "private_key_present": false,
+    "user_data_present": false
+  },
+  "integration": {
+    "Dockerfile_COPY": "COPY --chmod=0444 certs/gigachat-root-ca.pem /app/certs/gigachat-root-ca.pem",
+    "container_path": "/app/certs/gigachat-root-ca.pem",
+    "container_app_readable_mode": "0444",
+    "gitignore_scope": "Only this public PEM is excepted; all other *.pem/*.key remain ignored.",
+    "gitattributes_scope": "Only this public PEM is marked -text so Git preserves the exact verified CRLF bytes.",
+    "Git_clean_filter_blob_identical": true,
+    "global_OS_or_certifi_trust_modified": false,
+    "process_ENV_modified": false,
+    "client_use": "Parent creates a private ssl.create_default_context(), loads this public PEM for only the GigaChat HTTP client, and keeps CERT_REQUIRED/check_hostname. No verify=False, legacy-host credential fallback or system trust installation.",
+    "native_runtime_note": "The public certificate is outside the Python wheel. A Native controller must point to a readable public asset copy; no private0700 root-only runtime path is assumed."
+  },
+  "observed_TLS": "NGW9443 verified with this RootCA; api.giga.chat443 TCP connects but verified TLS times out on both Windows and WSL using the DNS-returned IPv4 address and correct SNI. Account key validity/models/balance remain UNKNOWN.",
+  "verification": [
+    "Exact fileSHA and DER fingerprint checked.",
+    "OpenSSL x509 subject/issuer/validity/fingerprint checked.",
+    "No private-key marker and exactly one certificate.",
+    "Git ignore exception and clean-filter no-EOL-change verified.",
+    "Docker inclusion checked statically; no new image build was run after this asset change."
+  ],
+  "execution": {
+    "authenticated_API_calls": 0,
+    "generation_calls": 0,
+    "personal_Master_key_reads": 0,
+    "Native_or_DB_or_engine_changes": 0,
+    "OS_trust_changes": 0
+  },
+  "limitations": [
+    "This public CA asset establishes only per-client certificate trust material. It does not resolve the observed API TLS/network stall.",
+    "Docker inclusion is declared by COPY and has not yet been built/qualified on this new source.",
+    "A fresh network preflight and explicit auth/models/balance readiness remain required before generation."
+  ],
+  "primary_sources": [
+    "https://developers.sber.ru/docs/ru/gigachat/certificates",
+    "https://developers.sber.ru/docs/ru/gigachat/api/reference/rest/gigachat-api",
+    "https://github.com/ai-forever/gigachat/blob/main/src/gigachat/models/auth.py"
+  ]
+}

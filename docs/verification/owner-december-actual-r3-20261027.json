@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-27",
+  "status": "ACTUAL_OWNER_LIKE_DIALOGUE_SOURCE_CHECKOUT_PASS",
+  "scope": "Adaptive continuation of owner December scenario, not exact original14 and not a free-language model benchmark",
+  "package_sha256": "4b8eedd251365427a19fa2b2113708d6991ec06360947ba745f6ca2a03f32699",
+  "private_folder": "/home/aegml/checks/owner-december-actual-r3-20261027-190432",
+  "private_report_sha256": "a0f7e5ad1f62babeb3b8d8286e0686b683c5a71701e9f7c249efc9562b64415d",
+  "turns": 17,
+  "checks": [
+    {
+      "name": "country_does_not_pick_city",
+      "pass": true
+    },
+    {
+      "name": "typo_requires_explicit_serbia_confirmation",
+      "pass": true
+    },
+    {
+      "name": "confirmed_belgrade_not_belgorod",
+      "pass": true
+    },
+    {
+      "name": "checkin_2026_12_28_saved",
+      "pass": true
+    },
+    {
+      "name": "invalid_checkout_explained_without_mutation",
+      "pass": true
+    },
+    {
+      "name": "jan_year_candidate_requires_confirmation",
+      "pass": true
+    },
+    {
+      "name": "confirmed_checkout_2027_01_05",
+      "pass": true
+    },
+    {
+      "name": "no_children_closes_question_without_model",
+      "pass": true
+    },
+    {
+      "name": "final_declared_trip_facts",
+      "pass": true
+    },
+    {
+      "name": "actual_sources_produced_ready_plan",
+      "pass": true
+    },
+    {
+      "name": "allocated_room_covers_single_adult",
+      "pass": true
+    },
+    {
+      "name": "plan_contains_actual_test_hotel_and_flight",
+      "pass": true
+    },
+    {
+      "name": "actual_hotel_photo",
+      "pass": true
+    },
+    {
+      "name": "fresh_component_reprice_preview",
+      "pass": true
+    },
+    {
+      "name": "saved_cost_does_not_refresh_or_revoke_quote",
+      "pass": true
+    },
+    {
+      "name": "nudge_never_changes_trip_or_quote",
+      "pass": true
+    },
+    {
+      "name": "confirmation_retry_idempotent",
+      "pass": true
+    },
+    {
+      "name": "exactly_one_simulated_order",
+      "pass": true
+    },
+    {
+      "name": "zero_supplier_book_pay",
+      "pass": true
+    }
+  ],
+  "model_calls": 0,
+  "source_http": 10,
+  "actual_llm_exercised": false,
+  "sources": {
+    "hotel": "LiteAPI SANDBOX",
+    "flights": "Duffel SANDBOX",
+    "transfer": "explicit registered-city DEMO",
+    "fx": "CBR reference"
+  },
+  "total_minor": 12952552,
+  "currency": "RUB",
+  "source_type": "MIXED",
+  "coverage_complete": true,
+  "photo": "Actual property photo returned; exact property association checked",
+  "simulated_orders": 1,
+  "order_status": "BOOKED_DEMO",
+  "reprice_and_confirmation_retry": "passed",
+  "price_question_preserves_quote_without_new_search": true,
+  "supplier_booking_or_payment": 0,
+  "local_qwen": 0,
+  "paid": 0,
+  "limitations": [
+    "No live purchase",
+    "Not a multi-city or multi-room actual case",
+    "Original80/106 not completed",
+    "API model comparison is separate"
+  ]
+}

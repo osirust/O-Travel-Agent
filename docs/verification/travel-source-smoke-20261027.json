@@ -1,0 +1,227 @@
+{
+  "started_at": "2026-10-26T23:49:35.848010+00:00",
+  "scope": "Actual read-only provider outputs; not NLU/availability/booking qualification",
+  "model_calls": 0,
+  "booking_calls": 0,
+  "payment_calls": 0,
+  "http_attempts": [
+    {
+      "method": "GET",
+      "host": "serpapi.com",
+      "path": "/account.json",
+      "at": "2026-10-26T23:49:35.848235+00:00",
+      "http_status": 200
+    },
+    {
+      "method": "GET",
+      "host": "serpapi.com",
+      "path": "/search.json",
+      "at": "2026-10-26T23:49:36.252700+00:00",
+      "http_status": 200
+    },
+    {
+      "method": "GET",
+      "host": "serpapi.com",
+      "path": "/search.json",
+      "at": "2026-10-26T23:49:39.146748+00:00",
+      "http_status": 200
+    },
+    {
+      "method": "GET",
+      "host": "api.open-meteo.com",
+      "path": "/v1/forecast",
+      "at": "2026-10-26T23:49:47.413626+00:00",
+      "http_status": 200
+    },
+    {
+      "method": "GET",
+      "host": "www.cbr.ru",
+      "path": "/scripts/XML_daily.asp",
+      "at": "2026-10-26T23:49:57.515506+00:00"
+    }
+  ],
+  "checks": {
+    "serp_account": {
+      "status": "ACTUAL_ACCOUNT_200",
+      "before_searches": {
+        "account_status": "Active",
+        "plan_id": "free",
+        "plan_name": "Free Plan",
+        "plan_monthly_price": 0.0,
+        "plan_renewal_date": "2026-11-25",
+        "searches_per_month": 250,
+        "plan_searches_left": 232,
+        "extra_credits": 0,
+        "total_searches_left": 232,
+        "this_month_usage": 18,
+        "this_hour_searches": 5,
+        "last_hour_searches": 1,
+        "account_rate_limit_per_hour": 250
+      },
+      "quota_after_searches": "NOT_REQUERIED",
+      "account_endpoint_counts_against_monthly_quota": false
+    },
+    "serp_hotels": {
+      "status": "ACTUAL_SEARCH_RESPONSE",
+      "request": {
+        "q": "Hotels in Dubai",
+        "checkin": "2026-11-10",
+        "checkout": "2026-11-13",
+        "occupancies": [
+          {
+            "adults": 1,
+            "children": []
+          }
+        ],
+        "currency": "RUB"
+      },
+      "offer_count": 20,
+      "sample": [
+        {
+          "description": "FIVE Jumeirah Village Hotel",
+          "amount_minor": 2622200,
+          "currency": "RUB",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_STAY_TOTAL",
+          "retrieved_at": "2026-10-26T23:49:39.140891+00:00",
+          "upstream_as_of": "2026-10-26T23:49:37.504Z",
+          "availability_verified": false,
+          "allocation_verified": false,
+          "property_token_present": true,
+          "property_token_sha256": "b51487e8163ded2b0b04f691a038f8e2e981b290b230a65bd924324ef10dbd31",
+          "total_rate": {
+            "extracted_display_price": 22488,
+            "extracted_lowest": 26222,
+            "extracted_before_taxes_fees": 22488,
+            "extracted_after_taxes_fees": 26222
+          },
+          "rate_per_night": {
+            "extracted_display_price": 7496,
+            "extracted_lowest": 8741,
+            "extracted_before_taxes_fees": 7496,
+            "extracted_after_taxes_fees": 8741
+          },
+          "listed_sellers": []
+        },
+        {
+          "description": "Anantara The Palm Dubai Resort",
+          "amount_minor": 6302000,
+          "currency": "RUB",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_STAY_TOTAL",
+          "retrieved_at": "2026-10-26T23:49:39.141141+00:00",
+          "upstream_as_of": "2026-10-26T23:49:37.504Z",
+          "availability_verified": false,
+          "allocation_verified": false,
+          "property_token_present": true,
+          "property_token_sha256": "aac5be1e716d516df2872c3071dba97e18a7a22e55598649b499f1e2a7e9eb24",
+          "total_rate": {
+            "extracted_display_price": 53607,
+            "extracted_lowest": 63020,
+            "extracted_before_taxes_fees": 53607,
+            "extracted_after_taxes_fees": 63020
+          },
+          "rate_per_night": {
+            "extracted_display_price": 17869,
+            "extracted_lowest": 21007,
+            "extracted_before_taxes_fees": 17869,
+            "extracted_after_taxes_fees": 21007
+          },
+          "listed_sellers": []
+        },
+        {
+          "description": "Al Habtoor Palace, Preferred Hotels & Resorts",
+          "amount_minor": 4567400,
+          "currency": "RUB",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_STAY_TOTAL",
+          "retrieved_at": "2026-10-26T23:49:39.141185+00:00",
+          "upstream_as_of": "2026-10-26T23:49:37.504Z",
+          "availability_verified": false,
+          "allocation_verified": false,
+          "property_token_present": true,
+          "property_token_sha256": "7ab0fea045e495099c23a8eeaad6ede9ef1d5bc74d06f92b583883dee612dee6",
+          "total_rate": {
+            "extracted_display_price": 36468,
+            "extracted_lowest": 45674,
+            "extracted_before_taxes_fees": 36468,
+            "extracted_after_taxes_fees": 45674
+          },
+          "rate_per_night": {
+            "extracted_display_price": 12156,
+            "extracted_lowest": 15225,
+            "extracted_before_taxes_fees": 12156,
+            "extracted_after_taxes_fees": 15225
+          },
+          "listed_sellers": []
+        }
+      ],
+      "supplier_comparison_verified": false,
+      "room_rate_facts_complete": false,
+      "note": "Seller names/property tokens or airline/flight numbers do not prove equivalent room, fees, cancellation, baggage or bookable inventory."
+    },
+    "serp_flights": {
+      "status": "UNAVAILABLE",
+      "code": "PROVIDER_RESPONSE_ERROR"
+    },
+    "weather": {
+      "status": "ACTUAL_FORECAST_RESPONSE",
+      "city": "Дубай",
+      "source_type": "LIVE_INDICATIVE",
+      "timezone": "Asia/Dubai",
+      "current": {
+        "time": "2026-10-27T03:45",
+        "interval": 900,
+        "temperature_2m": 28.0,
+        "weather_code": 0
+      },
+      "dates": [
+        "2026-10-27",
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-01",
+        "2026-11-02"
+      ],
+      "current_units": {
+        "time": "iso8601",
+        "interval": "seconds",
+        "temperature_2m": "°C",
+        "weather_code": "wmo code"
+      },
+      "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)",
+      "trip_dates_supported_by_this_forecast": false,
+      "note": "Seven-day forecast is current weather context, not weather guaranteed for the later November trip."
+    },
+    "reference_fx": {
+      "status": "UNAVAILABLE",
+      "code": "fx_source_unavailable"
+    }
+  },
+  "currency": "RUB",
+  "hotel_dates": [
+    "2026-11-10",
+    "2026-11-13"
+  ],
+  "finished_at": "2026-10-26T23:50:07.528094+00:00",
+  "actual_http_attempts": 5,
+  "primary_references": [
+    "https://serpapi.com/account-api",
+    "https://serpapi.com/google-hotels-api",
+    "https://serpapi.com/google-flights-api",
+    "https://open-meteo.com/en/docs",
+    "https://www.cbr.ru/development/SXML/"
+  ],
+  "comparison_assessment": {
+    "hotel_identity": "Google property_token is a search identity, not a verified crosswalk to LiteAPI hotel_id",
+    "supplier_identity": "Seller names may be present in prices[].source; no sellers were returned in the three saved sample properties",
+    "economic_comparability": "Same requested city/dates/single-adult/currency known; exact room, board, cancellation, total mandatory fee scope and supplier availability remain unverified",
+    "flight_comparability": "No normalized flight offer obtained in this bounded MOW-DXB query; raw error meaning not preserved",
+    "supported_claim": "SerpApi hotel market references are available; supplier-bookable or equivalent-tariff comparisons are not qualified"
+  },
+  "private_account_fields_exported": false,
+  "automatic_retries": 0,
+  "production_files_changed_for_this_check": false,
+  "native_changed": false
+}

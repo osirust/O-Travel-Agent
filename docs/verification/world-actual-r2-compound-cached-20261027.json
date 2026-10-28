@@ -1,0 +1,74 @@
+{
+  "format": "otravel.world_actual.compound_cached.v1",
+  "finding_id": "HARNESS-004-WORLD-VERIFIED-CITY-PREFLIGHT-001",
+  "status": "CACHED_ACTUAL_CONTRACT_API_PG_PASS_NEW_ACTUAL_RETEST_PENDING",
+  "source": {
+    "authorized_event_path": "/home/aegml/checks/world-actual-r2-20261027-154144/turn4-events.json",
+    "event_file_sha256": "5bb435a2cd85743eed6e23ed5d493fc4067df6607b54e9e0d7e6ae09a00f87b5",
+    "actual_provider": "groq",
+    "actual_model": "openai/gpt-oss-120b",
+    "recorded_model_snapshot_sha256": "9aeb40dbfa2747c9f750a035835e85da092898841b28820af6952fbf58547786",
+    "exported_value_canonical_sorted_sha256": "c7bdc35b6c3adbb17c23401804546448ace6700f57a9dc9761a136b119024e04",
+    "sha_scope": "The recorded snapshot hash precedes JSONB dictionary-key ordering. The exact exported semantic value has its own sorted canonical hash; these byte hashes are not treated as equal.",
+    "actual_raw_operation_count": 5,
+    "actual_checked_operation_count_before_repair": 0,
+    "actual_checked_reply": "Город «Buenos Aires» не распознан в справочнике известных городов. Уточните название города.",
+    "old_actual_failure_modified": false
+  },
+  "input": "Из Москвы, один взрослый, без детей. Заезд 10 ноября 2026, выезд 17 ноября 2026, один номер для меня. Бюджет на всю поездку 300 тысяч рублей. Гражданство Россия.",
+  "test_file": "tests/test_world_actual_compound_cached.py",
+  "test_file_sha256": "8c06c09c4aab6a104f3e2d9832995b18053271b62be9749220e4a897a759eb55",
+  "bootstrap": {
+    "kind": "Ordinary API country wish -> city query -> displayed homonyms -> explicit first choice",
+    "country": "AR",
+    "selected_place_id": "geo:openmeteo:3435910",
+    "selected_city": "Buenos Aires",
+    "initial_state_injected_with_private_SQL": false,
+    "source_adapters": "Controlled country list and MockTransport geocoder; real durable catalogue, API, Harness and Store",
+    "snapshot_byte_identity_to_original_actual_ref_claimed": false
+  },
+  "asserted_after_exact_raw_contract": [
+    "Origin Москва retained.",
+    "Exactly one adult new-traveler-1 retained and linked to new-group-1.",
+    "One owned Buenos Aires stay keeps the same selected place ID and entire existing location_refs map.",
+    "Check-in2026-11-10, check-out2026-11-17, requested_nights7 retained.",
+    "One room contains that adult exactly once.",
+    "Whole-trip budget30000000RUBminor retained.",
+    "Both derived legs use Москва/Buenos Aires and the correct outbound/return dates.",
+    "The checked model contract retains the world upsert_stay instead of deleting the entire batch.",
+    "No unknown-city reply, fabricated hotel or order occurs."
+  ],
+  "nationality_scope": {
+    "status": "EXPLICIT_INPUT_FACT_OMITTED_BY_ACTUAL_MODEL_NOT_CLOSED_HERE",
+    "fact": "The actual model's five operations omit guest_nationality although the input explicitly says Гражданство Россия.",
+    "controlled_observation": "With nationality still absent, the next question is correctly bound to search.guest_nationality rather than a stale city or room field.",
+    "next_condition": "A separate extraction/coverage repair and actual retest must prove RU is preserved from the explicit compound input; this city-preflight proof does not claim it."
+  },
+  "verification": {
+    "junit": ".local/evaluation/after80-20261027/world-actual-r2-compound-cached-final.xml",
+    "junit_sha256": "4bf8ae9d3d3a31d73f8747a8780b40be214297a39e36f356726dacc5e984214e",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 2.37,
+    "ruff": "PASS",
+    "test_database": "otravel_test",
+    "global_recovery_disabled": true,
+    "other_sessions_or_databases_changed": false
+  },
+  "initial_test_preflight_failure_preserved": {
+    "junit": ".local/evaluation/after80-20261027/world-actual-r2-compound-cached-initial.xml",
+    "sha256": "28c33f4f678bf47a64444e930e5e5083229ca839474a1d2e03d5063cc5815b8b",
+    "cause": "Author initially compared sorted exported JSON with the pre-JSONB serialization hash. Fixed only the new test's hash-scope assertion; model operations and behavioral oracles were not changed.",
+    "postgres_contacted_before_that_failure": false
+  },
+  "runtime_source_edited_by_this_agent": false,
+  "new_actual_model_or_supplier_http_calls": 0,
+  "native_changes": 0,
+  "limitations": [
+    "A cached actual contract on a controlled reconstructed precondition is not a new strong-model run.",
+    "This verifies retained canonical facts and city identity, not completed travel search/refresh/checkout or global corpus acceptance.",
+    "The original actual failure and original recorded hashes remain unchanged."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-PRICE-QUESTION-STALL-001",
+  "status": "CONTROLLED_TESTED_ACTUAL_REPEAT_PENDING",
+  "source": {
+    "path": "/home/aegml/checks/owner-december-20261027-182929/projection.json",
+    "sha256": "ad7f3c61321347d2ed458836f47918f5b0d1817da459b8decccf78fd3f793fed",
+    "turns": [13, 14],
+    "observed": "Both short continuation and whole-trip price question fell through to a generic response; no source API search was made in the original conversation."
+  },
+  "verification": {
+    "pure_owner_batch": {"passed": 99, "includes_other_children_and_date_checks": true},
+    "independent_price_review": {"passed": 19, "actual_model_or_source": false},
+    "price_pg_asgi": {"passed": 4, "database": "otravel_test", "actual_model_or_source": false},
+    "full_suite": "RUNNING_SEPARATE_RECEIPT_REQUIRED"
+  },
+  "contracts": [
+    "A narrow whole-trip price question reads comparable current-version saved plan totals or requests search without requiring an LLM call.",
+    "Minor units use declared currency precision; source type, synthetic/test data and reference FX remain explicit.",
+    "Unknown totals, foreign versions and expired external components do not become confirmed whole-trip prices.",
+    "Saved price replies preserve trip, existing quote and pending question; they create no order and perform no refresh.",
+    "Unanswered required facts and pending confirmations take priority over new price search.",
+    "Mixed edits, quoted text, hypotheses and component-only cost questions retain ordinary interpretation."
+  ],
+  "remaining": [
+    "Actual owner-like conversation with tourist APIs and strong model",
+    "Full 80/106 actual-language acceptance remains separate"
+  ],
+  "local_qwen_calls": 0,
+  "paid_calls": 0,
+  "supplier_booking_or_payment": 0
+}

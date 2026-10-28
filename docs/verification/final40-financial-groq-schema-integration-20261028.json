@@ -1,0 +1,109 @@
+{
+  "format": "otravel.final40_financial_groq_integration.v1",
+  "checked_at_utc": "2026-10-28T17:15:14.773866+00:00",
+  "status": "RELATED_GROQ_DYNAMIC_FINANCIAL_PG_PASS_FULL_R8_PENDING",
+  "finding_id": "FINANCIAL-GROQ-STRICT-SCHEMA-INTEGRATION-001",
+  "retained_r7": {
+    "sha256": "5a9ba766c9839366c8e98a5461c83d9d9970435bf5fbb4b3a3efc356de78e858",
+    "tests": 7926,
+    "failures": 26,
+    "errors": 0,
+    "skipped": 0
+  },
+  "source_scope": "Uncommitted current working tree after R7; parent owns fullR8/sourcefreeze/Git/deployment.",
+  "before": "Unconditional temporal key changed base operationvalue grammar: strict Groq compact-hint whitelist correctly rejected unreviewedshape. Legacy dynamic wire/schema/hints bytepins also detected the base change.",
+  "change": "New temporal-key creation is server-only from CURRENT literal financialguard. Fresh/sample schemas do not expose the key and recover exact historical schema/wire1/wire2/hints/metadata fingerprints. Persisted temporal keys expose strictboolean and known stay/room editing. Groq admits only3 explicitly reviewed new normalized shapes: setwith/without existinglegacy scalarbranch, clearwith savedtemporal roomkey. No shape/ID/unknownkey validators were relaxed.",
+  "reviewed_additional_shapes": {
+    "set_constraint": [
+      "ea95648151697dd6f1b29cf60a4cbdbb86cfece4e56704c5acc791d6c294494c",
+      "35a15df315c426ddfeba28f8131926f11502fc877a26a05cf9f32ccaee5dfdad"
+    ],
+    "clear_constraint": [
+      "0c4801c72636088bc99cde2ba136835fa6fe5972c30f7318bace3bf84157cbb4"
+    ]
+  },
+  "historical_pins": "Restored the earlier test unchanged by removing only our new temporalprojection block; frozen numbers/SHA/25percent bounds not rewritten. Separate saved-key test checks <=150byte delta, boolstrictness and roomscope.",
+  "checks": {
+    "initial_targeted": {
+      "sha256": "c309176503024fc771aae80d259c576c12925c4617ae1338533d0b52666790a0",
+      "tests": 250,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "initial_own_pg_attempt_retained": {
+      "sha256": "7779e0dc4d865ce3562d0f5d1ae4f644b549a54a1b7796328232fc142096c61a",
+      "tests": 769,
+      "failures": 2,
+      "errors": 4,
+      "skipped": 0
+    },
+    "all_groq_dynamic_financial_own_pg": {
+      "sha256": "5bd1bcea794ef5211313b9dc2f56983fdd873c38b21bff9fb62abd30a60c9701",
+      "tests": 767,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_tests_unchanged_during_own_pg": true,
+    "own_container_volume_removed": true,
+    "new_tests": 9,
+    "coverage": "All test_*groq modules, dynamic_place_contract, legacy llmcontract, samebatchroomrefs,financialpure/PG.",
+    "original_r7_schema_groq_failure_names_now_passing": [
+      "test_all_current_operation_types_values_and_required_semantics_are_present",
+      "test_changed_city_set_fails_closed_without_repeating_geography_list_in_hints",
+      "test_empty_and_existing_trip_registries_are_complete_without_calls[state0]",
+      "test_empty_and_existing_trip_registries_are_complete_without_calls[state1]",
+      "test_exhausted_creation_capacity_does_not_invent_new_people",
+      "test_existing_new_prefix_is_not_mistaken_for_creation_alias",
+      "test_guidance_is_not_claimed_as_schema_and_sha_binds_exact_original",
+      "test_inconsistent_member_alias_registry_is_rejected",
+      "test_legacy_constraint_and_preference_keys_remain_exact_dynamic_enums",
+      "test_legacy_default_schema_wire1_wire2_hints_and_metadata_are_byte_pinned[empty-state0-expected0]",
+      "test_legacy_default_schema_wire1_wire2_hints_and_metadata_are_byte_pinned[sample-state1-expected1]",
+      "test_optin_v3_admits_only_canonical_nonmutating_place_request",
+      "test_original_validator_still_rejects_null_defaults_and_unlisted_room_members",
+      "test_room_stay_const_not_owned_is_rejected_even_if_wire_target_is_valid",
+      "test_room_tokens_reused_across_stays_preserve_exact_pairings",
+      "test_route_hint_preserves_null_for_non_open_jaw_and_omission_for_all",
+      "test_second_creation_variant_cannot_hide_extra_aliases_behind_first_variant",
+      "test_strict_v3_wire_accepts_and_decodes_the_future_room_reference",
+      "test_v2_canonical_value_violation_cannot_hide_inside_valid_wire",
+      "test_v2_sends_lean_hints_and_compact_selectors_without_dropping_state_or_prices",
+      "test_v3_free_city_without_trusted_ref_cannot_enter_regular_stay_operation",
+      "test_v3_guidance_uses_exact_trusted_ref_names_and_ids_not_full_snapshots",
+      "test_v3_guidance_without_refs_still_verifies_query_grammar_and_retains_old_fingerprint[initial0]",
+      "test_v3_guidance_without_refs_still_verifies_query_grammar_and_retains_old_fingerprint[initial1]"
+    ],
+    "other_r7_party_failures": "Two independent initialparty/addchild failures were repeated and retained in initialownPG-r5, assigned to parent/partyowner, not counted as repaired by this schema change.",
+    "initial_setup_error": "Four Groqbudget guards require exact DBnameotravel_test. First newowncontainer used financial_UUID_test and correctly refused those tests. Repeated in another NEW owncontainer with its sole database namedotravel_test; no sharedcluster/HBA/guard changes.",
+    "negative_checks": "Extraobjectkey, arbitraryboolkey, stringinsteadbool, relaxedflighttarget, reservedtemporal hiding in legacy scalarbranch, foreignstay/room IDs remain rejected."
+  },
+  "changed_files": [
+    {
+      "path": "otravel/llm_contract.py",
+      "sha256": "b30f2628fbd14e2dec71b8f4b9d9fa86bf0a8096682fb64bb429b7af3a351589"
+    },
+    {
+      "path": "otravel/groq_prompt.py",
+      "sha256": "98ca8c6629da128eaab63eb5b89b5eb3e8f075ec9cd9a5c21400f077505dc334"
+    },
+    {
+      "path": "tests/test_llm_contract.py",
+      "sha256": "2e18732c95bf269c608323d8e1b32d567aa6bbb8d5d6853a9fcebe95036afd0d"
+    },
+    {
+      "path": "tests/test_groq_temporal_constraint.py",
+      "sha256": "0eef133aeda621f5f5f4e8d520af5580f6c28e3a689d1fdd78443bd93e945943"
+    }
+  ],
+  "runtime8084_changes": 0,
+  "git_stage_commit_push": 0,
+  "actual_llm_or_travel_http": 0,
+  "master_reads": 0,
+  "limitations": [
+    "Related controlledHTTP/pure/PG checks do not replace fullR8 or fresh actualLLM/suppliercanaries.",
+    "Temporalhard requirement remains unverified and blocks readyquote; no positive arbitrary supplierdeadline capability was added.",
+    "OldR7all26failures are retained; only a new parent fullrun can establish integration across the whole suite."
+  ]
+}

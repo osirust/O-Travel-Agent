@@ -1,0 +1,71 @@
+{
+  "format": "otravel.final-roster025.removal-guard.verification.v1",
+  "date": "2026-10-28",
+  "finding_id": "HARNESS-004-FINAL-CENSUS-REMOVAL-025-001",
+  "related_guard_id": "HARNESS-004-UNREQUESTED-TRAVELER-REMOVAL-001",
+  "status": "WHOLE_HARNESS_CONTROLLED_RED_TO_GREEN_FRESH_ACTUAL_RETEST_OPEN",
+  "source_attribution": {
+    "fixture_original_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+    "fixture_original_path": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-025.json",
+    "turn": 3,
+    "fact": "A36 validated/raw and checked operations correctly removed two surplus anonymous adults and added children4/12 for an explicitly final whole-party declaration. The new unrequested-removal guard, introduced for008, later suppressed these two valid removals in a controlled whole-Harness replay and produced4adults+2children.",
+    "not_closed": "The initial025/T1 wrong4adult intake is a different source problem and remains open. This repair qualifies only the final025/T3 regression caused by removal-authority filtering."
+  },
+  "input": "Окончательный состав: двое взрослых и двое детей, четырёх и двенадцати лет. Никаких других участников.",
+  "before": {
+    "adults": 4,
+    "adult_ages_birth_dates_groups": "ALL_NULL",
+    "adult_room_or_person_fact_bindings": "NONE",
+    "children": 0,
+    "pending": "stay.check_in/new-stay-1"
+  },
+  "controlled_before_fix": {
+    "tests": 1,
+    "result": "FAIL",
+    "run_status": "completed",
+    "actual_adults": 4,
+    "actual_child_ages": [4, 12],
+    "normalizations": "traveler_removal_not_requested for new-traveler-3 and new-traveler-4",
+    "whole_harness_not_only_pure_filter": true,
+    "real_model_or_provider_http": 0,
+    "evidence_xml": ".local/peer_reviews/budget-intake-20261028/shadow025-wholeharness-initial.xml",
+    "evidence_xml_sha256": "c1f47012e3cef006c92a95f4ebb599ff80e171f6ba3ba54b794e642c81e6bafd"
+  },
+  "repair": {
+    "component": "otravel/traveler_removal_grounding.py",
+    "permission": "Only a closed asserted current final/whole-trip-only declaration with both adult/child counts and the complete explicit child-age list can authorize this exception.",
+    "projection": "Apply the copied operations through existing pure domain validation. The projected adult count, every child age and total children must exactly match the declared census. Kept adult IDs must be exactly the old adult IDs minus the removal targets; no replacement adult identities are invented.",
+    "identity": "Only indistinguishable anonymous unbound adults can be removed under this exception: no age/DOB/name/group/room/person-scoped facts. Distinguishing identity yields a human conflict and party.removal question, blocking the whole batch rather than adding children on top of retained adults.",
+    "child_identity": "Removing a child merely because a final age list omits that age is not authorized. Existing explicit current removal verbs continue to the previous identity/group/domain resolvers.",
+    "non_authority": "Quotes, questions, history, hypotheticals, nonapplication, conflicting final rosters, incomplete age lists and room/group subset census do not grant this permission.",
+    "normalization_code": "complete_current_roster_removal_authorized",
+    "root_harness_hook": "Root merges notes, conflicts, deduplicated unknowns, trusted server questions and optional pending_context. This agent did not edit Harness.",
+    "canonical_or_typed_commands": "Existing bypass remains unchanged."
+  },
+  "verification": {
+    "combined_target": {"passed": 55, "failed": 0, "seconds": 7.75},
+    "pure_domain": 52,
+    "postgres_asgi": 3,
+    "positive025": "Exact original before/raw plus fresh owned version-bound pending through API worker:2adults+children4/12, prior unaffected trip fields preserved, one controlled adapter call, zero source tools/orders.",
+    "identity_negative": "An adult with distinguishing age45 is not arbitrarily selected: entire trip/version unchanged, concrete non-generic party.removal pending, zero tools/orders.",
+    "budget008_negative": "Current budget85k plus roster question still cannot remove the second adult; both adults and room membership remain, canonical reply reports2adults, quotes/orders0.",
+    "named_dob_group_room_personfacts": "Explicit pure negative controls remain blocked with human conflicts.",
+    "ruff": "PASS",
+    "real_model_http": 0,
+    "real_tourism_http": 0,
+    "fullR13": "PENDING_ROOT_FULL_SUITE_NOT_CLAIMED_BY_TARGET"
+  },
+  "intermediate_evidence": "One54PASS/1FAIL run preserved: distinguishing identity was already protected, but the human conflict was rendered as a generic question. Trusted unknown/server question and party.removal binding fixed that; the final assertion verifies concrete wording without depending on one exact phrase.",
+  "files_sha256": {
+    "otravel/traveler_removal_grounding.py": "e6b06f9341a6716e957b35ee1731f42c36d05f48333a2e44245afbf278917034",
+    "tests/test_traveler_final_roster.py": "b995205d81d094c43100ebb30347dc5bf8b47f8c6f747f7b8055b20e532c27c0",
+    "tests/test_traveler_final_roster_pg.py": "814d5ef3355513bf173572d031ed3e7e296b78d854facd3befeb5f66a3897692",
+    "fixtures/regression/traveler-final-census025-20261028.json": "50523dde66aa94a98ad0b3ad2e62354cd187b9df556be92ee90ef3680abecb4b",
+    ".local/evaluation/after80-20261028/final-roster025-removal008-frozen.xml": "a63cc0d34d1479b6a6567ff21220b2186e1db7a736ebd5c55b3107c7fc9532cc"
+  },
+  "remaining": [
+    "Fresh actual final-roster dialogue on the repaired immutable runtime is not yet qualified by this controlled replay.",
+    "General named-person/pronoun attribution is not closed by a census-count exception.",
+    "A36 original failures, initial025 intake, all raw/checked snapshots and original oracle expectations remain unchanged."
+  ]
+}

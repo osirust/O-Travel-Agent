@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-27",
+  "status": "FULL_SCHEMA_BEST_EFFORT_INVALID_STRICT_TRANSPORT_SHAPE_VALID_SEMANTICS_REJECTED",
+  "source_commit": "b9343c0c6459c6d34e8605371c955de95da2f73d",
+  "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+  "scope": "Two separately authorized one-request no-apply diagnostics using the same native extraction context as the earlier1024 probe. Own claimed durable runs and real Groq model ledger; no changes applied.",
+  "provider": "groq",
+  "model": "qwen/qwen3.8-27b",
+  "attempts": [
+    {
+      "status": "ACTUAL_1536_PROVIDER_FAILURE",
+      "http_attempts": 1,
+      "http_status": 200,
+      "model_starts": 1,
+      "wire_output_limit": 1536,
+      "wire_reasoning_effort": "none",
+      "wire_response_format": "json_schema",
+      "wire_strict": false,
+      "wire_schema_sha256": "1c5146e545e6d268ed5f617baab9206b6ef7115d993b2ae97c58ce6d9a070301",
+      "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+      "schema_utf8_bytes": 7760,
+      "finish_reason": "stop",
+      "final_content_sha256": "9697dd9f9e66852e7d66e160848e05fddffa1ee990f3cb7fc0f01a477079c829",
+      "final_content_utf8_bytes": 10,
+      "final_contract_type": "dict",
+      "final_contract_field_types": {},
+      "missing_required_fields": [
+        "conflicts",
+        "control",
+        "operations",
+        "reply",
+        "unknowns"
+      ],
+      "extra_field_count": 1,
+      "provider_error_code": "INVALID_LLM_RESPONSE",
+      "llm": {
+        "provider": "groq",
+        "model": "qwen/qwen3.8-27b",
+        "attempts": [
+          {
+            "provider": "groq",
+            "model": "qwen/qwen3.8-27b",
+            "code": "INVALID_LLM_RESPONSE",
+            "latency_ms": 861,
+            "request_metrics": {
+              "system_utf8_bytes": 11724,
+              "context_utf8_bytes": 7452,
+              "schema_utf8_bytes": 7760,
+              "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+              "prompt_sha256": "01a26dd273c6c88a531cac931113d4a16ef15ef760f42f6da83365207c9d5413"
+            },
+            "usage": {
+              "input_tokens": 4164,
+              "output_tokens": 6,
+              "total_tokens": 4170
+            },
+            "outcome": "failed"
+          }
+        ]
+      },
+      "diagnostic_state_unchanged": true,
+      "original_session_unchanged": true,
+      "diagnostic_operations_applied": false,
+      "diagnostic_run_terminal": "failed",
+      "tools": 0,
+      "orders": 0,
+      "prototype": "full_dynamic_schema_best_effort",
+      "private_folder": "/home/aegml/checks/groq-diagnostic-1536-20261027-bffc7371",
+      "private_report_sha256": "f19af396b0e0b7709277b39b9d3c05c2a723330ebb6329363f5eca28748279ff",
+      "final_contract_sanitized_sha256": "7eeef29e1d2cccedc9d994e2b357c1c2844dd083123b0ef87fd1c423d06b1c1b",
+      "wire_schema_artifact_sha256": "24b97153eba29547ae25371d1b0821e73411e36128becb4689f50a8fc8f89059"
+    },
+    {
+      "status": "ACTUAL_1536_PROVIDER_FAILURE",
+      "http_attempts": 1,
+      "http_status": 200,
+      "model_starts": 1,
+      "wire_output_limit": 1536,
+      "wire_reasoning_effort": "none",
+      "wire_response_format": "json_schema",
+      "wire_strict": true,
+      "wire_schema_sha256": "21e78e46737cddd7fefb428dcfa2615b7b52b6c114820544b4382bea7464ab0f",
+      "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+      "schema_utf8_bytes": 7760,
+      "finish_reason": "stop",
+      "final_content_sha256": "3128c4dce2b9e5efa851a4b7cb5f7f257de94c7eda7b2fc8ab6468103b6dd38c",
+      "final_content_utf8_bytes": 1036,
+      "final_contract_type": "dict",
+      "final_contract_field_types": {
+        "conflicts": "list",
+        "control": "dict",
+        "information_subject": "NoneType",
+        "operations": "list",
+        "reply": "str",
+        "speech_act": "str",
+        "unknowns": "list"
+      },
+      "missing_required_fields": [],
+      "extra_field_count": 0,
+      "pure_transport_checks": {
+        "roundtrips": 3,
+        "negative_rejections": 5,
+        "omission_and_explicit_null_preserved": true,
+        "duplicate_keys_rejected": true,
+        "hidden_fields_rejected": true
+      },
+      "transport_decode_failure": "decoded_semantic_schema_invalid",
+      "decoded_canonical_schema_valid": false,
+      "decoded_schema_errors": [
+        {
+          "path": [
+            "operations",
+            2
+          ],
+          "rule": "oneOf"
+        }
+      ],
+      "decoded_envelope_fields": [
+        "conflicts",
+        "control",
+        "information_subject",
+        "operations",
+        "reply",
+        "speech_act",
+        "unknowns"
+      ],
+      "provider_error_code": "INVALID_LLM_RESPONSE",
+      "llm": {
+        "provider": "groq",
+        "model": "qwen/qwen3.8-27b",
+        "attempts": [
+          {
+            "provider": "groq",
+            "model": "qwen/qwen3.8-27b",
+            "code": "INVALID_LLM_RESPONSE",
+            "latency_ms": 1123,
+            "request_metrics": {
+              "system_utf8_bytes": 11724,
+              "context_utf8_bytes": 7452,
+              "schema_utf8_bytes": 7760,
+              "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+              "prompt_sha256": "75282304c0fa37d1fddd532cae5c78ea1c36b3fa08e60b391260bf713f827557"
+            },
+            "usage": {
+              "input_tokens": 4271,
+              "output_tokens": 248,
+              "total_tokens": 4519
+            },
+            "outcome": "failed"
+          }
+        ]
+      },
+      "diagnostic_state_unchanged": true,
+      "original_session_unchanged": true,
+      "diagnostic_operations_applied": false,
+      "diagnostic_run_terminal": "failed",
+      "tools": 0,
+      "orders": 0,
+      "prototype": "strict_transport_value_json",
+      "private_folder": "/home/aegml/checks/groq-diagnostic-1536-20261027-02d1846f",
+      "private_report_sha256": "91607717c17788aa5fa64c7ab26767f4d5dcd7ff1c9f1a8b3737cc522919b11c",
+      "final_contract_sanitized_sha256": "38bfbe033db3e7b0eae4da2fae1f6390c9a0f95581c21da571b86c695c6c3e0e",
+      "wire_schema_artifact_sha256": "94d6173dbd2e1b01d95b644ec8576ebf2252fb4c5aab90371b426ceb4ad86aa1"
+    }
+  ],
+  "new_inferences": 2,
+  "automatic_retries": 0,
+  "fallbacks": 0,
+  "model_profile_changes": 0,
+  "production_changes": 0,
+  "native_changes": 0,
+  "travel_http_calls": 0,
+  "supplier_bookings": 0,
+  "payments": 0,
+  "hidden_reasoning_read_or_saved": false,
+  "failed_generation_read_or_saved": false,
+  "conclusions": [
+    "The full original dynamic schema was accepted with json_schema/strictfalse but final content was an object with an empty key and null; all five required envelope fields were absent.",
+    "The strict transport envelope returned all seven required keys and decoded its JSON-string values as objects without omission/null conversion.",
+    "The original local dynamic operation schema rejected operation2: upsert_stay supplied target_idnull instead of an allowed stable server alias. The rejection prevented every proposed edit.",
+    "Neither prototype qualifies as a production NLU migration or a complete dialogue acceptance. The last probe is a transport-shape result only.",
+    "The manager reasoning flag is still not mapped by the production Groq branch; only these private prototypes set reasoning_effortnone explicitly.",
+    "Do not infer old429 cause or quota reset from these HTTP200 responses. Do not automatically continue the prototype series."
+  ],
+  "review_only_next_design": "If revisited later, strict per-operation target-id variants could preserve the same value_json decoder while constraining required targets. No such code or extra model call is included here.",
+  "primary_sources": [
+    "https://console.groq.com/docs/model/qwen/qwen3.8-27b",
+    "https://console.groq.com/docs/structured-outputs",
+    "https://console.groq.com/docs/reasoning"
+  ]
+}

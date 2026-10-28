@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-INITIAL-FACT-OMISSION-001",
+  "status": "PURE_DOMAIN_RECOVERY_TESTED_HARNESS_ACTUAL_OPEN",
+  "files_sha256": {
+    "otravel/literal_intake.py": "bc1ea8445895835a782e15eefd82ac486f0e0ff4e6884008ffb171de2e6f8a79",
+    "tests/test_literal_intake.py": "1348b30cc5d02426e8965d20c8d1cd0c43ed7c40b50ab1c9ce5a2e86b9f7e4ca"
+  },
+  "contract": "ground_explicit_initial_facts(state,text,operations,*,pending=None,now=None) -> (operations,metadata)",
+  "verification": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.082,
+    "junit": ".local/evaluation/after80-20261027/literal-intake-frozen.xml",
+    "ruff": "PASS",
+    "junit_sha256": "e293299b26eefb04e5f3b926e3ccecf3ba757a0646b7332fa950fd4e294ad9c3"
+  },
+  "initial_result": {
+    "tests": 25,
+    "pass": 24,
+    "fail": 1,
+    "junit": ".local/evaluation/after80-20261027/literal-intake-initial.xml",
+    "failure": "Covered raw facts remained unchanged but generated an unnecessary current-year note. Fixed by keeping inference metadata only for an actually recovered check_in."
+  },
+  "owner_case": {
+    "input": "из москвы, я один взрослый и хочу в белгород в отель на неделю с 28 октября",
+    "captured_clock": "2026-10-27T12:00:00+00:00",
+    "recovered": [
+      "set_origin=Москва",
+      "add_traveler=new-traveler-1 adult",
+      "upsert_stay=new-stay-1 check_in2026-10-28 requested_nights7"
+    ],
+    "city_chosen": false,
+    "domain_checkout": "2026-11-04",
+    "scope": "Declared controlled fixture, no actual model/harness execution"
+  },
+  "approved_date_policy": {
+    "timezone": "Europe/Moscow",
+    "reference": "Caller supplied aware captured clock; never host now",
+    "missing_year": "Current year only for a future-or-today explicit day/month in a fresh initial lodging declaration",
+    "past_month": "Ask for year; never roll to next year",
+    "week": "Explicit one week in lodging declaration means7nights",
+    "days": "Days are not converted to nights",
+    "shared_date_slots_changed": false
+  },
+  "facts": [
+    "Only clear initial lodging/travel declarations trigger missing-fact recovery",
+    "Known origin parsing reuses existing grounded facts; no destination/country/city/airport guess",
+    "Adult aliases reuse canonical candidate generation; no children, ages, removals, or saved-fact replacement",
+    "RUB amount parsing reuses existing literal budget; foreign/unit/mixed scopes are not recovered",
+    "Only owned or unique new stay targets accept date-only partial upsert; current city and rooms are preserved",
+    "Raw operations are copied untouched; contradictions produce metadata for caller atomic conflict handling",
+    "Generated stay values have a pure Domain preflight before addition",
+    "Fully covered raw facts remain idempotent without new metadata notes"
+  ],
+  "execution": {
+    "actual_http": 0,
+    "model": 0,
+    "sql": 0,
+    "native_changes": 0,
+    "state_writes": 0
+  },
+  "limits": [
+    "Caller must retain normal schema/geo/domain/CAS validation and explicit control handling",
+    "This finite omission fallback is not general NLU or a guarantee for all80/106dialogs",
+    "Quoted, hypothetical, historical, alternative, negated and question inputs conservatively remain on the existing model/control path",
+    "Multi-stay routes and completed plans are outside this initial-fact recovery",
+    "No global geography, provider availability, hotel choice, room allocation, price revalidation or booking is performed"
+  ]
+}

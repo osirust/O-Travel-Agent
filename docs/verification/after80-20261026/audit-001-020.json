@@ -1,0 +1,791 @@
+{
+  "scope": "full root shard 001-020: all user/assistant turns, trip deltas, pending/errors and checkout actions",
+  "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "cases": [
+    {
+      "id": "ZAI100-001",
+      "turn_count": 11,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "recorded_model_calls": 8,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Explicit Belgrade lost in compound intake",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F003",
+          "turns": [
+            3
+          ],
+          "finding": "Destination change overwrote Moscow origin",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            2,
+            10,
+            11
+          ],
+          "finding": "FAQ/summary/source answers replaced",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "No-children, morning, dates, room, 80000 and lowest_total retained; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-002",
+      "turn_count": 11,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "recorded_model_calls": 11,
+      "observations": [
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            5,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "finding": "Hypothesis, ages, budget and existing order not explained",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Hypothesis no-op; child4 to5 sameID; budget150000 to130000; one typed BOOKED_DEMO, no duplicate order from recall",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-003",
+      "turn_count": 10,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "recorded_model_calls": 10,
+      "observations": [
+        {
+          "group_id": "ZAI-F004",
+          "turns": [
+            6
+          ],
+          "finding": "Explicit whole budget rejected due to negated unit prices",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F002",
+          "turns": [
+            8
+          ],
+          "finding": "Nightly cap unsupported contract fails instead of addressed limitation",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            5,
+            10
+          ],
+          "finding": "Budget/source FAQ not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Whole90000 then75000 retained; recovery and preview200; nightly request did not corrupt total",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-004",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F002",
+          "turns": [
+            1
+          ],
+          "finding": "Compound intake contract error; raw operation unavailable",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            2
+          ],
+          "finding": "Kazan to Moscow destination dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            7,
+            9
+          ],
+          "finding": "Roles/dates not explained despite correct state",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Explicit corrected origin, 12-15Nov, solo room, 70000, morning retained; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-005",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Dubai dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            7,
+            9
+          ],
+          "finding": "Infant composition and nights not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Infant age0 retained; exactly one adult added; checkout24 to25 only; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-006",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F009",
+          "turns": [
+            1,
+            3
+          ],
+          "finding": "Unresolved family separation not represented; search allocated 3 adults/child3 vs 1 adult/children6,10 before membership clarification",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            8
+          ],
+          "finding": "No decomposition of catalog failure",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Seven people retained; explicit room assignment and second child10 to11 correct; 150000 catalog failure did not weaken budget",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-007",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            5,
+            7,
+            8
+          ],
+          "finding": "Country/dates/checkout questions replaced by plans",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Hypothesis did not change city; checkout16 to14 exactly once; lowest_total retained; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-008",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 5,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Sochi dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            6,
+            8
+          ],
+          "finding": "Hypothesis/roster not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Hypothesis did not remove child; explicit removal cleaned rooms and roster; later summary did not resurrect child; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-009",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Kazan dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            6,
+            8,
+            9
+          ],
+          "finding": "Known owner example reply suppression",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Known actual/cached diagnosis; add child7 then8 sameID; hypothesis no-op, original adult and budget preserved",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-010",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Dubai dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            6,
+            8,
+            9
+          ],
+          "finding": "Scope and current budget not explained",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Adult addition preserves original; whole120000 not multiplied; plus15000 gave135000",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-011",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Istanbul dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F002",
+          "turns": [
+            7
+          ],
+          "finding": "No usable preference-clear operation",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F006",
+          "turns": [
+            8
+          ],
+          "finding": "Explicit cancellation left morning preference",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            6,
+            9
+          ],
+          "finding": "Hypothesis and current requirement not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Evening hypothesis did not remove morning; dates/budget preserved through failed cancellation",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-012",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Antalya dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            6,
+            8,
+            9
+          ],
+          "finding": "Category discussion/roster/source not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Explicit child17 toadult18 preserves sameID and other adults; 145000 budget correct",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-013",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F007",
+          "turns": [
+            3
+          ],
+          "finding": "Explicit destination replacement became unaddressed conflict",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            2,
+            8
+          ],
+          "finding": "City distinction/route/composition not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Context Serbia supports owner-authorized Belgrade interpretation; addressed replacement and later dates correct; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-014",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 7,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Mixed-language destination dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F004",
+          "turns": [
+            5
+          ],
+          "finding": "Whole trip RUB plus negated per-person rejected",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            2,
+            8
+          ],
+          "finding": "Mixed-language FAQ not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Origin retained; explicit city correction and105000 budget correct; coast typo did not change destination; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-015",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 5,
+      "observations": [
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            2,
+            8
+          ],
+          "finding": "Typo suggestion and nights/composition not explained",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Exact city confirmation and checkout11 to12 correct; no double shift from nights question; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-016",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 8,
+      "observations": [
+        {
+          "group_id": "ZAI-F002",
+          "turns": [
+            4,
+            6,
+            8
+          ],
+          "finding": "Invalid date edit and two subsequent valid edits failed contract",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F007",
+          "turns": [
+            5
+          ],
+          "finding": "Valid checkout correction became unaddressed conflict",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            2,
+            7
+          ],
+          "finding": "Saved date questions not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Original word dates10-15Nov correct; invalid9Nov did not mutate state; valid16Nov remained unresolved",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-017",
+      "turn_count": 9,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "PROVIDER_TIMEOUT",
+          "turns": [
+            1
+          ],
+          "finding": "Provider timeout preserved empty state; not evidence of semantic harness bug",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            2
+          ],
+          "finding": "Destination dropped on recovery",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F002",
+          "turns": [
+            7,
+            8
+          ],
+          "finding": "FAQ contract error and invalid calendar error instead of clear clarification",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Timeout no corruption; cooldown recovery same session; corrected1Dec accepted; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-018",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F002",
+          "turns": [
+            6
+          ],
+          "finding": "Zero-night interval rejected via schema error rather than addressed date question",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            5,
+            8
+          ],
+          "finding": "Composition and nights questions not answered",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Zero-night failed safely without mutation; next day relative to prior checkout yielded24Nov; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-019",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 5,
+      "observations": [
+        {
+          "group_id": "ZAI-F005",
+          "turns": [
+            1
+          ],
+          "finding": "Istanbul dropped",
+          "raw_model_attribution": "unavailable in exported turns"
+        },
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            6,
+            8
+          ],
+          "finding": "Existing budget/delta not explained",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Alternative80/100k left110k intact; explicit95k with typo correct; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    },
+    {
+      "id": "ZAI100-020",
+      "turn_count": 8,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "recorded_model_calls": 6,
+      "observations": [
+        {
+          "group_id": "ZAI-F001",
+          "turns": [
+            5,
+            7,
+            8
+          ],
+          "finding": "Room/person distinction, hypothetical price and actual rate facts not explained",
+          "raw_model_attribution": "unavailable in exported turns"
+        }
+      ],
+      "verified_successes": "Two rooms did not become two people; one family room preserves all4; two-room hypothesis no-op; preview200",
+      "e71875b_relation": "Route/reply/date/canonical-four-topic fixes may cover a subset; no actual replay PASS claimed"
+    }
+  ],
+  "cases_reviewed": 20,
+  "turns_reviewed": 175,
+  "raw_contract_limitation": "Exports omit raw/checked extraction. Metadata and state alone do not identify model vs grounding cause.",
+  "original_source_modified": false,
+  "new_model_calls": 0,
+  "runtime_modified_by_audit": false
+}

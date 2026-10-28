@@ -1,0 +1,406 @@
+{
+  "status": "TESTED_PACKAGE_MATCHES_STAGING_WITH_EXPLICIT_EOL_ONLY",
+  "tested_e_package_sha256": "2985d0ced59e8261f69befbe8804337da9036624397b5071bf9723d054dfa08f",
+  "package_files": 93,
+  "line_ending_normalizations": [
+    "otravel/budget_intake.py",
+    "otravel/destination_photos.py",
+    "otravel/domain.py",
+    "otravel/groq_place_prompt.py",
+    "otravel/groq_transport.py",
+    "otravel/harness.py",
+    "otravel/hotel_presentation.py",
+    "otravel/intent_grounding.py",
+    "otravel/llm_contract.py",
+    "otravel/place_refs.py",
+    "otravel/place_run.py",
+    "otravel/preference_grounding.py",
+    "otravel/price_date_recall.py",
+    "otravel/provider_cities.py",
+    "otravel/return_preservation.py",
+    "otravel/route_policy_intent.py",
+    "otravel/search_blocker_feedback.py"
+  ],
+  "staged_files": [
+    {
+      "path": "otravel/__init__.py",
+      "sha256": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a"
+    },
+    {
+      "path": "otravel/adult_age_grounding.py",
+      "sha256": "f35f190289216f09bef9beae92faf5f24ed162cd6e893af766b3f400e74f1533"
+    },
+    {
+      "path": "otravel/alias_stay_removal.py",
+      "sha256": "4ff802c670deea142cb40ecde00907d82f01e89b0fef87e567b587ba5049057c"
+    },
+    {
+      "path": "otravel/answering.py",
+      "sha256": "62802752fcf7561809d728f0619b7fb4a19720ea8761ea2693007cebdf73cbd3"
+    },
+    {
+      "path": "otravel/api.py",
+      "sha256": "651eec4667bccca98968256e829469f3276fd9ba5b372f4fd8e3c3ccd9f20945"
+    },
+    {
+      "path": "otravel/budget_intake.py",
+      "sha256": "a20fd1419ad7bf233fe87b66c39c1f43e882c37812c9514cc08106e0b9338442"
+    },
+    {
+      "path": "otravel/budget_intent.py",
+      "sha256": "bbeccfaf072a871b22547e3bd1549403801c87e93540e435d637e4779dce797a"
+    },
+    {
+      "path": "otravel/clarification_policy.py",
+      "sha256": "1e9e61227ea7cf36a29aed159038f9f408e72aa0609e00f0bc4d6529edea0e96"
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "f61138a5914745aa491cfd54ddfe16c0b1b07b4c10974624917fea5b4b127db0"
+    },
+    {
+      "path": "otravel/config.py",
+      "sha256": "d776bfa0104d6c0a859dff08286515153de443783cbae955d204e5c571529bdd"
+    },
+    {
+      "path": "otravel/conversation_followup.py",
+      "sha256": "0dfa7acc6001490011d948b2c4e3bb55ddf167e6ddf113648d3b13c8b5e7f29e"
+    },
+    {
+      "path": "otravel/conversational.py",
+      "sha256": "ffa03b5e09fb5ace36d079c319c7c1e522bbcf2ea3e47c8b3c8583a24deb6d8d"
+    },
+    {
+      "path": "otravel/country_intake.py",
+      "sha256": "9533a919fd43bc1efff9ef889965ddde8eb99ca302b94f50eb59647779257bfb"
+    },
+    {
+      "path": "otravel/country_lexicon.py",
+      "sha256": "acbe94605b219eb7328c418aba7af027cc566dbfa778c91096baab1a4fc520c7"
+    },
+    {
+      "path": "otravel/data/CLDR-ATTRIBUTION.md",
+      "sha256": "238763dd469dc9596e0965d5ad9cd05b1e0a087bc57911801e738571e6ba2e99"
+    },
+    {
+      "path": "otravel/data/UNICODE-CLDR-LICENSE.txt",
+      "sha256": "220ba0e1c43b99530d2d5bdb892a99dca0989414f51ab695ecd90163eaa1ec3b"
+    },
+    {
+      "path": "otravel/data/cldr_territories_ru_en.json",
+      "sha256": "74dd233f299cb6f5f3a620dd53f62d1a778aff4bb4799872725b384109eb5fa4"
+    },
+    {
+      "path": "otravel/date_intake.py",
+      "sha256": "f10f160e3706ca5f7600f4149c548825e81a3191196f2a1879ad168e49964b13"
+    },
+    {
+      "path": "otravel/date_slots.py",
+      "sha256": "dc3dbfafd82693d5e80ab3711727c0f9d98cecf3a80445b194e699f2be6640bf"
+    },
+    {
+      "path": "otravel/destination_photos.py",
+      "sha256": "44ced0a0f41be76c659d7c4fa9b6b2d8f00c6e0736db781bcb75df2c3758738b"
+    },
+    {
+      "path": "otravel/domain.py",
+      "sha256": "1e73428ee67d135ea059dc0204aade6fd4345bf17294bf0ff7fb728229795c4b"
+    },
+    {
+      "path": "otravel/duration_grounding.py",
+      "sha256": "4770863a63e6a67ffe92ffbf007d9fdbcbcb7617e366f3e1fc15ced1f56a376a"
+    },
+    {
+      "path": "otravel/external_llm.py",
+      "sha256": "c8818fbc74d88c6b28d5d0ff5593ffcafe27ece5373810cfdbe398f138298fa6"
+    },
+    {
+      "path": "otravel/family_count_answer.py",
+      "sha256": "75dff01ed856d0ec2030897c37e44bc6063ba758a502feab0ab074d24ac3e1d0"
+    },
+    {
+      "path": "otravel/fx.py",
+      "sha256": "26682ef48729f2463cc236dda029967d0e233fea2d89bc045876d452ef9e12ff"
+    },
+    {
+      "path": "otravel/geo_catalog.py",
+      "sha256": "50e06af3922548e7a3c475799ea299f798a7b290458a6763dff89dd3ccb3f9ea"
+    },
+    {
+      "path": "otravel/geo_dialogue.py",
+      "sha256": "cad5ab035d55a486b2b8c7375865cf34b59fa8e6054f0ff43764dca6babd7bd2"
+    },
+    {
+      "path": "otravel/geography.py",
+      "sha256": "3d8c0ba9dd8abf6767433744f15d6e3e64e540921d2ab9dd6dca9006a5d248ee"
+    },
+    {
+      "path": "otravel/gigachat_client.py",
+      "sha256": "f110c3c761ece36ae1cc9471d0f045355d58d74879d028ce457721f4bf7931e2"
+    },
+    {
+      "path": "otravel/greetings.py",
+      "sha256": "42aec96aa4932d1b6a87858ea089ef1249e6898d4d61839a1d7f5db7edbca7a3"
+    },
+    {
+      "path": "otravel/groq_context.py",
+      "sha256": "585208673de83dee42f56f58c002a80652cf263169d0fe106dff679876d83010"
+    },
+    {
+      "path": "otravel/groq_place_prompt.py",
+      "sha256": "933b3ba82f5c0f421421cb3c29a4d09e5291798ced24bf31430f028299a7750d"
+    },
+    {
+      "path": "otravel/groq_prompt.py",
+      "sha256": "a7ca7c73100dd31c4509a933ca4114a79ad2d555c37719bcea744205e7e53650"
+    },
+    {
+      "path": "otravel/groq_transport.py",
+      "sha256": "261321dce442af7b1b171dd6d06ab8dd765f51cfb7f19d3180059cddb4e209b3"
+    },
+    {
+      "path": "otravel/group_semantics.py",
+      "sha256": "1696a65933503469eb48514ed6401ad5b5697ddae1c513dd79f0f7761a5faf6e"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "cedf34a598805d5d6f3b62ae0e8c232c47a790800367ba6264f676799563f243"
+    },
+    {
+      "path": "otravel/history.py",
+      "sha256": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb"
+    },
+    {
+      "path": "otravel/hotel_presentation.py",
+      "sha256": "e5c88af6dc53063879b780357cbf9446bc24e9bf2bbb6508a8205dac3768bd98"
+    },
+    {
+      "path": "otravel/hotel_preservation.py",
+      "sha256": "9ef5dc0a5c84ea238e34057340839571a0984abea1b776124ded222ba5a45839"
+    },
+    {
+      "path": "otravel/initial_room_layout.py",
+      "sha256": "5f6bcbb6a2cf0aa9a2950b4460b56f5f36817f81fb0b57c62a675b904b1b02b0"
+    },
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "50866abae211baa53fa70e1ea3269cac65262222734118ff4d9f5d3ed035c23d"
+    },
+    {
+      "path": "otravel/inventory.py",
+      "sha256": "42ff449ed1b5d85f49875ed899c966028f646e2c66af4c2cdef70e1a56f4c3de"
+    },
+    {
+      "path": "otravel/leg_mode_intent.py",
+      "sha256": "6843a99ac9cb5f753eeace26230d16ce1571c6bacc65d94e6ceb0af54cf07f08"
+    },
+    {
+      "path": "otravel/literal_intake.py",
+      "sha256": "bc1ea8445895835a782e15eefd82ac486f0e0ff4e6884008ffb171de2e6f8a79"
+    },
+    {
+      "path": "otravel/llm_contract.py",
+      "sha256": "972b4972bbdf0fe06a03211184d549ec2d20edcd5043ad801449ba106f7fe153"
+    },
+    {
+      "path": "otravel/llm_schema_feedback.py",
+      "sha256": "a674b199a843d2a62aaf24cdb132487cba0781978202863eeba514de9d0cbb23"
+    },
+    {
+      "path": "otravel/media.py",
+      "sha256": "6c6846c08c05723cf8f8a9ac6b4f6f5608a7cb65df3723a01e68d5145f85133c"
+    },
+    {
+      "path": "otravel/money.py",
+      "sha256": "ee3820393bf0be39a9e658fc1a8eb9e146ed1ee296b341f9f59426963c9a8746"
+    },
+    {
+      "path": "otravel/nationality_intake.py",
+      "sha256": "85c302f70fbaeef0885c362fab48563719ec1c60252ba1154b5b6923b4cb6d3d"
+    },
+    {
+      "path": "otravel/observability.py",
+      "sha256": "47120ab90c302c2c043a0f1980964ff5e22a1f879de70c60355f8579baf8b358"
+    },
+    {
+      "path": "otravel/operation_aliases.py",
+      "sha256": "9b65a7e311122cf8110b63757215c14907a49864203468ddc2d73ad8ff52fe45"
+    },
+    {
+      "path": "otravel/orchestrator.py",
+      "sha256": "44ad1b37b462d03f21a5ffc9c4bd871a888c256e2caacac7bc04d63b4bbaba6a"
+    },
+    {
+      "path": "otravel/party_literals.py",
+      "sha256": "21a4152f6ac0f12e55db69663128e519b2f9c6ab93e0d86c8a5bc3284d7e5d90"
+    },
+    {
+      "path": "otravel/place_directory.py",
+      "sha256": "bb7185d293d0cd4bee9c958b5cf5bb836cd789ee9a7884f9e3838de8d157b0ac"
+    },
+    {
+      "path": "otravel/place_refs.py",
+      "sha256": "18429aa3007d4bb579402c0578b02d0caf928802dd011fa360bae1a7763c2759"
+    },
+    {
+      "path": "otravel/place_resolution.py",
+      "sha256": "91de61a01cf88559f2f17b2c8dd9e5abe5511c65a0f85b4df131349ebd543499"
+    },
+    {
+      "path": "otravel/place_resume.py",
+      "sha256": "aee559edc2c9ba00028f8984fd03392ea02fb062d206f27088dc365fe85fb706"
+    },
+    {
+      "path": "otravel/place_run.py",
+      "sha256": "5bbf865fb1f554639d258093722410f1c56b0c991332b1d4a47ab1e9d41977ec"
+    },
+    {
+      "path": "otravel/planning.py",
+      "sha256": "4280bb6dcd7ac2578ae91f1ddf6bed5db4798795ec4a0ad1b552820d66f32b37"
+    },
+    {
+      "path": "otravel/planning_intent.py",
+      "sha256": "79189fc4bc3b15e9c20bcdd733351c35e42376420938d12aebdeca3bed299506"
+    },
+    {
+      "path": "otravel/preference_grounding.py",
+      "sha256": "7649487045126683fa5cdf831cbe284c902924d858b471bb07777b20c75e33a4"
+    },
+    {
+      "path": "otravel/preference_intake.py",
+      "sha256": "57add9044922eb8a8e7539a17f2df0c5071995e151204cde7053620200d1a212"
+    },
+    {
+      "path": "otravel/price_date_recall.py",
+      "sha256": "c6da83c20f55c2d275d93fe2b689caef5738fe6df12da8355d10ce8b53abc77e"
+    },
+    {
+      "path": "otravel/price_queries.py",
+      "sha256": "79ba90d823b27df1cbfec2eb34d88f141e51155723748cbc4b59390eb78b1e90"
+    },
+    {
+      "path": "otravel/provider_cities.py",
+      "sha256": "af83dca4cce05c41123b89828f706359c968707bb2236a9e316cdef637b21d4d"
+    },
+    {
+      "path": "otravel/provider_facts.py",
+      "sha256": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55"
+    },
+    {
+      "path": "otravel/providers.py",
+      "sha256": "841e966f6e22fbfffbbab309630904189cefe75d32f37fcaaa902087524eb76d"
+    },
+    {
+      "path": "otravel/question_binding.py",
+      "sha256": "3321191ec6be9d8570d51523d52df5f72ef62803b5773c2c73895599c852367d"
+    },
+    {
+      "path": "otravel/question_rendering.py",
+      "sha256": "713a093d8eab11b62d7cd903a6c56441576b785d05713b5538bb4061bbde69be"
+    },
+    {
+      "path": "otravel/rate_failures.py",
+      "sha256": "8afa829ac0a7c36c5c269e70e35e7695e197343ec94492a26884585522f3f5b4"
+    },
+    {
+      "path": "otravel/return_preservation.py",
+      "sha256": "d44e1559c2a18b90ed8edd4e9aa5e0edd300720a64bb2fcc0daa564445edfb85"
+    },
+    {
+      "path": "otravel/room_additions.py",
+      "sha256": "3c2e55b85c63256d7587992dd608891dc482e91e37918bcc1426953a7c79fe48"
+    },
+    {
+      "path": "otravel/room_child_age_intake.py",
+      "sha256": "d8f5e1c2627a564648049e6af139903b4e02a41b9bae7bc5b283952ec5b58c23"
+    },
+    {
+      "path": "otravel/room_identity.py",
+      "sha256": "13cbf7d7710901c6cfe4b9b5bf1e9ef93faa6600fc0881a55e897d1fa064d044"
+    },
+    {
+      "path": "otravel/room_intent.py",
+      "sha256": "67322aa2fed1c0b87d85c208c3aec46f92658aaca91a0206220316a778b854c6"
+    },
+    {
+      "path": "otravel/route_intake.py",
+      "sha256": "73ea603b9eb0acd243d23b7eba6ed532bf7d2e7bd220d72eb6c152fc5da83dfd"
+    },
+    {
+      "path": "otravel/route_policy_intent.py",
+      "sha256": "0d0e7ded1c65dffbdd444d7b7ed5cb2faedec8679ce619b999b27f69db5c507b"
+    },
+    {
+      "path": "otravel/saved_fact_answers.py",
+      "sha256": "92fa0439765f9a6f72e6eb78900696860232783027a8836dc217840019fe148c"
+    },
+    {
+      "path": "otravel/search_blocker_feedback.py",
+      "sha256": "9c9f36c110df898010691ad5e05546aa476553747113bb421e9d54ae3d634415"
+    },
+    {
+      "path": "otravel/search_explanation.py",
+      "sha256": "429ba86c550246bd726dba6a87aafeebd34876ec044dcaaa210dbca8ba815294"
+    },
+    {
+      "path": "otravel/search_policy_intent.py",
+      "sha256": "e9cda59b5db3427c9b2a4e947aa03575a5c56b193948ff01b4d0ba0bf0d385e1"
+    },
+    {
+      "path": "otravel/selected_plan.py",
+      "sha256": "356d0d63cd529dfedef34763443f80dd06e10ace367bfe01aae56c0d247dbb07"
+    },
+    {
+      "path": "otravel/static/chat.css",
+      "sha256": "92b370ade4363434051298baaba410cf451da5a024aa19c25b1b78d16fd0fac1"
+    },
+    {
+      "path": "otravel/static/chat.js",
+      "sha256": "9fba03065676e9460a3caa99be0409b80711b45327a0b2777a4993bdcbab7ae0"
+    },
+    {
+      "path": "otravel/static/debug.html",
+      "sha256": "ddea33d746d7dd3cf766f2aa7651e7b536ad9a9db31f9b9f7e87dcd84292d3bf"
+    },
+    {
+      "path": "otravel/store.py",
+      "sha256": "b3c90dd6dcb7e0351441038b4185bf596e686f33526e437412801575890a94d3"
+    },
+    {
+      "path": "otravel/supplier_comparison.py",
+      "sha256": "b7c677595ce8aa68ec13fdf66a5c6b0072110fb2edfba81b87fd5496693b7939"
+    },
+    {
+      "path": "otravel/travel_runtime.py",
+      "sha256": "5a79b86140bf11b80f0dd8a128076d93bdb2767aa21b88460d91d30e9b71d05d"
+    },
+    {
+      "path": "otravel/traveler_addition_grounding.py",
+      "sha256": "ab82e1e678efd5f9330a57e0276d38addc19c30f3896ef1929c7128246c06591"
+    },
+    {
+      "path": "otravel/traveler_removal_grounding.py",
+      "sha256": "e6b06f9341a6716e957b35ee1731f42c36d05f48333a2e44245afbf278917034"
+    },
+    {
+      "path": "otravel/trip_answers.py",
+      "sha256": "89c8a12ec539b7f3f90daa5b6c5b4a1a9ac7ae868e3a84fa5446a348af08943d"
+    },
+    {
+      "path": "otravel/unknown_party_categories.py",
+      "sha256": "e79f068ba13d66bfbba63e62de678d573638dd1d1d3122aba08382744ddf1521"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "12ea470e5b64df4ee9bc9570b73b8233bdb22351fbfa3f5e3278e7bfffc204fb"
+    }
+  ],
+  "captured_fixture_bytes_exact": [
+    "fixtures/regression/return-checkin-preserve-005t9.json",
+    "fixtures/regression/price-date-recall-007t7.json",
+    "fixtures/regression/actual010-search-blocker.json",
+    "fixtures/regression/actual012-search-blocker.json",
+    "fixtures/regression/new80-geo-date-corrections-20261028.json"
+  ],
+  "real_secrets_or_runtime_env_in_output": false
+}

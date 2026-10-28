@@ -1,0 +1,160 @@
+{
+  "finding_id": "HARNESS-004-ROOM-FACT-LABEL-077-001",
+  "case": "ZAI100-077",
+  "turn": 5,
+  "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "raw_contract_sha256": "d75e32373104e03982b66b665e5a01a3d716bd6c49f65ab4f20d11c84e7b980d",
+  "input": "Какие требования к тарифу у тебя реально записаны по каждому из двух номеров? Общие условия мне не подходят, мне нужны разные.",
+  "before_trip": {
+    "state_version": 2,
+    "origin": "Москва",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": 5,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-5",
+        "age": 8,
+        "type": "child",
+        "group_id": "new-group-2",
+        "birth_date": null
+      }
+    ],
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-4"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-2",
+          "new-traveler-3",
+          "new-traveler-5"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Стамбул",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-4"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-2",
+              "new-traveler-3",
+              "new-traveler-5"
+            ]
+          }
+        ],
+        "check_in": "2026-11-20",
+        "hotel_id": null,
+        "check_out": "2026-11-25"
+      }
+    ],
+    "legs": [
+      {
+        "id": "leg-bb2fa23b-4f11-40ac-a669-efb81d25ac2f",
+        "mode": "flight",
+        "origin": "Москва",
+        "destination": "Стамбул",
+        "departure_date": "2026-11-20"
+      },
+      {
+        "id": "leg-7cdfc993-7157-43b9-bb0f-928b1c199167",
+        "mode": "flight",
+        "origin": "Стамбул",
+        "destination": "Москва",
+        "departure_date": "2026-11-25"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 18000000
+    },
+    "constraints": [
+      {
+        "key": "refundable",
+        "hard": true,
+        "value": true,
+        "room_id": "new-room-1",
+        "stay_id": "new-stay-1"
+      },
+      {
+        "key": "breakfast",
+        "hard": true,
+        "value": true,
+        "room_id": "new-room-2",
+        "stay_id": "new-stay-1"
+      }
+    ],
+    "preferences": [],
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    }
+  },
+  "raw_contract": {
+    "operations": [],
+    "speech_act": "ASK",
+    "control": {
+      "action": "none"
+    },
+    "unknowns": [],
+    "conflicts": [],
+    "reply": "preferences",
+    "pending_context": null
+  },
+  "expected": {
+    "room_1": "refundable only",
+    "room_2": "breakfast only",
+    "city": "Стамбул"
+  }
+}

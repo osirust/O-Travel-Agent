@@ -1,0 +1,252 @@
+{
+  "format": "otravel.r12.actual-budget-omission.safe-fixture.v1",
+  "source_manifest_sha256": "bfb5f662637d3fd9e9f9c1990d53b991bbce508ce7ff641094c3991a0a2b3fee",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "records": [
+    {
+      "id": "budget002",
+      "input": "Урежь обший бюджет на 20 тысяч рублей и напомни теперь возраста обоих детей.",
+      "before_trip": {
+        "legs": [
+          {
+            "id": "leg-2ccd5966-b707-4a88-b122-b1a8e42a7874",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Анталья",
+            "departure_date": "2026-11-10"
+          },
+          {
+            "id": "leg-f3a59c42-4f0d-4346-8720-319c11841151",
+            "mode": "flight",
+            "origin": "Анталья",
+            "destination": "Казань",
+            "departure_date": "2026-11-17"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Анталья",
+            "rooms": [],
+            "check_in": "2026-11-10",
+            "hotel_id": null,
+            "check_out": "2026-11-17"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 15000000
+        },
+        "groups": [],
+        "origin": "Казань",
+        "trip_id": "aab245b1-8b59-4de8-93c9-83de8a1aca14",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-3",
+            "age": 5,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-4",
+            "age": 9,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 0
+      },
+      "validated_raw_contract": {
+        "value": {
+          "reply": "Возраст детей: 5 и 9 лет.",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        },
+        "sha256": "72e3e39084fb72cdbe8e9e79bb6c925ab49be50a525b2647f2f7aa306df99edb",
+        "captured": true,
+        "utf8_bytes": 172
+      },
+      "checked_contract": {
+        "value": {
+          "reply": "Возраст детей: 5 и 9 лет.",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        },
+        "sha256": "6a5b71c124ae459088f6ce7e5d32b0ec29bdbc10e082a4b2d47966bb79522519",
+        "captured": true,
+        "utf8_bytes": 172
+      },
+      "normalizations": [],
+      "model_call_starts": 1,
+      "source_path": "/home/aegml/checks/r12-targeted-groq-20261027-222413/report.json",
+      "source_sha256": "c2b152aeaffd1d70d0750dbe2595322456f76f4b5c35ea5d60ca28f6e5cd390c",
+      "raw_absent_not_guessed": false
+    },
+    {
+      "id": "removal008",
+      "input": "Обший бюджет теперь 85000 рублей. Кто в итоге едет?",
+      "before_trip": {
+        "trip_id": "9bcd5d9e-eb27-4dc8-b185-57aef8637575",
+        "state_version": 0,
+        "origin": "Санкт-Петербург",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": null
+          }
+        ],
+        "groups": [],
+        "legs": [
+          {
+            "id": "leg-0ebc2086-8fe5-48ec-aefc-7ad398059762",
+            "origin": "Санкт-Петербург",
+            "destination": "Сочи",
+            "departure_date": "2026-11-02",
+            "mode": "flight"
+          },
+          {
+            "id": "leg-81137259-1676-4d0f-a16a-24aba548cc19",
+            "origin": "Сочи",
+            "destination": "Санкт-Петербург",
+            "departure_date": "2026-11-07",
+            "mode": "flight"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Сочи",
+            "check_in": "2026-11-02",
+            "check_out": "2026-11-07",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ],
+            "hotel_id": null
+          }
+        ],
+        "budget": null,
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "HYBRID",
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "demo_fallback": true,
+          "guest_nationality": "RU"
+        },
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        }
+      },
+      "validated_raw_contract": {
+        "value": {
+          "reply": "В поездке участвуют два путешественника: новый‑путешественник‑1 (взрослый) и новый‑путешественник‑2 (взрослый).",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [
+            {
+              "type": "set_budget",
+              "value": {
+                "scope": "whole_trip",
+                "currency": "RUB",
+                "amount_minor": 8500000
+              },
+              "target_id": null
+            }
+          ],
+          "speech_act": "ASK",
+          "information_subject": null
+        },
+        "sha256": "19d2620c36c9dac065893ef8a05b7bce5252c891d53a219a3132685a2d288ef5",
+        "captured": true,
+        "utf8_bytes": 449
+      },
+      "checked_contract": {
+        "value": {
+          "reply": "В поездке участвуют два путешественника: новый‑путешественник‑1 (взрослый) и новый‑путешественник‑2 (взрослый).",
+          "control": {
+            "action": "none"
+          },
+          "unknowns": [],
+          "conflicts": [],
+          "operations": [],
+          "speech_act": "ASK",
+          "information_subject": null
+        },
+        "sha256": "b15d15392eba7655950aa4888c061b40f2ac7eda33ec96b869a95de1d95e9f7f",
+        "captured": true,
+        "utf8_bytes": 340
+      },
+      "normalizations": [],
+      "model_call_starts": 1,
+      "source_path": "/home/aegml/checks/r12-targeted-groq-20261027-222413/removal008-recovery-readback.json",
+      "source_sha256": "6570fc54ff9775e12b08628be56d067dbe304298e6592ae640cf7dc5714538bf",
+      "raw_absent_not_guessed": false
+    }
+  ],
+  "new_api_or_model_calls": 0,
+  "session_capabilities_headers_reasoning_included": false
+}

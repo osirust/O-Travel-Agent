@@ -1,0 +1,135 @@
+{
+  "verification_id": "HARNESS-008-GROQ-8090-R17-HANDOFF-20261028",
+  "status": "STOPPED_PARTIAL_PROVIDER_TPD_429",
+  "commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "archive_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "fixed_source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "oracle_byte_sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "transport": "strictv3/low/noReasoning",
+  "mixed_lineage": {
+    "076_prefix_turns": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "prefix_model": "PriorNemo phase",
+    "prefix_replayed": false,
+    "076_new_groq_turns": [
+      7,
+      8,
+      9
+    ],
+    "same_native_session_and_capability_preserved": true,
+    "not_new_uniform_full076_chat": true
+  },
+  "planned_new_inputs": 37,
+  "submitted_new_inputs": 23,
+  "completed_new_runs": 21,
+  "failed_new_runs": [
+    {
+      "case": "ZAI100-078",
+      "turn": 10,
+      "code": "INVALID_LLM_RESPONSE",
+      "state_unchanged": true
+    },
+    {
+      "case": "ZAI100-079",
+      "turn": 2,
+      "code": "RATE_LIMITED",
+      "state_unchanged": true
+    }
+  ],
+  "unsent_inputs": 14,
+  "first_unsent": "ZAI100-079:T3",
+  "unsent_ranges": [
+    "079:T3–T8",
+    "080:T1–T8"
+  ],
+  "boundaries": {
+    "new_actual_groq_cap": 40,
+    "new_actual_supplier_cap": 421,
+    "effective_attempts_per_run": 1,
+    "model_http_spacing_seconds": 65,
+    "pacing_outside_gateway45s_request_timeout": true,
+    "generic_multi_provider_application_bound": 80,
+    "groq_bound": 40,
+    "old_router_bound_preserved": 40,
+    "paid_local_fallback": false,
+    "checkout_prebook_booking_payment": false
+  },
+  "actual_http": {
+    "groq": 23,
+    "supplier": 34
+  },
+  "separate_tool_events": 39,
+  "reported_phase_tokens": 131700,
+  "provider_account_limit": {
+    "token_window": "TPD",
+    "limit": 200000,
+    "used": 196878,
+    "requested": 5474,
+    "retry_after_seconds_hint": 1017,
+    "automatic_retry": false
+  },
+  "quota_note": "ErrorreportsTPD200000/used196878/requested5474. RetryAfter1017 is a servicehint, not automaticretry or guaranteedfullquota restoration. Accountwideusage mayinclude otherauthorizedwork; noaccount/key/IP/quota resets.",
+  "native_terminal_counts": {
+    "agent_events": 753,
+    "agent_runs": 64,
+    "demo_orders": 0,
+    "messages": 128,
+    "quotes": 0,
+    "sessions": 8,
+    "pending_or_running": 0,
+    "model_call_started": 62
+  },
+  "durable_model_history": {
+    "openrouter": 39,
+    "groq": 23
+  },
+  "old_nemo_ledger_unchanged": {
+    "model": 39,
+    "supplier": 79
+  },
+  "related_supplier_http_total": 113,
+  "startup": {
+    "new_generation": 0,
+    "new_supplier_http": 0,
+    "existing_native_history_model_starts": 39,
+    "original_bytes_preserved": true,
+    "first_import_failure": "Newprivatebridge modes700/600 afterumask077. Fixedonlynewprivate modes750/640; no generation/corebytes/DBhistory changes.",
+    "second_startup": "PASSsameexistingDBbaseline"
+  },
+  "runtime_stopped_guarded_8090_only": true,
+  "database_reset": false,
+  "orders": 0,
+  "quotes": 0,
+  "pending": 0,
+  "offline_partial_grade": {
+    "case_files_found": 5,
+    "source_cases": 80,
+    "source_turn_ids": 697,
+    "fully_bound_case_oracles": 0,
+    "check_status_counts": {
+      "PASS": 182,
+      "NEEDS_ADAPTIVE": 2,
+      "FAIL": 8
+    },
+    "comparability_counts": {}
+  },
+  "full_behavioral_status": "INCOMPLETE_ORACLES_NOT_80PASS",
+  "private_progress_sha256": "bb6507b2b56d0c502b2d0670f67d0ee063b6f3b22971c689bb0c42bc39ade143",
+  "private_lineage37_sha256": "89eea4239905041082e1c9241a3576441b6175842e62a1b22ab95c0fccf95461",
+  "private_terminal_audit_sha256": "00a846f47f3037087bc0d0f263554fed27204cd78aaed9e21524c405d9fac9c5",
+  "limitations": [
+    "14inputs remainunsubmitted.",
+    "21technicalCOMPLETED is not21semanticPASS; manualreview separate.",
+    "Malformed operation_value_json failure retained, nottrimmed/replayed.",
+    "Notuniform80/106languageacceptance.",
+    "No credentials, headers, providerhiddenreasoning, sessioncapability or accountidentifier published."
+  ]
+}

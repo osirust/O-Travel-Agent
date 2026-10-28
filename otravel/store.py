@@ -26,7 +26,9 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 SCHEMA_VERSION = 1
-REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq"})
+REAL_MODEL_PROVIDERS = frozenset({"gemini", "openrouter", "groq", "cloudflare", "zai", "gigachat", "external"})
+INDEPENDENT_REMOTE_PROVIDERS = frozenset({"groq", "cloudflare", "zai", "gigachat", "external"})
+SINGLE_ATTEMPT_REMOTE_PROVIDERS = frozenset({"cloudflare", "zai", "gigachat"})
 LOCAL_MODEL_PROVIDERS = frozenset({"ollama"})
 metadata = MetaData()
 schema_versions = Table(
@@ -238,6 +240,56 @@ def _stamped(state: dict, version: int) -> dict:
     result = _json(state)
     result["state_version"] = version
     return result
+
+
+def _pending_after_control(session: dict, version: int) -> dict | None:
+    """Carry a fresh clarification across a control-only revision, not an edit."""
+    pending = copy.deepcopy(session.get("pending_question"))
+    before = session["state_version"]
+    if (not isinstance(pending, dict) or type(pending.get("state_version")) is not int
+            or pending["state_version"] != before):
+        return None
+    original_context=pending.get("context") or {}
+    if isinstance(original_context,dict) and ("place_resolution" in original_context or "place_deferred_action" in original_context):
+        from .place_run import rebase_place_control
+        return rebase_place_control(pending,session["state"],version)
+    pending["state_version"] = version
+    context = pending.get("context")
+    if isinstance(context, dict):
+        owners = {"date_proposal": "date_slots.v1", "duration_proposal": "date_slots.duration.v1",
+                  "leg_mode_proposal": "leg_mode_intent_v1"}
+        for name, owner in owners.items():
+            packet = context.get(name)
+            if (isinstance(packet, dict) and packet.get("owner") == owner
+                    and packet.get("trip_id") == session["trip_id"]
+                    and type(packet.get("based_state_version")) is int and packet["based_state_version"] == before):
+                packet["based_state_version"] = version
+        if type(context.get("based_state_version")) is int and context["based_state_version"] == before:
+            context["based_state_version"] = version
+    return pending
+
+
+def _control_input_condition(column):
+    """SQL candidate filter for the same finite exact-control vocabulary.
+
+    Every candidate is also rechecked in Python against its server input/event
+    proof. No ordinary paused message is granted a claim through this filter.
+    """
+    from .harness import PAUSE_PHRASES, RESUME_PHRASES
+    whitespace = "\t\n\r\v\f\x1c\x1d\x1e\x1f \x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000"
+    normalized = func.rtrim(func.lower(func.btrim(column, whitespace)), ".! ")
+    return normalized.in_(sorted(PAUSE_PHRASES | RESUME_PHRASES))
+
+
+def _require_checkout_ready(session: dict) -> None:
+    if session.get("active_run_id") is not None:
+        raise Conflict("Дождитесь завершения обработки поездки.", "processing_in_progress")
+    if session.get("waiting_reason") == "user_pause":
+        raise Conflict("Поездка на паузе. Сначала явно продолжите работу с поездкой.", "user_paused")
+    if session.get("waiting_reason") == "clarification" and session.get("pending_question") is not None:
+        raise Conflict("Сначала уточните условия поездки.", "clarification_required")
+    if session.get("status") == "RECOVERABLE_ERROR":
+        raise Conflict("После ошибки проверьте условия и получите новый план.", "trip_requires_recovery")
 
 
 class Store:
@@ -621,28 +673,211 @@ class Store:
             await self._event(conn, session, run_id, "RUN_FAILED", clean_error)
             return response
 
-    async def set_control(self, session_id: str, action: str = "pause", reply: str = "") -> dict:
+    async def set_control(self, session_id: str, action: str = "pause", reply: str = "", *,
+                          control_run_id: str | None = None) -> dict:
         if action not in {"pause", "resume"}:
             raise StoreError("Допустимы pause или resume.", "invalid_control")
         async with self.engine.begin() as conn:
             session = await self._session(conn, session_id, lock=True)
+            control_run = None
+            if control_run_id is not None:
+                control_run = await self._run(conn, control_run_id)
+                if control_run["session_id"] != session_id:
+                    raise NotFound("Команда этой сессии не найдена.")
+                control_run = await self._run(conn, control_run_id, lock=True)
+                input_message = (await conn.execute(select(messages).where(
+                    messages.c.id == control_run["input_message_id"]
+                ).limit(1))).mappings().one()
+                # This reuses the one canonical command vocabulary, never a
+                # guessed model intent or a client-provided control marker.
+                from .harness import exact_control
+                if (input_message["role"] != "user" or input_message["session_id"] != session_id
+                        or input_message["text"] != control_run["input_text"]
+                        or exact_control(control_run["input_text"]) != action):
+                    raise Conflict("Принятая реплика не является этой точной control-командой.", "invalid_control_run")
+                if control_run["status"] == "completed":
+                    stored = control_run.get("result") or {}
+                    if (stored.get("result") or {}).get("control") != action:
+                        raise Conflict("Обработка уже завершена другим действием.", "run_not_active")
+                    return {**_public(session), "control_run_result": copy.deepcopy(stored),
+                        "control_replayed": True, "control_applied": False}
+                if control_run["status"] not in {"pending", "running"}:
+                    raise Conflict("Control-команда уже завершена или прервана.", "run_not_active")
+                accepted = (await conn.execute(select(events.c.sequence).where(
+                    events.c.session_id == session_id, events.c.run_id == control_run_id,
+                    events.c.event_type == "USER_MESSAGE_RECEIVED",
+                    events.c.payload["message_id"].astext == control_run["input_message_id"],
+                ).order_by(events.c.sequence.desc()).limit(1))).scalar_one_or_none()
+                if accepted is None:
+                    raise Conflict("Нет серверного подтверждения принятой control-реплики.", "invalid_control_run")
+                latest = (await conn.execute(select(events.c.sequence).where(
+                    events.c.session_id == session_id,
+                    events.c.event_type.in_(["USER_PAUSED", "USER_RESUMED"]),
+                ).order_by(events.c.sequence.desc()).limit(1))).scalar_one_or_none()
+                newer = await self._accepted_control_rows(conn, session_id=session_id,
+                    after_sequence=accepted, pending_only=False, limit=1)
+                if (latest is not None and latest > accepted) or newer:
+                    return await self._supersede_control_locked(conn, session, control_run, action)
+                expected = control_run.get("request_expected_version")
+                if expected is not None and expected != session["state_version"]:
+                    raise Conflict("Поездка изменилась перед control-командой.", "stale_state")
+                if control_run["status"] == "running" and session["active_run_id"] != control_run_id:
+                    raise Conflict("Control-команда не владеет текущей обработкой.", "run_not_active")
             version = session["state_version"] + 1
+            pending = _pending_after_control(session, version)
+            from .place_resume import OWNER as deferred_owner
+            from .place_resume import resume_marker, stale_place_question
+            old_context = (session.get("pending_question") or {}).get("context") or {}
+            place_owned = isinstance(old_context, dict) and (
+                "place_deferred_action" in old_context or "place_resolution" in old_context)
+            if action == "resume" and pending is None and place_owned:
+                pending = stale_place_question(version, str(uuid4()))
+            resume_run_id = None
+            context = pending.get("context") if isinstance(pending, dict) else None
+            deferred = context.get("place_deferred_action") if isinstance(context, dict) else None
+            if action == "resume" and isinstance(deferred, dict) and deferred.get("owner") == deferred_owner:
+                resume_run_id, message_id, now = str(uuid4()), str(uuid4()), _now()
+                deferred["resume_id"] = deferred.get("resume_id") or str(uuid4())
+                deferred["resume_run_id"] = resume_run_id
+                client_id = "place-resume:" + resume_run_id
+                text = resume_marker(session["trip_id"], deferred["resume_id"], resume_run_id)
+                await conn.execute(insert(messages).values(id=message_id, session_id=session_id,
+                    run_id=resume_run_id, client_message_id=client_id, role="system", text=text, created_at=now))
+                await conn.execute(insert(runs).values(id=resume_run_id, session_id=session_id,
+                    input_message_id=message_id, client_message_id=client_id, input_text=text,
+                    request_expected_version=None, based_version=version, status="pending", created_at=now))
             values = dict(
                 state_version=version, state=_stamped(session["state"], version),
-                status="WAITING_USER" if action == "pause" else "TRIP_DRAFT",
-                waiting_reason="user_pause" if action == "pause" else None,
-                pending_question=None, updated_at=_now(),
+                status="WAITING_USER" if action == "pause" or pending else "TRIP_DRAFT",
+                waiting_reason="user_pause" if action == "pause" else "clarification" if pending else None,
+                pending_question=pending, updated_at=_now(),
             )
+            if control_run is not None and session.get("active_run_id") == control_run_id:
+                values.update(active_run_id=None, active_run_started_at=None)
             await conn.execute(update(sessions).where(
                 sessions.c.session_id == session_id
             ).values(**values))
             session.update(values)
             await self._invalidate_quotes(conn, session_id)
-            await self._revision(conn, session, None, [{"op": action}])
-            await self._event(conn, session, None, "USER_PAUSED" if action == "pause" else "USER_RESUMED", {})
-            if reply:
+            await self._revision(conn, session, control_run_id, [{"op": action}])
+            await self._event(conn, session, control_run_id, "USER_PAUSED" if action == "pause" else "USER_RESUMED", {})
+            if resume_run_id is not None:
+                await self._event(conn, session, resume_run_id, "PLACE_RESUME_QUEUED", {})
+            if reply and control_run is None:
+                if action == "resume" and pending and isinstance(pending.get("text"), str):
+                    reply += " " + pending["text"]
                 await self._assistant(conn, session_id, None, reply)
-            return _public(session)
+            visible = _public(session)
+            visible["control_applied"] = True
+            if control_run is not None:
+                control_reply = ("Жду явного «продолжай»." if action == "pause" else
+                    "Продолжаю. " + ((pending or {}).get("text") or ""))
+                message = await self._assistant(conn, session_id, control_run_id, control_reply)
+                response = self._response(session, control_run_id, control_reply, message, [], None,
+                    {"control": action, "available_actions": ["commands", "demo", "resume"],
+                        "response_source": "canonical_control", "control_applied": True, "control_committed_atomically": True})
+                response["run"] = {**_run(control_run), "based_version": version - 1,
+                    "status": "completed", "current_status": "completed", "result": None}
+                await conn.execute(update(runs).where(runs.c.id == control_run_id).values(
+                    status="completed", based_version=version - 1, result=response, error=None, finished_at=_now()))
+                await self._event(conn, session, control_run_id, "RUN_COMPLETED", {
+                    "domain_changed": False, "control": action, "control_committed_atomically": True})
+                visible["control_run_result"] = response
+            if resume_run_id is not None:
+                visible["resume_run_id"] = resume_run_id
+            return visible
+
+    async def _accepted_control_rows(self, conn, *, session_id=None, after_sequence=None,
+                                     pending_only=True, limit=32) -> list[dict]:
+        query = select(runs.c.id, runs.c.session_id, runs.c.input_text,
+            events.c.sequence.label("accepted_sequence")).join(
+            messages, messages.c.id == runs.c.input_message_id).join(
+            events, (events.c.run_id == runs.c.id) & (events.c.session_id == runs.c.session_id)
+        ).join(sessions, sessions.c.session_id == runs.c.session_id).where(
+            messages.c.role == "user", messages.c.session_id == runs.c.session_id,
+            messages.c.text == runs.c.input_text, sessions.c.owner_token_hash.is_not(None),
+            events.c.event_type == "USER_MESSAGE_RECEIVED",
+            events.c.payload["message_id"].astext == runs.c.input_message_id,
+            _control_input_condition(runs.c.input_text))
+        if pending_only:
+            query = query.where(runs.c.status == "pending")
+        if session_id is not None:
+            query = query.where(runs.c.session_id == session_id)
+        if after_sequence is not None:
+            query = query.where(events.c.sequence > after_sequence)
+        rows = (await conn.execute(query.order_by(events.c.sequence.desc()).limit(limit))).mappings().all()
+        return [dict(row) for row in rows]
+
+    async def _supersede_control_locked(self, conn, session, run, action) -> dict:
+        """Complete an outdated accepted control without replaying its effect."""
+        if session.get("active_run_id") == run["id"]:
+            values = {"active_run_id": None, "active_run_started_at": None, "updated_at": _now()}
+            await conn.execute(update(sessions).where(sessions.c.session_id == session["session_id"]).values(**values))
+            session.update(values)
+        reply = "Команда заменена более новым решением. Текущее состояние поездки сохранено."
+        message = await self._assistant(conn, session["session_id"], run["id"], reply)
+        response = self._response(session, run["id"], reply, message, [], None,
+            {"control": action, "response_source": "canonical_control", "control_applied": False,
+                "control_superseded": True, "control_committed_atomically": True})
+        response["run"] = {**_run(run), "status": "completed", "current_status": "completed", "result": None}
+        await conn.execute(update(runs).where(runs.c.id == run["id"]).values(
+            status="completed", result=response, error=None, finished_at=_now()))
+        await self._event(conn, session, run["id"], "CONTROL_MESSAGE_SUPERSEDED", {})
+        await self._event(conn, session, run["id"], "RUN_COMPLETED", {"domain_changed": False, "control_superseded": True})
+        return {**_public(session), "control_run_result": response, "control_applied": False}
+
+    async def recover_accepted_controls(self, session_id: str | None = None, *, limit: int = 32) -> list[dict]:
+        """Bounded exact-control recovery before the ordinary paused queue gate.
+
+        No model, tool HTTP, transaction-spanning wait or ordinary-message claim
+        occurs here. Each accepted control commits independently under the same
+        session/run locks as direct control handling.
+        """
+        if type(limit) is not int or not 1 <= limit <= 32:
+            raise StoreError("Допустим от 1 до 32 control-команд за проход.", "invalid_control_batch")
+        if session_id is not None:
+            _key(session_id)
+        async with self.engine.connect() as conn:
+            candidates = await self._accepted_control_rows(conn, session_id=session_id, limit=limit)
+        from .harness import exact_control
+        results = []
+        for candidate in candidates:
+            action = exact_control(candidate["input_text"])
+            if action not in {"pause", "resume"}:
+                continue
+            try:
+                current = await self.set_control(candidate["session_id"], action, control_run_id=candidate["id"])
+            except Conflict as error:
+                row = await self.get_run(candidate["id"])
+                if row["status"] in {"pending", "running"}:
+                    await self.fail_run(candidate["id"], {"code": error.code,
+                        "message": "Принятая control-команда больше не соответствует состоянию поездки.", "retryable": False},
+                        preserve_session=True)
+                results.append({"session_id": candidate["session_id"], "run_id": candidate["id"],
+                    "action": action, "applied": False, "status": "rejected"})
+                continue
+            response = current["control_run_result"]
+            results.append({"session_id": candidate["session_id"], "run_id": candidate["id"],
+                "action": action, "applied": current.get("control_applied", (response.get("result") or {}).get("control_applied", True)),
+                "status": "completed", "state_version": current["state_version"],
+                "active_run_id": current.get("active_run_id")})
+        return results
+
+    async def get_place_resume_marker(self, run_id: str) -> dict | None:
+        """Read exact server-message provenance by the indexed run/message IDs."""
+        from .place_resume import read_resume_marker
+        async with self.engine.connect() as conn:
+            row = (await conn.execute(select(runs, messages.c.role.label("input_role"),
+                messages.c.text.label("message_text"), messages.c.session_id.label("message_session"))
+                .join(messages, messages.c.id == runs.c.input_message_id)
+                .where(runs.c.id == run_id).limit(1))).mappings().first()
+        if row is None or row["input_role"] != "system" or row["message_session"] != row["session_id"]:
+            return None
+        marker = read_resume_marker(row["input_text"])
+        if (marker is None or row["message_text"] != row["input_text"] or marker["resume_run_id"] != run_id
+                or row["client_message_id"] != "place-resume:" + run_id):
+            return None
+        return {"marker": marker, "status": row["status"], "session_id": row["session_id"]}
 
     async def create_quote(self, session_id: str, expected_version: int, plan: dict,
                            expires_seconds: int = 600) -> dict:
@@ -657,8 +892,16 @@ class Store:
                 raise Conflict("Состояние поездки изменилось.", "stale_state")
             if session["waiting_reason"] == "user_pause":
                 raise Conflict("Поездка поставлена на паузу.", "user_paused")
+            _require_checkout_ready(session)
             now = _now()
             expires_at = now + timedelta(seconds=min(600, expires_seconds))
+            if plan.get("fx_snapshot") is not None:
+                from .fx import FxUnavailable, validate_snapshot
+                try:
+                    pinned_fx = validate_snapshot(plan["fx_snapshot"], now)
+                    expires_at = min(expires_at, datetime.fromisoformat(pinned_fx["expires_at"]).astimezone(timezone.utc))
+                except FxUnavailable as error:
+                    raise StoreError(error.message, error.code) from None
             snapshots = plan.get("source_snapshots", [])
             if not isinstance(snapshots, list):
                 raise StoreError("Некорректные снимки источников корзины.", "invalid_source_snapshots")
@@ -695,6 +938,7 @@ class Store:
                 raise Conflict("Состояние поездки изменилось.", "stale_state")
             if session["waiting_reason"] == "user_pause":
                 raise Conflict("Поездка поставлена на паузу.", "user_paused")
+            _require_checkout_ready(session)
             await self._invalidate_quotes(conn, session_id)
             await self._event(conn, session, None, "QUOTE_PREVIEW_STARTED", {"state_version": expected_version})
 
@@ -704,6 +948,33 @@ class Store:
             if row is None:
                 raise NotFound("Корзина не найдена.")
             return _quote(row)
+
+    async def current_selected_plan(self, session_id: str, expected_version: int) -> dict | None:
+        """Read an owned caller's latest UI selection in one SQL snapshot.
+
+        The latest row is chosen before status/expiry checks: a later failed,
+        revoked or ordered selection must not resurrect an older active row.
+        No row locks, history writes, prices or consent are returned.
+        """
+        _version(expected_version)
+        from .selected_plan import project_current_selection
+
+        latest_id = (select(quotes.c.id).where(quotes.c.session_id == sessions.c.session_id)
+            .order_by(quotes.c.created_at.desc(), quotes.c.quote_version.desc())
+            .limit(1).correlate(sessions).scalar_subquery())
+        query = (select(sessions.c.session_id, sessions.c.trip_id, sessions.c.state_version, sessions.c.state,
+                quotes.c.session_id.label("quote_session_id"), quotes.c.state_version.label("quote_state_version"),
+                quotes.c.status.label("quote_status"), quotes.c.expires_at, quotes.c.plan)
+            .select_from(sessions.outerjoin(quotes, quotes.c.id == latest_id))
+            .where(sessions.c.session_id == session_id).limit(1))
+        async with self.engine.connect() as conn:
+            row = (await conn.execute(query)).mappings().first()
+        if row is None:
+            raise NotFound("Сессия не найдена.")
+        session = {key: row[key] for key in ("session_id", "trip_id", "state_version", "state")}
+        quote = {"session_id": row["quote_session_id"], "state_version": row["quote_state_version"],
+            "status": row["quote_status"], "expires_at": row["expires_at"], "plan": row["plan"]}
+        return project_current_selection(session, quote, expected_version, _now())
 
     async def confirm_quote(self, session_id: str, quote_id: str, quote_version: int,
                             idempotency_key: str, confirmed: bool,
@@ -727,6 +998,7 @@ class Store:
                 if previous["request_hash"] != request_hash:
                     raise Conflict("Ключ подтверждения использован с другими параметрами.", "idempotency_mismatch")
                 return _order(previous)
+            _require_checkout_ready(session)
             quote = (await conn.execute(select(quotes).where(
                 quotes.c.id == quote_id, quotes.c.session_id == session_id
             ).with_for_update())).mappings().first()
@@ -793,12 +1065,47 @@ class Store:
                     raise Conflict("Run принадлежит другой сессии.", "session_mismatch")
             return await self._event(conn, session, run_id, event_type, payload)
 
+    async def select_model_role(self, session_id: str, run_id: str, expected_version: int, role: str) -> None:
+        """Fix a server-owned role before inference, without a network lock."""
+        _version(expected_version)
+        if role != "readonly_answer_v1":
+            raise StoreError("Неизвестная серверная роль модели.", "invalid_model_role")
+        async with self.engine.begin() as conn:
+            await conn.execute(select(func.pg_advisory_xact_lock(0x4F545241)))
+            session = await self._session(conn, session_id, lock=True)
+            run = await self._run(conn, run_id, lock=True)
+            if (run["session_id"] != session_id or run["status"] != "running"
+                    or session["active_run_id"] != run_id or session["state_version"] != expected_version
+                    or run["based_version"] != expected_version or session["waiting_reason"] == "user_pause"):
+                raise Conflict("Изменились версия или управление поездкой.", "processing_control_changed")
+            previous = (await conn.execute(select(events.c.payload).where(
+                events.c.run_id == run_id, events.c.event_type == "MODEL_ROLE_SELECTED"))).scalars().all()
+            if previous:
+                if any(value.get("role") != role or value.get("based_state_version") != expected_version for value in previous):
+                    raise Conflict("Роль этого запуска уже выбрана.", "model_role_changed")
+                return
+            started = (await conn.execute(select(func.count()).select_from(events).where(
+                events.c.run_id == run_id, events.c.event_type == "MODEL_CALL_STARTED"))).scalar_one()
+            if started:
+                raise Conflict("Нельзя менять роль после вызова модели.", "model_role_changed")
+            await self._event(conn, session, run_id, "MODEL_ROLE_SELECTED", {
+                "role": role, "based_state_version": expected_version, "max_calls": 1})
+
     async def reserve_model_call(self, session_id: str, run_id: str,
-                                 limit: int, provider: str) -> bool:
+                                 limit: int, provider: str, *, run_attempt_limit: int | None = None) -> bool:
         """Reserve an actual attempt in remote/local/test durable budget buckets.
 
         This is an application budget, not a query of the provider's allowance.
-        Gemini/OpenRouter share a hard 40/day and 2/run remote bucket. Ollama has
+        Gemini/OpenRouter share accounting and a 2/run bucket. Gemini is capped
+        at40/day; OpenRouter may explicitly opt up from caller-default40 to50/day
+        for its free request allowance, without resetting existing usage. Groq has
+        an independent default40/day pool, explicitly raisable up to1000/day.
+        These are engineering ceilings, not vendor quota promises. Cloudflare and Z.ai have separate
+        default 40/day caller limits; dedicated evaluation may explicitly raise
+        them up to 2000/day. Cloudflare uses its own explicit setting, so raising
+        the generic Z.ai limit does not expand it. Both default to1/run. Z.ai
+        can explicitly opt into2 same-provider attempts; mixing another remote
+        provider before or after it remains forbidden. Ollama has
         an independent hard 500/day and 1/run local bucket; it is not a test
         adapter. Caller limits can reduce but never increase these ceilings.
         Injected test adapters share a third bucket excluding both actual buckets.
@@ -808,6 +1115,8 @@ class Store:
         """
         if type(limit) is not int or limit < 0:
             raise StoreError("Лимит должен быть целым неотрицательным.", "invalid_budget_limit")
+        if run_attempt_limit is not None and (type(run_attempt_limit) is not int or not 0 <= run_attempt_limit <= 2):
+            raise StoreError("Лимит попыток должен быть целым числом от0до2.", "invalid_budget_limit")
         if not isinstance(provider, str) or not (
             provider in REAL_MODEL_PROVIDERS or provider in LOCAL_MODEL_PROVIDERS or provider == "injected_test_adapter"
             or provider.startswith("test_")
@@ -824,25 +1133,55 @@ class Store:
             day_start = reserved_at.replace(hour=0, minute=0, second=0, microsecond=0)
             event_provider = events.c.payload["provider"].astext
             if provider in REAL_MODEL_PROVIDERS:
-                # New independent Groq account has its own conservative daily
-                # pool. The existing Gemini/OpenRouter shared cap is retained.
-                provider_scope = (event_provider == "groq" if provider == "groq" else
-                    event_provider.in_(sorted(REAL_MODEL_PROVIDERS - {"groq"})))
-                effective_limit, per_run_limit = min(limit, 40), 2
+                # Independent accounts retain their own conservative daily pool.
+                # Shared accounting is retained; caller defaults remain40.
+                provider_scope = (event_provider == provider if provider in INDEPENDENT_REMOTE_PROVIDERS else
+                    event_provider.in_(sorted(REAL_MODEL_PROVIDERS - INDEPENDENT_REMOTE_PROVIDERS)))
+                effective_limit = min(limit, 2000 if provider in {"zai", "cloudflare", "external"} else 1000 if provider in {"groq", "gigachat"} else 50 if provider == "openrouter" else 40)
+                per_run_limit = 1 if provider in SINGLE_ATTEMPT_REMOTE_PROVIDERS else 2
+                if provider == "zai" and run_attempt_limit is not None:
+                    per_run_limit = run_attempt_limit
+                elif run_attempt_limit is not None:
+                    per_run_limit = min(per_run_limit, run_attempt_limit)
             elif provider in LOCAL_MODEL_PROVIDERS:
                 provider_scope = event_provider.in_(sorted(LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = min(limit, 500), 1
             else:
                 provider_scope = event_provider.not_in(sorted(REAL_MODEL_PROVIDERS | LOCAL_MODEL_PROVIDERS))
                 effective_limit, per_run_limit = limit, None
+            roles = (await conn.execute(select(events.c.payload).where(
+                events.c.run_id == run_id, events.c.event_type == "MODEL_ROLE_SELECTED"))).scalars().all()
+            readonly = any(value.get("role") == "readonly_answer_v1" for value in roles)
+            if readonly:
+                if (run["status"] != "running" or session.get("active_run_id") != run_id
+                        or session.get("waiting_reason") == "user_pause"
+                        or any(value.get("based_state_version") != session["state_version"] for value in roles)
+                        or run["based_version"] != session["state_version"]):
+                    raise Conflict("Изменились версия или управление поездкой.", "processing_control_changed")
+                per_run_limit = 1
             if per_run_limit is not None:
-                run_scope = event_provider.in_(sorted(REAL_MODEL_PROVIDERS)) if provider in REAL_MODEL_PROVIDERS else provider_scope
+                run_scope = (True if readonly else event_provider.in_(sorted(REAL_MODEL_PROVIDERS))
+                             if provider in REAL_MODEL_PROVIDERS else provider_scope)
                 run_count = (await conn.execute(select(func.count()).select_from(events).where(
                     events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
                     run_scope,
                 ))).scalar_one()
                 if run_count >= per_run_limit:
                     return False
+                if provider == "zai" and run_count:
+                    other_remote = (await conn.execute(select(func.count()).select_from(events).where(
+                        events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
+                        event_provider.in_(sorted(REAL_MODEL_PROVIDERS - {"zai"})),
+                    ))).scalar_one()
+                    if other_remote:
+                        return False
+                if provider in REAL_MODEL_PROVIDERS and provider not in SINGLE_ATTEMPT_REMOTE_PROVIDERS and run_count:
+                    prior_single_attempt = (await conn.execute(select(func.count()).select_from(events).where(
+                        events.c.event_type == "MODEL_CALL_STARTED", events.c.run_id == run_id,
+                        event_provider.in_(sorted(SINGLE_ATTEMPT_REMOTE_PROVIDERS)),
+                    ))).scalar_one()
+                    if prior_single_attempt:
+                        return False
             count = (await conn.execute(select(func.count()).select_from(events).where(
                 events.c.event_type == "MODEL_CALL_STARTED",
                 events.c.created_at >= day_start,
@@ -933,14 +1272,14 @@ class Store:
         columns = (events.c.event_type, events.c.payload, events.c.created_at, events.c.sequence)
         common = (events.c.event_type.in_(event_types), events.c.payload["provider"].astext == provider,
                   events.c.created_at <= instant)
-        lookback = instant - timedelta(days=1) if provider == "groq" else instant - timedelta(minutes=10)
+        lookback = instant - timedelta(days=1) if provider in INDEPENDENT_REMOTE_PROVIDERS else instant - timedelta(minutes=10)
         async with self.engine.connect() as conn:
             # One statement snapshot for model cooldown and provider-wide limits:
             # a second query must not miss a concurrent account block seen by one.
             rows = (await conn.execute(select(*columns).where(
                 *common, events.c.created_at >= min(day_start, lookback)
             ).order_by(events.c.created_at.desc(), events.c.sequence.desc()))).mappings().all()
-        provider_rows = [row for row in rows if row["created_at"] >= day_start or provider == "groq"]
+        provider_rows = [row for row in rows if row["created_at"] >= day_start or provider in INDEPENDENT_REMOTE_PROVIDERS]
         model_rows = [row for row in rows if row["payload"].get("model") == model and row["created_at"] >= instant - timedelta(minutes=10)]
 
         def answer(available: bool, reason: str, scope: str, until: datetime | None = None,
@@ -957,7 +1296,56 @@ class Store:
                 continue
             payload = row["payload"]
             hint = payload.get("retry_after_seconds")
-            if (provider == "groq" and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
+            if (provider in {"zai", "cloudflare"} and payload.get("code") == "RATE_LIMITED"
+                    and type(payload.get("http_status")) is int and payload["http_status"] == 429):
+                from .rate_failures import classify_rate_failure
+                business = payload.get("business_code")
+                facts = classify_rate_failure(provider, 429, {"error": {"code": business}})
+                if facts["daily_quota_confirmed"]:
+                    until = row["created_at"].replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+                    if until > instant:
+                        return answer(False, "confirmed_daily_quota", "provider", until)
+                    continue
+                if facts["failure_kind"] in {"billing", "usage_quota"}:
+                    if row["created_at"] >= day_start:
+                        return answer(False, "provider_billing_or_usage_limit_reset_unconfirmed", "provider", next_day)
+                    continue
+                if facts["failure_kind"] in {"unknown", "request_rate", "capacity"}:
+                    # Unknown429 is not evidence of a daily quota. This is a
+                    # server wait interval, never a vendor-reset prediction or
+                    # an automatic HTTP retry. It also handles legacy rows.
+                    has_hint = type(hint) is int and 1 <= hint <= 86400
+                    wait = hint if has_hint else 300
+                    until = row["created_at"] + timedelta(seconds=wait)
+                    if until > instant:
+                        return answer(False, "provider_retry_after" if has_hint else "unconfirmed_429_engineering_wait", "provider", until)
+                    continue
+            if (provider == "groq" and payload.get("code") == "RATE_LIMITED"
+                    and type(payload.get("http_status")) is int and payload["http_status"] == 429
+                    and payload.get("limit_source") in {None, "unknown"}):
+                facts = payload.get("rate_limits")
+                facts = facts if isinstance(facts, dict) else {}
+                limit, requested = facts.get("token_limit_from_error"), facts.get("tokens_requested_from_error")
+                consumed = facts.get("tokens_used_from_error", 0)
+                confirmed_day_limit = (facts.get("token_window") == "TPD"
+                    and type(limit) is int and 0 <= limit <= 10**12
+                    and type(requested) is int and 0 < requested <= 10**12
+                    and type(consumed) is int and 0 <= consumed <= 10**12
+                    and consumed + requested > limit)
+                if confirmed_day_limit:
+                    if row["created_at"] >= day_start:
+                        return answer(False, "provider_usage_limit_reset_unconfirmed", "provider", next_day)
+                    continue
+                # Unknown/token-minute 429 is not evidence of an exhausted
+                # daily quota. This is a durable engineering wait only. A new
+                # explicit request still faces the provider's own limits.
+                has_hint = type(hint) is int and 1 <= hint <= 86400
+                until = row["created_at"] + timedelta(seconds=hint if has_hint else 300)
+                if until > instant:
+                    return answer(False, "provider_retry_after" if has_hint else "unconfirmed_429_engineering_wait", "provider", until)
+                continue
+            if (provider in INDEPENDENT_REMOTE_PROVIDERS and payload.get("code") == "RATE_LIMITED" and type(payload.get("http_status")) is int and payload.get("http_status") == 429
+                    and payload.get("limit_source") in {None, "unknown"}
                     and type(hint) is int and 1 <= hint <= 86400):
                 until = row["created_at"] + timedelta(seconds=hint)
                 if until > instant:
@@ -974,5 +1362,5 @@ class Store:
             scope, reason = classify(row["payload"])
             until = row["created_at"] + timedelta(minutes=10)
             if scope == "model" and until > instant:
-                return answer(False, reason, "model", until, allow_fallback=True)
+                return answer(False, reason, "model", until, allow_fallback=provider not in SINGLE_ATTEMPT_REMOTE_PROVIDERS)
         return answer(True, "no_active_cooldown", "model")

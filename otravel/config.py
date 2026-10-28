@@ -19,6 +19,31 @@ class Settings:
     max_llm_calls_per_day: int
     max_llm_calls_per_run: int
     max_local_llm_calls_per_day: int = 500
+    default_search_mode: str = "DEMO"
+    default_hotel_provider: str = "liteapi"
+    default_flight_provider: str = "serpapi"
+    max_cloudflare_llm_calls_per_day: int = 40
+    reference_fx_enabled: bool = False
+    max_groq_llm_calls_per_day: int = 40
+    max_gigachat_llm_calls_per_day: int = 40
+    dynamic_geography_enabled: bool = False
+
+    def __post_init__(self):
+        if type(self.dynamic_geography_enabled) is not bool:
+            raise ValueError("Dynamic geography flag must be boolean")
+        for value, allowed in (
+            (self.default_search_mode, {"DEMO", "HYBRID"}),
+            (self.default_hotel_provider, {"liteapi", "serpapi"}),
+            (self.default_flight_provider, {"duffel", "serpapi"}),
+        ):
+            if value not in allowed:
+                raise ValueError("Unsupported default travel search configuration")
+        if type(self.max_cloudflare_llm_calls_per_day) is not int or not 0 <= self.max_cloudflare_llm_calls_per_day <= 2000:
+            raise ValueError("Cloudflare application call budget must be an integer from 0 to 2000")
+        if type(self.max_groq_llm_calls_per_day) is not int or not 0 <= self.max_groq_llm_calls_per_day <= 1000:
+            raise ValueError("Groq application call budget must be an integer from 0 to 1000")
+        if type(self.max_gigachat_llm_calls_per_day) is not int or not 0 <= self.max_gigachat_llm_calls_per_day <= 1000:
+            raise ValueError("GigaChat application call budget must be an integer from 0 to 1000")
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -35,12 +60,25 @@ class Settings:
             max_llm_calls_per_day=int(os.getenv("MAX_LLM_CALLS_PER_DAY", "40")),
             max_llm_calls_per_run=int(os.getenv("MAX_LLM_CALLS_PER_RUN", "2")),
             max_local_llm_calls_per_day=int(os.getenv("MAX_LOCAL_LLM_CALLS_PER_DAY", "500")),
+            default_search_mode=os.getenv("DEFAULT_SEARCH_MODE", "DEMO"),
+            default_hotel_provider=os.getenv("DEFAULT_HOTEL_PROVIDER", "liteapi"),
+            default_flight_provider=os.getenv("DEFAULT_FLIGHT_PROVIDER", "serpapi"),
+            max_cloudflare_llm_calls_per_day=int(os.getenv("MAX_CLOUDFLARE_LLM_CALLS_PER_DAY", "40")),
+            reference_fx_enabled=enabled("REFERENCE_FX_ENABLED"),
+            max_groq_llm_calls_per_day=int(os.getenv("MAX_GROQ_LLM_CALLS_PER_DAY", "40")),
+            max_gigachat_llm_calls_per_day=int(os.getenv("MAX_GIGACHAT_LLM_CALLS_PER_DAY", "40")),
+            dynamic_geography_enabled=enabled("DYNAMIC_GEOGRAPHY_ENABLED"),
         )
 
     def provider_settings(self) -> dict[str, Any]:
         keys = [
+            "LLM_API_FORMAT", "LLM_BASE_URL", "LLM_MODEL", "LLM_API_KEY", "LLM_EXTERNAL_API_CONFIRMED",
+            "LLM_JSON_MODE", "LLM_TOKEN_LIMIT_FIELD", "LLM_AUTH_STYLE", "LLM_ANTHROPIC_VERSION",
             "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL",
-            "GROQ_API_KEY", "GROQ_MODEL",
+            "GROQ_API_KEY", "GROQ_MODEL", "GROQ_REASONING_EFFORT", "GROQ_STRUCTURED_TRANSPORT_ENABLED", "GROQ_TRANSPORT_VERSION",
+            "GIGACHAT_AUTH_KEY", "GIGACHAT_MODEL", "GIGACHAT_CA_FILE",
+            "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_MODEL",
+            "ZAI_API_KEY", "ZAI_MODEL",
             "LITEAPI_API_KEY", "LITEAPI_MODE", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY",
             "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY",
             "TRAVELPAYOUTS_API_TOKEN",
@@ -49,11 +87,19 @@ class Settings:
         ]
         values: dict[str, Any] = {key: os.getenv(key, "") for key in keys}
         values.update({
+            "DYNAMIC_GEOGRAPHY_ENABLED": enabled("DYNAMIC_GEOGRAPHY_ENABLED"),
+            "GROQ_TRANSPORT_VERSION": os.getenv("GROQ_TRANSPORT_VERSION", "1"),
             "GEMINI_MODEL": os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
             "OPENROUTER_MODEL": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"),
             "GEMINI_FREE_TIER_CONFIRMED": enabled("GEMINI_FREE_TIER_CONFIRMED"),
             "GROQ_MODEL": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
+            "GIGACHAT_MODEL": os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra"),
+            "GIGACHAT_FREEMIUM_CONFIRMED": enabled("GIGACHAT_FREEMIUM_CONFIRMED"),
             "GROQ_FREE_TIER_CONFIRMED": enabled("GROQ_FREE_TIER_CONFIRMED"),
+            "CLOUDFLARE_MODEL": os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"),
+            "CLOUDFLARE_FREE_TIER_CONFIRMED": enabled("CLOUDFLARE_FREE_TIER_CONFIRMED"),
+            "ZAI_MODEL": os.getenv("ZAI_MODEL", "glm-4.7-flash"),
+            "ZAI_FREE_TIER_CONFIRMED": enabled("ZAI_FREE_TIER_CONFIRMED"),
             "SERPAPI_FREE_TIER_CONFIRMED": enabled("SERPAPI_FREE_TIER_CONFIRMED"),
             "HOTELBEDS_TEST_CONFIRMED": enabled("HOTELBEDS_TEST_CONFIRMED"),
             "RATEHAWK_TEST_CONFIRMED": enabled("RATEHAWK_TEST_CONFIRMED"),
@@ -69,15 +115,32 @@ class Settings:
 
 
 def provider_status() -> dict[str, Any]:
+    from .external_llm import external_status
+
+    external = external_status({})
     return {
         "_runtime": {"llm_provider": os.getenv("LLM_PROVIDER", "openrouter"),
-                     "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b") if os.getenv("LLM_PROVIDER") == "ollama"
+                     "model": external.get("model") if os.getenv("LLM_PROVIDER") == "external"
+                              else os.getenv("OLLAMA_MODEL", "qwen3.5:4b") if os.getenv("LLM_PROVIDER") == "ollama"
                               else os.getenv("GEMINI_MODEL", "gemini-3.8-flash") if os.getenv("LLM_PROVIDER") == "gemini"
                               else os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b") if os.getenv("LLM_PROVIDER") == "groq"
+                              else os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra") if os.getenv("LLM_PROVIDER") == "gigachat"
+                              else os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast") if os.getenv("LLM_PROVIDER") == "cloudflare"
+                              else os.getenv("ZAI_MODEL", "glm-4.7-flash") if os.getenv("LLM_PROVIDER") == "zai"
                               else os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")},
         "gemini": {"configured": bool(os.getenv("GEMINI_API_KEY")), "free_tier_confirmed": enabled("GEMINI_FREE_TIER_CONFIRMED"), "model": os.getenv("GEMINI_MODEL", "gemini-3.8-flash")},
+        "external": external,
+        "gigachat": {"configured": bool(os.getenv("GIGACHAT_AUTH_KEY")), "model": os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra"),
+            "freemium_confirmed": enabled("GIGACHAT_FREEMIUM_CONFIRMED"), "paid_fallback": False, "parallel_flows": 1},
         "openrouter": {"configured": bool(os.getenv("OPENROUTER_API_KEY")), "model": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"), "backup_model": os.getenv("OPENROUTER_BACKUP_MODEL", ""), "paid_fallback": False},
-        "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False},
+        "groq": {"configured": bool(os.getenv("GROQ_API_KEY")), "model": os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"), "free_tier_confirmed": enabled("GROQ_FREE_TIER_CONFIRMED"), "paid_fallback": False,
+            **({"include_reasoning": False} if os.getenv("GROQ_MODEL") == "openai/gpt-oss-120b" else {}),
+            **({"structured_transport": True,
+                "transport_version": int(os.getenv("GROQ_TRANSPORT_VERSION")) if os.getenv("GROQ_TRANSPORT_VERSION") in {"1","2","3"} else 1,
+                "reasoning_effort": os.getenv("GROQ_REASONING_EFFORT") if os.getenv("GROQ_REASONING_EFFORT") in {"none", "default", "low", "medium", "high"} else None}
+                if enabled("GROQ_STRUCTURED_TRANSPORT_ENABLED") else {})},
+        "cloudflare": {"configured": bool(os.getenv("CLOUDFLARE_API_TOKEN") and os.getenv("CLOUDFLARE_ACCOUNT_ID")), "model": os.getenv("CLOUDFLARE_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"), "free_tier_confirmed": enabled("CLOUDFLARE_FREE_TIER_CONFIRMED"), "paid_fallback": False},
+        "zai": {"configured": bool(os.getenv("ZAI_API_KEY")), "model": os.getenv("ZAI_MODEL", "glm-4.7-flash"), "free_tier_confirmed": enabled("ZAI_FREE_TIER_CONFIRMED"), "paid_fallback": False},
         "ollama": {"configured": os.getenv("LLM_PROVIDER") == "ollama", "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b"), "source": "LOCAL_MODEL", "paid_fallback": False},
         "liteapi": {"configured": bool(os.getenv("LITEAPI_API_KEY")), "mode": os.getenv("LITEAPI_MODE", "sandbox")},
         "duffel": {"configured": bool(os.getenv("DUFFEL_ACCESS_TOKEN")), "mode": "sandbox"},

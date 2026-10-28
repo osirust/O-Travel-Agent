@@ -31,7 +31,11 @@ def test_common_country_aliases_require_city(phrase, code):
 @pytest.mark.parametrize("phrase,code", [("в Грузию хочу", "GE"), ("Belarus", "BY"), ("в Таиланд", "TH"), ("Египте", "EG"), ("China", "CN"), ("в Японию", "JP"), ("France", "FR"), ("Германии", "DE"), ("в Черногорию", "ME"), ("in Sri Lanka", "LK"), ("USA", "US"), ("United Kingdom", "GB")])
 def test_other_curated_countries_never_invent_covered_city(phrase, code):
     result = parse_destination(phrase)
-    assert result["requested_destination"] == {"kind": "country", "name": result["requested_destination"]["name"], "country_code": code}
+    expected = {"kind": "country", "name": result["requested_destination"]["name"], "country_code": code}
+    if code == "GE":
+        # Curated identity was extended after CF043, while search coverage did not.
+        expected["suggested_cities"] = [{"name": "Тбилиси", "country_code": "GE", "available": False}]
+    assert result["requested_destination"] == expected
     assert result["clarification"]
 
 

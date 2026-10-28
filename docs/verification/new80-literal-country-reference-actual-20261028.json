@@ -1,0 +1,98 @@
+{
+  "format": "otravel.current_literal_country_reference.actual_layers.v1",
+  "checked_at_utc": "2026-10-28T13:44:13.385945+00:00",
+  "finding_id": "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+  "status": "DECLARED_LAYERED_SCOPE_PASS_DYNAMIC_BRANCH_NOT_SELECTED_BY_FRESH_MODEL",
+  "base_git_commit": "ae7d2b45f654be0dfd9bc5b0660db0c3d23198d3",
+  "git_release_claimed": false,
+  "physical_package_sha256": "7fc51a26ceb0ae2a3d4fc1a2521c8afed84fe1cd921d02b6884228b3b2359880",
+  "source_scope": "Private immutable C snapshot of current E source, not installed production or a Git release.",
+  "logical_delta_from_base": [
+    "otravel/place_resolution.py",
+    "otravel/place_run.py"
+  ],
+  "double_source_manifest_verified": true,
+  "actual_totals": {
+    "zai_glm45_http": 1,
+    "geocoding_http": 1,
+    "local_models": 0,
+    "paid_fallback": false,
+    "booking_or_payment": 0
+  },
+  "fresh_model_layer": {
+    "http_status": 200,
+    "run_status": "completed",
+    "message": "Тогда Сербию отменяем, выбираю Санкт-Петербург в России. Москву оставь городом отправления.",
+    "result": "SavedSaintPetersburg/RU, retainedMoscow/party and askedcheckin.",
+    "dynamic_branch": "NOT_REACHED: model chose the valid legacy upsert(city) operation instead of resolve_place.",
+    "original_unconditional_dynamic_checks_preserved": "First report remainsNOT_ALL_PASS with two source checks; they are adjudicatedNOT_REACHED here, not source failure or wrong country state."
+  },
+  "captured_contract_actual_source_companion": {
+    "actual_new_llm_http": 0,
+    "actual_geocoding_http": 1,
+    "request": {
+      "name": "санкт-петербург",
+      "countryCode": "RU",
+      "language": "ru"
+    },
+    "http_status": 200,
+    "checks": [
+      {
+        "id": "geo_actual_completed",
+        "status": "PASS"
+      },
+      {
+        "id": "geo_current_RU_reached_source",
+        "status": "PASS"
+      },
+      {
+        "id": "geo_source_candidates_only_RU",
+        "status": "PASS"
+      },
+      {
+        "id": "geo_no_automatic_candidate_admission",
+        "status": "PASS"
+      },
+      {
+        "id": "geo_unrelated_party_origin_kept",
+        "status": "PASS"
+      },
+      {
+        "id": "canary_no_orders_created",
+        "status": "PASS"
+      },
+      {
+        "id": "actual_http_limits_respected",
+        "status": "PASS"
+      }
+    ],
+    "candidate_countries": [
+      "RU"
+    ],
+    "country_reference": {
+      "country_iso2": "RU",
+      "source_provider": "unicode-cldr",
+      "source_sha256": "74dd233f299cb6f5f3a620dd53f62d1a778aff4bb4799872725b384109eb5fa4",
+      "role": "destination",
+      "stay_id": "new-stay-1"
+    },
+    "no_automatic_city_admission": true,
+    "scope": "Captured original actual013 model contract drives the production coordinator and real Directory; this is not another fresh-model path."
+  },
+  "cleanup": {
+    "both_own_pg_scopes_removed": true,
+    "production_db_or_runtime_changed": false,
+    "newgo_limits_respected": "1actualZai and1geo, within1/2 allowance"
+  },
+  "private_evidence_sha256": {
+    "fresh_model": "3a9a1968ca366d0d93ce86410ea744fcf8b84d00ea29cdd363604ec960bc6cb9",
+    "actual_source_companion": "7477e5e6e8db576c4aa6069b3d2c853f8a13e299aad61737bf64a7fef424dabe"
+  },
+  "old_actual_failure_retained": "docs/verification/native-integrated-release-canaries-20261028.json",
+  "controlled_repair_evidence": "docs/verification/new80-literal-country-reference-repair-20261028.json",
+  "limitations": [
+    "Two separately declared layers and fresh own DBs, not one complete natural-language booking flow.",
+    "No deployment or full-suite qualification of a new Git release is implied.",
+    "Calendar schema/correction failures and complete40/106 acceptance remain separate open work."
+  ]
+}

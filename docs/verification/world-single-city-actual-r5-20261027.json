@@ -1,0 +1,188 @@
+{
+  "status": "ACTUAL_SINGLE_CITY_SEARCH_REFRESH_SIMULATED_CONFIRM_RETRY_PASS",
+  "scope": "Four public API user messages from an empty trip, strong remote model, actual source HTTP, one simulated order",
+  "base_git_commit": "25461f5b14393b8390e71d70fd511652e245ae1d",
+  "working_snapshot_sha256": "f423a80f455269434d540e50da7b9a2d23d405649914b983fcefe69e54f78fd7",
+  "actual_report_private": "/home/aegml/checks/world-actual-r5-20261027-174732/report.json",
+  "actual_report_sha256": "8877ff8d4817198aa743b4d290ea3c7615d88d3b5a46c671fba45b5ed203ef0d",
+  "user_turns": 4,
+  "model": "openai/gpt-oss-120b",
+  "provider": "groq",
+  "model_http_requests": 1,
+  "source_http_requests": 13,
+  "http_counts": [
+    {
+      "kind": "model",
+      "host": "api.groq.com",
+      "method": "POST",
+      "status": 200,
+      "requests": 1
+    },
+    {
+      "kind": "source",
+      "host": "api.duffel.com",
+      "method": "GET",
+      "status": 200,
+      "requests": 3
+    },
+    {
+      "kind": "source",
+      "host": "api.duffel.com",
+      "method": "POST",
+      "status": 201,
+      "requests": 2
+    },
+    {
+      "kind": "source",
+      "host": "api.liteapi.travel",
+      "method": "GET",
+      "status": 200,
+      "requests": 2
+    },
+    {
+      "kind": "source",
+      "host": "api.liteapi.travel",
+      "method": "POST",
+      "status": 200,
+      "requests": 1
+    },
+    {
+      "kind": "source",
+      "host": "book.liteapi.travel",
+      "method": "POST",
+      "status": 200,
+      "requests": 1
+    },
+    {
+      "kind": "source",
+      "host": "geocoding-api.open-meteo.com",
+      "method": "GET",
+      "status": 200,
+      "requests": 2
+    },
+    {
+      "kind": "source",
+      "host": "www.cbr.ru",
+      "method": "GET",
+      "status": 200,
+      "requests": 2
+    }
+  ],
+  "semantic_checks": [
+    {
+      "name": "country_does_not_select_capital",
+      "pass": true
+    },
+    {
+      "name": "explicit_city_identity_AR_persisted",
+      "pass": true
+    },
+    {
+      "name": "origin_preserved",
+      "pass": true
+    },
+    {
+      "name": "one_adult_no_child",
+      "pass": true
+    },
+    {
+      "name": "dated_stay_7_nights",
+      "pass": true
+    },
+    {
+      "name": "room_allocated",
+      "pass": true
+    },
+    {
+      "name": "nationality_RU",
+      "pass": true
+    },
+    {
+      "name": "budget_300k_RUB",
+      "pass": true
+    },
+    {
+      "name": "no_unrequested_preferences",
+      "pass": true
+    },
+    {
+      "name": "all_explicit_facts_saved_in_one_compound_turn",
+      "pass": true
+    },
+    {
+      "name": "simulated_confirmation_retry_idempotent",
+      "pass": true
+    }
+  ],
+  "preview_status": 200,
+  "confirm_status": 200,
+  "repeat_status": 200,
+  "orders_count": 1,
+  "repeat_same_order": true,
+  "order_type": "BOOKED_DEMO",
+  "booking_created_at_supplier": false,
+  "quoted_total_minor": 26420016,
+  "currency": "RUB",
+  "source_type": "MIXED",
+  "coverage_complete": true,
+  "ready_for_real_booking": false,
+  "component_source_types": [
+    "SANDBOX",
+    "SANDBOX",
+    "SANDBOX",
+    "DEMO"
+  ],
+  "reference_fx_only": true,
+  "actual_property_photo_items": 1,
+  "photo_hotel_identity_matches": true,
+  "source_selection_scope": [
+    {
+      "kind": "hotel",
+      "provider": "liteapi",
+      "scan_limit": 600,
+      "component_id": "new-stay-1",
+      "eligible_rows": 2,
+      "scan_truncated": false,
+      "rejected_reasons": [
+        "mandatory_fees_unknown"
+      ],
+      "source_rows_examined": 132,
+      "source_rows_received": 132,
+      "source_rows_not_examined": 0
+    },
+    {
+      "kind": "flight",
+      "provider": "duffel",
+      "scan_limit": 600,
+      "component_id": "leg-8a46a568-8792-4007-9e06-4ffc18c6001c",
+      "eligible_rows": 29,
+      "scan_truncated": false,
+      "rejected_reasons": [],
+      "source_rows_examined": 29,
+      "source_rows_received": 29,
+      "source_rows_not_examined": 0
+    },
+    {
+      "kind": "flight",
+      "provider": "duffel",
+      "scan_limit": 600,
+      "component_id": "leg-8448f7e2-c4bc-4f32-811c-87b081250860",
+      "eligible_rows": 45,
+      "scan_truncated": false,
+      "rejected_reasons": [],
+      "source_rows_examined": 45,
+      "source_rows_received": 45,
+      "source_rows_not_examined": 0
+    }
+  ],
+  "local_model_calls": 0,
+  "paid_calls": 0,
+  "payments": 0,
+  "runtime8084_updated": false,
+  "limitations": [
+    "One adult, one city and one room; not proof of every group or multi-city dialogue",
+    "Sandbox hotel/flights and DEMO transfer, not live supplier booking",
+    "Old R1/R2/R3 failures and R4 test-client 422/addendum retained separately",
+    "Full80/106 actual language acceptance remains open"
+  ]
+}

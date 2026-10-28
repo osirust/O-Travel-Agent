@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "TRAVEL-LITEAPI-PREBOOK409-NATURAL-001",
+  "status": "ORIGINAL409_CAUSE_UNKNOWN_FIRST_SELECTED_OFFER_DIAGNOSTIC200",
+  "scope": "Read-only original saved snapshot analysis plus one explicitly authorized exact selected sandbox prebook. No new search, booking, payment or state mutation.",
+  "original_evidence": {
+    "continuation_run_sha256": "10e6bd720beaee38ebd1093f18dd1857029fe0a9ea7ba510fad1938e322552a1",
+    "continuation_report_sha256": "7aad5863b5585122f11df6a353639ca7ec474c9cd786cad3bc1a6eee3b374c70",
+    "preview_sha256": "e79ec879fb0424b726c5dd84bcc1739b148b3a7d914574eabffe692fcaa426bf",
+    "preview_file_written_at_utc": "2026-10-27T05:45:13.798634+00:00",
+    "preview": {
+      "status": 503,
+      "body": {
+        "error": {
+          "code": "HTTP_ERROR",
+          "message": "Провайдер отклонил запрос.",
+          "retryable": false,
+          "provider": "liteapi",
+          "upstream_http_status": 409
+        }
+      }
+    },
+    "failure_cause": "UNKNOWN",
+    "provider_error_body_retained": false,
+    "failed_hotel_index_retained": false,
+    "note": "Existing events.json predates the continuation quote attempt. Later success on the first hotel does not prove which original hotel failed or why."
+  },
+  "selected_hotels": [
+    {
+      "hotel_id": "lp8a2f3",
+      "native_offer_sha256": "e3a1ec6a2ea94c94fa7d93d802efe8b42e39d71b6451d76970be102d64e163d0",
+      "native_offer_length": 2324,
+      "source_type": "SANDBOX",
+      "retrieved_at": "2026-10-27T05:44:49.852085+00:00",
+      "expires_at": "2026-10-27T05:49:49.852085+00:00",
+      "saved_expiry_after_failed_preview_file_write": true,
+      "search_request": {
+        "checkin": "2026-11-10",
+        "checkout": "2026-11-13",
+        "currency": "RUB",
+        "hotelIds": [
+          "lp6a87c",
+          "lp1f85b",
+          "lp8a2f3"
+        ],
+        "occupancies": [
+          {
+            "adults": 1,
+            "children": [
+              7
+            ]
+          },
+          {
+            "adults": 1,
+            "children": [
+              12
+            ]
+          }
+        ],
+        "guestNationality": "RU"
+      },
+      "currency": "RUB",
+      "amount_minor": 8973388,
+      "allocation_verified": true,
+      "fees_included": true
+    },
+    {
+      "hotel_id": "lp55de7",
+      "native_offer_sha256": "c522664aee1c1454be9792b473cdbfca5eb685e1c9c35c9b111ce79c676d57ea",
+      "native_offer_length": 2044,
+      "source_type": "SANDBOX",
+      "retrieved_at": "2026-10-27T05:44:53.693513+00:00",
+      "expires_at": "2026-10-27T05:49:53.693513+00:00",
+      "saved_expiry_after_failed_preview_file_write": true,
+      "search_request": {
+        "checkin": "2026-11-13",
+        "checkout": "2026-11-17",
+        "currency": "RUB",
+        "hotelIds": [
+          "lp55de7",
+          "lp4f7bd",
+          "lp22e91"
+        ],
+        "occupancies": [
+          {
+            "adults": 1,
+            "children": [
+              7
+            ]
+          },
+          {
+            "adults": 1,
+            "children": [
+              12
+            ]
+          }
+        ],
+        "guestNationality": "RU"
+      },
+      "currency": "RUB",
+      "amount_minor": 15938122,
+      "allocation_verified": true,
+      "fees_included": true
+    }
+  ],
+  "payload_contract": {
+    "endpoint": "POST https://book.liteapi.travel/v3.0/rates/prebook",
+    "body_fields": [
+      "offerId",
+      "usePaymentSdk"
+    ],
+    "offerId": "Exact opaque selected search offer ID; hash only exported.",
+    "usePaymentSdk": false,
+    "explicit_occupancy_in_prebook_body": false,
+    "explanation": "The official prebook contract takes the selected offerId from the rates search. Per-room guest facts are revalidated from its response; a repeated search is not a selected-offer refresh."
+  },
+  "one_actual_diagnostic": {
+    "started_at": "2026-10-27T05:49:14.183604+00:00",
+    "selected_hotel_id": "lp8a2f3",
+    "selected_offer_sha256": "e3a1ec6a2ea94c94fa7d93d802efe8b42e39d71b6451d76970be102d64e163d0",
+    "expires_at": "2026-10-27T05:49:49.852085+00:00",
+    "http_calls": 1,
+    "http_status": 200,
+    "raw_response_sha256": "49ffd1661116e126064929e788cb7d86c93a51eea5f7d2109d2a6e2cb0be0e64",
+    "status": "SELECTED_SANDBOX_PREBOOK_PASS",
+    "same_native_id": true,
+    "refreshed_amount_minor": 8973388,
+    "currency": "RUB",
+    "allocation_verified": true,
+    "fees_included": true,
+    "latency_ms": 13670
+  },
+  "attribution": {
+    "opaque_rate_identity_or_request_normalization_bug_confirmed": false,
+    "original409_proven_to_be_no_availability": false,
+    "original409_proven_to_be_expired_local_offer": false,
+    "original409_proven_to_be_price_change": false,
+    "first_selected_sandbox_offer_was_refreshable": true,
+    "second_selected_hotel_diagnostic_attempted": false,
+    "no_supplier_replacement_or_expiry_bypass": true
+  },
+  "recommended_human_handling_not_implemented_here": [
+    "Do not map every409 to no availability. Official errors require error.code, not HTTP status alone.",
+    "When a future captured prebook error is code2001, mark the selected tariff unconfirmed/unavailable-or-price-changed, keep the trip, revoke old quote/consent and request a new explicit search/selection.",
+    "When200 returns a changed price, validate fresh room/fee/constraint evidence and show a new quote with the changed total before fresh user confirmation.",
+    "For an unknown409, show that the supplier did not confirm the selected tariff, with safe provider/status metadata. Do not invent its reason or automatically select another rate."
+  ],
+  "primary_references": [
+    "https://docs.liteapi.travel/reference/post_rates-prebook",
+    "https://docs.liteapi.travel/reference/api-errors-for-hotel-booking-workflow"
+  ],
+  "safety": {
+    "http_calls": 1,
+    "model_calls": 0,
+    "search_calls": 0,
+    "booking_calls": 0,
+    "payment_calls": 0,
+    "database_mutations": 0,
+    "native_changes": 0,
+    "profile_changes": 0,
+    "automatic_retries": 0
+  },
+  "source_code_changes": 0,
+  "remaining": [
+    "Original upstream409 body and exact failed hotel are unknown.",
+    "No end-to-end successful preview/confirmation was completed for this natural-query continuation by this diagnostic.",
+    "Any semantic error normalization requires a separately approved bounded change and tests; this record does not change runtime behavior."
+  ]
+}

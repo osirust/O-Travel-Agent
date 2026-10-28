@@ -1,0 +1,96 @@
+{
+  "format": "otravel.source_offer_scan.v1",
+  "finding_id": "HARNESS-001-SOURCE-OFFER-PREFILTER-CAP-001",
+  "status": "ACTUAL_DATA_ATTRIBUTION_OLD_C_REPRODUCED_NEW_CONTROLLED_PASS_ACTUAL_R4_PENDING",
+  "historical_actual_R3": {
+    "report": "/home/aegml/checks/world-actual-r3-20261027-161831/report.json",
+    "package_sha256": "37d0dfd50b9a8113111e18608bc937dc30943dfddf85814c0aad9ec07c024f17",
+    "raw_rate_body_captured": false,
+    "result": "PARTIAL: hotel and transfer missing, two SANDBOX flight offers retained",
+    "original_report_modified": false
+  },
+  "separate_operator_diagnostic": {
+    "folder": "/home/aegml/checks/lite-fees-diagnostic-20261027-163603-4f750dd8",
+    "http_count": 2,
+    "http_statuses": [200, 200],
+    "model_calls": 0,
+    "requests": ["LiteAPI hotel lookup limit3", "LiteAPI rates with recorded dates/RUB/RU/occupancies"],
+    "same_historical_response_bytes_claimed": false,
+    "normalized_offers": 120,
+    "hotel_bundle_counts": [80, 1, 39],
+    "excluded_fee_offers": 118,
+    "included_fee_offers": 2,
+    "first30_fee_known_offers": 0,
+    "issues": {"excluded_fees": 118},
+    "null_or_malformed_fee_cause_in_this_read": false,
+    "fully_included_candidates": [
+      {"global_index0": 81, "position1": 82, "hotel_index0": 2, "bundle_index0": 0,
+        "amount": "172664.27", "currency": "RUB", "included_tax_already_inside_total": "29964.93",
+        "allocation_verified": true, "capacity_verified": true, "mandatory_fees_known": true, "issues": []},
+      {"global_index0": 83, "position1": 84, "hotel_index0": 2, "bundle_index0": 2,
+        "amount": "173538.08", "currency": "RUB", "included_tax_already_inside_total": "30116.57",
+        "allocation_verified": true, "capacity_verified": true, "mandatory_fees_known": true, "issues": []}
+    ],
+    "excluded_numeric_examples": [
+      {"included": false, "amount": "848.37", "currency": "RUB"},
+      {"included": false, "amount": "851.60", "currency": "RUB"}
+    ]
+  },
+  "root_cause": "Hotel response binding and generic choose both sliced raw rows[:30] before proof eligibility. On the diagnostic120-offer layout, the first30 all belong to the first hotel, while both fully priced alternatives are82/84.",
+  "repair": {
+    "file": "otravel/orchestrator.py",
+    "sha256": "44ad1b37b462d03f21a5ffc9c4bd871a888c256e2caacac7bc04d63b4bbaba6a",
+    "max_rows_examined_per_component": 600,
+    "selection": "Minimum among all proof-eligible candidates inside the bounded scan",
+    "hotel_binding_outer_scan_fixed": true,
+    "generic_choose_scan_fixed": true,
+    "proof_guards_relaxed": false,
+    "provider_fee_parser_changed": false,
+    "excluded_fees_summed_or_promoted_to_included": false,
+    "additional_http_requests_created": false,
+    "diagnostics_location": "Result.selection_diagnostics, outside offers/economic snapshot hashes",
+    "comparison_scope": "first_600_returned_offers_per_component_not_global_market_minimum"
+  },
+  "primary_contract": {
+    "url": "https://docs.liteapi.travel/docs/hotel-rates-api-json-data-structure",
+    "used_meaning": "retailRate/offerRetailRate already contain included taxes; excluded fees are payable at property; explicit taxesAndFees null is distinct from a missing key.",
+    "null_already_supported_before_fix": true,
+    "included_tax_added_twice": false
+  },
+  "fixture": {
+    "path": "fixtures/regression/lite-fees-included-projection-20261027.json",
+    "sha256": "13d7d6924c2dd9f6ac3980f454ec3a802906252316c4cb89ace712b66f5f5da1",
+    "scope": "Actual numeric/occupancy/fee/cancellation projection only; hotel/rate/native offer IDs omitted; not reusable live inventory"
+  },
+  "verification": {
+    "test_file": "tests/test_source_offer_scan.py",
+    "sha256": "215720757810fd05690ffaa720021cb666172ab49a9e8ab0b4862935dccd9c85",
+    "new_checks": 11,
+    "old_immutable_C_red": {"junit": ".local/evaluation/after80-20261027/source-offer-scan-old-r3-red.xml",
+      "sha256": "b49d631b881c96499ce0863dc9a9be43e9d8cb24a5762205cad720d6ffda42f8",
+      "failed": 1, "seconds": 1.13, "loaded_orchestrator_path_asserted": true},
+    "current_related_green": {"junit": ".local/evaluation/after80-20261027/source-offer-scan-related-final.xml",
+      "sha256": "6bb9970b7c0a243cfb0db41db6422f2ee373ba904db3d7616383829cc6e30031",
+      "passed": 105, "failed": 0, "skipped": 0, "seconds": 3.82},
+    "ruff_new_test": "PASS",
+    "new_actual_model_or_source_calls_by_tests": 0,
+    "sql_or_native_changes_by_tests": 0,
+    "controls": [
+      "80 fee-excluded prefix offers cannot hide valid82/84; lowest fully included total chosen.",
+      "Both actual included DTOs pass the unchanged fee/allocation/capacity normalizer.",
+      "Fees, insufficient capacity, stale lifetime, invalid source and hard breakfast requirement still reject unsuitable late quotes.",
+      "Row600 is considered, row601 is unexamined; limit/truncation is explicit.",
+      "Minimum is considered beyond the first30 eligible rows inside the bounded600 scan.",
+      "Hard whole-trip budget remains enforced and included taxes are not double counted.",
+      "Selection statistics do not enter source offer hashes."
+    ]
+  },
+  "documentation": {"path": "docs/testing/SOURCE_OFFER_SCAN.md",
+    "sha256": "f7fa70d40f5c3175e14b58e90dc92f9c4b67e51b96b35d7fdc810e9b220117a6"},
+  "limitations": [
+    "The original R3 rate response was not saved. A separate read plus unchanged-C counterexample proves this cap defect; old R3 outcomes are not rewritten.",
+    "Controlled105 PASS is not actual R4, worldwide tariff availability or live purchase acceptance.",
+    "Known excluded fees need a separate prepaid/pay-at-property ledger before full-cost support; this patch does not allow them.",
+    "A ready-price candidate still requires source refresh and explicit simulated confirmation; billing and real booking remain disabled."
+  ]
+}

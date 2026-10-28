@@ -1,0 +1,159 @@
+{
+  "format": "otravel.frontend_actual_handoff.v1",
+  "checked_at_utc": "2026-10-28T13:29:36.340021+00:00",
+  "status": "UI_CONNECTED_PHOTOS_AND_NAVIGATION_VERIFIED_NLU_AND_CHECKOUT_OPEN",
+  "url": "http://localhost:18082/#studio",
+  "runtime": {
+    "upstream": "http://127.0.0.1:8084",
+    "backend_core": "ae7d2b45",
+    "backend_core_identity_scope": "R25 native readiness supplied by root; the UI probe verifies health/provider responses, not a cryptographic runtime measurement",
+    "provider": "zai",
+    "model": "glm-4.5-flash",
+    "frontend_asset": "index-DUzf7TCh.js",
+    "frontend_uncommitted_guard_files_sha256": {
+      "frontend/src/lib/session.js": "cd2f203679d958d9048ec05bdd04fa92373209aae2ed2b32da3040ce01d2bb76",
+      "frontend/tests/integration-contract.test.js": "9f84c6808883dc015ed6a7a90a4c3d1685cd534547c8427a29943f6837f6057c"
+    },
+    "frontend_deployment": "Exact owned manually started running container; nginx upstream reload and dist copy only. No new start/stop/recreate of the serving container.",
+    "previous_start_policy_block": "Two automatic review denials were retained; the human later started the exact container manually. No alternative start was used."
+  },
+  "checks": {
+    "frontend_unit": {
+      "passed": 38,
+      "failed": 0,
+      "scope": "Node contract/session helpers, including local-cart whole-plan navigation and completed-order automatic-search guards"
+    },
+    "production_build": {
+      "passed": true,
+      "javascript_kb": 341.2,
+      "gzip_kb": 104.85,
+      "scope": "Pinned Node build image, npm ci from existing lock; no dependency upgrades"
+    },
+    "photos": {
+      "scope": "Real UI-originated Serp hotel search after an explicit typed fixture seed; not an NLU-derived trip",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "offers": 20,
+      "current_r25_property_binding_verified": true,
+      "first_decoded_dimensions": [
+        5614,
+        3740
+      ],
+      "second_gallery_image_decoded": true,
+      "first_url_sha256": "05076f074c441ce02e88a9392f1b462b291f4b6ed983de1e965866f5d5bc44cc",
+      "amount_minor": 1378200,
+      "currency": "RUB",
+      "rendered_price": "13 782 ₽",
+      "availability_or_bookability_claimed": false,
+      "desktop_visual_verified": true,
+      "mobile_scope": "Earlier provider-photo probe checked 390px layout/no horizontal overflow. Its screenshot shows the top viewport; no separate current-R25 mobile checkout claim."
+    },
+    "whole_plan": {
+      "scope": "Explicit typed fixture, actual HYBRID UI search and suppliers; not fresh language intake",
+      "run_status": "completed",
+      "plan_count": 1,
+      "source_type": "MIXED",
+      "total_minor": 5410120,
+      "currency": "RUB",
+      "components": [
+        {
+          "kind": "hotel",
+          "source_type": "SANDBOX",
+          "provider": "liteapi"
+        },
+        {
+          "kind": "flight",
+          "source_type": "SANDBOX",
+          "provider": "duffel"
+        },
+        {
+          "kind": "flight",
+          "source_type": "SANDBOX",
+          "provider": "duffel"
+        },
+        {
+          "kind": "transfer",
+          "source_type": "DEMO"
+        }
+      ],
+      "violations": [],
+      "logical_source_tools": 5,
+      "exact_supplier_http": "UNKNOWN_NOT_EQUAL_TO_LOGICAL_SOURCE_TOOLS"
+    },
+    "navigation": {
+      "status": "PASS_CURRENT_RENDER_AND_REQUEST_BINDING_SCOPE",
+      "standalone_hotel_selected": true,
+      "separate_whole_plan_action_visible_enabled": true,
+      "label": "Проверить целый план агента",
+      "separate_plan_explanation_visible": true,
+      "preview_post_uses_selected_server_plan_and_current_revision": true,
+      "local_cart_did_not_replace_plan_or_amount": true
+    },
+    "fresh_language_dialogue": {
+      "status": "ACTUAL_INTAKE_FINDINGS_OPEN",
+      "model_attempts": 3,
+      "logical_source_tools": 0,
+      "greeting": "PASS_NO_LLM",
+      "request": "Хочу из Москвы в Стамбул. Еду один взрослый, детей нет. Даты пока уточняю.",
+      "request_status": "failed",
+      "request_error": "INVALID_LLM_OPERATION",
+      "request_model_attempts": 2,
+      "trip_unchanged_on_failure": true,
+      "later_readonly_answer": "Состав поездки пока не указан.\n\nМаршрут поездки пока не указан.",
+      "successful_language_intake_claimed": false
+    },
+    "preview_and_order": {
+      "status": "BLOCKED_BY_REFERENCE_FX_SOURCE_FAILURE",
+      "preview_http_status": 503,
+      "error_code": "fx_source_unavailable",
+      "error_message": "Справочный источник курса временно недоступен.",
+      "quote_created": false,
+      "consent_submitted": false,
+      "local_order_created": false,
+      "supplier_booking_or_payment": false,
+      "order_or_confirmation_retried": false,
+      "post_order_guard_actual_runtime_verified": false
+    }
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-R25-ACTUAL-INTAKE-INVALID-OPERATION-001",
+      "status": "OPEN_ACTUAL_REPRODUCED",
+      "fact": "A simple current Moscow/Istanbul/one-adult/no-children message failed twice with INVALID_LLM_OPERATION. Store audit diagnosis is required; cause is not attributed to the model or harness without that evidence."
+    },
+    {
+      "id": "HARNESS-001-R25-FX-PREVIEW-UNAVAILABLE-001",
+      "status": "OPEN_ACTUAL_REPRODUCED",
+      "fact": "A full mixed RUB plan was built, but fresh preview returned503 fx_source_unavailable. No fake quote or order was created."
+    },
+    {
+      "id": "HARNESS-006-SERVER-PLAN-ACTION-HIDDEN-BY-LOCAL-CART-001",
+      "status": "CLOSED_CURRENT_UI_NAVIGATION_SCOPE",
+      "fact": "With a standalone hotel selected, the separate server-plan action remained visible and sent the canonical plan ID/revision to preview. Supplier/FX success remains separate."
+    },
+    {
+      "id": "HARNESS-006-POST-CHECKOUT-AUTOSEARCH-001",
+      "status": "CODE_UNIT_BUILD_VERIFIED_ACTUAL_POST_ORDER_PENDING",
+      "fact": "Two automatic-search guards block BOOKED_DEMO and reallow a new TRIP_DRAFT revision. Preview failure prevented an actual post-order render/refresh check."
+    }
+  ],
+  "limitations": [
+    "This is not a completed whole80 or source106/116 semantic acceptance.",
+    "Actual natural dialogue failed; typed supplier/UI results do not substitute language understanding.",
+    "Actual local simulated-order finish remains unverified in this current UI probe because FX preview failed.",
+    "Ratings without an admissible photo can still be lost by the current placeholder/media branch; separate presentation scope.",
+    "A possible post-order empty-state spinner is a prediction, not an observed post-order runtime result.",
+    "Earlier synthetic HTTP desktop/mobile contract tests are retained separately and are not provider acceptance."
+  ],
+  "private_artifact_hashes": {
+    "r25-natural-report.json": "34fa902321ec26e3f380e4107b73ce6b5b5b53f47b05359afd8bf530de75220a",
+    "r25-checkout-report.json": "ea35b496752afbeec49db9121387a382885a9d85f0f04fb4bec772f2e70150f8",
+    "actual-provider-report.json": "a56063e1a02439066830a2667e96ca13fbd3dd648a56953ea87e77922391c371",
+    "actual-provider-initial-setup-failure.json": "7e4171b6fe041c66af76d01c8508826a2f2341636aa26b525d514026b0881654"
+  },
+  "next_steps": [
+    "Read the owned failed-run audit and fix the exact invalid-operation cause, then rerun the natural intake.",
+    "Diagnose reference FX availability, then retry quote/consent/local-order in a separately authorized bounded scenario.",
+    "Keep the current README/configuration/one-command and recording handoff priority."
+  ]
+}

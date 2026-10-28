@@ -1,0 +1,3253 @@
+{
+  "created_at_utc": "2026-10-28T15:43:07.829386+00:00",
+  "source": {
+    "commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+    "package_sha256": "34a1cf1f7adedbf6311a6983340982283df39a4448363cca7a21b3e26c3ab0af",
+    "all_git_file_count": 1103,
+    "all_files_verified_before_import": true
+  },
+  "date_cases": [
+    {
+      "case_id": "FINAL40-031",
+      "pointer": "/turns/7",
+      "user": "Выезд 2026-11-19. Заезд не меняем.",
+      "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+      "before": {
+        "state_version": 4,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Стамбул»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Стамбул",
+              "country_code": "TR"
+            }
+          },
+          "questions": [
+            "На какую дату планируете выезд в городе «Стамбул»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "8db49a9b-d8ce-485e-b6b7-93a6811e97d5-question",
+          "state_version": 4,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Стамбул",
+            "country_code": "TR"
+          }
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Стамбул",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "2a04d503-88a4-49e2-a6e9-7c89589aa76d",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "after": {
+        "state_version": 4,
+        "status": "RECOVERABLE_ERROR",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Стамбул»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Стамбул",
+              "country_code": "TR"
+            }
+          },
+          "questions": [
+            "На какую дату планируете выезд в городе «Стамбул»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "8db49a9b-d8ce-485e-b6b7-93a6811e97d5-question",
+          "state_version": 4,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Стамбул",
+            "country_code": "TR"
+          }
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Стамбул",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "2a04d503-88a4-49e2-a6e9-7c89589aa76d",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "assistant": [
+        "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий."
+      ],
+      "started_at_utc": "2026-10-28T15:07:09.546735+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": []
+    },
+    {
+      "case_id": "FINAL40-032",
+      "pointer": "/turns/10",
+      "user": "Выезд 2026-11-19. Заезд не меняем.",
+      "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+      "before": {
+        "state_version": 5,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Kazan’»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "На какую дату планируете выезд в городе «Kazan’»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "46ac50c6-92f5-4a12-9439-2f26951c8369-question",
+          "state_version": 5
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Kazan’",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "place_id": "geo:openmeteo:551487",
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "89ad8863-ff00-4b59-9abf-a1bc9188ef0d",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:551487": {
+              "latitude": 55.78874,
+              "place_id": "geo:openmeteo:551487",
+              "timezone": "Europe/Moscow",
+              "longitude": 49.12214,
+              "ref_version": 1,
+              "country_iso2": "RU",
+              "country_name": "Russia",
+              "feature_code": "PPLA",
+              "canonical_name": "Kazan’",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 551487
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "86c2d146243cdb14a2128b8b9c60a718773f14e7ea7667f15c7a33834fa0a6de",
+              "administrative_areas": [
+                {
+                  "name": "Tatarstan Republic",
+                  "level": 1,
+                  "external_id": 484048
+                },
+                {
+                  "name": "Gorodskoy Okrug Kazan’",
+                  "level": 2,
+                  "external_id": 862913
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 5
+        }
+      },
+      "after": {
+        "state_version": 5,
+        "status": "RECOVERABLE_ERROR",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Kazan’»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "На какую дату планируете выезд в городе «Kazan’»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "46ac50c6-92f5-4a12-9439-2f26951c8369-question",
+          "state_version": 5
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Kazan’",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "place_id": "geo:openmeteo:551487",
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "89ad8863-ff00-4b59-9abf-a1bc9188ef0d",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:551487": {
+              "latitude": 55.78874,
+              "place_id": "geo:openmeteo:551487",
+              "timezone": "Europe/Moscow",
+              "longitude": 49.12214,
+              "ref_version": 1,
+              "country_iso2": "RU",
+              "country_name": "Russia",
+              "feature_code": "PPLA",
+              "canonical_name": "Kazan’",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 551487
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "86c2d146243cdb14a2128b8b9c60a718773f14e7ea7667f15c7a33834fa0a6de",
+              "administrative_areas": [
+                {
+                  "name": "Tatarstan Republic",
+                  "level": 1,
+                  "external_id": 484048
+                },
+                {
+                  "name": "Gorodskoy Okrug Kazan’",
+                  "level": 2,
+                  "external_id": 862913
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 5
+        }
+      },
+      "assistant": [
+        "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий."
+      ],
+      "started_at_utc": "2026-10-28T15:07:25.481401+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": []
+    },
+    {
+      "case_id": "FINAL40-039",
+      "pointer": "/turns/10",
+      "user": "Выезд 2026-11-19. Заезд не меняем.",
+      "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+      "before": {
+        "state_version": 4,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Казань»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Казань",
+              "country_code": "RU"
+            }
+          },
+          "questions": [
+            "На какую дату планируете выезд в городе «Казань»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "89b9bb59-7464-4684-824d-5e94c7ec8ba7-question",
+          "state_version": 4,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Казань",
+            "country_code": "RU"
+          }
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Казань",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "983f6184-6d95-41f6-b1c9-2836798df49e",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "after": {
+        "state_version": 4,
+        "status": "RECOVERABLE_ERROR",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Казань»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Казань",
+              "country_code": "RU"
+            }
+          },
+          "questions": [
+            "На какую дату планируете выезд в городе «Казань»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "89b9bb59-7464-4684-824d-5e94c7ec8ba7-question",
+          "state_version": 4,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Казань",
+            "country_code": "RU"
+          }
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Казань",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "983f6184-6d95-41f6-b1c9-2836798df49e",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "assistant": [
+        "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий."
+      ],
+      "started_at_utc": "2026-10-28T15:09:24.261245+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": []
+    },
+    {
+      "case_id": "FINAL40-040",
+      "pointer": "/turns/10",
+      "user": "Выезд 2026-11-19. Заезд не меняем.",
+      "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+      "before": {
+        "state_version": 4,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Istanbul»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "На какую дату планируете выезд в городе «Istanbul»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "f981c321-aff1-4e3c-8a2c-6fe4ab59db90-question",
+          "state_version": 4
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Istanbul",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "place_id": "geo:openmeteo:745044",
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": true
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "2d0a40e4-936d-44e0-b370-8967daca8e30",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:745044": {
+              "latitude": 41.01384,
+              "place_id": "geo:openmeteo:745044",
+              "timezone": "Europe/Istanbul",
+              "longitude": 28.94966,
+              "ref_version": 1,
+              "country_iso2": "TR",
+              "country_name": "Republic of Türkiye",
+              "feature_code": "PPLA",
+              "canonical_name": "Istanbul",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 745044
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "156f49ee9f53f3a60a4695a83f483aa98973721d29f33fd82b8914a33a6af9c4",
+              "administrative_areas": [
+                {
+                  "name": "Istanbul",
+                  "level": 1,
+                  "external_id": 745042
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "after": {
+        "state_version": 4,
+        "status": "RECOVERABLE_ERROR",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Istanbul»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "На какую дату планируете выезд в городе «Istanbul»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "f981c321-aff1-4e3c-8a2c-6fe4ab59db90-question",
+          "state_version": 4
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Istanbul",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "place_id": "geo:openmeteo:745044",
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": true
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "2d0a40e4-936d-44e0-b370-8967daca8e30",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:745044": {
+              "latitude": 41.01384,
+              "place_id": "geo:openmeteo:745044",
+              "timezone": "Europe/Istanbul",
+              "longitude": 28.94966,
+              "ref_version": 1,
+              "country_iso2": "TR",
+              "country_name": "Republic of Türkiye",
+              "feature_code": "PPLA",
+              "canonical_name": "Istanbul",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 745044
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "156f49ee9f53f3a60a4695a83f483aa98973721d29f33fd82b8914a33a6af9c4",
+              "administrative_areas": [
+                {
+                  "name": "Istanbul",
+                  "level": 1,
+                  "external_id": 745042
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "assistant": [
+        "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий."
+      ],
+      "started_at_utc": "2026-10-28T15:09:25.722097+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": []
+    },
+    {
+      "case_id": "FINAL40-013",
+      "pointer": "/turns/9",
+      "user": "Выезд 2026-11-19. Заезд не меняем.",
+      "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+      "before": {
+        "state_version": 6,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Kazan’»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "На какую дату планируете выезд в городе «Kazan’»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "a88fbf7f-ce12-4865-afb4-1031e04f9216-question",
+          "state_version": 6
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Kazan’",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "place_id": "geo:openmeteo:551487",
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "21f14752-c66b-4983-86a8-4216ede0379c",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "nonstop",
+              "hard": true,
+              "value": true,
+              "room_id": null,
+              "stay_id": null
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:551487": {
+              "latitude": 55.78874,
+              "place_id": "geo:openmeteo:551487",
+              "timezone": "Europe/Moscow",
+              "longitude": 49.12214,
+              "ref_version": 1,
+              "country_iso2": "RU",
+              "country_name": "Russia",
+              "feature_code": "PPLA",
+              "canonical_name": "Kazan’",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 551487
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "86c2d146243cdb14a2128b8b9c60a718773f14e7ea7667f15c7a33834fa0a6de",
+              "administrative_areas": [
+                {
+                  "name": "Tatarstan Republic",
+                  "level": 1,
+                  "external_id": 484048
+                },
+                {
+                  "name": "Gorodskoy Okrug Kazan’",
+                  "level": 2,
+                  "external_id": 862913
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 6
+        }
+      },
+      "after": {
+        "state_version": 6,
+        "status": "RECOVERABLE_ERROR",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете выезд в городе «Kazan’»?",
+          "field": "stay.check_out",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "На какую дату планируете выезд в городе «Kazan’»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "a88fbf7f-ce12-4865-afb4-1031e04f9216-question",
+          "state_version": 6
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Kazan’",
+              "rooms": [],
+              "check_in": "2026-11-12",
+              "hotel_id": null,
+              "place_id": "geo:openmeteo:551487",
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "21f14752-c66b-4983-86a8-4216ede0379c",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "nonstop",
+              "hard": true,
+              "value": true,
+              "room_id": null,
+              "stay_id": null
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:551487": {
+              "latitude": 55.78874,
+              "place_id": "geo:openmeteo:551487",
+              "timezone": "Europe/Moscow",
+              "longitude": 49.12214,
+              "ref_version": 1,
+              "country_iso2": "RU",
+              "country_name": "Russia",
+              "feature_code": "PPLA",
+              "canonical_name": "Kazan’",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 551487
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "86c2d146243cdb14a2128b8b9c60a718773f14e7ea7667f15c7a33834fa0a6de",
+              "administrative_areas": [
+                {
+                  "name": "Tatarstan Republic",
+                  "level": 1,
+                  "external_id": 484048
+                },
+                {
+                  "name": "Gorodskoy Okrug Kazan’",
+                  "level": 2,
+                  "external_id": 862913
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 6
+        }
+      },
+      "assistant": [
+        "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий."
+      ],
+      "started_at_utc": "2026-10-28T15:02:26.000199+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": []
+    }
+  ],
+  "geo_cases": [
+    {
+      "case_id": "FINAL40-001",
+      "pointer": "/turns/7",
+      "user": "Выбираем город Сочи, Россия.",
+      "user_sha256": "13fcc97793850a0dd5149686dbf4496cffdd43e5c3af08543619793c4f4474bb",
+      "before": {
+        "state_version": 2,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание.",
+          "field": "stay.rooms",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true,
+            "force_clarification": true,
+            "requested_room_count": 1,
+            "room_target_selection_required": true
+          },
+          "questions": [
+            "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание."
+          ],
+          "target_id": null,
+          "question_id": "ab56530d-5d96-439a-b42a-8222de74700d-question",
+          "state_version": 2
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "32df6ef0-05a5-4139-b9ef-ea16269cf588",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 2
+        }
+      },
+      "after": {
+        "state_version": 2,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Выберите конкретное место по номеру или ID: 1. Сочи (RU, Краснодарский край, Sochi City); 2. Сочимилько (MX, Мехико, Xochimilco); 3. Сочиапа (MX, Веракрус, Sochiapa); 4. Сочино (RU, Курганская Область); 5. Сочитепек (MX, Морелос, Xochitepec).",
+          "field": "place.resolution",
+          "reason": "clarification",
+          "context": {
+            "field": "place.resolution",
+            "target_id": "new-stay-1",
+            "place_resolution": {
+              "role": "destination",
+              "owner": "place_resolution.v1",
+              "query": "Сочи",
+              "stage": "city_choice",
+              "stay_id": "new-stay-1",
+              "trip_id": "32df6ef0-05a5-4139-b9ef-ea16269cf588",
+              "candidates": [
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочи",
+                  "source_id": 491422,
+                  "fact_sha256": "20412b30eabd9849b7773847e37f9493f4492060c70247194129e384f31a2e10",
+                  "candidate_id": "pc-96cffce8ad901033537a2f85a44d2472",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Краснодарский край",
+                      "level": 1,
+                      "external_id": 542415
+                    },
+                    {
+                      "name": "Sochi City",
+                      "level": 2,
+                      "external_id": 6695246
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочимилько",
+                  "source_id": 3514450,
+                  "fact_sha256": "3aa250d4e573c55797fa19cb6ca00f1892b12599bd191e057e58a07ef34f3636",
+                  "candidate_id": "pc-c6c655f7ad032ba976e2c63acdb61361",
+                  "country_iso2": "MX",
+                  "country_name": "Мексика",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Мехико",
+                      "level": 1,
+                      "external_id": 3527646
+                    },
+                    {
+                      "name": "Xochimilco",
+                      "level": 2,
+                      "external_id": 8379481
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочиапа",
+                  "source_id": 3516617,
+                  "fact_sha256": "13126a1de4d4df7cb3450bffe4d5ee4e56094605865ee914885208e8a73d8f8c",
+                  "candidate_id": "pc-d56dfddd87429f278fbba0072f23a4f8",
+                  "country_iso2": "MX",
+                  "country_name": "Мексика",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Веракрус",
+                      "level": 1,
+                      "external_id": 3514780
+                    },
+                    {
+                      "name": "Sochiapa",
+                      "level": 2,
+                      "external_id": 8583792
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочино",
+                  "source_id": 1531188,
+                  "fact_sha256": "a7f5298fecf887f630931764239b2d2e72a6700eeb44f9230bc69b83eee13296",
+                  "candidate_id": "pc-36b95286e5e88b50495500e17a08da54",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Курганская Область",
+                      "level": 1,
+                      "external_id": 1501312
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочитепек",
+                  "source_id": 3514437,
+                  "fact_sha256": "9f6b744a53719777034577750bfd600b9f3855f3dead2c9b95e59bb4d3fb825c",
+                  "candidate_id": "pc-2a42f82a32089f06426a78bbe7380017",
+                  "country_iso2": "MX",
+                  "country_name": "Мексика",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Морелос",
+                      "level": 1,
+                      "external_id": 3522961
+                    },
+                    {
+                      "name": "Xochitepec",
+                      "level": 2,
+                      "external_id": 8582396
+                    }
+                  ]
+                }
+              ],
+              "expires_at": "2026-10-28T15:14:59.984353+00:00",
+              "country_ref": null,
+              "resolution_id": "pr-fc683620712d40829c1e1ce06724436a",
+              "state_version": 2
+            },
+            "place_remaining_requests": []
+          },
+          "questions": [
+            "Выберите конкретное место по номеру или ID: 1. Сочи (RU, Краснодарский край, Sochi City); 2. Сочимилько (MX, Мехико, Xochimilco); 3. Сочиапа (MX, Веракрус, Sochiapa); 4. Сочино (RU, Курганская Область); 5. Сочитепек (MX, Морелос, Xochitepec)."
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "6c3538b3-a8a1-40de-85be-a29ebf46a918-place-question",
+          "state_version": 2
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "32df6ef0-05a5-4139-b9ef-ea16269cf588",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 2
+        }
+      },
+      "assistant": [
+        "Выберите конкретное место по номеру или ID: 1. Сочи (RU, Краснодарский край, Sochi City); 2. Сочимилько (MX, Мехико, Xochimilco); 3. Сочиапа (MX, Веракрус, Sochiapa); 4. Сочино (RU, Курганская Область); 5. Сочитепек (MX, Морелос, Xochitepec)."
+      ],
+      "started_at_utc": "2026-10-28T14:59:49.072363+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": [
+        {
+          "pointer": "/turns/7/source_events/3/payload/structured_contract/value",
+          "event": "MODEL_EXTRACTION_VALIDATED",
+          "value": {
+            "reply": "Добавлен город Сочи как пункт назначения.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "resolve_place",
+                "value": {
+                  "kind": "city",
+                  "role": "destination",
+                  "query": "Сочи",
+                  "stay_id": "new-stay-1"
+                },
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        },
+        {
+          "pointer": "/turns/7/source_events/4/payload/structured_contract/value",
+          "event": "MODEL_OPERATIONS_CHECKED",
+          "value": {
+            "reply": "Добавлен город Сочи как пункт назначения.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        }
+      ],
+      "query": "Сочи",
+      "role": "destination",
+      "expected_country": "RU"
+    },
+    {
+      "case_id": "FINAL40-005",
+      "pointer": "/turns/4",
+      "user": "Выбираем London, Канада.",
+      "user_sha256": "1b60bb81606f24a533a5eed98595a60e064824112dc2ae76a8935d25509f66b6",
+      "before": {
+        "state_version": 3,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "В какой город вы хотите поехать?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true
+          },
+          "questions": [
+            "В какой город вы хотите поехать?"
+          ],
+          "target_id": null,
+          "question_id": "3f7ed07b-e638-42eb-a261-fe58d008d52f-question",
+          "state_version": 3
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "London",
+          "trip_id": "720bded8-2edd-40ab-ab2b-614148a5da83",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "nonstop",
+              "hard": false,
+              "value": false,
+              "room_id": null,
+              "stay_id": null
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:6058560": {
+              "latitude": 42.98339,
+              "place_id": "geo:openmeteo:6058560",
+              "timezone": "America/Toronto",
+              "longitude": -81.23304,
+              "ref_version": 1,
+              "country_iso2": "CA",
+              "country_name": "Canada",
+              "feature_code": "PPL",
+              "canonical_name": "London",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 6058560
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "e0dd84c1380e0d5abd29d05eaba6c88eb798c648fa0c689a6230df5b36195991",
+              "administrative_areas": [
+                {
+                  "name": "Ontario",
+                  "level": 1,
+                  "external_id": 6093943
+                },
+                {
+                  "name": "Middlesex County",
+                  "level": 2,
+                  "external_id": 6073256
+                },
+                {
+                  "name": "London",
+                  "level": 3,
+                  "external_id": 13680305
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 3,
+          "origin_place_id": "geo:openmeteo:6058560"
+        }
+      },
+      "after": {
+        "state_version": 3,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Выберите конкретное место по номеру или ID: 1. Лондон (GB, Англия, Greater London); 2. Лондон (CA, Онтарио, Middlesex County, London); 3. Ландон (US, Огайо, Мэдисон, City of London); 4. Лондон (US, Кентукки, Лоурел); 5. Лондон (US, Арканзас, Поп, Township of Clark).",
+          "field": "place.resolution",
+          "reason": "clarification",
+          "context": {
+            "field": "place.resolution",
+            "target_id": "new-stay-1",
+            "place_resolution": {
+              "role": "destination",
+              "owner": "place_resolution.v1",
+              "query": "London",
+              "stage": "city_choice",
+              "stay_id": "new-stay-1",
+              "trip_id": "720bded8-2edd-40ab-ab2b-614148a5da83",
+              "candidates": [
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "london",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Лондон",
+                  "source_id": 2643743,
+                  "fact_sha256": "5422649820f5415c711f9c19dfe86600d79f54a1a2dd91c2e87b795fb7f5cb93",
+                  "candidate_id": "pc-797bbdc11a89d6db32954ce571cd92ad",
+                  "country_iso2": "GB",
+                  "country_name": "Британия",
+                  "response_sha256": "b438e6831933f7853e7d06031f4877a26eb0994f24234184b3b4cd3ab758667c",
+                  "administrative_areas": [
+                    {
+                      "name": "Англия",
+                      "level": 1,
+                      "external_id": 6269131
+                    },
+                    {
+                      "name": "Greater London",
+                      "level": 2,
+                      "external_id": 2648110
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "london",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Лондон",
+                  "source_id": 6058560,
+                  "fact_sha256": "e766447bac1ff5c758906bbbcf37dbfb99f882fc8a058f398443e98d31c31e4d",
+                  "candidate_id": "pc-b269a67eb42e7495acf4c2941a26c6c3",
+                  "country_iso2": "CA",
+                  "country_name": "Канада",
+                  "response_sha256": "b438e6831933f7853e7d06031f4877a26eb0994f24234184b3b4cd3ab758667c",
+                  "administrative_areas": [
+                    {
+                      "name": "Онтарио",
+                      "level": 1,
+                      "external_id": 6093943
+                    },
+                    {
+                      "name": "Middlesex County",
+                      "level": 2,
+                      "external_id": 6073256
+                    },
+                    {
+                      "name": "London",
+                      "level": 3,
+                      "external_id": 13680305
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "london",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Ландон",
+                  "source_id": 4517009,
+                  "fact_sha256": "4f3dbf27de60b0dc661a0743970521dbe3be0b084465936576e1c9b363990ad8",
+                  "candidate_id": "pc-917d96e1d7e7f32e45a491844b13624f",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "b438e6831933f7853e7d06031f4877a26eb0994f24234184b3b4cd3ab758667c",
+                  "administrative_areas": [
+                    {
+                      "name": "Огайо",
+                      "level": 1,
+                      "external_id": 5165418
+                    },
+                    {
+                      "name": "Мэдисон",
+                      "level": 2,
+                      "external_id": 4517365
+                    },
+                    {
+                      "name": "City of London",
+                      "level": 3,
+                      "external_id": 4517024
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "london",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Лондон",
+                  "source_id": 4298960,
+                  "fact_sha256": "2723e75f829d551996af27766822ea6967a25a746e1e2ebdfd945dac0623ed7f",
+                  "candidate_id": "pc-fb075ad5144c616bc31422a71a0e24c3",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "b438e6831933f7853e7d06031f4877a26eb0994f24234184b3b4cd3ab758667c",
+                  "administrative_areas": [
+                    {
+                      "name": "Кентукки",
+                      "level": 1,
+                      "external_id": 6254925
+                    },
+                    {
+                      "name": "Лоурел",
+                      "level": 2,
+                      "external_id": 4297480
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "london",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Лондон",
+                  "source_id": 4119617,
+                  "fact_sha256": "df751246fa92f6a53ba89d93c947e6bcdb96ca5ecb6944d913e8ecc0c6bf100e",
+                  "candidate_id": "pc-41032b11077e289cc16d4db93d2b34f0",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "b438e6831933f7853e7d06031f4877a26eb0994f24234184b3b4cd3ab758667c",
+                  "administrative_areas": [
+                    {
+                      "name": "Арканзас",
+                      "level": 1,
+                      "external_id": 4099753
+                    },
+                    {
+                      "name": "Поп",
+                      "level": 2,
+                      "external_id": 4127100
+                    },
+                    {
+                      "name": "Township of Clark",
+                      "level": 3,
+                      "external_id": 4105863
+                    }
+                  ]
+                }
+              ],
+              "expires_at": "2026-10-28T14:41:27.219989+00:00",
+              "country_ref": null,
+              "resolution_id": "pr-dc43d7b73e104a41ac74f4efb720630d",
+              "state_version": 3
+            },
+            "place_remaining_requests": []
+          },
+          "questions": [
+            "Выберите конкретное место по номеру или ID: 1. Лондон (GB, Англия, Greater London); 2. Лондон (CA, Онтарио, Middlesex County, London); 3. Ландон (US, Огайо, Мэдисон, City of London); 4. Лондон (US, Кентукки, Лоурел); 5. Лондон (US, Арканзас, Поп, Township of Clark)."
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "c197eb99-782f-42a0-bea6-3443b9300c75-place-question",
+          "state_version": 3
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "London",
+          "trip_id": "720bded8-2edd-40ab-ab2b-614148a5da83",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "nonstop",
+              "hard": false,
+              "value": false,
+              "room_id": null,
+              "stay_id": null
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "location_refs": {
+            "geo:openmeteo:6058560": {
+              "latitude": 42.98339,
+              "place_id": "geo:openmeteo:6058560",
+              "timezone": "America/Toronto",
+              "longitude": -81.23304,
+              "ref_version": 1,
+              "country_iso2": "CA",
+              "country_name": "Canada",
+              "feature_code": "PPL",
+              "canonical_name": "London",
+              "geographic_source": {
+                "provider": "openmeteo",
+                "external_id": 6058560
+              },
+              "provider_bindings": {
+                "duffel": null,
+                "liteapi": null
+              },
+              "source_fact_sha256": "e0dd84c1380e0d5abd29d05eaba6c88eb798c648fa0c689a6230df5b36195991",
+              "administrative_areas": [
+                {
+                  "name": "Ontario",
+                  "level": 1,
+                  "external_id": 6093943
+                },
+                {
+                  "name": "Middlesex County",
+                  "level": 2,
+                  "external_id": 6073256
+                },
+                {
+                  "name": "London",
+                  "level": 3,
+                  "external_id": 13680305
+                }
+              ]
+            }
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 3,
+          "origin_place_id": "geo:openmeteo:6058560"
+        }
+      },
+      "assistant": [
+        "Выберите конкретное место по номеру или ID: 1. Лондон (GB, Англия, Greater London); 2. Лондон (CA, Онтарио, Middlesex County, London); 3. Ландон (US, Огайо, Мэдисон, City of London); 4. Лондон (US, Кентукки, Лоурел); 5. Лондон (US, Арканзас, Поп, Township of Clark)."
+      ],
+      "started_at_utc": "2026-10-28T14:25:56.306128+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": [
+        {
+          "pointer": "/turns/4/source_events/3/payload/structured_contract/value",
+          "event": "MODEL_EXTRACTION_VALIDATED",
+          "value": {
+            "reply": "Выбран город назначения: London, Канада.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "resolve_place",
+                "value": {
+                  "kind": "city",
+                  "role": "destination",
+                  "query": "London",
+                  "stay_id": "new-stay-1",
+                  "country_iso2": "CA"
+                },
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        },
+        {
+          "pointer": "/turns/4/source_events/4/payload/structured_contract/value",
+          "event": "MODEL_OPERATIONS_CHECKED",
+          "value": {
+            "reply": "Выбран город назначения: London, Канада.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        }
+      ],
+      "query": "London",
+      "role": "destination",
+      "expected_country": "CA"
+    },
+    {
+      "case_id": "FINAL40-007",
+      "pointer": "/turns/4",
+      "user": "Выбираем Сочи, Россия.",
+      "user_sha256": "9701859a25a31524424141cb732ec90b2e1d03ea393375a50e42afded3c99cbc",
+      "before": {
+        "state_version": 2,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "В какой город вы хотите поехать?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true
+          },
+          "questions": [
+            "В какой город вы хотите поехать?"
+          ],
+          "target_id": null,
+          "question_id": "e9d5546d-3102-4643-86f3-a592717eae6a-question",
+          "state_version": 2
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "56491980-6cf9-4917-ad54-834a03039d9c",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 2
+        }
+      },
+      "after": {
+        "state_version": 3,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Выберите конкретное место по номеру или ID: 1. Сочи (RU, Краснодарский край, Sochi City); 2. Сочимилько (MX, Мехико, Xochimilco); 3. Сочиапа (MX, Веракрус, Sochiapa); 4. Сочино (RU, Курганская Область); 5. Сочитепек (MX, Морелос, Xochitepec).",
+          "field": "place.resolution",
+          "reason": "clarification",
+          "context": {
+            "field": "place.resolution",
+            "target_id": "new-stay-1",
+            "place_resolution": {
+              "role": "destination",
+              "owner": "place_resolution.v1",
+              "query": "Сочи",
+              "stage": "city_choice",
+              "stay_id": "new-stay-1",
+              "trip_id": "56491980-6cf9-4917-ad54-834a03039d9c",
+              "candidates": [
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочи",
+                  "source_id": 491422,
+                  "fact_sha256": "20412b30eabd9849b7773847e37f9493f4492060c70247194129e384f31a2e10",
+                  "candidate_id": "pc-b839055d68bd8fabfc49f8ffd480e9dc",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Краснодарский край",
+                      "level": 1,
+                      "external_id": 542415
+                    },
+                    {
+                      "name": "Sochi City",
+                      "level": 2,
+                      "external_id": 6695246
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочимилько",
+                  "source_id": 3514450,
+                  "fact_sha256": "3aa250d4e573c55797fa19cb6ca00f1892b12599bd191e057e58a07ef34f3636",
+                  "candidate_id": "pc-89f13d2974d406a91148afa64ba49c91",
+                  "country_iso2": "MX",
+                  "country_name": "Мексика",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Мехико",
+                      "level": 1,
+                      "external_id": 3527646
+                    },
+                    {
+                      "name": "Xochimilco",
+                      "level": 2,
+                      "external_id": 8379481
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочиапа",
+                  "source_id": 3516617,
+                  "fact_sha256": "13126a1de4d4df7cb3450bffe4d5ee4e56094605865ee914885208e8a73d8f8c",
+                  "candidate_id": "pc-68920c8d861e1ed7900218c84cb8bfff",
+                  "country_iso2": "MX",
+                  "country_name": "Мексика",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Веракрус",
+                      "level": 1,
+                      "external_id": 3514780
+                    },
+                    {
+                      "name": "Sochiapa",
+                      "level": 2,
+                      "external_id": 8583792
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочино",
+                  "source_id": 1531188,
+                  "fact_sha256": "a7f5298fecf887f630931764239b2d2e72a6700eeb44f9230bc69b83eee13296",
+                  "candidate_id": "pc-6f61500268e42a79470b87235d5eed20",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Курганская Область",
+                      "level": 1,
+                      "external_id": 1501312
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "сочи",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Сочитепек",
+                  "source_id": 3514437,
+                  "fact_sha256": "9f6b744a53719777034577750bfd600b9f3855f3dead2c9b95e59bb4d3fb825c",
+                  "candidate_id": "pc-8abb4622d12ab462a7b6ae1deb6f9897",
+                  "country_iso2": "MX",
+                  "country_name": "Мексика",
+                  "response_sha256": "badeabbc401a0c4f7a90f93699accc87a8b924b2da6ba815a2e87d1c6078d5d2",
+                  "administrative_areas": [
+                    {
+                      "name": "Морелос",
+                      "level": 1,
+                      "external_id": 3522961
+                    },
+                    {
+                      "name": "Xochitepec",
+                      "level": 2,
+                      "external_id": 8582396
+                    }
+                  ]
+                }
+              ],
+              "expires_at": "2026-10-28T14:42:45.102325+00:00",
+              "country_ref": null,
+              "resolution_id": "pr-11c52419a1d64fa8b08d95e7ab3723b4",
+              "state_version": 3
+            },
+            "place_remaining_requests": []
+          },
+          "questions": [
+            "Выберите конкретное место по номеру или ID: 1. Сочи (RU, Краснодарский край, Sochi City); 2. Сочимилько (MX, Мехико, Xochimilco); 3. Сочиапа (MX, Веракрус, Sochiapa); 4. Сочино (RU, Курганская Область); 5. Сочитепек (MX, Морелос, Xochitepec)."
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "1860540c-b8f3-4f06-a7a7-cfff1f40de0d-place-question",
+          "state_version": 3
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Сочи",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "56491980-6cf9-4917-ad54-834a03039d9c",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 3
+        }
+      },
+      "assistant": [
+        "Выберите конкретное место по номеру или ID: 1. Сочи (RU, Краснодарский край, Sochi City); 2. Сочимилько (MX, Мехико, Xochimilco); 3. Сочиапа (MX, Веракрус, Sochiapa); 4. Сочино (RU, Курганская Область); 5. Сочитепек (MX, Морелос, Xochitepec)."
+      ],
+      "started_at_utc": "2026-10-28T14:27:37.358593+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": [
+        {
+          "pointer": "/turns/4/source_events/3/payload/structured_contract/value",
+          "event": "MODEL_EXTRACTION_VALIDATED",
+          "value": {
+            "reply": "Понятно, вы выбрали город Сочи, Россия. Какая дата заезда и выезда?",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [
+              "Какая дата заезда?",
+              "Какая дата выезда?"
+            ],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "resolve_place",
+                "value": {
+                  "kind": "city",
+                  "role": "destination",
+                  "query": "Сочи",
+                  "stay_id": "new-stay-1",
+                  "country_iso2": "RU"
+                },
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        },
+        {
+          "pointer": "/turns/4/source_events/4/payload/structured_contract/value",
+          "event": "MODEL_OPERATIONS_CHECKED",
+          "value": {
+            "reply": "Понятно, вы выбрали город Сочи, Россия. Какая дата заезда и выезда?",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [
+              "Какая дата заезда?",
+              "Какая дата выезда?"
+            ],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "upsert_stay",
+                "value": {
+                  "city": "Сочи"
+                },
+                "target_id": "new-stay-1"
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        }
+      ],
+      "query": "Сочи",
+      "role": "destination",
+      "expected_country": "RU"
+    },
+    {
+      "case_id": "FINAL40-013",
+      "pointer": "/turns/5",
+      "user": "Выбираем Казань, Россия.",
+      "user_sha256": "d20f16cae70486acbbc8374f80c9917086a712676e3c88ce91eeed4ba3e430d9",
+      "before": {
+        "state_version": 3,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "В какой город вы хотите поехать?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true
+          },
+          "questions": [
+            "В какой город вы хотите поехать?"
+          ],
+          "target_id": null,
+          "question_id": "94fb53b9-89ac-405a-a61d-8a810c36dbb8-question",
+          "state_version": 3
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "21f14752-c66b-4983-86a8-4216ede0379c",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "nonstop",
+              "hard": true,
+              "value": true,
+              "room_id": null,
+              "stay_id": null
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 3
+        }
+      },
+      "after": {
+        "state_version": 4,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Выберите конкретное место по номеру или ID: 1. Казань (RU, Татарстан, Gorodskoy Okrug Kazan’); 2. Казань (RU, Кировская Область); 3. Казань (RU, Кировская Область); 4. Казань (RU, Кировская Область); 5. Казань-Омга (RU, Кировская Область).",
+          "field": "place.resolution",
+          "reason": "clarification",
+          "context": {
+            "field": "place.resolution",
+            "target_id": "new-stay-1",
+            "place_resolution": {
+              "role": "destination",
+              "owner": "place_resolution.v1",
+              "query": "Казань",
+              "stage": "city_choice",
+              "stay_id": "new-stay-1",
+              "trip_id": "21f14752-c66b-4983-86a8-4216ede0379c",
+              "candidates": [
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "казань",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Казань",
+                  "source_id": 551487,
+                  "fact_sha256": "a56048a6445bc8f7e48ec2b557645f4365ea62d35b07faa9a04fa4056768b403",
+                  "candidate_id": "pc-d47acc5d5ae04e893a85a6ba7e3aa013",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "00e91c2bbabbedd119d852c64973bcbe49e4214b552000a7945ae6b76a3dd788",
+                  "administrative_areas": [
+                    {
+                      "name": "Татарстан",
+                      "level": 1,
+                      "external_id": 484048
+                    },
+                    {
+                      "name": "Gorodskoy Okrug Kazan’",
+                      "level": 2,
+                      "external_id": 862913
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "казань",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Казань",
+                  "source_id": 551485,
+                  "fact_sha256": "24acdb6fed7586d70c80c2008aee9aa8b0ad8023c3674a88967b8ca1fcf0ce57",
+                  "candidate_id": "pc-2eaa214881c8fec5af93e9e760625b35",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "00e91c2bbabbedd119d852c64973bcbe49e4214b552000a7945ae6b76a3dd788",
+                  "administrative_areas": [
+                    {
+                      "name": "Кировская Область",
+                      "level": 1,
+                      "external_id": 548389
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "казань",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Казань",
+                  "source_id": 6422093,
+                  "fact_sha256": "5182df2a7c7b79a022d30fae3504b8a5c7cc633049719a1cbd5d7a48d8c26ec2",
+                  "candidate_id": "pc-02eafe09dd2c36fbd5333fa61bdcdfff",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "00e91c2bbabbedd119d852c64973bcbe49e4214b552000a7945ae6b76a3dd788",
+                  "administrative_areas": [
+                    {
+                      "name": "Кировская Область",
+                      "level": 1,
+                      "external_id": 548389
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "казань",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Казань",
+                  "source_id": 7794320,
+                  "fact_sha256": "a225d0e116a61bf20755fdff32f10492321717046637c14cdd4bf858f3aba88d",
+                  "candidate_id": "pc-5ecc539586052f524ed2dd35d616b0da",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "00e91c2bbabbedd119d852c64973bcbe49e4214b552000a7945ae6b76a3dd788",
+                  "administrative_areas": [
+                    {
+                      "name": "Кировская Область",
+                      "level": 1,
+                      "external_id": 548389
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "казань",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Казань-Омга",
+                  "source_id": 551445,
+                  "fact_sha256": "d170a4edf4639170a15aa694e916bff768536f7196c76290dbf25d75deff4a2e",
+                  "candidate_id": "pc-cbe3584527cfe710b0fe4caaf5d51119",
+                  "country_iso2": "RU",
+                  "country_name": "Россия",
+                  "response_sha256": "00e91c2bbabbedd119d852c64973bcbe49e4214b552000a7945ae6b76a3dd788",
+                  "administrative_areas": [
+                    {
+                      "name": "Кировская Область",
+                      "level": 1,
+                      "external_id": 548389
+                    }
+                  ]
+                }
+              ],
+              "expires_at": "2026-10-28T14:48:23.087602+00:00",
+              "country_ref": null,
+              "resolution_id": "pr-0a712d5fed5f48949f05330c7ec45e60",
+              "state_version": 4
+            },
+            "place_remaining_requests": []
+          },
+          "questions": [
+            "Выберите конкретное место по номеру или ID: 1. Казань (RU, Татарстан, Gorodskoy Okrug Kazan’); 2. Казань (RU, Кировская Область); 3. Казань (RU, Кировская Область); 4. Казань (RU, Кировская Область); 5. Казань-Омга (RU, Кировская Область)."
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "58c2334b-fdcd-41a9-803a-8b0f95121d3e-place-question",
+          "state_version": 4
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Казань",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "21f14752-c66b-4983-86a8-4216ede0379c",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "nonstop",
+              "hard": true,
+              "value": true,
+              "room_id": null,
+              "stay_id": null
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 4
+        }
+      },
+      "assistant": [
+        "Выберите конкретное место по номеру или ID: 1. Казань (RU, Татарстан, Gorodskoy Okrug Kazan’); 2. Казань (RU, Кировская Область); 3. Казань (RU, Кировская Область); 4. Казань (RU, Кировская Область); 5. Казань-Омга (RU, Кировская Область)."
+      ],
+      "started_at_utc": "2026-10-28T14:33:00.874340+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": [
+        {
+          "pointer": "/turns/5/source_events/3/payload/structured_contract/value",
+          "event": "MODEL_EXTRACTION_VALIDATED",
+          "value": {
+            "reply": "Выбран город назначения: Казань. Теперь нужно уточнить даты поездки.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [
+              "Даты поездки (заезд и выезд)"
+            ],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "resolve_place",
+                "value": {
+                  "kind": "city",
+                  "role": "destination",
+                  "query": "Казань",
+                  "stay_id": "new-stay-1"
+                },
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        },
+        {
+          "pointer": "/turns/5/source_events/4/payload/structured_contract/value",
+          "event": "MODEL_OPERATIONS_CHECKED",
+          "value": {
+            "reply": "Выбран город назначения: Казань. Теперь нужно уточнить даты поездки.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [
+              "Даты поездки (заезд и выезд)"
+            ],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "upsert_stay",
+                "value": {
+                  "city": "Казань"
+                },
+                "target_id": "new-stay-1"
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        }
+      ],
+      "query": "Казань",
+      "role": "destination",
+      "expected_country": "RU"
+    },
+    {
+      "case_id": "FINAL40-016",
+      "pointer": "/turns/5",
+      "user": "Выбираем Берлин, Германия.",
+      "user_sha256": "f04c996abfe8606a3fc9d4d10052a1e073d08ff2fc07d7898893115b5b9b3679",
+      "before": {
+        "state_version": 2,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "В какой город вы хотите поехать?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true
+          },
+          "questions": [
+            "В какой город вы хотите поехать?"
+          ],
+          "target_id": null,
+          "question_id": "86d73863-c9bb-4c9b-a228-1a2b6e71f6e3-question",
+          "state_version": 2
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "7ffdfa5b-9d66-4540-9f60-f5f230f4b6d1",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 2
+        }
+      },
+      "after": {
+        "state_version": 2,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Выберите конкретное место по номеру или ID: 1. Берлин (DE, Берлин, Berlin, Stadt, Berlin); 2. Берлин (US, Нью-Гэмпшир, Коос, City of Berlin); 3. Берлин (US, Нью-Джерси, Кэмден, Borough of Berlin); 4. Берлин (US, Висконсин, Грин-Лейк, City of Berlin); 5. Берлин (US, Мэриленд, Вустер).",
+          "field": "place.resolution",
+          "reason": "clarification",
+          "context": {
+            "field": "place.resolution",
+            "target_id": "new-stay-1",
+            "place_resolution": {
+              "role": "destination",
+              "owner": "place_resolution.v1",
+              "query": "Берлин",
+              "stage": "city_choice",
+              "stay_id": "new-stay-1",
+              "trip_id": "7ffdfa5b-9d66-4540-9f60-f5f230f4b6d1",
+              "candidates": [
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "берлин",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Берлин",
+                  "source_id": 2950159,
+                  "fact_sha256": "8de3c642bb131abbbf2ff9f642b659745dddc551410572c1194071e8c47a820a",
+                  "candidate_id": "pc-cd0fa1213b014d189857173e8a80c70f",
+                  "country_iso2": "DE",
+                  "country_name": "Германия",
+                  "response_sha256": "58c3e3619ac0ead6a92bffafeb05d5f2ff0eddf3862539c10602b22c1b7bf5b9",
+                  "administrative_areas": [
+                    {
+                      "name": "Берлин",
+                      "level": 1,
+                      "external_id": 2950157
+                    },
+                    {
+                      "name": "Berlin, Stadt",
+                      "level": 3,
+                      "external_id": 6547383
+                    },
+                    {
+                      "name": "Berlin",
+                      "level": 4,
+                      "external_id": 6547539
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "берлин",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Берлин",
+                  "source_id": 5083330,
+                  "fact_sha256": "c0c4870572309b16762d222fe6124186d30bcfeb6d0422a8174cdc7b7702b61b",
+                  "candidate_id": "pc-e596d6174b121674fd7b0a7129d05a44",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "58c3e3619ac0ead6a92bffafeb05d5f2ff0eddf3862539c10602b22c1b7bf5b9",
+                  "administrative_areas": [
+                    {
+                      "name": "Нью-Гэмпшир",
+                      "level": 1,
+                      "external_id": 5090174
+                    },
+                    {
+                      "name": "Коос",
+                      "level": 2,
+                      "external_id": 5084973
+                    },
+                    {
+                      "name": "City of Berlin",
+                      "level": 3,
+                      "external_id": 5083340
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "берлин",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Берлин",
+                  "source_id": 4500771,
+                  "fact_sha256": "04a88a488fda6312ec2908eda95a75d7a6a55d5995024c650bb1548fa7a68099",
+                  "candidate_id": "pc-65561c8d8de321fcf456630f61310163",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "58c3e3619ac0ead6a92bffafeb05d5f2ff0eddf3862539c10602b22c1b7bf5b9",
+                  "administrative_areas": [
+                    {
+                      "name": "Нью-Джерси",
+                      "level": 1,
+                      "external_id": 5101760
+                    },
+                    {
+                      "name": "Кэмден",
+                      "level": 2,
+                      "external_id": 4501019
+                    },
+                    {
+                      "name": "Borough of Berlin",
+                      "level": 3,
+                      "external_id": 4500776
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "берлин",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Берлин",
+                  "source_id": 5245497,
+                  "fact_sha256": "c760d7d11ea249a678b7851e259eb63a30a2a893e15a237058b1ecc6e8b732aa",
+                  "candidate_id": "pc-7b3d1d1ef7f591a8926487546150cd2a",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "58c3e3619ac0ead6a92bffafeb05d5f2ff0eddf3862539c10602b22c1b7bf5b9",
+                  "administrative_areas": [
+                    {
+                      "name": "Висконсин",
+                      "level": 1,
+                      "external_id": 5279468
+                    },
+                    {
+                      "name": "Грин-Лейк",
+                      "level": 2,
+                      "external_id": 5255015
+                    },
+                    {
+                      "name": "City of Berlin",
+                      "level": 3,
+                      "external_id": 5245510
+                    }
+                  ]
+                },
+                {
+                  "key": {
+                    "role": "destination",
+                    "count": 5,
+                    "query": "берлин",
+                    "language": "ru",
+                    "provider": "openmeteo",
+                    "operation": "search_city",
+                    "country_iso2": null
+                  },
+                  "kind": "city",
+                  "label": "Берлин",
+                  "source_id": 4348460,
+                  "fact_sha256": "941b19b1b4a969863491b174c43346307efa18c28d642615419f1fee05cab567",
+                  "candidate_id": "pc-f15b40b7fad95062e0289ce922dab842",
+                  "country_iso2": "US",
+                  "country_name": "США",
+                  "response_sha256": "58c3e3619ac0ead6a92bffafeb05d5f2ff0eddf3862539c10602b22c1b7bf5b9",
+                  "administrative_areas": [
+                    {
+                      "name": "Мэриленд",
+                      "level": 1,
+                      "external_id": 4361885
+                    },
+                    {
+                      "name": "Вустер",
+                      "level": 2,
+                      "external_id": 4374180
+                    }
+                  ]
+                }
+              ],
+              "expires_at": "2026-10-28T14:49:56.745824+00:00",
+              "country_ref": null,
+              "resolution_id": "pr-13040969c617406d94409103101e18ba",
+              "state_version": 2
+            },
+            "place_remaining_requests": []
+          },
+          "questions": [
+            "Выберите конкретное место по номеру или ID: 1. Берлин (DE, Берлин, Berlin, Stadt, Berlin); 2. Берлин (US, Нью-Гэмпшир, Коос, City of Berlin); 3. Берлин (US, Нью-Джерси, Кэмден, Borough of Berlin); 4. Берлин (US, Висконсин, Грин-Лейк, City of Berlin); 5. Берлин (US, Мэриленд, Вустер)."
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "f281de6c-179a-4744-b824-354ec96eefe3-place-question",
+          "state_version": 2
+        },
+        "trip": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [
+            {
+              "id": "new-group-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            }
+          ],
+          "origin": "Москва",
+          "trip_id": "7ffdfa5b-9d66-4540-9f60-f5f230f4b6d1",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": "new-group-1",
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 2
+        }
+      },
+      "assistant": [
+        "Выберите конкретное место по номеру или ID: 1. Берлин (DE, Берлин, Berlin, Stadt, Berlin); 2. Берлин (US, Нью-Гэмпшир, Коос, City of Berlin); 3. Берлин (US, Нью-Джерси, Кэмден, Borough of Berlin); 4. Берлин (US, Висконсин, Грин-Лейк, City of Berlin); 5. Берлин (US, Мэриленд, Вустер)."
+      ],
+      "started_at_utc": "2026-10-28T14:34:47.300802+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": [
+        {
+          "pointer": "/turns/5/source_events/3/payload/structured_contract/value",
+          "event": "MODEL_EXTRACTION_VALIDATED",
+          "value": {
+            "reply": "Выбран город назначения: Берлин, Германия.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "resolve_place",
+                "value": {
+                  "kind": "city",
+                  "role": "destination",
+                  "query": "Берлин",
+                  "stay_id": "new-stay-1",
+                  "country_iso2": "DE"
+                },
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        },
+        {
+          "pointer": "/turns/5/source_events/4/payload/structured_contract/value",
+          "event": "MODEL_OPERATIONS_CHECKED",
+          "value": {
+            "reply": "Выбран город назначения: Берлин, Германия.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [
+              "Какой город в стране «Германия» вы выбираете для поездки?"
+            ],
+            "conflicts": [],
+            "operations": [],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        }
+      ],
+      "query": "Берлин",
+      "role": "destination",
+      "expected_country": "DE"
+    }
+  ],
+  "booking_cases": [
+    {
+      "case_id": "FINAL40-024",
+      "pointer": "/turns/10",
+      "user": "Моё бронирование отменилось, можно вернуть его как было?",
+      "user_sha256": "14d8c652c2ef29bda6e953a60e84b378e6b96b7acb3ba563ee393db7a089b728",
+      "before": {
+        "state_version": 7,
+        "status": "WAITING_USER",
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Что нужно уточнить о поездке, чтобы продолжить?",
+          "field": null,
+          "reason": "clarification",
+          "context": {
+            "force_clarification": true,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Казань",
+              "country_code": "RU"
+            }
+          },
+          "questions": [
+            "Что нужно уточнить о поездке, чтобы продолжить?"
+          ],
+          "target_id": null,
+          "question_id": "bc6bbc74-68d1-49be-8c7a-6646f526aac8-question",
+          "state_version": 7,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Казань",
+            "country_code": "RU"
+          }
+        },
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Казань",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null,
+              "requested_nights": 7
+            }
+          ],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 7000000
+          },
+          "groups": [],
+          "origin": null,
+          "trip_id": "db68b57b-9fd9-4408-924f-d8b6ee2e998f",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": 7,
+              "type": "child",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "refundable",
+              "hard": true,
+              "value": true,
+              "room_id": null,
+              "stay_id": "new-stay-1"
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 7
+        }
+      },
+      "after": {
+        "state_version": 8,
+        "status": "TRIP_DRAFT",
+        "waiting_reason": null,
+        "pending_question": null,
+        "trip": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Казань",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null,
+              "requested_nights": 7
+            }
+          ],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 7000000
+          },
+          "groups": [],
+          "origin": null,
+          "trip_id": "db68b57b-9fd9-4408-924f-d8b6ee2e998f",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": null,
+              "type": "child",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "constraints": [
+            {
+              "key": "refundable",
+              "hard": true,
+              "value": true,
+              "room_id": null,
+              "stay_id": "new-stay-1"
+            }
+          ],
+          "preferences": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "search_policy": {
+            "mode": "HYBRID",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "duffel",
+            "guest_nationality": null
+          },
+          "state_version": 8
+        }
+      },
+      "assistant": [
+        "Отправление: город не указан. Остановки: Казань. Транспортные плечи и возвращение ещё не заданы.\n\nОстановка 1, Казань: заезд не указан, выезд не указан; запрошено 7 ночей. Дети на дату заезда: возраст не указан.\n\nТекущий состав: 2 взрослых; 1 ребёнок (возраст не указан).\n\nСохранённый бюджет на всю поездку: 70 000,00 RUB.\n\nУсловие для проживания №1 («Казань»): возвратность тарифа — да (обязательно).\n\nТекущий состав: 2 взрослых; 1 ребёнок (7 лет). → Текущий состав: 2 взрослых; 1 ребёнок (возраст не указан)."
+      ],
+      "started_at_utc": "2026-10-28T14:43:05.336173+00:00",
+      "orders_before": [],
+      "orders_after": [],
+      "contracts": [
+        {
+          "pointer": "/turns/10/source_events/3/payload/structured_contract/value",
+          "event": "MODEL_EXTRACTION_VALIDATED",
+          "value": {
+            "reply": "Ваше бронирование было отменено. Я восстановлю предыдущее состояние поездки.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "undo",
+                "value": {},
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        },
+        {
+          "pointer": "/turns/10/source_events/4/payload/structured_contract/value",
+          "event": "MODEL_OPERATIONS_CHECKED",
+          "value": {
+            "reply": "Ваше бронирование было отменено. Я восстановлю предыдущее состояние поездки.",
+            "control": {
+              "action": "continue"
+            },
+            "unknowns": [],
+            "conflicts": [],
+            "operations": [
+              {
+                "type": "undo",
+                "value": {},
+                "target_id": null
+              }
+            ],
+            "speech_act": "CHANGE",
+            "information_subject": null
+          }
+        }
+      ]
+    }
+  ],
+  "source_files": [
+    {
+      "case_id": "FINAL40-031",
+      "sha256": "740598e9c00f30ae445c9981a13759f94644ce8449d3004016dd91508827d591",
+      "source_file_name": "FINAL40-031.json"
+    },
+    {
+      "case_id": "FINAL40-032",
+      "sha256": "81afdffc81d0222ac3bc7f50ed950e229d92043801f1e464802a16c597c99cb8",
+      "source_file_name": "FINAL40-032.json"
+    },
+    {
+      "case_id": "FINAL40-039",
+      "sha256": "061f8a3d9edbb1903ea1965308123be5e89cce961362d08743d4d3156f684d66",
+      "source_file_name": "FINAL40-039.json"
+    },
+    {
+      "case_id": "FINAL40-040",
+      "sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+      "source_file_name": "FINAL40-040.json"
+    },
+    {
+      "case_id": "FINAL40-013",
+      "sha256": "b16841dfce47575eae57035f451a7aa80d0fd8c040754fac6e19625c1a2550d3",
+      "source_file_name": "FINAL40-013.json"
+    },
+    {
+      "case_id": "FINAL40-001",
+      "sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+      "source_file_name": "FINAL40-001.json"
+    },
+    {
+      "case_id": "FINAL40-005",
+      "sha256": "97b2bc117f4b3fadde60327a8aeeeb78a0259fec1c312b1b6e4e7ef0d30d4a5f",
+      "source_file_name": "FINAL40-005.json"
+    },
+    {
+      "case_id": "FINAL40-007",
+      "sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+      "source_file_name": "FINAL40-007.json"
+    },
+    {
+      "case_id": "FINAL40-016",
+      "sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+      "source_file_name": "FINAL40-016.json"
+    },
+    {
+      "case_id": "FINAL40-024",
+      "sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+      "source_file_name": "FINAL40-024.json"
+    }
+  ],
+  "scope": "Captured FINAL40 input/state fixtures; old failures remain evidence, not new actual-LLM acceptance."
+}

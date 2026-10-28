@@ -1,0 +1,59 @@
+{
+  "finding_id": "HARNESS-004-ROOM-SCOPED-AGE-OMISSION-078-001",
+  "status": "IMPLEMENTED_NARROW_LITERAL_SCOPE_TESTED_FULL_R19_PENDING",
+  "original_evidence": {
+    "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "source_package": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "raw_snapshot_sha256": "e72afc576635ecf3153af4cdbe4cccda08ae97c9ff5416333f23356486cda81d",
+    "checked_snapshot_sha256": "3af753858adcd2125ade004aa1f851b99fac1f4256b32e0307992dbd0fb12824",
+    "cause": "Model classified explicit scopedroom4age9→10 as ASK/noops and unrelatedadult question. Existinghelpers didnot cover whole roomreference ageedit; checkedunknown cleared, genericreply."
+  },
+  "implementation": {
+    "module": "otravel/room_child_age_intake.py",
+    "hook": "Small preLLM _interpret hook aftergreeting and beforeclosed savedfacts; pausedsessions skiphook. Model/typed operationbatches arenot normalized by it.",
+    "grammar": "Entiremessage: oneasserted current childfromownedroomordinal nowNEWyears insteadOLD, optionally one negativeotherroom preservation clause.",
+    "ownership": "Exactlyonestay, knownroomordinal, exactlyonechild inroom, oldageliteral matchescanonicalage, DOBNone, uniqueassignment. Noageonly/global/latestIDguess.",
+    "ages": "Existingclosedageparser0..17; boundedolddeclension normalization",
+    "unhandled": "Questions/quotes/history/hypothesis/pause/otherpositiveedits/ambiguousstays-or-child/DOB/oldmismatch/invalidage remainoldpath unchanged."
+  },
+  "verification": {
+    "pure_new_passed": 31,
+    "related_pure_passed": 113,
+    "cached_pg_red": {
+      "failed": 1,
+      "reason": "Beforehook age remained9",
+      "private_report": ".local/room-child-age-intake-pg-red-20261028.xml"
+    },
+    "cached_pg_final": {
+      "passed": 3,
+      "seconds": 2.78,
+      "scope": "real isolatedotravel_test, cachedStubLLM/fakeTravel only",
+      "exact_result": {
+        "target_room4_child_age": 10,
+        "second_room_other_child_age": 9,
+        "new_revisions": 1,
+        "model_calls": 0,
+        "all_other_trip_fields_preserved": true,
+        "orders": 0
+      },
+      "controls": [
+        "Valid existingmodel operation on unsupportedliteral wording retains1modelcall",
+        "Typed command retains0modelcalloriginalpath"
+      ]
+    },
+    "ruff": "PASS"
+  },
+  "limitations": [
+    "Fresh whole frozenR19 suite not yetrun here.",
+    "No arbitrary free-form room/age/census resolution promised.",
+    "Existing078T9wholesale modelmiss andfamilycoverage findings remainOPEN.",
+    "No runtime rollout/modelAPI/sourceAPI tests performed by thispatch block."
+  ],
+  "files_sha256": {
+    "otravel/room_child_age_intake.py": "d8f5e1c2627a564648049e6af139903b4e02a41b9bae7bc5b283952ec5b58c23",
+    "otravel/harness.py": "1295a06b18418411a6d0bdd0362de2e0236115d38bd93f6630728da8eaed81b9",
+    "tests/test_room_child_age_intake.py": "29f729a9bdd20f5f33b2b66595414eafc0875e91b23f4af3a463cf5e809ca759",
+    "tests/test_room_child_age_intake_pg.py": "142b90b44f0951d3c0440050fe374287e8dab198739ceca3f1b19118c8272829",
+    "fixtures/regression/room4-age-current-078-20261028.json": "7804ee994a6a74abb6d5bf1913831b94e9f7c346068d788dbcc0205e659f9c66"
+  }
+}

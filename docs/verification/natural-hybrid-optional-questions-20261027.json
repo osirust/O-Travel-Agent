@@ -1,0 +1,92 @@
+{
+  "finding_id": "HARNESS-004-OPTIONAL-UNKNOWN-BLOCKS-SEARCH-001",
+  "date": "2026-10-27",
+  "status": "CLOSED_BOUNDED_CACHED_PG_FLOW_SCOPE_ACTUAL_RETEST_PENDING",
+  "original_actual": {
+    "source_commit": "3208f03",
+    "package_sha256": "5e9f6860cbefabcc3518f6930db4dd8cbbe13af9677e3a92bdf2c40e2c9cd3c8",
+    "scope": "Fresh empty session, one actual natural extraction; not typed requirements bootstrap",
+    "model_calls": 1,
+    "run_status": "completed",
+    "session_status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_field": null,
+    "pending_text": "Что нужно уточнить о поездке, чтобы продолжить?",
+    "plans": 0,
+    "tool_starts": 0,
+    "orders": 0,
+    "supplier_booking_or_payment": 0,
+    "error": null,
+    "report_sha256": "8649707d0b17ab694688e6aac8a42c6a0b47351e75ac4f10ee2766d4b4f1be7b"
+  },
+  "attribution": {
+    "raw_operation_count": 12,
+    "checked_operation_count": 12,
+    "facts_present_in_raw_checked_and_store": [
+      "Казань -> Стамбул10..13Nov -> Анталья13..17Nov -> Казань17Nov",
+      "Two adults, children7and12, two separate full families",
+      "Two allocated rooms at each stay, four room IDs total",
+      "HYBRID, explicit DEMO fallback, citizenshipRU",
+      "Whole-trip budget2000000RUB /200000000minor"
+    ],
+    "frozen_source_validate_trip_after": [],
+    "guard_omission": false,
+    "raw_and_checked_unknowns": ["Требования к типу номера для взрослых", "Необходимость перелётов"],
+    "root_cause": "All model unknowns in CHANGE were treated as blocking before TripSearch. These two are unrequested optional room-type preferences and booking permission, not missing search facts.",
+    "presentation_cause": "Both noun phrases have question_field=None; generic humanization could not find a missing domain fact and retained a field-null generic question.",
+    "not_provider_failure": "No supplier request began; source responses, price, quotas and availability were not tested by the failed natural run.",
+    "no_missing_citizenship": true,
+    "raw_checked_capture_sha256": [
+      "32b52e88b6d75adf657287f9e418f8feaaabde09f55dcfebb68ffa393542c420",
+      "38f1c2392c8cebacd17cab1aa9fe9fa0b6ec8ba0fe83decd9414dcf20f53afbb"
+    ]
+  },
+  "repair": {
+    "module": "otravel/clarification_policy.py",
+    "module_sha256": "617599803cfa8123abb30ee823ccf6f29f1e9192072f71da7166f32404ad5daf",
+    "hook_owner": "Root integrates after canonical guards/application/preflight and before questions; this actor did not edit harness.py",
+    "optional_topics": ["room_type_preference", "transport_booking_permission"],
+    "scope": "Narrow model-unknown grammars only, complete canonical search facts, source nationality and full owned allocation. No general unknown discard.",
+    "provenance": "server_questions and known/ambiguous required slots remain blocking",
+    "user_requirements": "Current/recent/saved bed/type or unsupported hard room criteria stay blocking; transport veto/uncertainty/only-hotels stay blocking",
+    "optional_result": "optional_clarifications and policy notes survive the search-result replacement",
+    "wait_control": "Model wait with only proven optional topics may continue only if no explicit user pause; user pause is retained",
+    "blocking_rendering": "Safe plain Russian noun questions keep meaning; no field, target, age, bed or price is invented; unsafe HTML/URL/code/opaque IDs are not rendered",
+    "supplier_facts_or_booking_consent_inferred": false
+  },
+  "verification": {
+    "status": "51PASS_0FAIL_0SKIP",
+    "pure": 42,
+    "controlled_API_real_PG": 9,
+    "seconds": 5.21,
+    "junit": ".local/evaluation/after80-20261026/clarification-policy-integrated-final.xml",
+    "junit_sha256": "ff0bfab373de7ee17a555473401cc28f203982a252275f6fac4328b5f2739ffb",
+    "pure_test_file": "tests/test_clarification_policy.py",
+    "pure_test_sha256": "237df25f834c954e5edd81cb7079ab9dae538886491d19f1bd049c00bb41cef3",
+    "PG_test_file": "tests/test_harness_clarification_policy.py",
+    "PG_test_sha256": "07fbdb51833fd1b9821d713d2aece0ab812b3a75dd703f2eb320a5961b9d8839",
+    "fixture": "fixtures/regression/natural-hybrid-optional-unknowns-20261027.json",
+    "fixture_sha256": "00bfc87c609b8a04d431227ac50c6179d961fb62f01649a265d61f32b1e2a4ef",
+    "positive": "Fresh own empty PG session + exact source12operation extraction reaches TripSearch:2hotel/3flight controlled calls, OPTIONS_READY/plans, optional advice kept, no field defaults",
+    "control_edges": ["model continue", "model wait without user pause", "explicit user pause keeps0tools"],
+    "blocking_negatives": [
+      "literal hard bed requirement", "no-air/only-hotels", "hard sea-view/balcony/other supported conservative guard examples",
+      "missing nationality", "unknown child age", "unresolved family membership", "missing dates/legs/allocation",
+      "server-owned questions", "ambiguous/unsupported user questions", "unsafe question rendering"
+    ],
+    "Ruff": "All3new files PASS",
+    "actual_external_HTTP": 0,
+    "actual_LLM_HTTP": 0,
+    "Native_changes": 0,
+    "new_PG_quotes_or_orders": 0,
+    "own_empty_PG_session_per_case": true,
+    "test_database": "otravel_test"
+  },
+  "limitations": [
+    "Unknown or ambiguous topics intentionally remain blocking; this is not a universal optional-question classifier.",
+    "Past or removed bed-topic mentions are handled conservatively rather than inferred away.",
+    "This controlled run does not qualify actual supplier prices/availability, remote model replay, all80/106 or production deployment.",
+    "Root's subsequent explicit typed search on the already naturally extracted trip is source-integration evidence, not autonomous natural-agent PASS.",
+    "Original natural WAITING_USER/0tools report is retained unchanged."
+  ]
+}

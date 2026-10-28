@@ -37,6 +37,7 @@ def provider_offers(state=None):
                        "expires_at": (NOW + timedelta(hours=1)).isoformat(), "description": "Contract fixture, not real inventory",
                        "details": {"kind": kind, "binding": binding, "fees_included": True,
                                    "allocation_verified": True, "group_quote": True,
+                                   "passengers_count": len(state.travelers),
                                    "constraint_evidence": {"breakfast": True}}})
     return result
 

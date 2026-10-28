@@ -1,0 +1,74 @@
+{
+  "finding_id": "DIAGNOSTICS-PREVIEW-PROVIDER-001",
+  "status": "CLOSED_CONTROLLED_ASGI_ERROR_CONTRACT_SCOPE_ACTUAL_RETEST_PENDING",
+  "date": "2026-10-27",
+  "baseline_commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+  "implementation_scope": "E working tree only; not applied to the running frozen Native backend",
+  "problem": "ProviderError retained provider/details.http_status internally, but the synchronous API exception handler returned only code/message/retryable. The original preview503 therefore lacked source attribution.",
+  "change": {
+    "file": "otravel/api.py",
+    "sha256": "277bcc566ee7f603d66b264b3b549caf5a4365a54543b49a6d284c2b24271275",
+    "optional_error_fields": {
+      "provider": "Exact code-owned allowlisted provider name only",
+      "upstream_http_status": "Existing details.http_status, strict integer100..599",
+      "retry_after_seconds": "Existing details.retry_after_seconds, strict integer0..86400"
+    },
+    "provider_allowlist": [
+      "gemini", "openrouter", "groq", "zai", "cloudflare", "ollama", "liteapi", "duffel",
+      "serpapi", "open_meteo", "hotelbeds", "ratehawk", "travelpayouts"
+    ],
+    "unknown_or_missing_provider": "Exact legacy three-field payload; do not infer provider from URL, details or raw body",
+    "invalid_or_missing_numeric_facts": "Omitted; strings, booleans, floats, nested values and out-of-range integers are not coerced",
+    "public_HTTP_status": "Still503; upstream status is a separate diagnostic fact",
+    "not_exported": ["raw details", "body", "URL", "headers", "credentials", "native offer IDs", "prebook IDs", "arbitrary upstream metadata"],
+    "automatic_retry_or_header_added": false
+  },
+  "contract": {
+    "required_legacy_fields_unchanged": ["code", "message", "retryable"],
+    "optional_additive_fields_only": true,
+    "empty_provider_exact_legacy_shape_tested": true,
+    "request_body_extra_forbid_unchanged": true,
+    "response_path": "Existing JSONResponse error handler; no closed response-model validation rejects additive optional diagnostics",
+    "example": {
+      "error": {
+        "code": "HTTP_ERROR", "message": "Source declined refresh.", "retryable": false,
+        "provider": "liteapi", "upstream_http_status": 409
+      }
+    }
+  },
+  "verification": {
+    "new_test_file": "tests/test_provider_error_contract.py",
+    "new_test_sha256": "50ad16925881a95fa6d4265019c8b49d07ff4af0ac2ef00e58f5ac0508d7ea88",
+    "new_tests": 57,
+    "related_tests": 12,
+    "total_pass": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "junit": ".local/evaluation/after80-20261026/provider-error-contract-20261027-final.xml",
+    "junit_sha256": "cc87512a6a46ec72c4841ee97dbed15e7d9168db4861b1b40e8a1ed07a8d11df",
+    "seconds": 2.60,
+    "actual_preview_route": "Owned saved-plan checkout/preview with an injected refresh409; safe attribution returned, revocation-before-refresh call retained, no quote created, no state mutation",
+    "preview_test_limit": "Economic plan validation is controlled in this boundary test; durable quote/reprice semantics are qualified separately",
+    "Ruff_new_test_file": "PASS",
+    "Ruff_api_baseline": "7pre-existing findings in baseline and current: I001x1, BLE001x2, UP017x4; no new finding introduced",
+    "postgres_connections": 0,
+    "vendor_HTTP": 0,
+    "LLM_calls": 0,
+    "Native_changes": 0,
+    "supplier_orders_or_payments": 0
+  },
+  "original_failure": {
+    "reference": "docs/verification/travel-preview-diagnostic-20261027.json",
+    "original_preview_http_status": 503,
+    "original_upstream_provider_and_status": "UNKNOWN_NOT_RECONSTRUCTED",
+    "root_cause": "UNKNOWN",
+    "historical_reports_changed": false,
+    "not_claimed": "The old failure was diagnosed or fixed by adding future diagnostics"
+  },
+  "closing_conditions_outside_this_bounded_fix": [
+    "Include this E change in a new qualified package and frontend error-contract export",
+    "A future actual failed synchronous provider request may verify real diagnostic delivery; no deliberate vendor failure or new actual HTTP was performed here",
+    "Do not relabel the original503 as explained or a provider's temporary outage without retained evidence"
+  ]
+}

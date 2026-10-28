@@ -1,6 +1,6 @@
 # Дополнительные аккаунты LLM
 
-Условия проверены по официальной документации 25.10.2026. Доступ конкретного аккаунта, совместимость с нашей схемой и качество диалогов ещё не проверены. Эта инструкция не переключает работающую модель. Ключи храните только в локальной конфигурации, не в Git или чате.
+Условия проверены по официальной документации 25.10.2026. На 26.10 у команды работают ключи Z.ai и Cloudflare; качество диалогов ещё проверяется. Эта инструкция не переключает работающую модель. Ключи храните только в локальной конфигурации, не в Git или чате.
 
 ## Z.ai — Standard API
 
@@ -9,6 +9,8 @@
 3. Для первого сравнения выбрать `glm-4.7-flash` или `glm-4.5-flash`: input/output бесплатны по [прайсу](https://docs.z.ai/guides/overview/pricing). Численные лимиты запросов и токенов нужно проверить в кабинете.
 
 Обычный API endpoint: `https://api.z.ai/api/paas/v4`. Coding Plan, bundles и пополнение баланса не нужны для этого этапа. `glm-5.3-flash` — платная модель. Требования телефона/карты для конкретного нового аккаунта пока неизвестны; при запросе оплаты не продолжать. [Официальный порядок получения ключа](https://docs.z.ai/guides/overview/quick-start).
+
+Наша первая проверка `glm-4.7-flash`: HTTP200, ожидаемый короткий JSON,85 vendor tokens. Это проверка доступа. Runtime-адаптер добавлен отдельно; многошаговое качество проверяется на зафиксированной версии.
 
 ## Cohere — evaluation key
 
@@ -25,6 +27,10 @@
 3. Оставаться на Workers Free: **10000 neurons в сутки**, сброс **03:00 МСК**. После исчерпания Free возвращает ошибку; это не фиксированное число сообщений. [Тариф](https://developers.cloudflare.com/workers-ai/platform/pricing/).
 
 Кандидаты на Free: `@cf/zai-org/glm-4.7-flash`, `@cf/google/gemma-4-26b-a4b-it`, `@cf/nvidia/nemotron-3-120b-a12b`. [Разделение Free/Paid](https://developers.cloudflare.com/changelog/post/2026-07-28-models-require-workers-paid/). Бесплатный аккаунт [не требует карту](https://developers.cloudflare.com/labs/workers). Не выбирать Workers Paid, prepaid AI Gateway credits, платные GLM-5.x/DeepSeek V4/Kimi K2.6 и не создавать Global API Key.
+
+В адаптере разрешены Llama3.3-70B, Gemma4-26B-A4B и Nemotron3-120B-A12B. Первая проба Llama потеряла направление. На трёх одинаковых коротких запросах Gemma прошла 2 из 3 проверок, Nemotron — 3 из 3; это не оценка полных диалогов. Для точечных проверок резервного кандидата можно явно выбрать `CLOUDFLARE_MODEL=@cf/nvidia/nemotron-3-120b-a12b`. Аккаунт NVIDIA для вызова этой модели через Cloudflare не нужен. Работающий 8084 остаётся на Z.ai.
+
+Для Gemma/Nemotron подтверждён приём JSONMode и документированного отключения thinking. Это воспроизводится через `scripts/evaluate_cf_models.py --run` с настроенными Workers Free credentials; без `--run` запросов нет. [Фиксированные случаи](../fixtures/evaluation/cf-backup-pilot-20261026.json), [результаты](verification/cf-backup-pilot-20261026.json). Массовый прогон этим пилотом не закрывается.
 
 ## Дополнительно: NVIDIA hosted NIM
 

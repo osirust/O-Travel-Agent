@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-27",
+  "status": "CONTROLLED_RELATED_GEO_DIALOGUES_PASS_ACTUAL_NLU_OPEN",
+  "scope": "Bounded geography/role/confirmation fixes before frontend integration; no universal NLU/geocoder claim.",
+  "source_review": {
+    "dialogues_scanned": 80,
+    "user_turns_scanned": 697,
+    "geography_related_dialogues_read": 57,
+    "geography_related_turns_read": 128,
+    "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "index": ".local/evaluation/geo-20261027/source80-geography-index.json",
+    "interpretation": "Filtered geographic issue/utterance index, not an actual80 replay or a numerical NLU score."
+  },
+  "tests": {
+    "related_pass": 402,
+    "failed": 0,
+    "skipped": 0,
+    "junit_path": ".local/evaluation/geo-20261027/final-related.xml",
+    "junit_sha256": "28d75e6fa587a79815e47b97bf46b74ea343693993abfea7d95711d5fd242937",
+    "ruff": "PASS",
+    "new_connected_dialogues": 5,
+    "new_connected_user_turns": 38,
+    "new_connected_injected_adapter_calls": 13,
+    "actual_remote_llm_http_calls": 0,
+    "actual_supplier_http_calls": 0,
+    "new_connected_tool_starts": 0,
+    "new_connected_orders": 0
+  },
+  "findings": [
+    {
+      "id": "H004-GEO-QUALIFIED-001",
+      "fact": "A first city+country assertion without from/origin or an active destination slot lost the city role; the country alone produced another generic city question.",
+      "fix": "Known leading city plus explicit country is grounded as one destination assertion; a country mismatch keeps unrelated operations and asks confirmation.",
+      "controlled_proof": "Four city/country pure contradictions and initial-conflict six-turn PG dialogue.",
+      "actual_closure": "Repeat the same first utterance through a real remote model; origin/people/budget saved, incompatible city/country never committed as such.",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING"
+    },
+    {
+      "id": "H004-GEO-COMPOUND-CONSENT-001",
+      "fact": "Yes/no followed by an independent edit did not bind to the active destination proposal; a declined proposal could remain pending.",
+      "fix": "Bound yes/no prefix only to a fresh destination proposal and an explicit independent non-geographic edit. Questions, country/city mentions, history, vetoes and hypotheticals cannot grant consent.",
+      "controlled_proof": "Compound yes/no pure cases plus twelve-turn PG child7->8/budget/pause conversation.",
+      "actual_closure": "Actual multi-turn yes/no plus edits preserve current adult/budget and apply only current confirmed country/city.",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING"
+    },
+    {
+      "id": "H004-GEO-NEW-TARGET-001",
+      "fact": "The first country-conflict question had a generated future stay alias, but accepting it with another edit could not resolve a target because no stay existed yet.",
+      "fix": "Only when no stays exist, admit the bounded server-style stay-N/new-stay-N alias already bound in the pending question.",
+      "controlled_proof": "Saved initial FAIL then pure continuation and six-turn PG first-proposal acceptance.",
+      "actual_closure": "Actual new-chat conflict->compound acceptance creates exactly one owned stay; no phantom second stay.",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING"
+    },
+    {
+      "id": "H004-GEO-LATE-ACK-001",
+      "fact": "Late yes after declining a city unnecessarily fell through to the model instead of asking for a city in the retained country.",
+      "fix": "A destination question without a proposed city answers bare yes/no with its existing human question and no operation/model request.",
+      "controlled_proof": "Two declined-proposal/late-yes phases in the twelve-turn PG dialogue; exact adapter-call counts.",
+      "actual_closure": "Actual refusal then late yes leaves trip and country intact, without reviving rejected proposal.",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING"
+    },
+    {
+      "id": "H004-GEO-TYPO-PROPOSAL-001",
+      "fact": "Old80 F015/F047 include Санкт-Петербрг and Мосвкы. Literal grounding rejected even a correctly proposed canonical city without a useful targeted suggestion.",
+      "fix": "One edit or adjacent transposition against curated aliases after explicit origin/destination cues can propose one unique city for confirmation, never commit it. Residence, transit, country names, questions, quoted and non-current material are excluded.",
+      "controlled_proof": "Three initial FAILs, pure negatives, and two six-turn PG typo/yes/FAQ/pause/budget dialogues.",
+      "actual_closure": "Repeat both source-inspired compound typos through real LLM; other facts persist, confirmation owns the correct role and later budget changes do not undo it.",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING"
+    },
+    {
+      "id": "H004-GEO-RS-TYPO-PUNCT-001",
+      "fact": "The approved Serbia-only bare Белгород correction did not recognise ordinary trailing period/exclamation punctuation.",
+      "fix": "Normalise bare-answer punctuation while keeping question marks non-consensual and never changing the global Belgorod/Russia registry.",
+      "controlled_proof": "Visible Понял как «Белград», Сербия. in pure and twelve-turn PG assertions; explicit Russia and global aliases retain old guards.",
+      "actual_closure": "Actual Serbian-context bare typo reply visibly acknowledges Belgrade; explicit Russia and real country disagreement remain distinct.",
+      "status": "CONTROLLED_FIX_PASS_ACTUAL_NLU_RETEST_PENDING"
+    }
+  ],
+  "root_integration_dependency": {
+    "facts": "Root added canonical known-city/country and alias FAQ handling after two initial QA failures plus the alias no-edit failure.",
+    "root_related_receipts": [
+      ".local/evaluation/after80-20261026/faq-20261027-related-final.xml",
+      ".local/evaluation/after80-20261026/geo-faq-20261027-series.xml"
+    ],
+    "ownership": "Root answering.py/harness.py, not modified by this geo actor."
+  },
+  "preserved_initial_failures": [
+    "compound-initial.xml",
+    "first-proposal-target-initial.xml",
+    "dialogue-pg-initial.xml",
+    "dialogue-pg-series.xml",
+    "typo-initial.xml",
+    "dialogues-typos-final.xml"
+  ],
+  "hash_scope": "Current E:/work/aegml working-tree file bytes; native archive identity is separate.",
+  "file_sha256": {
+    "otravel/intent_grounding.py": "a2a3b811aa1740e870c9b0488ac5a4854b752679a6763d1ebcb0b327e71e72e0",
+    "otravel/clarifications.py": "c7e6f937dee0ed404a4eb67a1f3b4e9d7c1452e648c7b616822c0cb426b9266d",
+    "tests/test_geo_compound_consent.py": "f96b901e47c1afb5ef74ca84a288620ce05a2c97de642ef9f28442aa4104fe95",
+    "tests/test_geo_typo_proposals.py": "aa62691494662d655cac1feff60f14e30750ddce070b1322e68eb2f4d8050ddf",
+    "tests/test_harness_geo_dialogues_20261027.py": "5448cf8059001bfb3e8b883712cc26ae4823b1c9b39b69276bd3f26487e92c36",
+    "fixtures/regression/geography-dialogues-20261027.json": "1b2c09f2e4bf1a1370a4b99a9447f9dc16c1ae3a8aa85ffdb7e3a59652255e77"
+  },
+  "unchanged_external_scope": [
+    "Native source/controllers not changed",
+    "No API keys read or emitted",
+    "No LLM/travel HTTP, supplier booking, payment or frontend design",
+    "Original80 corpus unchanged"
+  ]
+}

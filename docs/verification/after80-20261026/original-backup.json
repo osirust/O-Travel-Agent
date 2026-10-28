@@ -1,0 +1,48 @@
+{
+  "status": "ORIGINAL_SOURCE_AND_DATABASE_BACKED_UP",
+  "database": "otravel_zai_eval",
+  "process": {
+    "pid": 421782,
+    "uid": 1000,
+    "start_ticks": 3488716,
+    "argv": [
+      "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+      "-m",
+      "uvicorn",
+      "otravel.api:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8084",
+      "--no-access-log"
+    ],
+    "cwd": "/home/aegml/projects/otravel-zai-eval",
+    "executable": "/usr/bin/python3.12"
+  },
+  "database_counts": {
+    "agent_events": 4775,
+    "agent_runs": 706,
+    "demo_orders": 1,
+    "messages": 1412,
+    "quotes": 65,
+    "sessions": 86,
+    "pending_or_running": 0,
+    "model_call_started": 605
+  },
+  "files": {
+    "original-source.tar.gz": {
+      "sha256": "decff483af12138b6b1128432e9dc13e876d5c12c614edd88231ebe632d587f3",
+      "bytes": 134660
+    },
+    "original-otravel_zai_eval.dump": {
+      "sha256": "5a6d2180a03dc6504f54cde0a7be65c01752bd5359d8bcd9613b0fff3b5679f6",
+      "bytes": 1548226
+    }
+  },
+  "archive_excludes_credentials": true,
+  "backup_directory": "/home/aegml/checks/after80-original-20261026-attempt2",
+  "runtime_stopped": false,
+  "model_calls": 0,
+  "supplier_calls": 0,
+  "source_manifest_sha256": "a25ec3607131e26be4ea879c0166e4a0dc4010fef96c6c7281c4c0969852537d"
+}

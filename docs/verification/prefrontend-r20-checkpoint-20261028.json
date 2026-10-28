@@ -1,0 +1,122 @@
+{
+  "format": "otravel.prefrontend.r20.release.v1",
+  "created_at_utc": "2026-10-28T04:29:58.483649+00:00",
+  "status": "CONTROLLED_FULL_PASS_RUNTIME_AND_FRESH_MODEL_RETEST_PENDING",
+  "package_sha256": "9bd2f7d752c96d95849c433031b9481076294150464e6c5a12e371c2f4d89589",
+  "package_file_count": 87,
+  "full": {
+    "passed": 7463,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_reported_seconds": 451.01,
+    "junit_suite_seconds": 450.882,
+    "source_and_tests_unchanged": true,
+    "test_file_count": 301,
+    "tests_sha256": "caea1c29d91ee5734206ceac17937f15116d8d0944ce1961f3344ff308b3a16a",
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r20-initial.xml",
+    "xml_sha256": "cdd196c78ea8c5acf189bccaa5acaa106a9f51d18bfdeede6b8cd90930983878",
+    "actual_provider_calls": 0
+  },
+  "previous_release": {
+    "revision": "R19",
+    "commit": "3f4f87174b96bcf96711b797c10f21dfcc230055",
+    "passed": 7384,
+    "rollout_was_held_for_new_actual_readonly_mutation": true,
+    "proof": "docs/verification/prefrontend-r19-checkpoint-20261028.json"
+  },
+  "repairs": [
+    {
+      "finding_id": "HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001",
+      "proof": "docs/verification/readonly-now-prefix-079-repair-20261028.json",
+      "scope": "Shared question prefix now admits теперь; explicit fact tails retain extraction, and the party-plus-room question keeps the strict readonly role. Invalid cached mutating output is rejected; valid selector renders saved facts without state/room/group changes."
+    },
+    {
+      "finding_id": "HARNESS-004-GROUP-PENDING-SHORTCUT-SWALLOW-080-001",
+      "proof": "docs/verification/group-count-pending-gate-080-repair-20261028.json",
+      "scope": "Only a complete closed count answer uses the early family-count shortcut. Independent budget/preference/membership text reaches normal extraction/readonly; pending separation and no-search boundaries remain."
+    }
+  ],
+  "finding_id_aliases": {
+    "HARNESS-004-READONLY-NOW-PREFIX-079-001": "HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001"
+  },
+  "fixture_byte_pins": "docs/verification/r20-fixture-byte-pins-20261028.json",
+  "language_input_coverage": {
+    "source_inputs": 697,
+    "source_dialogues": 80,
+    "accepted_unique": 697,
+    "terminal": 692,
+    "completed": 657,
+    "failed": 35,
+    "old_queued_not_executed": 5,
+    "uniform80_or106_semantic_pass_claimed": false,
+    "proof": "docs/verification/actual80-unique-input-coverage-20261028.json",
+    "final_manual": "docs/verification/after80-final-manual-079-080-20261028.json"
+  },
+  "actual_tourism_reference": {
+    "revision": "R18",
+    "actual_supplier_http": 22,
+    "fresh_llm_http": 0,
+    "proof": "docs/verification/r18-typed-real-travel-checkout-20261028.json",
+    "order": "One BOOKED_DEMO plus idempotent retry; SANDBOX hotels/flights and DEMO transfers.",
+    "oracle_corrections_and_original_failures_retained": true
+  },
+  "actual_cf_reference": {
+    "revision": "R17",
+    "actual_cf_http": 1,
+    "scope": "One successful endpoint/schema/room extraction; not a full chat PASS.",
+    "proof": "docs/verification/final-zai47-cloudflare-asgi-20261028.json"
+  },
+  "fresh_runtime_plan": "Exact committed archive Docker smoke, guarded native CF startup, at most3 actual CF requests on own controlled 079/080 sessions. Not performed by this full pytest.",
+  "delivery_open": [
+    "Dedicated jury key and root binary secrets.env.age",
+    "Final frontend/archive test",
+    "Public demo video/README link",
+    "Final official main/submission tag"
+  ],
+  "gigachat": {
+    "oauth_http": 200,
+    "generation_successes": 0,
+    "api_tls_timeout": true,
+    "vpn_routes_mtu_global_trust_or_tls_verification_changed": false
+  },
+  "current_test_scope_paid_local_qwen_supplier_booking_payment": false,
+  "staged_package": {
+    "tested_package_sha256": "9bd2f7d752c96d95849c433031b9481076294150464e6c5a12e371c2f4d89589",
+    "staged_package_sha256": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+    "package_files": 87,
+    "only_allowed_crlf_normalization": [
+      "otravel/budget_intake.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/intent_grounding.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py",
+      "otravel/route_policy_intent.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  },
+  "staged_tests": {
+    "tested_manifest_sha256": "caea1c29d91ee5734206ceac17937f15116d8d0944ce1961f3344ff308b3a16a",
+    "staged_manifest_sha256": "0b80cef863309c4e71b1279b0443e2a85367ae347e163d3e8d5feb2fe42d68fd",
+    "files": 301,
+    "non_eol_changes": 0,
+    "only_crlf_normalization": [
+      "tests/test_budget_raw_authority.py",
+      "tests/test_dynamic_place_contract.py",
+      "tests/test_dynamic_place_suppliers.py",
+      "tests/test_group_room_scope.py",
+      "tests/test_place_refs.py",
+      "tests/test_place_run.py",
+      "tests/test_place_run_pg.py",
+      "tests/test_rate_failure_peer_regressions.py",
+      "tests/test_route_end_and_unknown_party.py",
+      "tests/test_traveler_addition_grounding.py",
+      "tests/test_traveler_addition_repair_pg.py",
+      "tests/test_traveler_final_roster_pg.py"
+    ]
+  }
+}

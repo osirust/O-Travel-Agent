@@ -1,6 +1,7 @@
 """Masked local API-key entry. Secrets travel via stdin, never command arguments."""
 
 import argparse
+import base64
 import getpass
 import json
 import os
@@ -25,9 +26,41 @@ KEYS = {
     "RATEHAWK_KEY_ID": "RateHawk test key ID, если выдан",
     "RATEHAWK_API_KEY": "RateHawk test API key, если выдан",
     "TRAVELPAYOUTS_API_TOKEN": "Travelpayouts token, если выдан",
+    "ZAI_API_KEY": "Z.ai Standard API key (сохранение для будущей проверки)",
+    "COHERE_API_KEY": "Cohere evaluation key (сохранение для будущей проверки)",
+    "CLOUDFLARE_API_TOKEN": "Cloudflare Workers AI Free token (сохранение для будущей проверки)",
+    "CLOUDFLARE_ACCOUNT_ID": "Cloudflare Account ID (32 hex-символа)",
+    "NVIDIA_API_KEY": "NVIDIA hosted NIM key (сохранение для будущей проверки)",
 }
 GROQ_MODEL = "qwen/qwen3.8-27b"
-ALLOWED = set(KEYS) | {"GEMINI_FREE_TIER_CONFIRMED", "GROQ_FREE_TIER_CONFIRMED", "GROQ_MODEL", "SERPAPI_FREE_TIER_CONFIRMED", "HOTELBEDS_TEST_CONFIRMED", "RATEHAWK_TEST_CONFIRMED", "LLM_PROVIDER", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL", "LLM_REASONING_ENABLED", "LLM_REQUEST_TIMEOUT"}
+GIGACHAT_FIELDS = frozenset({"GIGACHAT_AUTH_KEY", "GIGACHAT_FREEMIUM_CONFIRMED"})
+COMPARISON_CREDENTIALS = {
+    "ZAI_FREE_TIER_CONFIRMED": ("ZAI_API_KEY",),
+    "COHERE_EVALUATION_CONFIRMED": ("COHERE_API_KEY",),
+    "CLOUDFLARE_FREE_TIER_CONFIRMED": ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"),
+    "NVIDIA_PROTOTYPING_CONFIRMED": ("NVIDIA_API_KEY",),
+}
+COMPARISON_CONFIRMATIONS = {
+    "ZAI_FREE_TIER_CONFIRMED": "Это Z.ai Standard API для бесплатных GLM Flash, БЕЗ пополнения и Coding Plan? yes/no: ",
+    "COHERE_EVALUATION_CONFIRMED": "Это Cohere trial/evaluation БЕЗ production и платёжного метода? yes/no: ",
+    "CLOUDFLARE_FREE_TIER_CONFIRMED": "Это Cloudflare Workers Free БЕЗ карты, Paid и prepaid credits? yes/no: ",
+    "NVIDIA_PROTOTYPING_CONFIRMED": "Это бесплатный NVIDIA hosted NIM для прототипирования БЕЗ платных услуг? yes/no: ",
+}
+ALLOWED = set(KEYS) | set(COMPARISON_CREDENTIALS) | GIGACHAT_FIELDS | {"GEMINI_FREE_TIER_CONFIRMED", "GROQ_FREE_TIER_CONFIRMED", "GROQ_MODEL", "SERPAPI_FREE_TIER_CONFIRMED", "HOTELBEDS_TEST_CONFIRMED", "RATEHAWK_TEST_CONFIRMED", "LLM_PROVIDER", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL", "LLM_REASONING_ENABLED", "LLM_REQUEST_TIMEOUT"}
+
+
+def validate_gigachat_auth_key(value) -> str:
+    """Validate the copied Basic authorization value without returning its parts."""
+    if not isinstance(value, str) or not 1 <= len(value) <= 4096:
+        raise ValueError("Нужен Authorization Key личного проекта GigaChat.")
+    try:
+        decoded = base64.b64decode(value, validate=True)
+    except (ValueError, UnicodeError):
+        raise ValueError("Authorization Key должен быть корректным Base64.") from None
+    client, separator, secret = decoded.partition(b":")
+    if not separator or not client.strip() or not secret.strip():
+        raise ValueError("Authorization Key должен содержать непустые client_id и secret.")
+    return value
 
 
 def write_env(payload: dict) -> None:
@@ -40,11 +73,28 @@ def write_env(payload: dict) -> None:
         # Free confirmation when the stdin writer is called directly.
         payload = {**payload, "GROQ_MODEL": payload.get("GROQ_MODEL", GROQ_MODEL),
                    "GROQ_FREE_TIER_CONFIRMED": payload.get("GROQ_FREE_TIER_CONFIRMED", "false")}
+    payload = dict(payload)
+    if "GIGACHAT_AUTH_KEY" in payload:
+        validate_gigachat_auth_key(payload["GIGACHAT_AUTH_KEY"])
+        payload.setdefault("GIGACHAT_FREEMIUM_CONFIRMED", "false")
+    if ("GIGACHAT_FREEMIUM_CONFIRMED" in payload
+            and (not isinstance(payload["GIGACHAT_FREEMIUM_CONFIRMED"], str)
+                 or payload["GIGACHAT_FREEMIUM_CONFIRMED"] not in {"true", "false"})):
+        raise ValueError("Подтверждение бесплатного пакета GigaChat должно быть true или false.")
+    for flag, credentials in COMPARISON_CREDENTIALS.items():
+        if any(name in payload for name in credentials):
+            # Confirmation belongs to this credential set, not its predecessor.
+            payload.setdefault(flag, "false")
     for name, value in payload.items():
         if name == "OPENROUTER_BACKUP_MODEL" and value == "":
             continue
         if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_.:/+=@-]{1,4096}", value):
             raise ValueError("Настройка содержит неподдерживаемые символы.")
+    if "CLOUDFLARE_ACCOUNT_ID" in payload and not re.fullmatch(r"[A-Fa-f0-9]{32}", payload["CLOUDFLARE_ACCOUNT_ID"]):
+        raise ValueError("Cloudflare Account ID должен содержать ровно 32 hex-символа.")
+    for flag in COMPARISON_CREDENTIALS:
+        if flag in payload and payload[flag] not in {"true", "false"}:
+            raise ValueError("Подтверждение бесплатного доступа должно быть true или false.")
     for name in ("OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL"):
         model = payload.get(name, "")
         if model and not model.endswith(":free"):
@@ -70,16 +120,22 @@ def _replace_env(payload: dict) -> None:
             if line and not line.startswith("#") and "=" in line:
                 k, v = line.split("=", 1)
                 values[k] = v
-    values.setdefault("POSTGRES_PASSWORD", secrets.token_urlsafe(32))
-    values.setdefault("APP_PORT", "8081")
-    values.setdefault("LLM_PROVIDER", "openrouter")
-    values.setdefault("GEMINI_MODEL", "gemini-3.8-flash")
-    values.setdefault("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")
-    values.setdefault("GEMINI_FREE_TIER_CONFIRMED", "false")
-    values.setdefault("GROQ_MODEL", GROQ_MODEL)
-    values.setdefault("GROQ_FREE_TIER_CONFIRMED", "false")
-    values.setdefault("SERPAPI_FREE_TIER_CONFIRMED", "false")
-    values.setdefault("LITEAPI_MODE", "sandbox")
+    # The standalone GigaChat collector only stores its new credential/flag.
+    # It must not initialize a provider, model or unrelated database defaults.
+    # Existing generic setup (including an empty update) retains its behavior.
+    if not (payload and set(payload) <= GIGACHAT_FIELDS):
+        values.setdefault("POSTGRES_PASSWORD", secrets.token_urlsafe(32))
+        values.setdefault("APP_PORT", "8081")
+        values.setdefault("LLM_PROVIDER", "openrouter")
+        values.setdefault("GEMINI_MODEL", "gemini-3.8-flash")
+        values.setdefault("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")
+        values.setdefault("GEMINI_FREE_TIER_CONFIRMED", "false")
+        values.setdefault("GROQ_MODEL", GROQ_MODEL)
+        values.setdefault("GROQ_FREE_TIER_CONFIRMED", "false")
+        values.setdefault("SERPAPI_FREE_TIER_CONFIRMED", "false")
+        for flag in COMPARISON_CREDENTIALS:
+            values.setdefault(flag, "false")
+        values.setdefault("LITEAPI_MODE", "sandbox")
     values.update(payload)
     fd, temp = tempfile.mkstemp(prefix=".env.", dir=PROJECT)
     try:
@@ -106,7 +162,8 @@ def status() -> None:
     print(json.dumps({"configured": {k: bool(values.get(k)) for k in KEYS},
                       "gemini_free_confirmed": values.get("GEMINI_FREE_TIER_CONFIRMED") == "true",
                       "groq_free_confirmed": values.get("GROQ_FREE_TIER_CONFIRMED") == "true",
-                      "serpapi_free_confirmed": values.get("SERPAPI_FREE_TIER_CONFIRMED") == "true"}, ensure_ascii=False))
+                      "serpapi_free_confirmed": values.get("SERPAPI_FREE_TIER_CONFIRMED") == "true",
+                      **{flag.lower(): values.get(flag) == "true" for flag in COMPARISON_CREDENTIALS}}, ensure_ascii=False))
 
 
 def collect_payload() -> dict:
@@ -132,6 +189,10 @@ def collect_payload() -> dict:
                 flag = "HOTELBEDS_TEST_CONFIRMED" if key == "HOTELBEDS_API_SECRET" else "RATEHAWK_TEST_CONFIRMED"
                 answer = input("Это разрешённый sandbox/test доступ без финансовых обязательств? yes/no: ").strip().lower()
                 payload[flag] = "true" if answer == "yes" else "false"
+    for flag, credentials in COMPARISON_CREDENTIALS.items():
+        if any(name in payload for name in credentials):
+            answer = input(COMPARISON_CONFIRMATIONS[flag]).strip().lower()
+            payload[flag] = "true" if answer == "yes" else "false"
     return payload
 
 

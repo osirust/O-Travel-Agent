@@ -1,0 +1,16 @@
+{
+  "provenance": {
+    "scope": "Safe field projection of the actual second-hotel prebook refusal; no offer IDs or credentials",
+    "actual_source_commit": "b9343c0c6459c6d34e8605371c955de95da2f73d",
+    "raw_response_sha256": "4e0d5008058c0a477d5cb56f49a5b5cf021c0516600a202ee78e9849cb1fc979",
+    "observed_http_status": 409,
+    "primary_reference": "https://docs.liteapi.travel/reference/api-errors-for-hotel-booking-workflow"
+  },
+  "response_body": {
+    "error": {
+      "code": 2001,
+      "message": "no availability found",
+      "description": "provider price exceeds locked selling price, please search again"
+    }
+  }
+}

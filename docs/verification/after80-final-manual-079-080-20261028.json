@@ -1,0 +1,485 @@
+{
+  "verification_id": "AFTER80-FINAL-MANUAL-079-080-20261028",
+  "recorded_at_utc": "2026-10-28T04:08:58.132327+00:00",
+  "status": "ALL_ORIGINAL_TURNS_ATTEMPTED_SEMANTIC_FAILURES_RETAINED",
+  "method": "Every full user/assistant/minimal before-after state was manually read. No model judge or metadata-derived semantic PASS.",
+  "evidence": {
+    "safe_projection": ".local\\evaluation\\final079-080-lineage-20261028\\full-dialogues-whitelist.json",
+    "sha256": "f676e52526d8110316d28348b3b964a499513e8431bf87340b5d1771765abe26",
+    "original_source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "all16_source_texts_exact": true
+  },
+  "coverage": {
+    "whole_dialogues_reviewed": 2,
+    "attempted_unique_turns": 16,
+    "completed_runs": 12,
+    "failed_runs": 4,
+    "overlap_with_prior_manual64": [
+      "ZAI100-079:T1",
+      "ZAI100-079:T2"
+    ],
+    "new_original_inputs_after_manual64": 14,
+    "prior_manual64_modified": false,
+    "full_uniform80_or106_pass": false,
+    "older_five_queued_inputs_not_counted_as_executed": true
+  },
+  "actual_model_http_in_these16": {
+    "groq": 2,
+    "openrouter": 8,
+    "zai": 1,
+    "cloudflare": 1
+  },
+  "zero_model_turns": [
+    "ZAI100-080:T5",
+    "ZAI100-080:T6",
+    "ZAI100-080:T7",
+    "ZAI100-080:T8"
+  ],
+  "source_scope": "All16 observed turns use immutableR17 db913/4e53, across separately declared providers/epochs. Later controlled R18/R19 repairs are not fresh repeats of these inputs.",
+  "critical_finding": {
+    "id": "HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001",
+    "observed_turn": "ZAI100-079:T5",
+    "causal_peer_proof": "docs/verification/readonly-question-now-prefix-079-cause-20261028.json",
+    "observation": "Pure query changes room memberships, mixes families and loses allocations. Root owns repair; no repair or runtime claim is made by this manual addendum."
+  },
+  "cloudflare_interpretation": {
+    "actual_fresh_model_calls": 1,
+    "actual_turn": "ZAI100-080:T4",
+    "provider": "cloudflare",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "what_changed": "Three room memberships only, version1→2; no groups or child age13 saved.",
+    "following_zero_model_turns": "T5–7 contextual_slot repeat unresolved-family question and leave independent edits unfulfilled; T8 canonical_saved_answer.",
+    "connection_schema_verified_scope": true,
+    "model_quality_ranking_or_full_chat_pass": false,
+    "zero_model_does_not_imply_semantic_pass": true
+  },
+  "cases": [
+    {
+      "id": "ZAI100-079",
+      "all_eight_original_inputs_attempted": true,
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "user": "Из Казани в Анталью 4–10 декабря 2026. Две семьи: первая — двое взрослых и ребёнок четырёх лет, вторая — двое взрослых и ребёнок девяти лет. Всего шестеро, четыре взрослых и двое детей. Два номера, семьи отдельно, общий бюджет 280000 рублей.",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "CARRIED_INITIAL_DATE_OMISSION",
+          "observation": "Original Groq prefix: correct people/groups/rooms/budget; dates4–10Dec missing, requested6nights saved instead. Old date omission remains, not a new suffix error.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers",
+            "groups",
+            "stays",
+            "budget"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "groq",
+            "runtime_model": "openai/gpt-oss-120b",
+            "model_call_started_count": 1,
+            "actual_model_provider": "groq",
+            "actual_model_id": "openai/gpt-oss-120b",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": null,
+            "not_replayed": true,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 2,
+          "user": "Первый номер: первые двое взрослых и ребёнок четырёх лет — первая семья. Второй номер: оставшиеся двое взрослых и ребёнок девяти лет — вторая семья. Семьи не смешивай.",
+          "run_status": "failed",
+          "response_source": null,
+          "manual_classification": "CARRIED_RESOURCE_FAILURE",
+          "observation": "Original Groq429 with unchanged trip/pending; not resent on the next provider.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "groq",
+            "runtime_model": "openai/gpt-oss-120b",
+            "model_call_started_count": 1,
+            "actual_model_provider": "groq",
+            "actual_model_id": "openai/gpt-oss-120b",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T1",
+            "not_replayed": true,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 3,
+          "user": "Один взрослый из второго номера не поедет. Там остаётся один взрослый и ребёнок девяти лет. Первый номер и его семью не трогай.",
+          "run_status": "failed",
+          "response_source": null,
+          "manual_classification": "FAILED_SCHEMA_PRESERVED",
+          "observation": "New Nemo input accepted but INVALID_LLM_OPERATION; trip/pending unchanged. Which of two adults would leave remains an adaptive identity issue, not solved by a failed run.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T2",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 4,
+          "user": "Удали этого взрослого из самой поездки, не только из номера. В итоге должно быть трое взрослых и двое детей четырёх и девяти лет. Первый номер оставь прежним.",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "PARTIAL_FACTS_AND_ADAPTIVE_REFERENCE",
+          "observation": "Nemo removes one adult from room2/trip and leaves3AD+CH4/9; room1 preserved at this point. Previous unspecified «один взрослый/этого» does not establish a named identity, so do not force one specific remaining adult ID as the only valid oracle.",
+          "changed_trip_fields": [
+            "travelers",
+            "groups",
+            "stays"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T3",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 5,
+          "user": "Теперь сколько взрослых и детей осталось? Первый номер сохранился прежним?",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "CONFIRMED_UNAUTHORIZED_READONLY_MUTATION",
+          "observation": "Read-only roster/room question advancesv2→3 and replaces room1[AD1,AD2,CH4],room2[AD4,CH9] with room1[AD4,CH4],room2[AD2]. AD1 andCH9 become unallocated; room1 mixes distinct keep-separate families. Roster/groups unchanged. This is a semantic mutation, not a version-only artifact.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T4",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 6,
+          "user": "Сократи общий бюджет на 20 тысяч рублей, состав и номера больше не меняй.",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "BUDGET_CORRECT_BAD_LAYOUT_RETAINED",
+          "observation": "280000→260000RUB correct; the already damaged layout is retained under explicit no-room-change instruction.",
+          "changed_trip_fields": [
+            "budget"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T5",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 7,
+          "user": "Ребёнку из второго номера теперь десять лет вместо девяти. Первый номер и ребёнка четырёх лет не трогай.",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "AGE_CORRECT_WITH_DAMAGED_REFERENCE_CONTEXT",
+          "observation": "Original CH9 changes to10, CH4 unchanged; no restoration of the lost room allocation. Current room2 has no child afterT5, so wording now refers to historical intended allocation.",
+          "changed_trip_fields": [
+            "travelers"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T6",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 8,
+          "user": "Подведи итог: сколько взрослых осталось, какие возраста детей, даты и общий бюджет? Первый номер остался прежним?",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "READONLY_INCOMPLETE_REPLY",
+          "observation": "State unchanged and roster3AD+CH4/10 correct. Reply omits dates/budget and whether room1 stayed unchanged; actual room1 had changed atT5.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-079:T7",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-080",
+      "all_eight_original_inputs_attempted": true,
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "user": "Из Москвы в Дубай 8–14 декабря 2026. Пятеро взрослых, дети трёх, шести, девяти и двенадцати лет. Две семьи, девять человек, три номера. Общий бюджет 500000 рублей.",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "INITIAL_FACTS_AND_LEGITIMATE_ALLOCATION_ASK",
+          "observation": "Nemo saves Moscow/Dubai8–14Dec/5AD+CH3/6/9/12/500000RUB/three empty rooms. Asking family/room membership is legitimate; pending has no machine field.",
+          "changed_trip_fields": [
+            "origin",
+            "travelers",
+            "stays",
+            "legs",
+            "budget"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": null,
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 2,
+          "user": "В первом номере первые двое взрослых и дети трёх и шести лет — первая семья. Во втором следующие двое взрослых и ребёнок девяти лет. В третьем последний взрослый и ребёнок двенадцати лет — это вторая семья. Семьи не смешивай.",
+          "run_status": "failed",
+          "response_source": null,
+          "manual_classification": "FAILED_SCHEMA_PRESERVED",
+          "observation": "Explicit full room/family allocation fails INVALID_LLM_OPERATION; no state/pending change. User facts are in history but were not committed.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "openrouter",
+            "runtime_model": "nvidia/nemotron-3.5-super-vl:free",
+            "model_call_started_count": 1,
+            "actual_model_provider": "openrouter",
+            "actual_model_id": "nvidia/nemotron-3.5-super-vl:free",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T1",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 3,
+          "user": "Старшему ребёнку второй семьи будет тринадцать лет вместо двенадцати. Первый номер и всю первую семью не меняй.",
+          "run_status": "failed",
+          "response_source": null,
+          "manual_classification": "FAILED_RESOURCE_PRESERVED",
+          "observation": "Z.ai47 separately accepts previously unsubmittedT3 then429. The age12→13 does not apply; this failure is not a model-quality conclusion.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-zai47-final-asgi-epoch1-20261028-034503-1c325031",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "zai",
+            "runtime_model": "glm-4.7-flash",
+            "model_call_started_count": 1,
+            "actual_model_provider": "zai",
+            "actual_model_id": "glm-4.7-flash",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T2",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 4,
+          "user": "Распределение: первый номер — первые двое взрослых и дети 3 и 6 лет. Второй — следующие двое взрослых и ребёнок 9 лет. Третий — последний взрослый и ребёнок 13 лет. Семьи не смешивать.",
+          "run_status": "completed",
+          "response_source": "llm",
+          "manual_classification": "CF_ROOM_EXTRACTION_PARTIAL_SUCCESS",
+          "observation": "One actual Cloudflare120B call succeeds. Exactly the three requested room ID memberships are saved and version1→2. Traveler ages remain3/6/9/12 and groups remain empty; no age13 update. New group-membership question is reasonable for unresolved canonical families, but its wording says rooms are not allocated although they now are.",
+          "changed_trip_fields": [
+            "stays"
+          ],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "cloudflare",
+            "runtime_model": "@cf/nvidia/nemotron-3-120b-a12b",
+            "model_call_started_count": 1,
+            "actual_model_provider": "cloudflare",
+            "actual_model_id": "@cf/nvidia/nemotron-3-120b-a12b",
+            "model_http_count": 1,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T3",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": false
+          }
+        },
+        {
+          "turn": 5,
+          "user": "Теперь старшему ребёнку второй семьи будет четырнадцать вместо тринадцати. Первую семью и первый номер не меняй.",
+          "run_status": "completed",
+          "response_source": "contextual_slot",
+          "manual_classification": "ZERO_MODEL_UNFULFILLED_AGE_REFERENCE",
+          "observation": "contextual_slot,0modelHTTP; same group question and unchanged state. Family membership is still unbound, so an identity clarification is safer than guessing the child. The requested age14 is not saved; this is not a successful Cloudflare model response.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "cloudflare",
+            "runtime_model": "@cf/nvidia/nemotron-3-120b-a12b",
+            "model_call_started_count": 0,
+            "actual_model_provider": null,
+            "actual_model_id": null,
+            "model_http_count": 0,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T4",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": true
+          }
+        },
+        {
+          "turn": 6,
+          "user": "Ему всё-таки тринадцать лет, я ошибся с четырнадцатью. Остальных детей не меняй.",
+          "run_status": "completed",
+          "response_source": "contextual_slot",
+          "manual_classification": "ZERO_MODEL_UNFULFILLED_REFERENCE_CORRECTION",
+          "observation": "contextual_slot,0modelHTTP; age13 correction also not saved. Family/reference remains unresolved and state stays12; not an extra Cloudflare model-quality sample.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "cloudflare",
+            "runtime_model": "@cf/nvidia/nemotron-3-120b-a12b",
+            "model_call_started_count": 0,
+            "actual_model_provider": null,
+            "actual_model_id": null,
+            "model_http_count": 0,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T5",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": true
+          }
+        },
+        {
+          "turn": 7,
+          "user": "Общий бюджет теперь 470000 рублей. Добавь приоритет минимальной общей стоимости. Все девять и распределение номеров остаются.",
+          "run_status": "completed",
+          "response_source": "contextual_slot",
+          "manual_classification": "ZERO_MODEL_INDEPENDENT_EDITS_LOST",
+          "observation": "contextual_slot,0modelHTTP; unambiguous whole-trip budget470000RUB and lowest_total preference are lost while the group question repeats. Canonical budget remains500000 and preferences empty. This is a harness shortcut outcome, not an unused model hallucination.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "cloudflare",
+            "runtime_model": "@cf/nvidia/nemotron-3-120b-a12b",
+            "model_call_started_count": 0,
+            "actual_model_provider": null,
+            "actual_model_id": null,
+            "model_http_count": 0,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T6",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": true
+          }
+        },
+        {
+          "turn": 8,
+          "user": "Это всё DEMO, никакой реальной брони нет, верно? Я пока ничего не покупаю.",
+          "run_status": "completed",
+          "response_source": "canonical_saved_answer",
+          "manual_classification": "CANONICAL_NO_OFFERS_PARTIAL_REPLY",
+          "observation": "canonical_saved_answer,0modelHTTP; no current offers/confirmed prices are claimed, and state/pending unchanged. No checkout/order is created. Reply does not fully address the explicit no-real-booking question.",
+          "changed_trip_fields": [],
+          "provenance": {
+            "phase": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+            "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+            "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+            "runtime_provider": "cloudflare",
+            "runtime_model": "@cf/nvidia/nemotron-3-120b-a12b",
+            "model_call_started_count": 0,
+            "actual_model_provider": null,
+            "actual_model_id": null,
+            "model_http_count": 0,
+            "http_count_basis": "All these turns are single-attempt and each phase HTTP ledger matches model-start count.",
+            "continued_from": "ZAI100-080:T7",
+            "not_replayed": false,
+            "zero_model_not_automatically_readonly_or_semantic_pass": true
+          }
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "No hidden reasoning/providerraw/headers/capabilities/keys read for manual review.",
+    "No new HTTP/PG writes/core/test edits.",
+    "Failed or prior unsubmitted placeholder rows remain preserved; actual delivered records are not merged into a fake single-model run.",
+    "All697 original inputs are reported attempted by a separate coverage audit; five old queued inputs still have no executed assistant result. This addendum independently reads only the final16 turns.",
+    "Model capability/connection success is separate from chronology, prices, actual supplier availability and live booking. No such new source qualification occurs here."
+  ]
+}

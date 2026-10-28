@@ -1,0 +1,178 @@
+{
+  "finding_id": "HARNESS-004-UNASKED-EXISTING-ADULT-AGE-059-001",
+  "shared_guard_finding_id": "HARNESS-004-UNASKED-ADULT-AGE-001",
+  "date": "2026-10-28",
+  "status": "CONTROLLED_AGE_GUARD_AND_EXACT_READER_TESTED_FULL_R17_PENDING",
+  "root_full_r17_source": "451adca3ceb724c65a2b27ceda938f4413d58f59f79ec5df3aaefb832c49cf4a",
+  "cause": "Exact059/T7 asked to review dates and adult count; recorded raw CHANGE operations invented age18 for both existing adults. A whole-Harness replay committed NULL→18 and triggered a new search.",
+  "initial_whole_harness_red": {
+    "source_case": "ZAI100-059/T7",
+    "xml": {
+      "path": ".local/peer_reviews/existing-adult-age059-20261028/initial-wholeharness.xml",
+      "sha256": "b2c62e1697ee3fea8a1b3a53b2f7d26aaeb2fe0636da6d514db8e4e5eb354524",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.009
+    },
+    "causal_summary_path": ".local/peer_reviews/existing-adult-age059-20261028/causal-summary.json",
+    "causal_summary_sha256": "41e1b0372dac6b4bd97adc513d5894b1a65108acb8febb9a52659bade408ba0e",
+    "before_age": [
+      null,
+      null
+    ],
+    "after_age": [
+      18,
+      18
+    ],
+    "version": [
+      0,
+      1
+    ],
+    "other_canonical_business_facts_unchanged": true,
+    "model_records": 1,
+    "tool_doubles": 4,
+    "orders": 0
+  },
+  "change": "The existing raw-model adult-age guard now removes a changed integer age>=18 from update_traveler of an existing adult when the unchanged current explicit adult-age/DOB predicate is false. It preserves other value fields and drops an update only when no fields remain.",
+  "positive_boundaries": [
+    "Identical age echoes remain.",
+    "Current explicit adult age/DOB remains allowed.",
+    "Child changes, other fields and typed/canonical short-slot paths remain unchanged.",
+    "No age/person-ID remapping or casts/default ages are introduced."
+  ],
+  "exact059_reader_peer": {
+    "input": "Сверь пожалуста обе даты и число взрослых. Февраль был только вопросом.",
+    "node": "tests/test_harness_saved_fact_answers_actual059.py::test_actual059_closed_reminder_keeps_null_adult_ages_and_calls_no_model_or_tool",
+    "xml": {
+      "path": ".local/drafts/closed-facts-r17-20261028/public-pg-final.xml",
+      "sha256": "1cc2a9f8d984f8b5e5eb539ff960dfc9dea3a2b5ce931bea93cc73b7d6b3d873",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.832
+    },
+    "model_calls": 0,
+    "tool_calls": 0,
+    "adult_ages": [
+      null,
+      null
+    ],
+    "trip_and_version_unchanged": true,
+    "note": "This is an independent code-owned saved-facts route; it does not claim to exercise the model-age guard."
+  },
+  "model_guard_pg_variant": {
+    "variant_label": "059T7_nonclosed_response_needed_tail",
+    "original_input": "Сверь пожалуста обе даты и число взрослых. Февраль был только вопросом.",
+    "input": "Сверь пожалуста обе даты и число взрослых. Февраль был только вопросом. Ответ нужен сейчас.",
+    "before_and_raw": "Identical059 canonical business facts and recorded model JSON; original corpus input is preserved separately.",
+    "model_records": 1,
+    "repair_requests_blocked": 0,
+    "adult_ages": [
+      null,
+      null
+    ],
+    "trip_unchanged": true,
+    "version_unchanged": true,
+    "normalization": "Two unasked_existing_adult_age_removed notes.",
+    "reply": "Сохранённый маршрут: Казань → Дубай → Казань.\n\nОстановка 1, Дубай: заезд 05.11.2026, выезд 12.11.2026; 7 ночей. Переезд 1, Казань → Дубай: отправление 05.11.2026. Переезд 2, Дубай → Казань: отправление 12.11.2026.\n\nТекущий состав: 2 взрослых; дети в сохранённом составе не указаны.\n\nСохранённый бюджет на всю поездку: 150 000,00 RUB.",
+    "public_model_reply": null,
+    "guarded_reply_suppressed": true,
+    "tool_calls": 0,
+    "orders": 0,
+    "diagnostic_sha256": "1d68201557d0abda0d51c75cc39b6516c5ec2addca147e3b6196febfc9f58de3"
+  },
+  "positive_existing_age_pg": {
+    "input": "Исправь мой возраст: мне 46 лет.",
+    "before_age": 45,
+    "after_age": 46,
+    "model_records": 1,
+    "version_delta": 1,
+    "stays_and_budget_unchanged": true,
+    "orders": 0
+  },
+  "tests": {
+    "initial_new_pure_red": {
+      "path": ".local/peer_reviews/existing-adult-age059-20261028/pure-r17-initial-red.xml",
+      "sha256": "59fb06ddc167407ee4635b4c30f368ae3c899a7e4915437c5d842f1c6a2fc671",
+      "tests": 28,
+      "failures": 17,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.561
+    },
+    "old_and_new_pure_green": {
+      "path": ".local/evaluation/after80-20261028/adult-age-r17-pure-green.xml",
+      "sha256": "9b18d9db20036eea02078fdecaf7ede9c2e2a0717bbbe6b3e4ff3c0caef31ca3",
+      "tests": 59,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.555
+    },
+    "joined_age_target": {
+      "path": ".local/evaluation/after80-20261028/adult-age-r17-initial-pg.xml",
+      "sha256": "ecc8a93a58bf5a7d0a614171ea095cba4f903589be56ee5da11ee6a00557a1d1",
+      "tests": 61,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 5.108
+    },
+    "scope": "59 pure cases and two controlled age PG cases; exact-reader peer case is reported separately, not relabeled as a model call."
+  },
+  "old_policy_test_preserved": {
+    "path": "fixtures/evaluation/historical-tests/test_adult_age_grounding.pre-r17.py.txt",
+    "original_byte_sha256": "f5b3368ec68d5206580966bf54db6c451e4c074254406ec3f69e9f8b320bc9d5",
+    "git_attribute": "-text at fixtures/evaluation/historical-tests/*",
+    "change": "One formerly out-of-scope expectation accepted AD45→46 under Добавь ребёнка семи лет. The input is unchanged; the age-only update is now omitted, while existing45 echo and child7 addition remain. No other old assertions were relaxed."
+  },
+  "files": [
+    {
+      "path": "otravel/adult_age_grounding.py",
+      "sha256": "f35f190289216f09bef9beae92faf5f24ed162cd6e893af766b3f400e74f1533"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "f492032567c43be98c5a4d5aa6baa8c40b2d76b71c60585e68915d62e068fc07"
+    },
+    {
+      "path": "tests/test_adult_age_grounding.py",
+      "sha256": "51478c9620ec5ac0e71dd290b255dd7762b9c963a21a59424aa007fd95a6abdf"
+    },
+    {
+      "path": "tests/test_existing_adult_age_grounding.py",
+      "sha256": "fd486bbcffb73129e8bb165ce241ad6619e96871c929e059cd6e99f1603485e7"
+    },
+    {
+      "path": "tests/test_existing_adult_age_pg.py",
+      "sha256": "a82a6fe0b58a79e150dc8e49d1430641414cc064a5cc7cb13e1c7a76d31bd360"
+    },
+    {
+      "path": "fixtures/regression/existing-adult-age059-20261028.json",
+      "sha256": "91fd2d2d03bbaf512d211357e4f5e25d32a1e681dc279c9062674792c91499ae"
+    },
+    {
+      "path": "fixtures/evaluation/historical-tests/test_adult_age_grounding.pre-r17.py.txt",
+      "sha256": "f5b3368ec68d5206580966bf54db6c451e4c074254406ec3f69e9f8b320bc9d5"
+    },
+    {
+      "path": "fixtures/evaluation/historical-tests/adult-age-grounding-r17-policy.json",
+      "sha256": "fed7ae81dd2cadc773f663530967993693f99820cfbdcbd3ee97dc17ace0351a"
+    }
+  ],
+  "external_model_calls": 0,
+  "external_travel_calls": 0,
+  "checks": {
+    "ruff": "PASS"
+  },
+  "open_limits": [
+    "Invented DOB writes and universal age-to-person attribution remain open.",
+    "Null clears, invalid/non-integer/under18 values remain under their existing validation paths; this guard does not repair them.",
+    "Explicit age/DOB presence is not a universal proof of which adult it belongs to.",
+    "Controlled saved JSON and real PG tests do not establish live-model NLU quality.",
+    "Full R17 is still running; previous full R16 two failures remain in their original evidence."
+  ]
+}

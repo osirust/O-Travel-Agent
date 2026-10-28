@@ -1,0 +1,67 @@
+{
+  "format": "otravel.after80.bulk.initial-findings.v1",
+  "date": "2026-10-27",
+  "status": "PARTIAL_READ_ONLY_FINDINGS_BULK_STILL_RUNNING",
+  "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+  "private_evidence_folder": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5",
+  "profile": "zai45-repair2_CONFIG2_EFFECTIVE1_KNOWN_CLAMP",
+  "findings": [
+    {
+      "id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+      "status": "OPEN_ACTUAL_AUTHORITY_GAP",
+      "case": "ZAI100-005",
+      "turns": [1, 2, 3],
+      "facts": [
+        "T1 model resolve_place queryDubai produced three distinct GeoNames candidates292223/11048853/8469788. Independent route grounding also saved legacy stay.cityDubai without a CityRef.",
+        "T2 the repeated nameDubai did not select a candidate; the server correctly repeated its explicit candidate-choice question.",
+        "T3 input only18.11.2026 proposed upsert_stay date/city with place_id:null. Checked ops removed null place_id, saved the date and replaced place.resolution with stay.check_out/context{}.",
+        "No admitted CityRef or explicit candidate selection is present. Later hotel/flight searches use the legacy city while the required place choice has been lost."
+      ],
+      "T1_raw_contract_sha256": "6fa3fc6febf1a0e68bf4b20613f2ac7a2462899165bab07ddb002ff295de2296",
+      "T3_raw_contract_sha256": "7b429725aade2054ff57b8dfd3bd7eafc8bd875e07dfeae1a29ea351ec637e33",
+      "T3_checked_contract_sha256": "5db9396f7203c93f574a4f643dfd9d452d8407a14297652b53176aeedb692beb",
+      "owner": "Root/price-review pending preservation; Native baseline remains frozen",
+      "closure": "Independent date can persist but an owned fresh unresolved place choice remains required. No source search/quote before explicit valid selection; preserve TTL/version/role/candidate ownership. Cached PG plus fresh actual."
+    },
+    {
+      "id": "HARNESS-004-MORNING-TYPO-PREFERENCE-001",
+      "related_guard_id": "HARNESS-004-UNREQUESTED-PREFERENCE-001",
+      "status": "OPEN_ACTUAL_LEGITIMATE_PREFERENCE_SUPPRESSED",
+      "case": "ZAI100-004",
+      "turn": 9,
+      "input": "Вылет лучше рано утрам. На какое число у меня сейчас выезд из отеля?",
+      "fact": "The model returned departure_time=early_morning, but the current-message guard recognizes утром and not утрам; it suppressed the requested preference.",
+      "raw_contract_sha256": "82609e2fa023e026202e5416181ab516141cf59c05ec5e91ceca8ad11bc23a39",
+      "checked_contract_sha256": "0fb29b1fd2d979c0748ae2beba34b9438f2c5ec6bcb4d5d064d2b669d25eb68f",
+      "owner": "Root delegated scalar/date/morning review; no source changes by this audit",
+      "closure": "A bounded positive current typo variant preserves the request; quotes/history/hypothesis/negation continue to suppress unauthorized preferences."
+    },
+    {
+      "id": "HARNESS-004-MIXED-DATE-ANSWER-LOSS-001",
+      "related_prior_id": "ZAI-F001",
+      "status": "OPEN_ACTUAL_CANONICAL_REPLY_LOSS",
+      "case": "ZAI100-004",
+      "turn": 9,
+      "fact": "The raw reply correctly says checkout15.11.2026, but also falsely confirms an added preference after that op is suppressed. Harness replaces the whole answer with 'Trip and shown plans unchanged', losing the explicit checkout question.",
+      "closure": "Render the requested checkout from saved canonical facts independently of rejected/suppressed edits. Never return the raw false confirmation."
+    }
+  ],
+  "actual_provider_response_facts": {
+    "case004_search_turns": [6, 8],
+    "calls_per_search": 5,
+    "liteapi_resolve_hotel_ids": 3,
+    "liteapi_rate_results": 15,
+    "duffel_offers_each_direction": 4,
+    "cbr_snapshot": "COMPLETED",
+    "hotel_fallback": "DEMO_BECAUSE_MANDATORY_FEE_EVIDENCE_UNCONFIRMED",
+    "flights": "SANDBOX",
+    "transfers": "DEMO",
+    "meaning": "These are bounded actual provider-response facts, not a fully real/bookable trip or proof of fresh user selection authority."
+  },
+  "limitations": [
+    "Case005 successful vendor responses are excluded from end-to-end place-selection acceptance because of the unresolved-choice bypass.",
+    "No new external API/model call, SQL mutation, Native update or source patch was performed for this read-only audit.",
+    "This file records only completed cases004/005. Bulk004–080 continues separately and this is not its final score."
+  ]
+}

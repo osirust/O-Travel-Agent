@@ -1,0 +1,78 @@
+{
+  "scope": "REDACTED_AUTHENTICATED_LITEAPI_SHAPE_PROJECTION_NOT_FULL_RESPONSE",
+  "provider": "liteapi",
+  "hotel_id": "lp1b30d1",
+  "observed_status": "CONTENT_200",
+  "reported_images_count": 55,
+  "source_shape_sha256": "20700eab263d34b27e52879fde4899f9e6d1626fff0004e0f0608f1864c21bd3",
+  "projection_notes": [
+    "Only response ID and observed URL/urlHd host/path with no query are copied.",
+    "HTTPS normalization is fixed by the approved CDN policy; caption/order/defaultImage/name/thumbnail values were not captured in this redacted shape and are not invented.",
+    "No image bytes, credentials, hotel contacts, rates, availability or booking evidence."
+  ],
+  "content_projection": {
+    "data": {
+      "id": "lp1b30d1",
+      "hotelImages": [
+        {
+          "url": "https://static.cupid.travel/hotels/210194244.jpg",
+          "urlHd": "https://static.cupid.travel/hotels/210194244.jpg"
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/193806701.jpg",
+          "urlHd": "https://static.cupid.travel/hotels/193806701.jpg"
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/220326577.jpg",
+          "urlHd": "https://static.cupid.travel/hotels/220326577.jpg"
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/220317518.jpg",
+          "urlHd": "https://static.cupid.travel/hotels/220317518.jpg"
+        },
+        {
+          "url": "https://static.cupid.travel/hotels/223513455.jpg",
+          "urlHd": "https://static.cupid.travel/hotels/223513455.jpg"
+        }
+      ]
+    }
+  },
+  "expected_media_for_projection": {
+    "url": "https://static.cupid.travel/hotels/210194244.jpg",
+    "thumbnailUrl": null,
+    "alt": "Фотография отеля",
+    "kind": "HOTEL",
+    "source": "LITEAPI",
+    "hotelId": "lp1b30d1",
+    "sourceHotelId": "lp1b30d1",
+    "isActualPropertyPhoto": true,
+    "caption": null,
+    "gallery": [
+      {
+        "url": "https://static.cupid.travel/hotels/210194244.jpg",
+        "alt": "Фотография отеля",
+        "caption": null
+      },
+      {
+        "url": "https://static.cupid.travel/hotels/193806701.jpg",
+        "alt": "Фотография отеля",
+        "caption": null
+      },
+      {
+        "url": "https://static.cupid.travel/hotels/220326577.jpg",
+        "alt": "Фотография отеля",
+        "caption": null
+      },
+      {
+        "url": "https://static.cupid.travel/hotels/220317518.jpg",
+        "alt": "Фотография отеля",
+        "caption": null
+      },
+      {
+        "url": "https://static.cupid.travel/hotels/223513455.jpg",
+        "alt": "Фотография отеля",
+        "caption": null
+      }
+    ]
+  }
+}

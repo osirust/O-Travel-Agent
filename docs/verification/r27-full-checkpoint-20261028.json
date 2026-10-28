@@ -1,0 +1,262 @@
+{
+  "started_at_utc": "2026-10-28T17:15:29.597180+00:00",
+  "finished_at_utc": "2026-10-28T17:26:46.634079+00:00",
+  "duration_seconds": 677.039,
+  "source_tests_unchanged": true,
+  "source_package_sha256": "1287953a3d8d09c06e58cf0f03b4b36dc0a714a9dab091792dce90538fe4f26e",
+  "test_sha256": "2ca223892304c4235bbc362e38a8d4f57a971d60e333333418d6195607059d63",
+  "test_file_count": 327,
+  "returncode": 0,
+  "remote_llm_or_supplier_requests": 0,
+  "junit": {
+    "tests": "7968",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "671.871"
+  },
+  "format": "otravel.r27.full_checkpoint.v1",
+  "status": "FULL_FROZEN_CONTROLLED_API_PG_PASS",
+  "created_at_utc": "2026-10-28T17:34:32.982082+00:00",
+  "git_commit": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "git_c_package_sha256": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+  "scope": "7968 automatic domain/adapter/API/PostgreSQL checks; not semantic acceptance of all40/106 or proof of every unprovided LLM endpoint.",
+  "evidence": {
+    "terminal": {
+      "path": ".local/evaluation/integrated-release-full-20261028-r8.terminal.json",
+      "sha256": "ad98ae00f7dd88a9725305438c79dcb91ff24c499f2e7ef249f30532389cef7c"
+    },
+    "before": {
+      "path": ".local/evaluation/integrated-release-full-20261028-r8.before.json",
+      "sha256": "95d49d68ea2ec1c8ca5b9912fb8bc4135fd64b6a11405fd5e7c43a167539b33b"
+    },
+    "junit": {
+      "path": ".local/evaluation/integrated-release-full-20261028-r8.xml",
+      "sha256": "5a5daf89757625652e9bd9c76e6781f76117d8a3e071e5fa4ea1523aa266a4d5"
+    },
+    "eol": {
+      "path": "docs/verification/r27-r8-staged-package-20261028.json",
+      "sha256": "2d69479d73a67417c1b3e4271db03a2e608c61de7da9a1eb08c8cf23b216ae56"
+    }
+  },
+  "identity_checks": {
+    "current_e_source_files_match_tested_before": 96,
+    "c_git_equivalence": "Only the17 explicitly listed CRLF/LF normalizations; no source/content replacement.",
+    "normalizations": [
+      "otravel/budget_intake.py",
+      "otravel/destination_photos.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/harness.py",
+      "otravel/hotel_presentation.py",
+      "otravel/intent_grounding.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/preference_grounding.py",
+      "otravel/price_date_recall.py",
+      "otravel/provider_cities.py",
+      "otravel/return_preservation.py",
+      "otravel/route_policy_intent.py",
+      "otravel/search_blocker_feedback.py"
+    ],
+    "captured_fixture_bytes_exact": [
+      "fixtures/evaluation/final40-party-20261028.json",
+      "fixtures/regression/final40-geo-date-booking-20261028.json"
+    ]
+  },
+  "separate_delivery_scope": {
+    "proof": {
+      "path": "docs/verification/final-r27-clean-compose-and-external-wire-20261028.json",
+      "sha256": "261997609f008defc5a5bd1b8dc12f7966a2fbafa6cded0d092416b934ea1f08"
+    },
+    "keyless_compose_checks_passed": 30,
+    "controlled_external_wire_checks_passed": 25,
+    "real_model_inference": 0,
+    "real_tour_http": 0,
+    "same_core_and_package": true
+  },
+  "separate_actual_scopes": {
+    "cloudflare": {
+      "proof": {
+        "path": "docs/verification/r27-cloudflare-related-actual-canary-20261028.json",
+        "sha256": "5aba2bd77f2b12bd964e8740758a00505455bd2bc33acf69b3587fcd47863bee"
+      },
+      "status": "PASS_IN_FOUR_RELATED_ACTUAL_MODEL_TARGETS_SCOPE",
+      "targets_passed": 4,
+      "physical_model_http": 4,
+      "checks_passed": 13,
+      "targets": [
+        {
+          "id": "FINAL40-006:T3",
+          "pass": true,
+          "checks": {
+            "completed": true,
+            "persistent_until_checkin": true,
+            "no_orders": true
+          }
+        },
+        {
+          "id": "FINAL40-024:T4",
+          "pass": true,
+          "checks": {
+            "completed": true,
+            "two_adults_only": true
+          }
+        },
+        {
+          "id": "FINAL40-029:T4",
+          "pass": true,
+          "checks": {
+            "completed": true,
+            "no_unasked_people": true,
+            "no_invented_origin": true
+          }
+        },
+        {
+          "id": "FRESH-NATURAL-INTAKE",
+          "pass": true,
+          "checks": {
+            "completed": true,
+            "origin": true,
+            "one_adult": true,
+            "istanbul": true,
+            "no_invented_dates": true
+          }
+        }
+      ],
+      "limit": "Four related model/state targets, mostly recorded setup and DEMO mode; not whole-corpus quality, real fares or quote acceptance."
+    },
+    "zai": {
+      "proof": {
+        "path": "docs/verification/r27-targeted-actual-canary-20261028.json",
+        "sha256": "e2bef8b9993f7a7535cfcb3cb65e93cfa73772e75460f2f3c27b96fd0dc4ef06"
+      },
+      "status": "NOT_ALL_PASS",
+      "targets": [
+        {
+          "id": "FINAL40-020:T4",
+          "pass": true,
+          "qualification": "ACTUAL_FREE_ZAI_HARNESS_RELATED_PASS",
+          "checks": {
+            "completed": true,
+            "not_1200_rubles": true,
+            "reserve_unresolved": true,
+            "orders0": true
+          }
+        },
+        {
+          "id": "FINAL40-006:T3",
+          "pass": false,
+          "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE",
+          "checks": {
+            "completed": false,
+            "until_checkin_hard_condition": false,
+            "no_false_ready": false,
+            "quotes0": true
+          }
+        },
+        {
+          "id": "FINAL40-024:T4",
+          "pass": false,
+          "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE",
+          "checks": {
+            "completed": false,
+            "two_adults_only": false
+          }
+        },
+        {
+          "id": "FINAL40-024:T11",
+          "pass": true,
+          "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS",
+          "checks": {
+            "completed": true,
+            "trip_unchanged": true,
+            "version_unchanged": true,
+            "model0": true,
+            "orders0": true
+          }
+        },
+        {
+          "id": "FINAL40-029:T4",
+          "pass": false,
+          "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE",
+          "checks": {
+            "completed": false,
+            "no_unasked_people": true,
+            "origin_not_invented": true
+          }
+        },
+        {
+          "id": "RELATED-OWNED-PARTY-SOLO-ROOM",
+          "pass": true,
+          "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS",
+          "checks": {
+            "completed": true,
+            "model0": true,
+            "solo_adult": true,
+            "unique_room_allocation": true
+          }
+        },
+        {
+          "id": "FINAL40-031:T8",
+          "pass": true,
+          "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS",
+          "checks": {
+            "completed": true,
+            "model0": true,
+            "check_in_preserved": true,
+            "check_out_set": true
+          }
+        },
+        {
+          "id": "ACTUAL-HYBRID-SOURCES",
+          "pass": true,
+          "qualification": "ACTUAL_SOURCE_AND_MEDIA_API_ONLY",
+          "checks": {
+            "search_completed": true,
+            "found_plan": true,
+            "liteapi_http": true,
+            "duffel_http": true,
+            "fx_http": true
+          }
+        },
+        {
+          "id": "ACTUAL-PROPERTY-JPEG",
+          "pass": true,
+          "qualification": "ACTUAL_SOURCE_AND_MEDIA_API_ONLY",
+          "checks": {
+            "media200": true,
+            "actual_property_media": true,
+            "offer_property_identity_bound": true,
+            "jpeg_header": true
+          }
+        }
+      ],
+      "limit": "Original timeout/cooldown and actor setup failures retained. Later CF successes do not overwrite Z.ai failures; no general model comparison is claimed."
+    },
+    "tourism_and_photos": {
+      "proof": {
+        "path": "docs/verification/r27-targeted-actual-canary-20261028.json",
+        "sha256": "e2bef8b9993f7a7535cfcb3cb65e93cfa73772e75460f2f3c27b96fd0dc4ef06"
+      },
+      "target_ids": [
+        "ACTUAL-HYBRID-SOURCES",
+        "ACTUAL-PROPERTY-JPEG"
+      ],
+      "status": "PASS_IN_ACTUAL_SOURCE_AND_MEDIA_SCOPE",
+      "source_type": "MIXED",
+      "currency": "RUB",
+      "total_minor": 5433185,
+      "supplier_results": "LiteAPIhotel lookup/rates200, Duffel2offer_requests201,CBR200,LiteAPIproperty metadata200.",
+      "property_photo_identity_bound": true,
+      "jpeg_status": 200,
+      "limit": "LiteAPI sandbox/Duffel test plus CBR and identity-bound property JPEG. No real supplier booking/payment, no LIVE_BOOKABLE claim."
+    }
+  },
+  "counting": "Automated, delivery-wire and actual-target scopes are separate and overlapping; no sum is represented as unique dialogue/corpus acceptance.",
+  "coverage_proof": "docs/verification/final40-repair-coverage-20261028.json",
+  "video_url": "PENDING_OWNER_URL_PLACEHOLDER_RETAINED",
+  "runtime_switch": "Not performed by this documentation task."
+}

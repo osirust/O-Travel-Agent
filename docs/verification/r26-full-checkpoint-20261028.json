@@ -1,0 +1,22 @@
+{
+  "started_at_utc": "2026-10-28T14:17:38.736839+00:00",
+  "finished_at_utc": "2026-10-28T14:26:46.696505+00:00",
+  "duration_seconds": 547.96,
+  "source_tests_unchanged": true,
+  "source_package_sha256": "2985d0ced59e8261f69befbe8804337da9036624397b5071bf9723d054dfa08f",
+  "test_sha256": "22cf57d8df2ce017ae5dcc01a099b3380a665ccc2ded2634aa8996b62bbe5e77",
+  "test_file_count": 315,
+  "returncode": 0,
+  "remote_llm_or_supplier_requests": 0,
+  "junit": {
+    "tests": "7664",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "543.333"
+  },
+  "status": "FULL_FROZEN_CONTROLLED_API_PG_PASS",
+  "git_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "git_c_package_sha256": "34a1cf1f7adedbf6311a6983340982283df39a4448363cca7a21b3e26c3ab0af",
+  "scope": "7664 automatic domain/adapter/API/PostgreSQL checks; not semantic acceptance of final40"
+}

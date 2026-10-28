@@ -1,0 +1,108 @@
+{
+  "status": "PURE_HELPER_TESTED_INTEGRATION_AND_ACTUAL_NLU_OPEN",
+  "source_baseline_commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+  "source_baseline_package_sha256": "15158e2655681f16c967b14515a73ad72b135f62088e02bad811105759f61cd5",
+  "scope": "Known code-static operation_contract English semantic compression only; no user data truncation.",
+  "helper": {
+    "file": "otravel/groq_context.py",
+    "sha256": "585208673de83dee42f56f58c002a80652cf263169d0fe106dff679876d83010",
+    "interface": "compact_operation_guide(context) -> (deepcopied_context, metadata)",
+    "matching": "Exact expected type + SHA256 canonical JSON of each original whole clause; unknown/custom values untouched.",
+    "recognized_fields": [
+      "instruction",
+      "duration_contract",
+      "leg_mode_contract",
+      "group_contract",
+      "room_constraint_contract",
+      "room_membership_contract",
+      "selection_contract",
+      "constraint_contract",
+      "route_contract",
+      "coverage_rules",
+      "schema_authoritative"
+    ],
+    "cycle_free_imports": true
+  },
+  "preserved": [
+    "trip",
+    "current_message",
+    "pending_question",
+    "recent_messages",
+    "shown_plans",
+    "first_shown_plan",
+    "current_selected_plan",
+    "reference_now_utc",
+    "default_timezone",
+    "__response_schema",
+    "supported_cities",
+    "known_hard_constraints",
+    "do_not_invent",
+    "unknown top/guide fields and changed static clauses"
+  ],
+  "semantic_review": {
+    "status": "INDEPENDENT_PEER_REVIEW_PASS_WITH_EXPLICIT_CURRENCY_CORRECTION",
+    "reviewer": "/root/travel_checkout/readonly_transport_tests",
+    "evidence": "11 current-source canonical clause fingerprints checked; all translations manually compared; four precision suggestions applied.",
+    "deliberate_semantic_correction": "Parent explicitly required replacing the obsolete all-RUB instruction with neutral matching-currency minor units.",
+    "neutral_money_rule": "Integer amount_minor in the stated currency minor units; no hard-coded RUB claim.",
+    "critical_clauses": [
+      "current message proposals/server review/no side effects",
+      "conflict blocks batch/no replay/undo distinct from cancel",
+      "room local stay and full membership patch vs whole-room-list replacement",
+      "known nights vs days, no unapproved date rewrite",
+      "explicit nationality not locale/destination",
+      "unknown separate family membership not guessed",
+      "room-scoped breakfast/refundability, nonstop trip-wide excludes technical stops",
+      "route kinds and no-stay transit, end city not automatically stay",
+      "current preview identities vs historical first plan, no price/purchase consent"
+    ]
+  },
+  "tests": {
+    "pure_passed": 24,
+    "skipped": 0,
+    "junit": ".local/evaluation/after80-20261027/groq-context-guide.xml",
+    "ruff": "PASS",
+    "related_codec_suite_passed": 212,
+    "related_junit": ".local/evaluation/after80-20261027/groq-context-codec-related.xml",
+    "test_file": "tests/test_groq_context.py",
+    "test_sha256": "af9b57e7d87efdfbf5b0b76e3723c2b2d58c4bb77b2e87ab8fecbe88b037a3a2",
+    "coverage": [
+      "all current hashes recognized",
+      "unknown/changed clause preserved",
+      "custom additions kept",
+      "all non-guide fields deep equal",
+      "no input mutation",
+      "dict order independent",
+      "tuple not treated as list",
+      "idempotent",
+      "critical semantic assertions",
+      "no Harness/provider/Store import cycle"
+    ]
+  },
+  "saved_t4_measurement": {
+    "input": "private preserved sent-context.json from PF-GROUP-04/T4",
+    "before_context_utf8_bytes": 22114,
+    "guide_before_utf8_bytes": 6467,
+    "guide_after_utf8_bytes": 4058,
+    "context_after_guide_only_utf8_bytes": 19705,
+    "guide_saved_utf8_bytes": 2409,
+    "with_separate_exact_duplicate_removals_utf8_bytes": 14530,
+    "all_other_context_fields_equal": true,
+    "saved_original_sha256": "4558d953c74eac61a879162f1803187956979385d805ab29890c3673bdd978cd",
+    "original_request_byte_identity_claimed": false
+  },
+  "calls": {
+    "real_models": 0,
+    "tourism_http": 0,
+    "other_vendor_http": 0,
+    "sql_reads": 0,
+    "sql_writes": 0
+  },
+  "native_profile_source_changes": 0,
+  "limits": [
+    "This is semantic translation of known code-static text, not mathematical lossless encoding.",
+    "No runtime integration or actual LLM qualification is claimed by these pure checks.",
+    "No price/economic/ID/history data is removed by this helper.",
+    "Actual prior HTTP413 cause remains UNKNOWN; byte savings do not establish token quota cause."
+  ]
+}

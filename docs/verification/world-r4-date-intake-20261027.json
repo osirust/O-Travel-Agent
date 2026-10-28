@@ -1,0 +1,151 @@
+{
+  "format": "otravel.world_r4_date_intake.v1",
+  "finding_id": "HARNESS-004-EXPLICIT-STAY-DATE-OMISSION-001",
+  "status": "SCOPED_PURE_AND_CACHED_API_PG_PASS_FRESH_ACTUAL_RETEST_PENDING",
+  "scope": "Recover omitted complete current labelled check-in/check-out for one fresh server-owned initial stay question; no implicit year, destination, hotel, source availability or consent is invented.",
+  "source_failure": {
+    "events": "/home/aegml/checks/world-actual-r4-20261027-165631/turn4-events-dates.json",
+    "event_sha256": "fe52b379b010cbd9b30dfaa4a037c1bd613544c3a3c9fd0a98859bf75fb35107",
+    "recorded_raw_contract_sha256": "c24a21e3e4598237b37052b099fc190d51ec462ec1fb10257a9e357f06651c80",
+    "canonical_raw_value_sha256": "e2aae007314423417c068dce4e38bffdcacffd8fa44c564aada7d91c5bc603f7",
+    "model": "groq/openai/gpt-oss-120b",
+    "input_dates": {
+      "check_in": "2026-11-10",
+      "check_out": "2026-11-17"
+    },
+    "model_dates": {
+      "check_in": null,
+      "check_out": null,
+      "requested_nights": 7
+    },
+    "old_actual_evidence_changed": false,
+    "qualification": "Actual R4 reached simulated checkout only after a separate explicit date step; that later success does not erase the original date omission."
+  },
+  "fixture": {
+    "path": "fixtures/regression/world-r4-date-omission-20261027.json",
+    "sha256": "ea4b7d31354a42dc994bec678b212d286bcecd5030fddeca0dfc72ecfc47a133",
+    "raw_contract_operations": 7,
+    "contains_keys_tokens_owner_hashes_or_native_offer_ids": false
+  },
+  "helper": {
+    "path": "otravel/date_intake.py",
+    "sha256": "99fe17dccd2864bfbea28edc21407b62c5ce36742381e7c7b0e7ddcbcde83885",
+    "signature": "ground_explicit_stay_dates(state,text,operations,*,pending,now,timezone='Europe/Moscow')->(copied_dict_operations,meta)",
+    "normalization_code": "explicit_initial_stay_dates_grounded",
+    "owned_target_required": true,
+    "missing_or_null_model_dates_only": true,
+    "model_contradiction": "Human conflict, no silent replacement of concrete different model dates or clearing of existing canonical dates.",
+    "duration": "Explicit paired dates must agree with every saved/proposed requested_nights value.",
+    "absolute_formats": [
+      "YYYY-MM-DD",
+      "DD.MM.YYYY",
+      "Russian day/month with explicit year"
+    ],
+    "refused_contexts": [
+      "hypothesis",
+      "history",
+      "quoted date declaration",
+      "information question",
+      "negated date edit",
+      "multiple stays",
+      "foreign or stale owned pending",
+      "missing year"
+    ],
+    "pause": "A current positive CHANGE declaration may save dates before a new explicit pause; caller must not run source search during that pause.",
+    "parent_hook": "After ordinary intent/room grounding and before nationality grounding, only CHANGE with no existing conflicts; parent owns Harness integration."
+  },
+  "pure": {
+    "path": "tests/test_date_intake.py",
+    "sha256": "5a261393dc56747bfaf4ce787a3ac612d93171a2fa25751390eee6a31cf2b6b6",
+    "junit": ".local/evaluation/after80-20261027/date-intake-pure-scope-final.xml",
+    "junit_sha256": "649630573996ecb7e77e889b3d2830a4f95d603226659c8a9dc2424f13644d11",
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.31
+  },
+  "cached_api_pg": {
+    "path": "tests/test_world_r4_dates_cached.py",
+    "sha256": "eb195f28ebfa1d809a21981a7a5bde34cd2badfe3907a62d2075e973788fe0a8",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 3.242,
+    "junit": ".local/evaluation/after80-20261027/world-r4-dates-cached-initial.xml",
+    "junit_sha256": "dc5a8ad61802b3b1cff8d071da11bc82c662a22aa226041bcbba6fc318364c48",
+    "database": "otravel_test",
+    "cases": [
+      "Exact unchanged actual R4 raw contract/input through public API, real Harness/Store/Catalog and controlled sources.",
+      "Labelled controlled variation adds a new explicit pause; dates/facts persist with zero source attempts."
+    ],
+    "verified": [
+      "10/17 November and seven nights survive; outbound/return leg dates agree.",
+      "Owned Buenos Aires CityRef, origin Moscow, adult/group/room, 300000 RUB and RU guest nationality remain consistent.",
+      "Unrequested model preferences are removed by the separately owned parent preference guard.",
+      "No repeated date/nationality question; original raw NULL-date contract remains unchanged in the audit event.",
+      "Normal source methods deliberately raise controlled CONFIG_MISSING, so no live ready-plan or checkout is claimed."
+    ],
+    "actual_model_or_supplier_http_calls": 0,
+    "orders": 0,
+    "source_scope": "The initial two-case XML remains immutable. Both cases also passed unchanged against the narrowed helper in the combined related batch below."
+  },
+  "ruff": "PASS for helper and two new test files",
+  "post_freeze_review": {
+    "finding_id": "HARNESS-004-DATE-INTAKE-QUESTION-SCOPE-001",
+    "status": "CONTROLLED_SCOPE_CLOSED_FRESH_ACTUAL_RETEST_SEPARATE",
+    "reproduction": "Invalid dates outside a fresh owned pending question left operations unchanged but injected a date unknown before ownership checks.",
+    "red": {
+      "junit": ".local/evaluation/after80-20261027/date-intake-scope-red.xml",
+      "junit_sha256": "e377ce474144fbe9d0c4b84c7011d549c460528e890f4c26dd2b1b2c3f065901",
+      "passed": 0,
+      "failed": 3,
+      "skipped": 0,
+      "seconds": 1.386
+    },
+    "fix": "Only move date parsing after existing single-stay, fresh-owned-pending, exact target and model-operation fences. No parser authority or formats were broadened.",
+    "negative_cases": [
+      "No pending question",
+      "Stale question version",
+      "Multiple canonical stays"
+    ],
+    "green": "The same three negatives and all existing owned-date positives pass in the current pure41 and combined related77 batches.",
+    "full3_historical_result": {
+      "junit": ".local/evaluation/after80-20261027/full-delivery-prefrontend-r3-initial.xml",
+      "junit_sha256": "a971b0cf529924502aba15c831e623426bdcdeb4b864ffe04f72500d653fa4f6",
+      "passed": 6428,
+      "failed": 14,
+      "changed": false
+    },
+    "whole_core_fresh_result": "Parent runs a separate frozen-source full suite; no new whole-core PASS is claimed by this receipt."
+  },
+  "limits": [
+    "No new strong-model inference or supplier HTTP was performed by these tests.",
+    "Not general relative-date parsing or a multi-stay date editor.",
+    "Controlled source-error preservation is not fresh availability or a ready-world-trip proof.",
+    "Full80/106 acceptance remains separate."
+  ],
+  "initial_pure_positives_before_scope_fix": {
+    "path": "tests/test_date_intake.py",
+    "sha256": "b3911c931edf4e3d228b8be84ce8c5168a52a842f75fe55b7ff55bd1702cd6fa",
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.309,
+    "junit": ".local/evaluation/after80-20261027/date-intake-pure-initial.xml",
+    "junit_sha256": "f19dcd672ec6c8b3ca803623bb5f3ecfac79ba0831bb4c830ccff4bee8aeff0d",
+    "source_sha256": "ffb063c12d581a51135fc6510ba91b99d71d7eb79a95fc17f77049927c6eb226"
+  },
+  "related_after_scope_and_preference_fixes": {
+    "junit": ".local/evaluation/after80-20261027/date-pref-full3-related-final.xml",
+    "junit_sha256": "f8d023288b74d9383e736d664a7552699b40d2b1fd98a8d3fe9a6b07869fbcb1",
+    "passed": 77,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 27.093,
+    "all_14_former_full3_failed_nodes_passed": true,
+    "includes_current_pure_and_cached_api_pg": true,
+    "counts_are_not_to_be_added_to_component_counts": true,
+    "old_oracles_changed": false,
+    "other_parent_or_agent_source_changes": "A separately owned explicit-preference guard was narrowed for two preference regressions; this combined result does not attribute those fixes to the date helper."
+  }
+}

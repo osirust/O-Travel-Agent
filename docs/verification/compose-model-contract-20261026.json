@@ -1,0 +1,15 @@
+{
+  "scope": "Compose config interpolation with synthetic canaries only",
+  "checks": {
+    "ZAI_MODEL": true,
+    "ZAI_API_KEY": true,
+    "ZAI_FREE_TIER_CONFIRMED": true,
+    "CLOUDFLARE_MODEL": true,
+    "CLOUDFLARE_API_TOKEN": true,
+    "CLOUDFLARE_ACCOUNT_ID": true,
+    "CLOUDFLARE_FREE_TIER_CONFIRMED": true
+  },
+  "host_binding": "127.0.0.1",
+  "containers_started": false,
+  "real_credentials_loaded": false
+}

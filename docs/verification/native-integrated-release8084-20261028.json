@@ -1,0 +1,78 @@
+{
+  "status": "RUNNING",
+  "url": "http://127.0.0.1:8084",
+  "source": "/home/aegml/projects/otravel-integrated-release-20261028",
+  "database": "otravel_zai_eval",
+  "release_commit": "ae7d2b45f654be0dfd9bc5b0660db0c3d23198d3",
+  "package_sha256": "28acfd1b40434ba7be14443e0aeaae462a8819dec35778fdd171e0f33b64bbbb",
+  "runtime": {
+    "llm_provider": "zai",
+    "model": "glm-4.5-flash"
+  },
+  "health": {
+    "status": "ok",
+    "database": "ready",
+    "application": "backend",
+    "supplier_booking": false
+  },
+  "limits": {
+    "daily": 200,
+    "per_run": 2,
+    "local": 0,
+    "llm_request_timeout": 90,
+    "paid_fallback": false
+  },
+  "database_counts_before": {
+    "agent_events": 7520,
+    "agent_runs": 1149,
+    "demo_orders": 6,
+    "messages": 2301,
+    "quotes": 78,
+    "sessions": 203,
+    "pending_or_running": 0,
+    "model_call_started": 834
+  },
+  "database_counts_after": {
+    "agent_events": 7520,
+    "agent_runs": 1149,
+    "demo_orders": 6,
+    "messages": 2301,
+    "quotes": 78,
+    "sessions": 203,
+    "pending_or_running": 0,
+    "model_call_started": 834
+  },
+  "historical_state_and_ledger_fingerprints_unchanged": true,
+  "database_created": false,
+  "hba_modified": false,
+  "controller_inference_calls": 0,
+  "controller_supplier_calls": 0,
+  "credentials_recorded": false,
+  "old_r22_stop": {
+    "old_process_alive": false,
+    "signals": 0,
+    "old_identity_unchanged": true
+  },
+  "checked_at_utc": "2026-10-28T13:10:25.621963+00:00",
+  "scope": "IMMUTABLE_GIT_RELEASE_INSTALL_AND_STARTUP_ONLY",
+  "private_receipt_sha256": "d9142de63b3133e42626aed4bf041ae84549947721da969f8aa6c0880f261a41",
+  "controller_sha256": "2bef021cdbf6825ec14efb39d8dae422f08a3d4e807f5d8b394e78ac4590c2c0",
+  "synthetic_controller_guards": {
+    "passed": 20,
+    "actual_master_read": false,
+    "actual_database_or_signal": false
+  },
+  "initial_install_refusal": {
+    "reason": "tracked frontend/.env.local.example was initially outside the example-template allowlist",
+    "source_was_not_created": true,
+    "runtime_or_database_started": false,
+    "retained": true,
+    "correction": "Allow only .env.example and .env.local.example templates; real .env/.env.local still refused"
+  },
+  "limitations": [
+    "Health/profile/startup are not model inference or actual supplier availability tests.",
+    "UI rendering and final source canaries are separate evidence.",
+    "Shared account vendor quota is not reset by the unchanged DB or application200/day cap.",
+    "No old source, foreign services, VPN, GigaChat, Docker frontend lifecycle or billing changed."
+  ]
+}

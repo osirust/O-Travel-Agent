@@ -1,0 +1,129 @@
+{
+  "finding_id": "HARNESS-001-SERP-PROPERTY-PHOTOS-001",
+  "status": "CURRENT_RESPONSE_REPLAY_PHOTO_FIX_TESTED_FULL_R21_PENDING",
+  "original_evidence": {
+    "source_commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+    "source_package": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+    "initial_two_read_proof": "docs/verification/r20-serpapi-openmeteo-actual-reads-20261028.json",
+    "initial_two_read_body_retained": false,
+    "separate_capture_authorized_actual_http": 1,
+    "capture_original_response_sha256": "1d03a4eecac6db954b71f8d730f830a5ad5fffc2d34f7839d6b5a7247ac87e68",
+    "capture_redacted_response_sha256": "1752e094a8c6b149c243db0ae2f8c39257cb1e9a9c2fd4fa496564ea7b03792b",
+    "capture_response_http_status": 200,
+    "request": {
+      "city": "Istanbul",
+      "q": "Hotels in Istanbul, Turkey",
+      "checkin": "2026-11-10",
+      "checkout": "2026-11-13",
+      "currency": "USD",
+      "no_cache": false,
+      "occupancies": [
+        {
+          "adults": 2,
+          "children": []
+        }
+      ]
+    },
+    "cache_bypass_requested": false,
+    "response_may_be_server_cached": true,
+    "source_as_of": "2026-10-28T04:46:52.408Z",
+    "raw_properties": 20,
+    "raw_images": 180,
+    "source_status": "LIVE_INDICATIVE",
+    "normalized_economic_offer_photos_before": 0,
+    "redaction": "API-key fields/string occurrences and all search_metadata including its URLs removed from the private 0600 response copy; original raw SHA calculated before transformation."
+  },
+  "implementation": {
+    "economic_offers": "Unchanged byte-for-byte for the same response and clock; no photo field is added to prices/offers/snapshots.",
+    "view_only_cache": "Safe property images only, exact (offer_id, property_token), LRU256 entries, six-hour TTL, at mostfive deduplicated images per entry.",
+    "source_identity": "DTO sourceSERPAPI with hotelId=sourceHotelId=the exact property_token returned under that offer. Conflicting/foreign image identifiers, offer IDs or hotel bindings yield no actual photo.",
+    "url_policy": "Separate exact lh3.googleusercontent.com HTTPS grass-cs/grass-proxy paths; LiteAPI URL policy is unchanged. No image download/proxy or arbitrary URL fetch.",
+    "existing_plan_endpoint": "Owner-bound saved/partial GET S/media reuses the same DTO, up to20 cache-only SerpApi hotels, existing LiteAPI fetch limitunchanged.",
+    "standalone_endpoint": "Existing asynchronous live/search result adds optional live_media.items[].media alongside unchanged live_offers; offer_id joins presentation to the owned result.",
+    "miss_policy": "Missing/expired/evicted/restarted cache returns a placeholder without any network lookup; a new ordinary search can refill the process-local cache."
+  },
+  "verification": {
+    "immutable_r20_cached_red": {
+      "raw_property_images": 9,
+      "dto_actual_photo": false,
+      "gallery": 0,
+      "actual_http": 0
+    },
+    "final_targeted": {
+      "passed": 99,
+      "seconds": 6.09,
+      "new_media_cases": 26,
+      "new_standalone_pg_cases": 1,
+      "existing_media_cases": 72,
+      "private_xml": ".local/serp-property-media-final-20261028.xml"
+    },
+    "earlier_related": {
+      "passed": 171,
+      "seconds": 8.43,
+      "scope": "Providers/media/price-media/standalone tests before the final capacity256 and Serp presentation20 bounds adjustment; final whole R21 is separate."
+    },
+    "actual_response_full20_replay": {
+      "same_captured_raw_sha256": "1d03a4eecac6db954b71f8d730f830a5ad5fffc2d34f7839d6b5a7247ac87e68",
+      "before_actual_property_photos": 0,
+      "after_actual_property_photos": 20,
+      "after_gallery_images": 100,
+      "media_items": 20,
+      "same_property_binding": true,
+      "cross_version_economic_offer_sha256_before": "78d8ad1cb12879e51e9d6bc2106af5d6b566c4b5ea9137f70c234d7afb78d09f",
+      "cross_version_economic_offer_sha256_after": "78d8ad1cb12879e51e9d6bc2106af5d6b566c4b5ea9137f70c234d7afb78d09f",
+      "economic_offers_identical": true,
+      "actual_http": 0,
+      "model": 0,
+      "database": 0,
+      "image_downloads": 0
+    },
+    "economics": "Nonempty assembled component/source_snapshots and full snapshot_hash stay equal before/after presentation; compare_plans.requires_new_confirmation=False. LIVE_INDICATIVE/price/availability flags unchanged.",
+    "ownership": "Saved-plan API and asynchronous run reject missing/foreign owner tokens. Media mutations operate on views/deep copies only.",
+    "negative_controls": [
+      "javascript/insecure/private/credential/port/fragment/unknown-host/path/query URLs",
+      "Foreign property/offer/explicit hotel binding",
+      "Explicit sourceHotelId/property_token/hotel_id mismatch on images",
+      "TTL expiration, restart/eviction/cache copy isolation",
+      "Dedup/photo/packet bounds, two twenty-offer cache retention"
+    ],
+    "ruff": {
+      "media_and_new_tests": "PASS",
+      "F_codes_changed_core_modules": "PASS",
+      "whole_legacy_provider_harness_style_not_claimed": true
+    },
+    "independent_readonly_peer": "No blocking finding reported; economic snapshot separation, sidecar access and source-specific URL policy reviewed."
+  },
+  "files_sha256": {
+    "otravel/providers.py": "62470c256a6e34cea352c3e8e7fc4214ef75e4cba7ccdcb5a5d4e8d9b63dac7b",
+    "otravel/media.py": "16bd6bbe91a8b6b3decb81e3c8aceaaec0aff6b02e695896328bd6edfeef54e7",
+    "otravel/harness.py": "44f44153690711c4f87f77e41add71eb263b6c7b4041da883ded7cf74d450c21",
+    "tests/test_serp_property_media.py": "8b7586316c8be4ddc1257cfc4ed5cf31f2b09c21f46617728bdc1935a47e4618",
+    "tests/test_serp_property_media_pg.py": "acb2d64e56c40b79caad05664bfa796a615d07469b4d6f83f04df9e8f388117e",
+    "fixtures/regression/serp-property-photos-current-20261028.json": "2673d3bc16671a830a2fca46350a8ce217c7bc04740c47debc1e84ae704d964c",
+    "docs/HOTEL_MEDIA.md": "bd459de3b7c4e0a82886387340cc71fa869c0f1659e5b2a5b38331dcaac11a2e",
+    "docs/FRONTEND_CONTRACT.md": "31c97eaf50308c67aac61fac00e2f9aeb6b687bc1e0d1631d97bebd8028c40d9"
+  },
+  "limitations": [
+    "Whole frozen R21 and native/archive rollout remain separate Root steps.",
+    "The repair was replayed against the same captured real response; no new post-patch SerpApi request was issued.",
+    "Process-local photo cache is not durable across restart. Cache misses never manufacture alternative images or cause extra paid/free searches.",
+    "Returned search photographs do not establish room identity, copyright ownership, current availability, tariff equivalence or a supplier booking.",
+    "The separate original two-read response and its photo gap remain historical evidence; it was not silently replaced with this captured-response phase."
+  ],
+  "actions_after_separate_capture": {
+    "actual_http": 0,
+    "model_http": 0,
+    "image_downloads": 0,
+    "production_database_writes": 0,
+    "runtime_rollout": false
+  },
+  "full_r21_followup": {
+    "passed": 7487,
+    "failed": 3,
+    "status": "ORIGINAL_FULL_FAILURE_PRESERVED_TEST_ORDER_CAUSE_CONFIRMED",
+    "test_only_repair_proof": "docs/verification/serp-photo-golden-redaction-isolation-20261028.json",
+    "runtime_core_unchanged": true,
+    "entire_original_economic_assertions_retained": true,
+    "fresh_full_r22": "PENDING_ROOT"
+  }
+}

@@ -20,7 +20,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse, FileResponse
-from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from jsonschema import Draft202012Validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from sqlalchemy import text as sql_text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -29,21 +30,54 @@ from .domain import DomainError, Operation, TripState, validate_trip
 from .harness import Harness, TYPED_PREFIX, encode_command, exact_control
 from .inventory import reprice_plan, validate_plan
 from .planning import assemble_plan, validate_quote
-from .providers import LLMGateway, ProviderError, TravelGateway
+from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields, public_offer_failure_fields, redact_runtime_text
+from .fx import CBRFxClient, FxUnavailable
+from .media import MEDIA_CSP_SOURCES, MediaResolver
+from .destination_photos import CITY_PAGES, DestinationPhotos
 from .store import Conflict, NotFound, Store, StoreError
+from .geo_catalog import GeoCatalog, GeoCatalogError
+from .llm_contract import build_operation_schema
+from .place_directory import PlaceDirectory
 
 
-_PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
+_PRIVATE = {"owner_token_hash", "input", "input_text", "request_hash", "active_run_id", "active_run_started_at", "settings", "database_url", "authorization", "api_key", "apikey", "api_token", "secret", "password", "access_token", "refresh_token", "headers", "raw_response", "raw_request", "request_url"}
+_PUBLIC_PROVIDER_NAMES = frozenset({
+    "gemini", "openrouter", "groq", "zai", "cloudflare", "ollama", "gigachat",
+    "liteapi", "duffel", "serpapi", "open_meteo", "hotelbeds", "ratehawk", "travelpayouts",
+})
+
+
+def _provider_error_public_fields(exc: ProviderError) -> dict:
+    """Optional code-owned diagnostics, never an upstream details projection.
+
+    An absent/unrecognised provider retains the legacy three-field payload.
+    Numeric facts are included only when they are already bounded integers;
+    strings, booleans and arbitrary nested metadata are not interpreted.
+    """
+    if not isinstance(exc.provider, str) or exc.provider not in _PUBLIC_PROVIDER_NAMES:
+        return {}
+    result: dict[str, Any] = {"provider": exc.provider}
+    details = exc.details if isinstance(exc.details, dict) else {}
+    status, retry = details.get("http_status"), details.get("retry_after_seconds")
+    if type(status) is int and 100 <= status <= 599:
+        result["upstream_http_status"] = status
+    if type(retry) is int and 0 <= retry <= 86400:
+        result["retry_after_seconds"] = retry
+    result.update(public_rate_failure_fields(exc.provider, details))
+    if exc.code == "OFFER_NOT_CONFIRMED":
+        result.update(public_offer_failure_fields(exc.provider, exc.code, details))
+    return result
 
 
 def _clean(value: Any) -> Any:
     if isinstance(value, dict):
-        return {key: _clean(item) for key, item in value.items() if key.casefold().replace("-", "_") not in _PRIVATE and not key.casefold().endswith(("_api_key", "_api_secret", "_access_token"))}
+        return {key: _clean(item) for key, item in value.items() if key.casefold().replace("-", "_") not in _PRIVATE and not key.casefold().replace("-", "_").endswith(("_api_key", "_api_secret", "_access_token", "_api_token", "_auth_key"))}
     if isinstance(value, list):
         return [_clean(item) for item in value]
     if isinstance(value, str):
+        value = redact_runtime_text(value)
         # Never echo configured credentials, even inside an otherwise public string.
-        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN"):
+        for name in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY", "HOTELBEDS_API_SECRET", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN", "ZAI_API_KEY", "COHERE_API_KEY", "CLOUDFLARE_API_TOKEN", "NVIDIA_API_KEY", "GIGACHAT_AUTH_KEY"):
             secret = os.getenv(name)
             if secret:
                 value = value.replace(secret, "[REDACTED]")
@@ -90,7 +124,7 @@ class Action(Body):
 class Search(Body):
     client_message_id: str = Field(default_factory=lambda: str(uuid4()), min_length=1, max_length=200)
     expected_version: int | None = Field(default=None, ge=0, strict=True)
-    mode: Literal["DEMO"] = "DEMO"
+    mode: Literal["DEMO", "HYBRID"] | None = None
 
 
 class LiveSearch(Body):
@@ -100,6 +134,30 @@ class LiveSearch(Body):
     provider: str = Field(min_length=1, max_length=40)
     request: dict[str, Any]
     demo_fallback: StrictBool = False
+
+
+class ResolvePlace(Body):
+    client_message_id: str = Field(min_length=1, max_length=200, strict=True)
+    expected_version: int = Field(ge=0, strict=True)
+    role: Literal["origin", "destination", "route_end"]
+    kind: Literal["country", "city"]
+    query: str = Field(min_length=2, max_length=160, strict=True)
+    country_iso2: str | None = Field(default=None, pattern=r"^[A-Z]{2}$", strict=True)
+    stay_id: str | None = Field(default=None, min_length=1, max_length=128, strict=True)
+
+    @field_validator("query")
+    @classmethod
+    def meaningful_query(cls, value: str) -> str:
+        if len(value.strip()) < 2 or any(ord(char) < 32 or ord(char) == 127 for char in value):
+            raise ValueError("Укажите название страны или города.")
+        return value
+
+
+class SelectPlace(Body):
+    client_message_id: str = Field(min_length=1, max_length=200, strict=True)
+    expected_version: int = Field(ge=0, strict=True)
+    resolution_id: str = Field(min_length=1, max_length=160, strict=True)
+    candidate_id: str = Field(min_length=1, max_length=160, strict=True)
 
 
 class Preview(Body):
@@ -115,22 +173,38 @@ class Confirm(Body):
     confirmed: StrictBool
 
 
-def create_app(settings: Settings | None = None, store: Any = None, llm: Any = None, travel: Any = None) -> FastAPI:
+def create_app(settings: Settings | None = None, store: Any = None, llm: Any = None, travel: Any = None, fx: Any = None, media: Any = None,
+               geo_catalog: Any = None, place_directory: Any = None) -> FastAPI:
     settings = settings or Settings.from_env()
     repository = store if store is not None else Store(settings.database_url)
     model = llm if llm is not None else LLMGateway(settings.provider_settings())
     gateway = travel if travel is not None else TravelGateway(settings.provider_settings())
-    harness = Harness(settings, repository, model, gateway)
+    rates = fx if fx is not None else CBRFxClient() if settings.reference_fx_enabled else None
+    pictures = media if media is not None else MediaResolver(gateway)
+    destination_pictures = DestinationPhotos()
+    catalog = (geo_catalog if geo_catalog is not None else GeoCatalog(repository.engine)) if settings.dynamic_geography_enabled else None
+    directory = (place_directory if place_directory is not None else PlaceDirectory(cache=catalog)) if settings.dynamic_geography_enabled else None
+    harness_options = {"fx": rates}
+    if settings.dynamic_geography_enabled:
+        harness_options.update(geo_catalog=catalog, place_directory=directory)
+    harness = Harness(settings, repository, model, gateway, **harness_options)
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         try:
             await repository.initialize()
+            if catalog is not None:
+                await catalog.initialize()
             await harness.start()
         except Exception:
+            if directory is not None:
+                await directory.close()
             await repository.close()
             await model.close()
             await gateway.close()
+            await destination_pictures.close()
+            if rates is not None:
+                await rates.close()
             raise RuntimeError("Backend startup failed: PostgreSQL initialization unavailable; connection details redacted.") from None
         try:
             yield
@@ -138,18 +212,30 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await harness.close()
             await model.close()
             await gateway.close()
+            await destination_pictures.close()
+            if rates is not None:
+                await rates.close()
+            if directory is not None:
+                await directory.close()
             await repository.close()
 
     app = FastAPI(title="O!Travel Agent Backend", version="0.1.0", lifespan=lifespan,
                   description="Сессии защищены Bearer-токеном, возвращаемым один раз при создании. DEMO не создаёт реальную бронь. POST сообщения возвращает run_id для polling.")
     app.state.store, app.state.harness = repository, harness
     app.state.llm, app.state.travel, app.state.settings = model, gateway, settings
+    app.state.fx = rates
+    app.state.media = pictures
+    app.state.geo_catalog, app.state.place_directory = catalog, directory
     origins = [value.strip().rstrip("/") for value in os.getenv("CORS_ORIGINS", "").split(",") if value.strip() and value.strip() != "*"]
     if origins:
         app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type"], allow_credentials=False)
 
-    def error(code: str, message: str, status: int, retryable: bool = False) -> JSONResponse:
-        return JSONResponse({"error": {"code": code, "message": _clean(message), "retryable": retryable}}, status_code=status)
+    def error(code: str, message: str, status: int, retryable: bool = False,
+              *, provider_failure: ProviderError | None = None) -> JSONResponse:
+        payload = {"code": code, "message": _clean(message), "retryable": retryable}
+        if provider_failure is not None:
+            payload.update(_provider_error_public_fields(provider_failure))
+        return JSONResponse({"error": payload}, status_code=status)
 
     @app.exception_handler(RequestValidationError)
     async def invalid_request(_request, _exc):
@@ -169,7 +255,18 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
 
     @app.exception_handler(ProviderError)
     async def provider_error(_request, exc):
-        return error(exc.code, exc.message, 503, exc.retryable)
+        refresh_required = (exc.code == "OFFER_NOT_CONFIRMED"
+            and public_offer_failure_fields(exc.provider, exc.code, exc.details).get("refresh_required") is True)
+        return error(exc.code, exc.message, 409 if refresh_required else 503, exc.retryable, provider_failure=exc)
+
+    @app.exception_handler(FxUnavailable)
+    async def fx_error(_request, exc):
+        return error(exc.code, exc.message, 503, True)
+
+    @app.exception_handler(GeoCatalogError)
+    async def geo_catalog_error(_request, exc):
+        unavailable = exc.code in {"catalog_unavailable", "catalog_integrity"}
+        return error(exc.code, exc.message, 503 if unavailable else 422, unavailable)
 
     @app.exception_handler(SQLAlchemyError)
     @app.exception_handler(ConnectionError)
@@ -199,14 +296,18 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         if isinstance(value, dict):
             for key, item in value.items():
                 normalized = key.casefold().replace("-", "_")
-                if normalized in {"api_key", "apikey", "token", "authorization", "password", "secret", "headers", "url", "endpoint"} or normalized.endswith(("_api_key", "_access_token", "_api_secret")):
+                if normalized in {"api_key", "apikey", "token", "authorization", "password", "secret", "headers", "url", "endpoint"} or normalized.endswith(("_api_key", "_access_token", "_api_secret", "_auth_key")):
                     raise HTTPException(400, "Ключи и адреса HTTP задаются только серверной конфигурацией.")
+                if (normalized in {"place_ref", "place_refs", "city_ref", "location_ref", "location_refs", "resolved_places", "provider_bindings"}
+                        or normalized.endswith(("_place_ref", "_city_ref"))):
+                    raise HTTPException(400, "Географические снимки и связи поставщиков подтверждаются только серверным справочником.")
                 no_credentials(item)
         elif isinstance(value, list):
             for item in value:
                 no_credentials(item)
 
-    async def submit(session: dict, client_id: str, expected_version: int | None, kind: str, *, schedule: bool = True, **fields: Any) -> dict:
+    async def submit(session: dict, client_id: str, expected_version: int | None, kind: str, *, schedule: bool = True,
+                     validate_new: Any = None, **fields: Any) -> dict:
         no_credentials(fields)
         # Reuse the original server-side fingerprint on an identical replay.
         incoming = {"kind": kind, **fields}
@@ -221,6 +322,8 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                     if payload == incoming:
                         encoded = previous_text
                 break
+        if encoded is None and validate_new is not None:
+            validate_new()
         encoded = encoded or encode_command(kind, session, **fields)
         if len(encoded) > max(16_000, settings.max_message_chars * 4):
             raise HTTPException(413, "Структурированная команда слишком велика.")
@@ -250,7 +353,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def debug_chat():
         return FileResponse(Path(__file__).parent / "static" / "debug.html", media_type="text/html",
             headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff",
-                     "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"})
+                     "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: " + " ".join(MEDIA_CSP_SOURCES) + "; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"})
 
     @app.get("/debug/assets/{asset}", include_in_schema=False)
     async def debug_asset(asset: Literal["chat.css", "chat.js"]):
@@ -261,6 +364,14 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     @app.post("/api/v1/sessions", status_code=201)
     async def create_session(body: CreateSession | None = None):
         state = body.initial_trip if body and body.initial_trip else TripState()
+        if state.location_refs:
+            if not settings.dynamic_geography_enabled or catalog is None:
+                raise DomainError("place_provenance_required", "Сначала подтвердите новые места через серверный географический справочник.")
+            await catalog.verify_places(state.location_refs, now=datetime.now(timezone.utc),
+                require_fresh=True, require_current=True)
+        if "search_policy" not in state.model_fields_set and settings.default_search_mode == "HYBRID":
+            state.search_policy = type(state.search_policy)(mode="HYBRID",
+                hotel_provider=settings.default_hotel_provider, flight_provider=settings.default_flight_provider)
         issues = validate_trip(state, final=False)
         if issues:
             raise DomainError(issues[0]["code"], issues[0]["message"])
@@ -272,10 +383,46 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def get_session(session_id: str, authorization: str | None = Header(default=None)):
         return _session_public(await owned(session_id, authorization))
 
+    @app.get("/api/v1/sessions/{session_id}/operation-schema")
+    async def operation_schema(session_id: str, state_version: int | None = Query(default=None, ge=0),
+                               authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if state_version is not None and state_version != session["state_version"]:
+            raise Conflict("Версия поездки изменилась; обновите схему операций.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"],
+            "schema": build_operation_schema(session["state"], dynamic_places=settings.dynamic_geography_enabled)})
+
+    @app.post("/api/v1/sessions/{session_id}/places/resolve", status_code=202)
+    async def resolve_place(session_id: str, body: ResolvePlace, authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if not settings.dynamic_geography_enabled or catalog is None or directory is None:
+            raise Conflict("Динамический географический справочник не включён.", "dynamic_geography_not_configured")
+        request = body.model_dump(exclude={"client_message_id", "expected_version"}, mode="json")
+        envelope = {"operations": [{"type": "resolve_place", "target_id": None, "value": request}],
+            "control": {"action": "none"}, "reply": "", "unknowns": [], "conflicts": [],
+            "speech_act": "CHANGE", "information_subject": None}
+        def validate_new():
+            if not Draft202012Validator(build_operation_schema(session["state"], dynamic_places=True)).is_valid(envelope):
+                raise HTTPException(422, "Роль и адрес разрешения места не соответствуют текущей схеме поездки.")
+        # An identical stored request reuses its original fingerprint even if a
+        # later valid edit removed its old target. It never becomes new work.
+        return await submit(session, body.client_message_id, body.expected_version, "resolve_place",
+            validate_new=validate_new, request=request)
+
+    @app.post("/api/v1/sessions/{session_id}/places/select", status_code=202)
+    async def select_place(session_id: str, body: SelectPlace, authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if not settings.dynamic_geography_enabled or catalog is None or directory is None:
+            raise Conflict("Динамический географический справочник не включён.", "dynamic_geography_not_configured")
+        selection = body.model_dump(exclude={"client_message_id", "expected_version"}, mode="json")
+        return await submit(session, body.client_message_id, body.expected_version, "select_place", selection=selection)
+
     @app.get("/api/v1/sessions/{session_id}/messages")
     async def get_messages(session_id: str, authorization: str | None = Header(default=None)):
         await owned(session_id, authorization)
         rows = await repository.list_messages(session_id)
+        from .place_resume import read_resume_marker
+        rows = [row for row in rows if not (row.get("role") == "system" and read_resume_marker(row.get("text")))]
         for row in rows:
             if row["text"].startswith(TYPED_PREFIX):
                 row["text"], row["kind"] = "Структурированная команда из формы.", "command"
@@ -325,7 +472,11 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                 await harness.cancel_control(await repository.get_run(accepted["run_id"]))
                 accepted["status"] = (await repository.get_run(accepted["run_id"]))["status"]
             return JSONResponse(_clean(accepted), status_code=202)
-        return _session_public(await harness.control(session_id, body.action))
+        controlled = await harness.control(session_id, body.action)
+        result = _session_public(controlled)
+        if controlled.get("resume_run_id"):
+            result["resume_run_id"] = controlled["resume_run_id"]
+        return result
 
     @app.post("/api/v1/sessions/{session_id}/demo", status_code=202)
     async def demo(session_id: str, body: Search | None = None, authorization: str | None = Header(default=None)):
@@ -337,6 +488,8 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     async def search(session_id: str, body: Search | None = None, authorization: str | None = Header(default=None)):
         session = await owned(session_id, authorization)
         body = body or Search()
+        if body.mode is not None and body.mode != session["state"].get("search_policy", {}).get("mode", "DEMO"):
+            raise Conflict("Режим поиска отличается от сохранённой политики поездки. Сначала измените политику поиска.", "search_policy_mismatch")
         return await submit(session, body.client_message_id, body.expected_version, "search")
 
     @app.post("/api/v1/sessions/{session_id}/live/search", status_code=202)
@@ -346,7 +499,44 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             raise HTTPException(422, "Для погоды нужны city, latitude и longitude.")
         return await submit(session, body.client_message_id, body.expected_version, "live_search", search_kind=body.kind, provider=body.provider, request=body.request, demo_fallback=body.demo_fallback)
 
-    async def saved_plan(session: dict, plan_id: str) -> dict:
+    @app.get("/api/v1/destination-photos")
+    async def get_destination_photos(city: list[str] = Query(default=[])):
+        if len(city) > 7 or any(value not in CITY_PAGES for value in city):
+            raise HTTPException(422, "Для фотографий выберите поддерживаемые города.")
+        return {"photos": await destination_pictures.resolve(city)}
+
+    @app.get("/api/v1/sessions/{session_id}/hotel-reviews")
+    async def hotel_reviews(session_id: str, offer_id: str = Query(min_length=1, max_length=128),
+                            authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        token = None
+        seen = set()
+        for message in reversed(await repository.list_messages(session_id)):
+            run_id = message.get("run_id")
+            if not run_id or run_id in seen:
+                continue
+            seen.add(run_id)
+            run = await repository.get_run(run_id)
+            response = run.get("result") or {}
+            if run.get("status") != "completed" or response.get("state_version") != session["state_version"]:
+                continue
+            inventory = response.get("result") or {}
+            for offer in inventory.get("live_offers", []):
+                details = offer.get("details") or {}
+                if offer.get("offer_id") == offer_id and offer.get("provider") == "serpapi" and details.get("kind") == "hotel":
+                    token = (details.get("provider_data") or {}).get("property_token")
+                    break
+            if token:
+                break
+        if not token:
+            raise NotFound("Отзывы доступны только для найденного отеля текущей поездки.")
+        reviews = await gateway.hotel_reviews(token)
+        latest = await repository.get_session(session_id)
+        if latest["state_version"] != session["state_version"]:
+            raise Conflict("Поездка изменилась во время загрузки отзывов.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"], "offer_id": offer_id, "source": "SerpApi / Google Hotels", "reviews": reviews})
+
+    async def saved_plan(session: dict, plan_id: str, *, include_partial: bool = False) -> dict:
         checked = set()
         for message in reversed(await repository.list_messages(session["session_id"])):
             run_id = message.get("run_id")
@@ -356,16 +546,39 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             run = await repository.get_run(run_id)
             response = run.get("result") or {}
             inventory = response.get("result") or {}
-            for plan in inventory.get("plans", []):
+            candidates = list(inventory.get("plans", []))
+            if include_partial and isinstance(inventory.get("partial_plan"), dict):
+                candidates.append(inventory["partial_plan"])
+            for plan in candidates:
                 if plan.get("plan_id") == plan_id:
                     if plan.get("trip_id") != session["trip_id"] or plan.get("state_version") != session["state_version"]:
                         raise Conflict("Выбранный план устарел; нужен новый поиск.", "stale_plan")
                     return plan
         raise NotFound("План этой сессии не найден.")
 
+    @app.get("/api/v1/sessions/{session_id}/media")
+    async def get_plan_media(session_id: str, plan_id: str = Query(min_length=1, max_length=120),
+                             state_version: int | None = Query(default=None, ge=0),
+                             authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        if state_version is not None and state_version != session["state_version"]:
+            raise Conflict("Версия поездки изменилась; обновите карточки.", "stale_state")
+        plan = await saved_plan(session, plan_id, include_partial=True)
+        # Static presentation is deliberately outside the priced snapshot. The
+        # resolver only sees hotel identities already saved in this own plan.
+        presentation = await pictures.resolve_plan(deepcopy(plan))
+        latest = await repository.get_session(session_id)
+        if latest["state_version"] != session["state_version"]:
+            raise Conflict("Поездка изменилась во время загрузки фотографий.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"],
+                       "plan_id": plan_id, **presentation})
+
     @app.post("/api/v1/sessions/{session_id}/checkout/preview")
     async def preview(session_id: str, body: Preview, authorization: str | None = Header(default=None)):
         session = await owned(session_id, authorization)
+        from .budget_requirements import budget_scope_unresolved
+        if budget_scope_unresolved(session):
+            raise Conflict('Сначала уточните сумму и состав общего бюджета поездки.', 'budget_scope_unresolved')
         if body.state_version != session["state_version"]:
             raise Conflict("Версия поездки изменилась.", "stale_state")
         plan = await saved_plan(session, body.plan_id)
@@ -378,6 +591,12 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             if issues:
                 issue = next((item for item in issues if item["code"] in {"stale_source_snapshot", "invalid_source_lifetime"}), issues[0])
                 raise Conflict(issue["message"], issue["code"])
+            fresh_fx = None
+            if plan.get("fx_snapshot") is not None:
+                if rates is None:
+                    raise Conflict("Источник курса недоступен; старая корзина отозвана, исходные предложения сохранены.", "fx_unavailable")
+                # Refresh rates before creating a new consent, never in confirm.
+                fresh_fx = await rates.fetch_snapshot(now=datetime.now(timezone.utc))
             refreshed = []
             for old in plan["offers"]:
                 if old.get("source_type") == "DEMO":
@@ -403,7 +622,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
                 new = deepcopy(new)
                 new["details"] = details
                 refreshed.append(new)
-            updated = assemble_plan(state, refreshed, previous_plan=plan, now=datetime.now(timezone.utc))
+            updated = assemble_plan(state, refreshed, previous_plan=plan, now=datetime.now(timezone.utc), fx_snapshot=fresh_fx)
             issues = validate_quote(updated, state, current_offers=refreshed, now=datetime.now(timezone.utc))
             if not issues and not updated["ready_for_simulated_checkout"]:
                 issues = updated["blockers"] or [{"code": "checkout_not_ready", "message": "Корзина не готова к имитации оформления."}]
@@ -420,7 +639,10 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
 
     @app.post("/api/v1/sessions/{session_id}/checkout/confirm")
     async def confirm(session_id: str, body: Confirm, authorization: str | None = Header(default=None)):
-        await owned(session_id, authorization)
+        session = await owned(session_id, authorization)
+        from .budget_requirements import budget_scope_unresolved
+        if budget_scope_unresolved(session):
+            raise Conflict('Сначала уточните сумму и состав общего бюджета поездки.', 'budget_scope_unresolved')
         return _clean(await repository.confirm_quote(session_id, body.quote_id, body.quote_version, body.idempotency_key, body.confirmed, body.state_version))
 
     @app.get("/api/v1/sessions/{session_id}/orders")

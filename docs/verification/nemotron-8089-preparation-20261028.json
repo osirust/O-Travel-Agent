@@ -1,0 +1,97 @@
+{
+  "verification_id": "HARNESS-008-NEMOTRON-8089-072-080-PREPARATION-20261028",
+  "status": "DRAFT_FAKE_DRY_TESTED_NOT_INSTALLED_NOT_STARTED",
+  "future_binding": "Exact Root-provided final commit and Git archive package SHA; current full R17 pending. No mutable E runtime source.",
+  "new_stand": {
+    "port": 8089,
+    "provider": "openrouter",
+    "model": "nvidia/nemotron-3.5-super-vl:free",
+    "new_own_database": "otravel_nemotron_9_eval_20261028",
+    "checkout_booking_payment": false
+  },
+  "source_lineage": {
+    "dialogues": [
+      "ZAI100-072",
+      "ZAI100-073",
+      "ZAI100-074",
+      "ZAI100-075",
+      "ZAI100-076",
+      "ZAI100-077",
+      "ZAI100-078",
+      "ZAI100-079",
+      "ZAI100-080"
+    ],
+    "user_inputs": 78,
+    "original_dialogues_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "oracle_byte_sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+    "all_nine_new_sessions": true,
+    "prior_R12_ZAI47_072_T1_failure": "Preserved in its original distinct phase, never overwritten by this proposed retest",
+    "typed_seed": "Explicit synthetic HYBRID/LiteAPI sandbox/Duffel test/guest nationalityRU, not inferred from language"
+  },
+  "bounds": {
+    "actual_model_http_attempts_total": 40,
+    "model_attempts_per_run": 2,
+    "actual_supplier_http_attempts_total": 500,
+    "minimum_model_http_spacing_seconds": 2,
+    "minimum_user_post_spacing_seconds": 2,
+    "parallel_dialogues": 1,
+    "client_tool_events_budget_is_separate": true,
+    "prior_micro_attempts": 4,
+    "vendor_counter_may_lag": true,
+    "no_unlimited_quota_claim": true
+  },
+  "guards": [
+    "Explicitfree model and verifiedzero pricing before startup; max_price0/noFallback in each request",
+    "Durable private HTTP admission ledger, nozero on reinitialization",
+    "Allowlisted source reads/searches; all prebook/booking/payment and other inference endpoints rejected",
+    "PID/start ticks/argv/cwd/core package/client/source/oracle/grader and privateguard fileSHA fences beforePOST",
+    "Resource failures or unknownPOST stop without resend; semantic failures may continue with next originalinput",
+    "Source/oracle byteexact, archiveoracle JSONsemantic equality recorded separately",
+    "Startup must verify model/source counts0 and own DB baseline0 before generation"
+  ],
+  "verification": {
+    "fake_dry_tests_passed": 25,
+    "ruff_new_guard_wrapper_installer": "PASS",
+    "actual_native_installation": "NOT_EXECUTED",
+    "actual_db_setup": "NOT_EXECUTED",
+    "actual_startup": "NOT_EXECUTED",
+    "new_api_or_model_requests": 0,
+    "core_test_files_modified": false
+  },
+  "pending": [
+    "Root final full PASS (currently R17)",
+    "Root exact commit/archive package and explicit GO",
+    "Actual source install, metadata before, zero-inference startup and runtimeproof",
+    "Actual independent fixed-input phase and bounded counterafter"
+  ],
+  "prepared_files_sha256": {
+    "after80_nemotron_isolated8089_backend.py": "4c2476128cdcaa8aa16677bfac2904858e1b604f0183e1e263afb9cf333ec765",
+    "replay9_nemotron_8089.py": "1f8518c218830a5bc6b895263b765bd3f20c4cbe348fc038810c6f0caf29afbc",
+    "phase8089_app.py": "9d7f59b0a827fcf1f25a6cd1dc09c3474bb616caf1d75e8ac6ef64cfafcbc8a2",
+    "phase8089_guard.py": "8ab425c690c848fb5fb07133cbd41e0d53564347d1d85cf4cb1d809ce9add6ba",
+    "original-dialogues.jsonl": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "after80-oracles-v3.raw.json": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c"
+  },
+  "private_ready_document": "ignored .local/drafts/after80-nemotron-8089-20261028/READY.md",
+  "limitations": [
+    "Fake tests do not prove real PostgreSQL/startup/API functionality.",
+    "This proposed9-case retest is not uniform80-dialogue language acceptance.",
+    "The small Nemotron API probe showed semantic risks; its availability is not semantic qualification.",
+    "No fallback to another provider, account, key, IP or local model is automatic."
+  ],
+  "semantic_repair_exhaustion_classifier": {
+    "status": "SDK_SHAPED_FAKE_TESTED_NOT_LIVE_TESTED",
+    "recognition": "Exactly two matching owned started/failed events and two error.llm failed validation attempts; state/version unchanged; both actualHTTP and global native-start budgets below40; no quota/network/cooldown hints",
+    "continue_action": "Next original input once, never resend failedPOST",
+    "ambiguous_metadata": "UNKNOWN_STOP"
+  },
+  "ready_command_review": {
+    "installer_help": "PASS",
+    "controller_plan_zero_credentials_zero_http": "PASS",
+    "runner_help": "PASS",
+    "target_native_source_exists": false,
+    "port8089_free": true,
+    "new_db_queried": false,
+    "new_generation": 0
+  }
+}

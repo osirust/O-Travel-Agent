@@ -1,0 +1,97 @@
+{
+  "case_id": "ZAI100-038",
+  "turn": 6,
+  "input": "Бюджет 65к рублей общий. Питер и Санкт-Петербург у тебя ведь один город? Мне две остановки не нужны.",
+  "before": {
+    "trip_id": "private-alias-case038",
+    "state_version": 4,
+    "origin": "Москва",
+    "budget": null,
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "type": "adult",
+        "age": null
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Санкт-Петербург",
+        "check_in": "2026-12-05",
+        "check_out": "2026-12-08",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": []
+          }
+        ]
+      }
+    ]
+  },
+  "raw_contract": {
+    "value": {
+      "reply": "Я установил бюджет в 65 000 рублей на всю поездку и удалил остановку в Санкт-Петербурге. Теперь поездка состоит только из перелёта из Москвы в Питер и обратно без проживания.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 6500000
+          },
+          "target_id": null
+        },
+        {
+          "type": "remove_stay",
+          "value": {},
+          "target_id": "new-stay-1"
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "30d7ce5652ce3e80b3454d9bd1ee657d6d69dcd57ecab3b521514ae8009fb2dd",
+    "captured": true,
+    "utf8_bytes": 618
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Я установил бюджет в 65 000 рублей на всю поездку и удалил остановку в Санкт-Петербурге. Теперь поездка состоит только из перелёта из Москвы в Питер и обратно без проживания.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 6500000
+          },
+          "target_id": null
+        },
+        {
+          "type": "remove_stay",
+          "value": {},
+          "target_id": "new-stay-1"
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "ff7377c08833908c5dc53b72d6a12f5ba76b44e36d6db40d8c87bc5f0b75d5d4",
+    "captured": true,
+    "utf8_bytes": 618
+  },
+  "source_sha256": "b3791285455ad8e0b8dcb456d3e12fb5cc457a0ee93f2067393add484100a366",
+  "before_projection_sha256": "cd10f70df71a03a439b0e32ef0bc03bcf2f3fd3c7228aaccbade56380574d4a7",
+  "controlled_bootstrap_scope": "Minimal canonical before fields;exact raw/checkedfinalJSON from old actual038;no new remoteNLU."
+}

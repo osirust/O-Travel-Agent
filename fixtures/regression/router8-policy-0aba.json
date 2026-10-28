@@ -1,0 +1,671 @@
+{
+  "format": "otravel.controlled.cached-policy.v1",
+  "scope": "development_regression_cached_raw_not_actual_nlu",
+  "runtime_commit": "0aba3a65cef49e3a434c6a4ae4e8ed610733aee2",
+  "cases": [
+    {
+      "id": "ROUTER8-004-T01",
+      "source_file": "ZAI100-004.json",
+      "source_sha256": "f24cfad145a95ea8f8935ba190de90f88f79ee779694d24353b87b26fc74647e",
+      "turn": 1,
+      "user": "Еду один взрослый в Москву по работе. Думал вылетать из Петербурга, но город отправления сейчас уточню.",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "3e0f09ef-9a00-44bd-b613-e5aee084a665",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 0
+      },
+      "raw": {
+        "reply": "Вижу, что вы еете один взрослый в Москву по работе. Город отправления уточните, когда будете готовы. Пока я зафиксировал, что это односторонняя поездка (обратный перелёт не нужен) и один взрослый пассажир.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [
+          "Город отправления (из Петербурга или другого?)",
+          "Возраст пассажира (для точного подбора тарифов)",
+          "Целевые даты поездки (выезд/возврат, если потребуется)"
+        ],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null
+            }
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "keep_separate": false
+            },
+            "target_id": "new-group-1"
+          },
+          {
+            "type": "set_route_policy",
+            "value": {
+              "kind": "one_way",
+              "end_city": null
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "ASK",
+        "information_subject": null
+      },
+      "prior_plan": null
+    },
+    {
+      "id": "ROUTER8-001-T11",
+      "source_file": "ZAI100-001.json",
+      "source_sha256": "136734284e49bfa0699c852723e5de04fd61dc028f513e593d52936557430580",
+      "turn": 11,
+      "user": "Откуда цены в первом плане: настоящие или демонстрационные? Как перейти только к тестовому оформлению?",
+      "before_state": {
+        "legs": [
+          {
+            "id": "leg-ca03e2e7-fcb3-4382-8d69-de1883456e8f",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Санкт-Петербург",
+            "departure_date": "2026-11-05"
+          },
+          {
+            "id": "leg-a6758179-0ecb-4ee4-a2af-7c6786b4aa31",
+            "mode": "flight",
+            "origin": "Санкт-Петербург",
+            "destination": "Москва",
+            "departure_date": "2026-11-09"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Санкт-Петербург",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ],
+            "check_in": "2026-11-05",
+            "hotel_id": null,
+            "check_out": "2026-11-09"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "groups": [
+          {
+            "id": "new-group-1",
+            "traveler_ids": [
+              "new-traveler-1"
+            ],
+            "keep_separate": false
+          }
+        ],
+        "origin": "Москва",
+        "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": "new-group-1",
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [
+          {
+            "key": "departure_time",
+            "value": "early_morning",
+            "weight": 1.0
+          },
+          {
+            "key": "price_priority",
+            "value": "lowest_total",
+            "weight": 1.0
+          }
+        ],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 6
+      },
+      "raw": {
+        "reply": "Цены в первом плане смешанные: перелёты и трансферы — демонстрационные (DEMO), проживание — тестовые тарифы (SANDBOX). Я переключил режим поиска в DEMO, чтобы все компоненты формились только тестовыми синтетическими данными.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_search_policy",
+            "value": {
+              "mode": "DEMO",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "duffel"
+            }
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "prior_plan": {
+        "offers": [
+          {
+            "details": {
+              "kind": "hotel",
+              "rates": [
+                {
+                  "name": "Standard room Single",
+                  "perks": [],
+                  "rateId": "I42FUVCPJZBFOR2FGNDUWTSSKVDVSWKUJ5GVEV2HKFNEIQKOLJJUOWSUIRGVUUSXJVIVURCBJZNFIR2ZGRKE2WSKK5DTIM2HI5HFEVSQKFMVGR2NKJIUOSJTIRBU2SSRI5LDMRCFJVBFGR2ZLFKEGTKCLJIFEU2XGRMDEVSLJY3EMRKWJQ2EWSSLKVCTOQSSJFCVSRKHG5BFKR2VLJCFGN2EJJFUEVCWJNJUINCHIUZVIU2NLJIUOTKZIREU4USRJBCTEVCTGZFU4TKWJJJUOTKSKJDTIWKEJNHFURCHIVNEIU2OLJHEOSKZKRHU2QSWI42TMRSFKJJU6UCRLJCECTKSK5DUKWKUIFGUUUKHLFMUIQJXIJJFAUSKIRBU2SSWI5BDMRCFJZJFORZULFCE6TS2IRFUUSCTI5KVGR2KLFJFIRKNIJJUOWKXKRBU2SSOI5AVSU2BJVBFOSCJLFCECSKZPQZDMNRXGAXDON34GIYDENRNGEYS2MBREAYDMORQGA5DAMD4KJHXY7D4PRJXIYLOMRQXEZBAOJXW63JAKNUW4Z3MMV6DALRQGB6DALRQGB6HYMBOGAYHYMBOGAYA",
+                  "remarks": "",
+                  "boardName": "Room Only",
+                  "boardType": "RO",
+                  "priceType": "commission",
+                  "adultCount": 1,
+                  "childCount": 0,
+                  "commission": [
+                    {
+                      "amount": 0,
+                      "currency": "RUB"
+                    }
+                  ],
+                  "promotions": null,
+                  "retailRate": {
+                    "total": [
+                      {
+                        "amount": 26670.77,
+                        "currency": "RUB"
+                      }
+                    ],
+                    "initialPrice": [
+                      {
+                        "amount": 26670.77,
+                        "currency": "RUB"
+                      }
+                    ],
+                    "taxesAndFees": null,
+                    "suggestedSellingPrice": [
+                      {
+                        "amount": 30671.38,
+                        "source": "",
+                        "currency": "RUB"
+                      }
+                    ]
+                  },
+                  "childrenAges": [],
+                  "maxOccupancy": 1,
+                  "paymentTypes": [
+                    "NUITEE_PAY"
+                  ],
+                  "occupancyNumber": 1,
+                  "providerCommission": {
+                    "amount": 0,
+                    "currency": ""
+                  },
+                  "cancellationPolicies": {
+                    "hotelRemarks": [],
+                    "refundableTag": "RFN",
+                    "cancelPolicyInfos": [
+                      {
+                        "type": "amount",
+                        "amount": 26670.77,
+                        "currency": "RUB",
+                        "timezone": "GMT",
+                        "cancelTime": "2026-11-01 06:00:00"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "issues": [],
+              "binding": {
+                "city": "Санкт-Петербург",
+                "checkin": "2026-11-05",
+                "stay_id": "new-stay-1",
+                "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+                "checkout": "2026-11-09",
+                "hotel_id": "lp34fe1",
+                "room_ids": [
+                  "new-room-1"
+                ],
+                "state_version": 6,
+                "room_assignments": [
+                  {
+                    "room_id": "new-room-1",
+                    "traveler_ids": [
+                      "new-traveler-1"
+                    ]
+                  }
+                ]
+              },
+              "checkin": "2026-11-05",
+              "checkout": "2026-11-09",
+              "hotel_id": "lp34fe1",
+              "warnings": [],
+              "room_facts": [
+                {
+                  "occupancy_number": 1,
+                  "capacity_verified": true,
+                  "reported_capacity": 1,
+                  "guest_counts_match": true
+                }
+              ],
+              "occupancies": [
+                {
+                  "adults": 1,
+                  "children": []
+                }
+              ],
+              "source_type": "SANDBOX",
+              "supplier_id": "2",
+              "fees_included": true,
+              "supplier_name": "nuitee",
+              "search_request": {
+                "checkin": "2026-11-05",
+                "checkout": "2026-11-09",
+                "currency": "RUB",
+                "hotelIds": [
+                  "lp6594a",
+                  "lp4f89e",
+                  "lp34fe1"
+                ],
+                "occupancies": [
+                  {
+                    "adults": 1,
+                    "children": []
+                  }
+                ],
+                "guestNationality": "RU"
+              },
+              "native_offer_id": "AwJ2MQAAAABq4Mq-UTn7HxbiR-Lvq62fnGElt9IuT9j1NbT4oEsYY5F77OH_IkxCZ1i9Ku3Udd6Yn9Ug4q-JP0R_aIuYUczFMLaSkBovjvfGNtB1KQyPIjDcoqgZ3QuhOv5qRceKMh9IBT48Fj_HVmq73m7VDmLAuAQLHSuGATxkhJnGtruOhWKhVnJ3LJwNq9PIRKKwYWsqFy_JJHXswtrWLS_JWBP2Dsaew_W4GY5W9htfeTggbF0nvP1yBi-SI3PPbXXK_wV7jAUEVXfeeGAz6b4B4WXVBb_47Hu4zYibIKGh_J3poRf9MUjqohUXs2a68rXNaLxKJzAmAka1QJ2oqbbH9nAoFXlnAv1eeJCdJgZmFUgLBx-PzFIon6daPOR9M55qNBfcLXAoWqvjf5kaljn60daqI46cw__iCLkxt2BVDii48VnxHhJEgWDMKlv1N-Gbj61n7VD3PYo1FYPiIXRuZAYAVt9yPA1dIuUoDWJCsXxWWOFgbxqi14lRR7FqPL6vkIg0h47sDAXuSxtBL8nIMGDj77W-Az0YbS2uup7LevBi5GeJRauFhlerXuY5ArgfXCelHgIVESJ3e2vN_DPS7pJl0dOrzJIq5b3h_XA5uuBPrIqrUxoOYybUdrqO7OZ6Dd7_tr-88UCWoOISk9AVStDXmKNllwu6OEqBMJLWTE69Oxi5DaiXdnZIJor9VzgjlW_1kn-WHbomoTVf0Byd2HcC4g_aqUEJG1SusffEVeJTn75747Sy1KSMyi-SskWIU9UN4w_uh1b4bvBWCyOTQQ0DDHUppjhe-l00X6ekbmMb8ym4tFUP8_Pg_IeNn94giiYFsCXxj7mE2Bi6k_qDjLp0R08zkyn0SH9RbO1GmBWC8HTW5XHEsgQx_G9ti8GV7-Z3HzM6pzUdgaMeRUZg7Agf4uBN4XPiLHupFTsje8hsMcFcVHmNmaY1xf-N76i2VFA-Xz9bRyh-rWev721tmjoSaM4b4j9RGMMF5gUpNtkOlGrFiO8qQGtZJ41BAUr3eSsSAPVfrckZeCca_DpkFRJQ0SPUdEKW4z4rtZWzG9wJzXp4mgYO5hW-AmMwEHMrsXXsJNs-LlKj1mf8RfguyFvvwX7OqsEh",
+              "capacity_verified": true,
+              "supplier_verified": false,
+              "allocation_verified": true,
+              "constraint_evidence": {
+                "breakfast": false,
+                "refundable": true
+              },
+              "cancellation_by_room": [
+                {
+                  "refundable_tag": "RFN",
+                  "occupancy_number": 1,
+                  "cancellation_deadline": "2026-11-01T06:00:00+00:00",
+                  "free_cancellation_now": true,
+                  "cancellation_charge_applies_now": null
+                }
+              ],
+              "mandatory_fees_known": true,
+              "refundable_from_tags": true,
+              "availability_verified": false,
+              "cancellation_deadline": "2026-11-01T06:00:00+00:00",
+              "free_cancellation_now": true,
+              "ready_for_real_booking": false,
+              "refundable_tag_verified": true
+            },
+            "currency": "RUB",
+            "offer_id": "liteapi:29eff849ac383ee4781bb0c6",
+            "provider": "liteapi",
+            "expires_at": "2026-10-26T16:06:19.789674+00:00",
+            "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+            "description": "lp34fe1",
+            "source_type": "SANDBOX",
+            "amount_minor": 2667077,
+            "retrieved_at": "2026-10-26T16:01:19.789674+00:00"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Москва",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-96809d8b2d9302f18cd2",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 900000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 900000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Санкт-Петербург",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 900000,
+            "arrival_date": "2026-11-05",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-ca03e2e7-fcb3-4382-8d69-de1883456e8f",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-05",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Санкт-Петербург",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-15df335d2e97f016508b",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 900000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 900000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Москва",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 900000,
+            "arrival_date": "2026-11-09",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-a6758179-0ecb-4ee4-a2af-7c6786b4aa31",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-09",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "city": "Санкт-Петербург",
+            "date": "2026-11-05",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-c2c88ab4a259d512cde0",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 1,
+                "unit_minor": 40000,
+                "amount_minor": 40000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 40000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-new-stay-1",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1"
+            ]
+          }
+        ],
+        "plan_id": "assembled-6a8f94afa2485acfea3da2ba",
+        "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+        "blockers": [],
+        "coverage": {
+          "covered": [
+            "hotel:new-stay-1:new-room-1",
+            "leg:leg-a6758179-0ecb-4ee4-a2af-7c6786b4aa31",
+            "leg:leg-ca03e2e7-fcb3-4382-8d69-de1883456e8f",
+            "transfer:new-stay-1"
+          ],
+          "missing": [],
+          "complete": true,
+          "required": [
+            "hotel:new-stay-1:new-room-1",
+            "leg:leg-ca03e2e7-fcb3-4382-8d69-de1883456e8f",
+            "leg:leg-a6758179-0ecb-4ee4-a2af-7c6786b4aa31",
+            "transfer:new-stay-1"
+          ],
+          "overlapping": []
+        },
+        "currency": "RUB",
+        "warnings": [
+          "liteapi:29eff849ac383ee4781bb0c6: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+          "Сумма является simulated estimate; DEMO/SANDBOX не подтверждают реальные цены и наличие."
+        ],
+        "comparison": {
+          "changes": [
+            {
+              "after": {
+                "currency": "RUB",
+                "offer_id": "liteapi:29eff849ac383ee4781bb0c6",
+                "source_type": "SANDBOX",
+                "amount_minor": 2667077,
+                "snapshot_hash": "2ef262501a8056f948ccd3a99cc92109f7346ea7d68fb8148472552b262a032d"
+              },
+              "before": {
+                "currency": "RUB",
+                "offer_id": "liteapi:29eff849ac383ee4781bb0c6",
+                "source_type": "SANDBOX",
+                "amount_minor": 2667077,
+                "snapshot_hash": "3b1a320370406d82f25c2ecfb6aadf0b8b6cba66f8272629f44c1769931ecf6a"
+              },
+              "component_id": "hotel:new-stay-1:new-room-1"
+            }
+          ],
+          "currency": "RUB",
+          "delta_minor": 0,
+          "source_changed": false,
+          "after_total_minor": 4507077,
+          "before_total_minor": 4507077,
+          "requires_new_confirmation": true
+        },
+        "components": [
+          {
+            "covers": [
+              "hotel:new-stay-1:new-room-1"
+            ],
+            "binding": {
+              "city": "Санкт-Петербург",
+              "checkin": "2026-11-05",
+              "stay_id": "new-stay-1",
+              "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+              "checkout": "2026-11-09",
+              "hotel_id": "lp34fe1",
+              "room_ids": [
+                "new-room-1"
+              ],
+              "state_version": 6,
+              "room_assignments": [
+                {
+                  "room_id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ]
+            },
+            "currency": "RUB",
+            "provider": "liteapi",
+            "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+            "source_type": "SANDBOX",
+            "amount_minor": 2667077,
+            "component_id": "liteapi:29eff849ac383ee4781bb0c6",
+            "demo_fallback": false,
+            "snapshot_hash": "2ef262501a8056f948ccd3a99cc92109f7346ea7d68fb8148472552b262a032d"
+          },
+          {
+            "covers": [
+              "leg:leg-ca03e2e7-fcb3-4382-8d69-de1883456e8f"
+            ],
+            "binding": {
+              "leg_ids": [
+                "leg-ca03e2e7-fcb3-4382-8d69-de1883456e8f"
+              ],
+              "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "state_version": 6
+            },
+            "currency": "RUB",
+            "provider": "demo_inventory",
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "amount_minor": 900000,
+            "component_id": "demo-transport-96809d8b2d9302f18cd2",
+            "demo_fallback": true,
+            "snapshot_hash": "0570b961e4d3a6c11ddeda09ac7475ec1e733015ab07617cc15a1aa5fddb2757"
+          },
+          {
+            "covers": [
+              "leg:leg-a6758179-0ecb-4ee4-a2af-7c6786b4aa31"
+            ],
+            "binding": {
+              "leg_ids": [
+                "leg-a6758179-0ecb-4ee4-a2af-7c6786b4aa31"
+              ],
+              "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "state_version": 6
+            },
+            "currency": "RUB",
+            "provider": "demo_inventory",
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "amount_minor": 900000,
+            "component_id": "demo-transport-15df335d2e97f016508b",
+            "demo_fallback": true,
+            "snapshot_hash": "1a03be59e3b7c8501ff2ae601e5943ae8a88b8ebefe5517e8c193bf1be2d1bdd"
+          },
+          {
+            "covers": [
+              "transfer:new-stay-1"
+            ],
+            "binding": {
+              "city": "Санкт-Петербург",
+              "date": "2026-11-05",
+              "stay_id": "new-stay-1",
+              "trip_id": "a2aafff5-f767-4ef6-8246-8f765a573ada",
+              "traveler_ids": [
+                "new-traveler-1"
+              ],
+              "state_version": 6
+            },
+            "currency": "RUB",
+            "provider": "demo_inventory",
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "amount_minor": 40000,
+            "component_id": "demo-transfer-c2c88ab4a259d512cde0",
+            "demo_fallback": true,
+            "snapshot_hash": "1f91b8a73961b1e5a0593ee305e5e6193fc5dcfd1ba53130482da26c9adcd8d8"
+          }
+        ],
+        "price_kind": "simulated_estimate",
+        "state_hash": "1899b12ef9193e6a796259f084ced7c4feed328239a28732d90c8d4707e4a117",
+        "violations": [],
+        "source_type": "MIXED",
+        "total_minor": 4507077,
+        "checkout_mode": "SIMULATED",
+        "snapshot_hash": "6a8f94afa2485acfea3da2ba3e68fbf7e876ab1fbc64aa0889b5b99d0060ae70",
+        "state_version": 6,
+        "booking_created": false,
+        "currency_totals": {
+          "RUB": 4507077
+        },
+        "room_assignments": {
+          "new-stay-1": [
+            {
+              "room_id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ]
+            }
+          ]
+        },
+        "source_snapshots": [
+          {
+            "offer_id": "liteapi:29eff849ac383ee4781bb0c6",
+            "expires_at": "2026-10-26T16:06:19.789674+00:00",
+            "source_type": "SANDBOX",
+            "retrieved_at": "2026-10-26T16:01:19.789674+00:00",
+            "snapshot_hash": "2ef262501a8056f948ccd3a99cc92109f7346ea7d68fb8148472552b262a032d"
+          },
+          {
+            "offer_id": "demo-transport-96809d8b2d9302f18cd2",
+            "expires_at": null,
+            "source_type": "DEMO",
+            "retrieved_at": null,
+            "snapshot_hash": "0570b961e4d3a6c11ddeda09ac7475ec1e733015ab07617cc15a1aa5fddb2757"
+          },
+          {
+            "offer_id": "demo-transport-15df335d2e97f016508b",
+            "expires_at": null,
+            "source_type": "DEMO",
+            "retrieved_at": null,
+            "snapshot_hash": "1a03be59e3b7c8501ff2ae601e5943ae8a88b8ebefe5517e8c193bf1be2d1bdd"
+          },
+          {
+            "offer_id": "demo-transfer-c2c88ab4a259d512cde0",
+            "expires_at": null,
+            "source_type": "DEMO",
+            "retrieved_at": null,
+            "snapshot_hash": "1f91b8a73961b1e5a0593ee305e5e6193fc5dcfd1ba53130482da26c9adcd8d8"
+          }
+        ],
+        "known_subtotal_minor": 4507077,
+        "ready_for_real_booking": false,
+        "ready_for_simulated_checkout": true
+      }
+    }
+  ]
+}

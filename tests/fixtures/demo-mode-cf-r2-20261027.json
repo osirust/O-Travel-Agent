@@ -1,0 +1,465 @@
+{
+  "finding_id": "HARNESS-004-DEMO-COMMAND-IGNORED-001",
+  "source": "prefrontend-20261027-012305-e541d0e5/report.json",
+  "scope": "Exact cached validated model contracts, not new actual calls; both originally contained DEMO and were suppressed by the old guard.",
+  "cases": [
+    {
+      "id": "PF-DURATION-03",
+      "turn": "01",
+      "text": "Включи деморежим. Из Москвы в Казань, один взрослый без детей, один номер. Хочу на 5 ночей, общий бюджет 75000 рублей. Даты пока неизвестны.",
+      "before_trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "b2864d53-2e67-4c6f-9dea-5ecebd2c603d",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "raw_contract": {
+        "reply": "Принято: деморежим, Москва → Казань, 1 взрослый, 1 номер, 5 ночей, бюджет 75 000 ₽. Даты уточним позже.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_search_policy",
+            "value": {
+              "mode": "DEMO",
+              "demo_fallback": true
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Москва"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Казань",
+              "requested_nights": 5
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 7500000
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "raw_contract_sha256": "171cd9b4ffab65eba6d8f10ecee0941b4a82f390ebaabdb83a9008cc43e0c8d9",
+      "historical_checked_contract": {
+        "reply": "Принято: деморежим, Москва → Казань, 1 взрослый, 1 номер, 5 ночей, бюджет 75 000 ₽. Даты уточним позже.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Москва"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Казань",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": []
+                }
+              ],
+              "requested_nights": 5
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 7500000
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "historical_mode_after": "HYBRID"
+    },
+    {
+      "id": "PF-GROUP-04",
+      "turn": "01",
+      "text": "Включи деморежим. Из Казани в Стамбул 10 ноября 2026, заезд 10.11.2026, выезд 13.11.2026. Затем Анталья: заезд 13.11.2026, выезд 17.11.2026, возвращение в Казань 17 ноября. Двое взрослых и ребёнок 7 лет. Это две семьи: первый взрослый с ребёнком, второй взрослый отдельно. В каждом городе два номера, семьи не смешивать. В первом номере первый взрослый с ребёнком, во втором второй взрослый. Завтрак в Стамбуле обязателен. Общий бюджет 400000 рублей.",
+      "before_trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "2639894a-3b2a-4fcd-9a58-fb9dab05a2ec",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "raw_contract": {
+        "reply": "Изменения приняты: деморежим включён, маршрут Казань → Стамбул → Анталья → Казань, даты и размещение указаны, бюджет 400000 RUB, семьи разделены, завтрак в Стамбуле обязателен.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_search_policy",
+            "value": {
+              "mode": "DEMO",
+              "demo_fallback": true
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Казань"
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_route_policy",
+            "value": {
+              "kind": "round_trip"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-3",
+              "age": 7,
+              "type": "child"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-3"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-1"
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-2"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-2"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Стамбул",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-3"
+                  ]
+                },
+                {
+                  "id": "new-room-2",
+                  "traveler_ids": [
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-13",
+              "requested_nights": 3
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Анталья",
+              "rooms": [
+                {
+                  "id": "new-room-3",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-3"
+                  ]
+                },
+                {
+                  "id": "new-room-4",
+                  "traveler_ids": [
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-17",
+              "requested_nights": 4
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_constraint",
+            "value": {
+              "key": "breakfast",
+              "hard": true,
+              "value": true,
+              "stay_id": "new-stay-1"
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 40000000
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "raw_contract_sha256": "fa5491d91301421879b4c5b63bbb49e0fc5ba137156950e0c41ff3c13835481c",
+      "historical_checked_contract": {
+        "reply": "Изменения приняты: деморежим включён, маршрут Казань → Стамбул → Анталья → Казань, даты и размещение указаны, бюджет 400000 RUB, семьи разделены, завтрак в Стамбуле обязателен.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Казань"
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_route_policy",
+            "value": {
+              "kind": "round_trip"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult"
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-3",
+              "age": 7,
+              "type": "child"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-3"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-1"
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-2"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-2"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Стамбул",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-3"
+                  ]
+                },
+                {
+                  "id": "new-room-2",
+                  "traveler_ids": [
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-13",
+              "requested_nights": 3
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Анталья",
+              "rooms": [
+                {
+                  "id": "new-room-3",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-3"
+                  ]
+                },
+                {
+                  "id": "new-room-4",
+                  "traveler_ids": [
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-17",
+              "requested_nights": 4
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_constraint",
+            "value": {
+              "key": "breakfast",
+              "hard": true,
+              "value": true,
+              "stay_id": "new-stay-1"
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 40000000
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "historical_mode_after": "HYBRID"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "format": "otravel.geo-role-grounding-repair.v1",
+  "created_at_utc": "2026-10-27T22:48:19.429832+00:00",
+  "status": "CONTROLLED_EXACT_RAW_REPAIR_TESTED_ACTUAL_REMOTE_RETEST_PENDING",
+  "source_before": {
+    "intent_grounding_sha256": "d44be6e3845e9f038cb69816a1e81377087ba30e7bf79168ade63b12173ffd6d",
+    "core_checkpoint": "b170 frozen before explicit Rootthaw",
+    "actual_observation_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+    "actual_observation_package": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27"
+  },
+  "causal_export": {
+    "path": "/home/aegml/checks/geo-role-causal-selected-20261028.json",
+    "sha256": "a5067ad6d9e3eb8b60480a8e3a215dd3fe3c49b6f654add5181ae618189e961a",
+    "allowed_scope": "final structured JSON / normalizations / minimal canonical before. No headers, reasoning, providerraw or vault."
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-NEGATED-DESTINATION-001",
+      "actual_case_turn": "ZAI100-040/T6",
+      "cause_confirmed": "Raw model operations contain budget and unasked breakfast, no city change. Checked operations contain server-added upsert_stay.city=Сочи; note destination_grounded_from_current_literal. _facts matched positive v-Sochi inside explicit negative mention.",
+      "action": "Bound the negation to its own FROM/TO/country preposition; do not globally veto later independent positive clauses. Current exact case applies budget only; forbidden Sochi never becomes destination.",
+      "closure": "CONTROLLED_PASS. Exact4raw replay into currentAPI/PG passes, but a new strong remote generation for this message/currentrelease has not run."
+    },
+    {
+      "id": "HARNESS-004-HOTEL-CHECKOUT-ORIGIN-CONFLATION-001",
+      "actual_case_turns": [
+        "ZAI100-052/T5",
+        "ZAI100-056/T8",
+        "ZAI100-059/T9"
+      ],
+      "cause_confirmed": "All three raw model operations correctly contain owned hotel checkout, no origin change. The server appended set_origin=hotelcity with origin_grounded_from_current_literal. _FROM treated iz inside hotelcheckout noun phrase as a new starting city.",
+      "action": "For a literal DD.MM.YYYY hotelcheckout whose raw upsert matches the same current owned stay/checkout/city, suppress only that extra FROM-role cue during fact extraction. Preserve every date, non-geographic field, target ID and independent explicit origin cue.",
+      "closure": "CONTROLLED_PASS / NEW_REMOTE_RETEST_PENDING. No model or provider inference invoked by repairtests."
+    },
+    {
+      "id": "HARNESS-004-EXPLICIT-ORIGIN-CORRECTION-FALSE-AMBIGUITY-001",
+      "related_actual_case_turn": "ZAI100-061/T2",
+      "cause": "Local FROM-preposition negation also avoids treating old negated Kazan as a second starting candidate. Controlled exact phrase now chooses SPb, not whole-message veto.",
+      "closure": "CONTROLLED_PASS, actual061 remote replay not run."
+    }
+  ],
+  "new_source_contract": {
+    "public_typed_operations_unchanged": true,
+    "harness_store_domain_api_unchanged_by_this_agent": true,
+    "_facts_optional_operations_parameter": "Internal only; copied validated operations are witnesses, never new authorization to create cityrefs or dates.",
+    "hotelcheckout_scope": "Reviewed literal nominal Выезд/Дата выезда из CURRENT_STAY_CITY DD.MM.YYYY plus an owned matching raw checkout operation. No generalized meaning of every выезд.",
+    "negative_scope": "Immediate ne/not before this FROM/TO/country cue, not all semantics of arbitrary negatives."
+  },
+  "checks": [
+    {
+      "path": ".local/drafts/geo-role-repair-20261028/initial-red.xml",
+      "sha256": "e901ddd7b49c738bc103dbf8b337f79f56da98c11ea790064997be0b025376c9",
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.319
+    },
+    {
+      "path": ".local/drafts/geo-role-repair-20261028/candidate-counterexamples.xml",
+      "sha256": "0352650178f63c24c84dc2480667b85cc32de25c78f3d161cb6a0c488973e214",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.275
+    },
+    {
+      "path": ".local/drafts/geo-role-repair-20261028/related-pure.xml",
+      "sha256": "10ccf3eb0c8bb53b7f2bf0363ddb3c76b7e9972a070dcddf0db16c91b800fad7",
+      "tests": 141,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.75
+    },
+    {
+      "path": ".local/drafts/geo-role-repair-20261028/related-pg-initial.xml",
+      "sha256": "65bf316ae09746db7fd9f41a17d9b97678934e789508415e9c9d138e14d40a31",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.596
+    }
+  ],
+  "counts": {
+    "new_pure_regressions": 25,
+    "related_pure_total_including_new": 141,
+    "pg_regressions": 4,
+    "unique_related_checked_total": 145,
+    "private25_not_added_again": true,
+    "new_actual_llm_http": 0,
+    "new_supplier_http": 0,
+    "simulated_or_real_orders": 0,
+    "one_controlled_adapter_call_each_pg_case": true
+  },
+  "pg_bootstrap_limitations": [
+    "Real ASGI/API/Store/PostgreSQL path with StubLLM exact rawoperations, not a language-model rerun.",
+    "Minimal canonical before-state is explicitly bootstrapped. Historical flight-mode no-ops get their same opaque owned leg ID in the controlled initial fixture. No claim of complete historical environment/offer reproduction.",
+    "DEMO policy is explicit to exclude actual travelHTTP. Sourceavailability, livepricing, current photo coverage and paidbooking not qualified."
+  ],
+  "counterexamples": [
+    "positive destination next to negated city",
+    "неизA,аизB origin correction",
+    "real departure/origin cue beside owned hotelcheckout",
+    "trueflightdeparture from currenthotelcity",
+    "quoted, historical, hypothetical and interrogative hotelphrases do not synthesize origin",
+    "two current stays including repeatedcity use raw ownedID without firststay inference",
+    "similarspelling not currentcityidentity",
+    "no mutation of inputstate or rawoperationobjects",
+    "negativecountry plus positivecountry selection"
+  ],
+  "not_closed": [
+    "HARNESS-004-ALIAS-QUESTION-STAY-REMOVAL-001 / ZAI100-038T6: model itself emitted remove_stay; not addressed by this FROM/TO patch.",
+    "All other manual001–071 open behaviors, nonapplications, arithmetic and replyloss.",
+    "Arbitrary world-city/locale/typo/quoted-name or full natural-dialogue generalization.",
+    "Full80/106 acceptance; manualunion5 has619observedinputs/78NOT_RUN."
+  ],
+  "source_files_sha256": {
+    "otravel/intent_grounding.py": "d1ef5eca98fbf8936f5e2c4bbaa1595b973882016276a710911b403c6e4ddfd5",
+    "tests/test_geo_role_server_introduced.py": "40d0d5d52fb2c0f705a5e1d52b9b43ca9569817601630ca12f413fc9e7eb384b",
+    "tests/test_harness_geo_role_server_introduced.py": "fd40f82c82482082894bd59bd70c9edf14572a432ba3137d5f0fe9c4254490f1",
+    "fixtures/regression/geo-role-server-introduced-20261028.json": "5863a22f39a6dcf03478df6213cb7d1f2e18d05b724d6462ab236bed247a8f2d"
+  },
+  "original_failures_and_manual_receipts_preserved": true
+}

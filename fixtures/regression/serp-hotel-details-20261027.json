@@ -1,0 +1,3125 @@
+{
+  "provenance": {
+    "scope": "Field projection of two actual responses; URLs, keys, phone, images and raw property token omitted; only the selected search property retained.",
+    "raw_search_sha256": "9ab5d3b01170ab8baeba5843f85d7caee3f7b6600a0ef79eaa54913575725c52",
+    "raw_details_sha256": "257b25f32b5441fa9c8101643d515dc6397a67900511f57885d77e9d1661d359",
+    "original_search_property_count": 20
+  },
+  "request": {
+    "property_token": "property-test-five-dubai",
+    "checkin": "2026-11-10",
+    "checkout": "2026-11-13",
+    "currency": "RUB",
+    "occupancies": [
+      {
+        "adults": 1,
+        "children": []
+      }
+    ]
+  },
+  "search_body": {
+    "search_metadata": {
+      "status": "Success",
+      "created_at": "2026-10-27T02:03:49.586Z",
+      "processed_at": "2026-10-27T02:03:49.587Z"
+    },
+    "properties": [
+      {
+        "name": "FIVE Jumeirah Village Hotel",
+        "total_rate": {
+          "display_price": "RUB 22,488",
+          "extracted_display_price": 22488,
+          "lowest": "RUB 26,221",
+          "extracted_lowest": 26221,
+          "before_taxes_fees": "RUB 22,488",
+          "extracted_before_taxes_fees": 22488,
+          "after_taxes_fees": "RUB 26,221",
+          "extracted_after_taxes_fees": 26221
+        },
+        "rate_per_night": {
+          "display_price": "RUB 7,496",
+          "extracted_display_price": 7496,
+          "lowest": "RUB 8,740",
+          "extracted_lowest": 8740,
+          "before_taxes_fees": "RUB 7,496",
+          "extracted_before_taxes_fees": 7496,
+          "after_taxes_fees": "RUB 8,740",
+          "extracted_after_taxes_fees": 8740
+        },
+        "property_token": "property-test-five-dubai"
+      }
+    ]
+  },
+  "details_body": {
+    "name": "FIVE Jumeirah Village Hotel",
+    "type": "hotel",
+    "rate_per_night": {
+      "display_price": "RUB 9,257",
+      "extracted_display_price": 9257,
+      "lowest": "RUB 10,748",
+      "extracted_lowest": 10748,
+      "before_taxes_fees": "RUB 9,257",
+      "extracted_before_taxes_fees": 9257,
+      "after_taxes_fees": "RUB 10,748",
+      "extracted_after_taxes_fees": 10748
+    },
+    "total_rate": {
+      "display_price": "RUB 27,770",
+      "extracted_display_price": 27770,
+      "lowest": "RUB 32,245",
+      "extracted_lowest": 32245,
+      "before_taxes_fees": "RUB 27,770",
+      "extracted_before_taxes_fees": 27770,
+      "after_taxes_fees": "RUB 32,245",
+      "extracted_after_taxes_fees": 32245
+    },
+    "featured_prices": [
+      {
+        "source": "Agoda",
+        "rooms": [
+          {
+            "name": "Superior",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 9,257",
+              "extracted_display_price": 9257,
+              "lowest": "RUB 10,749",
+              "extracted_lowest": 10749,
+              "before_taxes_fees": "RUB 9,257",
+              "extracted_before_taxes_fees": 9257,
+              "after_taxes_fees": "RUB 10,749",
+              "extracted_after_taxes_fees": 10749
+            },
+            "total_rate": {
+              "display_price": "RUB 27,770",
+              "extracted_display_price": 27770,
+              "lowest": "RUB 32,246",
+              "extracted_lowest": 32246,
+              "before_taxes_fees": "RUB 27,770",
+              "extracted_before_taxes_fees": 27770,
+              "after_taxes_fees": "RUB 32,246",
+              "extracted_after_taxes_fees": 32246
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 9,257",
+                  "extracted_display_price": 9257,
+                  "lowest": "RUB 10,749",
+                  "extracted_lowest": 10749,
+                  "before_taxes_fees": "RUB 9,257",
+                  "extracted_before_taxes_fees": 9257,
+                  "after_taxes_fees": "RUB 10,749",
+                  "extracted_after_taxes_fees": 10749
+                },
+                "total_rate": {
+                  "display_price": "RUB 27,770",
+                  "extracted_display_price": 27770,
+                  "lowest": "RUB 32,246",
+                  "extracted_lowest": 32246,
+                  "before_taxes_fees": "RUB 27,770",
+                  "extracted_before_taxes_fees": 27770,
+                  "after_taxes_fees": "RUB 32,246",
+                  "extracted_after_taxes_fees": 32246
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 2"
+                ]
+              },
+              {
+                "num_guests": 1,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 11,519",
+                  "extracted_display_price": 11519,
+                  "lowest": "RUB 13,269",
+                  "extracted_lowest": 13269,
+                  "before_taxes_fees": "RUB 11,519",
+                  "extracted_before_taxes_fees": 11519,
+                  "after_taxes_fees": "RUB 13,269",
+                  "extracted_after_taxes_fees": 13269
+                },
+                "total_rate": {
+                  "display_price": "RUB 34,558",
+                  "extracted_display_price": 34558,
+                  "lowest": "RUB 39,806",
+                  "extracted_lowest": 39806,
+                  "before_taxes_fees": "RUB 34,558",
+                  "extracted_before_taxes_fees": 34558,
+                  "after_taxes_fees": "RUB 39,806",
+                  "extracted_after_taxes_fees": 39806
+                },
+                "inclusions": [
+                  "1 guest",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 13,782",
+                  "extracted_display_price": 13782,
+                  "lowest": "RUB 15,789",
+                  "extracted_lowest": 15789,
+                  "before_taxes_fees": "RUB 13,782",
+                  "extracted_before_taxes_fees": 13782,
+                  "after_taxes_fees": "RUB 15,789",
+                  "extracted_after_taxes_fees": 15789
+                },
+                "total_rate": {
+                  "display_price": "RUB 41,347",
+                  "extracted_display_price": 41347,
+                  "lowest": "RUB 47,366",
+                  "extracted_lowest": 47366,
+                  "before_taxes_fees": "RUB 41,347",
+                  "extracted_before_taxes_fees": 41347,
+                  "after_taxes_fees": "RUB 47,366",
+                  "extracted_after_taxes_fees": 47366
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Double Queen",
+            "num_guests": 3,
+            "rate_per_night": {
+              "display_price": "RUB 9,257",
+              "extracted_display_price": 9257,
+              "lowest": "RUB 10,749",
+              "extracted_lowest": 10749,
+              "before_taxes_fees": "RUB 9,257",
+              "extracted_before_taxes_fees": 9257,
+              "after_taxes_fees": "RUB 10,749",
+              "extracted_after_taxes_fees": 10749
+            },
+            "total_rate": {
+              "display_price": "RUB 27,770",
+              "extracted_display_price": 27770,
+              "lowest": "RUB 32,246",
+              "extracted_lowest": 32246,
+              "before_taxes_fees": "RUB 27,770",
+              "extracted_before_taxes_fees": 27770,
+              "after_taxes_fees": "RUB 32,246",
+              "extracted_after_taxes_fees": 32246
+            },
+            "rates": [
+              {
+                "num_guests": 3,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Double",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 9,257",
+                  "extracted_display_price": 9257,
+                  "lowest": "RUB 10,749",
+                  "extracted_lowest": 10749,
+                  "before_taxes_fees": "RUB 9,257",
+                  "extracted_before_taxes_fees": 9257,
+                  "after_taxes_fees": "RUB 10,749",
+                  "extracted_after_taxes_fees": 10749
+                },
+                "total_rate": {
+                  "display_price": "RUB 27,770",
+                  "extracted_display_price": 27770,
+                  "lowest": "RUB 32,246",
+                  "extracted_lowest": 32246,
+                  "before_taxes_fees": "RUB 27,770",
+                  "extracted_before_taxes_fees": 27770,
+                  "after_taxes_fees": "RUB 32,246",
+                  "extracted_after_taxes_fees": 32246
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "3 guests",
+                  "Free cancellation until Nov 2"
+                ]
+              },
+              {
+                "num_guests": 1,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Double",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 12,548",
+                  "extracted_display_price": 12548,
+                  "lowest": "RUB 14,414",
+                  "extracted_lowest": 14414,
+                  "before_taxes_fees": "RUB 12,548",
+                  "extracted_before_taxes_fees": 12548,
+                  "after_taxes_fees": "RUB 14,414",
+                  "extracted_after_taxes_fees": 14414
+                },
+                "total_rate": {
+                  "display_price": "RUB 37,644",
+                  "extracted_display_price": 37644,
+                  "lowest": "RUB 43,242",
+                  "extracted_lowest": 43242,
+                  "before_taxes_fees": "RUB 37,644",
+                  "extracted_before_taxes_fees": 37644,
+                  "after_taxes_fees": "RUB 43,242",
+                  "extracted_after_taxes_fees": 43242
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "1 guest",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Double",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 14,811",
+                  "extracted_display_price": 14811,
+                  "lowest": "RUB 16,934",
+                  "extracted_lowest": 16934,
+                  "before_taxes_fees": "RUB 14,811",
+                  "extracted_before_taxes_fees": 14811,
+                  "after_taxes_fees": "RUB 16,934",
+                  "extracted_after_taxes_fees": 16934
+                },
+                "total_rate": {
+                  "display_price": "RUB 44,432",
+                  "extracted_display_price": 44432,
+                  "lowest": "RUB 50,802",
+                  "extracted_lowest": 50802,
+                  "before_taxes_fees": "RUB 44,432",
+                  "extracted_before_taxes_fees": 44432,
+                  "after_taxes_fees": "RUB 50,802",
+                  "extracted_after_taxes_fees": 50802
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "2 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              },
+              {
+                "num_guests": 3,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Double",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 17,074",
+                  "extracted_display_price": 17074,
+                  "lowest": "RUB 19,454",
+                  "extracted_lowest": 19454,
+                  "before_taxes_fees": "RUB 17,074",
+                  "extracted_before_taxes_fees": 17074,
+                  "after_taxes_fees": "RUB 19,454",
+                  "extracted_after_taxes_fees": 19454
+                },
+                "total_rate": {
+                  "display_price": "RUB 51,221",
+                  "extracted_display_price": 51221,
+                  "lowest": "RUB 58,362",
+                  "extracted_lowest": 58362,
+                  "before_taxes_fees": "RUB 51,221",
+                  "extracted_before_taxes_fees": 51221,
+                  "after_taxes_fees": "RUB 58,362",
+                  "extracted_after_taxes_fees": 58362
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "3 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Sky",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 10,285",
+              "extracted_display_price": 10285,
+              "lowest": "RUB 11,894",
+              "extracted_lowest": 11894,
+              "before_taxes_fees": "RUB 10,285",
+              "extracted_before_taxes_fees": 10285,
+              "after_taxes_fees": "RUB 11,894",
+              "extracted_after_taxes_fees": 11894
+            },
+            "total_rate": {
+              "display_price": "RUB 30,856",
+              "extracted_display_price": 30856,
+              "lowest": "RUB 35,683",
+              "extracted_lowest": 35683,
+              "before_taxes_fees": "RUB 30,856",
+              "extracted_before_taxes_fees": 30856,
+              "after_taxes_fees": "RUB 35,683",
+              "extracted_after_taxes_fees": 35683
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 10,285",
+                  "extracted_display_price": 10285,
+                  "lowest": "RUB 11,894",
+                  "extracted_lowest": 11894,
+                  "before_taxes_fees": "RUB 10,285",
+                  "extracted_before_taxes_fees": 10285,
+                  "after_taxes_fees": "RUB 11,894",
+                  "extracted_after_taxes_fees": 11894
+                },
+                "total_rate": {
+                  "display_price": "RUB 30,856",
+                  "extracted_display_price": 30856,
+                  "lowest": "RUB 35,683",
+                  "extracted_lowest": 35683,
+                  "before_taxes_fees": "RUB 30,856",
+                  "extracted_before_taxes_fees": 30856,
+                  "after_taxes_fees": "RUB 35,683",
+                  "extracted_after_taxes_fees": 35683
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 2"
+                ]
+              },
+              {
+                "num_guests": 1,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 12,548",
+                  "extracted_display_price": 12548,
+                  "lowest": "RUB 14,414",
+                  "extracted_lowest": 14414,
+                  "before_taxes_fees": "RUB 12,548",
+                  "extracted_before_taxes_fees": 12548,
+                  "after_taxes_fees": "RUB 14,414",
+                  "extracted_after_taxes_fees": 14414
+                },
+                "total_rate": {
+                  "display_price": "RUB 37,644",
+                  "extracted_display_price": 37644,
+                  "lowest": "RUB 43,242",
+                  "extracted_lowest": 43242,
+                  "before_taxes_fees": "RUB 37,644",
+                  "extracted_before_taxes_fees": 37644,
+                  "after_taxes_fees": "RUB 43,242",
+                  "extracted_after_taxes_fees": 43242
+                },
+                "inclusions": [
+                  "1 guest",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 14,811",
+                  "extracted_display_price": 14811,
+                  "lowest": "RUB 16,934",
+                  "extracted_lowest": 16934,
+                  "before_taxes_fees": "RUB 14,811",
+                  "extracted_before_taxes_fees": 14811,
+                  "after_taxes_fees": "RUB 16,934",
+                  "extracted_after_taxes_fees": 16934
+                },
+                "total_rate": {
+                  "display_price": "RUB 44,432",
+                  "extracted_display_price": 44432,
+                  "lowest": "RUB 50,802",
+                  "extracted_lowest": 50802,
+                  "before_taxes_fees": "RUB 44,432",
+                  "extracted_before_taxes_fees": 44432,
+                  "after_taxes_fees": "RUB 50,802",
+                  "extracted_after_taxes_fees": 50802
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Junior Suite with Hot Tub",
+            "num_guests": 3,
+            "rate_per_night": {
+              "display_price": "RUB 12,034",
+              "extracted_display_price": 12034,
+              "lowest": "RUB 13,841",
+              "extracted_lowest": 13841,
+              "before_taxes_fees": "RUB 12,034",
+              "extracted_before_taxes_fees": 12034,
+              "after_taxes_fees": "RUB 13,841",
+              "extracted_after_taxes_fees": 13841
+            },
+            "total_rate": {
+              "display_price": "RUB 36,102",
+              "extracted_display_price": 36102,
+              "lowest": "RUB 41,524",
+              "extracted_lowest": 41524,
+              "before_taxes_fees": "RUB 36,102",
+              "extracted_before_taxes_fees": 36102,
+              "after_taxes_fees": "RUB 41,524",
+              "extracted_after_taxes_fees": 41524
+            },
+            "rates": [
+              {
+                "num_guests": 3,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 12,034",
+                  "extracted_display_price": 12034,
+                  "lowest": "RUB 13,841",
+                  "extracted_lowest": 13841,
+                  "before_taxes_fees": "RUB 12,034",
+                  "extracted_before_taxes_fees": 12034,
+                  "after_taxes_fees": "RUB 13,841",
+                  "extracted_after_taxes_fees": 13841
+                },
+                "total_rate": {
+                  "display_price": "RUB 36,102",
+                  "extracted_display_price": 36102,
+                  "lowest": "RUB 41,524",
+                  "extracted_lowest": 41524,
+                  "before_taxes_fees": "RUB 36,102",
+                  "extracted_before_taxes_fees": 36102,
+                  "after_taxes_fees": "RUB 41,524",
+                  "extracted_after_taxes_fees": 41524
+                },
+                "inclusions": [
+                  "Suite",
+                  "3 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 1,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 14,296",
+                  "extracted_display_price": 14296,
+                  "lowest": "RUB 16,361",
+                  "extracted_lowest": 16361,
+                  "before_taxes_fees": "RUB 14,296",
+                  "extracted_before_taxes_fees": 14296,
+                  "after_taxes_fees": "RUB 16,361",
+                  "extracted_after_taxes_fees": 16361
+                },
+                "total_rate": {
+                  "display_price": "RUB 42,889",
+                  "extracted_display_price": 42889,
+                  "lowest": "RUB 49,084",
+                  "extracted_lowest": 49084,
+                  "before_taxes_fees": "RUB 42,889",
+                  "extracted_before_taxes_fees": 42889,
+                  "after_taxes_fees": "RUB 49,084",
+                  "extracted_after_taxes_fees": 49084
+                },
+                "inclusions": [
+                  "Suite",
+                  "1 guest",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 16,560",
+                  "extracted_display_price": 16560,
+                  "lowest": "RUB 18,881",
+                  "extracted_lowest": 18881,
+                  "before_taxes_fees": "RUB 16,560",
+                  "extracted_before_taxes_fees": 16560,
+                  "after_taxes_fees": "RUB 18,881",
+                  "extracted_after_taxes_fees": 18881
+                },
+                "total_rate": {
+                  "display_price": "RUB 49,679",
+                  "extracted_display_price": 49679,
+                  "lowest": "RUB 56,644",
+                  "extracted_lowest": 56644,
+                  "before_taxes_fees": "RUB 49,679",
+                  "extracted_before_taxes_fees": 49679,
+                  "after_taxes_fees": "RUB 56,644",
+                  "extracted_after_taxes_fees": 56644
+                },
+                "inclusions": [
+                  "Suite",
+                  "2 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Suite"
+                ]
+              }
+            ]
+          }
+        ],
+        "num_guests": 3,
+        "rate_per_night": {
+          "display_price": "RUB 9,257",
+          "extracted_display_price": 9257,
+          "lowest": "RUB 10,748",
+          "extracted_lowest": 10748,
+          "before_taxes_fees": "RUB 9,257",
+          "extracted_before_taxes_fees": 9257,
+          "after_taxes_fees": "RUB 10,748",
+          "extracted_after_taxes_fees": 10748
+        },
+        "total_rate": {
+          "display_price": "RUB 27,770",
+          "extracted_display_price": 27770,
+          "lowest": "RUB 32,245",
+          "extracted_lowest": 32245,
+          "before_taxes_fees": "RUB 27,770",
+          "extracted_before_taxes_fees": 27770,
+          "after_taxes_fees": "RUB 32,245",
+          "extracted_after_taxes_fees": 32245
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Nov 2",
+        "free_cancellation_until_time": "11:59 PM"
+      },
+      {
+        "source": "Expedia.ca",
+        "rooms": [
+          {
+            "name": "Junior Suite with Hot Tub",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 11,913",
+              "extracted_display_price": 11913,
+              "lowest": "RUB 13,798",
+              "extracted_lowest": 13798,
+              "before_taxes_fees": "RUB 11,913",
+              "extracted_before_taxes_fees": 11913,
+              "after_taxes_fees": "RUB 13,798",
+              "extracted_after_taxes_fees": 13798
+            },
+            "total_rate": {
+              "display_price": "RUB 35,740",
+              "extracted_display_price": 35740,
+              "lowest": "RUB 41,395",
+              "extracted_lowest": 41395,
+              "before_taxes_fees": "RUB 35,740",
+              "extracted_before_taxes_fees": 35740,
+              "after_taxes_fees": "RUB 41,395",
+              "extracted_after_taxes_fees": 41395
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 11,913",
+                  "extracted_display_price": 11913,
+                  "lowest": "RUB 13,798",
+                  "extracted_lowest": 13798,
+                  "before_taxes_fees": "RUB 11,913",
+                  "extracted_before_taxes_fees": 11913,
+                  "after_taxes_fees": "RUB 13,798",
+                  "extracted_after_taxes_fees": 13798
+                },
+                "total_rate": {
+                  "display_price": "RUB 35,740",
+                  "extracted_display_price": 35740,
+                  "lowest": "RUB 41,395",
+                  "extracted_lowest": 41395,
+                  "before_taxes_fees": "RUB 35,740",
+                  "extracted_before_taxes_fees": 35740,
+                  "after_taxes_fees": "RUB 41,395",
+                  "extracted_after_taxes_fees": 41395
+                },
+                "inclusions": [
+                  "Suite",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 16,394",
+                  "extracted_display_price": 16394,
+                  "lowest": "RUB 18,822",
+                  "extracted_lowest": 18822,
+                  "before_taxes_fees": "RUB 16,394",
+                  "extracted_before_taxes_fees": 16394,
+                  "after_taxes_fees": "RUB 18,822",
+                  "extracted_after_taxes_fees": 18822
+                },
+                "total_rate": {
+                  "display_price": "RUB 49,181",
+                  "extracted_display_price": 49181,
+                  "lowest": "RUB 56,466",
+                  "extracted_lowest": 56466,
+                  "before_taxes_fees": "RUB 49,181",
+                  "extracted_before_taxes_fees": 49181,
+                  "after_taxes_fees": "RUB 56,466",
+                  "extracted_after_taxes_fees": 56466
+                },
+                "inclusions": [
+                  "Suite",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast",
+                  "Suite"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 13,644",
+              "extracted_display_price": 13644,
+              "lowest": "RUB 15,739",
+              "extracted_lowest": 15739,
+              "before_taxes_fees": "RUB 13,644",
+              "extracted_before_taxes_fees": 13644,
+              "after_taxes_fees": "RUB 15,739",
+              "extracted_after_taxes_fees": 15739
+            },
+            "total_rate": {
+              "display_price": "RUB 40,933",
+              "extracted_display_price": 40933,
+              "lowest": "RUB 47,218",
+              "extracted_lowest": 47218,
+              "before_taxes_fees": "RUB 40,933",
+              "extracted_before_taxes_fees": 40933,
+              "after_taxes_fees": "RUB 47,218",
+              "extracted_after_taxes_fees": 47218
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 13,644",
+                  "extracted_display_price": 13644,
+                  "lowest": "RUB 15,739",
+                  "extracted_lowest": 15739,
+                  "before_taxes_fees": "RUB 13,644",
+                  "extracted_before_taxes_fees": 13644,
+                  "after_taxes_fees": "RUB 15,739",
+                  "extracted_after_taxes_fees": 15739
+                },
+                "total_rate": {
+                  "display_price": "RUB 40,933",
+                  "extracted_display_price": 40933,
+                  "lowest": "RUB 47,218",
+                  "extracted_lowest": 47218,
+                  "before_taxes_fees": "RUB 40,933",
+                  "extracted_before_taxes_fees": 40933,
+                  "after_taxes_fees": "RUB 47,218",
+                  "extracted_after_taxes_fees": 47218
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Room with 2 Queen Beds",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 13,644",
+              "extracted_display_price": 13644,
+              "lowest": "RUB 15,739",
+              "extracted_lowest": 15739,
+              "before_taxes_fees": "RUB 13,644",
+              "extracted_before_taxes_fees": 13644,
+              "after_taxes_fees": "RUB 15,739",
+              "extracted_after_taxes_fees": 15739
+            },
+            "total_rate": {
+              "display_price": "RUB 40,933",
+              "extracted_display_price": 40933,
+              "lowest": "RUB 47,218",
+              "extracted_lowest": 47218,
+              "before_taxes_fees": "RUB 40,933",
+              "extracted_before_taxes_fees": 40933,
+              "after_taxes_fees": "RUB 47,218",
+              "extracted_after_taxes_fees": 47218
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 13,644",
+                  "extracted_display_price": 13644,
+                  "lowest": "RUB 15,739",
+                  "extracted_lowest": 15739,
+                  "before_taxes_fees": "RUB 13,644",
+                  "extracted_before_taxes_fees": 13644,
+                  "after_taxes_fees": "RUB 15,739",
+                  "extracted_after_taxes_fees": 15739
+                },
+                "total_rate": {
+                  "display_price": "RUB 40,933",
+                  "extracted_display_price": 40933,
+                  "lowest": "RUB 47,218",
+                  "extracted_lowest": 47218,
+                  "before_taxes_fees": "RUB 40,933",
+                  "extracted_before_taxes_fees": 40933,
+                  "after_taxes_fees": "RUB 47,218",
+                  "extracted_after_taxes_fees": 47218
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Sky",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 14,662",
+              "extracted_display_price": 14662,
+              "lowest": "RUB 16,881",
+              "extracted_lowest": 16881,
+              "before_taxes_fees": "RUB 14,662",
+              "extracted_before_taxes_fees": 14662,
+              "after_taxes_fees": "RUB 16,881",
+              "extracted_after_taxes_fees": 16881
+            },
+            "total_rate": {
+              "display_price": "RUB 43,986",
+              "extracted_display_price": 43986,
+              "lowest": "RUB 50,642",
+              "extracted_lowest": 50642,
+              "before_taxes_fees": "RUB 43,986",
+              "extracted_before_taxes_fees": 43986,
+              "after_taxes_fees": "RUB 50,642",
+              "extracted_after_taxes_fees": 50642
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 14,662",
+                  "extracted_display_price": 14662,
+                  "lowest": "RUB 16,881",
+                  "extracted_lowest": 16881,
+                  "before_taxes_fees": "RUB 14,662",
+                  "extracted_before_taxes_fees": 14662,
+                  "after_taxes_fees": "RUB 16,881",
+                  "extracted_after_taxes_fees": 16881
+                },
+                "total_rate": {
+                  "display_price": "RUB 43,986",
+                  "extracted_display_price": 43986,
+                  "lowest": "RUB 50,642",
+                  "extracted_lowest": 50642,
+                  "before_taxes_fees": "RUB 43,986",
+                  "extracted_before_taxes_fees": 43986,
+                  "after_taxes_fees": "RUB 50,642",
+                  "extracted_after_taxes_fees": 50642
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Sky with 2 Queen Beds",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 14,662",
+              "extracted_display_price": 14662,
+              "lowest": "RUB 16,881",
+              "extracted_lowest": 16881,
+              "before_taxes_fees": "RUB 14,662",
+              "extracted_before_taxes_fees": 14662,
+              "after_taxes_fees": "RUB 16,881",
+              "extracted_after_taxes_fees": 16881
+            },
+            "total_rate": {
+              "display_price": "RUB 43,986",
+              "extracted_display_price": 43986,
+              "lowest": "RUB 50,642",
+              "extracted_lowest": 50642,
+              "before_taxes_fees": "RUB 43,986",
+              "extracted_before_taxes_fees": 43986,
+              "after_taxes_fees": "RUB 50,642",
+              "extracted_after_taxes_fees": 50642
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 14,662",
+                  "extracted_display_price": 14662,
+                  "lowest": "RUB 16,881",
+                  "extracted_lowest": 16881,
+                  "before_taxes_fees": "RUB 14,662",
+                  "extracted_before_taxes_fees": 14662,
+                  "after_taxes_fees": "RUB 16,881",
+                  "extracted_after_taxes_fees": 16881
+                },
+                "total_rate": {
+                  "display_price": "RUB 43,986",
+                  "extracted_display_price": 43986,
+                  "lowest": "RUB 50,642",
+                  "extracted_lowest": 50642,
+                  "before_taxes_fees": "RUB 43,986",
+                  "extracted_before_taxes_fees": 43986,
+                  "after_taxes_fees": "RUB 50,642",
+                  "extracted_after_taxes_fees": 50642
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "1 Bedroom Sky Villa with Pool",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 20,304",
+              "extracted_display_price": 20304,
+              "lowest": "RUB 23,179",
+              "extracted_lowest": 23179,
+              "before_taxes_fees": "RUB 20,304",
+              "extracted_before_taxes_fees": 20304,
+              "after_taxes_fees": "RUB 23,179",
+              "extracted_after_taxes_fees": 23179
+            },
+            "total_rate": {
+              "display_price": "RUB 60,911",
+              "extracted_display_price": 60911,
+              "lowest": "RUB 69,536",
+              "extracted_lowest": 69536,
+              "before_taxes_fees": "RUB 60,911",
+              "extracted_before_taxes_fees": 60911,
+              "after_taxes_fees": "RUB 69,536",
+              "extracted_after_taxes_fees": 69536
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "rate_per_night": {
+                  "display_price": "RUB 20,304",
+                  "extracted_display_price": 20304,
+                  "lowest": "RUB 23,179",
+                  "extracted_lowest": 23179,
+                  "before_taxes_fees": "RUB 20,304",
+                  "extracted_before_taxes_fees": 20304,
+                  "after_taxes_fees": "RUB 23,179",
+                  "extracted_after_taxes_fees": 23179
+                },
+                "total_rate": {
+                  "display_price": "RUB 60,911",
+                  "extracted_display_price": 60911,
+                  "lowest": "RUB 69,536",
+                  "extracted_lowest": 69536,
+                  "before_taxes_fees": "RUB 60,911",
+                  "extracted_before_taxes_fees": 60911,
+                  "after_taxes_fees": "RUB 69,536",
+                  "extracted_after_taxes_fees": 69536
+                },
+                "inclusions": [
+                  "2 guests"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 21,159",
+                  "extracted_display_price": 21159,
+                  "lowest": "RUB 24,165",
+                  "extracted_lowest": 24165,
+                  "before_taxes_fees": "RUB 21,159",
+                  "extracted_before_taxes_fees": 21159,
+                  "after_taxes_fees": "RUB 24,165",
+                  "extracted_after_taxes_fees": 24165
+                },
+                "total_rate": {
+                  "display_price": "RUB 63,477",
+                  "extracted_display_price": 63477,
+                  "lowest": "RUB 72,496",
+                  "extracted_lowest": 72496,
+                  "before_taxes_fees": "RUB 63,477",
+                  "extracted_before_taxes_fees": 63477,
+                  "after_taxes_fees": "RUB 72,496",
+                  "extracted_after_taxes_fees": 72496
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "2 Bedroom Sky Villa with Pool",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 25,455",
+              "extracted_display_price": 25455,
+              "lowest": "RUB 28,983",
+              "extracted_lowest": 28983,
+              "before_taxes_fees": "RUB 25,455",
+              "extracted_before_taxes_fees": 25455,
+              "after_taxes_fees": "RUB 28,983",
+              "extracted_after_taxes_fees": 28983
+            },
+            "total_rate": {
+              "display_price": "RUB 76,366",
+              "extracted_display_price": 76366,
+              "lowest": "RUB 86,949",
+              "extracted_lowest": 86949,
+              "before_taxes_fees": "RUB 76,366",
+              "extracted_before_taxes_fees": 76366,
+              "after_taxes_fees": "RUB 86,949",
+              "extracted_after_taxes_fees": 86949
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 25,455",
+                  "extracted_display_price": 25455,
+                  "lowest": "RUB 28,983",
+                  "extracted_lowest": 28983,
+                  "before_taxes_fees": "RUB 25,455",
+                  "extracted_before_taxes_fees": 25455,
+                  "after_taxes_fees": "RUB 28,983",
+                  "extracted_after_taxes_fees": 28983
+                },
+                "total_rate": {
+                  "display_price": "RUB 76,366",
+                  "extracted_display_price": 76366,
+                  "lowest": "RUB 86,949",
+                  "extracted_lowest": 86949,
+                  "before_taxes_fees": "RUB 76,366",
+                  "extracted_before_taxes_fees": 76366,
+                  "after_taxes_fees": "RUB 86,949",
+                  "extracted_after_taxes_fees": 86949
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 29,935",
+                  "extracted_display_price": 29935,
+                  "lowest": "RUB 34,008",
+                  "extracted_lowest": 34008,
+                  "before_taxes_fees": "RUB 29,935",
+                  "extracted_before_taxes_fees": 29935,
+                  "after_taxes_fees": "RUB 34,008",
+                  "extracted_after_taxes_fees": 34008
+                },
+                "total_rate": {
+                  "display_price": "RUB 89,806",
+                  "extracted_display_price": 89806,
+                  "lowest": "RUB 102,023",
+                  "extracted_lowest": 102023,
+                  "before_taxes_fees": "RUB 89,806",
+                  "extracted_before_taxes_fees": 89806,
+                  "after_taxes_fees": "RUB 102,023",
+                  "extracted_after_taxes_fees": 102023
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "4 Bedroom Sky Villa with Pool",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 48,875",
+              "extracted_display_price": 48875,
+              "lowest": "RUB 55,245",
+              "extracted_lowest": 55245,
+              "before_taxes_fees": "RUB 48,875",
+              "extracted_before_taxes_fees": 48875,
+              "after_taxes_fees": "RUB 55,245",
+              "extracted_after_taxes_fees": 55245
+            },
+            "total_rate": {
+              "display_price": "RUB 146,624",
+              "extracted_display_price": 146624,
+              "lowest": "RUB 165,735",
+              "extracted_lowest": 165735,
+              "before_taxes_fees": "RUB 146,624",
+              "extracted_before_taxes_fees": 146624,
+              "after_taxes_fees": "RUB 165,735",
+              "extracted_after_taxes_fees": 165735
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 48,875",
+                  "extracted_display_price": 48875,
+                  "lowest": "RUB 55,245",
+                  "extracted_lowest": 55245,
+                  "before_taxes_fees": "RUB 48,875",
+                  "extracted_before_taxes_fees": 48875,
+                  "after_taxes_fees": "RUB 55,245",
+                  "extracted_after_taxes_fees": 55245
+                },
+                "total_rate": {
+                  "display_price": "RUB 146,624",
+                  "extracted_display_price": 146624,
+                  "lowest": "RUB 165,735",
+                  "extracted_lowest": 165735,
+                  "before_taxes_fees": "RUB 146,624",
+                  "extracted_before_taxes_fees": 146624,
+                  "after_taxes_fees": "RUB 165,735",
+                  "extracted_after_taxes_fees": 165735
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 53,354",
+                  "extracted_display_price": 53354,
+                  "lowest": "RUB 60,269",
+                  "extracted_lowest": 60269,
+                  "before_taxes_fees": "RUB 53,354",
+                  "extracted_before_taxes_fees": 53354,
+                  "after_taxes_fees": "RUB 60,269",
+                  "extracted_after_taxes_fees": 60269
+                },
+                "total_rate": {
+                  "display_price": "RUB 160,063",
+                  "extracted_display_price": 160063,
+                  "lowest": "RUB 180,806",
+                  "extracted_lowest": 180806,
+                  "before_taxes_fees": "RUB 160,063",
+                  "extracted_before_taxes_fees": 160063,
+                  "after_taxes_fees": "RUB 180,806",
+                  "extracted_after_taxes_fees": 180806
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          }
+        ],
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 11,913",
+          "extracted_display_price": 11913,
+          "lowest": "RUB 13,798",
+          "extracted_lowest": 13798,
+          "before_taxes_fees": "RUB 11,913",
+          "extracted_before_taxes_fees": 11913,
+          "after_taxes_fees": "RUB 13,798",
+          "extracted_after_taxes_fees": 13798
+        },
+        "total_rate": {
+          "display_price": "RUB 35,740",
+          "extracted_display_price": 35740,
+          "lowest": "RUB 41,394",
+          "extracted_lowest": 41394,
+          "before_taxes_fees": "RUB 35,740",
+          "extracted_before_taxes_fees": 35740,
+          "after_taxes_fees": "RUB 41,394",
+          "extracted_after_taxes_fees": 41394
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Jun 15",
+        "free_cancellation_until_time": "4:00 AM",
+        "benefits": "Book with Expedia.ca to get these at no extra cost: Wi-Fi and parking"
+      },
+      {
+        "source": "Booking.com",
+        "rooms": [
+          {
+            "name": "Superior Room with 2 Queen Beds",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 9,257",
+              "extracted_display_price": 9257,
+              "lowest": "RUB 10,749",
+              "extracted_lowest": 10749,
+              "before_taxes_fees": "RUB 9,257",
+              "extracted_before_taxes_fees": 9257,
+              "after_taxes_fees": "RUB 10,749",
+              "extracted_after_taxes_fees": 10749
+            },
+            "total_rate": {
+              "display_price": "RUB 27,770",
+              "extracted_display_price": 27770,
+              "lowest": "RUB 32,246",
+              "extracted_lowest": 32246,
+              "before_taxes_fees": "RUB 27,770",
+              "extracted_before_taxes_fees": 27770,
+              "after_taxes_fees": "RUB 32,246",
+              "extracted_after_taxes_fees": 32246
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Single",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 9,257",
+                  "extracted_display_price": 9257,
+                  "lowest": "RUB 10,749",
+                  "extracted_lowest": 10749,
+                  "before_taxes_fees": "RUB 9,257",
+                  "extracted_before_taxes_fees": 9257,
+                  "after_taxes_fees": "RUB 10,749",
+                  "extracted_after_taxes_fees": 10749
+                },
+                "total_rate": {
+                  "display_price": "RUB 27,770",
+                  "extracted_display_price": 27770,
+                  "lowest": "RUB 32,246",
+                  "extracted_lowest": 32246,
+                  "before_taxes_fees": "RUB 27,770",
+                  "extracted_before_taxes_fees": 27770,
+                  "after_taxes_fees": "RUB 32,246",
+                  "extracted_after_taxes_fees": 32246
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "2 guests",
+                  "Free cancellation until Nov 2",
+                  "Balcony"
+                ]
+              },
+              {
+                "num_guests": 1,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Single",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 12,240",
+                  "extracted_display_price": 12240,
+                  "lowest": "RUB 14,070",
+                  "extracted_lowest": 14070,
+                  "before_taxes_fees": "RUB 12,240",
+                  "extracted_before_taxes_fees": 12240,
+                  "after_taxes_fees": "RUB 14,070",
+                  "extracted_after_taxes_fees": 14070
+                },
+                "total_rate": {
+                  "display_price": "RUB 36,719",
+                  "extracted_display_price": 36719,
+                  "lowest": "RUB 42,211",
+                  "extracted_lowest": 42211,
+                  "before_taxes_fees": "RUB 36,719",
+                  "extracted_before_taxes_fees": 36719,
+                  "after_taxes_fees": "RUB 42,211",
+                  "extracted_after_taxes_fees": 42211
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "1 guest",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Balcony"
+                ]
+              },
+              {
+                "num_guests": 3,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Single",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 12,342",
+                  "extracted_display_price": 12342,
+                  "lowest": "RUB 14,185",
+                  "extracted_lowest": 14185,
+                  "before_taxes_fees": "RUB 12,342",
+                  "extracted_before_taxes_fees": 12342,
+                  "after_taxes_fees": "RUB 14,185",
+                  "extracted_after_taxes_fees": 14185
+                },
+                "total_rate": {
+                  "display_price": "RUB 37,027",
+                  "extracted_display_price": 37027,
+                  "lowest": "RUB 42,555",
+                  "extracted_lowest": 42555,
+                  "before_taxes_fees": "RUB 37,027",
+                  "extracted_before_taxes_fees": 37027,
+                  "after_taxes_fees": "RUB 42,555",
+                  "extracted_after_taxes_fees": 42555
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "3 guests",
+                  "Free cancellation until Nov 2",
+                  "Balcony"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "2 Bedroom Sky Villa with Pool",
+            "num_guests": 4,
+            "rate_per_night": {
+              "display_price": "RUB 25,713",
+              "extracted_display_price": 25713,
+              "lowest": "RUB 29,515",
+              "extracted_lowest": 29515,
+              "before_taxes_fees": "RUB 25,713",
+              "extracted_before_taxes_fees": 25713,
+              "after_taxes_fees": "RUB 29,515",
+              "extracted_after_taxes_fees": 29515
+            },
+            "total_rate": {
+              "display_price": "RUB 77,140",
+              "extracted_display_price": 77140,
+              "lowest": "RUB 88,546",
+              "extracted_lowest": 88546,
+              "before_taxes_fees": "RUB 77,140",
+              "extracted_before_taxes_fees": 77140,
+              "after_taxes_fees": "RUB 88,546",
+              "extracted_after_taxes_fees": 88546
+            },
+            "rates": [
+              {
+                "num_guests": 4,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 25,713",
+                  "extracted_display_price": 25713,
+                  "lowest": "RUB 29,515",
+                  "extracted_lowest": 29515,
+                  "before_taxes_fees": "RUB 25,713",
+                  "extracted_before_taxes_fees": 25713,
+                  "after_taxes_fees": "RUB 29,515",
+                  "extracted_after_taxes_fees": 29515
+                },
+                "total_rate": {
+                  "display_price": "RUB 77,140",
+                  "extracted_display_price": 77140,
+                  "lowest": "RUB 88,546",
+                  "extracted_lowest": 88546,
+                  "before_taxes_fees": "RUB 77,140",
+                  "extracted_before_taxes_fees": 77140,
+                  "after_taxes_fees": "RUB 88,546",
+                  "extracted_after_taxes_fees": 88546
+                },
+                "inclusions": [
+                  "Suite",
+                  "4 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 5,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 28,799",
+                  "extracted_display_price": 28799,
+                  "lowest": "RUB 32,952",
+                  "extracted_lowest": 32952,
+                  "before_taxes_fees": "RUB 28,799",
+                  "extracted_before_taxes_fees": 28799,
+                  "after_taxes_fees": "RUB 32,952",
+                  "extracted_after_taxes_fees": 32952
+                },
+                "total_rate": {
+                  "display_price": "RUB 86,397",
+                  "extracted_display_price": 86397,
+                  "lowest": "RUB 98,855",
+                  "extracted_lowest": 98855,
+                  "before_taxes_fees": "RUB 86,397",
+                  "extracted_before_taxes_fees": 86397,
+                  "after_taxes_fees": "RUB 98,855",
+                  "extracted_after_taxes_fees": 98855
+                },
+                "inclusions": [
+                  "Suite",
+                  "5 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "4 Bedroom Sky Villa with Pool",
+            "num_guests": 8,
+            "rate_per_night": {
+              "display_price": "RUB 49,370",
+              "extracted_display_price": 49370,
+              "lowest": "RUB 56,740",
+              "extracted_lowest": 56740,
+              "before_taxes_fees": "RUB 49,370",
+              "extracted_before_taxes_fees": 49370,
+              "after_taxes_fees": "RUB 56,740",
+              "extracted_after_taxes_fees": 56740
+            },
+            "total_rate": {
+              "display_price": "RUB 148,109",
+              "extracted_display_price": 148109,
+              "lowest": "RUB 170,220",
+              "extracted_lowest": 170220,
+              "before_taxes_fees": "RUB 148,109",
+              "extracted_before_taxes_fees": 148109,
+              "after_taxes_fees": "RUB 170,220",
+              "extracted_after_taxes_fees": 170220
+            },
+            "rates": [
+              {
+                "num_guests": 8,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 49,370",
+                  "extracted_display_price": 49370,
+                  "lowest": "RUB 56,740",
+                  "extracted_lowest": 56740,
+                  "before_taxes_fees": "RUB 49,370",
+                  "extracted_before_taxes_fees": 49370,
+                  "after_taxes_fees": "RUB 56,740",
+                  "extracted_after_taxes_fees": 56740
+                },
+                "total_rate": {
+                  "display_price": "RUB 148,109",
+                  "extracted_display_price": 148109,
+                  "lowest": "RUB 170,220",
+                  "extracted_lowest": 170220,
+                  "before_taxes_fees": "RUB 148,109",
+                  "extracted_before_taxes_fees": 148109,
+                  "after_taxes_fees": "RUB 170,220",
+                  "extracted_after_taxes_fees": 170220
+                },
+                "inclusions": [
+                  "Suite",
+                  "8 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 9,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 52,455",
+                  "extracted_display_price": 52455,
+                  "lowest": "RUB 60,176",
+                  "extracted_lowest": 60176,
+                  "before_taxes_fees": "RUB 52,455",
+                  "extracted_before_taxes_fees": 52455,
+                  "after_taxes_fees": "RUB 60,176",
+                  "extracted_after_taxes_fees": 60176
+                },
+                "total_rate": {
+                  "display_price": "RUB 157,366",
+                  "extracted_display_price": 157366,
+                  "lowest": "RUB 180,529",
+                  "extracted_lowest": 180529,
+                  "before_taxes_fees": "RUB 157,366",
+                  "extracted_before_taxes_fees": 157366,
+                  "after_taxes_fees": "RUB 180,529",
+                  "extracted_after_taxes_fees": 180529
+                },
+                "inclusions": [
+                  "Suite",
+                  "9 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 10,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 55,541",
+                  "extracted_display_price": 55541,
+                  "lowest": "RUB 63,612",
+                  "extracted_lowest": 63612,
+                  "before_taxes_fees": "RUB 55,541",
+                  "extracted_before_taxes_fees": 55541,
+                  "after_taxes_fees": "RUB 63,612",
+                  "extracted_after_taxes_fees": 63612
+                },
+                "total_rate": {
+                  "display_price": "RUB 166,623",
+                  "extracted_display_price": 166623,
+                  "lowest": "RUB 190,837",
+                  "extracted_lowest": 190837,
+                  "before_taxes_fees": "RUB 166,623",
+                  "extracted_before_taxes_fees": 166623,
+                  "after_taxes_fees": "RUB 190,837",
+                  "extracted_after_taxes_fees": 190837
+                },
+                "inclusions": [
+                  "Suite",
+                  "10 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 6,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 60,067",
+                  "extracted_display_price": 60067,
+                  "lowest": "RUB 68,652",
+                  "extracted_lowest": 68652,
+                  "before_taxes_fees": "RUB 60,067",
+                  "extracted_before_taxes_fees": 60067,
+                  "after_taxes_fees": "RUB 68,652",
+                  "extracted_after_taxes_fees": 68652
+                },
+                "total_rate": {
+                  "display_price": "RUB 180,200",
+                  "extracted_display_price": 180200,
+                  "lowest": "RUB 205,957",
+                  "extracted_lowest": 205957,
+                  "before_taxes_fees": "RUB 180,200",
+                  "extracted_before_taxes_fees": 180200,
+                  "after_taxes_fees": "RUB 205,957",
+                  "extracted_after_taxes_fees": 205957
+                },
+                "inclusions": [
+                  "Suite",
+                  "6 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 7,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 61,609",
+                  "extracted_display_price": 61609,
+                  "lowest": "RUB 70,370",
+                  "extracted_lowest": 70370,
+                  "before_taxes_fees": "RUB 61,609",
+                  "extracted_before_taxes_fees": 61609,
+                  "after_taxes_fees": "RUB 70,370",
+                  "extracted_after_taxes_fees": 70370
+                },
+                "total_rate": {
+                  "display_price": "RUB 184,828",
+                  "extracted_display_price": 184828,
+                  "lowest": "RUB 211,111",
+                  "extracted_lowest": 211111,
+                  "before_taxes_fees": "RUB 184,828",
+                  "extracted_before_taxes_fees": 184828,
+                  "after_taxes_fees": "RUB 211,111",
+                  "extracted_after_taxes_fees": 211111
+                },
+                "inclusions": [
+                  "Suite",
+                  "7 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Suite"
+                ]
+              }
+            ]
+          }
+        ],
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 9,257",
+          "extracted_display_price": 9257,
+          "lowest": "RUB 10,749",
+          "extracted_lowest": 10749,
+          "before_taxes_fees": "RUB 9,257",
+          "extracted_before_taxes_fees": 9257,
+          "after_taxes_fees": "RUB 10,749",
+          "extracted_after_taxes_fees": 10749
+        },
+        "total_rate": {
+          "display_price": "RUB 27,770",
+          "extracted_display_price": 27770,
+          "lowest": "RUB 32,246",
+          "extracted_lowest": 32246,
+          "before_taxes_fees": "RUB 27,770",
+          "extracted_before_taxes_fees": 27770,
+          "after_taxes_fees": "RUB 32,246",
+          "extracted_after_taxes_fees": 32246
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Nov 2",
+        "free_cancellation_until_time": "11:59 PM"
+      },
+      {
+        "source": "Hotels.com",
+        "rooms": [
+          {
+            "name": "Junior Suite with Hot Tub",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 11,714",
+              "extracted_display_price": 11714,
+              "lowest": "RUB 13,600",
+              "extracted_lowest": 13600,
+              "before_taxes_fees": "RUB 11,714",
+              "extracted_before_taxes_fees": 11714,
+              "after_taxes_fees": "RUB 13,600",
+              "extracted_after_taxes_fees": 13600
+            },
+            "total_rate": {
+              "display_price": "RUB 35,142",
+              "extracted_display_price": 35142,
+              "lowest": "RUB 40,800",
+              "extracted_lowest": 40800,
+              "before_taxes_fees": "RUB 35,142",
+              "extracted_before_taxes_fees": 35142,
+              "after_taxes_fees": "RUB 40,800",
+              "extracted_after_taxes_fees": 40800
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 11,714",
+                  "extracted_display_price": 11714,
+                  "lowest": "RUB 13,600",
+                  "extracted_lowest": 13600,
+                  "before_taxes_fees": "RUB 11,714",
+                  "extracted_before_taxes_fees": 11714,
+                  "after_taxes_fees": "RUB 13,600",
+                  "extracted_after_taxes_fees": 13600
+                },
+                "total_rate": {
+                  "display_price": "RUB 35,142",
+                  "extracted_display_price": 35142,
+                  "lowest": "RUB 40,800",
+                  "extracted_lowest": 40800,
+                  "before_taxes_fees": "RUB 35,142",
+                  "extracted_before_taxes_fees": 35142,
+                  "after_taxes_fees": "RUB 40,800",
+                  "extracted_after_taxes_fees": 40800
+                },
+                "inclusions": [
+                  "Suite",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 16,119",
+                  "extracted_display_price": 16119,
+                  "lowest": "RUB 18,550",
+                  "extracted_lowest": 18550,
+                  "before_taxes_fees": "RUB 16,119",
+                  "extracted_before_taxes_fees": 16119,
+                  "after_taxes_fees": "RUB 18,550",
+                  "extracted_after_taxes_fees": 18550
+                },
+                "total_rate": {
+                  "display_price": "RUB 48,358",
+                  "extracted_display_price": 48358,
+                  "lowest": "RUB 55,649",
+                  "extracted_lowest": 55649,
+                  "before_taxes_fees": "RUB 48,358",
+                  "extracted_before_taxes_fees": 48358,
+                  "after_taxes_fees": "RUB 55,649",
+                  "extracted_after_taxes_fees": 55649
+                },
+                "inclusions": [
+                  "Suite",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast",
+                  "Suite"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 13,416",
+              "extracted_display_price": 13416,
+              "lowest": "RUB 15,513",
+              "extracted_lowest": 15513,
+              "before_taxes_fees": "RUB 13,416",
+              "extracted_before_taxes_fees": 13416,
+              "after_taxes_fees": "RUB 15,513",
+              "extracted_after_taxes_fees": 15513
+            },
+            "total_rate": {
+              "display_price": "RUB 40,249",
+              "extracted_display_price": 40249,
+              "lowest": "RUB 46,538",
+              "extracted_lowest": 46538,
+              "before_taxes_fees": "RUB 40,249",
+              "extracted_before_taxes_fees": 40249,
+              "after_taxes_fees": "RUB 46,538",
+              "extracted_after_taxes_fees": 46538
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 13,416",
+                  "extracted_display_price": 13416,
+                  "lowest": "RUB 15,513",
+                  "extracted_lowest": 15513,
+                  "before_taxes_fees": "RUB 13,416",
+                  "extracted_before_taxes_fees": 13416,
+                  "after_taxes_fees": "RUB 15,513",
+                  "extracted_after_taxes_fees": 15513
+                },
+                "total_rate": {
+                  "display_price": "RUB 40,249",
+                  "extracted_display_price": 40249,
+                  "lowest": "RUB 46,538",
+                  "extracted_lowest": 46538,
+                  "before_taxes_fees": "RUB 40,249",
+                  "extracted_before_taxes_fees": 40249,
+                  "after_taxes_fees": "RUB 46,538",
+                  "extracted_after_taxes_fees": 46538
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Room with 2 Queen Beds",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 13,416",
+              "extracted_display_price": 13416,
+              "lowest": "RUB 15,513",
+              "extracted_lowest": 15513,
+              "before_taxes_fees": "RUB 13,416",
+              "extracted_before_taxes_fees": 13416,
+              "after_taxes_fees": "RUB 15,513",
+              "extracted_after_taxes_fees": 15513
+            },
+            "total_rate": {
+              "display_price": "RUB 40,249",
+              "extracted_display_price": 40249,
+              "lowest": "RUB 46,538",
+              "extracted_lowest": 46538,
+              "before_taxes_fees": "RUB 40,249",
+              "extracted_before_taxes_fees": 40249,
+              "after_taxes_fees": "RUB 46,538",
+              "extracted_after_taxes_fees": 46538
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 13,416",
+                  "extracted_display_price": 13416,
+                  "lowest": "RUB 15,513",
+                  "extracted_lowest": 15513,
+                  "before_taxes_fees": "RUB 13,416",
+                  "extracted_before_taxes_fees": 13416,
+                  "after_taxes_fees": "RUB 15,513",
+                  "extracted_after_taxes_fees": 15513
+                },
+                "total_rate": {
+                  "display_price": "RUB 40,249",
+                  "extracted_display_price": 40249,
+                  "lowest": "RUB 46,538",
+                  "extracted_lowest": 46538,
+                  "before_taxes_fees": "RUB 40,249",
+                  "extracted_before_taxes_fees": 40249,
+                  "after_taxes_fees": "RUB 46,538",
+                  "extracted_after_taxes_fees": 46538
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Sky",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 14,417",
+              "extracted_display_price": 14417,
+              "lowest": "RUB 16,638",
+              "extracted_lowest": 16638,
+              "before_taxes_fees": "RUB 14,417",
+              "extracted_before_taxes_fees": 14417,
+              "after_taxes_fees": "RUB 16,638",
+              "extracted_after_taxes_fees": 16638
+            },
+            "total_rate": {
+              "display_price": "RUB 43,251",
+              "extracted_display_price": 43251,
+              "lowest": "RUB 49,914",
+              "extracted_lowest": 49914,
+              "before_taxes_fees": "RUB 43,251",
+              "extracted_before_taxes_fees": 43251,
+              "after_taxes_fees": "RUB 49,914",
+              "extracted_after_taxes_fees": 49914
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 14,417",
+                  "extracted_display_price": 14417,
+                  "lowest": "RUB 16,638",
+                  "extracted_lowest": 16638,
+                  "before_taxes_fees": "RUB 14,417",
+                  "extracted_before_taxes_fees": 14417,
+                  "after_taxes_fees": "RUB 16,638",
+                  "extracted_after_taxes_fees": 16638
+                },
+                "total_rate": {
+                  "display_price": "RUB 43,251",
+                  "extracted_display_price": 43251,
+                  "lowest": "RUB 49,914",
+                  "extracted_lowest": 49914,
+                  "before_taxes_fees": "RUB 43,251",
+                  "extracted_before_taxes_fees": 43251,
+                  "after_taxes_fees": "RUB 49,914",
+                  "extracted_after_taxes_fees": 49914
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Sky with 2 Queen Beds",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 14,417",
+              "extracted_display_price": 14417,
+              "lowest": "RUB 16,638",
+              "extracted_lowest": 16638,
+              "before_taxes_fees": "RUB 14,417",
+              "extracted_before_taxes_fees": 14417,
+              "after_taxes_fees": "RUB 16,638",
+              "extracted_after_taxes_fees": 16638
+            },
+            "total_rate": {
+              "display_price": "RUB 43,251",
+              "extracted_display_price": 43251,
+              "lowest": "RUB 49,914",
+              "extracted_lowest": 49914,
+              "before_taxes_fees": "RUB 43,251",
+              "extracted_before_taxes_fees": 43251,
+              "after_taxes_fees": "RUB 49,914",
+              "extracted_after_taxes_fees": 49914
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 14,417",
+                  "extracted_display_price": 14417,
+                  "lowest": "RUB 16,638",
+                  "extracted_lowest": 16638,
+                  "before_taxes_fees": "RUB 14,417",
+                  "extracted_before_taxes_fees": 14417,
+                  "after_taxes_fees": "RUB 16,638",
+                  "extracted_after_taxes_fees": 16638
+                },
+                "total_rate": {
+                  "display_price": "RUB 43,251",
+                  "extracted_display_price": 43251,
+                  "lowest": "RUB 49,914",
+                  "extracted_lowest": 49914,
+                  "before_taxes_fees": "RUB 43,251",
+                  "extracted_before_taxes_fees": 43251,
+                  "after_taxes_fees": "RUB 49,914",
+                  "extracted_after_taxes_fees": 49914
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "1 Bedroom Sky Villa with Pool",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 20,027",
+              "extracted_display_price": 20027,
+              "lowest": "RUB 22,904",
+              "extracted_lowest": 22904,
+              "before_taxes_fees": "RUB 20,027",
+              "extracted_before_taxes_fees": 20027,
+              "after_taxes_fees": "RUB 22,904",
+              "extracted_after_taxes_fees": 22904
+            },
+            "total_rate": {
+              "display_price": "RUB 60,082",
+              "extracted_display_price": 60082,
+              "lowest": "RUB 68,713",
+              "extracted_lowest": 68713,
+              "before_taxes_fees": "RUB 60,082",
+              "extracted_before_taxes_fees": 60082,
+              "after_taxes_fees": "RUB 68,713",
+              "extracted_after_taxes_fees": 68713
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "rate_per_night": {
+                  "display_price": "RUB 20,027",
+                  "extracted_display_price": 20027,
+                  "lowest": "RUB 22,904",
+                  "extracted_lowest": 22904,
+                  "before_taxes_fees": "RUB 20,027",
+                  "extracted_before_taxes_fees": 20027,
+                  "after_taxes_fees": "RUB 22,904",
+                  "extracted_after_taxes_fees": 22904
+                },
+                "total_rate": {
+                  "display_price": "RUB 60,082",
+                  "extracted_display_price": 60082,
+                  "lowest": "RUB 68,713",
+                  "extracted_lowest": 68713,
+                  "before_taxes_fees": "RUB 60,082",
+                  "extracted_before_taxes_fees": 60082,
+                  "after_taxes_fees": "RUB 68,713",
+                  "extracted_after_taxes_fees": 68713
+                },
+                "inclusions": [
+                  "2 guests"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 20,805",
+                  "extracted_display_price": 20805,
+                  "lowest": "RUB 23,814",
+                  "extracted_lowest": 23814,
+                  "before_taxes_fees": "RUB 20,805",
+                  "extracted_before_taxes_fees": 20805,
+                  "after_taxes_fees": "RUB 23,814",
+                  "extracted_after_taxes_fees": 23814
+                },
+                "total_rate": {
+                  "display_price": "RUB 62,415",
+                  "extracted_display_price": 62415,
+                  "lowest": "RUB 71,443",
+                  "extracted_lowest": 71443,
+                  "before_taxes_fees": "RUB 62,415",
+                  "extracted_before_taxes_fees": 62415,
+                  "after_taxes_fees": "RUB 71,443",
+                  "extracted_after_taxes_fees": 71443
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "2 Bedroom Sky Villa with Pool",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 25,031",
+              "extracted_display_price": 25031,
+              "lowest": "RUB 28,562",
+              "extracted_lowest": 28562,
+              "before_taxes_fees": "RUB 25,031",
+              "extracted_before_taxes_fees": 25031,
+              "after_taxes_fees": "RUB 28,562",
+              "extracted_after_taxes_fees": 28562
+            },
+            "total_rate": {
+              "display_price": "RUB 75,092",
+              "extracted_display_price": 75092,
+              "lowest": "RUB 85,687",
+              "extracted_lowest": 85687,
+              "before_taxes_fees": "RUB 75,092",
+              "extracted_before_taxes_fees": 75092,
+              "after_taxes_fees": "RUB 85,687",
+              "extracted_after_taxes_fees": 85687
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 25,031",
+                  "extracted_display_price": 25031,
+                  "lowest": "RUB 28,562",
+                  "extracted_lowest": 28562,
+                  "before_taxes_fees": "RUB 25,031",
+                  "extracted_before_taxes_fees": 25031,
+                  "after_taxes_fees": "RUB 28,562",
+                  "extracted_after_taxes_fees": 28562
+                },
+                "total_rate": {
+                  "display_price": "RUB 75,092",
+                  "extracted_display_price": 75092,
+                  "lowest": "RUB 85,687",
+                  "extracted_lowest": 85687,
+                  "before_taxes_fees": "RUB 75,092",
+                  "extracted_before_taxes_fees": 75092,
+                  "after_taxes_fees": "RUB 85,687",
+                  "extracted_after_taxes_fees": 85687
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 29,435",
+                  "extracted_display_price": 29435,
+                  "lowest": "RUB 33,510",
+                  "extracted_lowest": 33510,
+                  "before_taxes_fees": "RUB 29,435",
+                  "extracted_before_taxes_fees": 29435,
+                  "after_taxes_fees": "RUB 33,510",
+                  "extracted_after_taxes_fees": 33510
+                },
+                "total_rate": {
+                  "display_price": "RUB 88,306",
+                  "extracted_display_price": 88306,
+                  "lowest": "RUB 100,531",
+                  "extracted_lowest": 100531,
+                  "before_taxes_fees": "RUB 88,306",
+                  "extracted_before_taxes_fees": 88306,
+                  "after_taxes_fees": "RUB 100,531",
+                  "extracted_after_taxes_fees": 100531
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "4 Bedroom Sky Villa with Pool",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 48,058",
+              "extracted_display_price": 48058,
+              "lowest": "RUB 54,434",
+              "extracted_lowest": 54434,
+              "before_taxes_fees": "RUB 48,058",
+              "extracted_before_taxes_fees": 48058,
+              "after_taxes_fees": "RUB 54,434",
+              "extracted_after_taxes_fees": 54434
+            },
+            "total_rate": {
+              "display_price": "RUB 144,175",
+              "extracted_display_price": 144175,
+              "lowest": "RUB 163,302",
+              "extracted_lowest": 163302,
+              "before_taxes_fees": "RUB 144,175",
+              "extracted_before_taxes_fees": 144175,
+              "after_taxes_fees": "RUB 163,302",
+              "extracted_after_taxes_fees": 163302
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 48,058",
+                  "extracted_display_price": 48058,
+                  "lowest": "RUB 54,434",
+                  "extracted_lowest": 54434,
+                  "before_taxes_fees": "RUB 48,058",
+                  "extracted_before_taxes_fees": 48058,
+                  "after_taxes_fees": "RUB 54,434",
+                  "extracted_after_taxes_fees": 54434
+                },
+                "total_rate": {
+                  "display_price": "RUB 144,175",
+                  "extracted_display_price": 144175,
+                  "lowest": "RUB 163,302",
+                  "extracted_lowest": 163302,
+                  "before_taxes_fees": "RUB 144,175",
+                  "extracted_before_taxes_fees": 144175,
+                  "after_taxes_fees": "RUB 163,302",
+                  "extracted_after_taxes_fees": 163302
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3"
+                ]
+              },
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 3",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 52,463",
+                  "extracted_display_price": 52463,
+                  "lowest": "RUB 59,383",
+                  "extracted_lowest": 59383,
+                  "before_taxes_fees": "RUB 52,463",
+                  "extracted_before_taxes_fees": 52463,
+                  "after_taxes_fees": "RUB 59,383",
+                  "extracted_after_taxes_fees": 59383
+                },
+                "total_rate": {
+                  "display_price": "RUB 157,390",
+                  "extracted_display_price": 157390,
+                  "lowest": "RUB 178,150",
+                  "extracted_lowest": 178150,
+                  "before_taxes_fees": "RUB 157,390",
+                  "extracted_before_taxes_fees": 157390,
+                  "after_taxes_fees": "RUB 178,150",
+                  "extracted_after_taxes_fees": 178150
+                },
+                "inclusions": [
+                  "2 guests",
+                  "Free cancellation until Nov 3",
+                  "breakfast"
+                ]
+              }
+            ]
+          }
+        ],
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 11,714",
+          "extracted_display_price": 11714,
+          "lowest": "RUB 13,599",
+          "extracted_lowest": 13599,
+          "before_taxes_fees": "RUB 11,714",
+          "extracted_before_taxes_fees": 11714,
+          "after_taxes_fees": "RUB 13,599",
+          "extracted_after_taxes_fees": 13599
+        },
+        "total_rate": {
+          "display_price": "RUB 35,141",
+          "extracted_display_price": 35141,
+          "lowest": "RUB 40,798",
+          "extracted_lowest": 40798,
+          "before_taxes_fees": "RUB 35,141",
+          "extracted_before_taxes_fees": 35141,
+          "after_taxes_fees": "RUB 40,798",
+          "extracted_after_taxes_fees": 40798
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Jun 15",
+        "free_cancellation_until_time": "4:00 AM",
+        "benefits": "Book with Hotels.com to get these at no extra cost: Wi-Fi and parking"
+      },
+      {
+        "source": "Priceline",
+        "rooms": [
+          {
+            "name": "Superior",
+            "num_guests": 2,
+            "rate_per_night": {
+              "display_price": "RUB 9,257",
+              "extracted_display_price": 9257,
+              "lowest": "RUB 10,749",
+              "extracted_lowest": 10749,
+              "before_taxes_fees": "RUB 9,257",
+              "extracted_before_taxes_fees": 9257,
+              "after_taxes_fees": "RUB 10,749",
+              "extracted_after_taxes_fees": 10749
+            },
+            "total_rate": {
+              "display_price": "RUB 27,771",
+              "extracted_display_price": 27771,
+              "lowest": "RUB 32,246",
+              "extracted_lowest": 32246,
+              "before_taxes_fees": "RUB 27,771",
+              "extracted_before_taxes_fees": 27771,
+              "after_taxes_fees": "RUB 32,246",
+              "extracted_after_taxes_fees": 32246
+            },
+            "rates": [
+              {
+                "num_guests": 2,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "beds": [
+                  {
+                    "type": "Double",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 9,257",
+                  "extracted_display_price": 9257,
+                  "lowest": "RUB 10,749",
+                  "extracted_lowest": 10749,
+                  "before_taxes_fees": "RUB 9,257",
+                  "extracted_before_taxes_fees": 9257,
+                  "after_taxes_fees": "RUB 10,749",
+                  "extracted_after_taxes_fees": 10749
+                },
+                "total_rate": {
+                  "display_price": "RUB 27,771",
+                  "extracted_display_price": 27771,
+                  "lowest": "RUB 32,246",
+                  "extracted_lowest": 32246,
+                  "before_taxes_fees": "RUB 27,771",
+                  "extracted_before_taxes_fees": 27771,
+                  "after_taxes_fees": "RUB 32,246",
+                  "extracted_after_taxes_fees": 32246
+                },
+                "inclusions": [
+                  "1 double bed",
+                  "2 guests",
+                  "Free cancellation until Nov 2",
+                  "Balcony"
+                ]
+              },
+              {
+                "num_guests": 1,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "beds": [
+                  {
+                    "type": "Double",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 12,239",
+                  "extracted_display_price": 12239,
+                  "lowest": "RUB 14,071",
+                  "extracted_lowest": 14071,
+                  "before_taxes_fees": "RUB 12,239",
+                  "extracted_before_taxes_fees": 12239,
+                  "after_taxes_fees": "RUB 14,071",
+                  "extracted_after_taxes_fees": 14071
+                },
+                "total_rate": {
+                  "display_price": "RUB 36,718",
+                  "extracted_display_price": 36718,
+                  "lowest": "RUB 42,212",
+                  "extracted_lowest": 42212,
+                  "before_taxes_fees": "RUB 36,718",
+                  "extracted_before_taxes_fees": 36718,
+                  "after_taxes_fees": "RUB 42,212",
+                  "extracted_after_taxes_fees": 42212
+                },
+                "inclusions": [
+                  "1 double bed",
+                  "1 guest",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Balcony"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Superior Room with 2 Queen Beds",
+            "num_guests": 3,
+            "rate_per_night": {
+              "display_price": "RUB 12,343",
+              "extracted_display_price": 12343,
+              "lowest": "RUB 14,185",
+              "extracted_lowest": 14185,
+              "before_taxes_fees": "RUB 12,343",
+              "extracted_before_taxes_fees": 12343,
+              "after_taxes_fees": "RUB 14,185",
+              "extracted_after_taxes_fees": 14185
+            },
+            "total_rate": {
+              "display_price": "RUB 37,028",
+              "extracted_display_price": 37028,
+              "lowest": "RUB 42,555",
+              "extracted_lowest": 42555,
+              "before_taxes_fees": "RUB 37,028",
+              "extracted_before_taxes_fees": 37028,
+              "after_taxes_fees": "RUB 42,555",
+              "extracted_after_taxes_fees": 42555
+            },
+            "rates": [
+              {
+                "num_guests": 3,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "beds": [
+                  {
+                    "type": "Queen",
+                    "count": 2
+                  },
+                  {
+                    "type": "Single",
+                    "count": 1
+                  }
+                ],
+                "rate_per_night": {
+                  "display_price": "RUB 12,343",
+                  "extracted_display_price": 12343,
+                  "lowest": "RUB 14,185",
+                  "extracted_lowest": 14185,
+                  "before_taxes_fees": "RUB 12,343",
+                  "extracted_before_taxes_fees": 12343,
+                  "after_taxes_fees": "RUB 14,185",
+                  "extracted_after_taxes_fees": 14185
+                },
+                "total_rate": {
+                  "display_price": "RUB 37,028",
+                  "extracted_display_price": 37028,
+                  "lowest": "RUB 42,555",
+                  "extracted_lowest": 42555,
+                  "before_taxes_fees": "RUB 37,028",
+                  "extracted_before_taxes_fees": 37028,
+                  "after_taxes_fees": "RUB 42,555",
+                  "extracted_after_taxes_fees": 42555
+                },
+                "inclusions": [
+                  "2 queen beds",
+                  "3 guests",
+                  "Free cancellation until Nov 2",
+                  "Balcony"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "2 Bedroom Sky Villa with Pool",
+            "num_guests": 4,
+            "rate_per_night": {
+              "display_price": "RUB 25,713",
+              "extracted_display_price": 25713,
+              "lowest": "RUB 29,516",
+              "extracted_lowest": 29516,
+              "before_taxes_fees": "RUB 25,713",
+              "extracted_before_taxes_fees": 25713,
+              "after_taxes_fees": "RUB 29,516",
+              "extracted_after_taxes_fees": 29516
+            },
+            "total_rate": {
+              "display_price": "RUB 77,140",
+              "extracted_display_price": 77140,
+              "lowest": "RUB 88,547",
+              "extracted_lowest": 88547,
+              "before_taxes_fees": "RUB 77,140",
+              "extracted_before_taxes_fees": 77140,
+              "after_taxes_fees": "RUB 88,547",
+              "extracted_after_taxes_fees": 88547
+            },
+            "rates": [
+              {
+                "num_guests": 4,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 25,713",
+                  "extracted_display_price": 25713,
+                  "lowest": "RUB 29,516",
+                  "extracted_lowest": 29516,
+                  "before_taxes_fees": "RUB 25,713",
+                  "extracted_before_taxes_fees": 25713,
+                  "after_taxes_fees": "RUB 29,516",
+                  "extracted_after_taxes_fees": 29516
+                },
+                "total_rate": {
+                  "display_price": "RUB 77,140",
+                  "extracted_display_price": 77140,
+                  "lowest": "RUB 88,547",
+                  "extracted_lowest": 88547,
+                  "before_taxes_fees": "RUB 77,140",
+                  "extracted_before_taxes_fees": 77140,
+                  "after_taxes_fees": "RUB 88,547",
+                  "extracted_after_taxes_fees": 88547
+                },
+                "inclusions": [
+                  "Suite",
+                  "4 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 5,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 28,799",
+                  "extracted_display_price": 28799,
+                  "lowest": "RUB 32,952",
+                  "extracted_lowest": 32952,
+                  "before_taxes_fees": "RUB 28,799",
+                  "extracted_before_taxes_fees": 28799,
+                  "after_taxes_fees": "RUB 32,952",
+                  "extracted_after_taxes_fees": 32952
+                },
+                "total_rate": {
+                  "display_price": "RUB 86,397",
+                  "extracted_display_price": 86397,
+                  "lowest": "RUB 98,855",
+                  "extracted_lowest": 98855,
+                  "before_taxes_fees": "RUB 86,397",
+                  "extracted_before_taxes_fees": 86397,
+                  "after_taxes_fees": "RUB 98,855",
+                  "extracted_after_taxes_fees": 98855
+                },
+                "inclusions": [
+                  "Suite",
+                  "5 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "4 Bedroom Sky Villa with Pool",
+            "num_guests": 8,
+            "rate_per_night": {
+              "display_price": "RUB 49,370",
+              "extracted_display_price": 49370,
+              "lowest": "RUB 56,740",
+              "extracted_lowest": 56740,
+              "before_taxes_fees": "RUB 49,370",
+              "extracted_before_taxes_fees": 49370,
+              "after_taxes_fees": "RUB 56,740",
+              "extracted_after_taxes_fees": 56740
+            },
+            "total_rate": {
+              "display_price": "RUB 148,110",
+              "extracted_display_price": 148110,
+              "lowest": "RUB 170,220",
+              "extracted_lowest": 170220,
+              "before_taxes_fees": "RUB 148,110",
+              "extracted_before_taxes_fees": 148110,
+              "after_taxes_fees": "RUB 170,220",
+              "extracted_after_taxes_fees": 170220
+            },
+            "rates": [
+              {
+                "num_guests": 8,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 49,370",
+                  "extracted_display_price": 49370,
+                  "lowest": "RUB 56,740",
+                  "extracted_lowest": 56740,
+                  "before_taxes_fees": "RUB 49,370",
+                  "extracted_before_taxes_fees": 49370,
+                  "after_taxes_fees": "RUB 56,740",
+                  "extracted_after_taxes_fees": 56740
+                },
+                "total_rate": {
+                  "display_price": "RUB 148,110",
+                  "extracted_display_price": 148110,
+                  "lowest": "RUB 170,220",
+                  "extracted_lowest": 170220,
+                  "before_taxes_fees": "RUB 148,110",
+                  "extracted_before_taxes_fees": 148110,
+                  "after_taxes_fees": "RUB 170,220",
+                  "extracted_after_taxes_fees": 170220
+                },
+                "inclusions": [
+                  "Suite",
+                  "8 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 9,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 52,455",
+                  "extracted_display_price": 52455,
+                  "lowest": "RUB 60,176",
+                  "extracted_lowest": 60176,
+                  "before_taxes_fees": "RUB 52,455",
+                  "extracted_before_taxes_fees": 52455,
+                  "after_taxes_fees": "RUB 60,176",
+                  "extracted_after_taxes_fees": 60176
+                },
+                "total_rate": {
+                  "display_price": "RUB 157,366",
+                  "extracted_display_price": 157366,
+                  "lowest": "RUB 180,528",
+                  "extracted_lowest": 180528,
+                  "before_taxes_fees": "RUB 157,366",
+                  "extracted_before_taxes_fees": 157366,
+                  "after_taxes_fees": "RUB 180,528",
+                  "extracted_after_taxes_fees": 180528
+                },
+                "inclusions": [
+                  "Suite",
+                  "9 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 10,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "rate_per_night": {
+                  "display_price": "RUB 55,541",
+                  "extracted_display_price": 55541,
+                  "lowest": "RUB 63,612",
+                  "extracted_lowest": 63612,
+                  "before_taxes_fees": "RUB 55,541",
+                  "extracted_before_taxes_fees": 55541,
+                  "after_taxes_fees": "RUB 63,612",
+                  "extracted_after_taxes_fees": 63612
+                },
+                "total_rate": {
+                  "display_price": "RUB 166,623",
+                  "extracted_display_price": 166623,
+                  "lowest": "RUB 190,836",
+                  "extracted_lowest": 190836,
+                  "before_taxes_fees": "RUB 166,623",
+                  "extracted_before_taxes_fees": 166623,
+                  "after_taxes_fees": "RUB 190,836",
+                  "extracted_after_taxes_fees": 190836
+                },
+                "inclusions": [
+                  "Suite",
+                  "10 guests",
+                  "Free cancellation until Nov 2",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 6,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 60,066",
+                  "extracted_display_price": 60066,
+                  "lowest": "RUB 68,652",
+                  "extracted_lowest": 68652,
+                  "before_taxes_fees": "RUB 60,066",
+                  "extracted_before_taxes_fees": 60066,
+                  "after_taxes_fees": "RUB 68,652",
+                  "extracted_after_taxes_fees": 68652
+                },
+                "total_rate": {
+                  "display_price": "RUB 180,199",
+                  "extracted_display_price": 180199,
+                  "lowest": "RUB 205,957",
+                  "extracted_lowest": 205957,
+                  "before_taxes_fees": "RUB 180,199",
+                  "extracted_before_taxes_fees": 180199,
+                  "after_taxes_fees": "RUB 205,957",
+                  "extracted_after_taxes_fees": 205957
+                },
+                "inclusions": [
+                  "Suite",
+                  "6 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Suite"
+                ]
+              },
+              {
+                "num_guests": 7,
+                "free_cancellation": true,
+                "free_cancellation_until_date": "Nov 2",
+                "free_cancellation_until_time": "11:59 PM",
+                "breakfast_included": true,
+                "rate_per_night": {
+                  "display_price": "RUB 61,609",
+                  "extracted_display_price": 61609,
+                  "lowest": "RUB 70,371",
+                  "extracted_lowest": 70371,
+                  "before_taxes_fees": "RUB 61,609",
+                  "extracted_before_taxes_fees": 61609,
+                  "after_taxes_fees": "RUB 70,371",
+                  "extracted_after_taxes_fees": 70371
+                },
+                "total_rate": {
+                  "display_price": "RUB 184,828",
+                  "extracted_display_price": 184828,
+                  "lowest": "RUB 211,112",
+                  "extracted_lowest": 211112,
+                  "before_taxes_fees": "RUB 184,828",
+                  "extracted_before_taxes_fees": 184828,
+                  "after_taxes_fees": "RUB 211,112",
+                  "extracted_after_taxes_fees": 211112
+                },
+                "inclusions": [
+                  "Suite",
+                  "7 guests",
+                  "Free cancellation until Nov 2",
+                  "breakfast",
+                  "Suite"
+                ]
+              }
+            ]
+          }
+        ],
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 9,257",
+          "extracted_display_price": 9257,
+          "lowest": "RUB 10,748",
+          "extracted_lowest": 10748,
+          "before_taxes_fees": "RUB 9,257",
+          "extracted_before_taxes_fees": 9257,
+          "after_taxes_fees": "RUB 10,748",
+          "extracted_after_taxes_fees": 10748
+        },
+        "total_rate": {
+          "display_price": "RUB 27,770",
+          "extracted_display_price": 27770,
+          "lowest": "RUB 32,245",
+          "extracted_lowest": 32245,
+          "before_taxes_fees": "RUB 27,770",
+          "extracted_before_taxes_fees": 27770,
+          "after_taxes_fees": "RUB 32,245",
+          "extracted_after_taxes_fees": 32245
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Nov 2",
+        "free_cancellation_until_time": "11:58 PM",
+        "benefits": "Book with Priceline to get these at no extra cost: Wi-Fi and parking"
+      },
+      {
+        "source": "HomeToGo",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 9,569",
+          "extracted_display_price": 9569,
+          "lowest": "RUB 10,747",
+          "extracted_lowest": 10747,
+          "before_taxes_fees": "RUB 9,569",
+          "extracted_before_taxes_fees": 9569,
+          "after_taxes_fees": "RUB 10,747",
+          "extracted_after_taxes_fees": 10747
+        },
+        "total_rate": {
+          "display_price": "RUB 28,706",
+          "extracted_display_price": 28706,
+          "lowest": "RUB 32,240",
+          "extracted_lowest": 32240,
+          "before_taxes_fees": "RUB 28,706",
+          "extracted_before_taxes_fees": 28706,
+          "after_taxes_fees": "RUB 32,240",
+          "extracted_after_taxes_fees": 32240
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Jun 15",
+        "free_cancellation_until_time": "4:00 AM"
+      }
+    ],
+    "prices": [
+      {
+        "source": "FIVE Jumeirah Village Hotel",
+        "official": true,
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 9,301",
+          "extracted_display_price": 9301,
+          "lowest": "RUB 9,717",
+          "extracted_lowest": 9717,
+          "before_taxes_fees": "RUB 9,301",
+          "extracted_before_taxes_fees": 9301,
+          "after_taxes_fees": "RUB 9,717",
+          "extracted_after_taxes_fees": 9717
+        },
+        "total_rate": {
+          "display_price": "RUB 27,904",
+          "extracted_display_price": 27904,
+          "lowest": "RUB 29,152",
+          "extracted_lowest": 29152,
+          "before_taxes_fees": "RUB 27,904",
+          "extracted_before_taxes_fees": 27904,
+          "after_taxes_fees": "RUB 29,152",
+          "extracted_after_taxes_fees": 29152
+        }
+      },
+      {
+        "source": "Booking.com",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 9,257",
+          "extracted_display_price": 9257,
+          "lowest": "RUB 10,749",
+          "extracted_lowest": 10749,
+          "before_taxes_fees": "RUB 9,257",
+          "extracted_before_taxes_fees": 9257,
+          "after_taxes_fees": "RUB 10,749",
+          "extracted_after_taxes_fees": 10749
+        },
+        "total_rate": {
+          "display_price": "RUB 27,770",
+          "extracted_display_price": 27770,
+          "lowest": "RUB 32,246",
+          "extracted_lowest": 32246,
+          "before_taxes_fees": "RUB 27,770",
+          "extracted_before_taxes_fees": 27770,
+          "after_taxes_fees": "RUB 32,246",
+          "extracted_after_taxes_fees": 32246
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Nov 2",
+        "free_cancellation_until_time": "11:59 PM"
+      },
+      {
+        "source": "Priceline",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 9,257",
+          "extracted_display_price": 9257,
+          "lowest": "RUB 10,748",
+          "extracted_lowest": 10748,
+          "before_taxes_fees": "RUB 9,257",
+          "extracted_before_taxes_fees": 9257,
+          "after_taxes_fees": "RUB 10,748",
+          "extracted_after_taxes_fees": 10748
+        },
+        "total_rate": {
+          "display_price": "RUB 27,770",
+          "extracted_display_price": 27770,
+          "lowest": "RUB 32,245",
+          "extracted_lowest": 32245,
+          "before_taxes_fees": "RUB 27,770",
+          "extracted_before_taxes_fees": 27770,
+          "after_taxes_fees": "RUB 32,245",
+          "extracted_after_taxes_fees": 32245
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Nov 2",
+        "free_cancellation_until_time": "11:58 PM"
+      },
+      {
+        "source": "Expedia.ca",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 11,913",
+          "extracted_display_price": 11913,
+          "lowest": "RUB 13,798",
+          "extracted_lowest": 13798,
+          "before_taxes_fees": "RUB 11,913",
+          "extracted_before_taxes_fees": 11913,
+          "after_taxes_fees": "RUB 13,798",
+          "extracted_after_taxes_fees": 13798
+        },
+        "total_rate": {
+          "display_price": "RUB 35,740",
+          "extracted_display_price": 35740,
+          "lowest": "RUB 41,394",
+          "extracted_lowest": 41394,
+          "before_taxes_fees": "RUB 35,740",
+          "extracted_before_taxes_fees": 35740,
+          "after_taxes_fees": "RUB 41,394",
+          "extracted_after_taxes_fees": 41394
+        },
+        "free_cancellation": true,
+        "free_cancellation_until_date": "Jun 15",
+        "free_cancellation_until_time": "4:00 AM"
+      },
+      {
+        "source": "Vio.com",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 12,654",
+          "extracted_display_price": 12654,
+          "lowest": "RUB 14,432",
+          "extracted_lowest": 14432,
+          "before_taxes_fees": "RUB 12,654",
+          "extracted_before_taxes_fees": 12654,
+          "after_taxes_fees": "RUB 14,432",
+          "extracted_after_taxes_fees": 14432
+        },
+        "total_rate": {
+          "display_price": "RUB 37,962",
+          "extracted_display_price": 37962,
+          "lowest": "RUB 43,295",
+          "extracted_lowest": 43295,
+          "before_taxes_fees": "RUB 37,962",
+          "extracted_before_taxes_fees": 37962,
+          "after_taxes_fees": "RUB 43,295",
+          "extracted_after_taxes_fees": 43295
+        }
+      },
+      {
+        "source": "Qantas Hotels",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 14,588",
+          "extracted_display_price": 14588,
+          "lowest": "RUB 14,588",
+          "extracted_lowest": 14588
+        },
+        "total_rate": {
+          "display_price": "RUB 43,765",
+          "extracted_display_price": 43765,
+          "lowest": "RUB 43,765",
+          "extracted_lowest": 43765
+        }
+      },
+      {
+        "source": "Tripening Hotels",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 14,206",
+          "extracted_display_price": 14206,
+          "lowest": "RUB 14,206",
+          "extracted_lowest": 14206
+        },
+        "total_rate": {
+          "display_price": "RUB 42,618",
+          "extracted_display_price": 42618,
+          "lowest": "RUB 42,618",
+          "extracted_lowest": 42618
+        }
+      },
+      {
+        "source": "Traveluro",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 11,891",
+          "extracted_display_price": 11891,
+          "lowest": "RUB 13,080",
+          "extracted_lowest": 13080,
+          "before_taxes_fees": "RUB 11,891",
+          "extracted_before_taxes_fees": 11891,
+          "after_taxes_fees": "RUB 13,080",
+          "extracted_after_taxes_fees": 13080
+        },
+        "total_rate": {
+          "display_price": "RUB 35,672",
+          "extracted_display_price": 35672,
+          "lowest": "RUB 39,241",
+          "extracted_lowest": 39241,
+          "before_taxes_fees": "RUB 35,672",
+          "extracted_before_taxes_fees": 35672,
+          "after_taxes_fees": "RUB 39,241",
+          "extracted_after_taxes_fees": 39241
+        }
+      },
+      {
+        "source": "Clicktrip.com",
+        "num_guests": 2,
+        "rate_per_night": {
+          "display_price": "RUB 11,917",
+          "extracted_display_price": 11917,
+          "lowest": "RUB 12,491",
+          "extracted_lowest": 12491,
+          "before_taxes_fees": "RUB 11,917",
+          "extracted_before_taxes_fees": 11917,
+          "after_taxes_fees": "RUB 12,491",
+          "extracted_after_taxes_fees": 12491
+        },
+        "total_rate": {
+          "display_price": "RUB 35,751",
+          "extracted_display_price": 35751,
+          "lowest": "RUB 37,472",
+          "extracted_lowest": 37472,
+          "before_taxes_fees": "RUB 35,751",
+          "extracted_before_taxes_fees": 35751,
+          "after_taxes_fees": "RUB 37,472",
+          "extracted_after_taxes_fees": 37472
+        }
+      }
+    ],
+    "property_token": "property-test-five-dubai",
+    "search_metadata": {
+      "status": "Success",
+      "created_at": "2026-10-27T02:03:49.586Z",
+      "processed_at": "2026-10-27T02:03:49.587Z"
+    },
+    "search_parameters": {
+      "engine": "google_hotels",
+      "check_in_date": "2026-11-10",
+      "check_out_date": "2026-11-13",
+      "adults": 1,
+      "children": 0,
+      "currency": "RUB",
+      "property_token": "property-test-five-dubai"
+    }
+  }
+}

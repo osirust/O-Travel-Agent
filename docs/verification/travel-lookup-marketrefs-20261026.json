@@ -1,0 +1,184 @@
+{
+  "checked_at": "2026-10-26T12:50:03.356143+00:00",
+  "source_commit": "f52",
+  "native_source": "/home/aegml/projects/otravel-after80-20261026",
+  "native_provider_sha256": "0574e12c6bca0f61c097cf64ddbcc9c8d28b68568e7e22b801d9384bd596c3e8",
+  "manifest_sha256_parent_verified": "2155ab3c8e00c3ccfe9f037057cb42ac7e95736d34644df01ee3762894bd8fdc",
+  "attempt": "2",
+  "prior_preflight_http": 0,
+  "max_external_http": 6,
+  "http": [
+    {
+      "sequence": 1,
+      "check": "liteapi_native_spb_lookup",
+      "provider_host": "api.liteapi.travel",
+      "method": "GET",
+      "at": "2026-10-26T12:50:03.417806+00:00",
+      "http_status": 200
+    },
+    {
+      "sequence": 2,
+      "check": "liteapi_ru_city_dictionary",
+      "provider_host": "api.liteapi.travel",
+      "method": "GET",
+      "at": "2026-10-26T12:50:13.947691+00:00",
+      "http_status": 200
+    },
+    {
+      "sequence": 3,
+      "check": "liteapi_dictionary_spb_lookup",
+      "provider_host": "api.liteapi.travel",
+      "method": "GET",
+      "at": "2026-10-26T12:50:14.099011+00:00",
+      "http_status": 200
+    },
+    {
+      "sequence": 4,
+      "check": "serpapi_free_account_gate",
+      "provider_host": "serpapi.com",
+      "method": "GET",
+      "at": "2026-10-26T12:50:14.284902+00:00",
+      "http_status": 200
+    },
+    {
+      "sequence": 5,
+      "check": "serpapi_hotels_spb",
+      "provider_host": "serpapi.com",
+      "method": "GET",
+      "at": "2026-10-26T12:50:14.656641+00:00",
+      "http_status": 200
+    },
+    {
+      "sequence": 6,
+      "check": "serpapi_hotels_istanbul",
+      "provider_host": "serpapi.com",
+      "method": "GET",
+      "at": "2026-10-26T12:50:16.639517+00:00",
+      "http_status": 200
+    }
+  ],
+  "checks": [
+    {
+      "name": "liteapi_native_spb_lookup",
+      "status": "RESPONSE_RECEIVED",
+      "rows_count": 0,
+      "source_type": "SANDBOX_STATIC_CATALOGUE"
+    },
+    {
+      "name": "liteapi_ru_city_dictionary",
+      "status": "RESPONSE_RECEIVED",
+      "rows_count": 641,
+      "source_type": "SANDBOX_STATIC_CATALOGUE"
+    },
+    {
+      "name": "liteapi_dictionary_spb_lookup",
+      "status": "RESPONSE_RECEIVED",
+      "rows_count": 3,
+      "source_type": "SANDBOX_STATIC_CATALOGUE"
+    },
+    {
+      "name": "serpapi_free_account_gate",
+      "status": "RESPONSE_RECEIVED",
+      "free_plan": true,
+      "searches_left_before": 248
+    },
+    {
+      "name": "serpapi_hotels_spb",
+      "status": "RESPONSE_RECEIVED",
+      "offers_count": 20,
+      "source_types": [
+        "LIVE_INDICATIVE"
+      ],
+      "price_kinds": [
+        "INDICATIVE_STAY_TOTAL"
+      ],
+      "currencies": [
+        "RUB"
+      ],
+      "retrieved_at": "2026-10-26T12:50:16.637310+00:00",
+      "as_of": "2026-10-26T12:50:14.633Z",
+      "sample_amount_minor": 603800,
+      "mandatory_fees_verified": false,
+      "capacity_verified": false,
+      "availability_verified": false
+    },
+    {
+      "name": "serpapi_hotels_istanbul",
+      "status": "RESPONSE_RECEIVED",
+      "offers_count": 18,
+      "source_types": [
+        "LIVE_INDICATIVE"
+      ],
+      "price_kinds": [
+        "INDICATIVE_STAY_TOTAL"
+      ],
+      "currencies": [
+        "RUB"
+      ],
+      "retrieved_at": "2026-10-26T12:50:19.003001+00:00",
+      "as_of": "2026-10-26T12:50:16.615Z",
+      "sample_amount_minor": 1553700,
+      "mandatory_fees_verified": false,
+      "capacity_verified": false,
+      "availability_verified": false
+    }
+  ],
+  "llm_calls": 0,
+  "supplier_orders": 0,
+  "runtime_or_db_mutations": 0,
+  "primary_sources": [
+    "https://docs.liteapi.travel/reference/get_data-cities",
+    "https://docs.liteapi.travel/docs/preparing-a-list-of-hotel-ids"
+  ],
+  "limits": [
+    "Sandbox catalogue does not prove production availability.",
+    "SerpApi market prices are LIVE_INDICATIVE, not bookable supplier totals.",
+    "No complete multiroom/group qualification was attempted."
+  ],
+  "lookup_analysis": {
+    "matching_spb_labels_count": 1,
+    "supplier_response_city_label": "St. Petersburg",
+    "native_lookup_rows": 0,
+    "dictionary_lookup_rows": 3,
+    "conclusion": "CITY_LABEL_MISMATCH_CONFIRMED"
+  },
+  "status": "COMPLETED_BOUNDED_READ_DIAGNOSIS",
+  "external_http_count": 6,
+  "completed_at": "2026-10-26T12:50:19.004834+00:00",
+  "currency_display_evidence": [
+    {
+      "check": "serpapi_hotels_spb",
+      "response_search_parameters_currency": "RUB",
+      "displayed_total_price_strings": [
+        "RUB 6,038",
+        "RUB 30,780",
+        "RUB 13,740"
+      ],
+      "display_strings_have_ruble_marker": true,
+      "classification": "response display consistency only; request echo alone is not independent currency verification"
+    },
+    {
+      "check": "serpapi_hotels_istanbul",
+      "response_search_parameters_currency": "RUB",
+      "displayed_total_price_strings": [
+        "RUB 15,537",
+        "RUB 16,539",
+        "RUB 18,855"
+      ],
+      "display_strings_have_ruble_marker": true,
+      "classification": "response display consistency only; request echo alone is not independent currency verification"
+    }
+  ],
+  "preserved_preflight": {
+    "attempt": "1",
+    "external_http_count": 0,
+    "status": "BLOCKED_BEFORE_NETWORK",
+    "reason": "new_source_env_has_no_travel_keys",
+    "receipt_private": "/home/aegml/travel-diagnosis-20261026/preflight-1.json"
+  },
+  "evidence_integrity": {
+    "raw_response_sha256": "b577d3cd5a640c289c4b866202b27ade555472618f8daa5e35e32dac1aa45a2c",
+    "runner_sha256": "fed0db95272aafc7a505f5dca112f8e8fd35299484e494ff1c1aa070af914d6e",
+    "raw_vendor_response_records": 6
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-27",
+  "checked_at_utc": "2026-10-27T04:33:46.850505+00:00",
+  "status": "ACTUAL_KEY_METADATA_200",
+  "provider": "openrouter",
+  "endpoint": "GET /api/v1/key",
+  "metadata_http_calls": 1,
+  "inference_calls": 0,
+  "automatic_retries": 0,
+  "app_counter_reset": false,
+  "database_mutations": 0,
+  "native_changes": 0,
+  "profile_changes": 0,
+  "billing_changes": 0,
+  "original_before_run_receipt_preserved": "docs/verification/openrouter-quota-20261027.json",
+  "primary_reference": "https://openrouter.ai/docs/api/api-reference/api-keys/get-current-key",
+  "http_status": 200,
+  "data": {
+    "is_free_tier": true,
+    "limit": 0.01,
+    "limit_remaining": 0.01,
+    "usage": 0,
+    "usage_daily": 0,
+    "usage_weekly": 0,
+    "usage_monthly": 0,
+    "free_model_daily_requests": {
+      "used": 39,
+      "limit": 50,
+      "remaining": 11
+    }
+  },
+  "interpretation": "Free-model daily counter is a vendor snapshot, separate from app engineering budget. It does not guarantee a model provider has available capacity.",
+  "latency_ms": 474
+}

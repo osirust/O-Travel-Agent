@@ -1,0 +1,84 @@
+{
+  "format": "otravel.frontend_source_error_projection.v1",
+  "created_at_utc": "2026-10-28T17:50:31.116419+00:00",
+  "finding_id": "HARNESS-006-GOOGLE-FLIGHTS-NO-MATCHES-PROJECTION-001",
+  "status": "VIEW_FIX_UNIT_AND_PRODUCTION_BUILD_VERIFIED_NOT_LIVE_DEPLOYED_BY_AGENT",
+  "reported_actual_trigger": {
+    "run_id": "42bbeef4-b6e6-43aa-8143-c0edec832abc",
+    "source": "parent readonly PG and final UI recording",
+    "backend_error_code": "NO_MATCHES",
+    "backend_message_prefix": "Google Flights не вернул предложений",
+    "problem": "The canonical generic assistant failure hid the specific empty-source result after a later successful hotel search replaced the latest banner."
+  },
+  "change": "session.sync adds a view-only fixed-code source error projection only to the matching assistant failure. messageText explains Google Flights NO_MATCHES with an explicit limitation and next step. Canonical message.text/history, trip, runs, requests and backend are not rewritten.",
+  "binding_guards": [
+    "assistant role",
+    "exact canonical generic failure text",
+    "exact message.run_id == run.run_id",
+    "run.session_id == active snapshot session",
+    "run.status == failed",
+    "run.error.code == NO_MATCHES",
+    "fixed Google Flights error prefix; no raw provider text or arbitrary run.error fields rendered"
+  ],
+  "rendered_message": "Google Flights не вернул предложений по этому маршруту и датам. Это не доказывает, что рейсов нет. Проверьте маршрут и даты или попробуйте поиск позже.",
+  "unchanged_scope": [
+    "All other error codes and other NO_MATCHES sources keep previous rendering.",
+    "Substantive assistant messages keep their own text.",
+    "No source retry, new request, hidden alternative, canonical state mutation or error suppression added."
+  ],
+  "files_sha256": {
+    "frontend/src/lib/chat.js": "dd39f31041be0c0406d4088fd00a6574c99445c15934530baaac3b3a265be8bc",
+    "frontend/src/lib/session.js": "768eee6f8f3987fb1ecec00d7ec8f098a3cd87eeccfc3449cb3c7cbf7d5345d9",
+    "frontend/tests/source-error-projection.test.js": "a6e3b146bbb7efd8bd2919d3a2457f37cf290d41a5647192a02893372f6fbebb"
+  },
+  "unit": {
+    "command": "node --test tests/*.test.js",
+    "tests": 41,
+    "pass": 41,
+    "fail": 0,
+    "skip": 0,
+    "existing_tests": 38,
+    "new_tests": 3,
+    "meaningful_new_controls": [
+      "Exact run+owned-session binding and immutable history.",
+      "A newly constructed TravelSession after reload restores the failure alongside a newer successful hotel run; no POST/body generated.",
+      "Other error codes, other source names and substantive replies remain unchanged."
+    ],
+    "initial_new_red_preserved_in_tool_output": "2FAIL/39PASS. New Cyrillic-prefix matcher originally used JavaScript ASCII word-boundary; changed only boundary to whitespace/punctuation/end lookahead. Existing assertions not weakened."
+  },
+  "build": {
+    "command": "docker build --label otravel.owner=frontend-contract-20261028 -t otravel-frontend-source-errors:20261028-r27 -f frontend/Dockerfile frontend",
+    "status": "PASS",
+    "vite_version": "8.3.5",
+    "transformed_modules": 1958,
+    "vite_build_ms": 322,
+    "js_asset": "/assets/index-EBmwD5Kp.js",
+    "js_kb": 342.51,
+    "js_gzip_kb": 105.24,
+    "image_tag": "otravel-frontend-source-errors:20261028-r27",
+    "image_id": "sha256:dfa645754428b4e80eb200bbe4e800a062d04cf50a09c1d80c9ffcc74a995d3e"
+  },
+  "asset_export": {
+    "path": "/home/aegml/checks/frontend-source-errors-live-assets-20261028",
+    "receipt_sha256": "f2bb26b78e81a6046848113f83687883a889d894be6425b1d457cd2780262012",
+    "exact_image_and_owner_label_verified": true,
+    "extract_container_started": false,
+    "extract_container_removed": true,
+    "assets_sha256": {
+      "index.html": "0950580ffb9865bf473f04d1cf73f0494f99c0268cb631ed7622761ba1b3d06a",
+      "assets/index-BEdBXpxi.css": "7b73064b266aec109e1d33c9485148256f2a6466b61649f7fc6a7232d620b65c",
+      "assets/index-EBmwD5Kp.js": "b17f640466b8b31a47e08d5d6204cf75c33f157509b17ef984fc2a1d88458233"
+    }
+  },
+  "boundaries": {
+    "backend_python_changes": false,
+    "runtime8084_changes": false,
+    "live_frontend_updated_by_agent": false,
+    "container_start_stop_or_recreate": false,
+    "old_live_assets_deleted": false,
+    "actual_model_or_supplier_calls": 0,
+    "git_stage_or_commit": false,
+    "browser_validation_after_this_fix": false
+  },
+  "next": "Root copies exported static assets into the already running owned frontend, retaining old assets; verifies the existing failed run text after reload. No backend or container restart required."
+}

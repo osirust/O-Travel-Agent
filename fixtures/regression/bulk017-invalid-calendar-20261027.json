@@ -1,0 +1,159 @@
+{
+  "format": "otravel.actual_invalid_calendar.v1",
+  "finding_id": "HARNESS-004-INVALID-CALENDAR-ROLLOVER-001",
+  "source_case": "ZAI100-017",
+  "source_turn": 8,
+  "source_file_sha256": "a89b4dcd760bdac7c5523f073c94b83a07aa0a891447cdc9399db0d4a7f8aabb",
+  "source_reported_by_parent": "a36d76ef / cd021acb (immutable bulk runtime)",
+  "input": "Перенеси только выезд на 31 ноября 2026 года.",
+  "before": {
+    "legs": [
+      {
+        "id": "leg-21e53974-5ac3-4ea4-b480-d39f179897b7",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Москва",
+        "departure_date": "2026-11-25"
+      },
+      {
+        "id": "leg-f1e81aaf-92fd-4224-8339-26a8dce7e477",
+        "mode": "flight",
+        "origin": "Москва",
+        "destination": "Казань",
+        "departure_date": "2026-11-30"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Москва",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-25",
+        "hotel_id": null,
+        "check_out": "2026-11-30"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 8000000
+    },
+    "groups": [],
+    "origin": "Казань",
+    "trip_id": "bulk017-calendar-owned",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 4
+  },
+  "pending": null,
+  "raw": {
+    "reply": "Я перенес выезд из Москвы на 1 декабря 2026 года. Теперь ваше пребывание в Москве будет длиться 6 ночей с 25 ноября по 1 декабря.",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [],
+    "conflicts": [],
+    "operations": [
+      {
+        "type": "upsert_stay",
+        "value": {
+          "city": "Москва",
+          "check_in": "2026-11-25",
+          "check_out": "2026-12-01",
+          "requested_nights": 6
+        },
+        "target_id": "new-stay-1"
+      },
+      {
+        "type": "update_traveler",
+        "value": {
+          "age": null
+        },
+        "target_id": "new-traveler-1"
+      },
+      {
+        "type": "update_traveler",
+        "value": {
+          "age": null
+        },
+        "target_id": "new-traveler-2"
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "old_checked": {
+    "reply": "Я перенес выезд из Москвы на 1 декабря 2026 года. Теперь ваше пребывание в Москве будет длиться 6 ночей с 25 ноября по 1 декабря.",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [],
+    "conflicts": [],
+    "operations": [
+      {
+        "type": "upsert_stay",
+        "value": {
+          "city": "Москва",
+          "check_in": "2026-11-25",
+          "check_out": "2026-12-01",
+          "requested_nights": 6
+        },
+        "target_id": "new-stay-1"
+      },
+      {
+        "type": "update_traveler",
+        "value": {
+          "age": null
+        },
+        "target_id": "new-traveler-1"
+      },
+      {
+        "type": "update_traveler",
+        "value": {
+          "age": null
+        },
+        "target_id": "new-traveler-2"
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "old_reply": "Собрана оценочная поездка. Источник каждого компонента указан отдельно; оформление только имитируется.\n\nВ текущем расчёте: проживание — демонстрационный расчёт (DEMO); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nПроживание: Москва: в ответе не подтверждены все обязательные сборы.\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика.",
+  "old_tool_starts": 5,
+  "scope": "Raw input/contract preserved; only opaque trip_id replaced by synthetic ownership label. No bearer, key or supplier IDs copied."
+}

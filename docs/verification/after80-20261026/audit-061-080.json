@@ -1,0 +1,1485 @@
+{
+  "schema_revision": 1,
+  "scope": "Full read-only review of ZAI100-061..080; no replay or code change in this audit step",
+  "source": {
+    "path": "E:\\work\\aegml\\.local\\evaluation\\zai-full100-20261026\\dialogues.jsonl",
+    "bytes": 10798957,
+    "sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "original_modified": false
+  },
+  "reviewed_runtime_commit": "85160ef",
+  "compared_E_commit": "e71875ba056a3b717c0e54da27ad3122b7d87abf",
+  "review_method": "Every user/agent turn read, before/after wrappers compared as reversible structured deltas, events/model metadata and all recorded actions reviewed. Economic plan projections are not live availability.",
+  "limitations": [
+    "Raw model extraction/prose is absent in this shard; operation counts/speech_act and validated state effects cannot prove which exact model arguments caused failures.",
+    "Author expected strings are reviewed expectations, not automatically normative machine oracles; actual before-state takes precedence after failed turns.",
+    "Static comparison of new E code is not actual strong-API replay; no case is declared fixed/full-PASS from changed mechanisms alone.",
+    "No external APIs, model calls, database writes, runtime changes, Git changes, or original corpus modifications during this audit."
+  ],
+  "cases": [
+    {
+      "case_id": "ZAI100-061",
+      "source_line_sha256": "92e30b656098e9a58002a0f8dcf1dac53f061b5bcfbc3337936a62bff655c78d",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-061:T1",
+        "ZAI100-061:T2",
+        "ZAI100-061:T3",
+        "ZAI100-061:T4",
+        "ZAI100-061:T5",
+        "ZAI100-061:T6",
+        "ZAI100-061:T7",
+        "ZAI100-061:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-061:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 complete Kazan→Moscow compound intake",
+        "T2 changed only origin",
+        "T3 correctly applied minus20%",
+        "T5 one-night extension preserved checkin",
+        "T6 lowest_total preserved numeric budget",
+        "A1 DEMO preview200, no supplier booking"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-061-01",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-061:T4",
+            "ZAI100-061:T7",
+            "ZAI100-061:T8"
+          ],
+          "observed_fact": "Saved facts/night count/history comparison were not answered; generic no-change/DEMO text replaced the requested explanation.",
+          "root_cause_or_hypothesis": "Harness reply selection discards model prose; exact raw reply unavailable.",
+          "general_fix": "Canonical multi-topic facts and revision-diff rendering; do not trigger search for read-only questions.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-062",
+      "source_line_sha256": "550602920ddd76b2874921e3ac78e0d41e5f6ce9524ea308e8dbdcc70e2169c5",
+      "turn_count": 10,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-062:T1",
+        "ZAI100-062:T2",
+        "ZAI100-062:T3",
+        "ZAI100-062:T4",
+        "ZAI100-062:T5",
+        "ZAI100-062:T6",
+        "ZAI100-062:T7",
+        "ZAI100-062:T8",
+        "ZAI100-062:T9",
+        "ZAI100-062:T10"
+      ],
+      "model_calls": 10,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 10
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-062:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 retained adult ages65/67",
+        "T4 absolute checkout18Dec recovered",
+        "T6 explicit135000 corrected bad relative sum",
+        "T7 changed origin only",
+        "T9 explicit135000 repaired repeated increment",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-062-01",
+          "severity": "P1",
+          "layer": "money",
+          "refs": [
+            "ZAI100-062:T5"
+          ],
+          "observed_fact": "130000 +5000 RUB became130500, expected135000; actual amount_minor13000000→13050000.",
+          "root_cause_or_hypothesis": "Relative amount grounding/unit scale; source money.py unchanged between85160ef/e71875b.",
+          "general_fix": "Parse exact major-unit delta with currency exponent; pure before-state replay.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-062-02",
+          "severity": "P1",
+          "layer": "money",
+          "refs": [
+            "ZAI100-062:T8"
+          ],
+          "observed_fact": "Request to restore original origin while KEEPING the existing +5000 raised135000→140000.",
+          "root_cause_or_hypothesis": "Retention phrase/history delta reapplied as a new budget edit.",
+          "general_fix": "Keep/reminder clauses must be no-op; only current affirmative monetary change creates a delta.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-062-03",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-062:T3"
+          ],
+          "observed_fact": "Clear checkout18Dec with original checkin9Dec produced unaddressed generic clarification and no date edit.",
+          "root_cause_or_hypothesis": "Model conflict/unknown or operation normalization; raw contract absent so exact blame unknown.",
+          "general_fix": "Bind date-specific reason/target; never emit field=None loop for known date conflict.",
+          "status_compared_to_E": "OPEN_EXACT_LANGUAGE",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-062-04",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-062:T2",
+            "ZAI100-062:T10"
+          ],
+          "observed_fact": "Morning capability query and final roster/date/budget query were not answered.",
+          "root_cause_or_hypothesis": "Generic ASK/no-op rendering and repeated search.",
+          "general_fix": "Read-only response from facts/capabilities; do not invent actual flight hours.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-063",
+      "source_line_sha256": "926ae2cf0b34592cf10219ec79d4322ba41fcc4dc7533600fe5acf31d91f1f98",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-063:T1",
+        "ZAI100-063:T2",
+        "ZAI100-063:T3",
+        "ZAI100-063:T4",
+        "ZAI100-063:T5",
+        "ZAI100-063:T6",
+        "ZAI100-063:T7",
+        "ZAI100-063:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-063:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 adult/student not turned into child;30k correct",
+        "T2 lowest_total without numeric-zero budget",
+        "T4 explicit35000 recovered",
+        "T5 typo checkout+1day retained checkin",
+        "T6 did not invent breakfast hard constraint",
+        "T7 absolute40000 correct",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-063-01",
+          "severity": "P1",
+          "layer": "money",
+          "refs": [
+            "ZAI100-063:T3"
+          ],
+          "observed_fact": "30000 +5000 RUB became30500 (amount_minor3000000→3050000), expected35000.",
+          "root_cause_or_hypothesis": "Relative grounding major/minor scale.",
+          "general_fix": "Same exact currency-delta fix as062T5.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-063-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-063:T8"
+          ],
+          "observed_fact": "Question whether prices/order are DEMO received only a generic no-change sentence.",
+          "root_cause_or_hypothesis": "Saved source facts not rendered.",
+          "general_fix": "Render actual own-current source flags and absence of supplier order; no new search.",
+          "status_compared_to_E": "MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-064",
+      "source_line_sha256": "1a8efa4803bf47f06a0572bc38df225b5bc1a924b722279d90bcc4927b542e89",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-064:T1",
+        "ZAI100-064:T2",
+        "ZAI100-064:T3",
+        "ZAI100-064:T4",
+        "ZAI100-064:T5",
+        "ZAI100-064:T6",
+        "ZAI100-064:T7",
+        "ZAI100-064:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-064:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct2adults+child7 and date range",
+        "T2 hypothesis did not mutate age",
+        "T3 atomically changed same child7→8 and120000→110000",
+        "T5 breakfast soft(hardFalse)",
+        "T6 removed only breakfast and added lowest_total",
+        "T7 changed checkout only",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-064-01",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-064:T2",
+            "ZAI100-064:T4",
+            "ZAI100-064:T8"
+          ],
+          "observed_fact": "Hypothesis/existing child age+budget/final multi-topic summary yielded only DEMO/no-change boilerplate.",
+          "root_cause_or_hypothesis": "Reply selection ignores factual answer; no model raw text.",
+          "general_fix": "Canonical structured summary and supported hypothetical capability answer.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-065",
+      "source_line_sha256": "0b1510d257f413615e82a79f02417c31aa319d15e8f9993dba251c6c5c4b15e3",
+      "turn_count": 10,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-065:T1",
+        "ZAI100-065:T2",
+        "ZAI100-065:T3",
+        "ZAI100-065:T4",
+        "ZAI100-065:T5",
+        "ZAI100-065:T6",
+        "ZAI100-065:T7",
+        "ZAI100-065:T8",
+        "ZAI100-065:T9",
+        "ZAI100-065:T10"
+      ],
+      "model_calls": 10,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 10
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-065:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct3adult150000whole_trip",
+        "T2 per-person arithmetic question did not change budget",
+        "T3 explicit135000 correct",
+        "T6 date range recovered",
+        "T8 tentative fourth adult not added",
+        "T9 explicit fourth adult added exactly once with room allocation",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-065-01",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-065:T5"
+          ],
+          "observed_fact": "Unambiguous checkin22Nov/checkout26Nov produced generic field=None clarification; recoveredT6.",
+          "root_cause_or_hypothesis": "Raw conflict/unknown unavailable; existing full-month/compound date interpretation still depends on LLM.",
+          "general_fix": "Specific date binding and known-slot validation; preserve other facts.",
+          "status_compared_to_E": "OPEN_EXACT_LANGUAGE",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-065-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-065:T2",
+            "ZAI100-065:T4",
+            "ZAI100-065:T7",
+            "ZAI100-065:T8",
+            "ZAI100-065:T10"
+          ],
+          "observed_fact": "No answer to per-person arithmetic, roster/budget, plan comparison, hypothesis, final summary.",
+          "root_cause_or_hypothesis": "Generic plan-count replies, including several ASK responses.",
+          "general_fix": "Read-only comparisons of actual batch plus deterministic arithmetic/roster.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-066",
+      "source_line_sha256": "dc750ac42a75dda8223771a95f0af752ca99e6e245f0c601e92704ffe21731da",
+      "turn_count": 9,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-066:T1",
+        "ZAI100-066:T2",
+        "ZAI100-066:T3",
+        "ZAI100-066:T4",
+        "ZAI100-066:T5",
+        "ZAI100-066:T6",
+        "ZAI100-066:T7",
+        "ZAI100-066:T8",
+        "ZAI100-066:T9"
+      ],
+      "model_calls": 9,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 9
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-066:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct RUB100000 route",
+        "T2 currency-display question did not mutate",
+        "T5 new explicit RUB115000 recovered without FX conversion",
+        "T7 checkout8Dec only",
+        "T8 lowest_total preserved115000",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-066-01",
+          "severity": "P1",
+          "layer": "money",
+          "refs": [
+            "ZAI100-066:T3",
+            "ZAI100-066:T4"
+          ],
+          "observed_fact": "Explicit2000USD became amount_minor200000000 (2millionUSD), not200000; worded two-thousand retry did not repair.",
+          "root_cause_or_hypothesis": "Scale/lexical currency grounding; not a valid FX conversion.",
+          "general_fix": "Currency-aware amount parser and exact exponent; never infer thousand suffix from embedded text.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-066-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-066:T2",
+            "ZAI100-066:T6",
+            "ZAI100-066:T9"
+          ],
+          "observed_fact": "Currency capability/current amount/DEMO question not answered; generic plan or geography fallback.",
+          "root_cause_or_hypothesis": "Reply orchestration.",
+          "general_fix": "Canonical currency+amount and source-aware capability response.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-067",
+      "source_line_sha256": "cf3331802c4535d227678e5535999b36f2eba95bf1b09652a9f18aa6a8e7facb",
+      "turn_count": 10,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-067:T1",
+        "ZAI100-067:T2",
+        "ZAI100-067:T3",
+        "ZAI100-067:T4",
+        "ZAI100-067:T5",
+        "ZAI100-067:T6",
+        "ZAI100-067:T7",
+        "ZAI100-067:T8",
+        "ZAI100-067:T9",
+        "ZAI100-067:T10"
+      ],
+      "model_calls": 10,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 9,
+        "failed": 1
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-067:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct compound intake",
+        "T2 typo month moved only checkin",
+        "T6 full range recovered11–17Nov",
+        "T8 exact72000 + adult removal preserved child5",
+        "T9 preference preserved latest facts",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-067-01",
+          "severity": "P1",
+          "layer": "money",
+          "refs": [
+            "ZAI100-067:T7"
+          ],
+          "observed_fact": "80000 minus10percent became79990 (amount_minor8000000→7999000), expected72000.",
+          "root_cause_or_hypothesis": "Word percent suffix fell through as absolute ten-ruble delta.",
+          "general_fix": "Percentage grammar for numeric and word forms with decimal arithmetic.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-067-02",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-067:T4"
+          ],
+          "observed_fact": "Date-only edit failed INVALID_LLM_OPERATION, state retained.",
+          "root_cause_or_hypothesis": "Invalid model operation; raw arguments/schema-error loc absent in old report.",
+          "general_fix": "Preserve and surface validation diagnostics; controlled operation reproduction before choosing fix.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-067-03",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-067:T5"
+          ],
+          "observed_fact": "Six nights from11Nov produced unbound generic clarification; T6 recovered.",
+          "root_cause_or_hypothesis": "Model/harness conflict path not addressable.",
+          "general_fix": "Concrete date question or validated duration interpretation.",
+          "status_compared_to_E": "OPEN_EXACT_LANGUAGE",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-067-04",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-067:T3",
+            "ZAI100-067:T10"
+          ],
+          "observed_fact": "Night-count/final summary unanswered.",
+          "root_cause_or_hypothesis": "ASK/no-op generic rendering.",
+          "general_fix": "Canonical date arithmetic and multi-topic summary.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-068",
+      "source_line_sha256": "20b1692f0ac3a36ca9e9d007d9b72b4899d16517e44b418da26ad4650bdb405c",
+      "turn_count": 9,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-068:T1",
+        "ZAI100-068:T2",
+        "ZAI100-068:T3",
+        "ZAI100-068:T4",
+        "ZAI100-068:T5",
+        "ZAI100-068:T6",
+        "ZAI100-068:T7",
+        "ZAI100-068:T8",
+        "ZAI100-068:T9"
+      ],
+      "model_calls": 9,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8,
+        "failed": 1
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-068:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct compound intake",
+        "T2 explicit day-month slash disambiguation retained6Nov",
+        "T6 full interval recovered6–10Nov",
+        "T7 new55000 correct",
+        "T8 origin changed only",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-068-01",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-068:T5"
+          ],
+          "observed_fact": "Unambiguous10/11/2026 checkout failed INVALID_LLM_OPERATION; state retained.",
+          "root_cause_or_hypothesis": "Raw invalid model contract not recorded.",
+          "general_fix": "Exact slash-date fixture/validation feedback; do not guess June/November.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-068-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-068:T3",
+            "ZAI100-068:T4",
+            "ZAI100-068:T9"
+          ],
+          "observed_fact": "Format capability/date display/final date-origin-budget summary unanswered.",
+          "root_cause_or_hypothesis": "Generic ASK/plan output.",
+          "general_fix": "Render saved dates explicitly and explain unsupported format rules honestly.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-069",
+      "source_line_sha256": "dcd82d67667d3390692e5462bdf62c27a765c2fc733bfe09d8374ec1ec5ecb57",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-069:T1",
+        "ZAI100-069:T2",
+        "ZAI100-069:T3",
+        "ZAI100-069:T4",
+        "ZAI100-069:T5",
+        "ZAI100-069:T6",
+        "ZAI100-069:T7",
+        "ZAI100-069:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 6,
+        "failed": 2
+      },
+      "actions": [],
+      "observed_successes": [
+        "T1 correct complete intake",
+        "T2 unselected alternative dates14/15 did not mutate original13Nov",
+        "All failed edits retained prior valid9–13Nov and65000"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-069-01",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-069:T4",
+            "ZAI100-069:T8"
+          ],
+          "observed_fact": "Explicit chosen checkout14Nov repeatedly failed INVALID_LLM_OPERATION; final date remained13Nov.",
+          "root_cause_or_hypothesis": "Exact invalid arguments absent; second failure said dynamic operation contract violation.",
+          "general_fix": "Capture invalid schema path; bound exact stay/date operation or actionable clarification.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-069-02",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-069:T5",
+            "ZAI100-069:T6",
+            "ZAI100-069:T7"
+          ],
+          "observed_fact": "Duration/full interval retries looped field=None clarification; request to name missing field got generic topic help.",
+          "root_cause_or_hypothesis": "Conflict rendering discards concrete unresolved field.",
+          "general_fix": "Address stable stay/date and expose exact blocking fact; reject generic loops.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-069-03",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-069:T2",
+            "ZAI100-069:T3"
+          ],
+          "observed_fact": "No alternative-night-count comparison; tentative choices correctly stayed uncommitted.",
+          "root_cause_or_hypothesis": "Read-only answer not rendered.",
+          "general_fix": "Compute hypothetical night deltas without changing trip.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-070",
+      "source_line_sha256": "73a387877937c207685d4e8f3364c9f1280f268f4464c58edba21b5a7176a706",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-070:T1",
+        "ZAI100-070:T2",
+        "ZAI100-070:T3",
+        "ZAI100-070:T4",
+        "ZAI100-070:T5",
+        "ZAI100-070:T6",
+        "ZAI100-070:T7",
+        "ZAI100-070:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-070:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 complete intake",
+        "T2 origin changed only",
+        "T5 plus10% correctly90000→99000",
+        "T6 checkin21Nov only",
+        "T7 lowest_total preserved99000",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-070-01",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-070:T3",
+            "ZAI100-070:T4",
+            "ZAI100-070:T8"
+          ],
+          "observed_fact": "Antalya-country FAQ, current route and before/after summary got only plan counts.",
+          "root_cause_or_hypothesis": "Model ASK factual subject not exposed in old corpus; harness generic branch/research gap.",
+          "general_fix": "Curated geography fact plus canonical route and revision diff.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-071",
+      "source_line_sha256": "597e6eb5dd3ec220baa2eeec9e35047940292346fb370c05fcb7851edda549b2",
+      "turn_count": 9,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-071:T1",
+        "ZAI100-071:T2",
+        "ZAI100-071:T3",
+        "ZAI100-071:T4",
+        "ZAI100-071:T5",
+        "ZAI100-071:T6",
+        "ZAI100-071:T7",
+        "ZAI100-071:T8",
+        "ZAI100-071:T9"
+      ],
+      "model_calls": 9,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 9
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-071:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct complete intake",
+        "T5 duration6nights recovered10–16Dec",
+        "T6 absolute70000 correct",
+        "T7 refundable soft not hard",
+        "T8 removed only refundable",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-071-01",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-071:T3",
+            "ZAI100-071:T4"
+          ],
+          "observed_fact": "Explicit checkout16Dec/checkin10Dec and full interval produced generic clarification until duration retryT5.",
+          "root_cause_or_hypothesis": "Model conflict/unknown cause not recorded.",
+          "general_fix": "Date-specific binding and meaningful errors; exact full-month language not covered by bounded date helper.",
+          "status_compared_to_E": "OPEN_EXACT_LANGUAGE",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-071-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-071:T2",
+            "ZAI100-071:T9"
+          ],
+          "observed_fact": "Five-night confirmation/final saved dates+budget+constraint summary unanswered.",
+          "root_cause_or_hypothesis": "Generic count reply.",
+          "general_fix": "Canonical date arithmetic and actual constraint inventory.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-072",
+      "source_line_sha256": "7e5c9203fa5f3839898ef6882ad6eefcf119a0134f6fa64aa8a7764730dfced1",
+      "turn_count": 9,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-072:T1",
+        "ZAI100-072:T2",
+        "ZAI100-072:T3",
+        "ZAI100-072:T4",
+        "ZAI100-072:T5",
+        "ZAI100-072:T6",
+        "ZAI100-072:T7",
+        "ZAI100-072:T8",
+        "ZAI100-072:T9"
+      ],
+      "model_calls": 9,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8,
+        "failed": 1
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-072:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct children3/10",
+        "T3 explicit90000 recovered without removing people to fit budget",
+        "T5 negative preference question did not add any constraint",
+        "T7 date-duration recovered23–28Nov",
+        "T8 targeted older child10→11 preserved child3",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-072-01",
+          "severity": "P1",
+          "layer": "money",
+          "refs": [
+            "ZAI100-072:T2"
+          ],
+          "observed_fact": "100000 minus worded ten percent became99990, expected90000.",
+          "root_cause_or_hypothesis": "Percent word form read as ten-ruble subtraction.",
+          "general_fix": "Same numeric/word percent grounding fix as067T7.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-072-02",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-072:T6"
+          ],
+          "observed_fact": "Checkout-only compound shortened stay failed INVALID_LLM_OPERATION; state retained.",
+          "root_cause_or_hypothesis": "Invalid model contract, raw unavailable.",
+          "general_fix": "Specific validation feedback/exact target resolution.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-072-03",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-072:T4",
+            "ZAI100-072:T5",
+            "ZAI100-072:T9"
+          ],
+          "observed_fact": "Last-change budget, actual absent preferences and final roster/date/budget not answered.",
+          "root_cause_or_hypothesis": "Generic ASK/count/no-op.",
+          "general_fix": "Canonical structured summary and constraint-presence facts.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-073",
+      "source_line_sha256": "8afb96ab2c16a8bbebb577526776ffe6ca53dc9b6c283fec369ba5dfdb392f05",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-073:T1",
+        "ZAI100-073:T2",
+        "ZAI100-073:T3",
+        "ZAI100-073:T4",
+        "ZAI100-073:T5",
+        "ZAI100-073:T6",
+        "ZAI100-073:T7",
+        "ZAI100-073:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 5,
+        "failed": 3
+      },
+      "actions": [],
+      "observed_successes": [
+        "T1 zero children correctly distinct from adult/budget zero",
+        "T3 45→50thousand parsed as50000",
+        "T5 corrected original dates2–7Dec and removed invented refundable",
+        "FailedT6–8 retained prior one-adult valid state"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-073-01",
+          "severity": "P1",
+          "layer": "unrequested_mutation",
+          "refs": [
+            "ZAI100-073:T4"
+          ],
+          "observed_fact": "Only checkout7Dec requested; actual BOTH dates2–6→7–11Dec and hard refundable=True added.",
+          "root_cause_or_hypothesis": "Model edit scope not grounded; raw operations unavailable; domain validates plausibility, not authorization by text.",
+          "general_fix": "Operation footprint guard and explicit date-role grounding; no constraint unless affirmative user request.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-073-02",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-073:T6",
+            "ZAI100-073:T7",
+            "ZAI100-073:T8"
+          ],
+          "observed_fact": "Three natural variants to add exactly second adult all failed INVALID_LLM_OPERATION; final still1adult.",
+          "root_cause_or_hypothesis": "Repeated invalid operation/schema; no raw diagnostic.",
+          "general_fix": "Stable creation alias/room membership contract fixture and targeted feedback, no silent repeated generation.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-073-03",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-073:T2"
+          ],
+          "observed_fact": "Saved zero-children explanation absent.",
+          "root_cause_or_hypothesis": "Generic plan count.",
+          "general_fix": "Canonical count facts with no mutation.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-074",
+      "source_line_sha256": "5360835db78a832358c418f3369d42bedc2deca526c23c90f7a473170fc96d6c",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-074:T1",
+        "ZAI100-074:T2",
+        "ZAI100-074:T3",
+        "ZAI100-074:T4",
+        "ZAI100-074:T5",
+        "ZAI100-074:T6",
+        "ZAI100-074:T7",
+        "ZAI100-074:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-074:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 complete compound intake",
+        "T2 invalid checkout16 before checkin17 did NOT corrupt state",
+        "T3 valid checkout25 recovered",
+        "T5 minus20000 correctly130000→110000",
+        "T6 samechild6→7",
+        "T7 preference correct",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-074-01",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-074:T2"
+          ],
+          "observed_fact": "Invalid chronology was silently left unchanged and old plans redisplayed, without explaining invalid checkout.",
+          "root_cause_or_hypothesis": "Invalid proposal not surfaced as specific human clarification.",
+          "general_fix": "Keep prior valid state but ask checkout later than17Nov; no silent success.",
+          "status_compared_to_E": "PARTIAL_BOUNDED_DATE_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-074-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-074:T4",
+            "ZAI100-074:T8"
+          ],
+          "observed_fact": "Current route/date and complete roster/limit not answered.",
+          "root_cause_or_hypothesis": "Generic no-op/count branch.",
+          "general_fix": "Canonical multi-topic facts.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-075",
+      "source_line_sha256": "046fe5583b5d67c7f4a97229502515ca5032ecc3e5f41e7b7ca890a80d31658a",
+      "turn_count": 10,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-075:T1",
+        "ZAI100-075:T2",
+        "ZAI100-075:T3",
+        "ZAI100-075:T4",
+        "ZAI100-075:T5",
+        "ZAI100-075:T6",
+        "ZAI100-075:T7",
+        "ZAI100-075:T8",
+        "ZAI100-075:T9",
+        "ZAI100-075:T10"
+      ],
+      "model_calls": 10,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 10
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-075:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 full intake",
+        "T2 absolute135000 correct",
+        "T4 typo budget returnedonly125000",
+        "T7 date range recovered12–19Dec",
+        "T8 origin changed only",
+        "T9 lowest_total preserved125000",
+        "A1 DEMO preview200"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-075-01",
+          "severity": "P2",
+          "layer": "clarification",
+          "refs": [
+            "ZAI100-075:T5",
+            "ZAI100-075:T6"
+          ],
+          "observed_fact": "Explicit checkout19Dec and7night retry produced field=None loop, until full intervalT7.",
+          "root_cause_or_hypothesis": "Model/harness conflict details absent.",
+          "general_fix": "Address exact stay/date; no generic repeat loop.",
+          "status_compared_to_E": "OPEN_EXACT_LANGUAGE",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-075-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-075:T3",
+            "ZAI100-075:T10"
+          ],
+          "observed_fact": "Dubai-country answer/final multidomain reminder absent.",
+          "root_cause_or_hypothesis": "Generic plan reply despite ASK.",
+          "general_fix": "Curated UAE fact and canonical summary.",
+          "status_compared_to_E": "PARTIAL_MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-076",
+      "source_line_sha256": "69ca7e81d3d85ce9853c15c5bd01746cc28918677d08435a5acf2a3f8b15965e",
+      "turn_count": 9,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-076:T1",
+        "ZAI100-076:T2",
+        "ZAI100-076:T3",
+        "ZAI100-076:T4",
+        "ZAI100-076:T5",
+        "ZAI100-076:T6",
+        "ZAI100-076:T7",
+        "ZAI100-076:T8",
+        "ZAI100-076:T9"
+      ],
+      "model_calls": 6,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 9
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-076:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct5adults4children3/6/9/12 retained",
+        "T2–4 stable destination/checkin/checkout answers0LLM",
+        "T6 correct explicit3room mapping coveringall9",
+        "T7 whole-trip350000 correct",
+        "T8 exact first-familyolderchild6→7 only",
+        "A1 preview preserves all9 room allocations"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-076-01",
+          "severity": "P2",
+          "layer": "model_omission",
+          "refs": [
+            "ZAI100-076:T1"
+          ],
+          "observed_fact": "Explicit Sochi destination omitted while origin andall9people saved; redundant destination question.",
+          "root_cause_or_hypothesis": "Model omitted upsert_stay; no raw present to distinguish omission vs normalization.",
+          "general_fix": "Initial literal-route grounding, preserve all other compound facts.",
+          "status_compared_to_E": "MECHANISM_CHANGED_ROUTE_INTAKE_NOT_REPLAYED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-076-02",
+          "severity": "P2",
+          "layer": "allocation",
+          "refs": [
+            "ZAI100-076:T5",
+            "ZAI100-076:T6"
+          ],
+          "observed_fact": "Three empty rooms yielded options before family allocation known; explicit room map later succeeded; groups remainempty.",
+          "root_cause_or_hypothesis": "Provisional allocation may be valid only as estimate; family semantics not represented.",
+          "general_fix": "Mark tentative assignment/ask mapping before claiming family-compatible plan.",
+          "status_compared_to_E": "OPEN_REQUIREMENT_BOUNDARY",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-076-03",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-076:T9"
+          ],
+          "observed_fact": "Detailed room/family and updated child-age summary absent.",
+          "root_cause_or_hypothesis": "ASK response replaced by generic help.",
+          "general_fix": "Read-only canonical per-room roster.",
+          "status_compared_to_E": "OPEN_MULTIROOM_SUMMARY",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-077",
+      "source_line_sha256": "e446cd705a64847e2cc1da97a1c20446ecad0a3c57ccad0a44743f4114a94902",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-077:T1",
+        "ZAI100-077:T2",
+        "ZAI100-077:T3",
+        "ZAI100-077:T4",
+        "ZAI100-077:T5",
+        "ZAI100-077:T6",
+        "ZAI100-077:T7",
+        "ZAI100-077:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 6,
+        "failed": 2
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-077:A1",
+          "kind": "snapshot",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct3adults+children5/8,2rooms,180000",
+        "T2 exact separate family room mapping",
+        "T6/T7 provider timeouts preserved prior facts",
+        "A1 snapshot honestly showed childstill5 andconstraintsstaywide; no supplier booking"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-077-01",
+          "severity": "P1",
+          "layer": "unsupported_scope",
+          "refs": [
+            "ZAI100-077:T3",
+            "ZAI100-077:T4"
+          ],
+          "observed_fact": "Room1-only refundable androom2-only breakfast became two hard STAY-WIDE constraints, silently applying both to bothrooms.",
+          "root_cause_or_hypothesis": "Constraint schema/domain exposes stay_id but no room scope; model cannot represent request honestly.",
+          "general_fix": "Either implement room-scoped invariants through stack or return specific unsupported-scope ASK withno broadening.",
+          "status_compared_to_E": "OPEN_STRUCTURAL_CAPABILITY_GAP",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-077-02",
+          "severity": "P2",
+          "layer": "provider",
+          "refs": [
+            "ZAI100-077:T6",
+            "ZAI100-077:T7"
+          ],
+          "observed_fact": "Two targeted childage corrections timedout at45001ms; childremains5.",
+          "root_cause_or_hypothesis": "Provider wall timeout, not evidence of wrong target update.",
+          "general_fix": "Keep durable state and provide retriable failure; compact deterministic safe fields may avoid needless model calls.",
+          "status_compared_to_E": "OPEN_PROVIDER_AVAILABILITY",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-077-03",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-077:T5",
+            "ZAI100-077:T8"
+          ],
+          "observed_fact": "User asked supported scope/actual per-room constraints; no honest capability explanation.",
+          "root_cause_or_hypothesis": "Generic no-op/plan output masks unsupported room scope.",
+          "general_fix": "Canonical capability/error explanation, no false per-room promise.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-078",
+      "source_line_sha256": "b537cc5783702d30410217e7e8d448264a3ef3bd2184c0f713574df89ac54260",
+      "turn_count": 10,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-078:T1",
+        "ZAI100-078:T2",
+        "ZAI100-078:T3",
+        "ZAI100-078:T4",
+        "ZAI100-078:T5",
+        "ZAI100-078:T6",
+        "ZAI100-078:T7",
+        "ZAI100-078:T8",
+        "ZAI100-078:T9",
+        "ZAI100-078:T10"
+      ],
+      "model_calls": 10,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8,
+        "failed": 2
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-078:A1",
+          "kind": "snapshot",
+          "http": 200
+        },
+        {
+          "ref": "ZAI100-078:A2",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correcttotal9 and initial3rooms",
+        "T5 newchild9 addedasdistinctID10,oldchildID8kept",
+        "T6 safe adult+newchild move into4throom",
+        "T7 exactnewchild9→10 preservingold9",
+        "T9 room ordinals repaired",
+        "T10 membership repaired",
+        "A2 preview200 with10people4rooms"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-078-01",
+          "severity": "P1",
+          "layer": "invented_grouping",
+          "refs": [
+            "ZAI100-078:T1",
+            "ZAI100-078:T2",
+            "ZAI100-078:T9",
+            "ZAI100-078:T10"
+          ],
+          "observed_fact": "Initial unspecified family memberships were invented; later explicit ordinal map didnotupdate groups, rooms2/3 assignedwrongadultIDs untilT9/T10.",
+          "root_cause_or_hypothesis": "Group identity and room ordering not bound to explicit user declarations; inventedmembership biased followups.",
+          "general_fix": "Do not invent family membership; reconcile room+group+traveler mappings atomically usingstableIDs.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-078-02",
+          "severity": "P1",
+          "layer": "unsupported_constraint",
+          "refs": [
+            "ZAI100-078:T2",
+            "ZAI100-078:T9",
+            "ZAI100-078:T10"
+          ],
+          "observed_fact": "Repeated families-mustnotmix never set keep_separate; finalbothgroupsFalse despitecorrectedmembership andpreview200.",
+          "root_cause_or_hypothesis": "No supported operation for separation invariant; constraint not persisted/enforced.",
+          "general_fix": "Represent/enforce separation or block with explicit unsupported requirement; never imply satisfied.",
+          "status_compared_to_E": "OPEN_STRUCTURAL_CAPABILITY_GAP",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-078-03",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-078:T3"
+          ],
+          "observed_fact": "Newchild creation failed INVALID_LLM_OPERATION; statecorrectly remained9.",
+          "root_cause_or_hypothesis": "Raw operation absent; unknown schema cause.",
+          "general_fix": "Creation alias+group+room capacity contract, preserve childintake independentlyfromplan availability wherevalid.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-078-04",
+          "severity": "P2",
+          "layer": "test_expectation",
+          "refs": [
+            "ZAI100-078:T4"
+          ],
+          "observed_fact": "Expectedall10 remain, but beforeT4 actually9 becauseT3failed; T4 addedroom4only.",
+          "root_cause_or_hypothesis": "Adaptive expectation carried uncommitted intended state.",
+          "general_fix": "Require explicit child-add or count mismatch ASK; do not callthis deletionofcommittedchild.",
+          "status_compared_to_E": "ORACLE_NEEDS_ACTUAL_BEFORE_STATE",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-078-05",
+          "severity": "P2",
+          "layer": "provider",
+          "refs": [
+            "ZAI100-078:T8"
+          ],
+          "observed_fact": "Room/count summary timedout45002ms; statekept.",
+          "root_cause_or_hypothesis": "Provider timeout on read-only question.",
+          "general_fix": "Canonical room roster avoids model dependency for saved facts.",
+          "status_compared_to_E": "OPEN_MULTIROOM_SUMMARY",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-079",
+      "source_line_sha256": "f3dcec3ae390835e7c020ebc6d89b73d8da4dc43a3c03a1e88a0508779c9f50d",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-079:T1",
+        "ZAI100-079:T2",
+        "ZAI100-079:T3",
+        "ZAI100-079:T4",
+        "ZAI100-079:T5",
+        "ZAI100-079:T6",
+        "ZAI100-079:T7",
+        "ZAI100-079:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 8
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-079:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct6people,4adults2children",
+        "T2 exactfamily roommapping",
+        "T4 explicitrosterremoval recovered5people",
+        "T6 minus20000correct280000→260000",
+        "T7 exactsecond-roomchild9→10 keptfirstroomchild4",
+        "A1 previewcorrect5people2rooms"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-079-01",
+          "severity": "P1",
+          "layer": "partial_removal",
+          "refs": [
+            "ZAI100-079:T3"
+          ],
+          "observed_fact": "Adult requestednottravelling was removedonlyfromroom, nottravelers; rosterstill6/4adults, DEMOautoallocationreinserted unassignedadult.",
+          "root_cause_or_hypothesis": "Room update acceptedwithouttrip removal; search fallback can repopulate partial allocations.",
+          "general_fix": "Validate operation effectagainstrequestedcount/removal; explicit partial room map mustnotbe silently auto-filled acrossfamilies.",
+          "status_compared_to_E": "OPEN",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-079-02",
+          "severity": "P2",
+          "layer": "reply",
+          "refs": [
+            "ZAI100-079:T5",
+            "ZAI100-079:T8"
+          ],
+          "observed_fact": "Actualremainingcounts/ages/unchangedfirst-room status not answered.",
+          "root_cause_or_hypothesis": "Generic count-only reply.",
+          "general_fix": "Canonical per-room/total roster and stableID preservation explanation.",
+          "status_compared_to_E": "OPEN_MULTIROOM_SUMMARY",
+          "actual_replay_verified": false
+        }
+      ]
+    },
+    {
+      "case_id": "ZAI100-080",
+      "source_line_sha256": "b3740fdadcd3df2ff09a1ca8c848cd873b72943ccc1a36a4b03f960ae71b5324",
+      "turn_count": 8,
+      "all_turns_read": true,
+      "turn_refs": [
+        "ZAI100-080:T1",
+        "ZAI100-080:T2",
+        "ZAI100-080:T3",
+        "ZAI100-080:T4",
+        "ZAI100-080:T5",
+        "ZAI100-080:T6",
+        "ZAI100-080:T7",
+        "ZAI100-080:T8"
+      ],
+      "model_calls": 8,
+      "raw_extraction_events": 0,
+      "run_status_counts": {
+        "completed": 7,
+        "failed": 1
+      },
+      "actions": [
+        {
+          "ref": "ZAI100-080:A1",
+          "kind": "checkout/preview",
+          "http": 200
+        }
+      ],
+      "observed_successes": [
+        "T1 correct9people5adultschildren3/6/9/12",
+        "T3 exactchild12→13 despitefailedroommap",
+        "T4 correct3room map recovered",
+        "T5/T6 exactlastchild13→14→13,otherchildrenunchanged",
+        "T7 470000+lowest_total appliedatomically",
+        "T8 correctlylabelledDEMO/synthetic/no booking withoutstatechange",
+        "A1 previewcorrect9people3rooms"
+      ],
+      "findings": [
+        {
+          "finding_id": "A80-080-01",
+          "severity": "P2",
+          "layer": "model_contract",
+          "refs": [
+            "ZAI100-080:T2"
+          ],
+          "observed_fact": "Explicit3room allocation failed INVALID_LLM_OPERATION; no partialstatewrite.",
+          "root_cause_or_hypothesis": "Raw contract absent; exact creation/group schema issue unproven.",
+          "general_fix": "Contract-level fixture for existingtravelerIDs androom arrays; specificfeedback.",
+          "status_compared_to_E": "OPEN_UNATTRIBUTED",
+          "actual_replay_verified": false
+        },
+        {
+          "finding_id": "A80-080-02",
+          "severity": "P2",
+          "layer": "unnecessary_search",
+          "refs": [
+            "ZAI100-080:T8"
+          ],
+          "observed_fact": "Read-onlyDEMOverification repeatedsearch/modelcall despitefactualreplyalreadycorrect.",
+          "root_cause_or_hypothesis": "Generic continue no-op triggerssearch.",
+          "general_fix": "Read-onlysource response shouldpreservebatch/quote andskiptools.",
+          "status_compared_to_E": "MECHANISM_CHANGED_NOT_REPLAYED",
+          "actual_replay_verified": false
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "cases": 20,
+    "user_turn_records": 175,
+    "model_calls_in_original": 172,
+    "findings": {
+      "P2": 38,
+      "P1": 11
+    },
+    "raw_extraction_events": 0
+  },
+  "generated_at_utc": "2026-10-26T09:21:54.056529+00:00"
+}

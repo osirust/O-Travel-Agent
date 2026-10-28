@@ -1,0 +1,90 @@
+{
+  "format": "otravel.final40_party_r7_regression_repair.v1",
+  "created_at_utc": "2026-10-28T17:15:39.974625+00:00",
+  "finding_id": "HARNESS-004-R27-PARTY-UNKNOWN-FACT-VETO-001",
+  "status": "TWO_EXACT_R7_REGRESSIONS_GREEN_CONTROLLED_SCOPE",
+  "problem": "Generic `пока не` was treated as a party-change veto for the entire compound sentence. This dropped an explicitly asserted adult when only children were not going yet, and an explicitly requested child when only its age was unknown.",
+  "minimal_change": "Only the generic tail of _NO_CHANGE was narrowed to `пока\\s+не\\s+(?:надо|нужно)`. Existing explicit no-add/no-apply verbs and whole-sentence hypothesis/question checks remain. Arbitrary comma splitting was not introduced.",
+  "changed_app_files": {
+    "otravel/party_preservation.py": "9d7c1bd4af113cb58ec37014d1f6467815d7b068edaff5cf558f520cb0765bae"
+  },
+  "new_regression_tests": {
+    "tests/test_final40_party_preservation.py": "2c55da2de4cde167b90c3ceadf32fa27032dccb98488ce555f9d9ab99cd99e6c",
+    "new_cases": 10,
+    "initial_red": "2FAIL/8PASS",
+    "new_positive_cases": [
+      "Один взрослый из Москвы в Казань, детей пока не будет. Хочу сначала собрать простой вариант поездки.",
+      "Добавь ребёнка, возраст пока не назвал"
+    ],
+    "negative_cases": [
+      "Добавь ребёнка, если поедет сестра.",
+      "Добавь ребёнка, пока не применяй.",
+      "Ребёнка пока не добавляй, возраст пока не назвал.",
+      "Пока не добавляй ребёнка.",
+      "Пока не надо добавлять ребёнка.",
+      "Не надо добавлять ребёнка.",
+      "Если добавим ребёнка, возраст пока не назвал.",
+      "Добавь ребёнка? Возраст пока не назвал."
+    ]
+  },
+  "original_assertions_changed": false,
+  "room_intent_changed_in_this_repair": false,
+  "r7_exact_failures": [
+    {
+      "name": "test_known_literal_destination_is_saved_before_asking_for_dates",
+      "class": "tests.test_harness_initial_route",
+      "failure": "assert (0 == 1)\n +  where 0 = len([])"
+    },
+    {
+      "name": "test_missing_age_is_clarification_and_answer_can_continue_without_resume",
+      "class": "tests.test_harness_review",
+      "failure": "AssertionError: assert 9 == 10\n +  where 9 = len([{'id': 'adult-1', 'age': None, 'type': 'adult', 'group_id': 'family-1', ...}, {'id': 'adult-2', 'age': None, 'type': ...dult', 'group_id': 'family-2', ...}, {'id': 'adult-6', 'age': None, 'type': 'adult', 'group_id': 'family-2', ...}, ...])"
+    }
+  ],
+  "exact_new_results": [
+    {
+      "name": "test_known_literal_destination_is_saved_before_asking_for_dates",
+      "class": "tests.test_harness_initial_route",
+      "pass": true
+    },
+    {
+      "name": "test_missing_age_is_clarification_and_answer_can_continue_without_resume",
+      "class": "tests.test_harness_review",
+      "pass": true
+    }
+  ],
+  "verification": {
+    "combined_controlled": {
+      "tests": 123,
+      "pass": 123,
+      "fail": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 11.593,
+      "includes_unchanged_original_16_red_tests": true,
+      "private_terminal": "/home/aegml/checks/final40-party-green-20261028/green-controlled-v6-terminal.json",
+      "junit_sha256": "ee66cace75f1dcac02784377271a91a343b4b9cba4a364fcce72b69bf3538ce3",
+      "source_count": 95,
+      "source_mapping_sha256": "6c99c22f0e6b54dc6c7b7ee52e55f191d6673e5227755016956a9c9d453a6f90",
+      "source_unchanged_during_run": true
+    },
+    "related_pure": {
+      "pass": 198,
+      "fail": 0,
+      "seconds": 4.87,
+      "junit": ".local/evaluation/final40-party-r7-regression-pure-20261028.xml",
+      "overlap_with_combined": true
+    }
+  },
+  "boundaries": {
+    "model_http": 0,
+    "supplier_http": 0,
+    "shared_or_production_db_access": false,
+    "own_tmpfs_pg_cleaned": true,
+    "runtime_or_frontend_changes": false,
+    "master_env_read": false,
+    "canary_started": false,
+    "git_stage_or_commit": false
+  },
+  "next": "Files frozen for root R8 integrated full regression and later explicitly authorised actual canary; not a full R8 or LLM-quality claim."
+}

@@ -175,3 +175,92 @@ def test_request_stats_measure_bytes_and_hashes_without_token_estimation():
         "schema_utf8_bytes": len(encoded), "schema_sha256": hashlib.sha256(encoded).hexdigest(),
         "prompt_sha256": hashlib.sha256((system + "\0" + prompt).encode("utf-8")).hexdigest()}
     assert not any("tokens" in name for name in stats)
+
+
+def test_groq_error_explicit_TPM_request_too_large_extracts_only_bounded_counters():
+    message = ("Request too large for model qwen/example in organization org-SECRET on tokens per minute (TPM): "
+               "Limit 8000, Requested 8100. Please reduce your message size and try again.")
+    assert groq_rate_facts({}, {"error": {"type": "tokens", "message": message}}) == {
+        "quota_kind": "tokens", "token_window": "TPM", "token_limit_from_error": 8000,
+        "tokens_requested_from_error": 8100}
+
+
+def test_groq_error_explicit_TPD_preserves_used_and_requested_without_estimating_remaining():
+    message = "Rate limit reached on tokens per day(TPD): Limit 200000, Used 199000, Requested 2000."
+    facts = groq_rate_facts({}, {"error": {"message": message}})
+    assert facts == {"token_window": "TPD", "token_limit_from_error": 200000,
+                     "tokens_used_from_error": 199000, "tokens_requested_from_error": 2000}
+    assert "tokens_remaining" not in facts and "retry_after_seconds" not in facts and "quota_kind" not in facts
+
+
+def test_groq_error_counters_never_replace_header_facts_or_become_a_retry_hint():
+    headers = {"x-ratelimit-limit-tokens": "1000", "x-ratelimit-remaining-tokens": "900", "retry-after": "3"}
+    message = "On tokens per minute (TPM): Limit:8000, Used:7900, Requested:8100. Please try again in 5 seconds."
+    facts = groq_rate_facts(headers, {"error": {"message": message}})
+    assert facts == {"token_limit": 1000, "tokens_remaining": 900, "retry_after_seconds": 3,
+        "token_window": "TPM", "token_limit_from_error": 8000, "tokens_used_from_error": 7900,
+        "tokens_requested_from_error": 8100}
+
+
+@pytest.mark.parametrize("message", [
+    "Limit 8000, Requested 8100",
+    "tokens per minute: Limit 8000, Requested 8100",
+    "TPM: Limit 8000, Requested 8100",
+    "requests per minute (RPM): Limit 8000, Requested 8100",
+    "requests (TPM): Limit 8000, Requested 8100",
+    "tokens per minute (TPD): Limit 8000, Requested 8100",
+    "tokens per day (TPM): Limit 8000, Requested 8100",
+    "tokens per minute (TPM): Limit 8000, Requested 8100; tokens per day (TPD): Limit 200000, Requested 8100",
+    "tokens per minute (TPM): Limit 8000",
+    "tokens per day (TPD): Requested 8100",
+    "tokens per day (TPD): Limit 8000, Requested -1",
+    "tokens per minute (TPM): Limit -8000, Requested 8100",
+    "tokens per minute (TPM): Limit 8000, Requested 8100.5",
+    "tokens per minute (TPM): Limit 8000.0, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Used -1, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Used 1.1, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Requested 1e3",
+    "tokens per day (TPD): Limit 8000, Requested +1",
+    "tokens per day (TPD): Limit 8000, Requested NaN",
+    "tokens per day (TPD): Limit 8000, Requested 1000000000000",
+    "tokens per day (TPD): Limit 1000000000000, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Used 1000000000000, Requested 8100",
+    "tokens per minute (TPM): Limit 8000, Limit 9000, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Used 1, Used 2, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Requested 8100, Requested 8101",
+    "tokens per minute (TPM): Limit 8000, Requested 8100..",
+    "tokens per minute (TPM): Limit 8,000, Requested 8100",
+    "tokens per minute (TPM): Limit 8000, Requested 8,100",
+    "tokens per minute (TPM): Limit 8 000, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Requested 8 100",
+    "tokens per minute (TPM): Limit 8\u00a0000, Requested 8100",
+    "tokens per day (TPD): Limit 8000, Used 1 000, Requested 8100",
+    "tokens per minute (TPM): Limit 8 000, Requested8100",
+    "tokens per day (TPD): Limit 8000, Requested 8100, Used:",
+    "tokens per day (TPD): Limit 8000, Requested 8100, Requested:",
+])
+def test_groq_error_unknown_ambiguous_or_invalid_numeric_text_produces_no_new_facts(message):
+    assert groq_rate_facts({}, {"error": {"message": message}}) == {}
+
+
+@pytest.mark.parametrize("message", [None, [], {}, 8000, "x" * 4097])
+def test_groq_error_message_wrong_type_or_unbounded_size_is_ignored(message):
+    assert groq_rate_facts({}, {"error": {"message": message}}) == {}
+
+
+def test_groq_error_request_type_conflict_and_same_duplicate_values_are_explicit():
+    message = "tokens (TPM): Limit 8000, Requested 8100, Limit 8000, Requested 8100."
+    assert groq_rate_facts({}, {"error": {"type": "requests", "message": message}}) == {"quota_kind": "requests"}
+    assert groq_rate_facts({}, {"error": {"message": message}}) == {
+        "token_window": "TPM", "token_limit_from_error": 8000, "tokens_requested_from_error": 8100}
+
+
+def test_groq_error_counters_copy_no_message_model_organization_id_or_credentials():
+    message = f"Request too large for model secret-model, organization org-SECRET, token {CANARY} on tokens per minute (TPM): Limit 8000, Requested 8100."
+    facts = groq_rate_facts({"authorization": "Bearer " + CANARY}, {"api_key": CANARY,
+        "error": {"organization": "org-SECRET", "message": message, "type": "tokens"}})
+    encoded = json.dumps(facts)
+    assert facts == {"quota_kind": "tokens", "token_window": "TPM", "token_limit_from_error": 8000,
+                     "tokens_requested_from_error": 8100}
+    assert CANARY not in encoded and "org-SECRET" not in encoded and "secret-model" not in encoded
+    assert "message" not in facts and "error" not in facts

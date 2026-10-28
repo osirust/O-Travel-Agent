@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-27",
+  "status": "BOUNDED_DOWNSTREAM_REVIEW_AND_COUNT_GUARD_FIX_PASS",
+  "scope": "E working tree typed set_room_members and sparse-addition compatibility; real vendor HTTP and Native were not used",
+  "reviewed_contract": "set_room_members(target_id=existing room ID,value={stay_id:existing owning stay ID,traveler_ids:complete explicit members of that room}); full upsert_stay.rooms remains a complete layout replacement",
+  "finding": {
+    "id": "HARNESS-004-ROOM-COUNT-PATCH-BYPASS-001",
+    "initial_fact": "Count-only guard restored full upsert_stay.rooms but ignored set_room_members. With r1[a]/r2[b] and text 'В Стамбуле нужны два номера.', patches swapping members survived alongside note existing_room_allocation_preserved and changed the saved allocation.",
+    "initial_reproduction": {
+      "junit": ".local/evaluation/after80-20261026/room-count-patch-initial.xml",
+      "sha256": "ee89699ac7a636440d8225aac3e2ca52774cf7d2572a159021b90fcfde75bef7",
+      "tests": 1,
+      "failures": 1,
+      "preserved": true
+    },
+    "action": "One count-only preservation boundary now covers full layout and scoped room-members setters. Existing canonical members and room/guest ordering are kept. A uniquely declared same-batch new person may retain raw addition-only assignments at unchanged room count; no room or member is chosen by this guard. Explicit allocation edits retain their normal path. Unknown changed counts ask while preserving existing allocations.",
+    "closing_condition": "The same count-only input/patches preserve saved state; explicit new-child/redistribution remain possible, unknown count remains safe; related pure and real PG/ASGI assertions pass.",
+    "status": "CLOSED_RELATED_PURE_PG_ASGI_SCOPE_ACTUAL_REMOTE_RETEST_PENDING"
+  },
+  "implementation": {
+    "file": "otravel/room_intent.py",
+    "sha256": "b86164bfcaa8349bef4c897e5a564ba156254babbea19e6266c8d82d3ff9cf27",
+    "test_file": "tests/test_room_members_count_guard.py",
+    "test_sha256": "74b698fc10e1e7270feacf1c79aeba68b82069f83f682526aaf961c5a349d8a4",
+    "no_operations_added_or_members_inferred": true,
+    "foreign_room_patch": "Left for normal atomic unknown-target rejection, not silently retargeted",
+    "unrelated_budget_dates_party": "Retained as originally proposed operations"
+  },
+  "verification": {
+    "related_tests": 191,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 5.87,
+    "new_tests": 15,
+    "new_pure": 14,
+    "new_PG_ASGI": 1,
+    "junit": ".local/evaluation/after80-20261026/room-count-patch-related-freeze.xml",
+    "junit_sha256": "021e280b52bccec9dfb689351eda3a76660e258d970c83a78ff5444c615dbc02",
+    "Ruff": "PASS",
+    "new_PG_fact": "A controlled model returns schema-valid swapped scoped patches on a count-only message; after the guard the own real PG trip/version remain identical, one injected model adapter call, no tools/orders.",
+    "intermediate_fixture_failures": "room-count-patch-first.xml kept two failures caused by an initially incomplete test baseline with no route legs; complete dated canonical fixture now includes owned existing legs. Strict trip/version assertions were retained."
+  },
+  "downstream_boundaries": [
+    {
+      "area": "Owned IDs and schema",
+      "assessment": "No new bypass found in reviewed code and related cases",
+      "evidence": "Dynamic schema correlates each existing stay const with its owned room-ID enum. Domain selects room inside the specified current stay; unknown travelers, duplicate allocation and invalid shape fail the atomic batch. New person aliases require an actual same-batch add operation before use."
+    },
+    {
+      "area": "Group separation",
+      "assessment": "Draft structural validity is distinct from search/quote validity",
+      "evidence": "The new setter cannot change group flags. protect_group_separation restores previously true flags on unrelated upsert_group. Domain may retain an incomplete or incompatible draft; inventory fixed assignments and planning hotel binding reject mixed separate families, invalid occupancy and missing adult. No real-booking bypass is claimed."
+    },
+    {
+      "area": "Roster removal",
+      "assessment": "No new bypass found",
+      "evidence": "Emptying or changing a room does not remove a traveler from the trip. guard_unapplied_traveler_removal checks explicit omitted removal independently of setter type and blocks the batch for ASK. remove_traveler cleans all room/group references; a later re-add of its removed ID fails final known-traveler validation."
+    },
+    {
+      "area": "Pause and ownership",
+      "assessment": "No operation-specific bypass found",
+      "evidence": "API authorizes own session, paused worker does not execute queued mutations, _ensure_current_run and Store.finish_run apply shared state-version/lease fences. The new setter is a data operation and grants no resume or confirmation."
+    },
+    {
+      "area": "Quotes and consent",
+      "assessment": "Shared invalidation covers the new operation",
+      "evidence": "A real membership change is emitted as a stays change; Store.finish_run invalidates quotes whenever a new state is committed, independently of operation type. No-op patches preserve state. Existing related PG cases test stale quote rejection. Undo does not restore quote/order/consent."
+    }
+  ],
+  "separate_peer_finding": {
+    "id": "HARNESS-004-ROOM-PATCH-REMOVED-TARGET-CONFLICT-001",
+    "status": "REPRODUCED_AT_READONLY_REVIEW_ROOT_OWNS_FIX_AND_RETEST",
+    "fact": "A full rooms setter omitting a separately patched existing room was not a preflight conflict: patch->full could finish after dropping the target; full->patch failed unknown_target. Root was notified; this actor did not edit operation_conflicts.",
+    "example": "set_room_members(s/r2,[]) together with upsert_stay(s.rooms=[r1[a,b]])",
+    "closing_condition": "Preflight rejects a room patch whose target is absent from the same-batch full layout of that stay, regardless of operation order; retain valid scoped patches across different stays."
+  },
+  "safety": {
+    "real_LLM_HTTP": 0,
+    "supplier_HTTP": 0,
+    "Native_changes": 0,
+    "other_production_files_changed_by_this_fix": false,
+    "test_database": "otravel_test",
+    "global_DB_cleanup": false,
+    "source_oracles_weakened": false
+  },
+  "not_claimed": ["Remote actual language replay of this new fix", "Full original80/106 qualification", "Final Native package readiness", "Resolving every possible allocation phrasing"]
+}

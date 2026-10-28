@@ -1,0 +1,22 @@
+{
+  "scope": "Safe observed field projection, not a complete raw response or availability claim",
+  "request": {
+    "engine": "google_flights",
+    "departure_id": "MOW",
+    "arrival_id": "DXB",
+    "outbound_date": "2026-11-10",
+    "type": "2",
+    "adults": 1,
+    "children": 0,
+    "currency": "RUB"
+  },
+  "response_status": 200,
+  "response_body": {
+    "error": "Google Flights hasn't returned any results for this query."
+  },
+  "changed_origin_control": {
+    "departure_id": "IST",
+    "http_status": 200,
+    "normalized_indicative_offers": 12
+  }
+}

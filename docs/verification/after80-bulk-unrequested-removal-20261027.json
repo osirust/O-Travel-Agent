@@ -1,0 +1,69 @@
+{
+  "format": "otravel.after80.bulk.unrequested-traveler-removal.v1",
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-UNREQUESTED-TRAVELER-REMOVAL-001",
+  "status": "CONTROLLED_REPAIR_PASS_ACTUAL_RETEST_OPEN",
+  "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+  "case_id": "ZAI100-008",
+  "turn": 8,
+  "private_evidence": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-008.json",
+  "observation_pointer": "/turns/7",
+  "input": "Обший бюджет теперь 85000 рублей. Кто в итоге едет?",
+  "before": {
+    "adult_ids": ["new-traveler-1", "new-traveler-2"],
+    "child_ids": [],
+    "room_id": "new-room-1",
+    "room_members": ["new-traveler-1", "new-traveler-2"]
+  },
+  "raw_operations": [
+    {"type": "set_budget", "target_id": null, "value": {"scope": "whole_trip", "currency": "RUB", "amount_minor": 85000}},
+    {"type": "remove_traveler", "target_id": "new-traveler-2", "value": {}}
+  ],
+  "checked_operations": [
+    {"type": "set_budget", "target_id": null, "value": {"scope": "whole_trip", "currency": "RUB", "amount_minor": 8500000}},
+    {"type": "remove_traveler", "target_id": "new-traveler-2", "value": {}}
+  ],
+  "raw_contract_sha256": "c7e30c7ae3bf504f3c0c6bf77394a234153f1a2e01be8cf76e8b5d226adca1b9",
+  "checked_contract_sha256": "a70c9e1b9b47bb420225c4325eb028dd86847be1e892d75087c07b2bf41ea0e2",
+  "after": {
+    "adult_ids": ["new-traveler-1"],
+    "child_ids": [],
+    "room_id": "new-room-1",
+    "room_members": ["new-traveler-1"],
+    "budget_minor_RUB": 8500000
+  },
+  "attribution": "The model repeated/invented a removal not authorized by the current budget declaration plus factual party question. Domain ownership and valid operation shape did not prove semantic permission. Budget scalar grounding worked, but the unrelated removal remained and changed the saved party.",
+  "action": "Require current, positive party-change authority for model remove_traveler proposals or a fresh server-owned addressed confirmation. Budget edits and party questions must not replay an old removal. Preserve true explicit removals and unrelated operations; ask when person identity is ambiguous.",
+  "closure": "Cached original chain and PG/ASGI preserve both adults and room membership while setting85000RUB and answering who travels; quote/version invalidation remains correct. Hypothetical/history/quoted removals do not authorize mutation; explicit owned removal still works. Then a fresh actual repeat on the repaired immutable source.",
+  "controlled_repair": {
+    "interface": "guard_traveler_removal_operations(before, operations, text) -> copied_operations + notes/unknowns/conflicts",
+    "rule": "Without positive current traveler-removal intent, suppress only model remove_traveler operations. Keep budget, unrelated operations and IDs. Explicit positive removals continue to existing identity/group/domain resolvers.",
+    "normalization_code": "traveler_removal_not_requested",
+    "pure_domain_tests": {"passed": 31, "failed": 0, "seconds": 1.50},
+    "cached_pg_asgi_tests": {"passed": 1, "failed": 0, "seconds": 2.92},
+    "pg_observations": "Exact actual raw008/T8, real isolated PostgreSQL and API worker, controlled model/travel:85 000RUB, both existing adults and room membership unchanged, canonical response2adults, zero quotes/orders.",
+    "ruff": "PASS",
+    "real_model_calls": 0,
+    "real_tourism_http": 0,
+    "harness_integration": "Root model-only extraction hook. Typed and canonical addressed short-answer paths are not rerouted through this guard.",
+    "scope_limits": [
+      "The guard proves absence of current removal authority; it does not universally attribute a positive pronoun/name to one specific traveler ID.",
+      "Quotes, hypothetical/history/negation and removal of a preference/hotel/details or only local room/group membership do not authorize whole-trip traveler removal.",
+      "The actual defective source a36/cd0 remains frozen during its baseline. Fresh actual qualification of this repair is still required."
+    ],
+    "files_sha256": {
+      "otravel/traveler_removal_grounding.py": "71ac2c887006af51e0c6ef2e937ed44b4caa5fbfca9525491a9dfa9f63be877c",
+      "tests/test_traveler_removal_grounding.py": "00b64a46067af4021f025039e5d8ce708e8465c1f506d6c24eeb04efe4dd663a",
+      "tests/test_traveler_removal_grounding_pg.py": "0fd1d28364f8c4608b6b9e00106652ad57c11349019a315f37f7ce16335b9059",
+      "fixtures/regression/traveler-removal-008-20261027.json": "d1292053939a3549e06cc2a5914d9e600cdf6d62fb0a498079bf19a7b31c1a16",
+      ".local/evaluation/after80-20261027/traveler-removal-grounding-pure.xml": "226dd3267916bca1e6104a1e58a5ceba27c7c97279d8eb667e029554baa8ded1",
+      ".local/evaluation/after80-20261027/traveler-removal-grounding-pg-final.xml": "13e716e5a2fb379d89685f92c234f4f8189c348da83db47a4bfc7dacec2ab861"
+    }
+  },
+  "new_model_or_tourism_calls_for_audit": 0,
+  "source_runtime_changed_by_audit": false,
+  "bulk_continues_on_original_frozen_source": true,
+  "related_oracle": "O80-V2-008-T08-ONLY_BUDGET-1",
+  "not_a_false_positive": "Both the traveler collection and room membership really changed; this differs from derived metadata or necessary allocation of an explicitly added guest."
+}

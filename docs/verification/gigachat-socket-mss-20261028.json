@@ -1,0 +1,113 @@
+{
+  "checked_at_utc": "2026-10-28T01:51:51.314566+00:00",
+  "scope": "TLS_ONLY_PER_SOCKET_TCP_MAXSEG",
+  "hostname": "api.giga.chat",
+  "port": 443,
+  "original_sni": "api.giga.chat",
+  "kernel": "6.18.54.1-microsoft-standard-WSL2",
+  "ca_bundle_sha256": "936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504",
+  "certificate_validation_required": true,
+  "check_hostname": true,
+  "tls_trust": "Unchanged system default trust plus verified pinned public Giga CA bundle.",
+  "primary_references": [
+    "https://man7.org/linux/man-pages/man7/tcp.7.html",
+    "https://developers.google.com/speed/public-dns/docs/doh/json"
+  ],
+  "dns": {
+    "system": {
+      "returncode": 0,
+      "ipv4": [
+        "155.212.234.167"
+      ]
+    },
+    "selection": "Current system DNS matches the previously independently verified fixed IPv4."
+  },
+  "attempts": [
+    {
+      "requested_tcp_maxseg": "default",
+      "host": "api.giga.chat",
+      "sni": "api.giga.chat",
+      "peer_requested": [
+        "155.212.234.167",
+        443
+      ],
+      "stage": "tls_handshake",
+      "tcp_connected": true,
+      "tls_verified": false,
+      "tcp_maxseg_initial": 536,
+      "tcp_maxseg_before_connect": 536,
+      "tcp_seconds": 0.0004,
+      "peer": [
+        "155.212.234.167",
+        443
+      ],
+      "tcp_maxseg_after_connect": 1448,
+      "error_type": "TimeoutError",
+      "tls_seconds": 6.0063,
+      "total_seconds": 6.0084
+    },
+    {
+      "requested_tcp_maxseg": 1200,
+      "host": "api.giga.chat",
+      "sni": "api.giga.chat",
+      "peer_requested": [
+        "155.212.234.167",
+        443
+      ],
+      "stage": "tls_handshake",
+      "tcp_connected": true,
+      "tls_verified": false,
+      "tcp_maxseg_initial": 536,
+      "tcp_maxseg_before_connect": 1200,
+      "tcp_seconds": 0.0005,
+      "peer": [
+        "155.212.234.167",
+        443
+      ],
+      "tcp_maxseg_after_connect": 1188,
+      "error_type": "TimeoutError",
+      "tls_seconds": 6.0062,
+      "total_seconds": 6.007
+    },
+    {
+      "requested_tcp_maxseg": 1000,
+      "host": "api.giga.chat",
+      "sni": "api.giga.chat",
+      "peer_requested": [
+        "155.212.234.167",
+        443
+      ],
+      "stage": "tls_handshake",
+      "tcp_connected": true,
+      "tls_verified": false,
+      "tcp_maxseg_initial": 536,
+      "tcp_maxseg_before_connect": 1000,
+      "tcp_seconds": 0.0005,
+      "peer": [
+        "155.212.234.167",
+        443
+      ],
+      "tcp_maxseg_after_connect": 988,
+      "error_type": "TimeoutError",
+      "tls_seconds": 6.0065,
+      "total_seconds": 6.0073
+    }
+  ],
+  "oauth_calls": 0,
+  "model_list_calls": 0,
+  "generation_calls": 0,
+  "key_or_env_reads": 0,
+  "giga_http_requests": 0,
+  "giga_http_headers_sent": 0,
+  "application_data_sent_to_giga": 0,
+  "vpn_or_interface_or_mtu_or_route_changes": 0,
+  "registry_or_sysctl_changes": 0,
+  "global_tls_trust_changes": 0,
+  "timeout_seconds": {
+    "tcp_connect": 3,
+    "tls_handshake": 6
+  },
+  "mss_hypothesis_status": "NO_TLS_HANDSHAKE_SUCCEEDED_CAUSE_REMAINS_UNKNOWN",
+  "selected_ipv4": "155.212.234.167",
+  "status": "BOUNDED_THREE_ATTEMPTS_COMPLETE"
+}

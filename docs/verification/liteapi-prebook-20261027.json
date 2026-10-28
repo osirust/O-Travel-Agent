@@ -1,0 +1,151 @@
+{
+  "checked_at": "2026-10-26T23:40:10.531763+00:00",
+  "finding_id": "TRAVEL-LITEAPI-SELECTED-REPRICE-001",
+  "status": "ACTUAL_SANDBOX_PREBOOK_ADAPTER_PASS_NATIVE_API_RETEST_PENDING",
+  "problem": "A repeated hotel search cannot confirm the selected opaque offer ID; the old adapter required it to reappear.",
+  "change": "Reprice selected sandbox offer via fixed /rates/prebook with usePaymentSdk=false, retaining its selection identity and rebuilding fresh economic facts.",
+  "actual_http_calls": 7,
+  "supplier_booking_calls": 0,
+  "payment_calls": 0,
+  "llm_calls": 0,
+  "actual_cases": [
+    {
+      "hotel_id": "lp1b30d1",
+      "occupancies": [
+        {
+          "adults": 1,
+          "children": []
+        }
+      ],
+      "checkin": "2026-11-10",
+      "checkout": "2026-11-13",
+      "status": "ACTUAL_ADAPTER_PREBOOK_PASS",
+      "search_offers": 200,
+      "eligible_offers": 44,
+      "checks": {
+        "same_public_id": true,
+        "same_native_offer": true,
+        "same_hotel": true,
+        "same_request": true,
+        "sandbox_prebook_verified": true,
+        "allocation_verified": true,
+        "fees_included": true,
+        "sandbox_not_live_bookable": true,
+        "no_supplier_booking": true
+      },
+      "search_minor": 2482372,
+      "prebook_minor": 2482372,
+      "currency": "RUB",
+      "native_selection_sha256": "d924afcf9cddac5fd9a9fab7f30a9d579416d479ad4268e4e9f67b49c7030898",
+      "prebook_id_sha256": "7a0308dae94eff4d04b05bf2f05b17dd159bab9828006583ea5b2bf92f3cfe74",
+      "source_type": "SANDBOX",
+      "room_facts": [
+        {
+          "occupancy_number": 1,
+          "guest_counts_match": true,
+          "capacity_verified": true,
+          "reported_capacity": 1
+        }
+      ],
+      "fee_fact": true,
+      "sandbox_prebook_verified": true,
+      "provider_expiry_extended": false,
+      "prebook_provider_TTL_known": false
+    },
+    {
+      "hotel_id": "lp8a2f3",
+      "occupancies": [
+        {
+          "adults": 1,
+          "children": [
+            7
+          ]
+        },
+        {
+          "adults": 1,
+          "children": [
+            12
+          ]
+        }
+      ],
+      "checkin": "2026-11-10",
+      "checkout": "2026-11-13",
+      "status": "ACTUAL_ADAPTER_PREBOOK_PASS",
+      "search_offers": 164,
+      "eligible_offers": 164,
+      "checks": {
+        "same_public_id": true,
+        "same_native_offer": true,
+        "same_hotel": true,
+        "same_request": true,
+        "sandbox_prebook_verified": true,
+        "allocation_verified": true,
+        "fees_included": true,
+        "sandbox_not_live_bookable": true,
+        "no_supplier_booking": true
+      },
+      "search_minor": 8971394,
+      "prebook_minor": 8971394,
+      "currency": "RUB",
+      "native_selection_sha256": "b01cd1a750592a126ceaafac0ec760ebc9d0b6614d59cdb1d7a9391e12076673",
+      "prebook_id_sha256": "9c4ddde2735e5435a55b3e103161881459983325f2c3b68e07e62e6cd6520550",
+      "source_type": "SANDBOX",
+      "room_facts": [
+        {
+          "occupancy_number": 1,
+          "guest_counts_match": true,
+          "capacity_verified": true,
+          "reported_capacity": 2
+        },
+        {
+          "occupancy_number": 2,
+          "guest_counts_match": true,
+          "capacity_verified": true,
+          "reported_capacity": 2
+        }
+      ],
+      "fee_fact": true,
+      "sandbox_prebook_verified": true,
+      "provider_expiry_extended": false,
+      "prebook_provider_TTL_known": false
+    }
+  ],
+  "retained_negative": {
+    "hotel_id": "lp1b30d1",
+    "rooms": 2,
+    "search_offers": 200,
+    "outcome": "NO_ELIGIBLE_SEARCH_OFFER",
+    "note": "No search offer passed both allocation and fee checks for that separate occupancy request; no hotel/guest facts fabricated."
+  },
+  "private_receipt_sha256": {
+    "shape": "63a964cfac9c1e536eb5f6a7f927599c10f6ed7286f20bd9d7f62c23284209ed",
+    "adapter": "ec4649df017fad3f2c8557ef7862b8b7c88f5f5671303b6943152a474a032e7a"
+  },
+  "implementation_hashes": {
+    "otravel/providers.py": "54beac85fbd8ec0b4603216c78c3314e61ade80c1d53326b6a61301305798b77",
+    "tests/test_liteapi_prebook.py": "1c3e45c10ed1a11431d4baa6ab195d69d168299a7227f8ac29afbdfe6efd8a2e",
+    "tests/test_liteapi_prebook_checkout.py": "3742cb2620b2aa12beaf3ab14f89a8ae499de0264383089c4525b7ed9a2ff857",
+    "tests/test_travel_runtime.py": "7632297a2c9b23017689a50662ce471a7e772bdaaec0c5ff5e24d86c6d092e41"
+  },
+  "tests": {
+    "initial_adapter": "104PASS",
+    "related_first": "250PASS",
+    "PG_initial": "2PASS_1fixtureFAIL_preserved",
+    "latest": "SEE_liteapi-prebook-related-pg-final.xml",
+    "related_PG_final": "253PASS/0skip in11.57s",
+    "focused_final": "41PASS/0skip in2.61s",
+    "new_test_files_Ruff": "PASS"
+  },
+  "scope_limits": [
+    "Actual external checks validate one and two-room sandbox offers, not LIVE_BOOKABLE or supplier orders.",
+    "No native process restart/deploy performed by this actor; full deployed API checkout must be tested by root.",
+    "Prebook expiry is not documented in the received data; local expiry remains bounded by the original saved search deadline.",
+    "Missing fees/conditions are not inherited; changed prices/conditions require a new application quote and confirmation."
+  ],
+  "references": [
+    "https://docs.liteapi.travel/reference/post_rates-prebook",
+    "https://docs.liteapi.travel/docs/step-3-pre-booking-a-room",
+    "https://docs.liteapi.travel/reference/api-errors-for-hotel-booking-workflow"
+  ],
+  "TravelGateway_source_sha256": "eab45dbb574b90355d38341648b914c1e0ce23bcf546c02c4265a4269334d5be"
+}

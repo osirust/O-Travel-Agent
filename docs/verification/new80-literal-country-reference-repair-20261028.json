@@ -1,0 +1,74 @@
+{
+  "format": "otravel.current_literal_country_reference.repair.v1",
+  "checked_at_utc": "2026-10-28T13:27:38.155068+00:00",
+  "finding_id": "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+  "status": "ACTUAL_COORDINATOR_DIRECTORY_BOUNDARY_CONTROLS_PASS_ACTUAL_HTTP_RETEST_PENDING",
+  "original_actual_failure": "docs/verification/native-integrated-release-canaries-20261028.json",
+  "scope_gap_preserved": "Earlier534controlled checks asserted only thatRU hint reached a coordinator double. The actual coordinator correctly ignored unowned hints, so real source still receivedcountryCode:null.",
+  "change": {
+    "worker": "Current serverrun text is rechecked for one positive pairedcity-country declaration for exactrole/query; no rawmodelsource_text authority.",
+    "coordinator": "That proven declaration is bound to the packagedverifiedCLDRcountry row using the existing country_ref structure and checked against trip/currentversion/role/stay/sourceSHA/expiry. Genericresolve still ignores an arbitrarycountryhint.",
+    "selection": "ActualDirectory receivesRUfilter; even a single candidate is still shown for explicit selection. Source identity/Englishphysicalmatch/catalogadmission/owner/CAS rules unchanged.",
+    "pause": "Constructing countryreference is offline only. Apausedrun storesdeferred request and performszero directory/sourcecalls."
+  },
+  "checks": {
+    "initial_new_boundary": {
+      "passed": 8,
+      "failed": 1,
+      "junit_sha256": "645682adc88896567c9cd997855dd430e38d09f856d4ea8d8441f1486c65696d"
+    },
+    "initial_green_fixture_issue": {
+      "passed": 102,
+      "failed": 1,
+      "junit_sha256": "237a647acea1c08758b05ebe4586243834be4f8f355fb7e28d4de32c4a44aa53",
+      "cause": "Mock source returned foreignMS city despiteRUfilter; existing COUNTRY_MISMATCH guard correctly rejected it. Fixture now honorsfilter, with a separate explicit mismatch-rejection test retained."
+    },
+    "final_boundary_related": {
+      "passed": 106,
+      "failed": 0,
+      "junit_sha256": "a592b4c1ee190cd54308f9b24f29a835a1b3d4610e287443126c04abd30c2cab"
+    },
+    "own_fresh_pg_and_related": {
+      "executed": 546,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "new_boundary_methods": 12,
+    "captured_pg_methods": 3,
+    "model_http": 0,
+    "source_http": 0,
+    "ruff": "PASS two helpers and three related test modules"
+  },
+  "negative_boundaries": [
+    "modelhint only",
+    "forged request source_text",
+    "hypothesis",
+    "quoted declaration",
+    "history",
+    "negative wish",
+    "wrong city",
+    "wrong role",
+    "alternatives",
+    "contradictory suppliedcountryhint",
+    "foreign source response despitefilter",
+    "pause withoutsourcecalls"
+  ],
+  "files_sha256": {
+    "otravel/place_run.py": "95c9d17d28f3964fe09ab5cd5a7b0023d5fb95004344ea9892aa19c95430c318",
+    "otravel/place_resolution.py": "91de61a01cf88559f2f17b2c8dd9e5abe5511c65a0f85b4df131349ebd543499",
+    "tests/test_new80_literal_country_reference.py": "65a6f36d07c5c1f70610721f622cf77d9159aa730ed6e40666f9572d272f8901",
+    "tests/test_new80_geo_date_helpers.py": "7e2a1704f1ed5a790e7e5b9c2187779afda9d1c1d7258bfe80a1d1658e88218e",
+    "tests/test_new80_geo_date_helpers_pg.py": "be24c0038d1e253b32f6bfea078d487775c1f9fbe9cedbdf4a8792bde4908ced"
+  },
+  "pg_report_sha256": "fa24c421781fdedbe42a62b8cd1d1d040dea1baf9d55557db5e22f470c5ed3e5",
+  "pg_junit_sha256": "5b9d6c78de2d200435757d4a4fc552b9191c388ef1fd3c65ce61d40dc480df28",
+  "pg_snapshot_sha256": "db7dd949378849a056296d6bc8557719a210ee54d47fd49a551b041671aadd51",
+  "own_resources_removed": true,
+  "production_db_or_runtime_modified": false,
+  "limitations": [
+    "Fresh model/source retest requires a separately pinned updated runtime and root NEWGO; none was spent in this repair block.",
+    "The failed actualcalendar/schema canary remains open and is not covered by this country fix.",
+    "Full80-dialogue and source106 acceptance are not established by these controlled checks."
+  ]
+}

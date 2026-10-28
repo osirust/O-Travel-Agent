@@ -1,0 +1,125 @@
+{
+  "finding_id": "ROUTER8-DATE-LABEL-001",
+  "related_review_id": "ROUTER8-DATE-FIELD-001",
+  "source": {
+    "case_id": "ZAI100-002",
+    "turn": 3,
+    "case_sha256": "cafefde89c3950ebb79e7a87a1de486ed2663c89a7c0f2bec9d5d7eb50934f8e",
+    "code_commit": "0aba3a65cef49e3a434c6a4ae4e8ed610733aee2",
+    "private_identifiers_omitted": true
+  },
+  "user": "Выезд 17 ноября 2026 года.",
+  "before_trip": {
+    "legs": [],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Анталья",
+        "rooms": [],
+        "check_in": null,
+        "hotel_id": null,
+        "check_out": "2026-11-10"
+      }
+    ],
+    "budget": null,
+    "groups": [],
+    "origin": "Казань",
+    "trip_id": "router8-date-label-fixture",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 4,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": 9,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 2
+  },
+  "pending_question": {
+    "text": "На какую дату планируете заезд в городе «Анталья»?",
+    "field": "stay.check_in",
+    "context": {
+      "requested_destination": {
+        "kind": "city",
+        "name": "Анталья",
+        "country_code": "TR"
+      }
+    },
+    "questions": [
+      "На какую дату планируете заезд в городе «Анталья»?"
+    ],
+    "target_id": "new-stay-1",
+    "state_version": 2
+  },
+  "observed_wrong_model_contract": {
+    "reply": "Обновил дату заезда на 17 ноября 2026 года. Теперь известны даты заезда и выезда (17 ноября — 10 ноября 2026 года). Обратите внимание, дата выездаEarlier дата заезда — пожалуйста, уточните корректность дат.",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [
+      "Проверьте, верны ли даты: заезд 17 ноября, выезд 10 ноября 2026 года (выезд раньше заезда)."
+    ],
+    "conflicts": [],
+    "operations": [
+      {
+        "type": "upsert_stay",
+        "value": {
+          "check_in": "2026-11-17"
+        },
+        "target_id": "new-stay-1"
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "observed_assistant": [
+    "Выезд должен быть позже заезда."
+  ],
+  "expected_operations": [
+    {
+      "type": "upsert_stay",
+      "target_id": "new-stay-1",
+      "value": {
+        "check_out": "2026-11-17"
+      }
+    }
+  ],
+  "test_added_continuation": "10 ноября 2026 года.",
+  "expected_check_in_after_continuation": "2026-11-10",
+  "qualification": "Cached input/state fixture; controlled PG tests are not an actual model retest."
+}

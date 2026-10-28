@@ -1,0 +1,119 @@
+{
+  "format": "otravel.prefrontend.r19.release.v1",
+  "created_at_utc": "2026-10-28T03:55:00.328646+00:00",
+  "status": "CONTROLLED_FULL_PASS_LANGUAGE_AND_SUBMISSION_LIMITS_RETAINED",
+  "package_sha256": "f36166b989706e35c111dded5c79f1e0e0a42bf7b0d97cf137c389b683b21cc3",
+  "package_file_count": 86,
+  "full": {
+    "passed": 7384,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_reported_seconds": 447.54,
+    "junit_suite_seconds": 447.397,
+    "source_and_tests_unchanged": true,
+    "test_file_count": 297,
+    "tests_sha256": "f3460c41aa250c27a48e19fda18feda52de9f24c61996ae9451adf54cb3df200",
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r19-initial.xml",
+    "xml_sha256": "d2a5a8d9142105876347de17c586c3ea8cc4816152f2d3e071b9111fc1fe02bf",
+    "actual_provider_calls": 0
+  },
+  "previous_release": {
+    "revision": "R18",
+    "commit": "4645c24ae29a8a85e93fdcae4829299e6e7410eb",
+    "passed": 7314,
+    "proof": "docs/verification/prefrontend-r18-checkpoint-20261028.json"
+  },
+  "repairs": [
+    {
+      "finding_id": "HARNESS-004-ROOM-SCOPED-AGE-OMISSION-078-001",
+      "proof": "docs/verification/room-child-age-literal-repair-20261028.json",
+      "scope": "Closed whole-message current age replacement of the unique child in one owned room. Existing ID/old age/DOB/no-other-edit guards; zero model calls. No general age attribution."
+    },
+    {
+      "finding_id": "HARNESS-004-FAMILY-PARTITION-COVERAGE-076-001",
+      "proof": "docs/verification/family-ordinal-count-admission-20261028.json",
+      "scope": "Reject one-group extracted batch under an asserted first/second-family no-mix declaration. No family membership invention or general census parser."
+    },
+    {
+      "finding_id": "HARNESS-004-ROOM-FACT-LABEL-077-001",
+      "proof": "docs/verification/room-fact-labels077-repair-20261028.json",
+      "scope": "Render saved room-specific requirements with their unique stay/room ordinals and city; no additional supplier guarantee."
+    }
+  ],
+  "current_live_before_rollout": {
+    "revision": "R18",
+    "url": "http://localhost:8084/debug",
+    "exact_archive_docker_checks": 19,
+    "native_closed_reminder_checks": 31,
+    "proofs": [
+      "docs/verification/submission-r18-docker-smoke-20261028.json",
+      "docs/verification/native-r18-readiness-20261028.json",
+      "docs/verification/native-r18-closed-reminders-20261028.json"
+    ]
+  },
+  "actual_tourism_functional": {
+    "revision": "R18",
+    "proof": "docs/verification/r18-typed-real-travel-checkout-20261028.json",
+    "actual_supplier_http": 22,
+    "llm_http": 0,
+    "synthetic_typed_initial_state": true,
+    "hotels": 2,
+    "rooms": 4,
+    "flight_legs": 3,
+    "passengers": 4,
+    "property_photos": 2,
+    "source_types": [
+      "SANDBOX",
+      "DEMO"
+    ],
+    "total_minor_rub": 37616580,
+    "orders": 1,
+    "order_kind": "BOOKED_DEMO",
+    "idempotent_retry_same_order": true,
+    "version_oracle_and_quote_status_oracle_corrections_declared": true,
+    "fresh_nlu_or_real_supplier_booking_claimed": false
+  },
+  "language_acceptance": {
+    "original80_or106_full_pass": false,
+    "reason": "Mixed models and code epochs, schema/resource failures, incomplete oracles and open semantic findings remain. Controlled test count is not dialogue count.",
+    "manual64proof": "docs/verification/after80-r17-manual-072-079-20261028.json",
+    "causal_open_proof": "docs/verification/actual-complex-r17-causal-open-20261028.json"
+  },
+  "delivery_open": [
+    "Dedicated jury LLM key and root binary secrets.env.age",
+    "Final frontend and its exact archive test",
+    "Public demo video/README link",
+    "Final official main/submission tag"
+  ],
+  "gigachat": {
+    "oauth_http": 200,
+    "generation_successes": 0,
+    "api_tls_timeout": true,
+    "vpn_routes_mtu_global_trust_or_tls_verification_changed": false
+  },
+  "paid_local_qwen_real_booking_payment": false,
+  "rollout_hold": {
+    "finding": "HARNESS-004-READONLY-NOW-PREFIX-079-001",
+    "proof": "docs/verification/readonly-question-now-prefix-079-cause-20261028.json",
+    "action": "Do not promote this checkpoint before separately qualified R20 readonly repair. Controlled full PASS does not close this actual mutation."
+  },
+  "staged_package": {
+    "tested_package_sha256": "f36166b989706e35c111dded5c79f1e0e0a42bf7b0d97cf137c389b683b21cc3",
+    "staged_package_sha256": "77b2c2ed1d54262caf45f7f3d4acfd35cf2f9139bcf98c497685bd94e7d458b6",
+    "package_files": 86,
+    "only_allowed_crlf_normalization": [
+      "otravel/budget_intake.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/intent_grounding.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py",
+      "otravel/route_policy_intent.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

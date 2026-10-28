@@ -25,7 +25,8 @@ async def test_explicit_wait_survives_rejected_unknown_traveler_patch(api_factor
         posted = await client.post(path + "/messages", json={"client_message_id": "wait-invalid-child", "text": "Подожди, я ещё дополню: исправь гостя"}, headers=_headers(token))
         await _wait(client, posted.json()["run_id"], token)
         after = await _snapshot(client, sid, token)
-        assert after["waiting_reason"] == "user_pause" and after["pending_question"] is None
+        assert after["waiting_reason"] == "user_pause" and after["pending_question"] is not None
+        assert "unknown-child-id" not in after["pending_question"]["text"]
         assert _trip(after) == before
         queued = await client.post(path + "/messages", json={"client_message_id": "still-adding", "text": "Я добавлю ещё условие"}, headers=_headers(token))
         await asyncio.sleep(0.05)

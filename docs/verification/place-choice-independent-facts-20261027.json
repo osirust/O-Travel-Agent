@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "finding_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+  "recorded_on": "2026-10-27",
+  "status": "CACHED_AND_CONTROLLED_RELATED_FIXED_ACTUAL_REPLAY_PENDING",
+  "original_observation": {
+    "case_id": "ZAI100-005",
+    "source_epoch": "after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5",
+    "source_case_sha256": "c1cccc864b5d9d14488ccd6b6981296bcf7cb845e1ec11ad3cea695c18af4b4a",
+    "model": "Z.ai glm-4.5-flash",
+    "turn": 3,
+    "input": "18.11.2026",
+    "before": {
+      "state_version": 1,
+      "legacy_stay_city": "Дубай",
+      "selected_place_id": null,
+      "pending_field": "place.resolution",
+      "unresolved_candidates": 3,
+      "candidate_source_ids": [292223, 11048853, 8469788],
+      "expires_at": "2026-10-27T20:27:52.137778+00:00"
+    },
+    "checked_model_operations": "upsert_stay для той же остановки: city=Дубай, check_in=2026-11-18; неизвестна дата выезда. Нулевой place_id из raw удалён существующей нормализацией.",
+    "raw_contract_sha256": "7b429725aade2054ff57b8dfd3bd7eafc8bd875e07dfeae1a29ea351ec637e33",
+    "checked_contract_sha256": "5db9396f7203c93f574a4f643dfd9d452d8407a14297652b53176aeedb692beb",
+    "model_unknowns": ["Дата выезда из Дубай"],
+    "after": {
+      "state_version": 2,
+      "check_in": "2026-11-18",
+      "pending_field": "stay.check_out",
+      "place_context_lost": true,
+      "selected_place_id": null
+    },
+    "root_cause": "Harness dispatch к existing place maintenance запрещал любой непустой extracted.unknowns. Поэтому независимая дата с вопросом о выезде ушла в обычное завершение и заменила unresolved identity choice новым date binding. Это не отказ rebase или source TTL."
+  },
+  "repair": {
+    "new_predicate": "place_run.preserve_place_choice_for_independent_facts(pending, before_state, operations, now=...)",
+    "predicate_checks": [
+      "Свежий server-owned unresolved place packet, outer state_version и target",
+      "Existing _read_pending: trip, packet epoch, candidate IDs и TTL",
+      "Copy-only применение предложенных операций",
+      "Existing _rebase_owned_pending подтверждает неизменность географического scope и пригодность старой authority"
+    ],
+    "transition": "Root расширил тонкий model dispatch и typed commands dispatch. Existing finish_place_run maintenance сохраняет независимые факты и owned place choice одной CAS-ревизией; directory и hotel/flight search до выбора не выполняются.",
+    "protocol_preserved": [
+      "При изменении state_version candidate IDs пересчитываются существующим серверным протоколом",
+      "Resolution ID, source identities, expiry и country/source proof не продлеваются",
+      "Имя Дубай или дата не считаются выбором candidate ID",
+      "Переход к verified CityRef выполняется только после явного выбора"
+    ],
+    "canonical_date_error": {
+      "problem": "Старое contextual_slot exclusion могло потерять choice даже на server-generated ошибке даты.",
+      "solution": "При подходящем predicate этот exclusion больше не перехватывает переход. Optional independent_notice передаёт canonical calendar reason вместе с активным place question.",
+      "authority_guards": "Notice допустим только в maintenance с model_meta=None; модельная prose и resolve/select phase не получают эту роль.",
+      "state_effect": "Некорректная дата не создаёт правку или новую ревизию; place packet остаётся активным."
+    },
+    "typed_date_form": "Typed commands с независимой датой и без undo/set_search_policy сохраняют choice; даже request.search=true не запускает рынок до выбора места."
+  },
+  "fixture": {
+    "path": "fixtures/regression/place-choice-independent-date-bulk005-20261027.json",
+    "sha256": "438538ba5844eff96f7da4d14828d84993fa31ea3bdc11f211041530e5873480",
+    "source_transform": "Trip/question/resolution IDs заменены стабильными fixture ID; candidate IDs пересчитаны существующим _choice_id. Source candidates, metadata hashes, original expiry, raw/checked operations и дата не изменены. JSONB projection digests отделены от reported source contract SHA.",
+    "pure_clock": "Точная исходная reference_clock 2026-10-27T20:12:59.728655+00:00; original expiry сохранён.",
+    "pg_clock": "PG создаёт новый controlled packet с 15-minute lifetime от тестового wall clock и пересчитывает IDs; исходный fixture не меняется. Это тестовый новый показ, не продление authority исходного native packet.",
+    "capabilities_account_identifiers_keys_quotes_headers_urls_included": false
+  },
+  "verification": {
+    "status": "RELATED_CONTROLLED_PASS",
+    "tests": 116,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "junit_seconds": 14.004,
+    "artifact": ".local/evaluation/after80-20261027/place-choice-independent-related-final-20261027.xml",
+    "artifact_sha256": "521b71abf3fb6603007464b9cf9c05751a2882d380708d18bc0bb10b82d07da8",
+    "new_pure_worker_cases": 16,
+    "new_pg_cases": 5,
+    "database": "otravel_test",
+    "external_model_http": 0,
+    "external_source_http": 0,
+    "new_cases": [
+      "Cached BULK005 model date + checkout unknown сохраняет дату и три identity candidates",
+      "Country/epoch/candidate/target/expiry negatives не приобретают authority",
+      "Некорректная canonical дата сохраняет calendar reason и place binding без изменения состояния",
+      "Даже полностью заполненный legacy trip не запускает поиск при outstanding choice",
+      "Typed date form с search=true сохраняет choice и не вызывает модель, directory или рынок",
+      "Controlled directory → дата → explicit selection создаёт verified CityRef, сохраняя дату",
+      "Модельная independent_notice и notice вне maintenance отклоняются"
+    ],
+    "old_related_cases": "Existing place worker, PG, resume, resolution и full API conversation suites.",
+    "initial_test_setup_failures": [
+      "Cached абсолютный packet уже истёк по wall clock early interpreter: PG fixture ретаймлен как новый controlled packet; source original не изменён.",
+      "Повторный directory test получил валидный shared-cache hit вместо ожидаемого Mock HTTP. Новый тест изолирован unique controlled query/source IDs без очистки общего cache.",
+      "Typed path дал отдельно сохранённый RED 115 PASS/1 FAIL до Root hook; новый final XML содержит 116 PASS."
+    ],
+    "original_failed_artifacts_preserved": true,
+    "existing_test_oracles_modified": false
+  },
+  "owned_file_binding": {
+    "otravel/place_run.py": "0020a9b597c18aa7291edbf2f91140d4a35540ef36813faf7749b6d3ed00c7a2",
+    "tests/test_place_choice_independent_facts.py": "3d2410218573227b8910492bcb210e3e1178b837522ff896fc6a97fd895cec93",
+    "tests/test_place_choice_independent_facts_pg.py": "3327943b012f60b068fabbc2bffd9aa5ba37dd01c6dd05e60571c062696c25ee"
+  },
+  "limits_and_open_scope": [
+    "Новый actual LLM/API повтор BULK005 на исправленном snapshot этой квитанцией не выполнялся.",
+    "Generic expired/foreign packet ordinary fallback этим fresh-choice predicate не квалифицирован.",
+    "Географически изменяющие scope правки не являются independent facts и не получают authority от predicate.",
+    "Explicit DEMO/source-policy switch, undo/reset и общая оркестрация произвольных не представленных в TripState hard unknowns остаются отдельными случаями.",
+    "Не введена новая очередь вопросов; checkout/date missing facts после selection снова выводятся из validate_trip.",
+    "Native 8086 bulk snapshot, source actors, исходные raw/oracles и другие runtime не изменялись.",
+    "Это related scope, не полные 80/106 PASS."
+  ],
+  "closure_condition": "Свежий actual повтор сохраняет независимую дату при outstanding place choice, не выполняет market search до явного selection и затем продолжает планирование с выбранным verified identity и сохранённой датой. Full corpus и прочие control/policy transitions оцениваются отдельно."
+}

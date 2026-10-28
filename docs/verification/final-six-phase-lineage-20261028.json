@@ -1,0 +1,101 @@
+{
+  "format": "otravel.final-six-phase-lineage.v1",
+  "status": "MIXED_SOURCE_MODEL_INPUT_INVENTORY_PENDING_INDEPENDENT697_AUDIT",
+  "phases": [
+    {
+      "phase": "baseline-a36-ZAI45-001-071",
+      "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+      "package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+      "database": "otravel_zai45_80_eval_20261027",
+      "accepted_inputs": 619,
+      "completed": 584,
+      "failed": 30,
+      "queued_not_executed": 5,
+      "model_start_events": 515,
+      "source_tool_start_events": 771,
+      "actual_supplier_http": "NOT_INDEPENDENTLY_MEASURED_BY_THAT_BASELINE",
+      "scope": "Historical separate source/db; do not sum its tool events as HTTP into the new operator80/500 allocation."
+    },
+    {
+      "phase": "/home/aegml/.local/evaluation/after80-nemotron-8089-independent-epoch1-20261028-014253-92d57981",
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "accepted_inputs": 41,
+      "actual_model_http": 39,
+      "actual_supplier_http": 79,
+      "lifecycle": "OWNED_NATIVE8089_STOPPED",
+      "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+      "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+      "database": "otravel_nemotron_9_eval_20261028",
+      "no_reset": true
+    },
+    {
+      "phase": "/home/aegml/.local/evaluation/after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "accepted_inputs": 23,
+      "actual_model_http": 23,
+      "actual_supplier_http": 34,
+      "lifecycle": "OWNED_NATIVE8090_STOPPED",
+      "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+      "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+      "database": "otravel_nemotron_9_eval_20261028",
+      "no_reset": true
+    },
+    {
+      "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "accepted_inputs": 8,
+      "actual_model_http": 8,
+      "actual_supplier_http": 0,
+      "lifecycle": "OWNED_NATIVE8091_STOPPED",
+      "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+      "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+      "database": "otravel_nemotron_9_eval_20261028",
+      "no_reset": true
+    },
+    {
+      "phase": "/home/aegml/.local/evaluation/after80-zai47-final-asgi-epoch1-20261028-034503-1c325031",
+      "provider": "zai",
+      "model": "glm-4.7-flash",
+      "accepted_inputs": 1,
+      "actual_model_http": 1,
+      "actual_supplier_http": 0,
+      "lifecycle": "ASGI_LIFESPAN_CLOSED",
+      "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+      "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+      "database": "otravel_nemotron_9_eval_20261028",
+      "no_reset": true
+    },
+    {
+      "phase": "/home/aegml/.local/evaluation/after80-cloudflare-final-asgi-epoch1-20261028-035420-f5548d3b",
+      "provider": "cloudflare",
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "accepted_inputs": 5,
+      "actual_model_http": 1,
+      "actual_supplier_http": 0,
+      "lifecycle": "ASGI_LIFESPAN_CLOSED",
+      "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+      "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+      "database": "otravel_nemotron_9_eval_20261028",
+      "no_reset": true
+    }
+  ],
+  "accepted_input_sum": 697,
+  "source_input_inventory": 697,
+  "input_uniqueness_audit_owner": "price_review",
+  "new_R17_allocation_model_http": 72,
+  "operator_model_cap": 80,
+  "new_R17_actual_supplier_http": 113,
+  "operator_source_cap": 500,
+  "full079080_whitelist_path": "/mnt/e/work/aegml/.local/evaluation/final079-080-lineage-20261028/full-dialogues-whitelist.json",
+  "projection_sha256": "f676e52526d8110316d28348b3b964a499513e8431bf87340b5d1771765abe26",
+  "important_080_reading": "CF T5–7 are contextual_slot repeating group.membership; requested ages/budget not executed. T8canonical_saved_answer. Their zero-model status is not semanticPASS.",
+  "historical_R12_ZAI47_072T1": "Separate earlier failed source/model attempt retained, excluded from selected unique coverage rows to avoid counting the later explicit R17 retest twice.",
+  "limits": [
+    "697 accepted sum is not an independent uniqueness proof or 80dialoguePASS.",
+    "Five baseline messages remain queued and must not be relabeled executed.",
+    "Every original failure and distinct model/source phase remains intact."
+  ]
+}

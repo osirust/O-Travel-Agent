@@ -1,0 +1,434 @@
+{
+  "example_only": true,
+  "historical_market_reference": true,
+  "actual_source_receipt": "../verification/native-serp-comparison-20261027.json",
+  "warning": "Identifiers are placeholders. The source price is historical, not a quote or purchase guarantee.",
+  "response": {
+    "run_id": "example-run-id",
+    "session_id": "example-session-id",
+    "status": "completed",
+    "result": {
+      "reply": "Доступны раскрытые поисковые ставки продавцов. Условия различаются.",
+      "result": {
+        "live_offers": [
+          {
+            "details": {
+              "kind": "hotel",
+              "as_of": "2026-10-27T02:03:49.587Z",
+              "warning": "Поисковая цена конкретного раскрытого тарифа. Разные условия не означают эквивалентные предложения; бронирование не подтверждено.",
+              "provider_data": {
+                "property_token": "example-property-token-not-for-api"
+              },
+              "search_request": {
+                "checkin": "2026-11-10",
+                "checkout": "2026-11-13",
+                "currency": "RUB",
+                "occupancies": [
+                  {
+                    "adults": 1,
+                    "children": []
+                  }
+                ],
+                "property_token": "example-property-token-not-for-api"
+              },
+              "supplier_verified": false,
+              "itinerary_complete": false,
+              "allocation_verified": false,
+              "supplier_comparison": {
+                "status": "NOT_EQUIVALENT_OR_UNPROVEN",
+                "warning": "Сравниваются раскрытые поисковые данные продавцов. Одинаковость номеров, условий, итоговых сборов и возможность покупки не подтверждены.",
+                "excluded": {
+                  "truncated_rows": 0,
+                  "other_guest_count": 51,
+                  "unknown_guest_count": 0,
+                  "matching_rate_limit_reached": false,
+                  "missing_stay_total_after_taxes": 0,
+                  "seller_summary_not_a_room_quote": 15
+                },
+                "equivalent": false,
+                "source_type": "LIVE_INDICATIVE",
+                "seller_count": 12,
+                "seller_names": [
+                  "Agoda",
+                  "Booking.com",
+                  "Clicktrip.com",
+                  "Expedia.ca",
+                  "FIVE Jumeirah Village Hotel",
+                  "HomeToGo",
+                  "Hotels.com",
+                  "Priceline",
+                  "Qantas Hotels",
+                  "Traveluro",
+                  "Tripening Hotels",
+                  "Vio.com"
+                ],
+                "requested_guests": 1,
+                "seller_summaries": [
+                  {
+                    "section": "featured_prices",
+                    "supplier_name": "Agoda",
+                    "reported_summary_guests": 3,
+                    "matching_guest_rate_count": 4
+                  },
+                  {
+                    "section": "featured_prices",
+                    "supplier_name": "Expedia.ca",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "featured_prices",
+                    "supplier_name": "Booking.com",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 1
+                  },
+                  {
+                    "section": "featured_prices",
+                    "supplier_name": "Hotels.com",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "featured_prices",
+                    "supplier_name": "Priceline",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 1
+                  },
+                  {
+                    "section": "featured_prices",
+                    "supplier_name": "HomeToGo",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "FIVE Jumeirah Village Hotel",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Booking.com",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Priceline",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Expedia.ca",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Vio.com",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Qantas Hotels",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Tripening Hotels",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Traveluro",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  },
+                  {
+                    "section": "prices",
+                    "supplier_name": "Clicktrip.com",
+                    "reported_summary_guests": 2,
+                    "matching_guest_rate_count": 0
+                  }
+                ],
+                "comparison_groups": [
+                  {
+                    "rates": [
+                      {
+                        "beds": [],
+                        "benefits": [],
+                        "currency": "RUB",
+                        "room_name": "Superior",
+                        "equivalent": false,
+                        "inclusions": [
+                          "1 guest",
+                          "Free cancellation until Nov 2",
+                          "breakfast"
+                        ],
+                        "num_guests": 1,
+                        "price_scope": "source_reported_stay_total_after_taxes_fees",
+                        "amount_minor": 3980600,
+                        "supplier_name": "Agoda",
+                        "discount_remarks": [],
+                        "missing_evidence": [
+                          "room_product_identity",
+                          "supplier_eligibility",
+                          "final_mandatory_fees",
+                          "bed_configuration",
+                          "cancellation_deadline_year_timezone"
+                        ],
+                        "free_cancellation": true,
+                        "reference_rate_id": "serp-rate:c7ac128807bc5764dfe4cbd5",
+                        "supplier_bookable": false,
+                        "breakfast_included": true,
+                        "cancellation_until_date_text": "Nov 2",
+                        "cancellation_until_time_text": "11:59 PM",
+                        "cancellation_deadline_verified": false
+                      },
+                      {
+                        "beds": [
+                          {
+                            "type": "Queen",
+                            "count": 2
+                          },
+                          {
+                            "type": "Double",
+                            "count": 1
+                          }
+                        ],
+                        "benefits": [],
+                        "currency": "RUB",
+                        "room_name": "Superior Double Queen",
+                        "equivalent": false,
+                        "inclusions": [
+                          "2 queen beds",
+                          "1 guest",
+                          "Free cancellation until Nov 2",
+                          "breakfast"
+                        ],
+                        "num_guests": 1,
+                        "price_scope": "source_reported_stay_total_after_taxes_fees",
+                        "amount_minor": 4324200,
+                        "supplier_name": "Agoda",
+                        "discount_remarks": [],
+                        "missing_evidence": [
+                          "room_product_identity",
+                          "supplier_eligibility",
+                          "final_mandatory_fees",
+                          "bed_configuration",
+                          "cancellation_deadline_year_timezone"
+                        ],
+                        "free_cancellation": true,
+                        "reference_rate_id": "serp-rate:7b58fb0cd6b72adc934008af",
+                        "supplier_bookable": false,
+                        "breakfast_included": true,
+                        "cancellation_until_date_text": "Nov 2",
+                        "cancellation_until_time_text": "11:59 PM",
+                        "cancellation_deadline_verified": false
+                      },
+                      {
+                        "beds": [],
+                        "benefits": [],
+                        "currency": "RUB",
+                        "room_name": "Superior Sky",
+                        "equivalent": false,
+                        "inclusions": [
+                          "1 guest",
+                          "Free cancellation until Nov 2",
+                          "breakfast"
+                        ],
+                        "num_guests": 1,
+                        "price_scope": "source_reported_stay_total_after_taxes_fees",
+                        "amount_minor": 4324200,
+                        "supplier_name": "Agoda",
+                        "discount_remarks": [],
+                        "missing_evidence": [
+                          "room_product_identity",
+                          "supplier_eligibility",
+                          "final_mandatory_fees",
+                          "bed_configuration",
+                          "cancellation_deadline_year_timezone"
+                        ],
+                        "free_cancellation": true,
+                        "reference_rate_id": "serp-rate:24bc38ffde516990a4f4da63",
+                        "supplier_bookable": false,
+                        "breakfast_included": true,
+                        "cancellation_until_date_text": "Nov 2",
+                        "cancellation_until_time_text": "11:59 PM",
+                        "cancellation_deadline_verified": false
+                      },
+                      {
+                        "beds": [],
+                        "benefits": [],
+                        "currency": "RUB",
+                        "room_name": "Junior Suite with Hot Tub",
+                        "equivalent": false,
+                        "inclusions": [
+                          "Suite",
+                          "1 guest",
+                          "Free cancellation until Nov 2",
+                          "breakfast",
+                          "Suite"
+                        ],
+                        "num_guests": 1,
+                        "price_scope": "source_reported_stay_total_after_taxes_fees",
+                        "amount_minor": 4908400,
+                        "supplier_name": "Agoda",
+                        "discount_remarks": [],
+                        "missing_evidence": [
+                          "room_product_identity",
+                          "supplier_eligibility",
+                          "final_mandatory_fees",
+                          "bed_configuration",
+                          "cancellation_deadline_year_timezone"
+                        ],
+                        "free_cancellation": true,
+                        "reference_rate_id": "serp-rate:30f4cf49877dda927c0ef1b3",
+                        "supplier_bookable": false,
+                        "breakfast_included": true,
+                        "cancellation_until_date_text": "Nov 2",
+                        "cancellation_until_time_text": "11:59 PM",
+                        "cancellation_deadline_verified": false
+                      },
+                      {
+                        "beds": [
+                          {
+                            "type": "Queen",
+                            "count": 2
+                          },
+                          {
+                            "type": "Single",
+                            "count": 1
+                          }
+                        ],
+                        "benefits": [],
+                        "currency": "RUB",
+                        "room_name": "Superior Room with 2 Queen Beds",
+                        "equivalent": false,
+                        "inclusions": [
+                          "2 queen beds",
+                          "1 guest",
+                          "Free cancellation until Nov 2",
+                          "breakfast",
+                          "Balcony"
+                        ],
+                        "num_guests": 1,
+                        "price_scope": "source_reported_stay_total_after_taxes_fees",
+                        "amount_minor": 4221100,
+                        "supplier_name": "Booking.com",
+                        "discount_remarks": [],
+                        "missing_evidence": [
+                          "room_product_identity",
+                          "supplier_eligibility",
+                          "final_mandatory_fees",
+                          "bed_configuration",
+                          "cancellation_deadline_year_timezone"
+                        ],
+                        "free_cancellation": true,
+                        "reference_rate_id": "serp-rate:1a50539f70faa52fcfc36a54",
+                        "supplier_bookable": false,
+                        "breakfast_included": true,
+                        "cancellation_until_date_text": "Nov 2",
+                        "cancellation_until_time_text": "11:59 PM",
+                        "cancellation_deadline_verified": false
+                      },
+                      {
+                        "beds": [
+                          {
+                            "type": "Double",
+                            "count": 1
+                          }
+                        ],
+                        "benefits": [],
+                        "currency": "RUB",
+                        "room_name": "Superior",
+                        "equivalent": false,
+                        "inclusions": [
+                          "1 double bed",
+                          "1 guest",
+                          "Free cancellation until Nov 2",
+                          "breakfast",
+                          "Balcony"
+                        ],
+                        "num_guests": 1,
+                        "price_scope": "source_reported_stay_total_after_taxes_fees",
+                        "amount_minor": 4221200,
+                        "supplier_name": "Priceline",
+                        "discount_remarks": [],
+                        "missing_evidence": [
+                          "room_product_identity",
+                          "supplier_eligibility",
+                          "final_mandatory_fees",
+                          "cancellation_deadline_year_timezone"
+                        ],
+                        "free_cancellation": true,
+                        "reference_rate_id": "serp-rate:fe5119fe98d13e9d1c9ef1f2",
+                        "supplier_bookable": false,
+                        "breakfast_included": true,
+                        "cancellation_until_date_text": "Nov 2",
+                        "cancellation_until_time_text": "11:59 PM",
+                        "cancellation_deadline_verified": false
+                      }
+                    ],
+                    "checkin": "2026-11-10",
+                    "checkout": "2026-11-13",
+                    "currency": "RUB",
+                    "equivalent": false,
+                    "num_guests": 1,
+                    "property_token": "example-property-token-not-for-api"
+                  }
+                ],
+                "supplier_bookable": false,
+                "selected_reference_rate": {
+                  "beds": [],
+                  "benefits": [],
+                  "currency": "RUB",
+                  "room_name": "Superior",
+                  "equivalent": false,
+                  "inclusions": [
+                    "1 guest",
+                    "Free cancellation until Nov 2",
+                    "breakfast"
+                  ],
+                  "num_guests": 1,
+                  "price_scope": "source_reported_stay_total_after_taxes_fees",
+                  "amount_minor": 3980600,
+                  "supplier_name": "Agoda",
+                  "discount_remarks": [],
+                  "missing_evidence": [
+                    "room_product_identity",
+                    "supplier_eligibility",
+                    "final_mandatory_fees",
+                    "bed_configuration",
+                    "cancellation_deadline_year_timezone"
+                  ],
+                  "free_cancellation": true,
+                  "reference_rate_id": "serp-rate:c7ac128807bc5764dfe4cbd5",
+                  "supplier_bookable": false,
+                  "breakfast_included": true,
+                  "cancellation_until_date_text": "Nov 2",
+                  "cancellation_until_time_text": "11:59 PM",
+                  "cancellation_deadline_verified": false
+                },
+                "reference_selection_policy": "first_disclosed_matching_guest_stay_total_not_lowest_equivalent"
+              },
+              "availability_verified": false,
+              "ready_for_real_booking": false
+            },
+            "currency": "RUB",
+            "offer_id": "example-serp-room-rate-reference",
+            "provider": "serpapi",
+            "price_kind": "INDICATIVE_ROOM_RATE_STAY_TOTAL",
+            "description": "FIVE Jumeirah Village Hotel",
+            "source_type": "LIVE_INDICATIVE",
+            "amount_minor": 3980600
+          }
+        ]
+      }
+    }
+  }
+}

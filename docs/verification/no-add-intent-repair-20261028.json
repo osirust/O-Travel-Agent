@@ -1,0 +1,120 @@
+{
+  "finding_id": "HARNESS-004-EXPLICIT-NOADD-DUPLICATE-CHILD-NEMO-001",
+  "date": "2026-10-28",
+  "status": "CONTROLLED_REPAIR_AND_PG_SCOPE_TESTED_FULL_R16_PENDING",
+  "parent_release": "6418de37b703c7bcb4cc960d7533995aad07abfd",
+  "original_evidence": {
+    "private_summary_path": ".local/peer_reviews/nemo-wholeharness-r15-20261028/diagnostic-summary.json",
+    "sha256": "c0d36d3ce5a11c14f7c9ab63b310cec80201241db4b1972cd7d1489f727226ea",
+    "recorded_model": "NVIDIA Nemotron through OpenRouter; saved final JSON only",
+    "r15_result": "The whole Harness completed with five people, including both original child4 and unrequested new child4, despite an explicit current no-add instruction.",
+    "alias_calibration": "Antalya Russian-name echo was correctly normalized to the existing CityRef; raw-domain alias rejection was not the Harness outcome."
+  },
+  "fix": {
+    "authority": "Bounded current global person-NoAdd imperative with an existing canonical roster; model-only path.",
+    "no_dependencies": "Suppress only prohibited new-person adds; retain independently validated operations.",
+    "with_dependencies": "Set repair_required and keep the complete recorded batch as evidence. Structured feedback names existing IDs and forbidden new IDs; no business commit occurs before a complete valid repair.",
+    "user_contradiction": "Explicit current Add plus global NoAdd produces a human conflict at party.addition; it is not automatically repaired.",
+    "identity": "No remapping based on equal ages; typed commands and existing-person updates retain their existing validation paths.",
+    "public_reply": "Guarded model_reply is hidden while original validated/rejected final JSON remains in the audit."
+  },
+  "controlled_pg": [
+    {
+      "case": "max1_recorded_bad_response",
+      "max_llm_calls_per_run": 1,
+      "recorded_adapter_responses": 1,
+      "unavailable_repair_requests": 0,
+      "outcome": "INVALID_LLM_OPERATION at intent_guard; complete trip/version unchanged with four original IDs.",
+      "tool_calls": 0,
+      "orders": 0
+    },
+    {
+      "case": "max2_controlled_corrected_second_response",
+      "max_llm_calls_per_run": 2,
+      "recorded_adapter_responses": 2,
+      "unavailable_repair_requests": 0,
+      "feedback_asserted": "existing_traveler_ids and forbidden_new_traveler_ids preserved as structured fields.",
+      "outcome": "Four existing IDs, one child aged4, two rooms in each city; budget preserved and return remains2026-11-19.",
+      "replayed_shift": "An authored schema-valid second response retained a stale shift_return; the existing return guard suppressed it.",
+      "orders": 0,
+      "limit": "The second response is explicitly authored test data; no live model repair quality is claimed."
+    },
+    {
+      "case": "current_human_add_vs_noadd_conflict",
+      "recorded_adapter_responses": 1,
+      "unavailable_repair_requests": 0,
+      "outcome": "Trip/version unchanged; addressed party.addition question; public model_reply None.",
+      "tool_calls": 0,
+      "orders": 0
+    }
+  ],
+  "initial_current_r16": {
+    "path": ".local/evaluation/after80-20261028/no-add-r16-initial-pg.xml",
+    "sha256": "45e3398244969e9ac5a2a0fa4fe74085e760c5a538f1524745cafb7a22aa1db9",
+    "tests": 32,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 4.333
+  },
+  "intermediate_renderer_attempt": {
+    "path": ".local/evaluation/after80-20261028/no-add-r16-after-renderer.xml",
+    "sha256": "56156a00fb3f4543ee2c7343f5ab60c775b66355206784e9ef8c03144c7db3f3",
+    "tests": 32,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 4.233
+  },
+  "remaining_fail_cause_and_fix": "Human conflict metadata initially supplied conflicts/server_questions but not unknowns; the established renderer trust gate fell back to adult-count wording. Mirroring the code-owned conflict question into unknowns fixed the tested path. The ineffective renderer override was removed.",
+  "final": {
+    "path": ".local/evaluation/after80-20261028/no-add-r16-final.xml",
+    "sha256": "10d7d28dcb95e4f74bad06e980633979e485d312f12c4893eb2d8e0e338549b8",
+    "tests": 32,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 3.917
+  },
+  "unique_scope": {
+    "pure_cases": 29,
+    "pg_api_cases": 3
+  },
+  "checks": {
+    "ruff": "PASS"
+  },
+  "files": [
+    {
+      "path": "otravel/traveler_addition_grounding.py",
+      "sha256": "ab82e1e678efd5f9330a57e0276d38addc19c30f3896ef1929c7128246c06591"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "a717d71df806e56bea40b76b786465ccb2adbb26e8c95cd79404c114018503c6"
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "f61138a5914745aa491cfd54ddfe16c0b1b07b4c10974624917fea5b4b127db0"
+    },
+    {
+      "path": "tests/test_traveler_addition_grounding.py",
+      "sha256": "fe7d950e30d5337a72ea5d94cfae7d7597ad43a83de8561e38cea51782a34d35"
+    },
+    {
+      "path": "tests/test_traveler_addition_repair_pg.py",
+      "sha256": "3ea43779ec8ef34bef3f2ae0855690f79f625ca585d6a0cefcfbef9c8e05f63c"
+    },
+    {
+      "path": "fixtures/regression/nemo-explicit-noadd-20261028.json",
+      "sha256": "f6f8d89f9e280c15eb60ad42205b9fc4c0d524497490ae226e81695b03ea0fe8"
+    }
+  ],
+  "external_llm_calls": 0,
+  "external_travel_calls": 0,
+  "limits": [
+    "Narrow imperative grammar, not a general addition/identity classifier.",
+    "Quoted, historical, hypothetical, question, service-only and explicit exception forms are not treated as global person prohibitions.",
+    "Controlled model/travel adapters and real PostgreSQL; no new provider inference or supplier order.",
+    "Full R16 and fresh actual model repair remain separate qualifications."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-27",
+  "status": "CONTROLLED_CORE_4530_PASS_0_FAIL_0_SKIP",
+  "junit": ".local/evaluation/after80-20261027/full-hotel-clarification-final.xml",
+  "junit_sha256": "6881c806a1510ddd2b2eb2878387a57f44cd22558ed716207ad52c94fa4d900c",
+  "tests": 4530,
+  "seconds": 171.181,
+  "source_sha256": {
+    "otravel/harness.py": "7fa87e4187b3079eb7d28f20dcda437ee572e01837de617a69f04cce2f0c0e10",
+    "otravel/hotel_preservation.py": "9ef5dc0a5c84ea238e34057340839571a0984abea1b776124ded222ba5a45839",
+    "otravel/clarification_policy.py": "617599803cfa8123abb30ee823ccf6f29f1e9192072f71da7166f32404ad5daf",
+    "otravel/intent_grounding.py": "3b142e2286aaa34e9517df5a5cd1a4422f4fbb7f3e52b2361387871a77d8a5c9",
+    "otravel/selected_plan.py": "356d0d63cd529dfedef34763443f80dd06e10ace367bfe01aae56c0d247dbb07"
+  },
+  "scope": "Full controlled/domain/API/real isolated PostgreSQL/MockTransport suite; not actual all80/106 or supplier/model qualification",
+  "prior_failed_full": {
+    "junit": ".local/evaluation/after80-20261027/full-hotel-preserve-clarification-policy.xml",
+    "sha256": "9dd4c16ddc895352d869ae4242ed0bc953fe6ef258032d996643f54fea1cb702",
+    "pass": 4528,
+    "fail": 2,
+    "reason": "Prior controlled oracle expected hotel_id null after explicit preserve of a fresh selected hotel; now checks the own selected hotel identity. All room, party, breakfast, budget, date, revoked quote and zero-order checks retained."
+  },
+  "targeted": {
+    "tests": 90,
+    "junit_sha256": "e8ad43fc35b56b6ad33c0dcf8c97d46fdc58772200452494db168dadc378f845"
+  },
+  "actual_model_retest": "PENDING",
+  "actual_supplier_retest": "SEPARATE",
+  "real_bookings": 0,
+  "payments": 0,
+  "local_inference": 0
+}

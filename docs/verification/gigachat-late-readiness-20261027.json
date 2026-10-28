@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-10-27T20:15:15.039451+00:00",
+  "scope": "ONE_PERSONAL_AUTH_AND_MODELS_NO_GENERATION",
+  "oauth_attempts": 1,
+  "oauth_responses": [],
+  "model_list_attempts": 0,
+  "model_list_responses": [],
+  "generation_calls": 0,
+  "billing_changes": 0,
+  "vpn_or_network_changes": 0,
+  "global_trust_changes": 0,
+  "token_persisted": false,
+  "credential_values_output": false,
+  "tls_verify": true,
+  "hostname_check": true,
+  "status": "NOT_READY_FOR_INFERENCE",
+  "error": {
+    "code": "REQUEST_TIMEOUT",
+    "message": "GigaChat не ответил за отведённое время.",
+    "http_status": null,
+    "retryable": true,
+    "details": {}
+  },
+  "token_cached_in_ram": false
+}

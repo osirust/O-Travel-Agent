@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-BILLING-429-RETRY-001",
+  "status": "CONTROLLED_PUBLIC_ERROR_CONTRACT_CLOSED_ORIGINAL_ACTUAL_DENIAL_RETAINED",
+  "original_actual": "docs/verification/all80-provider-admission-20261027.json",
+  "failure": "Z.aiHTTP429business1113 was classified as billing but user message described rate frequency and retryable=true.",
+  "repair": "Compatible RATE_LIMITED machine code retained; recognized billing gets clear unavailable-resource/balance text and retryable=false. API and failed run expose only documented reclassified integer code/enum, never raw vendor text/account details.",
+  "verification": {
+    "full_tests": 4557,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 167.744,
+    "junit": ".local/evaluation/after80-20261027/full-billing-public-final.xml",
+    "junit_sha256": "f688a608d85c2b0aec4b9bf2ef8745c146a36304be1fedb9d31916a054fcdbb8",
+    "provider_related": 338,
+    "root_relay_related": 143,
+    "counts_overlap_not_added": true,
+    "pure_MockHTTP_ASGI_and_controlled_PG": true
+  },
+  "source_sha256": {
+    "otravel/providers.py": "c58652ae832f1fdae5d622a61d06c327e9718f560662a17fc63c9ed7eff82d07",
+    "otravel/api.py": "0761c4f54878f732a9c814b3e0af6acb739a7c5aa8f4a068d7e3dab6fa45faab",
+    "otravel/harness.py": "56dc83e071bf74ee9788ee40a9dc74e4aa4d666c9a8deb880297736351f28d47"
+  },
+  "new_external_HTTP": 0,
+  "local_inference": 0,
+  "billing_enabled": false,
+  "limitations": [
+    "No new Z.ai generation; original access denial remains.",
+    "Provider availability uses next UTC day as an engineering admission recheck for unconfirmed billing/usage; this is not evidence of vendor resource restoration.",
+    "All80/106 language acceptance is not closed."
+  ]
+}

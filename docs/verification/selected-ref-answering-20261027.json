@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-SELECTED-REF-ANSWER-001",
+  "status": "CONTROLLED_REF_ANSWER_SCOPE_TESTED_ACTUAL_NLU_OPEN",
+  "files_sha256": {
+    "otravel/answering.py": "8ab13926126db7982a7cf38495ea8d0457234c3b9e2fa7580db597e56fe37380",
+    "tests/test_answering_place_refs.py": "e3c9a6f917e4089cccb53fefa002c92a4a5d7f997ba8b21276447e532a887fd8"
+  },
+  "initial_reproduction": {
+    "finding_id": "HARNESS-004-SELECTED-REF-ANSWER-001",
+    "source_sha256": "969f05c081365b6f0c3724440589bfa1804a0b5c695dadc0e6eecb5e74724e39",
+    "current_bound_ref_country_iso2": "US",
+    "old_moscow_answer": "Москва — Россия.",
+    "old_homonym_answer": null,
+    "actual_http": 0,
+    "model": 0,
+    "sql": 0,
+    "state_mutations": 0
+  },
+  "initial_reproduction_path": ".local/evaluation/after80-20261027/answering-refs-initial-repro.json",
+  "initial_reproduction_sha256": "c360730364a8c3b3bb1d65ea6c28e8816c3de33d113a47579e6a620958fd6df4",
+  "verification": {
+    "tests": 127,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 2.517,
+    "junit": ".local/evaluation/after80-20261027/answering-refs-final-expanded.xml",
+    "ruff": "PASS"
+  },
+  "facts": [
+    "Bound origin/stay/route-end CityRefSnapshot country/admin/timezone precede curated city-country seeds for selected-place questions",
+    "Legacy city aliases are used for name matching only; Moscow US cannot inherit the Moscow RU seed country",
+    "Two distinct same-name owned places require stop/country disambiguation; ordinal and explicit ISO resolve owned stay position",
+    "Unbound snapshots do not override unrelated literal legacy questions",
+    "Route labels and optional route_geography projection are added only for nonempty location_refs",
+    "Empty refs preserve exact legacy facts JSON and READONLY_SCHEMA hashes",
+    "Canonical geography replies reject mixed edits and add no hotel availability, visa, price or booking facts",
+    "State and input snapshots remain unchanged"
+  ],
+  "wire_schema": {
+    "sections_unchanged": true,
+    "readonly_schema_unchanged": true,
+    "legacy_facts_sha256": "8ac525814247aba72febbb7ee12a60fe8a54ff30121db60cb40d7afbb4b0e1f8",
+    "readonly_schema_sha256": "73ebe6e8aa6683d4dfba88fe749f0dc857fd968db998aa2bcc24954177f007b4"
+  },
+  "execution": {
+    "actual_http": 0,
+    "sql": 0,
+    "model": 0,
+    "native_changes": 0,
+    "state_mutations": 0
+  },
+  "limits": [
+    "Caller/catalog authentication is required before a CityRef enters current canonical state; this renderer does not authenticate external request bodies",
+    "Only bounded exact canonical/known aliases and stop selectors are supported; arbitrary transliteration or typo resolution remains outside this helper",
+    "These pure declared fixtures are not actual geocoder availability or full-language Harness acceptance",
+    "No new country capital, visa, supplier availability, tariff, or price knowledge is inferred from a physical-place snapshot"
+  ]
+}

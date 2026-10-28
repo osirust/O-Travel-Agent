@@ -1,0 +1,122 @@
+{
+  "format": "otravel.final40_financial_requirements_repair.v1",
+  "checked_at_utc": "2026-10-28T16:48:47.213424+00:00",
+  "status": "CONTROLLED_FINANCIAL_SAFETY_REPAIRED_ACTUAL_NLU_RETEST_OPEN",
+  "base_git_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "source_scope": "Current E working tree; these uncommitted repairs are not claimed as installed runtime8084 or new Git release.",
+  "changed_files": [
+    {
+      "path": "otravel/financial_requirements.py",
+      "sha256": "76b6e5fe7db8978ab9bde9fc8985f602a3eee9941300b67bf94b9cd6017115cb"
+    },
+    {
+      "path": "otravel/domain.py",
+      "sha256": "09dc783ab60c27c7dfbd9f5166ef6bd5d108023b6b8887f79bc35b57642ee5e6"
+    },
+    {
+      "path": "otravel/llm_contract.py",
+      "sha256": "f4a767681779cd149efc23d6f4b8c7d53f2a5a4d0f3487c41339f494c00f2eac"
+    },
+    {
+      "path": "tests/test_financial_requirements.py",
+      "sha256": "b315aed9b33b4a604497b6d075205b5f7610a09e787a921da4027759aa9f6a7e"
+    },
+    {
+      "path": "tests/test_financial_requirements_pg.py",
+      "sha256": "e5365a34fdb08d07a455c3fdf70cb06e365c901f79e394106c6b8f52aacfa0de"
+    },
+    {
+      "path": "tests/test_llm_contract.py",
+      "sha256": "571e85b29ec36cd02e2966e66eb34ccce621fefb3ab3cfbb6fefa975cf35d5d6"
+    }
+  ],
+  "parent_owned_integration": {
+    "path": "otravel/harness.py",
+    "sha256_during_own_pg": "0b668b24709246f4bc547f6f376b31356f7a56951ecceefad32dbfa76b206475",
+    "hook": "Parent applies guard after interpretation/ASK suppression, before state commit; normal owner/CAS/domain paths retained."
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-FINAL40-REFUND-DEADLINE-001",
+      "status": "CONTROLLED_FAILCLOSED_REQUIREMENT_SCOPE_REPAIRED",
+      "before": "FINAL40-006T3 lost until-checkin semantics into refundable=true. Captured LiteAPI deadline11Nov10UTC vs checkin12Nov; ready MIXED7161658RUBminor; validate_quote accepted; earlier probe created one simulated order.",
+      "change": "CURRENT asserted until-checkin requirement becomes a distinct strict-boolean hard free_cancel_until_checkin, with canonical stay/room scope. Existing unsupported-hard checks refuse ready plans, preview/quote and synthetic flex; no arbitrary deadline verification is invented.",
+      "proof": "Five original captured RED assertions now pass. Real own-PG/ASGI stores a new revision, old quoteconfirm409/oldpreview409, orders0; unsolicited modelclear/false/soft is blocked, explicit current waiver becomes canonicalclear."
+    },
+    {
+      "id": "HARNESS-004-F40-CONTRADICTORY-CONSTRAINTS-021-001",
+      "status": "CONTROLLED_CURRENT_LITERAL_ATOMIC_SCOPE_REPAIRED",
+      "before": "021T2 free cancellation at any time+nonrefundable accepted hardfalse;023T1 directonly+suggestconnecting silently became hardfalse.",
+      "change": "CURRENT conflicting financial/route instructions produce concrete choice questions and block the atomic batch; no silently weakened polarity or search.",
+      "proof": "Both exact literals preserve all trip fields/version in own PostgreSQL/API tests, clarification pending, no plans or orders."
+    },
+    {
+      "id": "HARNESS-004-F40-NONSTOP-RELAXATION-AUX-001",
+      "status": "OPEN_KNOWN_P2_EXISTING_AUXILIARY_FALSE_POSITIVE",
+      "before_and_after": "Existing auxiliary guard still suppresses modelset(nonstop=false,hard=true) for explicit connecting-flight relaxation containing not mandatory. Original assertion retained; this repair does not modify auxiliary guard. Explicit clear_constraint remains the existing preferred removal operation."
+    }
+  ],
+  "checks": {
+    "related_pure": {
+      "path": "/mnt/e/work/aegml/.local/evaluation/final40-p0-safety-prep-20261028/RELATED-final.xml",
+      "sha256": "2defa4a9df7f851f452789526ebe5718a9762e356671de7e71b783e3fe57aa91",
+      "tests": 403,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "own_pg_and_new_pure": {
+      "path": "/mnt/e/work/aegml/.local/evaluation/final40-p0-safety-prep-20261028/ISOLATEDPG-r3.xml",
+      "sha256": "25fa149ff01d1f13f8aab07e3794c3e8e17622844f4dbe5e5fa31da9ee5fded6",
+      "tests": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "new_pure_tests": 56,
+    "own_pg_api_tests": 4,
+    "original_captured_contract_regressions": {
+      "path": "/mnt/e/work/aegml/.local/evaluation/final40-p0-safety-prep-20261028/AFTER-final-captured.xml",
+      "sha256": "60189ff3094c4b71f862b7ca66578a9848a8b28e9701a7d72d5c510bcba347cd",
+      "tests": 18,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "target_p1_red_now_green": 5,
+      "unchanged_control_passes": 12,
+      "known_open_p2": 1
+    },
+    "counts_overlap": "The56newpure tests appear in both403related and60ownPGcombined. Do not sum all run counts as unique scenarios.",
+    "own_pg_source_tests_unchanged": true,
+    "own_container_and_anonymous_volume_removed": true,
+    "legacy_schema_projection": "Only new temporal enum removed for historical-format comparison; original frozen bytes/hash/25percent bounds unchanged, current bool/room schema and separate<=150byte feature delta validated."
+  },
+  "original_evidence": {
+    "fixture_sha256": "7ead45dfbc76302a531bba6529fe64255dc6a1b082017ebbe4ece786307638e4",
+    "captured006_source_sha256": "ddb9a916371d0bed74afa4f8a35da6c12ceeae2bd1919b20e9543c12a0da58f6",
+    "captured021_source_sha256": "3e58a99a736df159568101d556d3926a356f1b31c66d6193f5f7dd5fda0b9e12",
+    "captured023_source_sha256": "a575551d93fbbbcb4271c086283d3f091ed9f9fa815f6bfd0d136d6dc61b42eb",
+    "fx_presentation_note": "Unmodified redacted snapshot correctly failedFX(v1retained). V2 restores deterministic official date_req URL and UTC representation of same instants, recovering the exact original CBR snapshot digest; rates/hash/source were never substituted.",
+    "baseline_red_xml_sha256": "38ae79758277970a3a82f28f1cb8c99c36bde52a20132c572e082073c8b4ff40",
+    "initial_related_399pass2legacy_projectionfail_xml_sha256": "b57dd18620b02600d3372b400c55ab3355dff8a17c7f415528552b9a99b02718"
+  },
+  "resources": {
+    "real_model_http": 0,
+    "real_supplier_http": 0,
+    "real_booking_or_payment": 0,
+    "local_qwen": 0,
+    "master_reads": 0,
+    "production_database_mutations": 0,
+    "runtime8084_redeploy": false,
+    "git_stage_commit_push": 0,
+    "setup_failures_retained": "Initial existing-cluster connections refused before SQL/testexecution; no HBA/password changes. Separate fresh qualifier r1failed on DockerinspectIPshape and removed ownresources; r2/r3actualtests completed and ownresources removed."
+  },
+  "limitations": [
+    "This is captured-contract/pure/realPG-ASGI qualification with controlled model outputs, not fresh actualLLM performance or full40/106 acceptance.",
+    "Positive arbitrary cancellation-deadline/TZ/checkin-time verification remains unsupported. Requirement stays blocking until verified capability is implemented or user explicitly waives it.",
+    "Until-checkin is not replaced with refundableboolean, assumed timezone or any-time cancellation guarantee.",
+    "Old sessions which already lost the requirement cannot be retrospectively migrated from refundableboolean alone.",
+    "Birthday, train/timehard wishes, pricing-budget issues and remaining whole-dialogue findings are separate repairs.",
+    "Global integration/full suite and immutable runtime deployment belong to parent final qualification."
+  ]
+}

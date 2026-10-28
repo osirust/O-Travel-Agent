@@ -1,0 +1,92 @@
+{
+  "scope": "Read-only existing finalJSON/checkedcontracts/businesssnapshots. No hiddenreasoning, key/header/vault/API/sessionmutations.",
+  "status": "CAUSAL_FINDINGS_OPEN_NO_PRODUCTION_PATCH",
+  "findings": [
+    {
+      "id": "HARNESS-004-ROOM-SCOPED-AGE-OMISSION-078-001",
+      "status": "OPEN",
+      "case": "ZAI100-078",
+      "turn": 7,
+      "cause": "MODEL_MISCLASSIFIED_CURRENT_EDIT_AND_HARNESS_DROPPED_QUESTION",
+      "detail": "RawASK/ops[] missed explicit room4 child9→10; checkedclearedwrongadultunknown, outergenericreply. Existing closedslot/literal helpers do not cover full scopedageedit.",
+      "raw_snapshot_sha256": "e72afc576635ecf3153af4cdbe4cccda08ae97c9ff5416333f23356486cda81d",
+      "checked_snapshot_sha256": "3af753858adcd2125ade004aa1f851b99fac1f4256b32e0307992dbd0fb12824",
+      "source_epoch": "after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+      "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041"
+    },
+    {
+      "id": "HARNESS-004-EXPLICIT-CENSUS-NOOP-078-001",
+      "status": "OPEN",
+      "case": "ZAI100-078",
+      "turn": 9,
+      "cause": "MODEL_EMPTY_ASK",
+      "detail": "Wholecurrentexplicit census/layout omitted already bymodel; no correctoperations were removed. Generalcensusparser deferred.",
+      "raw_snapshot_sha256": "ef67a07f2117182658f763a6bf9750e11b6a0da5a0d83f3d8ceef73fd407021e",
+      "checked_snapshot_sha256": "306570a029ffc2477f5d77632301ed8cd31f1ceb4242df770e4d009bee2e5e8c",
+      "source_epoch": "after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+      "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041"
+    },
+    {
+      "id": "HARNESS-004-FAMILY-PARTITION-COVERAGE-076-001",
+      "status": "OPEN",
+      "case": "ZAI100-076",
+      "turn": 6,
+      "cause": "MODEL_WRONG_MEMBERSHIP_HARNESS_INCOMPLETE_PARTITION_GUARD",
+      "detail": "Rawcorrectrooms butfamily1allfiveAD/nochildren; checked retained membership, appliedno-mix toonegroup. Mustreject incompleteexplicit2family mapping, notguess membership.",
+      "raw_snapshot_sha256": "2f66223bcfe5c64735e8d2b5c062483a2119bafc5673ba32a2d12c6caf703db6",
+      "checked_snapshot_sha256": "f71d4743219d97332d5270d73ed08b200804de94bd4c362b2dda9f5a5632b130",
+      "source_epoch": "after80-nemotron-8089-independent-epoch1-20261028-014253-92d57981",
+      "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041"
+    },
+    {
+      "id": "HARNESS-004-UNSPECIFIED-FAMILY-ALLOCATION-078-001",
+      "status": "OPEN",
+      "case": "ZAI100-078",
+      "turn": 1,
+      "cause": "MODEL_INVENTED_FAMILY_AND_ROOM_MEMBERSHIP",
+      "detail": "Initial usergave counts/twofamilies/threerooms butnot whoingroup/room. Rawalreadyinvented completepartition; checked admittedit. Onlyunaskedhardnights removed.",
+      "raw_snapshot_sha256": "dc315b4bceed59431a6be07674305eea8fc73cb6c5cd3da9e4da297682ca9063",
+      "checked_snapshot_sha256": "e1537a043d412bf0a0b8a63829f15f09f0b6dc25f8de3a3368c684938d2d721b",
+      "source_epoch": "after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+      "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041"
+    },
+    {
+      "id": "HARNESS-004-ROOM-FACT-LABEL-077-001",
+      "status": "OPEN",
+      "case": "ZAI100-077",
+      "turn": 5,
+      "cause": "DETERMINISTIC_READONLY_RENDERER_SCOPE_LOSS",
+      "detail": "Raw/checkedreply preference sectionselector, ops[]. Closedrenderer uses generic forspecifiedroom instead ofboundroomnumber, losing requestedperroom distinction.",
+      "raw_snapshot_sha256": "d75e32373104e03982b66b665e5a01a3d716bd6c49f65ab4f20d11c84e7b980d",
+      "checked_snapshot_sha256": "d75e32373104e03982b66b665e5a01a3d716bd6c49f65ab4f20d11c84e7b980d",
+      "source_epoch": "after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+      "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041"
+    },
+    {
+      "id": "HARNESS-004-DATE-RANGE-OMISSION-079-001",
+      "status": "OPEN",
+      "case": "ZAI100-079",
+      "turn": 1,
+      "cause": "MODEL_OMITTED_DATES_AND_LITERAL_RECOVERY_NO_MATCH",
+      "detail": "Rawupsert hasonlyrequested_nights6, no checkin/checkout; checked same. Pureground_explicit_stay_dates onexact4–10December2026 text returns recoveredFalse/notes[].",
+      "raw_snapshot_sha256": "356eab0a0c512f5858371c0d86dc3cfe63f2c0e7a8c3f8684a834603f527f169",
+      "checked_snapshot_sha256": "0f10c68b7e20647138e13692692ef86c183d270d61a900625fbf898174f2203a",
+      "source_epoch": "after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87",
+      "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041"
+    }
+  ],
+  "private_proposal": "ignored .local/peer_reviews/room4-age-and-family-proposal-20261028.md",
+  "private_red_test": "ignored .local/peer_reviews/test_room4_age_completeness_red_20261028.py",
+  "red_result": "1intentionalpureRED againstexistinghelpers, noPG orwholeHarness, noimplementationclaimed",
+  "priority": [
+    "Scopedroom4age omission guard afterRootreview",
+    "Familycount incompletenessreject/ASK withoutmembershipguessing",
+    "Readonlyroomlabel formatting",
+    "Date-span recoverygap",
+    "Wholesalecensus miss remainsOPEN, nohandwrittencensusparserbeforefrontend"
+  ],
+  "new_external_http": 0,
+  "new_model_calls": 0,
+  "production_source_changes": 0,
+  "pg_tests": 0
+}

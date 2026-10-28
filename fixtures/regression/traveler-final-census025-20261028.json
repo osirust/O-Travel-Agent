@@ -1,0 +1,228 @@
+{
+  "format": "otravel.cached.actual.final-roster025.v1",
+  "scope": "Sanitized actual before/pending/final JSON; original a36 preserved",
+  "source_path": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-025.json",
+  "source_sha256": "1f251c1f6c1614420c67149a94bccc70b2141bf1b5ba2aeba7b9edafea4820d0",
+  "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "input": "Окончательный состав: двое взрослых и двое детей, четырёх и двенадцати лет. Никаких других участников.",
+  "before_trip": {
+    "legs": [],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Сочи",
+        "rooms": [],
+        "check_in": null,
+        "hotel_id": null,
+        "check_out": null
+      }
+    ],
+    "budget": null,
+    "groups": [],
+    "origin": "Санкт-Петербург",
+    "trip_id": "420fc32b-dccf-4c15-8505-f0b00eaad9e7",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 1
+  },
+  "before_status": "WAITING_USER",
+  "before_waiting_reason": "clarification",
+  "before_pending": {
+    "text": "На какую дату планируете заезд в городе «Сочи»?",
+    "field": "stay.check_in",
+    "reason": "clarification",
+    "context": {
+      "requested_destination": {
+        "kind": "city",
+        "name": "Сочи",
+        "country_code": "RU"
+      }
+    },
+    "questions": [
+      "На какую дату планируете заезд в городе «Сочи»?"
+    ],
+    "target_id": "new-stay-1",
+    "question_id": "71fef15f-0a45-4108-9f6b-f28f11e29a69-question",
+    "state_version": 1,
+    "requested_destination": {
+      "kind": "city",
+      "name": "Сочи",
+      "country_code": "RU"
+    }
+  },
+  "validated_raw_contract": {
+    "value": {
+      "reply": "Состав поездки обновлен: двое взрослых и двое детей (4 и 12 лет). На какую дату планируете заезд в городе «Сочи»?",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [
+        "На какую дату планируете заезд в городе «Сочи»?"
+      ],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "update_traveler",
+          "value": {
+            "age": null,
+            "type": "adult"
+          },
+          "target_id": "new-traveler-1"
+        },
+        {
+          "type": "update_traveler",
+          "value": {
+            "age": null,
+            "type": "adult"
+          },
+          "target_id": "new-traveler-2"
+        },
+        {
+          "type": "remove_traveler",
+          "value": {},
+          "target_id": "new-traveler-3"
+        },
+        {
+          "type": "remove_traveler",
+          "value": {},
+          "target_id": "new-traveler-4"
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-5",
+            "age": 4,
+            "type": "child"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-6",
+            "age": 12,
+            "type": "child"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "54ecbb7c278f2124dd241922dafe5a7ef5b8ba15b5a3bd65ca57758f51c4278a",
+    "captured": true,
+    "utf8_bytes": 935
+  },
+  "checked_old_source_contract": {
+    "value": {
+      "reply": "Состав поездки обновлен: двое взрослых и двое детей (4 и 12 лет). На какую дату планируете заезд в городе «Сочи»?",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [
+        "На какую дату планируете заезд в городе «Сочи»?"
+      ],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "update_traveler",
+          "value": {
+            "age": null,
+            "type": "adult"
+          },
+          "target_id": "new-traveler-1"
+        },
+        {
+          "type": "update_traveler",
+          "value": {
+            "age": null,
+            "type": "adult"
+          },
+          "target_id": "new-traveler-2"
+        },
+        {
+          "type": "remove_traveler",
+          "value": {},
+          "target_id": "new-traveler-3"
+        },
+        {
+          "type": "remove_traveler",
+          "value": {},
+          "target_id": "new-traveler-4"
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-5",
+            "age": 4,
+            "type": "child"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-6",
+            "age": 12,
+            "type": "child"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "77ee445bf49001f5b63138cab40638c26d804da737f1e5c19af4d365af9d6800",
+    "captured": true,
+    "utf8_bytes": 935
+  },
+  "expected_after_census": {
+    "adults": 2,
+    "child_ages": [
+      4,
+      12
+    ]
+  },
+  "new_requests": 0
+}

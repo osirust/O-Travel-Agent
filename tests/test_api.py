@@ -585,11 +585,90 @@ async def test_provider_failure_switches_to_demo_only_when_explicitly_requested(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('kind,missing', [('hotels', 'origin'), ('flights', 'rooms')])
+async def test_component_search_keeps_unrelated_pending_question(api_factory, monkeypatch, kind, missing):
+    async def offers(*args, **kwargs):
+        return [{'offer_id': 'sample', 'source_type': 'LIVE_INDICATIVE', 'details': {'kind': kind[:-1]}}]
+    monkeypatch.setattr(NoTravelHTTP, 'search_hotels' if kind == 'hotels' else 'search_flights', offers)
+    initial = sample_trip().model_dump(mode='json')
+    if missing == 'origin':
+        initial['origin'] = None
+        initial['legs'] = []
+    else:
+        initial['stays'][0]['rooms'] = []
+    async with api_factory() as (client, _):
+        sid, token, state = await _session(client, initial)
+        path = f'/api/v1/sessions/{sid}'
+        command = await client.post(path + '/commands', headers=_headers(token), json={
+            'client_message_id': str(uuid4()), 'expected_version': state['state_version'],
+            'operations': [{'type': 'set_budget', 'value': {'amount_minor': 78000000}}], 'search': False})
+        assert command.status_code == 202
+        await _wait(client, command.json()['run_id'], token)
+        before = await _snapshot(client, sid, token)
+        assert before['waiting_reason'] == 'clarification' and before['pending_question']
+        search = await client.post(path + '/live/search', headers=_headers(token), json={
+            'client_message_id': str(uuid4()), 'expected_version': before['state_version'],
+            'kind': kind, 'provider': 'serpapi', 'request': {}})
+        assert search.status_code == 202
+        assert (await _wait(client, search.json()['run_id'], token))['status'] == 'completed'
+        after = await _snapshot(client, sid, token)
+        assert after['waiting_reason'] == 'clarification'
+        assert after['pending_question'] == before['pending_question']
+        assert after['trip'] == before['trip']
+
+
+@pytest.mark.asyncio
+async def test_hotel_page_tokens_and_offers_survive_the_session_api(api_factory, monkeypatch):
+    async def page(self, request):
+        token = request.get('next_page_token')
+        return ([{'offer_id': 'hotel-second' if token else 'hotel-first', 'source_type': 'LIVE_INDICATIVE', 'details': {'kind': 'hotel'}}], None if token else 'page-two')
+    monkeypatch.setattr(NoTravelHTTP, 'search_hotel_page', page, raising=False)
+    async with api_factory() as (client, _):
+        sid, token, state = await _session(client, sample_trip().model_dump(mode='json'))
+        path = f'/api/v1/sessions/{sid}/live/search'
+        for page_token, expected in [(None, 'page-two'), ('page-two', None)]:
+            response = await client.post(path, headers=_headers(token), json={
+                'client_message_id': str(uuid4()), 'expected_version': state['state_version'],
+                'kind': 'hotels', 'provider': 'serpapi', 'request': {'next_page_token': page_token} if page_token else {}})
+            assert response.status_code == 202
+            result = await _wait(client, response.json()['run_id'], token)
+            assert result['status'] == 'completed'
+            payload = result['result']['result']
+            assert payload['hotel_pagination'] == {'page_token': page_token, 'next_page_token': expected}
+            assert payload['live_offers'][0]['offer_id'] == ('hotel-second' if page_token else 'hotel-first')
+
+
+@pytest.mark.asyncio
+async def test_citizenship_answer_updates_trip_without_llm(api_factory):
+    initial = sample_trip().model_dump(mode='json')
+    initial['search_policy'] = {'mode': 'HYBRID', 'hotel_provider': 'liteapi', 'flight_provider': 'duffel', 'demo_fallback': False, 'guest_nationality': None}
+    async with api_factory() as (client, model):
+        sid, token, state = await _session(client, initial)
+        path = f'/api/v1/sessions/{sid}'
+        response = await client.post(path + '/search', headers=_headers(token), json={'client_message_id': str(uuid4()), 'expected_version': state['state_version'], 'mode': 'HYBRID'})
+        assert response.status_code == 202
+        await _wait(client, response.json()['run_id'], token)
+        before = await _snapshot(client, sid, token)
+        assert before['waiting_reason'] == 'clarification'
+        assert before['pending_question']['field'] == 'search.guest_nationality'
+        response = await client.post(path + '/messages', headers=_headers(token), json={'client_message_id': str(uuid4()), 'expected_version': before['state_version'], 'text': 'Россия'})
+        assert response.status_code == 202
+        await _wait(client, response.json()['run_id'], token)
+        after = await _snapshot(client, sid, token)
+        assert after['trip']['search_policy']['guest_nationality'] == 'RU'
+        assert after['trip']['origin'] == initial['origin']
+        assert after['trip']['stays'] == initial['stays']
+        assert model.calls == []
+
+
+@pytest.mark.asyncio
 async def test_model_context_has_only_preceding_dialogue_and_saved_offer_ids(api_factory):
     async with api_factory() as (client, model):
         session_id, token, _ = await _session(client)
         _, plans = await _demo(client, session_id, token)
-        text = "Объясни второй вариант"
+        # A pure saved-plan explanation now bypasses the model. Keep this
+        # context-isolation oracle on an explicit edit that needs extraction.
+        text = "Замени отель во втором варианте, сохрани остальные условия"
         response = await client.post(f"/api/v1/sessions/{session_id}/messages", json={"client_message_id": "context-references", "text": text}, headers=_headers(token))
         run = await _wait(client, response.json()["run_id"], token)
         context = model.calls[0]

@@ -42,7 +42,8 @@ BASE = f"http://127.0.0.1:{PORT}"
 HBA = "/var/lib/postgresql/data/pg_hba.conf"
 KEYS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY",
         "LITEAPI_API_KEY", "DUFFEL_ACCESS_TOKEN", "SERPAPI_API_KEY", "HOTELBEDS_API_KEY",
-        "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN")
+        "HOTELBEDS_API_SECRET", "RATEHAWK_KEY_ID", "RATEHAWK_API_KEY", "TRAVELPAYOUTS_API_TOKEN",
+        "ZAI_API_KEY", "COHERE_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "NVIDIA_API_KEY")
 ARGV = [str(PYTHON), "-m", "uvicorn", "otravel.api:app", "--host", "127.0.0.1",
         "--port", str(PORT), "--no-access-log"]
 # Historical receipts used only these five files. Retain them for compatibility,
@@ -50,6 +51,7 @@ ARGV = [str(PYTHON), "-m", "uvicorn", "otravel.api:app", "--host", "127.0.0.1",
 SOURCE_FILES = ("api.py", "providers.py", "config.py", "harness.py", "store.py")
 MANIFEST_FORMAT = "otravel.package_source_manifest.v1"
 SOURCE_SUFFIXES = {".py", ".html", ".css", ".js", ".json"}
+PACKAGE_NOTICES = {"data/UNICODE-CLDR-LICENSE.txt", "data/CLDR-ATTRIBUTION.md"}
 OPENER = build_opener(ProxyHandler({}))
 CURRENT_STAGE = "preflight"
 SAFE_CONTEXT = {}
@@ -369,7 +371,8 @@ def source_manifest(root=None):
         directories[:] = kept
         for name in names:
             path = current / name
-            if name.startswith(".") or path.suffix not in SOURCE_SUFFIXES:
+            if name.startswith(".") or (path.suffix not in SOURCE_SUFFIXES
+                    and path.relative_to(package).as_posix() not in PACKAGE_NOTICES):
                 continue
             require(not path.is_symlink() and path.is_file() and path.resolve() == path, "source_manifest_symlink_file_refused")
             files.append(path)

@@ -36,7 +36,7 @@ def read_values(path: Path) -> dict[str, str]:
 def redact(text: str, values: dict[str, str] | None = None) -> str:
     variants = set()
     for key, value in (values or {}).items():
-        if value and re.search(r"PASSWORD|SECRET|TOKEN|API_?KEY|DATABASE_URL", key, re.I):
+        if value and re.search(r"PASSWORD|SECRET|TOKEN|API_?KEY|AUTH_KEY|DATABASE_URL", key, re.I):
             variants.update((value, quote(value, safe=""), quote_plus(value, safe=""),
                              quote(quote(value, safe=""), safe=""), html.escape(value),
                              json.dumps(value, ensure_ascii=False)[1:-1]))

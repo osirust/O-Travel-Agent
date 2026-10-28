@@ -1,0 +1,162 @@
+{
+  "date": "2026-10-26",
+  "scope": "Reported usage.neurons from all preserved wire responses of these2actualattempts; not an account quota query",
+  "attempts": [
+    {
+      "name": "6009644_initial",
+      "source_sha": "6009644be59d2f5bcb998df41ee1355fa468b6d3",
+      "private_evidence_sha256": "87bc431f0af0fe2a4684a245a6e2a5173a246791b077658d83ae5ed7752d5033",
+      "reported_responses": 12,
+      "observed_neurons_sum_decimal": "3396.64000000000003",
+      "requests": [
+        {
+          "case_id": "CF10-01",
+          "response_index": 1,
+          "reported_neurons_decimal": "268.49"
+        },
+        {
+          "case_id": "CF10-02",
+          "response_index": 1,
+          "reported_neurons_decimal": "261.466"
+        },
+        {
+          "case_id": "CF10-03",
+          "response_index": 1,
+          "reported_neurons_decimal": "264.046"
+        },
+        {
+          "case_id": "CF10-04",
+          "response_index": 1,
+          "reported_neurons_decimal": "115.891"
+        },
+        {
+          "case_id": "CF10-05",
+          "response_index": 1,
+          "reported_neurons_decimal": "277.211"
+        },
+        {
+          "case_id": "CF10-06",
+          "response_index": 1,
+          "reported_neurons_decimal": "384.16700000000003"
+        },
+        {
+          "case_id": "CF10-07",
+          "response_index": 1,
+          "reported_neurons_decimal": "297.004"
+        },
+        {
+          "case_id": "CF10-08",
+          "response_index": 1,
+          "reported_neurons_decimal": "316.061"
+        },
+        {
+          "case_id": "CF10-09",
+          "response_index": 1,
+          "reported_neurons_decimal": "290.987"
+        },
+        {
+          "case_id": "CF10-10",
+          "response_index": 1,
+          "reported_neurons_decimal": "369.032"
+        },
+        {
+          "case_id": "CF10-11",
+          "response_index": 1,
+          "reported_neurons_decimal": "269.53"
+        },
+        {
+          "case_id": "CF10-12",
+          "response_index": 1,
+          "reported_neurons_decimal": "282.755"
+        }
+      ]
+    },
+    {
+      "name": "4a4c7011_retest",
+      "source_sha": "4a4c7011ab783d7938331ab41ac4e451e2019e18",
+      "private_evidence_sha256": "e38967938a7cf77edd89437082116fa640323bfacb63ba849abc27a881554278",
+      "reported_responses": 12,
+      "observed_neurons_sum_decimal": "3407.84999999999984",
+      "requests": [
+        {
+          "case_id": "CF10-01",
+          "response_index": 1,
+          "reported_neurons_decimal": "265.949"
+        },
+        {
+          "case_id": "CF10-02",
+          "response_index": 1,
+          "reported_neurons_decimal": "260.647"
+        },
+        {
+          "case_id": "CF10-03",
+          "response_index": 1,
+          "reported_neurons_decimal": "269.755"
+        },
+        {
+          "case_id": "CF10-04",
+          "response_index": 1,
+          "reported_neurons_decimal": "115.891"
+        },
+        {
+          "case_id": "CF10-05",
+          "response_index": 1,
+          "reported_neurons_decimal": "279.88199999999995"
+        },
+        {
+          "case_id": "CF10-06",
+          "response_index": 1,
+          "reported_neurons_decimal": "383.756"
+        },
+        {
+          "case_id": "CF10-07",
+          "response_index": 1,
+          "reported_neurons_decimal": "296.32"
+        },
+        {
+          "case_id": "CF10-08",
+          "response_index": 1,
+          "reported_neurons_decimal": "319.323"
+        },
+        {
+          "case_id": "CF10-09",
+          "response_index": 1,
+          "reported_neurons_decimal": "292.209"
+        },
+        {
+          "case_id": "CF10-10",
+          "response_index": 1,
+          "reported_neurons_decimal": "370.61499999999995"
+        },
+        {
+          "case_id": "CF10-11",
+          "response_index": 1,
+          "reported_neurons_decimal": "270.88699999999994"
+        },
+        {
+          "case_id": "CF10-12",
+          "response_index": 1,
+          "reported_neurons_decimal": "282.616"
+        }
+      ]
+    }
+  ],
+  "missing_neurons_are_unknown_not_zero": true,
+  "vendor_remaining": "UNKNOWN",
+  "do_not_subtract_from_10000_as_exact_balance": true,
+  "observed_responses_with_neurons": 24,
+  "observed_responses_missing_neurons": 0,
+  "known_used_lower_bound_reported_neurons_decimal": "6804.48999999999987",
+  "known_additional_requests_without_preserved_neurons": [
+    {
+      "evidence": "docs/verification/cf-backup-pilot-20261026.json",
+      "http_attempts": 6,
+      "neurons": "UNKNOWN"
+    },
+    {
+      "evidence": "docs/verification/cf-nemotron-native-readonly-canary-20261026.json",
+      "http_attempts": 1,
+      "neurons": "UNKNOWN"
+    }
+  ]
+}

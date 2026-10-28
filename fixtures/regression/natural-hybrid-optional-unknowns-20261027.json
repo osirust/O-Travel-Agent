@@ -1,0 +1,526 @@
+{
+  "finding_id": "HARNESS-004-OPTIONAL-UNKNOWN-BLOCKS-SEARCH-001",
+  "scope": "Exact natural fresh-session extraction and persisted trip; safe selected fields only. No headers/tokens/native offer IDs.",
+  "source": {
+    "package_sha256": "5e9f6860cbefabcc3518f6930db4dd8cbbe13af9677e3a92bdf2c40e2c9cd3c8",
+    "source_commit": "3208f03",
+    "raw_capture_sha256": "32b52e88b6d75adf657287f9e418f8feaaabde09f55dcfebb68ffa393542c420",
+    "checked_capture_sha256": "38f1c2392c8cebacd17cab1aa9fe9fa0b6ec8ba0fe83decd9414dcf20f53afbb",
+    "exports_sha256": {
+      "events.json": "f7c28fa60ffb2a37e1a518e90c85aae0e718f0d190b555bf9b76dc2c29d9f9d4",
+      "run.json": "7b291218ccae80c2d618889bc36ab831446efeb76f74126bc432c42b4ea1f45b",
+      "snapshot-after.json": "25384276962dd480ab389857e308198158cf2cbd7adb43f81276bf9d9cd3b3a9",
+      "report.json": "8649707d0b17ab694688e6aac8a42c6a0b47351e75ac4f10ee2766d4b4f1be7b",
+      "last-intent.json": "560f203a379a21a0a56ec332a9a56d9e0cca2b68f40639b6d9b0a1ebd72e5aa9"
+    }
+  },
+  "input_text": "Включи гибридный режим, разрешаю явно помеченные демоданные при отказе источника. Из Казани в Стамбул: заезд 10.11.2026, выезд 13.11.2026. Затем Анталья: заезд 13.11.2026, выезд 17.11.2026. Возвращение в Казань 17.11.2026. Два взрослых и двое детей: 7 и 12 лет. Две отдельные семьи: первый взрослый с ребёнком 7 лет, второй взрослый с ребёнком 12 лет. В каждом городе два номера, семьи не смешивать. В первом номере первый взрослый с ребёнком 7 лет, во втором номере второй взрослый с ребёнком 12 лет. Гражданство Россия. Общий бюджет 2000000 рублей на всю поездку.",
+  "raw_source_validated_contract": {
+    "reply": "Гибридный режим включён, маршруты и участники заданы. Уточните: есть ли у взрослых ограничения на тип номера (например, отдельные кровати, ванна/душ)? Также подтвердите, нужно ли бронировать перелёты из Казани в Стамбул и из Антальи обратно в Казань.",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [
+      "Требования к типу номера для взрослых",
+      "Необходимость перелётов"
+    ],
+    "conflicts": [],
+    "operations": [
+      {
+        "type": "set_search_policy",
+        "value": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "guest_nationality": "RU"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_origin",
+        "value": {
+          "city": "Казань"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_budget",
+        "value": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 200000000
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_route_policy",
+        "value": {
+          "kind": "round_trip"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-2",
+          "age": 7,
+          "type": "child",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-3",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-4",
+          "age": 12,
+          "type": "child",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-2"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-1"
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-3",
+            "new-traveler-4"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-2"
+      },
+      {
+        "type": "upsert_stay",
+        "value": {
+          "city": "Стамбул",
+          "rooms": [
+            {
+              "id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2"
+              ]
+            },
+            {
+              "id": "new-room-2",
+              "traveler_ids": [
+                "new-traveler-3",
+                "new-traveler-4"
+              ]
+            }
+          ],
+          "check_in": "2026-11-10",
+          "check_out": "2026-11-13",
+          "requested_nights": 3
+        },
+        "target_id": "new-stay-1"
+      },
+      {
+        "type": "upsert_stay",
+        "value": {
+          "city": "Анталья",
+          "rooms": [
+            {
+              "id": "new-room-3",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2"
+              ]
+            },
+            {
+              "id": "new-room-4",
+              "traveler_ids": [
+                "new-traveler-3",
+                "new-traveler-4"
+              ]
+            }
+          ],
+          "check_in": "2026-11-13",
+          "check_out": "2026-11-17",
+          "requested_nights": 4
+        },
+        "target_id": "new-stay-2"
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "checked_contract": {
+    "reply": "Гибридный режим включён, маршруты и участники заданы. Уточните: есть ли у взрослых ограничения на тип номера (например, отдельные кровати, ванна/душ)? Также подтвердите, нужно ли бронировать перелёты из Казани в Стамбул и из Антальи обратно в Казань.",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [
+      "Требования к типу номера для взрослых",
+      "Необходимость перелётов"
+    ],
+    "conflicts": [],
+    "operations": [
+      {
+        "type": "set_search_policy",
+        "value": {
+          "guest_nationality": "RU"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_origin",
+        "value": {
+          "city": "Казань"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_budget",
+        "value": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 200000000
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_route_policy",
+        "value": {
+          "kind": "round_trip"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-2",
+          "age": 7,
+          "type": "child",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-3",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-4",
+          "age": 12,
+          "type": "child",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-2"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-1"
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-3",
+            "new-traveler-4"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-2"
+      },
+      {
+        "type": "upsert_stay",
+        "value": {
+          "city": "Стамбул",
+          "rooms": [
+            {
+              "id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2"
+              ]
+            },
+            {
+              "id": "new-room-2",
+              "traveler_ids": [
+                "new-traveler-3",
+                "new-traveler-4"
+              ]
+            }
+          ],
+          "check_in": "2026-11-10",
+          "check_out": "2026-11-13",
+          "requested_nights": 3
+        },
+        "target_id": "new-stay-1"
+      },
+      {
+        "type": "upsert_stay",
+        "value": {
+          "city": "Анталья",
+          "rooms": [
+            {
+              "id": "new-room-3",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2"
+              ]
+            },
+            {
+              "id": "new-room-4",
+              "traveler_ids": [
+                "new-traveler-3",
+                "new-traveler-4"
+              ]
+            }
+          ],
+          "check_in": "2026-11-13",
+          "check_out": "2026-11-17",
+          "requested_nights": 4
+        },
+        "target_id": "new-stay-2"
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "normalizations": [
+    {
+      "code": "search_policy_literal_grounded",
+      "mode": "HYBRID",
+      "source": "current_explicit_mode_command",
+      "finding_id": "HARNESS-004-DEMO-COMMAND-IGNORED-001",
+      "operation_added": false,
+      "model_mode_corrected": false
+    },
+    {
+      "code": "family_separation_grounded",
+      "field": "groups.keep_separate",
+      "source": "explicit_user_no_mix",
+      "group_ids": [
+        "new-group-1",
+        "new-group-2"
+      ],
+      "membership_inferred": false
+    }
+  ],
+  "after_trip": {
+    "legs": [
+      {
+        "id": "leg-300f351d-0cde-46e0-ac8b-e5be7320265f",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Стамбул",
+        "departure_date": "2026-11-10"
+      },
+      {
+        "id": "leg-59484ab1-53a1-4f30-8c8c-f3eb61e1383e",
+        "mode": "flight",
+        "origin": "Стамбул",
+        "destination": "Анталья",
+        "departure_date": "2026-11-13"
+      },
+      {
+        "id": "leg-2bc6d7e8-aac4-43fa-ab69-201434fac51b",
+        "mode": "flight",
+        "origin": "Анталья",
+        "destination": "Казань",
+        "departure_date": "2026-11-17"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Стамбул",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-3",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "check_out": "2026-11-13",
+        "requested_nights": 3
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Анталья",
+        "rooms": [
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          },
+          {
+            "id": "new-room-4",
+            "traveler_ids": [
+              "new-traveler-3",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": null,
+        "check_out": "2026-11-17",
+        "requested_nights": 4
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 200000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-2"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-3",
+          "new-traveler-4"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Казань",
+    "trip_id": "7c5f8196-0fe2-42ea-9cfe-9ed292822124",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": 12,
+        "type": "child",
+        "group_id": "new-group-2",
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 1
+  },
+  "old_status": "WAITING_USER",
+  "old_waiting_reason": "clarification",
+  "old_pending": {
+    "text": "Что нужно уточнить о поездке, чтобы продолжить?",
+    "field": null,
+    "reason": "clarification",
+    "context": {}
+  },
+  "old_counts": {
+    "model_calls": 1,
+    "tool_starts": 0,
+    "plans": 0,
+    "orders": 0
+  },
+  "raw_transport_body": "NOT_INCLUDED_SOURCE_VALIDATED_CONTRACT_ONLY",
+  "PG_reconstruction_scope": "Fresh empty own test session; inject the exact source-validated12operation model contract. Not a typed requirements bootstrap and not new remote NLU."
+}

@@ -1,0 +1,471 @@
+{
+  "verification_id": "HARNESS-001-R18-TYPED-REAL-TRAVEL-CHECKOUT-001",
+  "recorded_at_utc": "2026-10-28T03:45:29.591383+00:00",
+  "status": "ACTUAL_FUNCTIONAL_CHECKOUT_COMPLETE_WITH_DECLARED_TEST_ORACLE_CORRECTIONS",
+  "scope": "Real public API/ASGI and fresh PostgreSQL with typed initial facts/search, real LiteAPI sandbox/Duffel test/CBR. No remote or recorded model adapter and no natural-language acceptance claim.",
+  "source": {
+    "commit": "4645c24ae29a8a85e93fdcae4829299e6e7410eb",
+    "git_package_sha256": "4e383ff6d50442dd207382e72ffe7202e4222b14e2e4c91bfa017c85a0b97551",
+    "files": 85,
+    "path": "/home/aegml/projects/otravel-r18-typed-travel-20261028-4645c24",
+    "before_after_unchanged": true,
+    "runner_sha256": "6aa3392fdb456ee3ed2b65c9eb761b09d04d73408de2fad21e8d7a2fdb86690b",
+    "runtime_core_changes": 0
+  },
+  "isolation": {
+    "database": "otravel_r18_typed_eval_20261028",
+    "new_database_created_for_phase": true,
+    "new_database_tables_before_init": 0,
+    "owned_container_verified": true,
+    "exact_database_role_client_hba32": true,
+    "hba_change": "Two additive rules only for the new database/role/loopback and exact private client. Existing prefix SHA verified; no broad host rule.",
+    "source_and_secret_files_modes": "private C directories0700/files0600",
+    "selected_credentials": [
+      "LITEAPI_API_KEY",
+      "DUFFEL_ACCESS_TOKEN"
+    ],
+    "llm_credentials": 0,
+    "all_remote_local_model_budgets": 0,
+    "no_model_adapter_raises_if_called": true,
+    "no_native_profile_pid_port_changes": true,
+    "old_databases_sessions_not_reused": true,
+    "database_retained_for_audit": true
+  },
+  "typed_input": {
+    "route": [
+      "Казань",
+      "Стамбул",
+      "Анталья",
+      "Казань"
+    ],
+    "adults": 2,
+    "adult_ages": [
+      null,
+      null
+    ],
+    "child_ages": [
+      7,
+      4
+    ],
+    "stays": [
+      {
+        "city": "Стамбул",
+        "check_in": "2026-11-10",
+        "check_out": "2026-11-13",
+        "rooms": [
+          {
+            "adults": 1,
+            "children": [
+              7,
+              4
+            ]
+          },
+          {
+            "adults": 1,
+            "children": []
+          }
+        ]
+      },
+      {
+        "city": "Анталья",
+        "check_in": "2026-11-13",
+        "check_out": "2026-11-19",
+        "rooms": [
+          {
+            "adults": 1,
+            "children": [
+              7,
+              4
+            ]
+          },
+          {
+            "adults": 1,
+            "children": []
+          }
+        ]
+      }
+    ],
+    "return_date": "2026-11-19",
+    "budget_minor": 118000000,
+    "currency": "RUB",
+    "guest_nationality": "RU",
+    "policy": "HYBRID with explicit DEMO transfer fallback",
+    "dynamic_directory_exercised": false,
+    "city_scope": "Known catalogue cities; no global-geography request in this phase"
+  },
+  "actual_http": {
+    "supplier_calls": 22,
+    "cap": 40,
+    "by_kind": {
+      "hotel_lookup": 2,
+      "hotel_rates": 2,
+      "flight_search": 3,
+      "reference_fx": 3,
+      "hotel_details": 2,
+      "hotel_sandbox_prebook": 4,
+      "flight_refresh": 6
+    },
+    "statuses": {
+      "200": 19,
+      "201": 3
+    },
+    "automatic_vendor_retries": 0,
+    "model_calls": 0,
+    "paid_calls": 0,
+    "local_qwen_calls": 0,
+    "supplier_booking_payment_calls": 0,
+    "sandbox_prebook_calls": 4,
+    "prebook_usePaymentSdk": false
+  },
+  "verified": {
+    "source_counts": {
+      "SANDBOX": 5,
+      "DEMO": 2
+    },
+    "source_type": "MIXED",
+    "hotel_offers": 2,
+    "flight_legs": 3,
+    "demo_transfers": 2,
+    "rooms_each_stay": [
+      2,
+      2
+    ],
+    "group_passengers_each_flight": 4,
+    "source_chronology_party_airports": true,
+    "source_chronology": {
+      "searched": {
+        "pass": true,
+        "failures": [],
+        "flights": [
+          {
+            "leg_index": 1,
+            "passengers": 4,
+            "adult_count": 2,
+            "child_ages": [
+              4,
+              7
+            ],
+            "party_matches": true,
+            "segments": [
+              {
+                "origin_iata": "KZN",
+                "destination_iata": "IST",
+                "departing_local": "2026-11-10T06:58:00+03:00",
+                "arriving_local": "2026-11-10T10:27:00+03:00",
+                "departing_utc": "2026-11-10T03:58:00+00:00",
+                "arriving_utc": "2026-11-10T07:27:00+00:00",
+                "origin_timezone": "Europe/Moscow",
+                "destination_timezone": "Europe/Istanbul",
+                "chronological": true,
+                "cabin_classes": [
+                  "economy"
+                ],
+                "segment_passengers": 4
+              }
+            ],
+            "scope": "actual source offer in saved plan; not guaranteed real booking",
+            "departure_matches_requested_date": true,
+            "first_departure_utc": "2026-11-10T03:58:00+00:00",
+            "last_arrival_utc": "2026-11-10T07:27:00+00:00",
+            "predeclared_airport_pair_matches": true,
+            "arrival_within_stay_dates": true
+          },
+          {
+            "leg_index": 2,
+            "passengers": 4,
+            "adult_count": 2,
+            "child_ages": [
+              4,
+              7
+            ],
+            "party_matches": true,
+            "segments": [
+              {
+                "origin_iata": "IST",
+                "destination_iata": "AYT",
+                "departing_local": "2026-11-13T09:17:00+03:00",
+                "arriving_local": "2026-11-13T10:33:00+03:00",
+                "departing_utc": "2026-11-13T06:17:00+00:00",
+                "arriving_utc": "2026-11-13T07:33:00+00:00",
+                "origin_timezone": "Europe/Istanbul",
+                "destination_timezone": "Europe/Istanbul",
+                "chronological": true,
+                "cabin_classes": [
+                  "economy"
+                ],
+                "segment_passengers": 4
+              }
+            ],
+            "scope": "actual source offer in saved plan; not guaranteed real booking",
+            "departure_matches_requested_date": true,
+            "first_departure_utc": "2026-11-13T06:17:00+00:00",
+            "last_arrival_utc": "2026-11-13T07:33:00+00:00",
+            "predeclared_airport_pair_matches": true,
+            "arrival_within_stay_dates": true
+          },
+          {
+            "leg_index": 3,
+            "passengers": 4,
+            "adult_count": 2,
+            "child_ages": [
+              4,
+              7
+            ],
+            "party_matches": true,
+            "segments": [
+              {
+                "origin_iata": "AYT",
+                "destination_iata": "KZN",
+                "departing_local": "2026-11-19T13:56:00+03:00",
+                "arriving_local": "2026-11-19T17:51:00+03:00",
+                "departing_utc": "2026-11-19T10:56:00+00:00",
+                "arriving_utc": "2026-11-19T14:51:00+00:00",
+                "origin_timezone": "Europe/Istanbul",
+                "destination_timezone": "Europe/Moscow",
+                "chronological": true,
+                "cabin_classes": [
+                  "economy"
+                ],
+                "segment_passengers": 4
+              }
+            ],
+            "scope": "actual source offer in saved plan; not guaranteed real booking",
+            "departure_matches_requested_date": true,
+            "first_departure_utc": "2026-11-19T10:56:00+00:00",
+            "last_arrival_utc": "2026-11-19T14:51:00+00:00",
+            "predeclared_airport_pair_matches": true,
+            "arrival_within_stay_dates": null
+          }
+        ],
+        "limitations": [
+          "Hotel check-in/out hours and airport transfer duration not provided by this diagnostic.",
+          "Does not infer real availability from sandbox offers."
+        ]
+      },
+      "refreshed": {
+        "pass": true,
+        "failures": [],
+        "flights": [
+          {
+            "leg_index": 1,
+            "passengers": 4,
+            "adult_count": 2,
+            "child_ages": [
+              4,
+              7
+            ],
+            "party_matches": true,
+            "segments": [
+              {
+                "origin_iata": "KZN",
+                "destination_iata": "IST",
+                "departing_local": "2026-11-10T06:58:00+03:00",
+                "arriving_local": "2026-11-10T10:27:00+03:00",
+                "departing_utc": "2026-11-10T03:58:00+00:00",
+                "arriving_utc": "2026-11-10T07:27:00+00:00",
+                "origin_timezone": "Europe/Moscow",
+                "destination_timezone": "Europe/Istanbul",
+                "chronological": true,
+                "cabin_classes": [
+                  "economy"
+                ],
+                "segment_passengers": 4
+              }
+            ],
+            "scope": "actual source offer in saved plan; not guaranteed real booking",
+            "departure_matches_requested_date": true,
+            "first_departure_utc": "2026-11-10T03:58:00+00:00",
+            "last_arrival_utc": "2026-11-10T07:27:00+00:00",
+            "predeclared_airport_pair_matches": true,
+            "arrival_within_stay_dates": true
+          },
+          {
+            "leg_index": 2,
+            "passengers": 4,
+            "adult_count": 2,
+            "child_ages": [
+              4,
+              7
+            ],
+            "party_matches": true,
+            "segments": [
+              {
+                "origin_iata": "IST",
+                "destination_iata": "AYT",
+                "departing_local": "2026-11-13T09:17:00+03:00",
+                "arriving_local": "2026-11-13T10:33:00+03:00",
+                "departing_utc": "2026-11-13T06:17:00+00:00",
+                "arriving_utc": "2026-11-13T07:33:00+00:00",
+                "origin_timezone": "Europe/Istanbul",
+                "destination_timezone": "Europe/Istanbul",
+                "chronological": true,
+                "cabin_classes": [
+                  "economy"
+                ],
+                "segment_passengers": 4
+              }
+            ],
+            "scope": "actual source offer in saved plan; not guaranteed real booking",
+            "departure_matches_requested_date": true,
+            "first_departure_utc": "2026-11-13T06:17:00+00:00",
+            "last_arrival_utc": "2026-11-13T07:33:00+00:00",
+            "predeclared_airport_pair_matches": true,
+            "arrival_within_stay_dates": true
+          },
+          {
+            "leg_index": 3,
+            "passengers": 4,
+            "adult_count": 2,
+            "child_ages": [
+              4,
+              7
+            ],
+            "party_matches": true,
+            "segments": [
+              {
+                "origin_iata": "AYT",
+                "destination_iata": "KZN",
+                "departing_local": "2026-11-19T13:56:00+03:00",
+                "arriving_local": "2026-11-19T17:51:00+03:00",
+                "departing_utc": "2026-11-19T10:56:00+00:00",
+                "arriving_utc": "2026-11-19T14:51:00+00:00",
+                "origin_timezone": "Europe/Istanbul",
+                "destination_timezone": "Europe/Moscow",
+                "chronological": true,
+                "cabin_classes": [
+                  "economy"
+                ],
+                "segment_passengers": 4
+              }
+            ],
+            "scope": "actual source offer in saved plan; not guaranteed real booking",
+            "departure_matches_requested_date": true,
+            "first_departure_utc": "2026-11-19T10:56:00+00:00",
+            "last_arrival_utc": "2026-11-19T14:51:00+00:00",
+            "predeclared_airport_pair_matches": true,
+            "arrival_within_stay_dates": null
+          }
+        ],
+        "limitations": [
+          "Hotel check-in/out hours and airport transfer duration not provided by this diagnostic.",
+          "Does not infer real availability from sandbox offers."
+        ]
+      }
+    },
+    "hotel_allocation_and_fees_included": true,
+    "actual_property_photos": 2,
+    "photos_bound_to_exact_selected_hotel_ids": true,
+    "searched_total_minor": 37616580,
+    "refreshed_total_minor": 37616580,
+    "currency": "RUB",
+    "display_total_rub": "376165.80",
+    "reference_fx": {
+      "provider": "cbr",
+      "as_of": "2026-10-28",
+      "reference_only": true,
+      "bank_fees_unknown": true
+    },
+    "ready_for_simulated_checkout": true,
+    "ready_for_real_booking": false,
+    "old_quote_http": 409,
+    "new_confirm_http": 200,
+    "explicit_same_consent_retry_http": 200,
+    "orders": 1,
+    "order_status": "BOOKED_DEMO",
+    "same_order_returned_on_retry": true,
+    "confirm_supplier_calls": 0,
+    "business_facts_preserved": true,
+    "initial_state_version": 0,
+    "final_state_version": 1,
+    "revision_reason": "Intentional atomic demo_order revision in Store.confirm_quote.",
+    "model_start_events": 0,
+    "pending_runs": 0,
+    "active_sessions": 0,
+    "quotes": {
+      "ordered": 1,
+      "stale": 1
+    }
+  },
+  "original_test_outcomes": {
+    "actor_runtime_assertions": {
+      "passed": 13,
+      "failed": 1,
+      "original_status": "STOPPED_NO_AUTOMATIC_RETRY",
+      "reason": "The final oracle incorrectly expected no state revision after an order. Core intentionally advances one revision; all business fields are unchanged."
+    },
+    "first_readonly_addendum": {
+      "passed": 10,
+      "failed": 1,
+      "reason": "Diagnostic guessed the inactive quote label revoked; the implemented canonical label is stale."
+    },
+    "corrected_readonly_addendum": {
+      "passed": 11,
+      "failed": 0,
+      "new_external_calls": 0,
+      "new_database_writes": 0
+    },
+    "all_original_failures_preserved": true,
+    "source_or_runtime_modified_to_pass": false,
+    "new_order_or_provider_retry_for_oracle_correction": false
+  },
+  "artifacts": [
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/report.json",
+      "sha256": "e2dfd21d30a887130b98f78e75a5b838cc32c85f5e8fb127e46b3422dc95c400"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/terminal-readonly-addendum.json",
+      "sha256": "b266b994e9aa3d95388c41fb4a798e38f6aac42aa98c3d9c8904f30a883da29f"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/terminal-readonly-addendum-v2.json",
+      "sha256": "c2f81090074821f9bbd2a3c689da4d1f20c932d5055b7fb9b7517ec015595e65"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/source-manifest.json",
+      "sha256": "87b3ed1a453881dbfbf75d2a0d12cc2875832c6144f37dc8b73e6d9053eb1277"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/initial-snapshot.json",
+      "sha256": "e74ca49fa8cea9d5159820c70d9469fd052f1db7869970083d6f8f17a95e7dc7"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/searched-plan.json",
+      "sha256": "3752f3a920e8f7d5a54cf8d88fe28068e41cc44159eeb0119162a6329a58fb41"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/quote1.json",
+      "sha256": "0b2e4d235362e64260b383cdd1374237f9469ff25dd2ef68b311c996d0274a33"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/quote2.json",
+      "sha256": "a94ac211ab31aeae4f076e51de14c0d1dab0d4d3feab2a2dadc5e2119f1c138c"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/hotel-media.json",
+      "sha256": "464d6d9be4ac608e16c67ea8e9dd48d5987edd6b0578fe9b1d1bf5b936571293"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033507-91cbc14e/final-snapshot.json",
+      "sha256": "b12ed04e3d7e0ff3d9d251a06a19275a8a1e21e91f9b06cea4c7862c06915505"
+    }
+  ],
+  "preserved_setup_refusals": [
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033132-c9541722/report.json",
+      "sha256": "9ced87f054665a6bc0d2c37e9e5fd0e8135c0e5b7b9f3361916a6fa1b5ed9227"
+    },
+    {
+      "path": "/home/aegml/checks/r18-typed-real-travel-20261028-033219-cc4fff93/report.json",
+      "sha256": "93ab4da4eebdd1f617518c01c5c640680408c5251474548e817147bef7ecec5f"
+    }
+  ],
+  "limitations": [
+    "Typed initial facts/search are not natural-language understanding and do not close full80/106.",
+    "SANDBOX plus DEMO does not prove live bookability. No supplier order/payment was sent.",
+    "This qualification does not prove all room-specific hard constraints or multiple supplier comparison.",
+    "Only calendar/flight chronology was independently inspected; exact hotel check-in hours and real airport transfer timing are not proven.",
+    "The private runner ended with a preserved overstrict-oracle failure after the functional checkout completed. Read-only corrected attribution is explicit; original report is not relabelled PASS.",
+    "No final frontend/Docker delivery or separate jury-key readiness claim follows from this phase."
+  ]
+}
