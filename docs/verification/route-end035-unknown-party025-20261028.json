@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-28",
+  "status": "CAUSAL_CONTROLLED_SCOPE_TESTED_FULL_R15_PENDING",
+  "baseline_release": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "r14_parent_commit": "4daa16633ef917c3f7702c49d95392afa515258e",
+  "findings": [
+    {
+      "id": "HARNESS-004-ROUTE-END-AS-HOTEL-035-001",
+      "source_case": "ZAI100-035/T7",
+      "input": "Подтверждаю завершение в Москве после Дубая. Начало всё ещё Казань, не меняй его на Москву.",
+      "raw_model_fact": "The validated final JSON had only set_route_policy(open_jaw, Moscow), no lodging edit.",
+      "checked_failure": "Route guard suppressed the endpoint; current-literal grounding inserted upsert_stay(Moscow).",
+      "fix": "Recognize bounded current nominal ending cues, keep alternatives before the prior-stop context, and protect endpoint role from lodging extraction even with no valid policy op.",
+      "controlled_pg": {
+        "route_kind": "open_jaw",
+        "end_city": "Москва",
+        "hotel_city_before_after": "Дубай",
+        "origin_before_after": "Санкт-Петербург",
+        "party_and_budget_unchanged": true,
+        "orders": 0
+      },
+      "limit": "The previous wrong Saint Petersburg origin already existed before T7; this fix does not claim to restore Kazan."
+    },
+    {
+      "id": "HARNESS-004-PARTY-CATEGORY-GUESS-025-001",
+      "source_case": "ZAI100-025/T1",
+      "input": "Нас четверо, хотим из Санкт-Петербурга в Сочи. Возраст и состав я ещё не перечислил, не угадывай.",
+      "raw_model_fact": "The validated final JSON invented four adult additions; checked operations preserved them without normalizations.",
+      "fix": "For a fresh party with explicitly unknown composition and a proved total, remove guessed category additions and their dependent memberships, keep independent facts, and persist an addressed count question.",
+      "controlled_pg": {
+        "travelers": [],
+        "origin": "Санкт-Петербург",
+        "stay_city": "Сочи",
+        "pending_field": "party.adults",
+        "declared_total": 4,
+        "tool_calls": 0,
+        "orders": 0,
+        "model_reply": null,
+        "model_reply_suppressed": true,
+        "original_false_model_reply_preserved_only_in_audit": true
+      },
+      "limit": "Bounded initial unknown-composition guard, not general person/category attribution. Known adults with unknown ages and existing parties remain outside scope."
+    }
+  ],
+  "raw_fixture": {
+    "path": "fixtures/regression/route-end035-unknown-party025-20261028.json",
+    "sha256": "0299ba5a9ba44df18c2b77173ffaa7c3a60a5af1ba02b027a7f6e9431538b3d6",
+    "includes": "selected final model JSON, checked operations, normalizations, minimal canonical before/after facts and original file SHA",
+    "excludes": "session capabilities, provider headers, hidden reasoning, raw provider HTTP"
+  },
+  "files": [
+    {
+      "path": "otravel/route_policy_intent.py",
+      "sha256": "760d7d38875345804fd1e4ff2a8e2c69f6282f46aae18832be6c7910801d0944"
+    },
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "e5317a0a97b8ce7ba76e9b55f0cef090d82ec038ba55f332bd245ca71597b15d"
+    },
+    {
+      "path": "otravel/unknown_party_categories.py",
+      "sha256": "e79f068ba13d66bfbba63e62de678d573638dd1d1d3122aba08382744ddf1521"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "dab26aefb4724e218bd8f0bdd57e65d85a734d1ba97ed96ac13535b53b852d7f"
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "d99cfb5f4b9646a03b670555b6f46dcc6178cd6c852393b0844fde4aaef344a3"
+    },
+    {
+      "path": "tests/test_route_end_and_unknown_party.py",
+      "sha256": "c904c04aedb7435261d10551b0a2d7ef35f86f250c1590dce6d24ec4a7d14101"
+    },
+    {
+      "path": "tests/test_route_end_unknown_party_pg.py",
+      "sha256": "b82a47e8de32b0defc902ae38a3d1a1d82c4f27e424f0fcb10ea94aa0b2f5140"
+    },
+    {
+      "path": "fixtures/regression/route-end035-unknown-party025-20261028.json",
+      "sha256": "0299ba5a9ba44df18c2b77173ffaa7c3a60a5af1ba02b027a7f6e9431538b3d6"
+    }
+  ],
+  "initial_private_red": {
+    "failed": 11,
+    "passed": 14,
+    "path": ".local/peer_reviews/r15-semantic-guards-20261028/initial-red.xml",
+    "sha256": "aa92d03564a1c9f1f2f7c6b2f1aa2d7288389558115cf553333c4b469600dc6c"
+  },
+  "tests": {
+    "merged_pure": {
+      "path": ".local/evaluation/after80-20261028/r15-route-party-pure-final.xml",
+      "sha256": "069d6e39293529cac6b69a992baba952e92b977b7835b4c6d39f87b2e96fb1d6",
+      "tests": 164,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.761
+    },
+    "joined_initial": {
+      "path": ".local/evaluation/after80-20261028/r15-route-party-pg-initial.xml",
+      "sha256": "a89abd699fdbf4ed00cf490fac6b54636cdf7d2ff693d1d3ad9913ebc1729b20",
+      "tests": 166,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 8.359
+    },
+    "final_pg_with_public_reply_and_audit_assertions": {
+      "path": ".local/evaluation/after80-20261028/r15-route-party-pg-final.xml",
+      "sha256": "d47384da3bdc11f0cad74f4ca741f6a7ce57d275ac7c3b61790a2e4a808478f0",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.427
+    },
+    "unique_scope": "164 pure tests plus 2 API/PG tests; rerunning the PG pair does not add unique coverage."
+  },
+  "external_model_calls": 0,
+  "external_travel_calls": 0,
+  "verification_limits": [
+    "API tests use real PostgreSQL and controlled external adapters.",
+    "No fresh actual LLM rerun or arbitrary global NLU guarantee.",
+    "Full R15 is a separate parent-run checkpoint; earlier baseline failures remain immutable."
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "format": "otravel.alias-stay-removal-repair.v1",
+  "created_at_utc": "2026-10-28T00:01:50.096855+00:00",
+  "status": "CONTROLLED_EXACT_CACHED_PASS_NEW_ACTUAL_RETEST_PENDING",
+  "finding_id": "HARNESS-004-ALIAS-QUESTION-STAY-REMOVAL-001",
+  "actual_evidence": {
+    "case_id": "ZAI100-038",
+    "turn": 6,
+    "input": "Бюджет 65к рублей общий. Питер и Санкт-Петербург у тебя ведь один город? Мне две остановки не нужны.",
+    "source_runtime": "a36d76/cd021acb",
+    "source_report_sha256": "b3791285455ad8e0b8dcb456d3e12fb5cc457a0ee93f2067393add484100a366",
+    "before_projection_sha256": "cd10f70df71a03a439b0e32ef0bc03bcf2f3fd3c7228aaccbade56380574d4a7",
+    "raw_model_behavior": "Modelalreadyemittedremove_stayforonlycanonicalSPbstay+set_budget6500000;checkedkeptit. Modelreplyfalselyclaimedtriphasnofurtherlodging.",
+    "old_actual_remains_fail": true,
+    "cause_scope": "Modelmistakeplusmissingpermissionfence,notaserver-createdremoveoperation.",
+    "raw_checked_unchanged_in_fixture": true
+  },
+  "action": {
+    "module": "otravel/alias_stay_removal.py",
+    "signature": "guard_alias_stay_removal_operations(before_state,operations,text)->(copied_operations,notes_meta)",
+    "only_scope": "Exactlyoneownedstay;two distinctknownaliasesofitscurrentcity+one-cityquestion+two-stops-unwanted. Currentphysicalrefmustmatchknowncountry;nohomonymreselection.",
+    "filter": "Removeonlymodelremove_staytargetingthatownedsoleIDwhenno separatecurrentpositiveremoval/replacementauthorizesit. Preservebudget,rooms,rosterandallotheroperations.",
+    "positive_authority": "Unquotedcurrentdirectstay/routeobjectremovalorownedcurrentcityreplacement;notanunrelatedbudget/originverb,notquoted/hypothetical/negatedcommands.",
+    "hook_by_root": "Modelguardaftergeo/auxandpartyguards;operationnormalizationsnote. Canonicalaliasreceiptinsteadfalsemodellead/model_reply. RawfinalJSONremainsinaudit.",
+    "typed_commands": "Notchanged;modelpathhookonly."
+  },
+  "checks": [
+    {
+      "path": ".local/drafts/alias-removal-repair-20261028/initial-red.xml",
+      "sha256": "b11ac00324dd8f0d0f0c1f11bf278586ab210690a76bcb2715edc8759468d01f",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.238
+    },
+    {
+      "path": ".local/drafts/alias-removal-repair-20261028/replacement-authority-red.xml",
+      "sha256": "7daffa6d380202ca9f2eca8eaa1d56b7e9c9141dbb36cc410744eec4e164770f",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.267
+    },
+    {
+      "path": ".local/drafts/alias-removal-repair-20261028/public-pure-final.xml",
+      "sha256": "64623d0055a045ee21187cc2094641966d01db725546e58723a549c1338ec7b4",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.299
+    },
+    {
+      "path": ".local/drafts/alias-removal-repair-20261028/public-pg-initial.xml",
+      "sha256": "c0290b3073f2a3d3060dad81f524807c46567e597f27a67563ba817f1478161b",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.49
+    },
+    {
+      "path": ".local/drafts/alias-removal-repair-20261028/public-pg-final.xml",
+      "sha256": "3e9d1ab8e3ca15ba43262f401f2de73c07f7d77730c52c1e3807c00992d9f5cd",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.601
+    }
+  ],
+  "counts": {
+    "final_pure": 21,
+    "final_api_pg": 2,
+    "different_related_asserted_cases": 23,
+    "new_remote_llm": 0,
+    "new_supplier_http": 0,
+    "real_or_simulated_orders": 0,
+    "controlled_model_calls_each_pg": 1
+  },
+  "pg_facts": {
+    "bootstrap": "Explicitminimalcanonicalbeforefixture,DEMOsearchpolicy,noactualinference;realASGI/API/Store/PostgreSQL.",
+    "initial_budget_unknown_case": "6500000minorRUBsaved;onlystayID/city/dates/rooms/travelers/originretained;oneversionincrement.",
+    "already_equal_budget_case": "6500000unchanged;noextraTripversion.",
+    "public_reply": "Piter/SPbcanonicalanswer;no«удалилостановку»or«безпроживания»fromrawwrongmodelreply.",
+    "orders": 0
+  },
+  "initial_pg_dependency_failure": {
+    "facts": "First2PG1fail/1pass:soleStaywaspreservedbutnewbudgetremainedNone. Rootbudgetquestionguardusedageographyquestionmarktostripset_budgetwhenliteralopwasunrecognized.",
+    "root_fix": "Financialquestionrestrictedtothesentencewiththefinancialmarker;unrelatedaliasquestiondoesnotrevokeassertedbudget.",
+    "no_test_oracle_weakened": true,
+    "old_failed_xml_retained": true
+  },
+  "counterexamples": [
+    "realexplicitremove/replacementnotblanketblocked",
+    "twoactualstaysguarddoesnotchoosefirstorfilter",
+    "foreignIDnotowned",
+    "room-onlyoperationspreserved",
+    "quoted/hypothetical/negateddeletecannotgrantpermission",
+    "explicitunquoteddeletestillworksalongsidequote",
+    "RUselectedrefpreservedwithoutreselection",
+    "USsame-namephysicalrefnotassertedPiterRU",
+    "samebudgetnoopdoesnotcreatefakechange",
+    "unrelatedbudget/otheroriginreplacementcannotauthorizedeletingthisstay"
+  ],
+  "source_files_sha256": {
+    "otravel/alias_stay_removal.py": "4ff802c670deea142cb40ecde00907d82f01e89b0fef87e567b587ba5049057c",
+    "tests/test_alias_stay_removal.py": "17c3dfbf2a2feb0781897f4e78daa530e5b6e4a7f4ae3572a002dfcc1486d820",
+    "tests/test_harness_alias_stay_removal.py": "9b574a3df078d9f60aa35793817ed89368682285ba89fa84e4e356737b41bf5b",
+    "fixtures/regression/alias-question-stay-removal-20261028.json": "ad57b768b32219b9d2c136f5a95f874039fb1994effdffd4af17a5a209aeece4"
+  },
+  "not_closed": [
+    "NewstrongremoteLLMreplayof038onthereleasecontainingthisguard.",
+    "Arbitrarystaydeletion,multi-cityreferenceresolutionandallaliaslanguagepatterns.",
+    "Full80/106acceptanceornewworldcoverage.",
+    "Publicselectedforeignsame-namesrefoutsidethisnarrowguardrequiresseparatepermissions;unhandledisnotpermissiontodelete."
+  ],
+  "source_frozen_for_root_r15": true,
+  "main_plan_owned_by_root": true
+}

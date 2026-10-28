@@ -8,7 +8,8 @@ from .geography import _CITY_ALIASES
 
 _QUOTES = re.compile(r'«[^»]*»|“[^”]*”|"[^"\n]*"|\'[^\'\n]*\'|`[^`]*`', re.DOTALL)
 _NONCURRENT = re.compile(r"\b(?:если|бы|допустим|предположим|например|раньше|вчера|ранее|думал\w*|говорил\w*|писал\w*|сказал\w*|просил\w*|цитирую)\b|\bв\s+прошл\w*\b")
-_DECLARED_END = r"(?:поездка|маршрут)\s+(?:заканчивается|завершается|закончится|завершится)"
+_DECLARED_END = (r"(?:(?:поездка|маршрут)\s+(?:заканчивается|завершается|закончится|завершится)|"
+    r"(?:завершение|окончание)(?:\s+(?:поездки|маршрута))?|конец\s+(?:поездки|маршрута))")
 _KINDS = {
     "one_way": re.compile(r"\b(?:в\s+одну\s+сторону|только\s+туда|обратн\w*\s+(?:перелет|билет|путь)\s+не\s+нуж\w*|без\s+обратного\s+(?:перелета|билета))\b"),
     "round_trip": re.compile(r"\b(?:туда\s*(?:и\s+|[-–]\s*)?обратно|возвращаемся\s+домой|вернемся\s+домой)\b"),
@@ -16,7 +17,7 @@ _KINDS = {
     "open_jaw": re.compile(rf"\b(?:open[-_ ]jaw|вернемся\s+в|возвращаемся\s+в|закончим\s+(?:маршрут|поездку)\s+в|{_DECLARED_END}\s+в)\b"),
 }
 _DIRECT = re.compile(r"\b(?:выбери|используй|установи|включи|хочу)\s+(?:тип\s+маршрута\s+)?(one_way|round_trip|open_jaw|undecided)\b")
-_NEGATIVE = re.compile(r"\bне\s+(?:выбирай|используй|устанавливай|включай|хочу|хотим|едем|летим|вернемся|возвращаемся)\b")
+_NEGATIVE = re.compile(r"\bне\s+(?:выбирай|используй|устанавливай|включай|хочу|хотим|едем|летим|вернемся|возвращаемся|подтвержда\w*)\b")
 _END = re.compile(rf"\b(?:вернемся|возвращаемся|закончим\s+(?:маршрут|поездку)|{_DECLARED_END})\s+в\s+(.+)$")
 _CITY_NAMES = "|".join(re.escape(k) for k in sorted(_CITY_ALIASES, key=len, reverse=True))
 _CITY = re.compile(rf"(?<![\w-])(?:{_CITY_NAMES})(?![\w-])")
@@ -57,7 +58,8 @@ def guard_route_policy_operations(state, ops: list, text: str) -> tuple[list, di
     result, meta = [], {"notes": [], "conflicts": [], "unknowns": []}
     prior = _policy(_get(state, "route_policy", {}))
     requested, endpoint_parts, explicit_open_kind = set(), [], False
-    for clause in current_clauses(text):
+    route_text = re.sub(r",\s*(?=(?:или|либо)\b)", ' ', text, flags=re.IGNORECASE) if isinstance(text, str) else text
+    for clause in current_clauses(route_text):
         if _NEGATIVE.search(clause):
             continue
         direct = _DIRECT.search(clause)
@@ -69,7 +71,9 @@ def guard_route_policy_operations(state, ops: list, text: str) -> tuple[list, di
                 requested.add(kind)
                 if kind == "open_jaw":
                     target = _END.search(clause)
-                    endpoint_parts.append(target[1] if target else clause)
+                    # 'После <prior stop>' describes the route context, not
+                    # another possible endpoint. Alternatives before it remain.
+                    endpoint_parts.append(re.split(r"\bпосле\b", target[1], maxsplit=1)[0] if target else clause)
     endpoints = {_CITY_ALIASES[m.group()] for part in endpoint_parts for m in _CITY.finditer(part)}
     origin = _get(state, "origin")
     origin = _CITY_ALIASES.get(origin.casefold()) if isinstance(origin, str) else None

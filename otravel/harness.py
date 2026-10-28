@@ -943,6 +943,24 @@ class Harness:
                         auxiliary, auxiliary_notes = ground_auxiliary_operations(session["state"], extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in auxiliary]
                         extracted.operation_normalizations.extend(auxiliary_notes)
+                        from .unknown_party_categories import guard_unknown_party_categories
+                        category_ops, category_meta = guard_unknown_party_categories(session["state"],
+                            extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in category_ops]
+                        extracted.operation_normalizations.extend(category_meta["notes"])
+                        extracted.conflicts.extend(category_meta["conflicts"])
+                        extracted.unknowns = list(dict.fromkeys(category_meta["unknowns"] + extracted.unknowns))
+                        extracted.server_questions.extend(category_meta["conflicts"] + category_meta["unknowns"])
+                        if category_meta.get("pending_context") is not None:
+                            category_context = dict(category_meta["pending_context"])
+                            if category_context.pop("force", False):
+                                category_context["force_clarification"] = True
+                            extracted.pending_context = {**(extracted.pending_context or {}), **category_context}
+                        from .alias_stay_removal import guard_alias_stay_removal_operations
+                        alias_ops, alias_meta = guard_alias_stay_removal_operations(session["state"],
+                            extracted.operations, run["input_text"])
+                        extracted.operations = [Operation.model_validate(op) for op in alias_ops]
+                        extracted.operation_normalizations.extend(alias_meta["notes"])
                         from .traveler_removal_grounding import guard_traveler_removal_operations
                         removal_ops, removal_meta = guard_traveler_removal_operations(session["state"],
                             extracted.operations, run["input_text"])
@@ -2089,16 +2107,21 @@ class Harness:
             literal_budget = extracted.speech_act != "PROPOSE" and any(
                 note.get("code") in {"explicit_budget_literal_completed", "budget_question_not_assignment"}
                 for note in extracted.operation_normalizations)
+            alias_preservation = next((note for note in extracted.operation_normalizations
+                if note.get("code") == "alias_question_single_stay_removal_suppressed"), None)
             known_preference_noop = (not changes and any(op.type == "set_preference" and any(
                 saved.key == op.value.get("key") and saved.value == op.value.get("value")
                 for saved in current.preferences) for op in extracted.operations))
-            if ((changes or literal_preference or known_preference_noop or literal_budget) and wants_saved_facts(run["input_text"])
-                    and (literal_budget or subject.get("kind") not in {"country", "city"})):
+            if ((changes or literal_preference or known_preference_noop or literal_budget or alias_preservation) and wants_saved_facts(run["input_text"])
+                    and (literal_budget or alias_preservation or subject.get("kind") not in {"country", "city"})):
                 shown = result.get("plans") if "plans" in result else await self._latest_current_plans(session, run)
                 receipt, sections = changed_trip_receipt(run["input_text"], current.model_dump(mode="json"),
                     current_plans(current, shown), changes, await self.store.list_orders(session["session_id"]))
-                lead = reply if (result.get("violations") or extracted.candidate_operations) and not literal_budget else ""
+                lead = reply if (result.get("violations") or extracted.candidate_operations) and not (literal_budget or alias_preservation) else ""
                 reply = (lead + "\n\n" if lead and not questions else "") + receipt
+                if alias_preservation and any(stay.id == alias_preservation.get("target_id")
+                        and stay.city == alias_preservation.get("city") for stay in current.stays):
+                    reply = f"Это названия одного города — {alias_preservation['city']}. Проживание сохранено.\n\n" + reply
                 if questions:
                     reply += "\n\n" + questions[0]
                 result["answer_sections"] = sections
@@ -2153,6 +2176,8 @@ class Harness:
                     clarification_metadata.pop(key, None)
             elif binding.get("target_id") is not None:
                 clarification_metadata.pop("room_target_selection_required", None)
+            if current.travelers and binding.get("field") not in {"party.adults", "party.children"}:
+                clarification_metadata.pop("declared_total", None)
             if binding.get("field") == "traveler.age" and binding.get("target_id") is None:
                 # Choose whom to ASK, not whose age an ambiguous prior answer
                 # meant. The persisted question names its exact target first.
@@ -2181,7 +2206,12 @@ class Harness:
             result["response_source"] = extracted.response_source
         if model_meta is not None:
             result["llm"] = model_meta
-            result["model_reply"] = extracted.reply
+            interpretation_protected = any(note.get("code") in {
+                "unknown_initial_party_categories_preserved", "alias_question_single_stay_removal_suppressed"}
+                for note in extracted.operation_normalizations)
+            result["model_reply"] = None if interpretation_protected else extracted.reply
+            if interpretation_protected:
+                result["model_reply_suppressed"] = "Canonical guards changed the interpretation; original final JSON remains in the audit."
             result["operation_normalizations"] = extracted.operation_normalizations
         await self.store.finish_run(run["run_id"], version, current.model_dump(mode="json") if new_state is not None else None, status, reply, pending_question=pending, waiting_reason=waiting_reason, changes=changes, result=result)
 

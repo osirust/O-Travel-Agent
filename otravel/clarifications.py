@@ -159,7 +159,7 @@ def _context(raw: Any, extra: dict | None = None) -> dict:
         if isinstance(raw.get("details"), dict):
             result.update(deepcopy(raw["details"]))
         for name in ("target_id", "stay_id", "traveler_id", "leg_id", "group_id", "requested_destination", "requested_origin",
-                     "proposed_destination", "confirmation_required", "proposal_field", "children_known", "children_count", "force_clarification", "contextual_correction"):
+                     "proposed_destination", "confirmation_required", "proposal_field", "children_known", "children_count", "force_clarification", "contextual_correction", "declared_total"):
             if name in raw:
                 result[name] = deepcopy(raw[name])
     if isinstance(extra, dict):
@@ -226,6 +226,9 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
                 return f"Выбираем город «{known['name']}», {country}, для дальнейшего поиска?"
         return "В какой город вы хотите поехать?"
     if field == "party.adults":
+        total = ctx.get("declared_total")
+        if type(total) is int and 1 <= total <= 10 and not data.get("travelers"):
+            return f"Сколько взрослых из указанных {total} участников поедет?"
         return "Сколько взрослых поедет в поездку?"
     if field == "party.children":
         return "Поедут ли с вами дети? Если да, сколько их будет?"

@@ -1,0 +1,43 @@
+{
+  "finding_id": "HARNESS-004-ZAI47-CORRECTION-SCHEMA-001",
+  "status": "ACTUAL_NLU_SCHEMA_REJECT_OPEN_GUARD_CORRECT",
+  "scope": "Last bounded actualZ.ai47 correction onR14, not the later recorded-adapter phase",
+  "source_package_sha256": "3eca7197628416b4614650ba473121af5aa695298fec28b5e349053799b77564",
+  "original_scenario_oracles_sha256": "dbc83f9de0675181871a9bc17b603bdd2afd6dc94766258a884529aab49646f4",
+  "additional_adult_age_birthdate_oracles_sha256": "04f1f4d23e4cf266739407d955562da6295197d308d99594495c3aa3dc6a1396",
+  "actual_attempts_in_this_phase": 1,
+  "latency_ms": 28145,
+  "provider_outcome": "HTTP200 final JSON rejected by canonical schema; planned repair refused by engineering cap6",
+  "schema_errors": [
+    {
+      "path": [
+        "operations",
+        1
+      ],
+      "rule": "oneOf"
+    },
+    {
+      "path": [
+        "operations",
+        4
+      ],
+      "rule": "oneOf"
+    }
+  ],
+  "rejected_snapshot_sha256": "942a825d4953903190012bfd41a17da518c9a7d01830ae4fc7b380df424f6bd8",
+  "cause": "Model setter reused an existing room belonging to the second stay for the first stay, and update_traveler included forbidden id/type fields. These were legitimate ownership/schema rejections, not a reason to weaken validation.",
+  "native_readonly_verified": {
+    "unchanged_trip": true,
+    "state_version": 5,
+    "orders": 0,
+    "actual_zai_started_events": 6,
+    "quota_reset": false
+  },
+  "cumulative_counts_after_actual": {
+    "model": 6,
+    "source": 32
+  },
+  "actual_report_sha256": "f3a3b7bd70b7eef26175ae2c2555049c3422b16e341298e728fee5d88521fc0b",
+  "terminal_readonly_audit_sha256": "650dc9423db47a28a9e89d1a9c89a26c2f87a3fccfbe6061b49e10b8deba8ccf",
+  "next_phase": "A separately labelled recorded JSON adapter exercises repaired harness with actual tourism APIs; does not close this NLU finding."
+}

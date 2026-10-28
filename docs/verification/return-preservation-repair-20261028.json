@@ -1,6 +1,6 @@
 {
   "finding_id": "HARNESS-004-UNASKED-RETURN-REPLAY-001",
-  "status": "CACHED_PURE_PG_TESTED_ACTUAL_CONTINUATION_OPEN",
+  "status": "CACHED_PURE_PG_AND_RECORDED_REAL_TRAVEL_TESTED_ACTUAL_NLU_OPEN",
   "original": {
     "source_package_sha256": "b170deda2396b53451e13f60d6af7da711ab9681f6bdee18d48f54f2339eb793",
     "raw_contract_sha256": "347697220d8ce650b8ac009ac75119cf05677d21a0470d8289ac5c978a2101c0",
@@ -52,10 +52,23 @@
       "passed": 5,
       "seconds": 4.35,
       "report": "private .local/return-and-room-count-pg-r4-20261028.xml"
+    },
+    "recorded_real_travel": {
+      "source_package_sha256": "3eca7197628416b4614650ba473121af5aa695298fec28b5e349053799b77564",
+      "proof": "complex-rebuild-r14-recorded-real-travel-20261028.json",
+      "recorded_adapter_calls": 1,
+      "new_actual_llm_calls": 0,
+      "return_guard_runtime_note": "unrequested_return_shift_suppressed",
+      "return_date": "2026-11-19",
+      "photos_for_two_actual_hotels": true,
+      "reprice_preview": 200,
+      "one_booked_demo": true,
+      "idempotent_retry": true,
+      "original_actual_nlu_failure_preserved": true
     }
   },
   "limitations": [
-    "Fresh actual correction continuation not yet run on repaired source.",
+    "Fresh actual correction failed canonical schema before harness guards; separately labelled recorded-JSON/real-tourism continuation passed. No fresh language-understanding acceptance.",
     "Original complex chain remains WITH_DEFECTS and has no order.",
     "Does not repair generic date setters or synthesize room/group allocations.",
     "Not full acceptance of 80 dialogues or 106 scenarios."

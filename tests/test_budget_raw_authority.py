@@ -6,6 +6,12 @@ import pytest
 from otravel import budget_intake as candidate
 
 
+def test_unrelated_alias_question_does_not_revoke_asserted_budget_clause():
+    ops = [{'type': 'set_budget', 'value': {'amount_minor': 6500000, 'currency': 'RUB'}}]
+    text = 'Бюджет65к рублей общий. Питер и Санкт-Петербург один город? Две остановки не нужны.'
+    assert candidate.guard_budget_question_operations(ops, text, has_asserted_budget=False) == (ops, [])
+
+
 def operations():
     return [{'type': 'set_budget', 'value': {'amount_minor': 9000000, 'currency': 'RUB'}},
             {'type': 'set_origin', 'value': {'city': 'Москва'}}]

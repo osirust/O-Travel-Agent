@@ -111,15 +111,19 @@ def _closed_financial_tail(clause: str, marker) -> bool:
     return not tail.strip(' \t\r\n.,!;')
 
 
+def _raw_sentences(text: str):
+    start = 0
+    for separator in re.finditer(r"[!?;\n]|(?<!\d)\.|\.(?!\d)", text):
+        yield text[start:separator.end()]
+        start = separator.end()
+    if text[start:].strip():
+        yield text[start:]
+
+
 def _sentences(text: str):
     clean = _QUOTED.sub(" ", text)
     clean = "\n".join(line for line in clean.splitlines() if not line.lstrip().startswith(">"))
-    start = 0
-    for separator in re.finditer(r"[!?;\n]|(?<!\d)\.|\.(?!\d)", clean):
-        yield clean[start:separator.end()]
-        start = separator.end()
-    if clean[start:].strip():
-        yield clean[start:]
+    yield from _raw_sentences(clean)
 
 
 def _current_parts(text: str):
@@ -237,7 +241,8 @@ def guard_budget_question_operations(operations: list, text: str, *, has_asserte
     nonapply = bool(_budget_noncommit(normalized) or _WHOLE_PROHIBITION.search(_QUOTED.sub(' ', normalized)))
     only_noncurrent = bool(_MARKER.search(normalized)) and not any(
         _MARKER.search(clause) for sentence in _sentences(normalized) for clause in _current_parts(sentence))
-    financial_question = '?' in normalized and _MARKER.search(normalized) is not None
+    financial_question = any(part.rstrip().endswith('?') and _MARKER.search(part) is not None
+        for part in _raw_sentences(normalized))
     negative_evidence = _negative_budget_evidence(normalized)
     if not (unbalanced or nonapply or only_noncurrent or financial_question or negative_evidence):
         return operations, []

@@ -39,7 +39,8 @@ _FROM = re.compile(rf"\b(?:из|from|iz)\s+(?:города\s+)?(?P<city>{_NAMES}
 _START_CUE = r"(?:начинаем(?: поездку| маршрут)?|(?:поездка|маршрут) начинается|стартуем|starting|(?:trip )?starts?)"
 _START = re.compile(rf"\b{_START_CUE}\s+(?:в|с|из|in|from)\s+(?P<city>{_NAMES})(?![\w-])")
 _START_BEFORE = re.compile(rf"\b{_START_CUE}\s*$")
-_END_BEFORE = re.compile(r"\b(?:заканчива\w*|заверша\w*|финиширу\w*|конец поездки|ends?|ending)\s*$")
+_END_BEFORE = re.compile(r"\b(?:заканчива\w*|заверша\w*|финиширу\w*|"
+    r"(?:завершение|окончание)(?:\s+(?:поездки|маршрута))?|конец\s+(?:поездки|маршрута)|ends?|ending)\s*$")
 _TO = re.compile(rf"\b(?:в|во|to|v|vo)\s+(?:город\s+)?(?P<city>{_NAMES})(?![\w-])")
 _NEXT_DESTINATION = re.compile(rf"\b(?:затем|потом|далее)\s+(?:(?:в|во)\s+)?(?P<city>{_NAMES})(?![\w-])")
 _NO_LODGING_IN_CITY = re.compile(rf"\b(?:отел\w*|гостиниц\w*|проживан\w*)\s+(?:в|во)\s+(?P<city>{_NAMES})(?![\w-]).{{0,25}}\bне\s+(?:нуж\w*|требу\w*)")

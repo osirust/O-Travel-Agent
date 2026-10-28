@@ -1,3 +1,24 @@
+# Текущая основная матрица — R15,28 октября
+
+**7154 controlled PASS/0fail/0skip**,414.59с, frozen sourcec8125790. [Квитанция](../verification/prefrontend-r15-checkpoint-20261028.json). Исходные R13FAIL сохранены; источники, версии и типы проверок не смешиваются.
+
+| ID | Текущий статус | Проверенное доказательство | Открыто |
+| --- | --- | --- | --- |
+| HARNESS-001 | REAL_TRAVEL_FUNCTIONAL_SCOPE_PASS / FRESH_NLU_OPEN | R14 recordedJSON+реальныеLiteAPI/Duffel/CBR:27/27,2отеля/4номера/3рейса/4pax,фото/refresh/oneBOOKED_DEMO+retry. | Это не свежий модельный разбор; LIVE_BOOKABLE/exact supplier equivalence не доказаны. |
+| HARNESS-002 | CANONICAL_SCHEMA_CONTROLLED_PASS | Все7154 с текущими ID/room ownership/датами/бюджетом; новые NoAdd ограничения ещё pendingR16. | Engineering bounds не утверждены как продуктовые пределы. |
+| HARNESS-003 | UNDO_CANCEL_GUARDS_TESTED | CAS/история/отмена и конкретные actual selective restore пути имеют прежние scopedproofs. | Все языковые ссылки и неизвестные формулировки не квалифицированы. |
+| HARNESS-004 | R15_CONTROLLED_PASS / ACTUAL_LANGUAGE_OPEN | Budgetauthority/scope,4servergeo corruptions,035endpoint,025initial/finalparty,038alias/removal исправлены своими repro+PG. | Новый recordedNemoNoAddduplicate RED и простые saved-fact replyloss вR16; full80/106 не пройдены. |
+| HARNESS-005 | PERSISTENT_LIMITS_AND_FENCES_TESTED | Sequence/CAS/idempotency/одноactive/cooldown/quote/order guards+boundedrepair2 входят вfull. | Vendorquota/timeout не равны appcaps; exactly-once externalHTTP не заявляется. |
+| HARNESS-006 | BACKEND_READY / FINAL_UI_AND_SECRETS_PENDING | Media/owner APIs/debug и прежний Docker16smoke; frontend отдельный. | Точному финальному архиву свойsmoke, jury-onlykeys+binaryage, frontend/video/main/submission ещё нужны. |
+| HARNESS-007 | CONTROLLED_RECOVERY_AND_REFUSAL_TESTED | Предыдущие реальныеPGcrash/WAL и provider-refusal proofs сохранены; текущие tests проходят. | Не произвольная потеря диска/сети; GigaTLSgeneration0. |
+| HARNESS-008 | ALL_INPUTS_READ / ACTUAL_PARTIAL_EXECUTION | 619a36inputs+отдельный072T1R12; исходные697/v3hash неизменны, все имеющиеся ответы прочитаны. |77inputsNOTRUN, fully-boundlanguage80/106PASS не заявлен. |
+
+KnowncriticalR16: HARNESS-004-EXPLICIT-NOADD-DUPLICATE-CHILD-NEMO-001 — wholeHarness privateRED5people вместо4 при currentNoAdd; onlymodel output alias-normalization отдельно корректна. Требуется запрет/repair доcommit, безвозрастногоID-remap. Saved-facts family H004-SAVED-FACTS/HARNESS-004-REPLY-LOSS — закрытый canonicalreminder кандидат49pure, APIинтеграцияpending.
+
+Juryключи: [официальнаяинструкция](https://docs.ostrovok.tech/s/b9e6ec5e-5ad6-4091-9c85-a48eee9b21cc/doc/shifrovanie-sekretov-klyuchej-6Qhc4gJOPZ) требует отдельный ключ; ciphertext отсутствует, Masterнепередан. BrowserURL-check stop сохранён; GigaVPNисключение не выполнялось.
+
+## Исторические checkpoint и доказательства
+
 # Текущий checkpoint — R14,28 октября
 
 **7098 controlled PASS / 0 fail / 0 skip**,410.55с, immutable source3eca7197. [Полная квитанция](../verification/prefrontend-r14-checkpoint-20261028.json). R13 пять регрессий не скрыты: malformed raw schema больше не маскируется literal budget, PROPOSE/candidate/ответ сохранены, неизвестные даты не отзывают независимый бюджет; исходные5testsPASS.
