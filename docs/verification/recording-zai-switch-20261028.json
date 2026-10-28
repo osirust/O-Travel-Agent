@@ -1,0 +1,46 @@
+{
+  "finding_id": "OPS-CF-RECORDING-429-20261028-001",
+  "status": "UPSTREAM_429_OPEN_NATIVE_ZAI_RESERVE_TESTED",
+  "cloudflare": {
+    "failure_at_msk": "2026-10-28 23:30:33",
+    "http_status": 429,
+    "daily_quota_confirmed": false,
+    "engineering_wait_seconds": 300,
+    "engineering_wait_until_msk": "2026-10-28 23:35:33",
+    "ledger_or_cooldown_reset": false
+  },
+  "reserve": {
+    "provider": "zai",
+    "model": "glm-4.5-flash",
+    "free_tier_confirmed": true,
+    "availability_before_call": "no_active_cooldown",
+    "bounded_connection_probe_http_status": 200,
+    "bounded_connection_probe_seconds": 1.44,
+    "runtime_daily_call_limit": 40,
+    "runtime_calls_per_run": 1,
+    "paid_or_local_fallback": false
+  },
+  "actual_fresh_ui_check": {
+    "model_run_status": "completed",
+    "model_error": null,
+    "model_latency_ms": 17347,
+    "input_tokens": 4768,
+    "output_tokens": 542,
+    "route": "Казань → Стамбул",
+    "check_in": "2026-10-30",
+    "check_out": "2026-11-06",
+    "adults": 2,
+    "rooms": 1,
+    "budget_rub_minor": 18000000,
+    "pending_question": null,
+    "hotel_cards": 20,
+    "hotel_photo": "Jasmine Apart Boutique Hotel - Apartment",
+    "loaded_photo_dimensions": [287, 192],
+    "page_errors": []
+  },
+  "same_backend_core": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "same_backend_package": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+  "database_and_historical_ledger_preserved_at_switch": true,
+  "source_code_or_compose_changed": false,
+  "limits": "One fresh full-input dialogue and photo rendering, not full corpus acceptance or guaranteed future upstream availability. Initial pending-image receipt was retained separately."
+}
