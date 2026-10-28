@@ -2,6 +2,7 @@ import { TravelApi } from './api.js';
 import { componentRequest, currentPlans, isPending, latestChanges, payloadOf, uuid } from './travel.js';
 import { agentProposalReady } from './agentProposal.js';
 import { restoreHotelMedia, restoreHotelPages } from './hotelPages.js';
+import { projectMessageRunError } from './chat.js';
 
 const storage = {
   get(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
@@ -124,7 +125,7 @@ export class TravelSession {
       if (this.confirmDelivery && orders.some(order => order.quote_id === this.confirmDelivery.quote_id)) this.confirmDelivery = null;
       const quote = this.state.quote?.state_version === snapshot.state_version && !active.length && !snapshot.waiting_reason ? this.state.quote : null;
       const media = this.state.snapshot?.state_version === snapshot.state_version && selectedId === this.state.selectedId ? this.state.media : {};
-      this.patch({ snapshot, messages, plans, selectedId, media, external, externalMedia, hotelPagination: hotelPages.pagination, changes: latestChanges(messages, this.runs), orders, online: true,
+      this.patch({ snapshot, messages: messages.map(message => projectMessageRunError(message, this.runs, sessionId)), plans, selectedId, media, external, externalMedia, hotelPagination: hotelPages.pagination, changes: latestChanges(messages, this.runs), orders, online: true,
         busy: !paused && active.length > 0, progress: paused ? 'На паузе' : active.length ? 'Обрабатываем ваш запрос…' : '', quote, notice });
       this.journal();
       void this.loadMedia();

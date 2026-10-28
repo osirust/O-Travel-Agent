@@ -1,8 +1,8 @@
-# O!Travel Agent — 28 октября, 20:17 МСК
+# O!Travel Agent — 28 октября, 20:49 МСК
 
 ## Текущая цель
 
-До 19:30 владелец разрешил только проверки; они завершены. До 22:00 — исправления подтверждённых ошибок, относящиеся проверки, итоговая публикация и передача для видео. Новый 40/80 не запускать. R7 закончен с 7900 PASS / 26 FAIL; все26 исправлены и прошли связанные проверки. Кандидат R27 заморожен, общий R8 начат20:15 (exec68812), terminal ещё нет. Код/тесты не менять. Проверки реальных API и чистого Docker разрешены параллельно на том же Git/package, runtime переключать только после результатов.
+Последний срок владельца: завершить передачу до **21:11 МСК**. Backend/APP/tests заморожены; новых функций и прогонов40/80 не запускать. R8 завершён: **7968 PASS /0FAIL /0ERROR /0SKIP**, source/tests unchanged. Код кандидата `a95eca834c2708006f51fd68b15faedd2e527629` опубликован обоим private remote. Остались финальные metadata push, небольшое UI-copy уточнение отдельным владельцем frontend, свежий архив, main/submission и видео. Старый R7 с7900PASS/26FAIL сохраняется отдельно.
 
 ## Что проверено
 
@@ -10,16 +10,19 @@
 - R26 код `91e6ee4`: общий R6 — 7664 PASS; чистый Docker — 30 проверок, внешний неизвестный model ID / HTTP — 25 проверок. Реальные Serp-фотографии отелей, LiteAPI sandbox, Duffel test, FX и один имитированный заказ отдельно проверялись. Последний UI-preview безопасно отказал по LiteAPI 2001: quote/order не созданы.
 - Новые R27 исправления: бюджет и непроверенные расходы (205 связанных, 31 новых целевых, включая PG); состав группы / единственный номер (111 контролируемых, отдельный пересекающийся related 188); даты / страна / booking restore (612 связанных, включая 3 PG); отмена и противоречия (403 связанных, затем wrong-stay fix 415 связанных / 73 own-PG+pure). Наборы пересекаются, не складывать.
 - Независимый peer подтвердил блокировку гипотетического снятия расходов и снятия условия не у того отеля. Исходные RED, подготовительные ошибки и ограничения сохранены. Отчёты: `docs/verification/final40-*-20261028.json`.
+- R27/R8: `docs/verification/r27-full-checkpoint-20261028.json`;96APP-файлов/327testfiles, tested E package `1287953a3d8d09c06e58cf0f03b4b36dc0a714a9dab091792dce90538fe4f26e`, Git/C package `ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12`; только17 проверенных EOL-нормализаций. Чистая поставка того же кода: `final-r27-clean-compose-and-external-wire-20261028.json`,30Docker+25controlled-wire, не тест качества неизвестной LLM.
+- Реальные scopes раздельны: Cloudflare4запроса/13целевых проверок PASS (`r27-cloudflare-related-actual-canary-20261028.json`); Z.ai canary NOT_ALL_PASS из-за timeout/cooldown (`r27-targeted-actual-canary-20261028.json`). LiteAPI sandbox/Duffel test/CBR и фото конкретного отеля/JPEG проверены отдельно в том же canary. Нельзя заменять старые ошибки новым чужимPASS.
+- По фактам root свежий естественный UI-диалог дошёл до плана,20отелей и JPEG-галереи, console errors0. Финальный frontend unit/build результат root вставит перед публикацией; прежняя база38unit+build. `.local/FINAL_PR_BODY.md` содержит явный `FRONTEND_FINAL_RESULT` placeholder, его нельзя публиковать не заменив.
 
 ## Что выполняется сейчас
 
-Общий R8: `.local/verify_integrated_release_20261028.py r8`, exec session68812. Before `.local/evaluation/integrated-release-full-20261028-r8.before.json`, E package `1287953a3d8d09c06e58cf0f03b4b36dc0a714a9dab091792dce90538fe4f26e`, 96файлов/327testfiles. APP/tests frozen. R7terminal/XML сохранены:24schema+2partyFAIL не переименовываются вPASS. Новые related:767Groq/financial,123party,155ownedreask (пересекаются). Actualcanary/cleanDocker — отдельные privateконтроллеры, runtimeR26 пока не менять.
+R8terminal: `.local/evaluation/integrated-release-full-20261028-r8.terminal.json` и одноимённые before/XML;7968PASS,677.039s wall, source/tests unchanged. R7terminal/XML сохранены:24schema+2partyFAIL не переименовываются вPASS. Related767Groq/financial,123party,155ownedreask пересекаются и не суммируются. Новые app/test правки запрещены; дальнейшая работа — только финальная поставка и запись.
 
 ## Живой стенд и Git
 
-- Пользовательский frontend: http://localhost:18082/#studio → native8084. Сейчас установлен именно R26, не R27. Frontend-контейнер ранее вручную запустил владелец; запрет автоматического запуска не обходился.
-- R26 C source: `/home/aegml/projects/otravel-recipient-release-r26-20261028`; DB `otravel_zai_eval`. Не перезаписывать live source. Подготовлен private `.local/recipient_release_r27_8084_20261028.py` для НОВОГО C source и точного guarded SIGTERM только старого R26, без смены БД и startup inference. Install/start только после общего PASS и точного Git/package pin.
-- Ветка `backend/harness-foundation`, оба private remote origin/cv на `5e2575e`. PR3 draft: https://github.com/ostrovok-hackathon-2026/aegml/pull/3. Основная main ещё старая `545e692`; финальная merge/tag не выполнена. Не force-push.
+- Пользовательский frontend: http://localhost:18082/#studio → native8084. По текущему readiness установлен R27, provider `cloudflare`, модель `@cf/nvidia/nemotron-3-120b-a12b`. Frontend-контейнер ранее вручную запустил владелец; запрет автоматического запуска не обходился.
+- R27 C source: `/home/aegml/projects/otravel-recipient-release-r27-20261028`, code `a95eca834c2708006f51fd68b15faedd2e527629`, package `ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12`; DB прежняя `otravel_zai_eval`. Readiness `/home/aegml/checks/recipient-release-r27-8084-20261028/readiness.json` создан `recipient_release_r27_cloudflare_8084_20261028.py`: RUNNING, historical state/ledger fingerprints preserved, controller startup inference/supplier0. Лимиты40/day,2/run,45s, local0/paidfallbackfalse. Старый R26 source и его доказательства не удалены; старым Z.ai-контроллером текущий CF-стенд не перезапускать.
+- Ветка `backend/harness-foundation`; APP core `a95eca8` опубликован origin/cv. Финальные metadata push/merge/tag делает root; не считать их выполненными по публикации кода. PR3 draft: https://github.com/ostrovok-hackathon-2026/aegml/pull/3. Не force-push.
 - GitHub connector даёт 404 private repo, gh нет. Допустимый fallback: existing GCM credential только RAM, `.local/github_release_pr_20261028.py`; токен не печатать.
 
 ## Передача
@@ -30,10 +33,10 @@ README уже содержит обложку, настоящий скриншо
 
 ## Открытые границы
 
-Нет полного semantic PASS 40/80/106. Весь первый набор разнородных hard пожеланий, rail-only, день рождения ребёнка и все свободные вопросы не закрыты. Until-checkin сохраняется как обязательное непроверенное условие и блокирует оформление; положительная квалификация произвольного срока отмены не реализована. Неадресный clear иногда консервативно уточняется. GigaChat OAuth200, inference TLS не подтверждён, VPN не менять.
+Нет полного semantic PASS40/80/106. Карта `docs/verification/final40-repair-coverage-20261028.json`:27исходныхID,11repaired_in_controlled_scope/6partial/10open; actual результаты добавлены только по относящимсяID, эти counts не переоценивались. Разнородные hard пожелания, rail-only, день рождения ребёнка и общий свободный диалог не закрыты. Until-checkin хранится как обязательное непроверенное условие и блокирует оформление; положительная квалификация произвольного срока отмены не реализована. Неадресный clear иногда уточняется. Исходный private RED owned-room-reask был служебно перезаписан: loss честно отражён в его receipt, старый captured040 и failing tool trace сохранены; GREEN не выдаётся за исходныйRED. GigaChat OAuth200, inference TLS не подтверждён, VPN не менять.
 
 ## Ближайший шаг
 
-Получить R7 terminal и source/test equality → целевой actual retake с сильной API LLM / туристическими API → stage только известные файлы, scan секретов, commit/push обоим → R27 immutable install / проверка frontend → свежий архив, PR/main и передача для видео. Не менять закрытые блоки без новой причины.
+До21:11: завершить отдельное UI-copy уточнение и его финальный unit/build → заменить PR-body placeholder → stage только известные metadata/UI-файлы, scan секретов и push → свежий архив с точным tested core/package → main/submission после проверки → передать участнику на видео. ВидеоURL остаётся placeholder до ссылки владельца. Backend/APP/tests не менять; старый архив ae7d2b4 не использовать как текущую поставку.
 
 AEGYX R16 INDEX81 owner-paused; A524, Ubuntu-24.04, Windows PostgreSQL/PEM, httpd8080 не трогать. Нет WSL shutdown/prune/global trust/VPN действий. Local Qwen / платные вызовы / настоящая бронь и оплата = 0.

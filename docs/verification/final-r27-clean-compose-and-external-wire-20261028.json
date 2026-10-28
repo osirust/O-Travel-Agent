@@ -1,0 +1,329 @@
+{
+  "format": "otravel.final_r27_clean_delivery.v1",
+  "checked_at_utc": "2026-10-28T17:23:57.819727+00:00",
+  "status": "EXACT_R27_KEYLESS_CORE_AND_CONTROLLED_EXTERNAL_HTTP_WIRE_PASS",
+  "git_commit": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "package_sha256": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+  "package_files": 96,
+  "git_archive_sha256": "744c5886cef3858eaecb8d07cb1484ba83e6d109e906f3c86bdd6aa74341fede",
+  "initial_command": [
+    "docker",
+    "compose",
+    "up",
+    "--build"
+  ],
+  "parameters": "Own UUID COMPOSE_PROJECT_NAME and COMPOSE_ENV_FILES pointing to private.env; no extra composeup flags.",
+  "ports": {
+    "web": 18084,
+    "app": 18085,
+    "optional_owned_mock": 18086,
+    "postgres_host_port": null
+  },
+  "keyless_core": {
+    "checks": [
+      {
+        "id": "exact_git_package_pin",
+        "status": "PASS"
+      },
+      {
+        "id": "empty_public_env_example",
+        "status": "PASS"
+      },
+      {
+        "id": "app_loopback_port",
+        "status": "PASS"
+      },
+      {
+        "id": "web_loopback_port",
+        "status": "PASS"
+      },
+      {
+        "id": "postgres_not_published",
+        "status": "PASS"
+      },
+      {
+        "id": "all_real_service_credentials_absent",
+        "status": "PASS"
+      },
+      {
+        "id": "own_db_password_from_private_env",
+        "status": "PASS"
+      },
+      {
+        "id": "host_gateway_config_present",
+        "status": "PASS"
+      },
+      {
+        "id": "fresh_owned_three_services_one_volume",
+        "status": "PASS"
+      },
+      {
+        "id": "app_uid_nonroot10001",
+        "status": "PASS"
+      },
+      {
+        "id": "all_container_healthchecks_ready",
+        "status": "PASS"
+      },
+      {
+        "id": "backend_health_and_no_supplier_booking",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_static_html",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_bundled_assets_present",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_asset_0",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_asset_1",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_api_proxy_health",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_api_v1_proxy",
+        "status": "PASS"
+      },
+      {
+        "id": "keyless_error_is_structured_and_keeps_state",
+        "status": "PASS"
+      },
+      {
+        "id": "explicit_demo_form_ready_after_keyless_error",
+        "status": "PASS"
+      },
+      {
+        "id": "typed_form_rebuilds_one_revision",
+        "status": "PASS"
+      },
+      {
+        "id": "current_demo_price_preview",
+        "status": "PASS"
+      },
+      {
+        "id": "explicit_one_booked_demo_order",
+        "status": "PASS"
+      },
+      {
+        "id": "identical_confirmation_is_idempotent",
+        "status": "PASS"
+      },
+      {
+        "id": "exactly_one_durable_demo_order",
+        "status": "PASS"
+      },
+      {
+        "id": "trip_owner_version_survive_restart",
+        "status": "PASS"
+      },
+      {
+        "id": "one_order_survives_restart",
+        "status": "PASS"
+      },
+      {
+        "id": "no_model_or_vendor_http_attempts_in_keyless_demo_phase",
+        "status": "PASS"
+      },
+      {
+        "id": "source_package_unchanged_by_build_and_lifecycle",
+        "status": "PASS"
+      },
+      {
+        "id": "only_owned_stack_and_volume_removed",
+        "status": "PASS"
+      }
+    ],
+    "passed": 30,
+    "failed": 0,
+    "own_project": "otravel_clean_a559b442bf14",
+    "started_at_utc": "2026-10-28T17:18:49.138241+00:00",
+    "finished_at_utc": "2026-10-28T17:19:57.921857+00:00",
+    "three_services_healthy": true,
+    "app_uid": 10001,
+    "frontend_assets_and_api_proxy": true,
+    "structured_keyless_error_retains_state": true,
+    "explicit_demo_and_typed_form_edit": true,
+    "one_simulated_order": true,
+    "confirmation_idempotence": true,
+    "app_restart_preserves_exact_trip_owner_version_and_order": true,
+    "real_model_or_tour_http": 0,
+    "source_package_unchanged": true,
+    "own_resources_removed": true,
+    "private_report_sha256": "bae4721165c825936848911fce9c64ef6d681e1d0e194989a75f3e8c12375bde",
+    "onecommand_log_sha256": "7a52555d3c76afb0e46174f94bb96f3d80a88a645b2934cad32667c1119968e4"
+  },
+  "external_wire": {
+    "checks": [
+      {
+        "id": "exact_git_package_pin",
+        "status": "PASS"
+      },
+      {
+        "id": "empty_public_env_example",
+        "status": "PASS"
+      },
+      {
+        "id": "app_loopback_port",
+        "status": "PASS"
+      },
+      {
+        "id": "web_loopback_port",
+        "status": "PASS"
+      },
+      {
+        "id": "postgres_not_published",
+        "status": "PASS"
+      },
+      {
+        "id": "archive_initial_profile_real_service_credentials_absent",
+        "status": "PASS"
+      },
+      {
+        "id": "own_db_password_from_private_env",
+        "status": "PASS"
+      },
+      {
+        "id": "host_gateway_config_present",
+        "status": "PASS"
+      },
+      {
+        "id": "generic_url_model_key_manual_trust_propagate_from_private_env",
+        "status": "PASS"
+      },
+      {
+        "id": "fresh_owned_three_services_one_volume",
+        "status": "PASS"
+      },
+      {
+        "id": "app_uid_nonroot10001",
+        "status": "PASS"
+      },
+      {
+        "id": "all_container_healthchecks_ready",
+        "status": "PASS"
+      },
+      {
+        "id": "backend_health_and_no_supplier_booking",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_static_html",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_bundled_assets_present",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_asset_0",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_asset_1",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_api_proxy_health",
+        "status": "PASS"
+      },
+      {
+        "id": "frontend_api_v1_proxy",
+        "status": "PASS"
+      },
+      {
+        "id": "unknown_model_name_reaches_controlled_http_server",
+        "status": "PASS"
+      },
+      {
+        "id": "bearer_key_reaches_only_owned_synthetic_endpoint",
+        "status": "PASS"
+      },
+      {
+        "id": "generic_model_response_parsed_and_validated",
+        "status": "PASS"
+      },
+      {
+        "id": "generic_ops_preserve_expected_fields",
+        "status": "PASS"
+      },
+      {
+        "id": "exactly_one_controlled_model_http_attempt_no_source_order",
+        "status": "PASS"
+      },
+      {
+        "id": "only_owned_stack_and_volume_removed",
+        "status": "PASS"
+      }
+    ],
+    "passed": 25,
+    "failed": 0,
+    "own_project": "otravel_clean_f75fbcb9b973",
+    "started_at_utc": "2026-10-28T17:21:47.720417+00:00",
+    "finished_at_utc": "2026-10-28T17:22:23.005929+00:00",
+    "provider": "external",
+    "format": "openai",
+    "base_url": "http://host.docker.internal:18086/v1",
+    "model": "jury-private-unknown-model-qualification",
+    "manual_endpoint_confirmation": true,
+    "host_gateway_route_checked": true,
+    "request_count": 1,
+    "paths": [
+      "/v1/chat/completions"
+    ],
+    "synthetic_bearer_matches": true,
+    "real_schema_domain_store_applied": "Moscow origin, Kazan destination, oneadult, budget12300000RUBminor",
+    "scope": "CONTROLLED_HTTP_FIXTURE_NOT_REAL_MODEL_INFERENCE",
+    "real_model_inference": 0,
+    "real_tour_http": 0,
+    "orders": 0,
+    "own_mock_and_stack_resources_removed": true,
+    "private_report_sha256": "71aa149b1da6a1a3dbff4df79fd7c9bdeca9659918dfca6729c0bbf05ecce571",
+    "onecommand_log_sha256": "2fd7266b37765fe3dca70220a1a7c059748fc2f5ab36d88cb3ee63cd1172f932"
+  },
+  "retained_initial_optional_preflight_failure": {
+    "sha256": "88b45e7594cf5f31ee4b7e4c0dd9201690910a148c9d5a650f1f929694cd8b8a",
+    "status": "SYNTHETIC_WIRE_FAILED_OR_BLOCKED",
+    "error_type": "OSError",
+    "reason": "Unclassified preflight OSError before first archivecheck or any containerstart; private details suppressed by existing qualifier.",
+    "resources_created": 0,
+    "cleanup_passed": true,
+    "followup": "Read-only bindprobe subsequently found all three ports free; same unchanged qualifier+pins passed on a new UUID. Do not claim the original errno/cause is proven."
+  },
+  "credentials": {
+    "master_reads": 0,
+    "real_model_or_travel_key_reads": 0,
+    "real_provider_tokens": 0,
+    "synthetic_values_only": "Own database password and explicit non-live external mock key.",
+    "real_api_calls": 0
+  },
+  "untouched": [
+    "Sharedapp/tests/Git",
+    "native8084",
+    "manuallystartedfrontend18082",
+    "importanthttpd8080",
+    "VPN/Happ",
+    "AEGYX",
+    "foreignDockerresources"
+  ],
+  "qualifier_sha256": {
+    "core": "5224124677344a1f70a1c6779c3f76cf2347f150482d6b050e50a704493a87e4",
+    "external": "df9d519885fac351a990769a1754712c2d2588d802bbb57da4db65091c242cc7"
+  },
+  "limitations": [
+    "Candidate exactGit/Cpackage qualification; parent fullR8/actualcanary governs finalrelease acceptance.",
+    "Two separate fresh projects; duplicated preflights are not additional source106 scenarios.",
+    "Synthetic externalwire proves environment/hostgateway/protocol/auth/unknownmodel/schema/domain/PG plumbing, not any unprovided jury endpoint or model quality.",
+    "No real supplier search/photos or livepricing is claimed by this keyless delivery test.",
+    "Rendered UI/visualquality and realLLM/supplier semantic checks are separate evidence.",
+    "Defaulthost8080 was preserved; isolated delivery ports18084/18085 were selected explicitly."
+  ]
+}

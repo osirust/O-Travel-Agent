@@ -1,0 +1,100 @@
+{
+  "format": "otravel.r27_native_cloudflare_release8084.v1",
+  "published_at_utc": "2026-10-28T17:48:07.548958+00:00",
+  "status": "ROOT_STARTUP_VERIFIED_EXISTING_STATE_AND_LEDGER_PRESERVED",
+  "git_commit": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "package_sha256": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+  "package_files": 96,
+  "source": "/home/aegml/projects/otravel-recipient-release-r27-20261028",
+  "url": "http://localhost:8084",
+  "database_name": "otravel_zai_eval",
+  "runtime": {
+    "llm_provider": "cloudflare",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b"
+  },
+  "limits": {
+    "daily": 40,
+    "cloudflare_daily": 40,
+    "generic_other_daily": 0,
+    "per_run": 2,
+    "local": 0,
+    "llm_request_timeout": 45,
+    "paid_fallback": false
+  },
+  "health": {
+    "status": "ok",
+    "database": "ready",
+    "application": "backend",
+    "supplier_booking": false
+  },
+  "previous_release": {
+    "git_commit": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+    "package_sha256": "34a1cf1f7adedbf6311a6983340982283df39a4448363cca7a21b3e26c3ab0af",
+    "owned_stop": {
+      "old_process_alive": true,
+      "signals": 1,
+      "signal": "SIGTERM",
+      "target": "pidfd",
+      "old_identity_unchanged": true,
+      "old_source_changed": false
+    },
+    "identity_guards": "Exact saved old release/source/UID/PID/startticks/argv/executable and ownedlistener checked before pidfdSIGTERM; no force fallback."
+  },
+  "startup_database_counts_before": {
+    "agent_events": 7582,
+    "agent_runs": 1156,
+    "demo_orders": 6,
+    "messages": 2315,
+    "quotes": 78,
+    "sessions": 206,
+    "pending_or_running": 0,
+    "model_call_started": 837
+  },
+  "startup_database_counts_after": {
+    "agent_events": 7582,
+    "agent_runs": 1156,
+    "demo_orders": 6,
+    "messages": 2315,
+    "quotes": 78,
+    "sessions": 206,
+    "pending_or_running": 0,
+    "model_call_started": 837
+  },
+  "startup_state_and_ledger_content_fingerprints_unchanged": true,
+  "startup_inference_calls": 0,
+  "startup_supplier_calls": 0,
+  "database_created": false,
+  "hba_modified": false,
+  "historical_ledger_reset": false,
+  "credential_files_copied_or_written": false,
+  "credentials_recorded": false,
+  "travel_profile": {
+    "mode": "HYBRID",
+    "liteapi": "configured/sandbox",
+    "duffel": "configured/test",
+    "serpapi": "configured/LIVE_INDICATIVE",
+    "evidence": "The successful controllerreadiness guard requires these three configured modes, CloudflareFreeconfirmation and no other configuredLLM/paidfallback. No touristsearch is performed during startup."
+  },
+  "controller": {
+    "name": "recipient_release_r27_cloudflare_8084_20261028.py",
+    "sha256": "f024451aa3ae3f54821c6691395cca94e6547049ccf3ae2573b7d0ba0397ddbb",
+    "new_process_creator": "recipient_release_r27_cloudflare_8084_20261028.py",
+    "installed_source_pin_creator": "recipient_release_r27_8084_20261028.py",
+    "startup_receipt_sha256": "bf81e3694dfc92fa778cf02170f6e87195f63ef0139ae24e7650f45cd614331e",
+    "release_archive_sha256": "744c5886cef3858eaecb8d07cb1484ba83e6d109e906f3c86bdd6aa74341fede"
+  },
+  "this_publication_actions": {
+    "controller_start_or_stop": 0,
+    "source_edits": 0,
+    "database_or_network_access": 0,
+    "master_reads": 0,
+    "frontend_changes": 0,
+    "git_stage_commit_push": 0
+  },
+  "limitations": [
+    "Counts/fingerprints describe the guarded startup interval; later explicit user/QA messages may legitimately add sessions/events and consume modelquota.",
+    "Startuphealth/profile checks do not themselves prove new modeldialogue quality or livehotelphotos; poststart browser/supplier evidence is recorded separately.",
+    "SANDBOX/DEMO/LIVE_INDICATIVE remain distinct; supplierbooking and payments remain disabled.",
+    "No APIkeys/accountIDs/DSN/privateprocessenv are included."
+  ]
+}

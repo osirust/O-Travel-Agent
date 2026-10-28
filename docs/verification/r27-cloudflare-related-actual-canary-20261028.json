@@ -1,0 +1,129 @@
+{
+  "format": "otravel.r27.cloudflare_related_actual_canary.v1",
+  "created_at_utc": "2026-10-28T17:30:04.665123+00:00",
+  "status": "PASS_IN_FOUR_RELATED_ACTUAL_MODEL_TARGETS_SCOPE",
+  "candidate_git": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "candidate_package_sha256": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+  "candidate_source": "/home/aegml/projects/otravel-recipient-release-r27-20261028",
+  "source_unchanged": true,
+  "runtime8084_changed": false,
+  "provider": {
+    "adapter": "native cloudflare",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "workers_free_no_card_previously_confirmed": true,
+    "account_or_token_published": false,
+    "max_attempts_per_run": 1,
+    "request_timeout_seconds": 45,
+    "physical_http": 4,
+    "response_statuses": [
+      200,
+      200,
+      200,
+      200
+    ],
+    "repair_retries_or_paid_local_fallback": 0,
+    "hard_cap": 4,
+    "model_capabilities_inferred_from_name": false
+  },
+  "checks": [
+    {
+      "id": "FINAL40-006:T3",
+      "checks": {
+        "completed": true,
+        "persistent_until_checkin": true,
+        "no_orders": true
+      },
+      "pass": true
+    },
+    {
+      "id": "FINAL40-024:T4",
+      "checks": {
+        "completed": true,
+        "two_adults_only": true
+      },
+      "pass": true
+    },
+    {
+      "id": "FINAL40-029:T4",
+      "checks": {
+        "completed": true,
+        "no_unasked_people": true,
+        "no_invented_origin": true
+      },
+      "pass": true
+    },
+    {
+      "id": "FRESH-NATURAL-INTAKE",
+      "checks": {
+        "completed": true,
+        "origin": true,
+        "one_adult": true,
+        "istanbul": true,
+        "no_invented_dates": true
+      },
+      "pass": true
+    }
+  ],
+  "source_and_state_scope": {
+    "financial_case006": "Canonical complete one-adult Istanbul trip with an existing refundable constraint, source phrase exact from006T3. Actual model response was checked/applied; persistent hard free_cancel_until_checkin=true; orders0.",
+    "child_case024": "Recorded prior party2AD+1CH and owned pending state, exact source phrase024T4. Actual model response plus harness produced only the2prior adults.",
+    "city_case029": "Recorded empty party/origin and owned city pending state, exact source phrase029T4. Actual response plus harness preserved no people/no origin instead of defaults. Static known-city evaluation mode; not worldwide dynamic-place qualification.",
+    "fresh_natural_intake": "Fresh empty own session without trip seed. OriginMoscow, destinationIstanbul, oneadult, no invented dates; all target state checks passed.",
+    "declarations": "Cases useDEMO source mode to isolate NLU/state safety. They do not qualify real fare comparisons, quote repricing, confirmation, order idempotence or UI rendering."
+  },
+  "visible_replies": [
+    {
+      "id": "FINAL40-006:T3",
+      "user": "Мне нужен именно refundable до дня заезда, а не до недели до него.",
+      "reply": "Условие бесплатной отмены до заезда сохранено. Точный подходящий срок выбранного тарифа пока не подтверждён; готовую корзину по этому условию оформить нельзя.",
+      "status": "completed",
+      "physical_model_http": 1
+    },
+    {
+      "id": "FINAL40-024:T4",
+      "user": "Нет, ребёнок не едет.",
+      "reply": "Текущий состав: 2 взрослых; дети в сохранённом составе не указаны. На какую дату планируете заезд в городе «Казань»?",
+      "status": "completed",
+      "physical_model_http": 1
+    },
+    {
+      "id": "FINAL40-029:T4",
+      "user": "Выбираем Тбилиси, Грузия.",
+      "reply": "Тбилиси — город в стране «Грузия». В текущем поисковом каталоге проекта его нет; адаптеры поиска его не покрывают. Обсудим направление без поиска или выберем другой город?",
+      "status": "completed",
+      "physical_model_http": 1
+    },
+    {
+      "id": "FRESH-NATURAL-INTAKE",
+      "user": "Хочу из Москвы в Стамбул. Один взрослый, детей нет. Даты пока уточняю.",
+      "reply": "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. На какую дату планируете заезд в городе «Стамбул»?",
+      "status": "completed",
+      "physical_model_http": 1
+    }
+  ],
+  "financial_quote_scope": "The CF case proves actual model extraction and persistence of until-checkin hard requirement. This short script did not invoke quote/search after that request; no claim that this phase independently tested refund deadline/source quote eligibility. Related API/PG qualification is separate.",
+  "actual_travel_and_photo_scope": "Already qualified in separate Z.ai-phase source call receipt r27-targeted-actual-canary-20261028.json. Tourism was not repeated here.",
+  "comparison_limit": "Four related CF responses passed where the prior Z.ai phase was partly blocked by request timeout/cooldown. This is availability and target-specific evidence, not a general quality benchmark or full40/80/106/116 semantic PASS.",
+  "previous_receipts_preserved": [
+    "docs/verification/r27-targeted-actual-canary-20261028.json",
+    "/home/aegml/checks/r27-targeted-actual-20261028-171843-08670ba9/report.json",
+    "/home/aegml/checks/r27-targeted-actual-20261028-172151-29cfcfce/report.json"
+  ],
+  "private_receipt": {
+    "path": "/home/aegml/checks/r27-cf-targeted-20261028-172740-d5c1b8e7/report.json",
+    "sha256": "7a450f849194df3b32bedb56053e66c7856e4b53ea4c319dcdeb6ed357ce953d",
+    "script_sha256": "36ae48d49be3d0bad0a411e875e1e1c0bebe52fd2b58c42123487bcdae188760"
+  },
+  "safety": {
+    "source_http": 0,
+    "source_http_cap": 14,
+    "supplier_booking_or_payments": false,
+    "own_new_tmpfs_pg_only": true,
+    "guarded_cleanup": "DONE",
+    "production_cooldown_or_ledger_modified": false,
+    "application_or_Master_configuration_changed": false,
+    "credentials_selected_to_RAM_only": true,
+    "keys_account_headers_or_session_tokens_recorded": false
+  },
+  "next": "Root combines R8 integrated result and these bounded actual results; no new model attempts or runtime switch were made by this agent."
+}

@@ -1,0 +1,269 @@
+{
+  "format": "otravel.r27.targeted_actual_canary.v1",
+  "created_at_utc": "2026-10-28T17:25:30.714724+00:00",
+  "status": "NOT_ALL_PASS",
+  "scope": "Five related candidate repetitions and one HYBRID source search; not a new40/80/106/116 acceptance run.",
+  "candidate_git": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "candidate_package_sha256": "ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12",
+  "candidate_source": "/home/aegml/projects/otravel-recipient-release-r27-20261028",
+  "runtime8084_changed": false,
+  "source_unchanged_both_attempts": true,
+  "original_attempt": {
+    "path": "/home/aegml/checks/r27-targeted-actual-20261028-171843-08670ba9/report.json",
+    "sha256": "19892bd4b1ed2ae24a572dfbd716a94371b952a18e550d028d79354ecfda351c",
+    "status": "ACTOR_FAILED_SAFE",
+    "error_type": "ModuleNotFoundError",
+    "model_http": 1,
+    "nonmodel_http": 6,
+    "attribution": "One model timeout45s caused cooldown for further model-dependent targets. Travel/media succeeded; final actor attempted optional unavailable PIL import for JPEG header. Original result retained, not overwritten."
+  },
+  "one_authorized_retake": {
+    "path": "/home/aegml/checks/r27-targeted-actual-20261028-172151-29cfcfce/report.json",
+    "sha256": "e44e0d8f053b113c8687e99aef2a22711a6f0eaacac19d60134c0f164026565f",
+    "status": "NOT_ALL_PASS",
+    "model_http": 2,
+    "nonmodel_http": 7,
+    "actor_only_repair": "Removed optional PIL dependency in the private recipe; read bounded JPEG SOF with stdlib. No application/dependency/guard/cooldown changes.",
+    "script_sha256": "3101b23415ba31ebea62ec542d93239cd717bc28f50e353faa8eb265dce23200"
+  },
+  "aggregate_physical_requests": {
+    "model": 3,
+    "nonmodel_including_cdn": 13,
+    "hard_caps": [
+      20,
+      40
+    ],
+    "counter_scope": "Each outgoing physical request counted before transport send; transport retry0; second attempt includes original usage in cap guards.",
+    "retake_trace": [
+      {
+        "kind": "model",
+        "method": "POST",
+        "host": "api.z.ai",
+        "path": "/api/paas/v4/chat/completions",
+        "status": 200
+      },
+      {
+        "kind": "model",
+        "method": "POST",
+        "host": "api.z.ai",
+        "path": "/api/paas/v4/chat/completions"
+      },
+      {
+        "kind": "supplier",
+        "method": "GET",
+        "host": "api.liteapi.travel",
+        "path": "/v3.0/data/hotels",
+        "status": 200
+      },
+      {
+        "kind": "supplier",
+        "method": "POST",
+        "host": "api.liteapi.travel",
+        "path": "/v3.0/hotels/rates",
+        "status": 200
+      },
+      {
+        "kind": "supplier",
+        "method": "POST",
+        "host": "api.duffel.com",
+        "path": "/air/offer_requests",
+        "status": 201
+      },
+      {
+        "kind": "fx",
+        "method": "GET",
+        "host": "www.cbr.ru",
+        "path": "/scripts/XML_daily.asp",
+        "status": 200
+      },
+      {
+        "kind": "supplier",
+        "method": "POST",
+        "host": "api.duffel.com",
+        "path": "/air/offer_requests",
+        "status": 201
+      },
+      {
+        "kind": "supplier",
+        "method": "GET",
+        "host": "api.liteapi.travel",
+        "path": "/v3.0/data/hotel",
+        "status": 200
+      },
+      {
+        "kind": "cdn",
+        "method": "GET",
+        "host": "static.cupid.travel",
+        "path": "/hotels/483737377.jpg",
+        "status": 200
+      }
+    ]
+  },
+  "targets": [
+    {
+      "id": "FINAL40-020:T4",
+      "checks": {
+        "completed": true,
+        "not_1200_rubles": true,
+        "reserve_unresolved": true,
+        "orders0": true
+      },
+      "pass": true,
+      "qualification": "ACTUAL_FREE_ZAI_HARNESS_RELATED_PASS"
+    },
+    {
+      "id": "FINAL40-006:T3",
+      "checks": {
+        "completed": false,
+        "until_checkin_hard_condition": false,
+        "no_false_ready": false,
+        "quotes0": true
+      },
+      "pass": false,
+      "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE"
+    },
+    {
+      "id": "FINAL40-024:T4",
+      "checks": {
+        "completed": false,
+        "two_adults_only": false
+      },
+      "pass": false,
+      "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE"
+    },
+    {
+      "id": "FINAL40-024:T11",
+      "checks": {
+        "completed": true,
+        "trip_unchanged": true,
+        "version_unchanged": true,
+        "model0": true,
+        "orders0": true
+      },
+      "pass": true,
+      "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS"
+    },
+    {
+      "id": "FINAL40-029:T4",
+      "checks": {
+        "completed": false,
+        "no_unasked_people": true,
+        "origin_not_invented": true
+      },
+      "pass": false,
+      "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE"
+    },
+    {
+      "id": "RELATED-OWNED-PARTY-SOLO-ROOM",
+      "checks": {
+        "completed": true,
+        "model0": true,
+        "solo_adult": true,
+        "unique_room_allocation": true
+      },
+      "pass": true,
+      "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS"
+    },
+    {
+      "id": "FINAL40-031:T8",
+      "checks": {
+        "completed": true,
+        "model0": true,
+        "check_in_preserved": true,
+        "check_out_set": true
+      },
+      "pass": true,
+      "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS"
+    },
+    {
+      "id": "ACTUAL-HYBRID-SOURCES",
+      "checks": {
+        "search_completed": true,
+        "found_plan": true,
+        "liteapi_http": true,
+        "duffel_http": true,
+        "fx_http": true
+      },
+      "pass": true,
+      "qualification": "ACTUAL_SOURCE_AND_MEDIA_API_ONLY"
+    },
+    {
+      "id": "ACTUAL-PROPERTY-JPEG",
+      "checks": {
+        "media200": true,
+        "actual_property_media": true,
+        "offer_property_identity_bound": true,
+        "jpeg_header": true
+      },
+      "pass": true,
+      "qualification": "ACTUAL_SOURCE_AND_MEDIA_API_ONLY"
+    }
+  ],
+  "actual_model": {
+    "provider": "external",
+    "format": "openai",
+    "model": "glm-4.5-flash",
+    "manual_free_confirmation": true,
+    "successful_target": "FINAL40-020:T4",
+    "response": "Уточните максимальную сумму, которую можно потратить на саму поездку. Процент резерва входит в названную сумму или добавляется сверху? До уточнения сохранённый бюджет не меняю.",
+    "remaining_model_dependent_targets": "006 actual timeout45.003s;024child/029city then MODEL_COOLDOWN with0additionalHTTP. Original-source semantic expected state was not reached; do not infer model/harness semantic PASS.",
+    "cooldown_or_ledger_bypassed": false
+  },
+  "refund_target_limitation": {
+    "message_completed": false,
+    "requested_condition_applied": false,
+    "quote_count": 0,
+    "subsequent_typed_search": "Actor explicitly searched the unchanged prior state after the failed message, so it found a plan without the newly requested hard condition. The false no_false_ready check does not demonstrate that until-checkin validation failed on an applied hard constraint; this semantic target is unqualified.",
+    "risk_to_retain": "An unprocessed new condition must not be described to a user as already applied; UI/source states and explicit LLM error remain relevant."
+  },
+  "actual_tourism": {
+    "setup": "Explicit canonical1adult/0children/1room/RUnationality;Moscow↔Istanbul2026-11-10..13;1millionRUBbudget. HYBRID search, no supplier booking/checkout confirm.",
+    "plan_id": "assembled-5ae4a97d44a62eb39981ddbd",
+    "source_type": "MIXED",
+    "total_minor": 5433185,
+    "currency": "RUB",
+    "violations": [],
+    "prices_not_live_bookable": true,
+    "source_results": "LiteAPIhotel lookup/rates200, Duffel2offer_requests201,CBR200,LiteAPIproperty metadata200.",
+    "media": {
+      "http_status": 200,
+      "offer_id": "liteapi:8a245d789fd46acde3a1a0aa",
+      "hotel_id": "lp6a87c",
+      "source_hotel_id": "lp6a87c",
+      "is_actual_property_photo": true,
+      "kind": "HOTEL",
+      "jpeg": {
+        "checked": true,
+        "status": 200,
+        "content_type": "image/jpeg",
+        "format": "JPEG",
+        "dimensions": [
+          3000,
+          2192
+        ],
+        "bytes_read": 16384
+      },
+      "browser_render_qualified": false,
+      "image_and_prices_are_separate_DTOs": true
+    }
+  },
+  "canonical_related_results": {
+    "booking_restore": "Completed0model;trip/versionunchanged;orders0. The preceding child-removal message was blocked by cooldown, so this is readonly safety on the retained party, not successful actual child-removal qualification.",
+    "party_and_room": "Completed0model;one existing/new explicitly requested adult and one room, unique membership.",
+    "checkout": "Completed0model;checkout19Nov set,checkin10Nov preserved. Canonical known-city setup, not full original dynamicgeo setup."
+  },
+  "observed_reply_limit": "Owned party/room completed with correct state, but reply still said children were not specified after explicit zero-child clause. Retain as a presentation wording limitation; no product fix applied in this canary.",
+  "safety": {
+    "orders": 0,
+    "supplier_booking_or_payment": false,
+    "local_llm": false,
+    "paid_fallback": false,
+    "own_new_tmpfs_pg_only": true,
+    "cleanup_both_attempts": true,
+    "master_keys_selected_only_to_ram": true,
+    "credential_values_or_session_tokens_recorded": false,
+    "runtime_vpn_or_shared_db_changes": false,
+    "new_application_changes": false
+  },
+  "next": "Root uses full R8 result plus this scoped receipt for candidate decision. No further retries initiated."
+}
