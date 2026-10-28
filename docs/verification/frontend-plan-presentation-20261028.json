@@ -1,0 +1,28 @@
+{
+  "finding_id": "UI-PLAN-COPY-20261028-001",
+  "status": "CLOSED_RELATED_PRESENTATION",
+  "frontend_tests_passed": 52,
+  "new_warning_and_title_tests_passed": 5,
+  "production_build": "PASS",
+  "browser_scope": "Saved owner plan rendered through controlled read-only API responses; not a new LLM or supplier test",
+  "browser": {
+    "url": "http://localhost:18082/#studio",
+    "viewport": "1365x1000",
+    "warning_count_before": 5,
+    "warning_count_after": 3,
+    "opaque_hotel_id_absent": true,
+    "raw_service_english_absent": true,
+    "neutral_hotel_title_visible": true,
+    "source_types_and_fx_date_preserved": true,
+    "original_total_rub_minor": 11112541,
+    "page_errors": [],
+    "unexpected_api_requests": []
+  },
+  "bundle": "index-B4iis5_w.js",
+  "bundle_sha256": "175c3f7b1595dba65ff020bf7af2542f611274b8f8f1c9847cb25cb399476978",
+  "same_running_frontend_container_and_start": true,
+  "backend_or_database_changed": false,
+  "new_llm_or_tourist_provider_calls": 0,
+  "room_question_review": "EXPECTED_MISSING_FIELD; rooms were empty until the later explicit room assignment; no lost-room defect confirmed",
+  "limits": "Prices, offers, blockers and original warnings remain unchanged in canonical data. No full dialogue corpus rerun."
+}

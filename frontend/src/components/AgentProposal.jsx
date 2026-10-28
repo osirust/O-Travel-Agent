@@ -1,6 +1,7 @@
 import { ArrowRight, ChevronRight, Info, LoaderCircle, Plane, Sparkles } from 'lucide-react';
 import { agentProposalReady } from '../lib/agentProposal.js';
 import { money, offerKind } from '../lib/travel.js';
+import { displayPlanOfferName } from '../lib/planWarnings.js';
 import { HotelRow } from './PlanViews.jsx';
 import { SourceBadge } from './Ui.jsx';
 import '../agent-proposal.css';
@@ -25,7 +26,7 @@ export default function AgentProposal({ data, onDetails, onBuild, onEdit }) {
         <div className="agent-plan-heading"><div><span className="eyebrow">ВАРИАНТ {index + 1}</span><h3>{index === 0 ? 'Ваша поездка' : 'Ещё один вариант'}</h3><SourceBadge source={plan.source_type} small /></div><div className="agent-plan-price"><strong>{money(plan.total_minor, plan.currency)}</strong><small>{Number.isSafeInteger(plan.total_minor) ? 'за всю поездку' : 'полная стоимость уточняется'}</small></div></div>
         {plan.source_type === 'DEMO' && <p className="agent-example-notice">Пример поездки: отели, перелёты и цены вымышлены.</p>}
         {plan.source_type === 'MIXED' && <p className="agent-example-notice">В варианте есть тестовые предложения; проверьте источник каждого компонента.</p>}
-        {hotels.length ? <div className="agent-hotel-list">{hotels.map(offer => <button className="agent-hotel-button" key={offer.offer_id} onClick={() => onDetails(plan)} aria-label={`Посмотреть отель и перелёты: ${offer.name || offer.description || 'предложение'}`}><HotelRow offer={offer} trip={trip} media={data.selectedId === plan.plan_id ? data.media[offer.offer_id] : null} /><ChevronRight size={20} className="agent-hotel-arrow" /></button>)}</div> : <p className="agent-plan-empty">Проживание в этом варианте пока не подобрано.</p>}
+        {hotels.length ? <div className="agent-hotel-list">{hotels.map(offer => <button className="agent-hotel-button" key={offer.offer_id} onClick={() => onDetails(plan)} aria-label={`Посмотреть отель и перелёты: ${displayPlanOfferName(offer, offer.city || trip.stays.find(stay => stay.id === offer.component_id)?.city)}`}><HotelRow offer={offer} trip={trip} media={data.selectedId === plan.plan_id ? data.media[offer.offer_id] : null} /><ChevronRight size={20} className="agent-hotel-arrow" /></button>)}</div> : <p className="agent-plan-empty">Проживание в этом варианте пока не подобрано.</p>}
         <div className="agent-plan-footer"><span><Plane size={15} />{flights.length ? `Перелётов в маршруте: ${flights.length}` : 'Перелёты уточняются'}</span><button className="text-button" onClick={() => onDetails(plan)}>Посмотреть состав <ArrowRight size={15} /></button></div>
         {plan.blockers?.length > 0 && <p className="agent-plan-warning">Не все условия поездки подтверждены. Откройте состав для подробностей.</p>}
       </article>;

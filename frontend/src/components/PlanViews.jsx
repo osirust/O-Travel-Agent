@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowRight, BedDouble, Check, ChevronRight, CircleCheck, Info, MapPin, Plane, TrainFront, Car, RefreshCw, Sparkles, UsersRound } from 'lucide-react';
-import { serverPlanReviewAction, dateLabel, destinationImage, money, offerAmount, offerKind, offerName, offerStayId, partyLabel, readableChange } from '../lib/travel.js';
+import { serverPlanReviewAction, dateLabel, destinationImage, money, offerAmount, offerKind, offerStayId, partyLabel, readableChange } from '../lib/travel.js';
 import { session } from '../lib/session.js';
 import { cartTotal, compareToBudget } from '../lib/cart.js';
 import { cabinLabel, FLIGHT_CLASSES } from '../lib/flights.js';
+import { displayPlanOfferName, humanPlanWarnings } from '../lib/planWarnings.js';
 import { SourceBadge, TravelImage } from './Ui.jsx';
 import '../trip-timeline.css';
 
@@ -31,7 +32,7 @@ export function HotelRow({ offer, trip, media }) {
   const checkIn = offer.check_in || stay?.check_in, checkOut = offer.check_out || stay?.check_out;
   const nights = checkIn && checkOut ? Math.round((Date.parse(checkOut) - Date.parse(checkIn)) / 86400000) : null;
   const rooms = offer.room_assignments || details.binding?.room_assignments || stay?.rooms || [];
-  return <div className="hotel-row"><TravelImage city={offer.city || stay?.city} media={media} /><div className="hotel-row-content"><SourceBadge source={offer.source_type} small /><h3>{offerName(offer).replace(/^DEMO\s*[—·-]?\s*/i, '')}</h3><p className="muted">{offer.city || stay?.city}{nights !== null ? ` · ${nights} ночей` : ''}</p><div className="amenities">{offer.breakfast === true && <span><Check size={13} />Завтрак</span>}{offer.refundable === true && <span><Check size={13} />Возвратный тариф</span>}{rooms.length > 0 && <span><BedDouble size={14} />{rooms.length} ном.</span>}</div>{offer.room_rates?.some(rate => rate.breakfast !== offer.room_rates[0].breakfast || rate.refundable !== offer.room_rates[0].refundable) && <small className="hint">Условия различаются по номерам</small>}<span className="hotel-price">{money(offerAmount(offer), offer.currency)} <small>за проживание</small></span></div></div>;
+  return <div className="hotel-row"><TravelImage city={offer.city || stay?.city} media={media} /><div className="hotel-row-content"><SourceBadge source={offer.source_type} small /><h3>{displayPlanOfferName(offer, offer.city || stay?.city).replace(/^DEMO\s*[—·-]?\s*/i, '')}</h3><p className="muted">{offer.city || stay?.city}{nights !== null ? ` · ${nights} ночей` : ''}</p><div className="amenities">{offer.breakfast === true && <span><Check size={13} />Завтрак</span>}{offer.refundable === true && <span><Check size={13} />Возвратный тариф</span>}{rooms.length > 0 && <span><BedDouble size={14} />{rooms.length} ном.</span>}</div>{offer.room_rates?.some(rate => rate.breakfast !== offer.room_rates[0].breakfast || rate.refundable !== offer.room_rates[0].refundable) && <small className="hint">Условия различаются по номерам</small>}<span className="hotel-price">{money(offerAmount(offer), offer.currency)} <small>за проживание</small></span></div></div>;
 }
 
 export function PlanList({ data, onSelect, onDetails }) {
@@ -126,12 +127,12 @@ export function PlanDetails({ plan, trip }) {
     const stay = kind === 'hotel' ? trip.stays.find(item => item.id === offerStayId(offer)) : null;
     const segments = Array.isArray(offer.details?.provider_data?.flights) ? offer.details.provider_data.flights : [];
     const city = offer.city || stay?.city, checkIn = offer.check_in || stay?.check_in, checkOut = offer.check_out || stay?.check_out;
-    return <section className="detail-offer" key={offer.offer_id}><div className="section-title"><Icon size={20} /><h3>{offerName(offer)}</h3><SourceBadge source={offer.source_type} small /></div>
+    return <section className="detail-offer" key={offer.offer_id}><div className="section-title"><Icon size={20} /><h3>{displayPlanOfferName(offer, city)}</h3><SourceBadge source={offer.source_type} small /></div>
       {kind === 'hotel' && <p>{city || 'Город уточняется'}{checkIn && checkOut ? ` · ${dateLabel(checkIn)} — ${dateLabel(checkOut)}` : ''}</p>}
       {offer.origin && <p>{offer.origin} → {offer.destination || 'Уточняется'}{offer.departure_date && ` · ${dateLabel(offer.departure_date)}`}</p>}
       {segments.map((segment, index) => segment && <p key={index}>{[segment.airline, segment.flight_number].filter(value => typeof value === 'string' && value.trim()).join(' · ') || 'Перелёт'}: {segment.departure_airport?.id || segment.departure_airport?.name || 'Отправление'} → {segment.arrival_airport?.id || segment.arrival_airport?.name || 'Прибытие'}{typeof segment.travel_class === 'string' ? ` · ${cabinLabel(segment.travel_class)}` : ''}</p>)}
       <strong>{money(offerAmount(offer), offer.currency)}</strong>{offer.price_kind?.includes('NIGHTLY') && <span className="hint"> за ночь; не общая стоимость поездки</span>}
       {(offer.room_assignments || binding.room_assignments || []).map((room, index) => <p key={room.room_id || room.id || index} className="hint">Номер {index + 1}: {(room.traveler_ids || []).map(id => { const traveler = trip.travelers.find(person => person.id === id); return traveler?.type === 'child' ? `ребёнок ${traveler.age ?? '?'} лет` : 'взрослый'; }).join(', ')}</p>)}
       {offer.retrieved_at && <p className="hint">Получено {new Date(offer.retrieved_at).toLocaleString('ru-RU')}</p>}</section>;
-  })}{(plan.warnings || []).map((warning, index) => <p className="warning-text" key={index}><Info size={16} />{typeof warning === 'string' ? warning : warning.message}</p>)}{(plan.blockers || plan.violations || []).map((blocker, index) => <p className="form-error" key={index}>{blocker.message}</p>)}</div>;
+  })}{humanPlanWarnings(plan.warnings).map(warning => <p className="warning-text" key={warning}><Info size={16} />{warning}</p>)}{(plan.blockers || plan.violations || []).map((blocker, index) => <p className="form-error" key={index}>{blocker.message}</p>)}</div>;
 }
