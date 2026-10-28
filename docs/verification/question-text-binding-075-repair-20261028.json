@@ -1,0 +1,102 @@
+{
+  "finding_id": "HARNESS-004-QUESTION-TEXT-BINDING-075-001",
+  "recorded_at_utc": "2026-10-28T03:05:48.269709+00:00",
+  "status": "CONTROLLED_RENDERING_SCOPE_CLOSED_FRESH_ACTUAL_RETEST_PENDING",
+  "actual_evidence": {
+    "case_id": "ZAI100-075",
+    "turn": 1,
+    "core_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "core_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "model_provider": "openrouter",
+    "model": "nvidia/nemotron-3.5-super-vl:free",
+    "input_source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "raw_final_contract_sha256": "b8efab3e43589f7449aebd38b1f800e939ce3d13fdfecafefe7c16efa89e71b2",
+    "checked_final_contract_sha256": "bcd6248d095f962c43d343bfc029bbbe893f0097d5fcddf22d86a11d0075b53b",
+    "observed_pending_field": "party.children",
+    "observed_question_field": "party.adults",
+    "observed_question": "Сколько взрослых поедет в поездку?",
+    "actual_wrong_child_mutation_observed": false
+  },
+  "cause": [
+    "Untrusted model unknowns mention nights and adult age. The existing broad classifier recognizes an adult-count question.",
+    "derive_pending_field remaps a known adult-count slot to the still-unknown children slot.",
+    "human_question formerly reparsed the original wording; a binding supplied only as context did not replace that parsed field.",
+    "The second sanitizer repeated the adult wording, while final_question_binding persisted party.children without rerendering party questions."
+  ],
+  "change": {
+    "files": [
+      {
+        "path": "otravel/question_rendering.py",
+        "sha256": "713a093d8eab11b62d7cd903a6c56441576b785d05713b5538bb4061bbde69be"
+      },
+      {
+        "path": "otravel/harness.py",
+        "sha256": "65fa654eb16f7f78e2ecdd3f8fb3c6a577512291b7916d8fda46ccfd2c8a04cc"
+      },
+      {
+        "path": "tests/test_question_rendering_075.py",
+        "sha256": "7e124f0f0eaa5c5f4391ccf8197b9a6d97c908198a2f6ae712930226c1efcf0e"
+      },
+      {
+        "path": "tests/test_harness_question_rendering_075.py",
+        "sha256": "a500206cab65fac6029b4e5de5f1900f290b882dee97fd59410c0fc337732a5a"
+      }
+    ],
+    "harness_diff": "one import and the two existing untrusted rendering calls only",
+    "semantics": "Render a recognized canonical derived field/target explicitly. No answer inference, operations, parser-regex changes, or changes to trusted server-question/proposal fences."
+  },
+  "verification": {
+    "initial_red": {
+      "tests": 1,
+      "failures": 1,
+      "seconds": 3.07,
+      "path": ".local/drafts/question-binding075-20261028/whole-harness-red.xml",
+      "sha256": "74a7dba68ed40116905e77297ce8933a445e7f11bfe3e6af05e061b564572a5c"
+    },
+    "related_final": {
+      "tests": 58,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 23.58,
+      "path": ".local/drafts/question-binding075-20261028/related-final.xml",
+      "sha256": "cd5be3a81ae752f9d23c4b6c7eb8d098b2f67e56f555f41b6eedfe61b7c27ba4"
+    },
+    "new_checks": {
+      "pure": 12,
+      "api_pg": 1,
+      "existing_related": 45
+    },
+    "exact075_complete_green": {
+      "tests": 1,
+      "failures": 0,
+      "seconds": 3.28,
+      "path": ".local/drafts/question-binding075-20261028/exact075-complete-green.xml",
+      "sha256": "340fa44b443b7a8ef9eddb1438f607aae00b3d4146beb2d7a6ee4055393054dd"
+    },
+    "facts": [
+      "one existing adult remains age=null",
+      "12–18 December2026 stay/room member and125000RUB budget preserved",
+      "persisted question text and field both address children",
+      "the explicit bound reply «Дети не едут» uses no second model call",
+      "child-count answer preserves trip/version and advances beyond adult/child count slots"
+    ],
+    "controls": [
+      "known adult to child-count remapping",
+      "no-adult count remains adult-bound",
+      "children-known skip guard",
+      "impossible flight date remaps to the one unresolved hotel date",
+      "origin/nationality/questions without a known slot",
+      "owned hotel targets and server proposal binding controls remain intact"
+    ],
+    "ruff": "three new files PASS",
+    "real_model_http": 0,
+    "real_supplier_http": 0,
+    "native_changes": 0
+  },
+  "limitations": [
+    "No fresh remote075 replay on the candidate; the actual R17 transcript and all old failures are immutable.",
+    "Compound literal «Один взрослый без детей, один номер» does not currently establish children_known via the separate complete-clause matcher. This is not repaired by this rendering-only change.",
+    "Other observed no-op date edits, redundant duration questions, and broader reply-loss cases remain separately open.",
+    "This is not full80/106 language acceptance or frontend visual acceptance. Parent owns the combined R18 source digest/full-suite proof."
+  ]
+}

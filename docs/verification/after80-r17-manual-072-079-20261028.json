@@ -1,0 +1,498 @@
+{
+  "review_id": "AFTER80-R17-INDEPENDENT-MANUAL-072-079-20261028",
+  "recorded_at_utc": "2026-10-28T03:12:57.518988+00:00",
+  "method": "Human read of every captured user/reply/minimal before-after state; source-exact checks are structural provenance only, not semantic PASS.",
+  "core_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "core_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "original_input_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "oracle_sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+  "models": {
+    "Nemo": {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "submitted_inputs": 41
+    },
+    "Groq": {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "submitted_inputs": 23
+    }
+  },
+  "scope": {
+    "observed_case_ids": 8,
+    "all_inputs_submitted_cases": 7,
+    "submitted_unique_inputs": 64,
+    "completed_runs": 62,
+    "failed_runs": 2,
+    "unsubmitted_inputs": 14,
+    "all80_language_pass": false,
+    "all106_language_pass": false
+  },
+  "source_exact_structural_checks": {
+    "compared_original_texts": 64,
+    "all_exact": true,
+    "unique_case_turns": 64,
+    "warning": "No NLU or response-quality claim follows from these counts."
+  },
+  "evidence": [
+    {
+      "path": "/home/aegml/.local/evaluation/after80-nemotron-8089-independent-epoch1-20261028-014253-92d57981/manual-safe-completed-20261028T015102.jsonl",
+      "sha256": "d9041747981cf4ebe3fce106ffd4dd6882e1ffc202367407d32f1d64679ce42b",
+      "kind": "private whitelisted projection"
+    },
+    {
+      "path": "/home/aegml/.local/evaluation/after80-nemotron-8089-independent-epoch1-20261028-014253-92d57981/manual-safe-076-terminal.json",
+      "sha256": "5d944e32f914d6df4beb3c7dba810a39dcb5b2978595c2a10a30643747181fc5",
+      "kind": "private whitelisted projection"
+    },
+    {
+      "path": "/home/aegml/.local/evaluation/after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87/manual-safe-076-groq-new7-9.json",
+      "sha256": "dfdf2a688808b57a2d439528dea27c95a5c34762c8b7ff7eb39e58661d9c3dda",
+      "kind": "private whitelisted projection"
+    },
+    {
+      "path": "/home/aegml/.local/evaluation/after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87/manual-safe-077-completed.json",
+      "sha256": "02d3905de3c19a65fbe6ba42c7e6687d292ab47234b59aa51300362f595d8c2e",
+      "kind": "private whitelisted projection"
+    },
+    {
+      "path": "/home/aegml/.local/evaluation/after80-groq-8090-handoff-epoch1-20261028-022450-31ce0b87/manual-safe-078-079-terminal.jsonl",
+      "sha256": "1b8c7c5edf0b4e243f1f0e443b5bc0b01e6a27db8290da1adb1a8747c3da0a6f",
+      "kind": "private whitelisted projection"
+    }
+  ],
+  "failures": [
+    {
+      "id": "ZAI100-078",
+      "turn": 10,
+      "code": "INVALID_LLM_RESPONSE",
+      "trip_unchanged": true,
+      "pending_unchanged": true
+    },
+    {
+      "id": "ZAI100-079",
+      "turn": 2,
+      "code": "RATE_LIMITED",
+      "trip_unchanged": true,
+      "pending_unchanged": true,
+      "reported_retry_seconds": 1017,
+      "quota_facts_source": "separate guarded-run diagnostics; no invented reset"
+    }
+  ],
+  "cases": [
+    {
+      "id": "ZAI100-072",
+      "submitted_turns": 9,
+      "all_original_inputs_submitted": true,
+      "lineage": "Nemo",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "FACTS_OK",
+          "observation": "Initial Moscow→Sochi23–30Nov,2AD+CH3/10,one family room,100000RUB preserved; supplier failure is disclosed with DEMO/SANDBOX labels."
+        },
+        {
+          "turn": 2,
+          "classification": "FACTS_OK",
+          "observation": "Ten-percent reduction is100000→90000RUB; people/dates unchanged."
+        },
+        {
+          "turn": 3,
+          "classification": "FACTS_OK",
+          "observation": "Explicit90000 repeats the same amount without a trip revision."
+        },
+        {
+          "turn": 4,
+          "classification": "REPLY_SCOPE_OPEN",
+          "observation": "Read-only state preserved and90000 correct; last-change answer instead enumerates initial construction and all accumulated changes."
+        },
+        {
+          "turn": 5,
+          "classification": "REPLY_LOSS_OPEN",
+          "observation": "No preferences were stored and no changes occur, but the reply only says unchanged instead of confirming absence of breakfast/early-flight wishes."
+        },
+        {
+          "turn": 6,
+          "classification": "FACTS_OK",
+          "observation": "Checkout30→28Nov, checkin23 retained,5nights/return28Nov; roster/budget preserved."
+        },
+        {
+          "turn": 7,
+          "classification": "FACTS_OK",
+          "observation": "Explicit five nights repeats23–28Nov with no extra revision."
+        },
+        {
+          "turn": 8,
+          "classification": "FACTS_OK",
+          "observation": "The same older child10→11, younger remains3; both adults retain unknown ages."
+        },
+        {
+          "turn": 9,
+          "classification": "FACTS_OK",
+          "observation": "Read-only final reply accurately includes dates/5nights/90000RUB/2AD/children3and11."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-073",
+      "submitted_turns": 8,
+      "all_original_inputs_submitted": true,
+      "lineage": "Nemo",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "REDUNDANT_QUESTION_OPEN",
+          "observation": "Kazan→Moscow2–6Dec/1AD/45000RUB saved; the room has no members and a nights question is asked despite both exact dates."
+        },
+        {
+          "turn": 2,
+          "classification": "READONLY_PARTIAL_REPLY",
+          "observation": "Roster and45000RUB remain unchanged; answer reports one adult and children not specified, without clearly confirming the explicit zero-child fact."
+        },
+        {
+          "turn": 3,
+          "classification": "FACTS_OK_REPLY_OPEN",
+          "observation": "Budget45000→50000RUB correct; redundant question about nights2–6Dec persists."
+        },
+        {
+          "turn": 4,
+          "classification": "EXPLICIT_EDIT_LOST_OPEN",
+          "observation": "Positive checkout edit to seventh December is a no-op; current checkout remains6Dec and reply is generic preservation text."
+        },
+        {
+          "turn": 5,
+          "classification": "RECOVERED_BY_NEXT_INPUT",
+          "observation": "Explicit hotel checkout7Dec updates stay and return leg; checkin2Dec/origin/other facts preserved. Fee uncertainty is disclosed, not converted to live-ready."
+        },
+        {
+          "turn": 6,
+          "classification": "FACTS_OK",
+          "observation": "Second adult added exactly once; both placed in the same room, budget50000 and no children retained."
+        },
+        {
+          "turn": 7,
+          "classification": "FACTS_OK",
+          "observation": "Repeat of two-adult roster produces no change."
+        },
+        {
+          "turn": 8,
+          "classification": "NEEDS_ADAPTIVE",
+          "observation": "After two adults are saved, «ещё один взрослый в дополнение ко мне» yields a third adult. Context permits an addition reading, but a correction/total-count reading needs human clarification; do not require one unique count blindly."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-074",
+      "submitted_turns": 8,
+      "all_original_inputs_submitted": true,
+      "lineage": "Nemo",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "REDUNDANT_QUESTION_OPEN",
+          "observation": "Antalya17–24Nov/2AD+CH6/130000RUB saved; empty room members and redundant nights question despite dates."
+        },
+        {
+          "turn": 2,
+          "classification": "SAFE_REJECT_REPLY_OPEN",
+          "observation": "Checkout16Nov before checkin17 is not applied; generic assistance fails to explain the date-order problem."
+        },
+        {
+          "turn": 3,
+          "classification": "FACTS_OK_REPLY_OPEN",
+          "observation": "Correction checkout25Nov/return25 saves correctly; checkin17 retained, but unnecessary nights clarification persists."
+        },
+        {
+          "turn": 4,
+          "classification": "FACTS_OK",
+          "observation": "Read-only route/dates/8nights and CH6 reply correct; existing pending preserved."
+        },
+        {
+          "turn": 5,
+          "classification": "FACTS_OK",
+          "observation": "Whole-trip budget130000→110000RUB only; excess-budget result is disclosed."
+        },
+        {
+          "turn": 6,
+          "classification": "FACTS_OK",
+          "observation": "Existing child6→7, not a new traveler."
+        },
+        {
+          "turn": 7,
+          "classification": "FACTS_OK",
+          "observation": "lowest_total preference saved while110000RUB and other facts remain."
+        },
+        {
+          "turn": 8,
+          "classification": "FACTS_OK",
+          "observation": "Read-only final roster/child7/dates17–25/110000RUB all accurately rendered."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-075",
+      "submitted_turns": 10,
+      "all_original_inputs_submitted": true,
+      "lineage": "Nemo",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "CONFIRMED_BINDING_BUG",
+          "observation": "1ADageNULL/room/Dubai12–18Dec/125000RUB saved. pending.field=party.children but text asks adult count. Exact causal reproduction and controlled R18 repair are recorded separately; actual R17 transcript stays immutable."
+        },
+        {
+          "turn": 2,
+          "classification": "FACTS_OK_EXISTING_BINDING_BUG",
+          "observation": "Budget125000→135000 only; wrong adult wording persists under child field."
+        },
+        {
+          "turn": 3,
+          "classification": "FACTS_OK",
+          "observation": "Dubai-country information returns UAE without trip/pending mutation."
+        },
+        {
+          "turn": 4,
+          "classification": "FACTS_OK",
+          "observation": "Typo budget125000 restored selectively; other facts unchanged and previous clarification cleared."
+        },
+        {
+          "turn": 5,
+          "classification": "EXPLICIT_EDIT_LOST_OPEN",
+          "observation": "Explicit checkout19Dec is a no-op; checkout remains18Dec."
+        },
+        {
+          "turn": 6,
+          "classification": "RECOVERED_BY_NEXT_INPUT",
+          "observation": "Seven nights from12Dec updates checkout/return to19Dec and records7nights."
+        },
+        {
+          "turn": 7,
+          "classification": "REDUNDANT_QUESTION_OPEN",
+          "observation": "Repeat of already saved12–19Dec/7nights creates generic clarification with no identified missing fact."
+        },
+        {
+          "turn": 8,
+          "classification": "FACTS_OK",
+          "observation": "Origin Moscow→Kazan and corresponding return endpoint change; Dubai/dates/budget preserved."
+        },
+        {
+          "turn": 9,
+          "classification": "FACTS_OK",
+          "observation": "lowest_total saved,125000RUB unchanged."
+        },
+        {
+          "turn": 10,
+          "classification": "FACTS_OK",
+          "observation": "Read-only final budget/route/dates/lowest-total preference rendered accurately."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-076",
+      "submitted_turns": 9,
+      "all_original_inputs_submitted": true,
+      "lineage": "Nemo1–6 then Groq7–9; same session, prefix not replayed",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "FACTS_OK_PARTITION_PENDING",
+          "observation": "5AD+CH3/6/9/12 and Sochi retained; no family membership was yet specified, so initial lack of partition is not graded as a wrong assignment."
+        },
+        {
+          "turn": 2,
+          "classification": "FIXED_SCRIPT_NOT_ANSWER",
+          "observation": "Bare Sochi does not answer an already-bound checkin question; repeating that question is correct and does not add a stay."
+        },
+        {
+          "turn": 3,
+          "classification": "FACTS_OK",
+          "observation": "Fresh checkin answer10Nov owned by the stay."
+        },
+        {
+          "turn": 4,
+          "classification": "FACTS_OK",
+          "observation": "Checkout16Nov and two route legs saved; room-count question follows."
+        },
+        {
+          "turn": 5,
+          "classification": "COUNT_ONLY_SCOPE",
+          "observation": "Three empty rooms saved without invented member allocation; source failure/fallback disclosed."
+        },
+        {
+          "turn": 6,
+          "classification": "CONFIRMED_FAMILY_PARTITION_LOSS",
+          "observation": "Exact three room memberships are correct. But the two explicitly described families become ONE keep_separate group containing all five adults, while all four children have no group. Room correctness does not prove correct family membership."
+        },
+        {
+          "turn": 7,
+          "classification": "FACTS_OK_MIXED_MODEL",
+          "observation": "First Groq turn after six Nemo turns:350000RUB added; existing business facts retained. Nemo prePOST admission stop is not a submitted seventh turn."
+        },
+        {
+          "turn": 8,
+          "classification": "FACTS_OK",
+          "observation": "Child6 in first room/family changes to7; other children3/9/12 and remaining rooms unchanged."
+        },
+        {
+          "turn": 9,
+          "classification": "READONLY_EXPOSES_PARTITION_LOSS",
+          "observation": "Read-only reply preserves state and accurately lists all room members and child ages. Its family summary exposes the wrong one-group/all-adults partition, rather than two families."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-077",
+      "submitted_turns": 8,
+      "all_original_inputs_submitted": true,
+      "lineage": "Groq",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "FACTS_OK",
+          "observation": "Initial two family groups and two rooms exactly match1AD+CH5 /2AD+CH8; dates20–25Nov and180000RUB correct."
+        },
+        {
+          "turn": 2,
+          "classification": "FACTS_OK",
+          "observation": "Repeated same allocation is correctly a no-op."
+        },
+        {
+          "turn": 3,
+          "classification": "FACTS_OK",
+          "observation": "refundable=true hard only room1; breakfast=true hard only room2. Provider proof failure is disclosed without falsely satisfying the condition."
+        },
+        {
+          "turn": 4,
+          "classification": "REPLY_LOSS_OPEN",
+          "observation": "No mutation/globalization of scoped requirements, but no direct capability explanation is given."
+        },
+        {
+          "turn": 5,
+          "classification": "REPLY_MAPPING_OPEN",
+          "observation": "Stored constraints remain correctly scoped; reply repeats «для указанного номера» twice without identifying which room owns which condition."
+        },
+        {
+          "turn": 6,
+          "classification": "FACTS_OK",
+          "observation": "Existing child in family/room1 changes5→6; family2/CH8 untouched."
+        },
+        {
+          "turn": 7,
+          "classification": "FIXED_SCRIPT_REDUNDANT",
+          "observation": "Input says after an error, but age6 is already saved; no duplicate change is needed."
+        },
+        {
+          "turn": 8,
+          "classification": "REPLY_CAPABILITY_OPEN",
+          "observation": "No confirmation/order claim or requirement globalization; reply only repeats provider-proof warning instead of explaining supported room-level behavior."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-078",
+      "submitted_turns": 10,
+      "all_original_inputs_submitted": true,
+      "lineage": "Groq",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "CONFIRMED_UNPROVEN_PARTITION",
+          "observation": "Initial totals/three rooms/dates/budget saved. Family memberships and room member split are assigned before the user supplies their identities in T2; the totals alone do not prove that particular partition."
+        },
+        {
+          "turn": 2,
+          "classification": "FIXED_SCRIPT_CONFIRMATION",
+          "observation": "Explicit partition equals the already assigned state, so no mutation is correct; generic assistance is poor acknowledgment but not evidence of a new wrong allocation."
+        },
+        {
+          "turn": 3,
+          "classification": "ADDITION_OK_ALLOCATION_UNRESOLVED",
+          "observation": "New distinct CH9 added to family1, original CH9 retained. New child remains outside all rooms; reply does not directly explain requested capacity/room allocation. Price/source fallback is explicitly DEMO."
+        },
+        {
+          "turn": 4,
+          "classification": "LEGITIMATE_CLARIFICATION",
+          "observation": "Request for4rooms preserves existing assigned layout and asks how to redistribute rather than silently assigning people."
+        },
+        {
+          "turn": 5,
+          "classification": "FIXED_SCRIPT_REDUNDANT",
+          "observation": "Repeat says ten people/newchild though that child already exists; avoiding an eleventh person is correct. Generic response does not help answer pending redistribution."
+        },
+        {
+          "turn": 6,
+          "classification": "FACTS_OK",
+          "observation": "Fourth room added with one adult from room1 and the new child; old rooms2/3 unchanged, room1 retains other adult+CH3/6. Choosing either old room1 adult is allowed by this wording."
+        },
+        {
+          "turn": 7,
+          "classification": "EXPLICIT_EDIT_LOST_OPEN",
+          "observation": "Unique new child in room4 should change9→10; no state change occurs and reply is generic assistance."
+        },
+        {
+          "turn": 8,
+          "classification": "REPLY_LOSS_OPEN",
+          "observation": "Read-only reply lists5AD+5CH with actual saved ages, but omits room4 members/explicit total. It does not invent the requested age10 that T7 failed to save."
+        },
+        {
+          "turn": 9,
+          "classification": "COMPOUND_EDIT_LOST_OPEN",
+          "observation": "Explicit adult swap between rooms1/4, age10 and lowest_total preference all remain unapplied. Current old room allocation/age9/preferences remain; generic reply."
+        },
+        {
+          "turn": 10,
+          "classification": "FAILED_SCHEMA_PRESERVED",
+          "observation": "INVALID_LLM_RESPONSE operation_value_json; no trip/pending mutation. Schema failure is separate from provider quota and from successful delivery of previous turns."
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-079",
+      "submitted_turns": 2,
+      "all_original_inputs_submitted": false,
+      "lineage": "Groq",
+      "manual_turn_notes": [
+        {
+          "turn": 1,
+          "classification": "DATE_OMISSION_OPEN",
+          "observation": "Two families/4AD+CH4/9, two correct rooms, Kazan/Antalya and280000RUB saved. Explicit4–10Dec dates are omitted; requested_nights6 is stored instead and already-given checkin is requested again."
+        },
+        {
+          "turn": 2,
+          "classification": "FAILED_RESOURCE_PRESERVED",
+          "observation": "Groq RATE_LIMITED429, provider hint1017s. Trip/pending unchanged; no resend. T3–8 not sent in this epoch."
+        }
+      ]
+    }
+  ],
+  "remaining_not_run": [
+    "ZAI100-079:T3",
+    "ZAI100-079:T4",
+    "ZAI100-079:T5",
+    "ZAI100-079:T6",
+    "ZAI100-079:T7",
+    "ZAI100-079:T8",
+    "ZAI100-080:T1",
+    "ZAI100-080:T2",
+    "ZAI100-080:T3",
+    "ZAI100-080:T4",
+    "ZAI100-080:T5",
+    "ZAI100-080:T6",
+    "ZAI100-080:T7",
+    "ZAI100-080:T8"
+  ],
+  "attribution": {
+    "075": "Exact raw/checked FINAL JSON and controlled R18 diagnosis/repair are in question-text-binding-075-repair-20261028.json. Fresh actual repair remains untested here.",
+    "other_new_findings": "Observed end-to-end behavior only. Model omission vs harness normalization/answer replacement is UNKNOWN until separately reviewed bounded final JSON."
+  },
+  "limits": [
+    "No raw reasoning/provider bodies/headers/vault/keys were read for this manual review.",
+    "No new model/supplier HTTP, API/PG writes or source/test changes were performed by the reviewer for this manual phase.",
+    "DEMO and SANDBOX labels in replies remain explicit; partial source failure is not live-ready or real booking.",
+    "Offer prices/FX/booking availability are outside the whitelisted projection and are not qualified by this review.",
+    "R12/Zai47 old072T1 timeout and old source/model outcomes remain separately preserved.",
+    "Nemo076T7 prePOST local admission stop is not a failed submitted user turn; its subsequent Groq submission is counted once.",
+    "073T8 and other fixed-script redundant/correction turns require adaptive adjudication instead of one blindly forced oracle.",
+    "Any subsequent14-input continuation is a separate epoch/addendum; it is not already completed here."
+  ]
+}

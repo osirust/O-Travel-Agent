@@ -1,3 +1,27 @@
+# Текущий проверенный checkpoint — R18, 28 октября
+
+**7314 controlled PASS / 0 fail / 0 skip**, 440,09 с; sourceE `f8bf851d…`, 291 test files. [Квитанция R18](../verification/prefrontend-r18-checkpoint-20261028.json). Новый renderer исправляет несоответствие поля и текста вопроса. R18 готов к Git/Docker; native 8084 пока на R17/db913942, чей точный Docker-архив прошёл 18 проверок. ИсходныеR13/R16FAIL сохранены,policyage-testдоизменениялежитсbyteSHAвhistorical-tests.
+
+| ID | Фактическое состояние | Открытая граница |
+| --- | --- | --- |
+| HARNESS-001 | РеальныйtourismfunctionalR14:27/27,19HTTPsuccess,4pax/4rooms/3flights/photos/refresh/oneBOOKED_DEMO. LLMexplicitrecorded. | FreshcomplexNLU/OpenLiveBookable/exactsupplierequivalenceне доказаны. |
+| HARNESS-002 | CurrentcanonicalID/schema/dates/room/person/budgetguards вfull7301. | Engineeringboundsне утверждённыйproductmax; неуниверсальнаяperson-age attribution. |
+| HARNESS-003 | Scopedundo/cancel/CAS/historicalrestore/oldquoteconsentguardsпроверены. | Всеязыковыессылкине квалифицированы. |
+| HARNESS-004 | Budget/geo/025/035/038/NoAdd/059/closedreminders имеютRED→PGgreen;3nativeclosedqueries31checks0model. | ОбщийlanguagePASS80/106нет. НовыеNemo date-drop/nightquestions/075bindingOPEN. |
+| HARNESS-005 | Persistentcaps/fences/boundedrepair/pause/controlидемпотентность проверены. | Vendorlimits ≠appcaps; exactly-once externalHTTPне заявлен. |
+| HARNESS-006 | API/media/currentDocker18smoke/FrontendContractR17готовы. | Finalfrontend/video/jury-onlyciphertext/main+submissionpending. |
+| HARNESS-007 | Scopedrecovery/refusaltestsиисторическиеWALproofsсохранены. | Не произвольнаяdisk/networkloss; GigaTLS/generation0. |
+| HARNESS-008 | Old619 inputs + Nemo41 + Groq23 из immutable R17; последние 14 UNSENT переданы ограниченной резервной фазе. | Фазы/версии/моделине смешиватьв80PASS; old5queuedнеизъявленыexecuted. |
+
+Режимданных: LiteAPI/Duffel SANDBOX, собственныйtransfer DEMO; CBRсистемаreferenceFX. У каждого компонента provenance/expiry; MIXEDне полностьюреальныйпокупаемыйтур. Root7301pytest не заменяеткорпусныеoracles/actualNLU. Groq8090 остановлен на 079/T2: 23 новых model HTTP, 34 supplier HTTP; 21 completed, schema failure и TPD429 сохранены. Старые 39 Nemo HTTP не сброшены. Разрешённый резерв 8091: не более 8 новых free HTTP на 14 UNSENT с fresh quota check. noresend/nopaid/nolocal/noCheckout. COMPLETED и число HTTP не равны semantic PASS.
+
+Секреты: отдельныйключдляжюриобязателен;mainMasterне передан,agehelperготов,ciphertextнетиз-заChromeURL-checkstop. Giga auth200, ноAPIhandshakeнеполучендажена3per-socketMSSпробах; VPNнастройкине менялись.
+
+
+**HARNESS-004-QUESTION-TEXT-BINDING-075-001 — CONTROLLED_SCOPE_CLOSED / FRESH_NLU_RETEST_OPEN.** Exact cached075 через Harness/API/PostgreSQL сохраняет `party.children`, но показывает вопрос о взрослых. RED: `.local/drafts/question-binding075-20261028/whole-harness-red.xml`, 1 FAIL. Причина: поле после derive изменилось, renderer повторно выбрал старое поле из сырого текста. Действие: для непроверенного модельного вопроса рендерить уже вычисленные field/target; серверные предложения не переадресовывать. Проверено: тот же PG-ввод GREEN; ответ «Дети не едут» не вызывает вторую модель, не меняет trip/version и не повторяет вопрос о взрослых/детях. 58 related PASS; полный R18 — 7314 PASS без пропусков. [Доказательство](../verification/question-text-binding-075-repair-20261028.json). Новый remote replay ещё не выполнен. Составная исходная фраза «один взрослый без детей, один номер» по-прежнему не закрывает children_known: это отдельный пробел, исправлением renderer он не устранён.
+
+## Исторические ревизии и неизменённые доказательства
+
 # Текущая основная ревизия — R17,28октября
 
 **7301 controlled PASS / 0 fail / 0 skip**,430.79с, source451adca3.[Квитанция](../verification/prefrontend-r17-checkpoint-20261028.json). R16 исходные2FAIL сохранены и исправлены без ослаблениястарых assertions: recognizedlegacyrenderer не перекрывается новымreminder, code-owned proposed event сохраняется, renderfailure не вызываетLLM. 059 обаADageNULL не превращаютсяв18, rawмодельныйтекст18невыдаётсязаистину.

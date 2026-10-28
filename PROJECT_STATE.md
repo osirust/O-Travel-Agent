@@ -1,31 +1,38 @@
-# O!Travel Agent — состояние на28октября,04:45МСК
+# O!Travel Agent — 28 октября, 06:05 МСК
 
-Цель: передать устойчивый backend для frontend/видео и закончить оставшуюся языковую проверку. Код не объявляется безошибочным по числу pytest.
+Цель: подготовить backend к утренней интеграции frontend и видео. Frontend делает сокомандник. Рабочий чат: http://localhost:8084/debug.
 
-## Последний проверенный код
+## Проверенная версия
 
-R17: **7301 PASS / 0 fail / 0 skip**,430.79с; source451adca3ceb724c65a2b27ceda938f4413d58f59f79ec5df3aaefb832c49cf4a,289testfiles. [Квитанция](docs/verification/prefrontend-r17-checkpoint-20261028.json). Source/tests во время full не менялись. R16:7236PASS/2FAIL сохранены; первоначальные два regressiontests после исправления прошли без изменения assertions. R15:7154PASS; R14:7098PASS.
+Core `db913942`, документация `17cbf28`, опубликованы в обеих приватных ветках `backend/harness-foundation`. R17: **7301 PASS, 0 fail, 0 skip**, 430,79 с. Исходники и тесты не менялись во время проверки. Native 8084 использует этот же Git-пакет `4e53aa60…`. Точный Docker-архив прошёл 18 проверок, включая чистую БД, запуск без ключа, сохранение состояния и restart. Три запроса сохранённых фактов: 31 проверка, 0 model/tool calls. Доказательства: `docs/verification/prefrontend-r17-checkpoint-20261028.json`, `native-r17-readiness-20261028.json`, `submission-r17-docker-smoke-20261028.json`.
 
-Закрытые controlled области: budgetdelta/scope/quotes/advice, origin/hotel/endpoint roles, даты/календарь/derivednights, начальный и конечный состав, alias single-stay removal, explicitNoAdd+boundedrepair, незапрошенный existingADage, canonical closedread-only напоминания(0model), pause/continuation/ownedquestions/CAS/idempotency/quote/order guards. Same-value/typed/explicitpositive правила проверены отдельно. DOB-изобретения и универсальная person-age attribution этим не закрываются.
+R18 проверен: **7314 PASS, 0 fail, 0 skip**, 440,09 с; source `f8bf851d…`, 291 test files, без изменения исходников/тестов во время прогона. [Квитанция](docs/verification/prefrontend-r18-checkpoint-20261028.json).
 
-## Что проверено через внешние сервисы
+Исправление R18: HARNESS-004-QUESTION-TEXT-BINDING-075-001. Exact cached 075 через настоящий Harness/API/PG воспроизвёл ошибку: pending.field=party.children, показанный вопрос — о взрослых. Исходный RED сохранён. Исправляется только согласованность текста с уже вычисленным полем для непроверенных модельных вопросов; серверные предложения и их ID не меняются. Полный R18 завершён. До публикации и проверки точного Docker-архива 8084 сохраняет R17. Частные R17-копии корпуса неизменны.
 
-- R14 Groq120B:2 exactinputs с явным историческимsetup,10/10checks,2modelcalls.5toolstarts:4completed,1LiteAPI PROVIDER_RESPONSE_ERROR. Это не два полных диалога.
-- R14 recordedfinalJSON+настоящиеLiteAPI/Duffel/CBR:27/27checks,19HTTPsuccess,2hotels/по2rooms/3flights/4pax/photos/refresh/oldquote409/одинBOOKED_DEMO+retry.372523.72RUB при1180000budget. LLM replay явноcontrolled, freshZai6attempt отвергнут за невалидные операции. Hotel/flightSANDBOX, transferDEMO; realbooking/payments0.
-- Fixeda36/Zai45:619/697inputs,584completed/30failed/5queued,515model/771tools. Все619ответов прочитаны. ОтдельныйR12/Zai47:072T1timeout;77inputsNOTRUN. Full80/106PASS нет; D250 импортирован.
-- OpenRouter: Gemma429 приaccountfree50/50; Nemotron3HTTP200/validJSON, rawsemanticошибки. Whole-Harness recordedduplicate RED сохранён; NoAddguard теперьcontrolledtested. Микрофазы4actualHTTP отдельно. Качество моделей не ранжировали по метаданным.
+## Языковые прогоны
 
-## Git / стенды
+- Исторический a36/Z.ai45: 619/697 исходных реплик приняты; 584 completed, 30 failed, 5 queued. Это не полный language PASS.
+- R17/Nemotron8089: 41 новая реплика (072–075 полностью, 076/T1–6), 39 model HTTP, 79 supplier HTTP. Остановка перед 076/T7 из-за собственного лимита; ledger не сброшен. Pending/quotes/orders=0. Квитанция: `nemotron-8089-bounded-terminal-20261028.json`.
+- R17/Groq8090: 23 новые реплики, 21 completed, 2 failed. 078/T10: INVALID_LLM_RESPONSE/value_json; 079/T2: настоящий TPD 429 (200000 tokens/day, used196878, Retry-After1017s). 23 model HTTP, 34 supplier HTTP. Pending/quotes/orders=0, только собственный 8090 остановлен. Остались 14 UNSENT: 079/T3–8, 080/T1–8. Квитанция: `groq-8090-handoff-terminal-20261028.json`.
+- Разрешена отдельная фаза 8091: только эти 14 UNSENT, не повторять failed POST. Не более 8 новых бесплатных Router HTTP после свежей проверки остатка; 387 supplier HTTP, одна попытка/run, fallback/local/paid/checkout=0. Профиль Router50 использует существующий путь настроек; старые 39 Router и 23 Groq события сохраняются. Общий операторский потолок 80 не повышен. Подготовка/запуск — у travel_checkout; сначала fresh metadata/guards.
 
-Ветка backend/harness-foundation в origin+cv; последнийpublishedR15=6418de3, сейчас сохраняетсяR17. Live8084 http://localhost:8084/debug покаR14/e37ccb72, Groq120B/v3/HYBRID/global, DBotravel_zai_eval. Guardedrollout выполнен, native-r17-readiness содержит source/процесс/БД иstartup0calls.8086 immutablea36/DBсохранена;8088остановлен/DBсохранена.8089Nemotron072–080 RUNNING поRootGOизGitdb9139/4e53:40modelHTTP/500supplierHTTP/perrun2. OwnC/DB/counters startup0 проверены; phasefolder /home/aegml/.local/evaluation/after80-nemotron-8089-independent-epoch1-20261028-014253-92d57981. Start изimmutableC, оригинальныеinputs/oraclebyteexact, nofallback/paid/local/checkout/resend. SourceE не используетсяruntime.
+Все результаты хранят версии и модели по ходам. COMPLETED не означает semantic PASS. Пропуски словесных правок дат, лишние вопросы о ночах и отдельные ошибки групп/ответов остаются открытыми. Полного повторного language PASS 80/106 нет.
 
-## Что осталось
+## Туристические API
 
-1. Запустить prepared9casephase, сохранитьполныеответы/ошибки/remaininginputledger; app40cap илиvendoroutage не объявлять semanticPASS. При необходимости отдельнаяявнаяGroqepoch, безпересылкиunknownPOST/сбросаквоты.
-2. ТочныйGitarchiveR17 Docker18smokePASS(новаяPG/безключей/nonroot/каноническийreminder/restart/cleanupown), frontend интеграцияпо существующемуконтракту, видео, затемmain+submissiontag. Source17неподменятьновымнепровереннымкодомвпроцессе.
-3. Separatejury-onlykey+secrets.env.age ещё НЕ созданы. Официальныйrecipient/helper/пустой.env.example готовы. АвтопроверкаChromeостановиласозданиеключаиз-за неопределённогоURL; Masterключ не экспортировать. Финальноеvideo/publiclink ещёнет.
-4. Giga OAuth200/inference0: TLSapi.giga.chattimeout. VPN/Happ/systemroutes/TLSverify не менялись; точечныйDirectexception только предложен, ответа владельца нет.
+LiteAPI — SANDBOX, Duffel — test/SANDBOX, SerpApi — LIVE_INDICATIVE, Open-Meteo — география/погода, ЦБ — справочный FX. Собственные трансферы DEMO. Нельзя называть смешанный план полностью бронируемым.
 
-## Границы
+R14: отдельный контролируемый записанный JSON + настоящие LiteAPI/Duffel/ЦБ: 27/27 проверок, 19 успешных HTTP, 2 отеля/4 номера/3 рейса/4 пассажира/фото/refresh/старый quote409/один BOOKED_DEMO с идемпотентным повтором. Fresh LLM=0; это функциональная проверка интеграций, не успешное понимание сложного исходного диалога. Исторические actual NLU failures сохранены.
 
-ИсходникиE:/work/aegml; native/Docker/PG — C-backed WSL AegML-Hackathon. AEGYXR16INDEX81 owner-paused, A524/Ubuntu24.04/WindowsPG/PEM/httpd8080 не трогать. NoWSLshutdown/prune/globalkill/чужихvolume. Ключи только ignored0600nativeenv, не вGit/ответах. Текущиепроверки localQwen0/paid0; настоящиеbooking/payment запрещены. Frontend делает сокомандник, дизайнздесьне меняем.
+## Внешние блокеры сдачи
+
+GigaChat: OAuth200, generation0. API TLS зависает; три отдельные MSS-пробы не помогли. VPN/Happ/маршруты/MTU/доверие TLS не менялись. Direct-исключение лишь предложено, ответ владельца ожидается. Повторять одинаковые сетевые пробы не нужно.
+
+Отдельный ключ для жюри и `secrets.env.age` ещё не созданы. Официальный recipient, проверенный age1.3.2, helper и пустой .env.example готовы. Автоматическая проверка Chrome остановила действие, потому что не смогла надёжно определить текущий URL. Не обходить ограничение другим UI; основной Master-ключ не экспортировать. Ожидается отдельный ключ из кабинета/скрытый локальный ввод. Далее: финальный frontend, видео с доступом без входа, итоговый main и тег submission.
+
+## Следующий шаг и изоляция
+
+Сохранить проверенный R18 в Git, проверить точный Docker-архив и обновить 8084. Завершить ограниченную 8091-фазу, проверить её журнал/расходы, прочитать новые ответы и обновить основную матрицу `docs/research/harness-plan-review.md`. Не превращать ошибки в PASS по числу API-запросов.
+
+E:/work/aegml; native/Docker/PG в C-backed WSL AegML-Hackathon. AEGYX R16/INDEX81 owner-paused; A524/Ubuntu24.04/Windows PostgreSQL/PEM/httpd8080 не трогать. Никаких wsl --shutdown, prune или чужих volumes. Ключи — только ignored 0600 env; local Qwen=0, paid=0, настоящее бронирование/оплата=0.

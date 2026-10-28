@@ -24,6 +24,7 @@ from .money import ground_budget_operations
 from .route_intake import ground_initial_route
 from .llm_contract import build_operation_schema
 from .clarifications import PENDING_CONTEXT_CLEAR_KEYS, derive_pending_field, human_question, question_field, resolve_short_answer
+from .question_rendering import render_untrusted_question
 from .date_slots import resolve_date_answer
 from .observability import model_snapshot
 from .providers import LLMGateway, ProviderError, public_rate_failure_fields
@@ -2052,7 +2053,7 @@ class Harness:
                     bound = derive_pending_field([{**clarification_metadata, "text": raw}], current)
                     if question_field(raw) and bound["field"] is None and not trusted and not extracted.conflicts:
                         continue  # This precise slot is already filled.
-                    rendered = raw if trusted else human_question({**clarification_metadata, "text": raw}, current, bound)
+                    rendered = raw if trusted else render_untrusted_question({**clarification_metadata, "text": raw}, current, binding=bound)
                     if (not trusted and not extracted.conflicts and bound["field"] is None
                             and rendered == human_question(None, current)):
                         # An unknown model field must not erase the address of
@@ -2103,7 +2104,7 @@ class Harness:
                 extracted.response_source == "contextual_slot" or extracted.destination_request is not None
                 or questions[0] in extracted.server_questions)
             if not trusted:
-                questions = [human_question({**clarification_metadata, "text": questions[0]}, current, clarification_metadata)]
+                questions = [render_untrusted_question({**clarification_metadata, "text": questions[0]}, current, clarification_metadata)]
         if waiting_reason == "user_pause":
             reply = "Запрос и текущее состояние сохранены. Жду явного «продолжай»; поиск и оформление остановлены."
             if questions:
