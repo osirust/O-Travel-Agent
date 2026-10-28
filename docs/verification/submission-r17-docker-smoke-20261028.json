@@ -1,0 +1,96 @@
+{
+  "format": "otravel.r17.docker.smoke.v1",
+  "created_at_utc": "2026-10-28T01:49:53.425533+00:00",
+  "status": "EXACT_COMMITTED_ARCHIVE_KEYLESS_DOCKER_PASS",
+  "commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "source_kind": "git archive, no mutable source or overlay",
+  "checks": [
+    {
+      "id": "immutable_checkpoint_package_matches",
+      "passed": true
+    },
+    {
+      "id": "packaging_overlay_does_not_change_core",
+      "passed": true
+    },
+    {
+      "id": "all_example_values_empty",
+      "passed": true
+    },
+    {
+      "id": "no_model_or_travel_credentials_in_container",
+      "passed": true
+    },
+    {
+      "id": "single_local_owned_port",
+      "passed": true
+    },
+    {
+      "id": "non_root_runtime",
+      "passed": true
+    },
+    {
+      "id": "health_database_and_booking_guard",
+      "passed": true
+    },
+    {
+      "id": "debug_html_ready",
+      "passed": true
+    },
+    {
+      "id": "swagger_available_as_documented",
+      "passed": true
+    },
+    {
+      "id": "dynamic_flag_reaches_real_runtime",
+      "passed": true
+    },
+    {
+      "id": "keyless_llm_failure_preserves_empty_trip",
+      "passed": true
+    },
+    {
+      "id": "explicit_demo_form_works_after_llm_failure",
+      "passed": true
+    },
+    {
+      "id": "typed_form_changes_one_revision",
+      "passed": true
+    },
+    {
+      "id": "closed_reminder_works_without_model_key",
+      "passed": true
+    },
+    {
+      "id": "closed_reminder_preserves_exact_trip_and_version",
+      "passed": true
+    },
+    {
+      "id": "no_generation_provider_calls_or_orders",
+      "passed": true
+    },
+    {
+      "id": "db_trip_and_owner_survive_app_restart",
+      "passed": true
+    },
+    {
+      "id": "only_owned_project_removed",
+      "passed": true
+    }
+  ],
+  "db_counts": {
+    "sessions": 1,
+    "model_starts": 0,
+    "tool_starts": 0,
+    "orders": 0
+  },
+  "build_up_seconds": 27.987,
+  "elapsed_seconds": 33.446,
+  "private_report": "/home/aegml/checks/submission-r17-docker-smoke-20261028-014331-6c3ec0c8/report.json",
+  "private_report_sha256": "052325757056512762d636d59ddb83b1da10fbed97b76ffdd031784826c375fa",
+  "cleanup": "Only two verified own project containers, exact labelled new volume and project networks.",
+  "real_model_or_travel_keys": false,
+  "source_secrets_read": false,
+  "scope": "Fresh PG/nonroot/health/API/DEMO/forms/new closed reminder without any model key/app restart. No actual supplier or NLU qualification."
+}

@@ -17,12 +17,12 @@ R17: **7301 PASS / 0 fail / 0 skip**,430.79с; source451adca3ceb724c65a2b27ceda9
 
 ## Git / стенды
 
-Ветка backend/harness-foundation в origin+cv; последнийpublishedR15=6418de3, сейчас сохраняетсяR17. Live8084 http://localhost:8084/debug покаR14/e37ccb72, Groq120B/v3/HYBRID/global, DBotravel_zai_eval. Следующий guardedrollout — новыйкоммитR17.8086 immutablea36/DBсохранена;8088остановлен/DBсохранена.8089Nemotron072–080 толькоPREPARED:40modelHTTP/500supplierHTTP/perrun2, actualrun ещё0. RootдастGOпоточномуGitarchiveSHAпослепубликации; start изimmutableC, оригинальныеinputs/oraclebyteexact, nofallback/paid/local/checkout/resend. SourceE не используетсяruntime.
+Ветка backend/harness-foundation в origin+cv; последнийpublishedR15=6418de3, сейчас сохраняетсяR17. Live8084 http://localhost:8084/debug покаR14/e37ccb72, Groq120B/v3/HYBRID/global, DBotravel_zai_eval. Guardedrollout выполнен, native-r17-readiness содержит source/процесс/БД иstartup0calls.8086 immutablea36/DBсохранена;8088остановлен/DBсохранена.8089Nemotron072–080 RUNNING поRootGOизGitdb9139/4e53:40modelHTTP/500supplierHTTP/perrun2. OwnC/DB/counters startup0 проверены; phasefolder /home/aegml/.local/evaluation/after80-nemotron-8089-independent-epoch1-20261028-014253-92d57981. Start изimmutableC, оригинальныеinputs/oraclebyteexact, nofallback/paid/local/checkout/resend. SourceE не используетсяruntime.
 
 ## Что осталось
 
 1. Запустить prepared9casephase, сохранитьполныеответы/ошибки/remaininginputledger; app40cap илиvendoroutage не объявлять semanticPASS. При необходимости отдельнаяявнаяGroqepoch, безпересылкиunknownPOST/сбросаквоты.
-2. ТочныйфинальныйGitarchive Docker smoke, frontend интеграцияпо существующемуконтракту, видео, затемmain+submissiontag. Source17неподменятьновымнепровереннымкодомвпроцессе.
+2. ТочныйGitarchiveR17 Docker18smokePASS(новаяPG/безключей/nonroot/каноническийreminder/restart/cleanupown), frontend интеграцияпо существующемуконтракту, видео, затемmain+submissiontag. Source17неподменятьновымнепровереннымкодомвпроцессе.
 3. Separatejury-onlykey+secrets.env.age ещё НЕ созданы. Официальныйrecipient/helper/пустой.env.example готовы. АвтопроверкаChromeостановиласозданиеключаиз-за неопределённогоURL; Masterключ не экспортировать. Финальноеvideo/publiclink ещёнет.
 4. Giga OAuth200/inference0: TLSapi.giga.chattimeout. VPN/Happ/systemroutes/TLSverify не менялись; точечныйDirectexception только предложен, ответа владельца нет.
 
