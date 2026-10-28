@@ -1,42 +1,42 @@
-# O!Travel Agent — 28 октября, 20:49 МСК
+# O!Travel Agent — передача R27, 28 октября 2026
 
-## Текущая цель
+## Последняя команда владельца
 
-Последний срок владельца: завершить передачу до **21:11 МСК**. Backend/APP/tests заморожены; новых функций и прогонов40/80 не запускать. R8 завершён: **7968 PASS /0FAIL /0ERROR /0SKIP**, source/tests unchanged. Код кандидата `a95eca834c2708006f51fd68b15faedd2e527629` опубликован обоим private remote. Остались финальные metadata push, небольшое UI-copy уточнение отдельным владельцем frontend, свежий архив, main/submission и видео. Старый R7 с7900PASS/26FAIL сохраняется отдельно.
+Завершить работу за40мин с20:31, до21:11МСК. Последние исправления внесены и проверены; новые функции и фоновые прогоны не запускать. Дальше запись видео и финальная ссылка.
 
-## Что проверено
+## Переданный код
 
-- Финальные 40: все 437 реплик прочитаны; 106 исходных ID / 129 оригинальных реплик плюс 308 продолжений. 415 completed / 22 failed, 352 настоящих вызова Z.ai и 313 прочих HTTP. Это НЕ семантический PASS всех диалогов; 16 fault-setup остались BLOCKED. Источник: `/home/aegml/.local/evaluation/final40-adaptive-20261028-142306-fbeb5460/`. Сводка: `docs/verification/final40-diagnostic-census-20261028.json`.
-- R26 код `91e6ee4`: общий R6 — 7664 PASS; чистый Docker — 30 проверок, внешний неизвестный model ID / HTTP — 25 проверок. Реальные Serp-фотографии отелей, LiteAPI sandbox, Duffel test, FX и один имитированный заказ отдельно проверялись. Последний UI-preview безопасно отказал по LiteAPI 2001: quote/order не созданы.
-- Новые R27 исправления: бюджет и непроверенные расходы (205 связанных, 31 новых целевых, включая PG); состав группы / единственный номер (111 контролируемых, отдельный пересекающийся related 188); даты / страна / booking restore (612 связанных, включая 3 PG); отмена и противоречия (403 связанных, затем wrong-stay fix 415 связанных / 73 own-PG+pure). Наборы пересекаются, не складывать.
-- Независимый peer подтвердил блокировку гипотетического снятия расходов и снятия условия не у того отеля. Исходные RED, подготовительные ошибки и ограничения сохранены. Отчёты: `docs/verification/final40-*-20261028.json`.
-- R27/R8: `docs/verification/r27-full-checkpoint-20261028.json`;96APP-файлов/327testfiles, tested E package `1287953a3d8d09c06e58cf0f03b4b36dc0a714a9dab091792dce90538fe4f26e`, Git/C package `ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12`; только17 проверенных EOL-нормализаций. Чистая поставка того же кода: `final-r27-clean-compose-and-external-wire-20261028.json`,30Docker+25controlled-wire, не тест качества неизвестной LLM.
-- Реальные scopes раздельны: Cloudflare4запроса/13целевых проверок PASS (`r27-cloudflare-related-actual-canary-20261028.json`); Z.ai canary NOT_ALL_PASS из-за timeout/cooldown (`r27-targeted-actual-canary-20261028.json`). LiteAPI sandbox/Duffel test/CBR и фото конкретного отеля/JPEG проверены отдельно в том же canary. Нельзя заменять старые ошибки новым чужимPASS.
-- По фактам root свежий естественный UI-диалог дошёл до плана,20отелей и JPEG-галереи, console errors0. Финальный frontend unit/build результат root вставит перед публикацией; прежняя база38unit+build. `.local/FINAL_PR_BODY.md` содержит явный `FRONTEND_FINAL_RESULT` placeholder, его нельзя публиковать не заменив.
+- PR3 слит в официальный main: merge `a178af6fbb1df6e97dc3384f2870de9a9fb3b40b`. Этот файл обновлён отдельным завершающим docs-коммитом; точный последний HEAD смотреть в Git / `.local/delivery/FINAL_DELIVERY.json`.
+- Проверенный backend core `a95eca834c2708006f51fd68b15faedd2e527629`, C/Git package `ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12`,96файлов. После него backend/зависимости/Compose не менялись.
+- Финальная frontend-only правка `9d598e5`: понятный source-specific NO_MATCHES вместо общей ошибки. Bundle `index-EBmwD5Kp.js`; старые assets сохранены, контейнер не перезапускался.
+- Архив: `E:/work/aegml/.local/delivery/OTravel-Agent-final-20261028.zip`. Только tracked Git-файлы; `.env` туда не помещается. Зеркальная рабочая ветка есть в osirust/O-Travel-Agent; окончательная синхронизация refs фиксируется delivery receipt.
 
-## Что выполняется сейчас
+## Проверено
 
-R8terminal: `.local/evaluation/integrated-release-full-20261028-r8.terminal.json` и одноимённые before/XML;7968PASS,677.039s wall, source/tests unchanged. R7terminal/XML сохранены:24schema+2partyFAIL не переименовываются вPASS. Related767Groq/financial,123party,155ownedreask пересекаются и не суммируются. Новые app/test правки запрещены; дальнейшая работа — только финальная поставка и запись.
+- R8:7968 PASS /0fail/0error/0skip,327testfiles,source/tests unchanged. `docs/verification/r27-full-checkpoint-20261028.json`.
+- Чистый Docker:30/30 + неизвестный model ID через controlled HTTP:25/25; одна команда поднимает frontend/backend/PostgreSQL, один идемпотентный DEMO-заказ и сохранение после restart. `final-r27-clean-compose-and-external-wire-20261028.json`.
+- Cloudflare Nemotron120:4actual targets /13conditions PASS /4HTTP200. Z.ai отдельно: резерв020PASS, два timeout/cooldown attempts NOT_ALL_PASS сохранены.
+- Реальные LiteAPI sandbox / Duffel test / ЦБ, MIXEDplan и JPEG3000×2192; это не реальная бронь. `r27-targeted-actual-canary-20261028.json`.
+- Свежий видимый UI-диалог без APIseed → план →20SerpHotels, фотоSkalion5614×3740/галерея5615×3742. Reload сохранил поездку, новая ошибка NO_MATCHES объясняется; mobile390/scroll390,0JS/consoleerrors. Frontend41unit и productionbuildPASS. `r27-final-visible-ui-20261028.json`.
 
-## Живой стенд и Git
+## Рабочий стенд
 
-- Пользовательский frontend: http://localhost:18082/#studio → native8084. По текущему readiness установлен R27, provider `cloudflare`, модель `@cf/nvidia/nemotron-3-120b-a12b`. Frontend-контейнер ранее вручную запустил владелец; запрет автоматического запуска не обходился.
-- R27 C source: `/home/aegml/projects/otravel-recipient-release-r27-20261028`, code `a95eca834c2708006f51fd68b15faedd2e527629`, package `ff1d112d70635d6cb03fdea33f3f2362919ec246b8877c8cb8bcb0a5c17e4e12`; DB прежняя `otravel_zai_eval`. Readiness `/home/aegml/checks/recipient-release-r27-8084-20261028/readiness.json` создан `recipient_release_r27_cloudflare_8084_20261028.py`: RUNNING, historical state/ledger fingerprints preserved, controller startup inference/supplier0. Лимиты40/day,2/run,45s, local0/paidfallbackfalse. Старый R26 source и его доказательства не удалены; старым Z.ai-контроллером текущий CF-стенд не перезапускать.
-- Ветка `backend/harness-foundation`; APP core `a95eca8` опубликован origin/cv. Финальные metadata push/merge/tag делает root; не считать их выполненными по публикации кода. PR3 draft: https://github.com/ostrovok-hackathon-2026/aegml/pull/3. Не force-push.
-- GitHub connector даёт 404 private repo, gh нет. Допустимый fallback: existing GCM credential только RAM, `.local/github_release_pr_20261028.py`; токен не печатать.
+http://localhost:18082/#studio → native8084, Cloudflare `@cf/nvidia/nemotron-3-120b-a12b`,40/day2/run/45s/local0/otherproviders0/paid0. C source `/home/aegml/projects/otravel-recipient-release-r27-20261028`, DB `otravel_zai_eval`.
 
-## Передача
+Private controller `.local/recipient_release_r27_cloudflare_8084_20261028.py`; startup proof `docs/verification/r27-native-cloudflare-release8084-20261028.json`. Exact oldR26 PID365440/start2602345 остановлен одним verified pidfd SIGTERM; DB/ledger fingerprints before=after, startup inference0, HBA/чужиепроцессы не менялись. Live C source не перезаписывать.
 
-README уже содержит обложку, настоящий скриншот, одну команду `docker compose up --build`, localhost8080 и LLM config. Видео пока placeholder. `LLM_PROVIDER=external`, форматы `openai|gemini|anthropic`, свои URL/model/key/confirmation; нестандартный протокол по одному ключу не угадывается. Gemini/Anthropic live не проверялись, wire/API/PG проверялись.
+## Конфиг и запуск получателя
 
-`secrets.env.age`: 78 имён, три существующих проектных LiteAPI-sandbox / Duffel-test / SerpApi ключа по разрешению владельца, LLM-ключей 0. Official recipient `age1932fu7f70rwyfhaxflyfszz4gf6avxwc95wc0yjwm6zns9tspycqpgdnc0`; ciphertext SHA `0a6f6b336548bee747aba1ee5fe2b05da5050317f7a3d15ead06844c3f5649c9`. Private конфиг записывающему: `/home/aegml/delivery/otravel-recording-20261028/recording-final.env`, 0600, 78 имён/3 непустых tourkeys/LLM пустые. Не публиковать plaintext. Старый архив ae7d2b4 устарел — нужен новый после commit.
+`docker compose up --build`, затем http://localhost:8080. Один `.env`: собственные LLM_PROVIDER/FORMAT/BASE_URL/MODEL/API_KEY/CONFIRMED. Поддержаны OpenAI-compatible Chat Completions, Gemini и Anthropic, плюс nativeадаптеры. Нестандартный протокол не определяется по одному ключу.
 
-## Открытые границы
+Для записывающего приватный конфиг: `C:/Users/ggdro/.codex/private/otravel-recording/.env`; исходник WSL `/home/aegml/delivery/otravel-recording-20261028/recording-final.env`.78имён/3projecttourkeys/LLMcredentials пустые. Значения не публиковать; конфиг копируется в корень распакованного проекта, получатель указывает свою LLM.
 
-Нет полного semantic PASS40/80/106. Карта `docs/verification/final40-repair-coverage-20261028.json`:27исходныхID,11repaired_in_controlled_scope/6partial/10open; actual результаты добавлены только по относящимсяID, эти counts не переоценивались. Разнородные hard пожелания, rail-only, день рождения ребёнка и общий свободный диалог не закрыты. Until-checkin хранится как обязательное непроверенное условие и блокирует оформление; положительная квалификация произвольного срока отмены не реализована. Неадресный clear иногда уточняется. Исходный private RED owned-room-reask был служебно перезаписан: loss честно отражён в его receipt, старый captured040 и failing tool trace сохранены; GREEN не выдаётся за исходныйRED. GigaChat OAuth200, inference TLS не подтверждён, VPN не менять.
+В Git `secrets.env.age`2109B, officialrecipient age1932fu7f70rwyfhaxflyfszz4gf6avxwc95wc0yjwm6zns9tspycqpgdnc0; три существующих туристических ключа по разрешению владельца, LLMключей0. Никакого Master-export.
 
-## Ближайший шаг
+## Открытые границы и следующий человеческий шаг
 
-До21:11: завершить отдельное UI-copy уточнение и его финальный unit/build → заменить PR-body placeholder → stage только известные metadata/UI-файлы, scan секретов и push → свежий архив с точным tested core/package → main/submission после проверки → передать участнику на видео. ВидеоURL остаётся placeholder до ссылки владельца. Backend/APP/tests не менять; старый архив ae7d2b4 не использовать как текущую поставку.
+Видео ещё не записано: README содержит placeholder; тег submission не создавать до добавления публичного видеоURL на последнем main. После получения ссылки — один docs-коммит и submission tag.
 
-AEGYX R16 INDEX81 owner-paused; A524, Ubuntu-24.04, Windows PostgreSQL/PEM, httpd8080 не трогать. Нет WSL shutdown/prune/global trust/VPN действий. Local Qwen / платные вызовы / настоящая бронь и оплата = 0.
+Весь40/106 semantic PASS не заявлен. Исходные40=437реплик/415completed22failed, все прочитаны. Карта27finding records:11controlled-repaired/6partial/10open, scopes не смешивать. Rail-only, переход возраста ребёнка, произвольные hard wishes и все свободные вопросы полностью не квалифицированы. Until-checkin сохраняется и блокирует оформление до подтверждения; произвольная положительная проверка срока не реализована. SourceNO_MATCHES и APIквоты не выдаются за работоспособность любой внешней модели. GigaChat inferenceTLS не подтверждён; VPN не менять.
+
+Исторические R7=7900PASS26FAIL, старые Zai outages/privateREDreceipt loss и исходные аудиты сохранены. Никаких новых автоматических продолжений, 40/80 или локальной Qwen. AEGYX R16 INDEX81 owner-paused; A524/Ubuntu-24.04/WindowsPG/PEM/httpd8080 не трогать, no global WSLshutdown/prune/routes/trust.
