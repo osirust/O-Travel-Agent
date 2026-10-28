@@ -260,6 +260,30 @@ def facts_projection(
     return result
 
 
+def _constraint_scope(constraint: dict, state: dict) -> str:
+    """Label only a uniquely owned saved stay/room, never the first ID match."""
+    stay_id, room_id = constraint.get("stay_id"), constraint.get("room_id")
+    stays = [(index, stay) for index, stay in enumerate(state.get("stays", []), 1)
+             if not stay_id or stay.get("id") == stay_id]
+    if room_id:
+        matches = [(stay_index, stay, room_index)
+                   for stay_index, stay in stays
+                   for room_index, room in enumerate(stay.get("rooms", []), 1)
+                   if room.get("id") == room_id]
+        if len(matches) != 1:
+            return "для номера (привязку к проживанию нужно уточнить)"
+        stay_index, stay, room_index = matches[0]
+        city = stay.get("city") or "город не указан"
+        return f"для номера №{room_index}, проживание №{stay_index} («{city}»)"
+    if stay_id:
+        if len(stays) != 1:
+            return "для проживания (привязку нужно уточнить)"
+        stay_index, stay = stays[0]
+        city = stay.get("city") or "город не указан"
+        return f"для проживания №{stay_index} («{city}»)"
+    return "для всей поездки"
+
+
 def _fact_sections(
     state: dict, plans: list[dict], orders: list[dict], changes: list[dict], question: str,
     selection_reference: dict | None = None,
@@ -308,13 +332,7 @@ def _fact_sections(
             if constraint.get("key") == "nonstop" and constraint["value"] is False:
                 prefs.append("Пересадки разрешены: требование лететь без пересадок снято.")
                 continue
-            scope = (
-                "для указанного номера"
-                if constraint.get("room_id")
-                else "для проживания"
-                if constraint.get("stay_id")
-                else "для всей поездки"
-            )
+            scope = _constraint_scope(constraint, state)
             prefs.append(
                 f"Условие {scope}: {name} — {'да' if constraint['value'] else 'нет'} "
                 + ("(обязательно)." if constraint.get("hard") else "(пожелание).")

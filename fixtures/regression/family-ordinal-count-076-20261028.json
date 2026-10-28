@@ -1,0 +1,193 @@
+{
+  "finding_id": "HARNESS-004-FAMILY-PARTITION-COVERAGE-076-001",
+  "source_scope": "Actual R17 Nemotron 076/T6, business-state/final-JSON whitelist only; no capabilities, headers, reasoning or provider payload.",
+  "source_raw_contract_sha256": "2f66223bcfe5c64735e8d2b5c062483a2119bafc5673ba32a2d12c6caf703db6",
+  "source_checked_contract_sha256": "f71d4743219d97332d5270d73ed08b200804de94bd4c362b2dda9f5a5632b130",
+  "transformation": "Whitelisted before-trip structure and exact user/final contract preserved; no session or account material copied.",
+  "input": "Первый номер: первые двое взрослых и дети трёх и шести лет. Второй номер: следующие двое взрослых и ребёнок девяти лет. Третий номер: последний взрослый и ребёнок двенадцати лет. Первая семья живёт в первом номере, вторая — во втором и третьем. Семьи не смешивай.",
+  "before_trip": {
+    "state_version": 4,
+    "origin": "Москва",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-5",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-6",
+        "age": 3,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-7",
+        "age": 6,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-8",
+        "age": 9,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-9",
+        "age": 12,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "groups": [],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Сочи",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": []
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": []
+          },
+          {
+            "id": "new-room-3",
+            "traveler_ids": []
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "check_out": "2026-11-16"
+      }
+    ],
+    "legs": [
+      {
+        "id": "leg-c3b4b08a-884e-459c-9239-f0574d1716cb",
+        "mode": "flight",
+        "origin": "Москва",
+        "destination": "Сочи",
+        "departure_date": "2026-11-10"
+      },
+      {
+        "id": "leg-702322d7-8ec8-454a-92b2-8605a20b1b9b",
+        "mode": "flight",
+        "origin": "Сочи",
+        "destination": "Москва",
+        "departure_date": "2026-11-16"
+      }
+    ],
+    "budget": null,
+    "constraints": [],
+    "preferences": [],
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    }
+  },
+  "raw_contract": {
+    "operations": [
+      {
+        "type": "set_room_members",
+        "value": {
+          "stay_id": "new-stay-1",
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-2",
+            "new-traveler-6",
+            "new-traveler-7"
+          ]
+        },
+        "target_id": "new-room-1"
+      },
+      {
+        "type": "set_room_members",
+        "value": {
+          "stay_id": "new-stay-1",
+          "traveler_ids": [
+            "new-traveler-3",
+            "new-traveler-4",
+            "new-traveler-8"
+          ]
+        },
+        "target_id": "new-room-2"
+      },
+      {
+        "type": "set_room_members",
+        "value": {
+          "stay_id": "new-stay-1",
+          "traveler_ids": [
+            "new-traveler-5",
+            "new-traveler-9"
+          ]
+        },
+        "target_id": "new-room-3"
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-2",
+            "new-traveler-3",
+            "new-traveler-4",
+            "new-traveler-5"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-1"
+      }
+    ],
+    "speech_act": "CHANGE",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [],
+    "conflicts": [],
+    "reply": "Размещение расставлено по комнатам без смешивания семей: первый номер — первые двое взрослых и дети 3 и 6 лет; второй — двое взрослых и ребёнок 9 лет; третий — один взрослый и ребёнок 12 лет.",
+    "pending_context": null
+  }
+}

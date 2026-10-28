@@ -1,24 +1,31 @@
-# Текущий проверенный checkpoint — R18, 28 октября
+# Текущий проверенный checkpoint — R19, 28 октября
 
-**7314 controlled PASS / 0 fail / 0 skip**, 440,09 с; sourceE `f8bf851d…`, 291 test files. [Квитанция R18](../verification/prefrontend-r18-checkpoint-20261028.json). Новый renderer исправляет несоответствие поля и текста вопроса. R18 готов к Git/Docker; native 8084 пока на R17/db913942, чей точный Docker-архив прошёл 18 проверок. ИсходныеR13/R16FAIL сохранены,policyage-testдоизменениялежитсbyteSHAвhistorical-tests.
+**7384 controlled PASS / 0 fail / 0 skip**, 447,54 с; sourceE `f36166b9…`, 86 package files / 297 test files, source/tests unchanged. [Квитанция](../verification/prefrontend-r19-checkpoint-20261028.json). R19 сохраняется в Git как checkpoint; rollout HOLD до отдельного исправления нового readonly079 дефекта. Live8084 пока R18/4645c24/4e383ff6: exactDocker19 и native31checks с0model/tool. Предыдущие FAIL и фактические языковые ошибки сохранены.
 
-| ID | Фактическое состояние | Открытая граница |
+| ID | Подтверждено | Открытая граница |
 | --- | --- | --- |
-| HARNESS-001 | РеальныйtourismfunctionalR14:27/27,19HTTPsuccess,4pax/4rooms/3flights/photos/refresh/oneBOOKED_DEMO. LLMexplicitrecorded. | FreshcomplexNLU/OpenLiveBookable/exactsupplierequivalenceне доказаны. |
-| HARNESS-002 | CurrentcanonicalID/schema/dates/room/person/budgetguards вfull7301. | Engineeringboundsне утверждённыйproductmax; неуниверсальнаяperson-age attribution. |
-| HARNESS-003 | Scopedundo/cancel/CAS/historicalrestore/oldquoteconsentguardsпроверены. | Всеязыковыессылкине квалифицированы. |
-| HARNESS-004 | Budget/geo/025/035/038/NoAdd/059/closedreminders имеютRED→PGgreen;3nativeclosedqueries31checks0model. | ОбщийlanguagePASS80/106нет. НовыеNemo date-drop/nightquestions/075bindingOPEN. |
-| HARNESS-005 | Persistentcaps/fences/boundedrepair/pause/controlидемпотентность проверены. | Vendorlimits ≠appcaps; exactly-once externalHTTPне заявлен. |
-| HARNESS-006 | API/media/currentDocker18smoke/FrontendContractR17готовы. | Finalfrontend/video/jury-onlyciphertext/main+submissionpending. |
-| HARNESS-007 | Scopedrecovery/refusaltestsиисторическиеWALproofsсохранены. | Не произвольнаяdisk/networkloss; GigaTLS/generation0. |
-| HARNESS-008 | Old619 inputs + Nemo41 + Groq23 из immutable R17; последние 14 UNSENT переданы ограниченной резервной фазе. | Фазы/версии/моделине смешиватьв80PASS; old5queuedнеизъявленыexecuted. |
+| HARNESS-001 | R18 typed freshDB:22realHTTP/2hotels/4rooms/3flights/4pax/2photos/FX/2preview/old409/oneBOOKED_DEMO+retry. LLM0; actor-oracle corrections явно сохранены. | Не fresh complex NLU и не LIVE_BOOKABLE; сопоставимость всех suppliers не доказана. |
+| HARNESS-002 | Канонические ID/версии/schema/room/person/date/budget guards входят в7384. | Engineering bounds не продуктовые гарантии; универсальной age/DOB attribution нет. |
+| HARNESS-003 | Scopedundo/cancel/history/CAS/oldquote/consent/idempotency квалифицированы прежними regressionproofs. | Все языковые ссылки не квалифицированы. |
+| HARNESS-004 | R19: exact078room-age0model;076bad-familybatchrejected;077roomfactslabelled; R18text/field075 coherent. Свои RED→GREEN/PG и общий7384. | 078initialinventedfamilies/wholesalecensus, словесные даты/лишние ночи и более широкое понимание OPEN; full80/106PASS нет. |
+| HARNESS-005 | Persistent budgets/fences/pause/attemptlimits/modelroles/control/quote/order guards. Фазы не сбрасывают ledger. | Vendor quotas отдельно от appcaps; externalexactly-once не заявлен. |
+| HARNESS-006 | Contract/API/media/R18exactDocker19/native31 готовы; frontend делает сокомандник. | Итоговый frontend/root/video/finalarchive/juryenv/main/tag pending. |
+| HARNESS-007 | Scopedfault/crash/WAL/recovery proofs сохранены; R18freshPG/orderfunctional readback. | Не произвольнаяdisk/networkloss. GigaTLS/generation0. |
+| HARNESS-008 | 697 uniqueinputs приняты:657completed/35failed/5oldqueued;0missing/duplicates/textSHA mismatch. Последние5CFходов выполнены на immutableR17, из них только1modelcall. Источники/эпохи/модели учитываются отдельно. | Пять oldqueued не executed. Частичные oracles/COMPLETED не дают80semanticPASS;106fullNLU не исполнен. |
 
-Режимданных: LiteAPI/Duffel SANDBOX, собственныйtransfer DEMO; CBRсистемаreferenceFX. У каждого компонента provenance/expiry; MIXEDне полностьюреальныйпокупаемыйтур. Root7301pytest не заменяеткорпусныеoracles/actualNLU. Groq8090 остановлен на 079/T2: 23 новых model HTTP, 34 supplier HTTP; 21 completed, schema failure и TPD429 сохранены. Старые 39 Nemo HTTP не сброшены. Разрешённый резерв 8091: не более 8 новых free HTTP на 14 UNSENT с fresh quota check. noresend/nopaid/nolocal/noCheckout. COMPLETED и число HTTP не равны semantic PASS.
+Постоянные finding текущего блока:
 
-Секреты: отдельныйключдляжюриобязателен;mainMasterне передан,agehelperготов,ciphertextнетиз-заChromeURL-checkstop. Giga auth200, ноAPIhandshakeнеполучендажена3per-socketMSSпробах; VPNнастройкине менялись.
+- **HARNESS-004-QUESTION-TEXT-BINDING-075-001 — CONTROLLED_SCOPE_CLOSED / FRESH_NLU_OPEN.** Exact cached075 давал pendingchildren/adulttext. Renderer использует derivedfield/target;58related и полныйR18/R19. Ответ «Дети не едут»0secondmodel, trip/version unchanged. [Proof](../verification/question-text-binding-075-repair-20261028.json). Compound initial no-child phrase остаётся отдельным пробелом.
+- **HARNESS-004-ROOM-SCOPED-AGE-OMISSION-078-001 — CLOSED_LITERAL_SCOPE / GENERAL_NLU_OPEN.** Модель опустила явную room4 age9→10. При единственном подтверждённом room-childID/старом возрасте/DOBNone и whole-message grammar выполняется ровно одна canonical update без LLM; другой9-летний сохранён.31pure+3PG и7384. Вне грамматики, при нескольких stays/children, вопросе/гипотезе/цитате/иной правке helper не выбирает человека. [Proof](../verification/room-child-age-literal-repair-20261028.json).
+- **HARNESS-004-FAMILY-PARTITION-COVERAGE-076-001 — SCOPED_ADMISSION_CLOSED / MEMBERSHIP_NLU_OPEN.** Actual raw дал одну группу из всех5AD вместо двух семей. Current asserted first/second family +no-mix с mismatched groupcount теперь блокирует весьbatch, не угадывая людей.27newpure+3PG и7384; correct2groups и прежний cardinal-placeholder path сохранены. [Proof](../verification/family-ordinal-count-admission-20261028.json). Не исправляет произвольную partition/078initialguess.
+- **HARNESS-004-ROOM-FACT-LABEL-077-001 — CONTROLLED_RENDERING_CLOSED.** Правильные room1refundable/room2breakfast сохранялись, но выводились обе как «для указанного номера». Теперь уникальные stay/room IDs переводятся в видимые номера/город; неизвестные связи помечаются уточнением.74related, finaltargeted36, exactPGstate/version/quote/orderunchanged, общий7384. [Proof](../verification/room-fact-labels077-repair-20261028.json).
+
+[Actual R18 typed tourism](../verification/r18-typed-real-travel-checkout-20261028.json) и [causal open findings](../verification/actual-complex-r17-causal-open-20261028.json) различаются. Статус исходного failure не переписывается последующим controlled PASS другой ветви. Семантические ошибки новых диалогов остаются в [manual072–079](../verification/after80-r17-manual-072-079-20261028.json).
+
+Giga OAuth200/inference0; VPN не изменён. Jury-onlykey/ciphertext отсутствуют из-за Chrome URL-checkstop, Master не экспортирован. После finalfrontend нужны main/tag/video/secrets: [officialmatrix](../testing/SUBMISSION_REQUIREMENTS_MATRIX_20261028.md).
 
 
-**HARNESS-004-QUESTION-TEXT-BINDING-075-001 — CONTROLLED_SCOPE_CLOSED / FRESH_NLU_RETEST_OPEN.** Exact cached075 через Harness/API/PostgreSQL сохраняет `party.children`, но показывает вопрос о взрослых. RED: `.local/drafts/question-binding075-20261028/whole-harness-red.xml`, 1 FAIL. Причина: поле после derive изменилось, renderer повторно выбрал старое поле из сырого текста. Действие: для непроверенного модельного вопроса рендерить уже вычисленные field/target; серверные предложения не переадресовывать. Проверено: тот же PG-ввод GREEN; ответ «Дети не едут» не вызывает вторую модель, не меняет trip/version и не повторяет вопрос о взрослых/детях. 58 related PASS; полный R18 — 7314 PASS без пропусков. [Доказательство](../verification/question-text-binding-075-repair-20261028.json). Новый remote replay ещё не выполнен. Составная исходная фраза «один взрослый без детей, один номер» по-прежнему не закрывает children_known: это отдельный пробел, исправлением renderer он не устранён.
+**HARNESS-004-READONLY-NOW-PREFIX-079-001 — CRITICAL_REPRODUCED / R20_REPAIR_PENDING.** Actual079/T5 — чистый вопрос о составе и сохранности первого номера. Он обошёл readonly на «Теперь сколько»; secondary party gate не узнал вопрос о номере. Raw/checked изменили rooms, оставили людей без размещения и смешали семьи. [Causal proof](../verification/readonly-question-now-prefix-079-cause-20261028.json). Следующее действие: закрыть обе классификационные границы; точный malicious cached batch должен быть отвергнут без изменения state, а валидный selector party+rooms дать канонический ответ. Нужны RED→GREEN/PG и новый full;7384PASS это не закрывают.
 
 ## Исторические ревизии и неизменённые доказательства
 

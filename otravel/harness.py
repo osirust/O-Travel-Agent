@@ -1334,6 +1334,18 @@ class Harness:
             return ModelResult(operations=[], control={"action": "none"}, reply=reply,
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
 
+        from .room_child_age_intake import resolve_room_child_age_replacement
+        room_age = (resolve_room_child_age_replacement(session["state"], run["input_text"])
+                    if session.get("waiting_reason") != "user_pause" else {"handled": False})
+        if room_age["handled"]:
+            await self._ensure_current_run(session, run)
+            await self.store.save_event(session["session_id"], run["run_id"], "CONTEXT_ANSWER_PROPOSED", {
+                "based_state_version": session["state_version"], "source": "owned_room_child_age_literal",
+                "operations": room_age["operations"], "normalization": room_age["note"]})
+            return ModelResult(operations=[Operation.model_validate(op) for op in room_age["operations"]],
+                control={"action": "none"}, reply=room_age["reply"], unknowns=[], conflicts=[], speech_act="CHANGE",
+                response_source="contextual_slot", operation_normalizations=[room_age["note"]]), None
+
         from .saved_fact_answers import canonical_saved_fact_answer, classify_closed_saved_fact_question
         closed_kind = (classify_closed_saved_fact_question(run["input_text"])
             if classify_saved_question(run["input_text"]) is None else None)

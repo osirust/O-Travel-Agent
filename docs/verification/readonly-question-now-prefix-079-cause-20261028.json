@@ -1,0 +1,29 @@
+{
+  "finding_id": "HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001",
+  "status": "CAUSE_CONFIRMED_FIX_NOT_PERFORMED_IN_THIS_AUDIT",
+  "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "source_package": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "case": "ZAI100-079",
+  "turn": 5,
+  "input": "Теперь сколько взрослых и детей осталось? Первый номер сохранился прежним?",
+  "raw_snapshot_sha256": "940ed9aa554088119e71b2807cd43399da1508bef0eeadc1b29e84758bec2ee5",
+  "checked_snapshot_sha256": "44c382c6c45204ac4fc302fd9e8dc0aa8b5a780ceb05dcd32faa1fdfd811b0d1",
+  "recorded_behavior": {
+    "raw_speech_act": "CHANGE",
+    "raw_operations": ["remove_traveler", "set_room_members", "set_room_members"],
+    "checked_operations": ["set_room_members", "set_room_members"],
+    "raw_and_checked_valid_readonly_contract": false,
+    "old_guard_effect": "Only the unrequested traveler removal was suppressed; both room setters survived and changed the room partition.",
+    "impact": "Roster and group definitions survived, but the first room mixed two saved separate families and two travelers became unallocated."
+  },
+  "immutable_source_pure_probe": {
+    "exact_input": {"readonly_question": false, "classify_saved_question": null, "request_kinds": ["party"]},
+    "remove_initial_discourse_word": {"readonly_question": true, "classify_saved_question": null},
+    "replace_initial_word_with_Сейчас": {"readonly_question": true, "classify_saved_question": null},
+    "replace_initial_word_with_Напомни": {"readonly_question": true, "classify_saved_question": null}
+  },
+  "cause": "answering._QUESTION_START accepts a сейчас prefix but not теперь. The exact mixed party/room factual question therefore bypassed the readonly path. The passive past word сохранился did not match the imperative edit regex; this was not evidence of an explicit mutation request. The general model path accepted a mutating CHANGE contract without the readonly schema gate.",
+  "repair_boundary_proposed": "Recognize the bounded current factual question prefix without treating passive factual wording as an edit; preserve explicit positive edits and compound edit-plus-question inputs on their normal path. Validate with exact cached whole-Harness reproduction before closure.",
+  "actions": {"new_http": 0, "generation": 0, "database_access": 0, "source_or_tests_edits": 0},
+  "limitations": ["No code fix or new cached PG result is claimed here.", "This is an exact causal audit, not a general proof that all read-only questions are safe."]
+}

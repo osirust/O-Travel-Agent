@@ -25,6 +25,25 @@ _FAMILY_COUNTS = {"одна": 1, "одной": 1, "две": 2, "двух": 2, "�
 _COUNT_FAMILIES = re.compile(r"\b(\d{1,2}|" + "|".join(_FAMILY_COUNTS) + r")\s+(?:(?:разные|разных|отдельные|отдельных)\s+)?сем(?:ья|ьи|ей)\b")
 _GROUP_UNASSERTED = re.compile(r"\b(?:если|допустим|предположим|возможно|может|наверное|гипотетически|например|напомни|расскажи|объясни|скажи|раньше|ранее|вчера|сказал|сказала|писал|писала|говорил|говорила)\b")
 _COUNT_ALTERNATIVE = re.compile(r"\b(?:\d+|" + "|".join(_FAMILY_COUNTS) + r")\s+(?:сем(?:ьи|ей)\s+)?(?:или|либо)\s+(?:\d+|" + "|".join(_FAMILY_COUNTS) + r")\b")
+_ORDINAL_FAMILY_PLACEMENT = r"(?:[—–-]\s*|(?:живет|живут|размещается|размещаются)\s+)"
+_FIRST_FAMILY = re.compile(r"\bпервая\s+семья\s+" + _ORDINAL_FAMILY_PLACEMENT)
+_SECOND_FAMILY = re.compile(r"\bвторая\s+(?:семья\s+)?" + _ORDINAL_FAMILY_PLACEMENT)
+_ORDINAL_FAMILY_UNASSERTED = re.compile(r"[?\"'«»“”`]|\b(?:или|либо|третья|подожди|пока)\b|\bне\s+первая\s+семья\b")
+
+
+def _declares_current_two_families(text: str) -> bool:
+    """Recognize a narrow asserted ordinal pair, never its members or rooms.
+
+    Cardinal counts retain their existing intake path. Questions, quotation,
+    historical/hypothetical context, alternatives, or permission to mix do not
+    acquire a new count merely by mentioning the first and second families.
+    """
+    value = " ".join(text.casefold().replace("ё", "е").split())
+    if (_ORDINAL_FAMILY_UNASSERTED.search(value) or _GROUP_UNASSERTED.search(value)
+            or _MIX_ALLOW.search(value) or not _FAMILIES.search(value) or not _SEPARATE.search(value)):
+        return False
+    first = _FIRST_FAMILY.search(value)
+    return bool(first and _SECOND_FAMILY.search(value, first.end()))
 
 
 def _asserted_text(text: str) -> str:
@@ -154,6 +173,13 @@ def guard_group_separation(state: TripState | dict, operations: list[Operation |
         return result
     groups = [g.model_copy(deep=True) for g in candidate.groups]
     declared = next(iter(counts)) if counts else None
+    if declared is None and _declares_current_two_families(text) and len(groups) != 2:
+        return {**result, "handled": True, "block_batch": True, "field": "group.membership", "target_id": None,
+            "question": "Не удалось сохранить две семьи раздельно. Кто входит в первую семью, а кто — во вторую? Изменения пока не применены.",
+            "context": {"field": "group.membership", "force_clarification": True, "family_separation_required": True},
+            "notes": [{"code": "explicit_ordinal_family_count_mismatch", "source": "explicit_user_no_mix",
+                       "declared_count": 2, "candidate_count": len(groups), "membership_inferred": False,
+                       "action": "ASK_NOT_APPLIED"}]}
     if declared is not None and len(groups) > declared:
         return {**result, "handled": True, "block_batch": True, "field": "group.membership", "target_id": None,
             "question": "Вы указали другое число семей. Уточните, какие сохранённые группы нужно оставить и кто в них входит.",

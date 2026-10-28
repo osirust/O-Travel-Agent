@@ -1,0 +1,197 @@
+{
+  "finding_id": "HARNESS-004-ROOM-SCOPED-AGE-OMISSION-078-001",
+  "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "raw_snapshot_sha256": "e72afc576635ecf3153af4cdbe4cccda08ae97c9ff5416333f23356486cda81d",
+  "input": "Новому ребёнку из четвёртого номера теперь десять лет вместо девяти. Девятилетнего из второго номера второй семьи вообще не меняй.",
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-7960a6b3-af56-4165-abf9-ea93328f744f",
+        "mode": "flight",
+        "origin": "Санкт-Петербург",
+        "destination": "Казань",
+        "departure_date": "2026-12-15"
+      },
+      {
+        "id": "leg-33726e95-f30b-4f25-8673-44c6b637aa13",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Санкт-Петербург",
+        "departure_date": "2026-12-20"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Казань",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-2",
+              "new-traveler-6",
+              "new-traveler-7"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-3",
+              "new-traveler-4",
+              "new-traveler-8"
+            ]
+          },
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-5",
+              "new-traveler-9"
+            ]
+          },
+          {
+            "id": "new-room-4",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-10"
+            ]
+          }
+        ],
+        "check_in": "2026-12-15",
+        "hotel_id": null,
+        "check_out": "2026-12-20"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 40000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-2",
+          "new-traveler-6",
+          "new-traveler-7",
+          "new-traveler-10"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-3",
+          "new-traveler-4",
+          "new-traveler-5",
+          "new-traveler-8",
+          "new-traveler-9"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Санкт-Петербург",
+    "trip_id": "regression-room4-age-current-replacement",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-5",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-6",
+        "age": 3,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-7",
+        "age": 6,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-8",
+        "age": 9,
+        "type": "child",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-9",
+        "age": 12,
+        "type": "child",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-10",
+        "age": 9,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 3
+  },
+  "raw_contract": {
+    "reply": "Уточните, какого именно взрослого вы хотите переселить из первого номера в четвёртый: это путешественник 1 или 2?",
+    "control": {
+      "action": "none"
+    },
+    "unknowns": [
+      "Какой взрослый из первого номера должен быть перемещён в четвёртый номер?"
+    ],
+    "conflicts": [],
+    "operations": [],
+    "speech_act": "ASK",
+    "information_subject": null
+  },
+  "fixture_transform": "Onlytrip_id fixed to non-capability fixture; user, stablebusinessIDs andrawvalues retained. Noheaders/sessiontoken/sourceURLs/reasoning."
+}

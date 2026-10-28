@@ -1,0 +1,23 @@
+{
+  "format": "otravel.r18.native.readiness.v1",
+  "created_at_utc": "2026-10-28T03:24:13.278478+00:00",
+  "status": "RUNNING_HEALTH_AND_DEBUG_READY_ZERO_STARTUP_INFERENCE",
+  "commit": "4645c24ae29a8a85e93fdcae4829299e6e7410eb",
+  "url": "http://localhost:8084/debug",
+  "package_sha256": "4e383ff6d50442dd207382e72ffe7202e4222b14e2e4c91bfa017c85a0b97551",
+  "source": "/home/aegml/projects/otravel-after80-20261026",
+  "database": "otravel_zai_eval",
+  "manager": "after80_world_backend.py",
+  "process": {
+    "pid": 1164315,
+    "uid": 1000,
+    "start_ticks": 8376866,
+    "cwd": "/home/aegml/projects/otravel-after80-20261026"
+  },
+  "loaded_manifest_matches": true,
+  "install_env_metadata_unchanged": true,
+  "installation_report_sha256": "129c4b29042c1b7660bb1ed948b4e7596da23abf6e5888aa2a1993c4efe4dac9",
+  "startup_model_requests": 0,
+  "runtime_report_checked_at_utc": "2026-10-28T03:21:30.924750+00:00",
+  "scope": "Guarded source install plus existing controller startup checks. Does not consume API calls or erase saved sessions/ledger."
+}
