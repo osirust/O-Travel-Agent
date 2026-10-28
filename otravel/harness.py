@@ -869,6 +869,24 @@ class Harness:
                         if extracted.control.action == "none":
                             extracted.unknowns = []
                     if not readonly and not extracted.conflicts and extracted.control.action != "cancel":
+                        from .traveler_addition_grounding import guard_traveler_addition_operations
+                        addition_ops, addition_meta = guard_traveler_addition_operations(session["state"],
+                            extracted.operations, run["input_text"])
+                        if addition_meta["repair_required"]:
+                            context["validation_feedback"] = {**addition_meta["feedback"],
+                                "note": "Пользователь явно запретил добавлять людей. Верни весь исправленный batch только с существующими участниками; не угадывай соответствие ID по возрасту и не удаляй сохранённых людей."}
+                            raise ProviderError("INVALID_LLM_OPERATION", "Модель предложила новых участников вопреки явному запрету. Поездка не изменена.",
+                                provider=provider, details={"validation_stage": "intent_guard",
+                                    "domain_error_code": "traveler_addition_prohibited",
+                                    "rejected_structured_contract": validated_snapshot})
+                        extracted.operations = [Operation.model_validate(op) for op in addition_ops]
+                        extracted.operation_normalizations.extend(addition_meta["notes"])
+                        extracted.conflicts.extend(addition_meta["conflicts"])
+                        extracted.unknowns = list(dict.fromkeys(addition_meta["unknowns"] + extracted.unknowns))
+                        extracted.server_questions.extend(addition_meta["conflicts"] + addition_meta["unknowns"])
+                        if addition_meta.get("pending_context") is not None:
+                            extracted.pending_context = {**(extracted.pending_context or {}), **addition_meta["pending_context"]}
+                    if not readonly and not extracted.conflicts and extracted.control.action != "cancel":
                         from .budget_intent import guard_budget_prohibitions
                         budget_ops, budget_meta = guard_budget_prohibitions(extracted.operations, run["input_text"])
                         extracted.operations = [Operation.model_validate(op) for op in budget_ops]
@@ -1065,6 +1083,20 @@ class Harness:
                                 extracted.unknowns = list(dict.fromkeys(count_meta["unknowns"] + extracted.unknowns))
                                 extracted.server_questions.extend(count_meta["unknowns"])
                                 extracted.pending_context = {**(extracted.pending_context or {}), **(count_meta["pending_context"] or {})}
+                        if (any(note.get("code") == "unasked_existing_adult_age_removed" for note in extracted.operation_normalizations)
+                                and not extracted.conflicts and not explicit_pause_hint(run["input_text"])):
+                            from .answering import wants_saved_facts
+                            from .conversational import explicit_search_request
+                            if wants_saved_facts(run["input_text"]) and not explicit_search_request(run["input_text"]):
+                                try:
+                                    _, remaining_changes = apply_operations(TripState.model_validate(session["state"]), extracted.operations)
+                                except (DomainError, ValueError):
+                                    pass
+                                else:
+                                    if not remaining_changes:
+                                        extracted.operations = []
+                                        extracted.speech_act = "ASK"
+                                        extracted.control.action = "none"
                     location = parse_destination(run["input_text"])
                     requested = location["requested_destination"]
                     country_context = requested if requested["kind"] == "country" else None
@@ -1299,6 +1331,21 @@ class Harness:
                 reply += " " + question
             await self._ensure_current_run(session, run)
             return ModelResult(operations=[], control={"action": "none"}, reply=reply,
+                unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
+
+        from .saved_fact_answers import canonical_saved_fact_answer, classify_closed_saved_fact_question
+        closed_kind = (classify_closed_saved_fact_question(run["input_text"])
+            if classify_saved_question(run["input_text"]) is None else None)
+        if closed_kind is not None:
+            reminder = canonical_saved_fact_answer(run["input_text"], session["state"])
+            if reminder is None:
+                reminder = "Не удалось прочитать сохранённые сведения. Поездка и текущий вопрос не изменены."
+            await self._ensure_current_run(session, run)
+            await self.store.save_event(session["session_id"], run["run_id"], "SAVED_FACTS_ANSWER_PROPOSED", {
+                "based_state_version": session["state_version"], "kind": closed_kind,
+                "facts_sha256": hashlib.sha256(json.dumps({"state": session["state"]}, sort_keys=True,
+                    ensure_ascii=False, separators=(",", ":")).encode()).hexdigest(), "model_calls": 0})
+            return ModelResult(operations=[], control={"action": "none"}, reply=reminder,
                 unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
 
         if whole_trip_price_question(run["input_text"]):
@@ -2109,15 +2156,17 @@ class Harness:
                 for note in extracted.operation_normalizations)
             alias_preservation = next((note for note in extracted.operation_normalizations
                 if note.get("code") == "alias_question_single_stay_removal_suppressed"), None)
+            age_preservation = any(note.get("code") == "unasked_existing_adult_age_removed"
+                for note in extracted.operation_normalizations)
             known_preference_noop = (not changes and any(op.type == "set_preference" and any(
                 saved.key == op.value.get("key") and saved.value == op.value.get("value")
                 for saved in current.preferences) for op in extracted.operations))
-            if ((changes or literal_preference or known_preference_noop or literal_budget or alias_preservation) and wants_saved_facts(run["input_text"])
-                    and (literal_budget or alias_preservation or subject.get("kind") not in {"country", "city"})):
+            if ((changes or literal_preference or known_preference_noop or literal_budget or alias_preservation or age_preservation) and wants_saved_facts(run["input_text"])
+                    and (literal_budget or alias_preservation or age_preservation or subject.get("kind") not in {"country", "city"})):
                 shown = result.get("plans") if "plans" in result else await self._latest_current_plans(session, run)
                 receipt, sections = changed_trip_receipt(run["input_text"], current.model_dump(mode="json"),
                     current_plans(current, shown), changes, await self.store.list_orders(session["session_id"]))
-                lead = reply if (result.get("violations") or extracted.candidate_operations) and not (literal_budget or alias_preservation) else ""
+                lead = reply if (result.get("violations") or extracted.candidate_operations) and not (literal_budget or alias_preservation or age_preservation) else ""
                 reply = (lead + "\n\n" if lead and not questions else "") + receipt
                 if alias_preservation and any(stay.id == alias_preservation.get("target_id")
                         and stay.city == alias_preservation.get("city") for stay in current.stays):
@@ -2207,7 +2256,9 @@ class Harness:
         if model_meta is not None:
             result["llm"] = model_meta
             interpretation_protected = any(note.get("code") in {
-                "unknown_initial_party_categories_preserved", "alias_question_single_stay_removal_suppressed"}
+                "unknown_initial_party_categories_preserved", "alias_question_single_stay_removal_suppressed",
+                "traveler_addition_prohibited", "traveler_addition_instruction_conflict",
+                "unasked_existing_adult_age_removed"}
                 for note in extracted.operation_normalizations)
             result["model_reply"] = None if interpretation_protected else extracted.reply
             if interpretation_protected:

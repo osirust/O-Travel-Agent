@@ -1,0 +1,11 @@
+{
+  "original_path": "tests/test_adult_age_grounding.py",
+  "preserved_path": "fixtures/evaluation/historical-tests/test_adult_age_grounding.pre-r17.py.txt",
+  "original_sha256": "f5b3368ec68d5206580966bf54db6c451e4c074254406ec3f69e9f8b320bc9d5",
+  "policy_change_finding": "HARNESS-004-UNASKED-EXISTING-ADULT-AGE-059-001",
+  "shared_guard_finding": "HARNESS-004-UNASKED-ADULT-AGE-001",
+  "changed_original_test": "test_existing_adult_update_and_child_are_untouched",
+  "evidence": "Exact059/T7 whole-Harness replay committed unasked existing-adult ages NULL to18 under a request to review dates and adult count.",
+  "policy_change": "The input remains Добавь ребёнка семи лет. The formerly out-of-scope existing-adult age45→46 write is now suppressed, while the existing45 echo and child7 addition are preserved.",
+  "bounds": "Only changed integer age>=18 on an existing adult with no current explicit adult-age/DOB authority. No invented DOB or universal person attribution."
+}

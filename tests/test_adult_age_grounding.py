@@ -63,15 +63,17 @@ def test_explicit_current_adult_age_or_dob_is_retained_without_person_attributio
     assert meta == {"notes": [], "unknowns": [], "conflicts": []}
 
 
-def test_existing_adult_update_and_child_are_untouched():
+def test_unasked_existing_adult_age_change_is_suppressed_but_echo_and_child_are_untouched():
     state = TripState(trip_id="trip-age", travelers=[{"id": "existing-adult", "type": "adult", "age": 45}])
     operations = [adult("existing-adult", 45),
         {"type": "update_traveler", "target_id": "existing-adult", "value": {"age": 46}},
         {"type": "add_traveler", "target_id": None, "value": {"id": "child", "type": "child", "age": 7}}]
     checked, meta = guard_adult_age_operations(state, operations, "Добавь ребёнка семи лет.")
-    assert checked == operations
+    # R17 expands the former new-adult-only scope after the exact059/T7
+    # reproduction proved that unasked existing-adult ages were committed.
+    assert checked == [operations[0], operations[2]]
     assert state.travelers[0].age == 45
-    assert not meta["notes"]
+    assert meta["notes"][0]["code"] == "unasked_existing_adult_age_removed"
 
 
 @pytest.mark.parametrize("age", [None, 17, "30", 30.0, True])

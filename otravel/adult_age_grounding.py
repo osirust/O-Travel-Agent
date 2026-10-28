@@ -1,4 +1,4 @@
-"""Suppress invented ages on newly added adults, without guessing an age.
+"""Suppress unasked integer ages on new and existing adults, never guess ages.
 
 Explicit age-to-person attribution and invented birth dates are outside this
 narrow guard. Schema/domain validation remains responsible for invalid values.
@@ -52,7 +52,11 @@ def _adult_age_or_dob_is_explicit(text: str) -> bool:
 
 
 def guard_adult_age_operations(before_state, operations, text):
-    """Copy proposals and remove only unasked integer age>=18 from new adults."""
+    """Copy proposals; remove only unasked adult integer age>=18 writes.
+
+    Existing identical values are harmless echoes. Null clears, invented DOBs,
+    child changes and explicit age/person attribution remain outside scope.
+    """
     data = before_state.model_dump(mode="json") if hasattr(before_state, "model_dump") else deepcopy(before_state)
     copied = [operation.model_dump(mode="json") if hasattr(operation, "model_dump") else deepcopy(operation)
         for operation in operations]
@@ -61,15 +65,31 @@ def guard_adult_age_operations(before_state, operations, text):
         return copied, meta
     if _adult_age_or_dob_is_explicit(text):
         return copied, meta
-    existing = {person.get("id") for person in data.get("travelers", []) if isinstance(person, dict)}
+    existing = {person.get("id"): person for person in data.get("travelers", []) if isinstance(person, dict)}
+    result = []
     for operation in copied:
-        if not isinstance(operation, dict) or operation.get("type") != "add_traveler":
+        if not isinstance(operation, dict):
+            result.append(operation)
             continue
         value = operation.get("value")
+        previous = existing.get(operation.get("target_id")) if operation.get("type") == "update_traveler" else None
+        if (isinstance(value, dict) and isinstance(previous, dict) and previous.get("type") == "adult"
+                and type(value.get("age")) is int and value["age"] >= 18 and value["age"] != previous.get("age")):
+            remainder = {key: item for key, item in value.items() if key != "age"}
+            if remainder:
+                result.append({**operation, "value": remainder})
+            meta["notes"].append({"code": "unasked_existing_adult_age_removed", "finding_id": FINDING_ID,
+                "field": "travelers.age", "traveler_id": operation.get("target_id"), "status": "suppressed"})
+            continue
+        if operation.get("type") != "add_traveler":
+            result.append(operation)
+            continue
         if (not isinstance(value, dict) or value.get("type") != "adult"
                 or value.get("id") in existing or type(value.get("age")) is not int or value["age"] < 18):
+            result.append(operation)
             continue
         operation["value"] = {key: item for key, item in value.items() if key != "age"}
         meta["notes"].append({"code": "unasked_new_adult_age_removed", "finding_id": FINDING_ID,
             "field": "travelers.age", "traveler_id": value.get("id"), "status": "suppressed"})
-    return copied, meta
+        result.append(operation)
+    return result, meta

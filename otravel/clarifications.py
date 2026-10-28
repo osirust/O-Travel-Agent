@@ -44,6 +44,7 @@ _ALIASES = {
     "route.end_city": "route.end_city", "route_policy.end_city": "route.end_city", "missing_route_end_city": "route.end_city",
     "group.membership": "group.membership", "missing_group_membership": "group.membership",
     "party.removal": "party.removal", "explicit_traveler_removal_missing": "party.removal",
+    "party.addition": "party.addition", "traveler_addition_instruction_conflict": "party.addition",
 }
 _COUNTRY_NAMES = {"RS": "Сербия", "RU": "Россия", "TR": "Турция", "AE": "ОАЭ"}
 _ORIGIN_FORMS = {"москвы": "Москва", "санкт-петербурга": "Санкт-Петербург",
@@ -168,7 +169,7 @@ def _context(raw: Any, extra: dict | None = None) -> dict:
 
 
 def _target(field: str | None, state: dict, context: dict) -> str | None:
-    if field in {"search.guest_nationality", "route.kind", "route.end_city", "party.removal"}:
+    if field in {"search.guest_nationality", "route.kind", "route.end_city", "party.removal", "party.addition"}:
         return None
     explicit = context.get("target_id") or context.get("group_id" if field == "group.membership" else "traveler_id" if field == "traveler.age" else "leg_id" if field in {"leg.departure_date", "leg.mode"} else "stay_id")
     if explicit:
@@ -234,6 +235,8 @@ def human_question(rawfield: Any, state: Any, context: dict | None = None) -> st
         return "Поедут ли с вами дети? Если да, сколько их будет?"
     if field == "party.removal":
         return "Какого взрослого исключить из всей поездки? Уточните участника: изменение состава номера само по себе не удаляет человека из поездки и транспорта."
+    if field == "party.addition":
+        return "Нужно добавить нового участника или сохранить текущий состав? Укажите, кого добавляем, либо напишите, что состав остаётся прежним."
     if field == "group.membership":
         index = next((i + 1 for i, g in enumerate(data.get("groups", [])) if g["id"] == target), None)
         label = f" №{index}" if index is not None else ""

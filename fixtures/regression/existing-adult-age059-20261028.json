@@ -1,0 +1,269 @@
+{
+  "id": "ZAI100-059",
+  "turn": 7,
+  "input": "Сверь пожалуста обе даты и число взрослых. Февраль был только вопросом.",
+  "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-059.json",
+  "source_sha256": "4ca647affa08c8e3084ebd5b4c45e8d3bd5adfdb657de6306f090bef44c7b47e",
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-a07b1470-c600-4841-a0d2-798a18515428",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Дубай",
+        "departure_date": "2026-11-05"
+      },
+      {
+        "id": "leg-3b0e9aae-2499-4b08-933b-cf16f4fc1df7",
+        "mode": "flight",
+        "origin": "Дубай",
+        "destination": "Казань",
+        "departure_date": "2026-11-12"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Дубай",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-05",
+        "hotel_id": null,
+        "check_out": "2026-11-12"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 15000000
+    },
+    "groups": [],
+    "origin": "Казань",
+    "trip_id": "c5bdf132-551c-4362-aaea-ce3e8481ac59",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 5
+  },
+  "before_pending": null,
+  "before_waiting_reason": null,
+  "observed_after_trip": {
+    "legs": [
+      {
+        "id": "leg-a07b1470-c600-4841-a0d2-798a18515428",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Дубай",
+        "departure_date": "2026-11-05"
+      },
+      {
+        "id": "leg-3b0e9aae-2499-4b08-933b-cf16f4fc1df7",
+        "mode": "flight",
+        "origin": "Дубай",
+        "destination": "Казань",
+        "departure_date": "2026-11-12"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Дубай",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-05",
+        "hotel_id": null,
+        "check_out": "2026-11-12",
+        "requested_nights": 7
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 15000000
+    },
+    "groups": [],
+    "origin": "Казань",
+    "trip_id": "c5bdf132-551c-4362-aaea-ce3e8481ac59",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": 18,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": 18,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 6
+  },
+  "observed_run_status": "completed",
+  "observed_assistant": [
+    "Сохранённый маршрут: Казань → Дубай → Казань.\n\nОстановка 1, Дубай: заезд 05.11.2026, выезд 12.11.2026; 7 ночей. Переезд 1, Казань → Дубай: отправление 05.11.2026. Переезд 2, Дубай → Казань: отправление 12.11.2026.\n\nТекущий состав: 2 взрослых; дети в сохранённом составе не указаны.\n\nСохранённый бюджет на всю поездку: 150 000,00 RUB.\n\nВариант 1. Сохранённая расчётная сумма: 111 110,78 RUB. План смешанный. DEMO-компонентов: 1; их цены и наличие вымышлены. SANDBOX-компонентов: 3; это ответы тестового API. Реальная бронь этим ответом не создаётся.\n\nВ текущем расчёте: проживание — тестовые тарифы (SANDBOX); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+  ],
+  "events": [
+    {
+      "event_type": "MODEL_EXTRACTION_VALIDATED",
+      "final_contract": {
+        "operations": [
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Дубай",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-05",
+              "check_out": "2026-11-12",
+              "requested_nights": 7
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 18,
+              "type": "adult"
+            },
+            "target_id": "new-traveler-1"
+          },
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 18,
+              "type": "adult"
+            },
+            "target_id": "new-traveler-2"
+          }
+        ],
+        "control": {
+          "action": "continue"
+        },
+        "reply": "Даты и количество взрослых уточнены: заезд 5 ноября 2026, выезд 12 ноября 2026 (7 ночей), 2 взрослых (возраст 18 лет).",
+        "unknowns": [],
+        "conflicts": [],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "structured_contract_sha256": "0d0144f427bce1523a0e19c52c24f1fe13d22d65f48b15f0681ebf6ecb0f8ab1",
+      "normalizations": []
+    },
+    {
+      "event_type": "MODEL_OPERATIONS_CHECKED",
+      "final_contract": {
+        "operations": [
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Дубай",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-05",
+              "check_out": "2026-11-12",
+              "requested_nights": 7
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 18,
+              "type": "adult"
+            },
+            "target_id": "new-traveler-1"
+          },
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 18,
+              "type": "adult"
+            },
+            "target_id": "new-traveler-2"
+          }
+        ],
+        "control": {
+          "action": "continue"
+        },
+        "reply": "Даты и количество взрослых уточнены: заезд 5 ноября 2026, выезд 12 ноября 2026 (7 ночей), 2 взрослых (возраст 18 лет).",
+        "unknowns": [],
+        "conflicts": [],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "structured_contract_sha256": "d8db50fbb54f242613bfff187cdc3b19f27c91677e7f0d6d5fb61f0e01d75635",
+      "normalizations": []
+    }
+  ],
+  "scope": "Recorded model final JSON and synthetic canonical facts only; no capabilities, headers or reasoning."
+}

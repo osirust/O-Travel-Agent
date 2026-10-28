@@ -1,3 +1,24 @@
+# Текущая основная ревизия — R17,28октября
+
+**7301 controlled PASS / 0 fail / 0 skip**,430.79с, source451adca3.[Квитанция](../verification/prefrontend-r17-checkpoint-20261028.json). R16 исходные2FAIL сохранены и исправлены без ослаблениястарых assertions: recognizedlegacyrenderer не перекрывается новымreminder, code-owned proposed event сохраняется, renderfailure не вызываетLLM. 059 обаADageNULL не превращаютсяв18, rawмодельныйтекст18невыдаётсязаистину.
+
+| ID | Проверенный статус | Доказательство и граница |
+| --- | --- | --- |
+| HARNESS-001 | REAL_TRAVEL_FUNCTIONAL_SCOPE_PASS | R14recordedJSON+actualtourism27/27,19HTTPsuccess,4pax/4rooms/3flights/photos/refresh/oneBOOKED_DEMO. FreshNLU correction был отвергнут; LIVE_BOOKABLE/exactsupplierequivalence OPEN. |
+| HARNESS-002 | CANONICAL_SCHEMA_CONTROLLED_PASS | 7301 current tests; stable IDs/dates/rooms/personbindings/typedcommands/budget. Engineeringbounds не продуктовыйбезусловныйпредел. |
+| HARNESS-003 | CONTROL_AND_SELECTIVE_HISTORY_TESTED | CASundo/cancel/oldquote/consent guards; scopedactualselectiverestore сохранён. Всеязыковыессылкине квалифицированы. |
+| HARNESS-004 | R17_CONTROLLED_REPAIRS_PASS / ACTUAL_LANGUAGE_OPEN | Budget/geo roles/025/035/038/NoAdd/059/reminder fixes подтверждены своимиRED→green+PG. Whole80/106 не пройдены, DOB/универсальнаяатрибуцияage/свободныевопросы OPEN. |
+| HARNESS-005 | PERSISTENT_FENCES_AND_BOUNDED_REPAIR_TESTED | Одинactive/CAS/idempotency/day+run caps/pause/durablecooldown/NoAddrepair доcommit. Vendorquota не appcounter, externalexactly-once не заявлен. |
+| HARNESS-006 | BACKEND_CONTRACT_AND_MEDIA_TESTED | Authoritativecanonicalreply, safe media, exactminor units, storedreadOnlyfacts0model/pendingquoteunchanged. Finalfrontend/Dockerfinalarchive/separatejurykeys/video/tag ещё нужны. |
+| HARNESS-007 | SCOPED_RECOVERY_REFUSAL_TESTED | ИсторическиеPGcrash/WAL+текущиеcontrolledfaulttests; immutableстарыеfailures сохранены. GigaTLS/inference0, произвольныйdiskloss/distributedcommit не закрыты. |
+| HARNESS-008 | INPUTS_READ / ACTUAL_EXECUTION_PARTIAL |619originalinputs+отдельный072T1, fullybound80/106PASS не заявлен. Preparedbounded8089 ещё не стартовал,77NOTRUN. |
+
+Текущиепостоянныеfinding: EXPLICIT-NOADD-DUPLICATE-CHILD-NEMO-001 controlledNoAddrepair tested(неfreshmodelrepair); UNASKED-EXISTING-ADULT-AGE-059-001 currentliteralguard+exactreadonly0model; SAVED-FACTS/REPLY-LOSS closedreminders tested(непроизвольныесмешанныереплики). Источники/модели/версиииassertionметоды учитываютсяраздельно.
+
+Jury:binary age helper/officialrecipient готовы, ciphertextотсутствуетиз-за требованияотдельногоключаиChromeURL-checkstop. GigaOAuth200ноgeneration0; VPNисключение не выполнялось. Не ставитьsubmissionнаfeaturebranch; финальныйmainпослеfrontend/video.
+
+## Исторические ревизии и доказательства
+
 # Текущая основная матрица — R15,28 октября
 
 **7154 controlled PASS/0fail/0skip**,414.59с, frozen sourcec8125790. [Квитанция](../verification/prefrontend-r15-checkpoint-20261028.json). Исходные R13FAIL сохранены; источники, версии и типы проверок не смешиваются.
