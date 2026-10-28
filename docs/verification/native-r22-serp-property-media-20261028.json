@@ -1,0 +1,361 @@
+{
+  "format": "otravel.native-r22.serp-photos.v1",
+  "status": "ACTUAL_NATIVE_R22_SERP_PROPERTY_MEDIA_PASS",
+  "runtime_before": {
+    "commit": "615b1e09b50a7c087cba8ea0fa57cc6d36f0598a",
+    "package_sha256": "de24c5604f42449be3e796e1ae5453ad8da27af3c32d83dbd6113edd37a0db10",
+    "process": {
+      "pid": 1309474,
+      "uid": 1000,
+      "start_ticks": 9166798,
+      "argv": [
+        "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+        "-m",
+        "uvicorn",
+        "otravel.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8084",
+        "--no-access-log"
+      ],
+      "cwd": "/home/aegml/projects/otravel-after80-20261026",
+      "executable": "/usr/bin/python3.12"
+    },
+    "readiness_sha256": "2275415c2a5329fdf743f822bc29cfdad6520e44111d9796f0488ef5c0b2cab2"
+  },
+  "request": {
+    "city": "Istanbul",
+    "q": "Hotels in Istanbul, Turkey",
+    "checkin": "2026-11-10",
+    "checkout": "2026-11-13",
+    "currency": "USD",
+    "no_cache": false,
+    "occupancies": [
+      {
+        "adults": 2,
+        "children": []
+      }
+    ]
+  },
+  "max_external_serp_searches": 1,
+  "model_calls": 0,
+  "image_downloads": 0,
+  "preview_order_calls": 0,
+  "keys_or_database_config_read_by_client": false,
+  "resends": 0,
+  "scope": "Own synthetic API session; one typed standalone hotel lookup, indicative media binding only.",
+  "private_directory": "/home/aegml/checks/native-r22-serp-media-20261028-053319",
+  "run_status": "completed",
+  "error": null,
+  "media": [
+    {
+      "offer_id": "serpapi:bc39129dfd56f8e346444303",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "9908a8189b2724f744d0d131852a93cdea116c8dab51c618429d60259d753ef2",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "40b434e10ddefb7adc921fdee5faeed6782d6d9f5c1c9066d7fb489966247f2f",
+      "name": "Sura Hagia Sophia Hotel İstanbul"
+    },
+    {
+      "offer_id": "serpapi:ef3d795f528ac2324f7413b7",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "068d2dc72781bfe64201c5b39c8d761aafcd2089f07f86d61570adb46e9608b4",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "3eeff2d7c482fd814e6aa5ea629d58dfef3f87cb7c18a49f76c7ff48a380d5b1",
+      "name": "Catch Sultanahmet"
+    },
+    {
+      "offer_id": "serpapi:e948ad1e168f0d228c8b970e",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "8ba3539ce1e2055915d22ee08b85dc75443e426be7d2bea3dff16aecd6749e9e",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "7e895ff4ec6339329203abb109855a987d1b4961592a05b4d7f2cffd81715dfe",
+      "name": "Royan Hotel Hagia Sophia Istanbul, a member of Radisson Individuals"
+    },
+    {
+      "offer_id": "serpapi:7e22ea4ed43ddf265b24c2f4",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "94c2dd65b3a5729e8b1523b692bc61f038a4956c56c6c13d18fc612bc7ffc032",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "40ee742038667fabf8e93ad752e9b9f886301ba0f4ade8f40bcd0a659e234ed6",
+      "name": "Ramada By Wyndham Istanbul Pera"
+    },
+    {
+      "offer_id": "serpapi:782f47d9289835dc4745d487",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "5d27428048a03f2a0fa715432f0cde2d20e29c5956df24d7e3723417716fccd9",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "c9565ae6412eed5a387eaa0516b501474d10f5398ba6f781417e0ca0f1fc3acc",
+      "name": "Skalion Hotel"
+    },
+    {
+      "offer_id": "serpapi:9d36acf4621c265dca69d38a",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "3f20c001d880ef91dd34c7af6c79d02ae80716dadd891c5334c3041703b3cbf8",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "50188ac42b257c51ec1576b81a171262a45a70ea530611d6b808d7f99c9f0a55",
+      "name": "Cheers Lighthouse"
+    },
+    {
+      "offer_id": "serpapi:0ba85182d352ac77eeca017d",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "cf03ac7ea5448c94b8dce8ab2a4058fee261fdbbd18cd02c23882c97dcc49871",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "548ec6ee1e544601edff2f33f42e29eb60f5d4519b862b5de1a3ea22518cfee6",
+      "name": "The Magnaura Palace Hotel"
+    },
+    {
+      "offer_id": "serpapi:755e177a118901976292c943",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "b940af10c98d2d655b0071fb7a09f48201ae81f27ca75d42bf9c450fe29e27fa",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "1db7ecd88a975aa2f371751c4ef34b4b248cdda02362eaf946708c98f52099df",
+      "name": "HOTEL BRONTE"
+    },
+    {
+      "offer_id": "serpapi:dc445b3a61ceed6bd34464d0",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "e29c93ac99008824489ae4e018bde7b86821da2e09335fabb24f09df33c11a8c",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "566dc99c9ab7824ae413478d752511fa5012f91df0b937d97c54b48ad1753718",
+      "name": "Legacy Ottoman Hotel"
+    },
+    {
+      "offer_id": "serpapi:5a14bc829b5d7c46a81326cc",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "a8a188ba0121a5e49a11e28c52726b29d49bf448c6fc5c19720292247e0f8b20",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "b590450c8598d3975ebced1f87960c63f98acd3217360d6b8da195ee851e572b",
+      "name": "My Dream Istanbul Hotel"
+    },
+    {
+      "offer_id": "serpapi:da47d2487c6dfca101eb142c",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "35b27ea15492c1a0d047a5a245f7c70cbeb4f542553852200c0308e48daa9acd",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "f9c5eebed2227b4064af31256cee1530d209d3363da293aecd127375a6824383",
+      "name": "Demiray Hotel"
+    },
+    {
+      "offer_id": "serpapi:b8de0c6fbe6f7f2747c473c3",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "2027b5c1a488ed080279e8263e3ca2391a7823b3f510bbea18eea8b0076c678b",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "680f73d43c7050f08ef7d897ffc0a5e12c081049f43debbef584b7a1adc3e9ea",
+      "name": "Sultan süleyman palace hotel & hamam"
+    },
+    {
+      "offer_id": "serpapi:d532d6fd90c7c141296ea00e",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "c5591757a55891615487bbd42d955839bef16bd094e9e11ee1018313162c8dd7",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "122447c543a0f3c2898719211faf10ec1125296a276632eadb370be1eccc0bde",
+      "name": "Radisson Hotel Istanbul Sultanahmet"
+    },
+    {
+      "offer_id": "serpapi:56ecd986e36404f4dcbeb083",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "f4f8791dc4dae2cde5ec16c9129c3594a31af53fe776fd60c44f2e72b9003156",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "50eecf89157d5860e055cc95f27f1f37677973bea011cb86e3031b2aeff853fd",
+      "name": "Ferman Port Hotel - Special Category"
+    },
+    {
+      "offer_id": "serpapi:7c5b494e99b148e61e0cb2de",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "6c89706e0cc81f7fc53536014336e226bf7694704017a12fd04edd3e897ccc78",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "1bc308943e30c2e440fa017dc483508258a3b7714f8641fd2d7fb5f664ef5392",
+      "name": "Agora Life Hotel"
+    },
+    {
+      "offer_id": "serpapi:9e50cd38fef977692811938d",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "8b881be24867ab1a9cb451407a017f9c8e2d98f113abe2f6c3a6464c5498c4fc",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "7d24c33459499a15c0379ed0f7c97419f5b7aecec2d62bb914e7aed72c74455e",
+      "name": "Dosso Dossi Hotels"
+    },
+    {
+      "offer_id": "serpapi:4901351e6b38a05bbb8f3853",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "2f7bfd10bda8390bdb336bed78d043854f0dd74424a9905c1dc9e4a8cf4a29aa",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "6fe05b1f9054575d936ae3b549ace8f3d3f7cddfc3b357783bc81a5a40058514",
+      "name": "Side Hotel"
+    },
+    {
+      "offer_id": "serpapi:90dc5732991bbb4777b4c1de",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "7ede74dacbdd945f7bb3955e07a242129f1667e2348281b2eefb11045212a7de",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "079691c5d24b25e347749369c928616de65374771989d20c3231c0afaebefbec",
+      "name": "Hampton by Hilton Istanbul Kayasehir"
+    },
+    {
+      "offer_id": "serpapi:f125d4c939c5a4033fe80cf0",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "907b329e40f8b11fff6e4347e191afa99d356865062ddaa385110de9f6ce7c52",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "f0866fdb400ae34fc0ec1986d2f3a34865c50ec4c7b6f77aec802d67ed1946ec",
+      "name": "Tophane Suites"
+    },
+    {
+      "offer_id": "serpapi:d98eb5d411c1ab4822f8154b",
+      "provider": "serpapi",
+      "source_type": "LIVE_INDICATIVE",
+      "hotel_id_sha256": "247e4ec629815359fec74086feb0bef806641ddbe0b45f84666989330c65f564",
+      "exact_property_binding": true,
+      "isActualPropertyPhoto": true,
+      "source": "SERPAPI",
+      "photo_count": 5,
+      "cover_url_sha256": "08ef421f2b9d8c5b3c5aaa261ad4d38201e841e74d7dc0d1667b90000a097c25",
+      "name": "Art Nouveau Galata - Deluxe Suite with Balcony"
+    }
+  ],
+  "tool_events": [
+    {
+      "kind": "hotels",
+      "provider": "serpapi"
+    }
+  ],
+  "offer_count": 20,
+  "photos_total": 100,
+  "trip_and_version_unchanged": true,
+  "plans_quotes_orders_zero": true,
+  "actual_search_count_basis": "One typed lookup/one Serp tool and single-request gateway without autoretry; media from exact-offer cache, no image/content request.",
+  "runtime_after": {
+    "commit": "615b1e09b50a7c087cba8ea0fa57cc6d36f0598a",
+    "package_sha256": "de24c5604f42449be3e796e1ae5453ad8da27af3c32d83dbd6113edd37a0db10",
+    "process": {
+      "pid": 1309474,
+      "uid": 1000,
+      "start_ticks": 9166798,
+      "argv": [
+        "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+        "-m",
+        "uvicorn",
+        "otravel.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8084",
+        "--no-access-log"
+      ],
+      "cwd": "/home/aegml/projects/otravel-after80-20261026",
+      "executable": "/usr/bin/python3.12"
+    },
+    "readiness_sha256": "2275415c2a5329fdf743f822bc29cfdad6520e44111d9796f0488ef5c0b2cab2"
+  },
+  "commit": "615b1e09b50a7c087cba8ea0fa57cc6d36f0598a",
+  "package_sha256": "de24c5604f42449be3e796e1ae5453ad8da27af3c32d83dbd6113edd37a0db10",
+  "source_file_count": 87,
+  "checked_at_utc": "2026-10-28T05:34:32.408828+00:00",
+  "checks": {
+    "twenty_offers": true,
+    "twenty_media_items": true,
+    "twenty_actual_property_media_bindings": true,
+    "hundred_photo_metadata_urls": true,
+    "all_prices_usd": true,
+    "all_amounts_nonnegative_integer_minor_units": true,
+    "all_source_live_indicative": true,
+    "all_prices_indicative_stay_total": true,
+    "all_availability_unverified": true,
+    "all_allocation_unverified": true,
+    "zero_models": true,
+    "one_serp_hotel_tool": true,
+    "trip_version_unchanged": true,
+    "plans_quotes_orders_zero": true,
+    "runtime_unchanged": true,
+    "source_matches_exact_r22": true
+  },
+  "original_private_report_sha256": "2803cff291bd8ea5a76352da00f097f7442ee4b9a764f8e3c6516c1ce763106e",
+  "original_private_run_sha256": "49a231c6e1c9c1c35dd1097b64315238fa59d8d09cfbf091216fc5f38df3056f",
+  "check_count": 16,
+  "original_records_preserved": true,
+  "external_serp_searches_accounted": 1,
+  "limitations": [
+    "Typed standalone supplier lookup, not natural-language intake or a complete travel basket.",
+    "Photos are metadata URLs from each matching property row; no image GET/browser rendering/copyright qualification.",
+    "LIVE_INDICATIVE is not verified availability, equivalent tariffs, selected room, price consent or supplier booking.",
+    "One Serp HTTP is accounted from the single-request/no-retry adapter path and one tool event; no network interceptor was installed.",
+    "R20 actual readonly079/group080 proofs are retained; their model calls were not repeated for this media-only rollout."
+  ]
+}

@@ -1,5 +1,7 @@
 # Сверка требований сдачи — 28 октября 2026
 
+Актуализация после исходной сверки: установлен R22 `615b1e0`, 7490 controlled PASS, exact Docker19 PASS и native SerpApi20отелей/100фотоссылок. [Текущее состояние](../../PROJECT_STATE.md), [передача frontend](../FRONTEND_HANDOFF_20261028.md). Ниже исходная документальная сверка; jury-ключи/age, итоговый frontend, видео и main/submission по-прежнему открыты.
+
 Документальная проверка текущих файлов и сохранённых доказательств. Новые build/HTTP/UI/PG-проверки не запускались. Наличие кода, успешный controlled-тест и фактическая работа внешнего API учитываются отдельно.
 
 Источники: [трек](https://docs.ostrovok.tech/doc/trek-odin-zapros-V96HozBmsk), PDF3стр., SHA `f6895c013621a2e30662ba05899104ee05d8662ffe7040367116a3513de70aee`; [технические правила](https://docs.ostrovok.tech/doc/pravila-po-tehnike-zI2APu8VkH), PDF5стр., SHA `317281fb25af8b2dc67ab7af8157c414d5111c861f6c744c5c37b471f0afc016`. Полные тексты прочитаны ранее; при этой сверке повторно просмотрены релевантные страницы сохранённых рендеров. [Официальная инструкция секретов](https://docs.ostrovok.tech/s/b9e6ec5e-5ad6-4091-9c85-a48eee9b21cc/doc/shifrovanie-sekretov-klyuchej-6Qhc4gJOPZ): сохранённый HTTP200/HTML SHA `05baa075f382e343cc5ad4107e6943704ec88fe45c6c0bbd4b9c1c0dbfde186c`, без нового сетевого обращения.

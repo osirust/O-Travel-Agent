@@ -1,3 +1,26 @@
+# Актуальная передача — R22 установлен,28октября
+
+**7490controlledPASS/0fail/0skip**,458,76с; core615b1e09/Gitpackage de24c560/87files/303testfiles. ExactDocker19PASS; nativeCF22 установлен безсменыDB/сессий/ledger. [Full](../verification/prefrontend-r22-checkpoint-20261028.json),[Docker](../verification/submission-r22-docker-smoke-20261028.json),[Ready](../verification/native-r22-cf-readiness-20261028.json).
+
+| ID | Подтверждено | Открытые границы |
+| --- | --- | --- |
+| HARNESS-001 | R18typed22sourceHTTP→oneBOOKED_DEMO; R22nativeSerp1query/20offers/100boundphotoURLs/16checks. View-onlymedia не меняетprices/snapshots/consent. | Нет freshcomplexNLU/LIVE_BOOKABLE/all-supplier-equivalence. |
+| HARNESS-002 | Canonical IDs/schema/rooms/people/budget/dates,7490controlledtests. | Engineeringbounds не productmax; неуниверсальнаяage/DOBattribution. |
+| HARNESS-003 | Scopedundo/cancel/history/CAS/oldquote/consent/idempotency квалифицированы прежнимиproofs. | Всеязыковые ссылкине квалифицированы. |
+| HARNESS-004 | readonly079/groupgate080:actual2CF/22checks,0tools/orders,точныеномера/470k/pref/pending. R19/R18 scopedfixes сохранены. | Общийsemantic80/106PASS отсутствует, старые свободные формулировки остаются. |
+| HARNESS-005 | Durablecontrol/budgets/roles/fences; startup0inference/newprocessбезledgerreset. | Vendorquota не app40/day; externalexactly-once не заявляется. |
+| HARNESS-006 | Backendcontract/media/live_media/freshDocker/nativeготовы. Frontendделаетсокомандник. | Finalfrontend/finalarchive/video/jurykeys/main/tagpending. |
+| HARNESS-007 | Scopedfault/PGcrash/WAL/recovery иactualnewDBorderreadback. | Неarbitrarydiskloss/networkfailures;GigaAPI-TLS/inference0. |
+| HARNESS-008 | 697uniqueaccepted/692terminal/5oldqueued,0missing/duplicate/textSHA mismatch; полныеответыпрочитаны. | 657completed неsemanticPASS;35failed/mixedepochs/partialoracles,106fullNLUнепройден. |
+
+**HARNESS-001-SERP-PROPERTY-PHOTOS-001 — QUALIFIED_CURRENT_NATIVE_MEDIA_SCOPE.** ОднаactualtypedSerpquery наR22 дала20propertymedia/100URLs; exactowner/offer/property/source,USDminor/LIVE_INDICATIVE иfalseavailability/allocationflags проверены.0LLM/imagesGET/другихproviders/quote/order. [Nativeproof](../verification/native-r22-serp-property-media-20261028.json). Replayтого жеrawR20→R21 давал20unchangedeconomicsoffers;pricehash/sourceSnapshots не содержатфото. Processcacheнепереживаетrestart,cachemissplaceholderбездопHTTP. Неclaimvisualidentity/copyright/roomphoto/booking.
+
+**HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001 — TARGETED_ACTUAL_PROTECTION_PASS.** Дваслояreadonlyисправлены, maliciouscachedbatchrejected;actualCFcanonicalparty+rooms сохраняетexactpending/state/version. ВременнаяRootметкаREADONLY-NOW-PREFIX—aliasтого жеfinding. **HARNESS-004-GROUP-PENDING-SHORTCUT-SWALLOW-080-001 — TARGETED_ACTUAL_INDEPENDENT_EDIT_PASS.** Budget470k/lowest_total применены приpendinggroup безguessmembers/search. [Canaries](../verification/native-r20-cf-canaries-20261028.json):контролируемыеhistoricfixtures,неfullnewchat.
+
+Далее только frontend-интеграция/финальная сборка/видео/выделенныйjuryenv+age/main+submission. GigaостаётсяTLSblocked,VPNнетронут. [Передача](../FRONTEND_HANDOFF_20261028.md). ИсходныеR21full3FAIL,actualschema/429,oldqueued/oraclecorrectionsсохраненыниже; новыйPASSнепереписываетстаруюветвь.
+
+## Исторические checkpoint и исходные доказательства
+
 # Текущий проверенный checkpoint — R22,28октября
 
 **7490controlledPASS/0fail/0skip**,458,76с; sourcec991b44e,87package/303testfiles,source/testsunchanged. [Proof](../verification/prefrontend-r22-checkpoint-20261028.json). СейчасGit/Docker/CF22rolloutиодинfreshSerpphotoquery; C20CFстабилен. ПредыдущийR21full3FAIL сохранён и атрибутированtest-registry pollution;productionкод не менялся при изоляцииэталонныхтестов.

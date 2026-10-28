@@ -1,6 +1,6 @@
 # Передача frontend — 28 октября
 
-Backend: `4529ddb37577f8b3f252fd7dc1838241f430a429`, ветка `backend/harness-foundation` в обоих приватных репозиториях. Рабочий стенд владельца: http://localhost:8084/debug. На другом компьютере запускать свой Docker; его localhost относится к нему самому. Штатный порт Compose —8080.
+Backend: `615b1e09b50a7c087cba8ea0fa57cc6d36f0598a`, ветка `backend/harness-foundation` в обоих приватных репозиториях. Рабочий стенд владельца: http://localhost:8084/debug. На другом компьютере запускать свой Docker; его localhost относится к нему самому. Штатный порт Compose —8080.
 
 Сейчас на стенде выбран Cloudflare `@cf/nvidia/nemotron-3-120b-a12b`. Проверены два настоящих модельных ответа; это не обещание качества любого запроса или неограниченной квоты. Ключи остаются на backend. GigaChat ещё не отвечает из-за TLS; переключение VPN не выполнялось.
 
@@ -35,3 +35,5 @@ Backend: `4529ddb37577f8b3f252fd7dc1838241f430a429`, ветка `backend/harness
 Полного semantic PASS80/106 нет. [697 уникальных реплик](verification/actual80-unique-input-coverage-20261028.json) включают35 failed и5 старых queued; эти результаты не скрыты общим счётом pytest. Старые свободные формулировки дат, произвольные семьи/переписи группы и часть объяснений остаются предметом приёмки.
 
 ОбновлениеR22:7490controlledPASS. SerpApi-фото получаются также из`run.result.result.live_media.items[].media` по`offer_id`, вне`live_offers` иэкономическогоhash. `source=SERPAPI`,ценыостаютсяLIVE_INDICATIVE. Cache-only256/6h,приcachemiss—заглушка/новыйобычныйпоиск. СтарыеR20actual079/080сохраняютсвойscope; новыйnativephoto-proofпослерелизапубликуетсяотдельно.
+
+ФинальнаяпроверкаR22:7490PASS; [exactDocker19](verification/submission-r22-docker-smoke-20261028.json); [native20hotel/100photoURLs](verification/native-r22-serp-property-media-20261028.json),16checks/1Serpquery/0model. На8084установленэтоткод,CF120активен. Ещёнеполученfrontend/неподготовленыjuryciphertext/video/main+submission. [Последнийкороткийстатус](../PROJECT_STATE.md).

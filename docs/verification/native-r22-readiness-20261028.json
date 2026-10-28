@@ -1,0 +1,57 @@
+{
+  "status": "RUNNING_CLOUDFLARE_R22",
+  "commit": "615b1e09b50a7c087cba8ea0fa57cc6d36f0598a",
+  "package_sha256": "de24c5604f42449be3e796e1ae5453ad8da27af3c32d83dbd6113edd37a0db10",
+  "file_count": 87,
+  "source": "/home/aegml/projects/otravel-after80-20261026",
+  "database": "otravel_zai_eval",
+  "manager": "after80_cf_live8084_r22_backend.py",
+  "process": {
+    "pid": 1309474,
+    "uid": 1000,
+    "start_ticks": 9166798,
+    "argv": [
+      "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+      "-m",
+      "uvicorn",
+      "otravel.api:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8084",
+      "--no-access-log"
+    ],
+    "cwd": "/home/aegml/projects/otravel-after80-20261026",
+    "executable": "/usr/bin/python3.12"
+  },
+  "loaded_manifest_matches": true,
+  "url": "http://localhost:8084/debug",
+  "limits": {
+    "cloudflare_daily_engineering_bound": 40,
+    "vendor_quota": "UNKNOWN",
+    "calls_per_run": 1,
+    "local_calls": 0,
+    "fallback": false
+  },
+  "profile": {
+    "database": "ready",
+    "provider": "cloudflare",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "travel": {
+      "liteapi": "SANDBOX",
+      "duffel": "TEST",
+      "serpapi": "LIVE_INDICATIVE"
+    },
+    "supplier_booking": false,
+    "provider_quota_checked": false,
+    "generation_performed": false
+  },
+  "startup_model_events_before": 834,
+  "startup_model_events_after": 834,
+  "startup_inference": 0,
+  "model_inference_during_photo_canary": 0,
+  "database_reset": false,
+  "master_environment_changed": false,
+  "readiness_file_sha256": "2275415c2a5329fdf743f822bc29cfdad6520e44111d9796f0488ef5c0b2cab2",
+  "availability_scope": "Startup/profile and one successful actual Serp photo lookup; no new CF model inference or all-language qualification."
+}
