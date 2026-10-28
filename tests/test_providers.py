@@ -58,6 +58,16 @@ def test_lookup_rejects_production_key_before_http():
     assert error.value.code == "CONFIG_BLOCKED"
 
 
+def test_liteapi_unauthorized_response_explains_access_without_exposing_key():
+    gateway = TravelGateway(settings(lambda request: httpx.Response(401), LITEAPI_API_KEY="sand_private_test_value"))
+    with pytest.raises(ProviderError) as error:
+        call(gateway, "resolve_hotels", "Стамбул")
+    assert error.value.code == "HTTP_ERROR"
+    assert error.value.details["http_status"] == 401
+    assert "LiteAPI" in error.value.message and "доступ" in error.value.message
+    assert "sand_private_test_value" not in str(error.value.as_dict())
+
+
 @pytest.mark.parametrize("config,code", [
     ({"LLM_PROVIDER": "gemini", "GEMINI_API_KEY": "fake"}, "CONFIG_BLOCKED"),
     ({"LLM_PROVIDER": "gemini", "GEMINI_FREE_TIER_CONFIRMED": True, "GEMINI_API_KEY": ""}, "CONFIG_MISSING"),
@@ -260,6 +270,35 @@ def test_serpapi_indicative_stable_ids_not_nightly_as_trip_total():
     asyncio.run(run())
 
 
+def test_serp_hotel_presentation_keeps_only_trusted_images_and_real_rating():
+    def handler(request):
+        return httpx.Response(200, json={"properties": [{"name": "Hotel", "property_token": "property1", "overall_rating": 4.7, "reviews": 321,
+            "images": [{"thumbnail": "https://lh3.googleusercontent.com/grass-cs/abcdefghijk=s287"},
+                       {"thumbnail": "https://lh3.googleusercontent.com.evil.test/abc"},
+                       {"thumbnail": "https://lh3.googleusercontent.com/abc?api_key=bad"}],
+            "total_rate": {"extracted_lowest": 1500}}]})
+    request = {**HOTEL_REQUEST, "city": "Казань", "occupancies": [{"adults": 2, "children": []}]}
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    offer = call(gateway, "search_hotels", request, "serpapi")[0]
+    assert not {"photos", "rating", "review_count"} & offer["details"]["provider_data"].keys()
+    presentation = gateway.serpapi_property_media(offer["offer_id"], "property1")
+    assert [photo["url"] for photo in presentation["hotelImages"]] == ["https://lh3.googleusercontent.com/grass-cs/abcdefghijk=s287"]
+    assert presentation["metadata"] == {"rating": 4.7, "review_count": 321}
+
+
+def test_serp_hotel_reviews_are_bounded_and_never_return_private_urls():
+    def handler(request):
+        assert request.url.params["engine"] == "google_hotels_reviews"
+        assert request.url.params["property_token"] == "property1"
+        return httpx.Response(200, json={"reviews": [{"user": {"name": "Гость", "link": "https://private.example"},
+            "snippet": "Удобно", "rating": 5, "best_rating": 5, "date": "2026-01-01", "source": "Google"}]})
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    reviews = call(gateway, "hotel_reviews", "property1")
+    assert reviews[0]["text"] == "Удобно"
+    assert reviews[0]["rating"] == 5
+    assert "link" not in json.dumps(reviews)
+
+
 def test_serpapi_multicity_params_and_indicative_segments():
     def handler(request):
         assert request.url.params["type"] == "3"
@@ -270,6 +309,68 @@ def test_serpapi_multicity_params_and_indicative_segments():
     offer = call(gateway, "search_flights", {**FLIGHT_REQUEST, "adults": 1, "children": 1, "currency": "RUB"}, "serpapi")[0]
     assert offer["source_type"] == "LIVE_INDICATIVE"
     assert offer["details"]["itinerary_complete"] is False
+
+
+@pytest.mark.parametrize("message,success", [
+    ("Google Flights hasn't returned any results for this query.", True),
+    ("Account quota exhausted", False),
+])
+def test_serpapi_distinguishes_empty_flights_from_provider_failure(message, success):
+    def handler(request):
+        return httpx.Response(200, json={"search_metadata": {"status": "Success"}, "error": message})
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    request = {**FLIGHT_REQUEST, "adults": 1, "currency": "RUB"}
+    if success:
+        with pytest.raises(ProviderError) as error:
+            call(gateway, "search_flights", request, "serpapi")
+        assert error.value.code == "NO_MATCHES"
+    else:
+        with pytest.raises(ProviderError) as error:
+            call(gateway, "search_flights", request, "serpapi")
+        assert error.value.code == "PROVIDER_RESPONSE_ERROR"
+
+
+def test_serpapi_hotel_pagination_forwards_token_and_preserves_offer_identity():
+    calls = []
+    def handler(request):
+        token = request.url.params.get('next_page_token')
+        calls.append(token)
+        pagination = {'next_page_token': 'page-two'} if token is None else {}
+        return httpx.Response(200, json={'properties': [{'name': 'Hotel', 'property_token': 'hotel-one', 'total_rate': {'extracted_lowest': 1000}}], 'serpapi_pagination': pagination})
+    request = {**HOTEL_REQUEST, 'city': 'Казань', 'occupancies': [{'adults': 2, 'children': []}]}
+    async def run():
+        gateway = TravelGateway(settings(handler, SERPAPI_API_KEY='fake', SERPAPI_FREE_TIER_CONFIRMED=True))
+        try:
+            first, next_token = await gateway.search_hotel_page(request)
+            second, after = await gateway.search_hotel_page({**request, 'next_page_token': next_token})
+            assert calls == [None, 'page-two']
+            assert first[0]['offer_id'] == second[0]['offer_id']
+            assert after is None
+        finally:
+            await gateway.close()
+    asyncio.run(run())
+
+
+def test_serpapi_rejects_invalid_hotel_page_token_before_http():
+    gateway = TravelGateway(settings(forbidden, SERPAPI_API_KEY='fake', SERPAPI_FREE_TIER_CONFIRMED=True))
+    request = {**HOTEL_REQUEST, 'city': 'Казань', 'occupancies': [{'adults': 2, 'children': []}], 'next_page_token': 'bad&key=value'}
+    with pytest.raises(ProviderError):
+        call(gateway, 'search_hotel_page', request)
+
+
+@pytest.mark.parametrize("cabin,expected", [("economy", "1"), ("premium_economy", "2"), ("business", "3"), ("first", "4")])
+def test_serpapi_forwards_selected_cabin(cabin, expected):
+    def handler(request):
+        assert request.url.params["travel_class"] == expected
+        return httpx.Response(200, json={"best_flights": []})
+    gateway = TravelGateway(settings(handler, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    assert call(gateway, "search_flights", {**FLIGHT_REQUEST, "adults": 1, "currency": "RUB", "cabin_class": cabin}, "serpapi") == []
+
+
+def test_serpapi_rejects_invalid_cabin_before_request():
+    gateway = TravelGateway(settings(forbidden, SERPAPI_API_KEY="fake", SERPAPI_FREE_TIER_CONFIRMED=True))
+    with pytest.raises(ProviderError):
+        call(gateway, "search_flights", {**FLIGHT_REQUEST, "adults": 1, "currency": "RUB", "cabin_class": "invalid"}, "serpapi")
 
 
 def test_serpapi_errors_and_http_logs_redact_key(caplog):

@@ -1787,6 +1787,10 @@ class Harness:
                 questions = result.get("questions", [])
                 status = "WAITING_USER" if questions else "OPTIONS_READY" if result.get("live_offers") or result.get("weather") or result.get("plans") else "TRIP_DRAFT"
                 waiting_reason = "clarification" if questions else None
+                # A component can be searched while another part of the trip is
+                # incomplete. Keep its pending question until the user answers it.
+                if not questions and session.get("waiting_reason") == "clarification" and session.get("pending_question"):
+                    preserve_pending, waiting_reason, status = True, "clarification", "WAITING_USER"
             elif kind in {"resolve_place","select_place"}:
                 if not self.settings.dynamic_geography_enabled or self.place_resolution is None:
                     raise DomainError("dynamic_geography_disabled","Поиск новых мест не включён в этой конфигурации.")
@@ -2289,7 +2293,23 @@ class Harness:
         await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_STARTED", {"kind": kind, "provider": provider})
         try:
             if kind == "hotels":
-                offers = await self.travel.search_hotels(request, provider)
+                hotel_names = {}
+                pagination = None
+                if provider == "liteapi" and not request.get("hotelIds") and request.get("city"):
+                    matches = await self.travel.resolve_hotels(request["city"], limit=10)
+                    request = {**request, "hotelIds": [hotel["id"] for hotel in matches if hotel.get("id")]}
+                    hotel_names = {hotel["id"]: hotel["name"] for hotel in matches if hotel.get("id") and hotel.get("name")}
+                    if not request["hotelIds"]:
+                        raise ProviderError("NO_MATCHES", "В тестовом каталоге не нашлось отелей этого города.", provider="liteapi")
+                if provider == "serpapi" and hasattr(self.travel, "search_hotel_page"):
+                    offers, next_page = await self.travel.search_hotel_page(request)
+                    pagination = {"page_token": request.get("next_page_token"), "next_page_token": next_page}
+                else:
+                    offers = await self.travel.search_hotels(request, provider)
+                for offer in offers:
+                    hotel_id = offer.get("details", {}).get("hotel_id")
+                    if hotel_id in hotel_names:
+                        offer["description"] = hotel_names[hotel_id]
             elif kind == "flights":
                 offers = await self.travel.search_flights(request, provider)
             else:
@@ -2298,6 +2318,8 @@ class Harness:
                 return {"weather": weather, "source_type": weather["source_type"], "plans": []}
             await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_COMPLETED", {"kind": kind, "provider": provider, "count": len(offers)})
             result = {"live_offers": offers, "source_type": offers[0].get("source_type", "UNKNOWN") if offers else "NO_MATCHES", "plans": [], "warnings": ["Это отдельные компоненты, не проверенная многогородская корзина. Supplier orders не создаются."]}
+            if kind == "hotels" and pagination is not None:
+                result["hotel_pagination"] = pagination
             if kind == "hotels" and provider == "serpapi":
                 from .media import MediaResolver
                 result["live_media"] = await MediaResolver(self.travel).resolve_plan({"offers": offers})

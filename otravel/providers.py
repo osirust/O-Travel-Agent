@@ -360,7 +360,9 @@ class _HTTPGateway:
             message = ("Для этого аккаунта у провайдера нет доступного API-ресурса или баланса." if billing else
                        "Провайдер ограничил запросы (HTTP 429)." if status == 429 else
                        "Запрос к Groq слишком большой (HTTP 413). Сократите передаваемый контекст и повторите запрос."
-                       if groq_too_large else "Провайдер отклонил запрос.")
+                       if groq_too_large else f"{ {'liteapi': 'LiteAPI', 'duffel': 'Duffel', 'serpapi': 'SerpApi', 'travelpayouts': 'Travelpayouts', 'hotelbeds': 'Hotelbeds', 'ratehawk': 'RateHawk'}[provider]} не подтвердил доступ. Проверьте ключ и права аккаунта или выберите другой источник."
+                       if status in {401, 403} and provider in {"liteapi", "duffel", "serpapi", "travelpayouts", "hotelbeds", "ratehawk"}
+                       else "Провайдер отклонил запрос.")
             retry_seconds = details.get("retry_after_seconds")
             if status == 429 and not billing and type(retry_seconds) is int and 0 <= retry_seconds <= 86400:
                 message += f" Указанное провайдером ожидание: {retry_seconds} сек."
@@ -1759,7 +1761,12 @@ class TravelGateway(_HTTPGateway):
                 "LIVE_INDICATIVE", "CACHED_REFERENCE_FARE", expiry))
         return result
 
-    async def _serp(self, request: dict, kind: str) -> list[dict]:
+    async def search_hotel_page(self, request: dict) -> tuple[list[dict], str | None]:
+        if not isinstance(request, dict):
+            _fail("Поиск должен быть объектом.", "serpapi")
+        return await self._serp(request, "hotel", include_pagination=True)
+
+    async def _serp(self, request: dict, kind: str, *, include_pagination: bool = False):
         provider = "serpapi"
         confirmed = _setting(self.settings, "SERPAPI_FREE_TIER_CONFIRMED")
         if confirmed is None:
@@ -1787,6 +1794,11 @@ class TravelGateway(_HTTPGateway):
             params.update(check_in_date=checkin, check_out_date=checkout,
                           adults=rooms[0]["adults"], children=len(rooms[0]["children"]))
             params.update({"property_token": property_token} if property_token is not None else {"q": query})
+            page_token = request.get("next_page_token")
+            if page_token is not None:
+                if not isinstance(page_token, str) or not 1 <= len(page_token) <= 4096 or not re.fullmatch(r"[A-Za-z0-9._~+/=:-]+", page_token):
+                    _fail("Некорректный указатель страницы отелей.", provider)
+                params["next_page_token"] = page_token
             if rooms[0]["children"]:
                 params["children_ages"] = ",".join(map(str, rooms[0]["children"]))
         else:
@@ -1795,6 +1807,11 @@ class TravelGateway(_HTTPGateway):
             if type(adults) is not int or adults < 1 or type(children) is not int or children < 0:
                 _fail("Нужны явные количества взрослых и детей.", provider)
             params.update(adults=adults, children=children)
+            cabin_classes = {"economy": "1", "premium_economy": "2", "business": "3", "first": "4"}
+            cabin = request.get("cabin_class", "economy")
+            if not isinstance(cabin, str) or cabin not in cabin_classes:
+                _fail("Выберите допустимый класс обслуживания.", provider)
+            params["travel_class"] = cabin_classes[cabin]
             if len(slices) == 1:
                 params.update(type="2", departure_id=slices[0]["origin"], arrival_id=slices[0]["destination"], outbound_date=slices[0]["departure_date"])
             else:
@@ -1830,7 +1847,7 @@ class TravelGateway(_HTTPGateway):
                     "warning": "Поисковая цена конкретного раскрытого тарифа. Разные условия не означают эквивалентные предложения; бронирование не подтверждено."},
                 "LIVE_INDICATIVE", "INDICATIVE_ROOM_RATE_STAY_TOTAL")
             self._remember_serpapi_media(offer, body)
-            return [offer]
+            return ([offer], None) if include_pagination else [offer]
         if kind == "hotel":
             rows = body.get("properties", [])
         else:
@@ -1849,7 +1866,7 @@ class TravelGateway(_HTTPGateway):
                 total = total_block.get("extracted_lowest") if isinstance(total_block, dict) else None
                 nightly = nightly_block.get("extracted_lowest") if isinstance(nightly_block, dict) else None
                 amount, price_kind = (total, "INDICATIVE_STAY_TOTAL") if total is not None else (nightly, "INDICATIVE_NIGHTLY")
-                identity = [row.get("property_token"), row.get("name"), request]
+                identity = [row.get("property_token"), row.get("name"), {key: value for key, value in request.items() if key != "next_page_token"}]
                 description = row.get("name", "Гостиничная поисковая выдача")
                 selected = {k: row[k] for k in ("property_token", "prices", "total_rate", "rate_per_night", "gps_coordinates", "hotel_class") if k in row}
             else:
@@ -1869,6 +1886,12 @@ class TravelGateway(_HTTPGateway):
             result.append(offer)
         if rows and not result:
             _fail("В поисковой выдаче нет проверяемой числовой цены.", provider, "INVALID_RESPONSE")
+        if include_pagination:
+            pagination = body.get("serpapi_pagination")
+            token = pagination.get("next_page_token") if isinstance(pagination, dict) else None
+            if not isinstance(token, str) or not 1 <= len(token) <= 4096 or not re.fullmatch(r"[A-Za-z0-9._~+/=:-]+", token):
+                token = None
+            return result, token
         return result
 
     async def _liteapi_prebook(self, offer: dict) -> dict:
@@ -1966,6 +1989,32 @@ class TravelGateway(_HTTPGateway):
             "SANDBOX", "PROVIDER_ROOMS_STAY_TOTAL", expiry.isoformat())
         refreshed["offer_id"] = public_id
         return refreshed
+
+    async def hotel_reviews(self, property_token: str) -> list[dict]:
+        """Fetch reviews only for a saved SerpApi hotel identity."""
+        provider = "serpapi"
+        if not isinstance(property_token, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,1024}", property_token):
+            _fail("Отель не содержит идентификатор для поиска отзывов.", provider, "INVALID_REQUEST")
+        if not _truth(_setting(self.settings, "SERPAPI_FREE_TIER_CONFIRMED", os.getenv("SERPAPI_FREE_TIER_CONFIRMED", "false"))):
+            _fail("Нужно подтверждение квоты SerpApi.", provider, "CONFIG_BLOCKED")
+        key = self._key("SERPAPI_API_KEY", provider)
+        body = await self._request(provider, "GET", "https://serpapi.com/search.json", params={"engine": "google_hotels_reviews", "property_token": property_token, "api_key": key, "hl": "ru", "no_cache": "false"})
+        if not isinstance(body.get("reviews"), list):
+            _fail("Источник не вернул список отзывов.", provider, "INVALID_RESPONSE")
+        reviews = []
+        for row in body["reviews"][:10]:
+            if not isinstance(row, dict):
+                continue
+            user = row.get("user") if isinstance(row.get("user"), dict) else {}
+            def text(value, limit):
+                return _safe_text(value).replace(key, "[REDACTED]")[:limit] if isinstance(value, str) else ""
+            rating = row.get("rating")
+            best = row.get("best_rating", 5)
+            reviews.append({"author": text(user.get("name"), 120), "date": text(row.get("date"), 80),
+                            "source": text(row.get("source"), 80), "text": text(row.get("snippet"), 3000),
+                            "rating": rating if type(rating) in {int, float} and 0 <= rating <= 10 else None,
+                            "best_rating": best if type(best) in {int, float} and 0 < best <= 10 else None})
+        return reviews
 
     async def reprice(self, offer: dict) -> dict:
         if not isinstance(offer, dict) or not isinstance(offer.get("details"), dict):

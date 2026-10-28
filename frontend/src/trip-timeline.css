@@ -1,0 +1,22 @@
+.trip-timeline{position:relative;padding:0 0 12px;border-bottom:1px solid #e8edf5;margin-bottom:18px}
+.trip-timeline .timeline-point{display:flex;align-items:center;gap:10px;min-height:84px;padding:0;position:relative}
+.trip-timeline .timeline-point:not(:last-child):after{content:"";position:absolute;z-index:0;left:19px;top:50%;bottom:-50%;width:0;border-left:2px dotted #cbd4e4}
+.trip-timeline .timeline-icon,.trip-timeline .timeline-marker{width:40px;height:40px;flex:0 0 40px;position:relative;z-index:1;display:grid;place-items:center}
+.trip-timeline .timeline-icon{border-radius:50%;background:#f0f3f9;color:#344464}
+.trip-timeline .timeline-marker i{display:block;width:16px;height:16px;border-radius:50%;background:#3155f5;box-shadow:0 0 0 5px #fff}
+.trip-timeline .timeline-photo{width:64px;height:68px;flex:0 0 64px;border-radius:15px;object-fit:cover}
+.trip-timeline .timeline-point>div{padding:0}
+.trip-timeline .timeline-destination{min-width:0;flex:1}
+.trip-timeline .timeline-action{width:100%;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:5px;text-align:left;padding:5px 0;color:#14203b}
+.trip-timeline .origin-point .timeline-action{flex:1}
+.trip-timeline .timeline-action span{min-width:0}
+.trip-timeline .timeline-action strong{font-size:13px;line-height:1.35;font-weight:750;overflow-wrap:anywhere}
+.trip-timeline .timeline-action small{font-size:11px;line-height:1.35;color:#7485a6;margin-top:5px}
+.trip-timeline .timeline-action svg{color:#253655;flex:0 0 auto}
+.trip-timeline .timeline-action:hover strong{color:var(--blue)}
+.timeline-credits{margin:-12px 0 14px;text-align:right;color:#91a0b7;font-size:9px;line-height:1.5}
+.timeline-credits summary{cursor:pointer;list-style:none}
+.timeline-credits summary::-webkit-details-marker{display:none}
+.timeline-credits a{display:block;margin-top:4px;overflow-wrap:anywhere}
+.timeline-credits summary:hover,.timeline-credits a:hover{color:var(--blue)}
+@media(min-width:1500px),(max-width:700px){.trip-timeline .timeline-point{gap:12px;min-height:96px}.trip-timeline .timeline-photo{width:68px;height:72px;flex-basis:68px}.trip-timeline .timeline-action strong{font-size:15px}.trip-timeline .timeline-action small{font-size:12px}}

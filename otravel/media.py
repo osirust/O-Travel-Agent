@@ -110,6 +110,11 @@ def serpapi_property_content(row: dict) -> dict | None:
     if hotel_id is None:
         return None
     result = {"id": hotel_id, "name": _text(row.get("name"), 120), "hotelImages": []}
+    rating, reviews = row.get("overall_rating"), row.get("reviews")
+    result["metadata"] = {
+        "rating": rating if type(rating) in {int, float} and 0 <= rating <= 5 else None,
+        "review_count": reviews if type(reviews) is int and 0 <= reviews <= 100_000_000 else None,
+    }
     seen = set()
     images = row.get("images")
     for index, image in enumerate(images[:100] if isinstance(images, list) else []):
@@ -160,7 +165,8 @@ def _media(hotel_id: str, content: dict, source: str = "LITEAPI") -> dict:
         return _placeholder(hotel_id)
     return {"url": photos[0]["url"], "thumbnailUrl": thumbnail, "alt": photos[0]["alt"],
         "kind": "HOTEL", "source": source, "hotelId": hotel_id, "sourceHotelId": content["id"],
-        "isActualPropertyPhoto": True, "caption": photos[0]["caption"], "gallery": photos}
+        "isActualPropertyPhoto": True, "caption": photos[0]["caption"], "gallery": photos,
+        **({"metadata": deepcopy(content["metadata"])} if source == "SERPAPI" and isinstance(content.get("metadata"), dict) else {})}
 
 
 class MediaResolver:

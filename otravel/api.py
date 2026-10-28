@@ -33,6 +33,7 @@ from .planning import assemble_plan, validate_quote
 from .providers import LLMGateway, ProviderError, TravelGateway, public_rate_failure_fields, public_offer_failure_fields, redact_runtime_text
 from .fx import CBRFxClient, FxUnavailable
 from .media import MEDIA_CSP_SOURCES, MediaResolver
+from .destination_photos import CITY_PAGES, DestinationPhotos
 from .store import Conflict, NotFound, Store, StoreError
 from .geo_catalog import GeoCatalog, GeoCatalogError
 from .llm_contract import build_operation_schema
@@ -180,6 +181,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
     gateway = travel if travel is not None else TravelGateway(settings.provider_settings())
     rates = fx if fx is not None else CBRFxClient() if settings.reference_fx_enabled else None
     pictures = media if media is not None else MediaResolver(gateway)
+    destination_pictures = DestinationPhotos()
     catalog = (geo_catalog if geo_catalog is not None else GeoCatalog(repository.engine)) if settings.dynamic_geography_enabled else None
     directory = (place_directory if place_directory is not None else PlaceDirectory(cache=catalog)) if settings.dynamic_geography_enabled else None
     harness_options = {"fx": rates}
@@ -200,6 +202,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await repository.close()
             await model.close()
             await gateway.close()
+            await destination_pictures.close()
             if rates is not None:
                 await rates.close()
             raise RuntimeError("Backend startup failed: PostgreSQL initialization unavailable; connection details redacted.") from None
@@ -209,6 +212,7 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
             await harness.close()
             await model.close()
             await gateway.close()
+            await destination_pictures.close()
             if rates is not None:
                 await rates.close()
             if directory is not None:
@@ -494,6 +498,43 @@ def create_app(settings: Settings | None = None, store: Any = None, llm: Any = N
         if body.kind == "weather" and not {"city", "latitude", "longitude"}.issubset(body.request):
             raise HTTPException(422, "Для погоды нужны city, latitude и longitude.")
         return await submit(session, body.client_message_id, body.expected_version, "live_search", search_kind=body.kind, provider=body.provider, request=body.request, demo_fallback=body.demo_fallback)
+
+    @app.get("/api/v1/destination-photos")
+    async def get_destination_photos(city: list[str] = Query(default=[])):
+        if len(city) > 7 or any(value not in CITY_PAGES for value in city):
+            raise HTTPException(422, "Для фотографий выберите поддерживаемые города.")
+        return {"photos": await destination_pictures.resolve(city)}
+
+    @app.get("/api/v1/sessions/{session_id}/hotel-reviews")
+    async def hotel_reviews(session_id: str, offer_id: str = Query(min_length=1, max_length=128),
+                            authorization: str | None = Header(default=None)):
+        session = await owned(session_id, authorization)
+        token = None
+        seen = set()
+        for message in reversed(await repository.list_messages(session_id)):
+            run_id = message.get("run_id")
+            if not run_id or run_id in seen:
+                continue
+            seen.add(run_id)
+            run = await repository.get_run(run_id)
+            response = run.get("result") or {}
+            if run.get("status") != "completed" or response.get("state_version") != session["state_version"]:
+                continue
+            inventory = response.get("result") or {}
+            for offer in inventory.get("live_offers", []):
+                details = offer.get("details") or {}
+                if offer.get("offer_id") == offer_id and offer.get("provider") == "serpapi" and details.get("kind") == "hotel":
+                    token = (details.get("provider_data") or {}).get("property_token")
+                    break
+            if token:
+                break
+        if not token:
+            raise NotFound("Отзывы доступны только для найденного отеля текущей поездки.")
+        reviews = await gateway.hotel_reviews(token)
+        latest = await repository.get_session(session_id)
+        if latest["state_version"] != session["state_version"]:
+            raise Conflict("Поездка изменилась во время загрузки отзывов.", "stale_state")
+        return _clean({"session_id": session_id, "state_version": session["state_version"], "offer_id": offer_id, "source": "SerpApi / Google Hotels", "reviews": reviews})
 
     async def saved_plan(session: dict, plan_id: str, *, include_partial: bool = False) -> dict:
         checked = set()
