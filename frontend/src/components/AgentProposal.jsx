@@ -7,12 +7,13 @@ import '../agent-proposal.css';
 
 export default function AgentProposal({ data, onDetails, onBuild, onEdit }) {
   const trip = data.snapshot?.trip;
+  const completed = data.snapshot?.status === 'BOOKED_DEMO';
   const ready = agentProposalReady(trip);
   const attemptKey = data.snapshot ? `${data.snapshot.session_id}:${data.snapshot.state_version}:agent` : null;
   const attempted = Boolean(attemptKey && data.autoAttempts?.[attemptKey]);
   const unknown = data.deliveries.some(entry => entry.kind === 'search' && !entry.runId && entry.body.expected_version === data.snapshot?.state_version);
   const waiting = Boolean(data.snapshot?.waiting_reason);
-  const loading = data.restoring || data.busy || data.sending || (!attempted && ready && !waiting && data.online);
+  const loading = !completed && (data.restoring || data.busy || data.sending || (!attempted && ready && !waiting && data.online));
   const unavailable = data.online === false;
   return <section className="agent-proposals">
     <div className="external-intro"><span className="external-icon"><Sparkles size={24} /></span><div><h2>Предложение от агента</h2><p>Варианты на основе ваших пожеланий и параметров поездки</p></div></div>
@@ -28,6 +29,6 @@ export default function AgentProposal({ data, onDetails, onBuild, onEdit }) {
         <div className="agent-plan-footer"><span><Plane size={15} />{flights.length ? `Перелётов в маршруте: ${flights.length}` : 'Перелёты уточняются'}</span><button className="text-button" onClick={() => onDetails(plan)}>Посмотреть состав <ArrowRight size={15} /></button></div>
         {plan.blockers?.length > 0 && <p className="agent-plan-warning">Не все условия поездки подтверждены. Откройте состав для подробностей.</p>}
       </article>;
-    })}</div> : <div className="external-empty">{loading ? <LoaderCircle className="spin" size={32} /> : <Sparkles size={32} strokeWidth={1.3} />}<p>{!data.snapshot || data.restoring ? 'Загружаем вашу поездку…' : data.snapshot.waiting_reason === 'user_pause' ? 'Поиск на паузе. Продолжите поездку, чтобы получить предложение.' : waiting ? 'Уточните оставшиеся детали поездки, чтобы агент собрал предложение.' : unavailable ? 'Не удалось подключиться. Попробуйте позже.' : !ready ? 'Расскажите о поездке или заполните маршрут, даты и размещение — агент соберёт варианты.' : unknown ? 'Проверяем результат предыдущего запроса.' : loading ? 'Агент собирает предложение…' : 'Не удалось подобрать предложение. Можно попробовать ещё раз.'}</p>{!ready && !loading && <button className="secondary-button" onClick={onEdit}>Заполнить поездку</button>}{ready && attempted && !unknown && !loading && !waiting && !unavailable && <button className="secondary-button" onClick={onBuild}>Попробовать снова</button>}</div>}
+    })}</div> : <div className="external-empty">{loading ? <LoaderCircle className="spin" size={32} /> : <Sparkles size={32} strokeWidth={1.3} />}<p>{completed ? 'Пример поездки сохранён. Бронирование не создано. Измените параметры, чтобы подготовить новый вариант.' : !data.snapshot || data.restoring ? 'Загружаем вашу поездку…' : data.snapshot.waiting_reason === 'user_pause' ? 'Поиск на паузе. Продолжите поездку, чтобы получить предложение.' : waiting ? 'Уточните оставшиеся детали поездки, чтобы агент собрал предложение.' : unavailable ? 'Не удалось подключиться. Попробуйте позже.' : !ready ? 'Расскажите о поездке или заполните маршрут, даты и размещение — агент соберёт варианты.' : unknown ? 'Проверяем результат предыдущего запроса.' : loading ? 'Агент собирает предложение…' : 'Не удалось подобрать предложение. Можно попробовать ещё раз.'}</p>{!completed && !ready && !loading && <button className="secondary-button" onClick={onEdit}>Заполнить поездку</button>}{!completed && ready && attempted && !unknown && !loading && !waiting && !unavailable && <button className="secondary-button" onClick={onBuild}>Попробовать снова</button>}</div>}
   </section>;
 }

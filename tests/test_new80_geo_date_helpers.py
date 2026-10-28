@@ -35,7 +35,9 @@ async def test_actual013_current_explicit_russia_filters_the_exact_source_reques
     actual = harness.place_resolution.calls[0]['value']
     assert actual['query'] == 'Санкт-Петербург' and actual['country_iso2'] == 'RU'
     assert actual['role'] == 'destination' and actual['stay_id'] == 'new-stay-1'
-    assert not actual.get('country_ref')
+    assert actual['country_ref']['source_provider'] == 'unicode-cldr'
+    assert actual['country_ref']['country_iso2'] == 'RU'
+    assert actual['country_ref']['state_version'] == harness.place_resolution.calls[0]['state']['state_version']
     assert (state.model_dump(mode='json'), request, session) == original
 
 

@@ -34,7 +34,7 @@ from .observability import groq_rate_facts, model_snapshot, request_stats, secon
 _SECRETS: set[str] = set()
 _EPHEMERAL_PUBLIC_SECRETS: set[str] = set()
 _SENSITIVE_FIELDS = {"api_key", "apikey", "api_token", "key", "authorization", "access_token", "password", "secret"}
-_LLM_CREDENTIAL_FIELDS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "CLOUDFLARE_API_TOKEN", "ZAI_API_KEY", "GIGACHAT_AUTH_KEY")
+_LLM_CREDENTIAL_FIELDS = ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "GROQ_API_KEY", "CLOUDFLARE_API_TOKEN", "ZAI_API_KEY", "GIGACHAT_AUTH_KEY", "LLM_API_KEY")
 _LIMIT_SOURCES = {
     "upstream_provider_shared_pool", "account_quota", "key_rate_limit",
     "workspace_credit_limit", "exhausted_global_quota", "unknown",
@@ -332,7 +332,7 @@ class _HTTPGateway:
                         details["rate_limits"] = facts
                         if "retry_after_seconds" in facts:
                             details["retry_after_seconds"] = facts["retry_after_seconds"]
-                elif ((provider == "zai" and url == "https://api.z.ai/api/paas/v4/chat/completions")
+                elif (provider == "external" or (provider == "zai" and url == "https://api.z.ai/api/paas/v4/chat/completions")
                       or (provider == "cloudflare" and re.fullmatch(
                           r"https://api\.cloudflare\.com/client/v4/accounts/[a-fA-F0-9]{32}/ai/v1/chat/completions", url))):
                     if (retry := seconds_hint(response.headers.get("retry-after"))) is not None:
@@ -474,6 +474,11 @@ one compound message, even when that city is outside the DEMO search coverage.
 Known geographic cities in the schema can be retained; search coverage is a
 separate backend decision. 'No children' is known absence, not a reason to ask
 again. Never discard the remaining explicit facts because one field is missing.
+The destination city belongs in upsert_stay.value.city or in resolve_place with
+role=destination and a stay_id from the supplied schema; NEVER use route_policy.end_city as a destination field.
+round_trip returns to the saved origin and requires end_city=null and end_place_id=null.
+A nonempty end_city is only for open_jaw with an explicitly requested different final city.
+If the user did not change the return policy, do not propose set_route_policy.
 """
 
 
@@ -582,7 +587,7 @@ class LLMGateway(_HTTPGateway):
         mode = context.get("__response_mode")
         if mode not in {None, "readonly_answer_v1"}:
             _fail("Неизвестная серверная роль модели.", provider, "CONFIG_BLOCKED")
-        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai", "gigachat"}:
+        if provider not in {"gemini", "openrouter", "ollama", "groq", "cloudflare", "zai", "gigachat", "external"}:
             _fail("Неизвестный LLM-провайдер.", provider, "CONFIG_BLOCKED")
         context_compression = None
         visible_context = safe_model_context({key: value for key, value in context.items()
@@ -618,7 +623,20 @@ class LLMGateway(_HTTPGateway):
         self._request_metrics.set(metrics)
         groq_transport_role = None
         groq_transport_version = 1
-        if provider == "gemini":
+        if provider == "external":
+            from .external_llm import ExternalConfigError, external_profile, request_payload, response_text
+            try:
+                profile = external_profile(self.settings)
+                model = profile.model
+                headers, payload = request_payload(profile, system, prompt, output_schema, max_tokens)
+            except ExternalConfigError as error:
+                raise ProviderError(error.code, str(error), provider=provider) from None
+            body = await self._request(provider, "POST", profile.endpoint, headers=headers, json=payload)
+            try:
+                content = response_text(profile, body)
+            except ExternalConfigError as error:
+                raise ProviderError(error.code, str(error), provider=provider) from None
+        elif provider == "gemini":
             model = str(_setting(self.settings, "GEMINI_MODEL", "gemini-3.8-flash"))
             if model != "gemini-3.8-flash":
                 _fail("Для этой конфигурации разрешён только подтверждённый free Gemini model ID.", provider, "CONFIG_BLOCKED")
@@ -988,8 +1006,12 @@ class LLMGateway(_HTTPGateway):
                 if len(violations) >= 3:
                     break
             if violations:
+                from .llm_schema_feedback import operation_schema_feedback
+                precise = operation_schema_feedback(result, output_schema)
                 raise ProviderError("INVALID_LLM_OPERATION", "Ответ модели нарушает контракт доступных операций.",
-                    provider=provider, details={"schema_errors": violations,
+                    provider=provider, details={"schema_errors": [
+                        {"path": item["path"], "rule": item["rule"]} for item in precise] if precise else violations,
+                        **({"schema_repair_hints": precise} if precise else {}),
                         "rejected_structured_contract": model_snapshot(result, self.settings)})
         metadata = {"provider": provider, "model": model, **self.call_metadata_for_current_call()}
         # Kept for legacy callers. Harness uses the per-result metadata instead

@@ -234,7 +234,9 @@ async def test_public_HTTP_contract_fixed_host_Moscow_date_no_auth_proxy_redirec
         result = await client.fetch_snapshot()
         assert result["source_url"] == str(calls[0].url)
         assert result["as_of"] == "2026-10-27" and len(calls) == 1
-        assert client._client.timeout.read == 10 and client._client.follow_redirects is False
+        # The official endpoint was observed returning valid XML after 11.1s;
+        # keep a finite 20s bound without changing host, retries or provenance.
+        assert client._client.timeout.read == 20 and client._client.follow_redirects is False
     finally:
         await client.close()
 

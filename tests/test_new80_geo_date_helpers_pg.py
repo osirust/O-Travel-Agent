@@ -83,7 +83,9 @@ async def test_pg_actual013_current_qualified_country_reaches_source_and_persist
         operations=checked, model_meta={'provider': 'controlled', 'model': 'captured-actual'})
     actual = h.place_resolution.calls[0]['value']
     assert actual['query'] == 'Санкт-Петербург' and actual['country_iso2'] == 'RU'
-    assert not actual.get('country_ref')
+    assert actual['country_ref']['source_provider'] == 'unicode-cldr'
+    assert actual['country_ref']['country_iso2'] == 'RU'
+    assert actual['country_ref']['state_version'] == h.place_resolution.calls[0]['state']['state_version']
     after = await repository.get_session(made['session_id'])
     expected = TripState.model_validate(session['state'])
     assert after['state_version'] == session['state_version'] + 1

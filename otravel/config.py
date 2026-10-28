@@ -72,6 +72,8 @@ class Settings:
 
     def provider_settings(self) -> dict[str, Any]:
         keys = [
+            "LLM_API_FORMAT", "LLM_BASE_URL", "LLM_MODEL", "LLM_API_KEY", "LLM_EXTERNAL_API_CONFIRMED",
+            "LLM_JSON_MODE", "LLM_TOKEN_LIMIT_FIELD", "LLM_AUTH_STYLE", "LLM_ANTHROPIC_VERSION",
             "GEMINI_API_KEY", "GEMINI_MODEL", "OPENROUTER_API_KEY", "OPENROUTER_MODEL", "OPENROUTER_BACKUP_MODEL",
             "GROQ_API_KEY", "GROQ_MODEL", "GROQ_REASONING_EFFORT", "GROQ_STRUCTURED_TRANSPORT_ENABLED", "GROQ_TRANSPORT_VERSION",
             "GIGACHAT_AUTH_KEY", "GIGACHAT_MODEL", "GIGACHAT_CA_FILE",
@@ -113,9 +115,13 @@ class Settings:
 
 
 def provider_status() -> dict[str, Any]:
+    from .external_llm import external_status
+
+    external = external_status({})
     return {
         "_runtime": {"llm_provider": os.getenv("LLM_PROVIDER", "openrouter"),
-                     "model": os.getenv("OLLAMA_MODEL", "qwen3.5:4b") if os.getenv("LLM_PROVIDER") == "ollama"
+                     "model": external.get("model") if os.getenv("LLM_PROVIDER") == "external"
+                              else os.getenv("OLLAMA_MODEL", "qwen3.5:4b") if os.getenv("LLM_PROVIDER") == "ollama"
                               else os.getenv("GEMINI_MODEL", "gemini-3.8-flash") if os.getenv("LLM_PROVIDER") == "gemini"
                               else os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b") if os.getenv("LLM_PROVIDER") == "groq"
                               else os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra") if os.getenv("LLM_PROVIDER") == "gigachat"
@@ -123,6 +129,7 @@ def provider_status() -> dict[str, Any]:
                               else os.getenv("ZAI_MODEL", "glm-4.7-flash") if os.getenv("LLM_PROVIDER") == "zai"
                               else os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free")},
         "gemini": {"configured": bool(os.getenv("GEMINI_API_KEY")), "free_tier_confirmed": enabled("GEMINI_FREE_TIER_CONFIRMED"), "model": os.getenv("GEMINI_MODEL", "gemini-3.8-flash")},
+        "external": external,
         "gigachat": {"configured": bool(os.getenv("GIGACHAT_AUTH_KEY")), "model": os.getenv("GIGACHAT_MODEL", "GigaChat-3-Ultra"),
             "freemium_confirmed": enabled("GIGACHAT_FREEMIUM_CONFIRMED"), "paid_fallback": False, "parallel_flows": 1},
         "openrouter": {"configured": bool(os.getenv("OPENROUTER_API_KEY")), "model": os.getenv("OPENROUTER_MODEL", "dots-studio/dots-3-note-preview:free"), "backup_model": os.getenv("OPENROUTER_BACKUP_MODEL", ""), "paid_fallback": False},

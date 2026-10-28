@@ -243,6 +243,35 @@ class PlaceResolutionCoordinator:
             "source_provider": metadata.get("source_provider", "liteapi"),
             "retrieved_at": metadata["retrieved_at"], "expires_at": metadata["expires_at"]}
 
+    def current_literal_country_ref(self, request, state, source_text):
+        """Bind a current paired user declaration to verified packaged country data.
+
+        Only the worker supplies ``source_text`` from its current server run.
+        ``resolve`` itself still treats model country hints as display-only;
+        this method neither selects a city nor admits any source identity.
+        """
+        from .country_lexicon import DATA_SHA256, _lexicon
+        from .intent_grounding import current_city_country_hint
+
+        data = _state(state)
+        if not isinstance(request, dict) or request.get("kind") != "city":
+            return None
+        req = deepcopy(request)
+        req["stay_id"] = _target(data, req.get("role"), req.get("stay_id"))
+        country = current_city_country_hint(data, source_text, req.get("role"), req.get("query"))
+        if country is None:
+            return None
+        _require(req.get("country_iso2") in {None, country}, "literal_country_hint_conflict")
+        rows, _aliases, _pattern = _lexicon()
+        _require(country in rows, "invalid_literal_country")
+        now = self._now()
+        metadata = {"source_provider": "unicode-cldr", "source_sha256": DATA_SHA256,
+            "retrieved_at": now.isoformat(), "expires_at": (now + timedelta(hours=24)).isoformat()}
+        reference = self._country_ref(data, req,
+            {"country_iso2": country, "name": rows[country]["ru"]}, metadata)
+        self._checked_country_ref(reference, data, req)
+        return reference
+
     def _checked_country_ref(self, ref, state, request):
         _require(isinstance(ref, dict) and ref.get("owner") == COUNTRY_OWNER and ref.get("trip_id") == state["trip_id"]
             and type(ref.get("state_version")) is int and ref["state_version"] == state["state_version"]

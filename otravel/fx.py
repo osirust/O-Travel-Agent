@@ -262,7 +262,7 @@ class CBRFxClient:
                  clock: Callable[[], datetime] | None = None, ttl_seconds: int = DEFAULT_TTL_SECONDS):
         self._ttl = _ttl(ttl_seconds)
         self._clock = clock or (lambda: datetime.now(UTC))
-        self._client = httpx.AsyncClient(timeout=10.0, follow_redirects=False, trust_env=False, transport=transport)
+        self._client = httpx.AsyncClient(timeout=20.0, follow_redirects=False, trust_env=False, transport=transport)
 
     async def fetch_snapshot(self, now: datetime | None = None) -> FxSnapshot:
         requested_at = _utc(self._clock() if now is None else now)

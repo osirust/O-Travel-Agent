@@ -111,6 +111,15 @@ def _prepare_request(value, before, current, pending, coordinator, *, source_tex
         hint = current_city_country_hint(before, source_text, result["role"], result["query"])
         if hint is not None:
             result["country_iso2"] = hint
+    if result["kind"] == "city" and result.get("country_ref") is None:
+        # A hint alone is deliberately ignored by the coordinator. Only this
+        # current server-run declaration may create the ordinary checked CLDR
+        # country reference used by the real directory request.
+        reference = coordinator.current_literal_country_ref(result, current, source_text)
+        if reference is not None:
+            result["country_iso2"] = reference["country_iso2"]
+            result["country_ref"] = reference
+            return result
     authority = _owned_country(pending)
     supplied = result.get("country_ref")
     if (supplied is None and result["kind"] == "city" and isinstance(authority, dict)

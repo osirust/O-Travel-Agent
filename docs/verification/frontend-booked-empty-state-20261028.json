@@ -1,0 +1,44 @@
+{
+  "format": "otravel.frontend_booked_empty_state.v1",
+  "status": "CONTROLLED_RENDER_AND_EDIT_TRANSITION_PASS_ACTUAL_POST_ORDER_PENDING",
+  "finding_id": "HARNESS-006-POST-CHECKOUT-AUTOSEARCH-001",
+  "subtype": "BOOKED_EMPTY_STATE_REMAINED_IN_DERIVED_LOADING",
+  "fact": "With a complete BOOKED_DEMO snapshot and an owned simulated order, all three offer tabs displayed an indefinite derived loading state even though the automatic-search guards correctly sent no requests.",
+  "change": "AgentProposal and ExternalCatalog treat canonical BOOKED_DEMO as a completed empty state, suppress their derived loading indicators and retry/load-more controls, and show the saved-example message. No prices, source flags, checkout or API behavior changed.",
+  "paths": {
+    "frontend/src/components/AgentProposal.jsx": "901dbd75929d93e4defe5ce3c54f0b9cbf9b975676a20c641e091d01bfe1a7ab",
+    "frontend/src/components/ExternalCatalog.jsx": "ead94ac9ff1dbf01e05dfba3a0b8d3b57749d1ec349e2d75e48a19f671f2e1e5"
+  },
+  "verification": {
+    "node_contract_tests": {"passed": 38, "failed": 0},
+    "production_build": {"passed": true, "javascript_asset": "index-De37d6ef.js", "javascript_kb": 341.70, "gzip_kb": 104.95},
+    "browser": "Browser plugin unavailable; regular Playwright with installed Chrome, fresh isolated profile and controlled HTTP DTOs",
+    "viewport": {"width": 1440, "height": 1000},
+    "controlled_before": {
+      "agent_spinner": 1,
+      "hotel_spinner": 1,
+      "flight_spinner": 1,
+      "automatic_posts": 0
+    },
+    "controlled_after": {
+      "agent_spinner": 0,
+      "hotel_spinner": 0,
+      "flight_spinner": 0,
+      "all_tabs_saved_example_message": true,
+      "reload_automatic_posts": 0,
+      "explicit_budget_edit": "One typed command transitions the fixture to TRIP_DRAFT revision2; one whole-plan search and one explicit tab hotel search then resume at revision2.",
+      "javascript_or_console_errors": 0
+    },
+    "actual_model_http": 0,
+    "actual_supplier_http": 0,
+    "actual_order_created": false,
+    "serving_container_restarted": false,
+    "serving_update": "Existing owned running frontend received only the built static dist; old assets were retained. Extraction helper was created but never started."
+  },
+  "private_evidence": "C:/Users/ggdro/AppData/Local/Temp/otravel-frontend-contract-20261028/booked-empty-{before,after}-report.json and booked-empty-after-1440.png",
+  "limitations": [
+    "The booked snapshot/order and subsequent edit responses were explicit controlled fixtures; this is not a successful actual supplier checkout.",
+    "The earlier real RUB preview503 fx_source_unavailable and actual natural-intake INVALID_LLM_OPERATION remain separate open evidence.",
+    "Actual R26 quote, consent, one local order and post-order render/reload await the native R26 rollout. No new provider request was made for this repair."
+  ]
+}

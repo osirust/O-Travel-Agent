@@ -5,11 +5,33 @@ import { filterHotels, sortHotels, EMPTY_HOTEL_FILTERS } from '../src/lib/hotelF
 import { componentRequest, serverPlanReviewAction } from '../src/lib/travel.js';
 import { createTripDraft, buildTripOperations } from '../src/lib/tripDraft.js';
 import { messageText } from '../src/lib/chat.js';
+import { TravelSession } from '../src/lib/session.js';
 
 const snapshot = { session_id: 'session-one', state_version: 4 };
 const offer = { offer_id: 'offer-one', provider: 'serpapi', amount_minor: 27600, currency: 'USD', price_kind: 'INDICATIVE_STAY_TOTAL', details: { kind: 'hotel', provider_data: { property_token: 'property-one' } } };
 const photo = { url: 'https://lh3.googleusercontent.com/grass-cs/a=s600', source: 'SERPAPI', kind: 'HOTEL', isActualPropertyPhoto: true, hotelId: 'property-one', sourceHotelId: 'property-one', gallery: [], metadata: { rating: 4.7, review_count: 82 } };
 function run(media, extra = {}) { return { run_id: 'run-one', session_id: snapshot.session_id, status: 'completed', result: { state_version: 4, result: { live_offers: [offer], live_media: { items: [{ offer_id: offer.offer_id, media }] } } }, ...extra }; }
+
+test('a completed simulated order stops automatic source and plan searches until a new trip edit', async () => {
+  const requests = [];
+  const session = new TravelSession({ request: async (path, options) => { requests.push({ path, body: options.body }); return { run_id: `run-${requests.length}` }; } }, { get: () => ({}), set: () => {} });
+  session.access = { session_id: snapshot.session_id, session_token: 'synthetic-session-token' };
+  session.sync = async () => {};
+  session.schedule = () => {};
+  const trip = { origin: 'Москва', travelers: [{ id: 'adult', type: 'adult' }], stays: [{ id: 'stay', city: 'Стамбул', check_in: '2026-11-10', check_out: '2026-11-13', rooms: [{ id: 'room', traveler_ids: ['adult'] }] }], route_policy: { kind: 'round_trip' }, search_policy: { mode: 'HYBRID' } };
+  session.patch({ snapshot: { ...snapshot, trip, status: 'BOOKED_DEMO' }, online: true, providers: { serpapi: { configured: true, free_tier_confirmed: true } } });
+  assert.equal(await session.ensureAutomaticProposal(), false);
+  assert.equal(await session.ensureAutomaticSearch('hotels'), false);
+  assert.equal(await session.ensureAutomaticProposal({ retry: true }), false);
+  assert.equal(await session.ensureAutomaticSearch('hotels', { retry: true }), false);
+  assert.deepEqual(requests, []);
+  session.patch({ snapshot: { ...snapshot, trip, state_version: 5, status: 'TRIP_DRAFT' } });
+  assert.equal(await session.ensureAutomaticProposal(), true);
+  assert.equal(await session.ensureAutomaticSearch('hotels'), true);
+  assert.equal(requests.length, 2);
+  assert.ok(requests.every(request => request.body.expected_version === 5));
+  session.destroy();
+});
 
 test('local component selections keep the separate whole-trip quote action and its version guards', () => {
   const state = { ...snapshot, trip_id: 'trip-one', waiting_reason: null };

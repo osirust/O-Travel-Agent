@@ -18,6 +18,8 @@ services:
 
   app:
     build: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: "5432"
@@ -25,6 +27,15 @@ services:
       DATABASE_USER: otravel
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-otravel-local-demo}
       LLM_PROVIDER: ${LLM_PROVIDER:-openrouter}
+      LLM_API_FORMAT: ${LLM_API_FORMAT:-openai}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_EXTERNAL_API_CONFIRMED: ${LLM_EXTERNAL_API_CONFIRMED:-false}
+      LLM_JSON_MODE: ${LLM_JSON_MODE:-prompt}
+      LLM_TOKEN_LIMIT_FIELD: ${LLM_TOKEN_LIMIT_FIELD:-max_tokens}
+      LLM_AUTH_STYLE: ${LLM_AUTH_STYLE:-auto}
+      LLM_ANTHROPIC_VERSION: ${LLM_ANTHROPIC_VERSION:-2023-06-01}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_FREE_TIER_CONFIRMED: ${GEMINI_FREE_TIER_CONFIRMED:-false}

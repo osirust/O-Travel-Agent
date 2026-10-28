@@ -156,6 +156,23 @@ def selected_jury_llm(values):
     return provider
 
 
+def external_jury_llm(values):
+    """Travel-only envelope: the recipient supplies every LLM credential.
+
+    Explicit opt-in never turns an incomplete LLM profile into tested inference.
+    The default encryption path still requires a dedicated selected LLM key.
+    """
+    prefixes = ('LLM_', 'OPENAI_', 'ANTHROPIC_', 'GEMINI_', 'GROQ_', 'OPENROUTER_',
+                'CLOUDFLARE_', 'GIGACHAT_', 'ZAI_', 'NVIDIA_', 'COHERE_')
+    credentials = [name for name in values if name.startswith(prefixes)
+                   and name.endswith(('_KEY', '_TOKEN', '_SECRET'))]
+    require(all(values[name] == '' for name in credentials), 'EXTERNAL_LLM_ENVELOPE_MUST_NOT_CONTAIN_LLM_KEYS')
+    require(bool(values.get('LITEAPI_API_KEY')) or bool(values.get('DUFFEL_ACCESS_TOKEN'))
+            or bool(values.get('SERPAPI_API_KEY')), 'TRAVEL_ONLY_ENVELOPE_REQUIRES_TRAVEL_KEY')
+    return {'llm_key_provided': False, 'recipient_llm_configuration_required': True,
+            'free_dialogue_ready_without_recipient_key': False}
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if os.name == "nt":
@@ -173,6 +190,10 @@ def main(argv=None):
     action.add_argument("--encrypt", action="store_true")
     action.add_argument("--prepare-empty-example", action="store_true")
     parser.add_argument("--confirm-jury-only-keys", action="store_true")
+    parser.add_argument("--confirm-project-travel-keys", action="store_true",
+                        help="Owner-authorized sharing of existing project travel test/search keys; no LLM key included.")
+    parser.add_argument("--external-llm-key", action="store_true",
+                        help="Encrypt only travel credentials; recipient must configure their own LLM API.")
     parser.add_argument("--replace", action="store_true")
     args = parser.parse_args(argv)
     try:
@@ -192,18 +213,25 @@ def main(argv=None):
                 "age_binary_exists": AGE.is_file(), "output": str(ROOT / "secrets.env.age")}))
             return 0
         if args.encrypt:
-            require(args.confirm_jury_only_keys, "JURY_ONLY_KEY_PROVENANCE_CONFIRMATION_REQUIRED")
+            if args.external_llm_key:
+                require(args.confirm_project_travel_keys, "PROJECT_TRAVEL_KEY_SHARING_CONFIRMATION_REQUIRED")
+            else:
+                require(args.confirm_jury_only_keys, "JURY_ONLY_KEY_PROVENANCE_CONFIRMATION_REQUIRED")
         raw = read_jury_env()
         values = parse_env(raw)
         example = parse_env((ROOT / ".env.example").read_bytes(), empty=True)
         require(set(values) == set(example), "JURY_ENV_EXAMPLE_NAMES_MUST_MATCH")
-        selected_jury_llm(values)
+        llm_delivery = external_jury_llm(values) if args.external_llm_key else {
+            'llm_key_provided': True, 'provider': selected_jury_llm(values)}
+        if args.external_llm_key:
+            llm_delivery['key_provenance'] = 'OWNER_PROVIDED_PROJECT_TRAVEL_KEYS_NOT_REISSUED_LLM_KEYS'
         if not args.encrypt:
-            print(json.dumps({"status": "JURY_FORMAT_VALID", "variables": len(values), "values_printed": False}))
+            print(json.dumps({"status": "JURY_FORMAT_VALID", "variables": len(values), "values_printed": False,
+                              **llm_delivery}))
             return 0
         result = encrypt_bytes(raw, RECIPIENT, ROOT / "secrets.env.age", replace=args.replace)
         print(json.dumps({"status": "JURY_ENV_ENCRYPTED_BINARY", "output": str(ROOT / "secrets.env.age"),
-            "recipient_sha256": RECIPIENT_SHA256, "variables": len(values), **result}))
+            "recipient_sha256": RECIPIENT_SHA256, "variables": len(values), **llm_delivery, **result}))
         return 0
     except (SubmissionError, OSError, UnicodeError) as error:
         code = str(error) if isinstance(error, SubmissionError) else type(error).__name__

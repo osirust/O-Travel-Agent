@@ -178,7 +178,7 @@ export class TravelSession {
   search() { return this.submit('search', { mode: this.state.snapshot.trip.search_policy.mode }); }
   async ensureAutomaticProposal({ retry = false } = {}) {
     const { snapshot, busy, sending, restoring, online, plans } = this.state;
-    if (!snapshot || !this.access || busy || sending || restoring || online !== true || snapshot.waiting_reason || !agentProposalReady(snapshot.trip)) return false;
+    if (!snapshot || !this.access || snapshot.status === 'BOOKED_DEMO' || busy || sending || restoring || online !== true || snapshot.waiting_reason || !agentProposalReady(snapshot.trip)) return false;
     if (!retry && plans.length) return false;
     const key = `${snapshot.session_id}:${snapshot.state_version}:agent`;
     if (!retry && this.autoAttempts[key]) return false;
@@ -204,7 +204,7 @@ export class TravelSession {
   }
   async ensureAutomaticSearch(kind, { retry = false } = {}) {
     const { snapshot, busy, sending, restoring, providers, online, external } = this.state;
-    if (!snapshot || !this.access || busy || sending || restoring || online !== true || snapshot.waiting_reason === 'user_pause' || !providers?.serpapi?.configured || !providers?.serpapi?.free_tier_confirmed) return false;
+    if (!snapshot || !this.access || snapshot.status === 'BOOKED_DEMO' || busy || sending || restoring || online !== true || snapshot.waiting_reason === 'user_pause' || !providers?.serpapi?.configured || !providers?.serpapi?.free_tier_confirmed) return false;
     if (!retry && external[kind] !== null) return false;
     const key = this.autoSearchKey(kind);
     if (!retry && this.autoAttempts[key]) return false;

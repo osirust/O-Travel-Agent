@@ -293,6 +293,8 @@ def _can_switch_model(error: Exception) -> bool:
 
 def _requested_model(gateway: Any, provider: str) -> str:
     config = getattr(gateway, "settings", {})
+    if isinstance(config, dict) and provider == "external":
+        return str(config.get("LLM_MODEL", ""))
     if isinstance(config, dict) and provider == "ollama":
         return str(config.get("OLLAMA_MODEL", "qwen3.5:4b"))
     if isinstance(config, dict) and provider == "groq":
@@ -603,6 +605,12 @@ class Harness:
         if isinstance(gateway, LLMGateway):
             config = gateway.settings
             primary = config.get("LLM_PROVIDER", self.settings.llm_mode)
+            if primary == "external":
+                from .external_llm import ExternalConfigError, external_profile
+                try:
+                    external_profile(config)
+                except ExternalConfigError as error:
+                    raise ProviderError(error.code, str(error), provider="external") from None
             gemini_ready = bool(config.get("GEMINI_API_KEY")) and str(config.get("GEMINI_FREE_TIER_CONFIRMED", False)).lower() in {"true", "1", "yes"}
             router_ready = bool(config.get("OPENROUTER_API_KEY")) and str(config.get("OPENROUTER_MODEL", "")).endswith(":free")
             if primary == "gemini" and router_ready:
@@ -663,7 +671,7 @@ class Harness:
         temporary = gateway is not self.llm
         attempt_meta: list[dict] = []
         try:
-            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq", "cloudflare", "zai"}:
+            if isinstance(gateway, LLMGateway) and provider in {"gemini", "openrouter", "groq", "cloudflare", "zai", "external"}:
                 current_model = _requested_model(gateway, provider)
                 health = await self.store.model_availability(provider, current_model)
                 if not health["available"]:
@@ -688,7 +696,7 @@ class Harness:
                     min(2000, self.settings.max_cloudflare_llm_calls_per_day) if provider == "cloudflare" else
                     min(1000, self.settings.max_groq_llm_calls_per_day) if provider == "groq" else
                     min(1000, self.settings.max_gigachat_llm_calls_per_day) if provider == "gigachat" else
-                    min(2000, self.settings.max_llm_calls_per_day) if provider == "zai" else
+                    min(2000, self.settings.max_llm_calls_per_day) if provider in {"zai", "external"} else
                     min(50 if self.settings.max_llm_calls_per_day == 50 else 40,
                         self.settings.max_llm_calls_per_day) if provider == "openrouter" else
                     min(40, self.settings.max_llm_calls_per_day) if isinstance(self.llm, LLMGateway) else self.settings.max_llm_calls_per_day)
@@ -1182,10 +1190,10 @@ class Harness:
                         **({"response_role": "readonly_answer_v1"} if readonly else {})}
                 except (ProviderError, ValidationError) as exc:
                     if isinstance(exc, ProviderError) and exc.code == "INVALID_LLM_OPERATION" and exc.details.get("schema_errors"):
-                        context["validation_feedback"] = {"errors": exc.details["schema_errors"],
-                            "note": "Выбери точный существующий target_id из enum и разрешённую структуру value. Не придумывай типы операций или имена полей."}
+                        context["validation_feedback"] = {"errors": exc.details.get("schema_repair_hints") or exc.details["schema_errors"],
+                            "note": "Исправь указанные поля по JSON Schema: expected_type/expected_const/allowed_values задаются сервером. Сохрани остальные явно заданные факты. Не придумывай типы операций, ID или имена полей."}
                         rejected = exc.details.get("rejected_structured_contract")
-                        if provider == "zai" and isinstance(rejected, dict) and rejected.get("captured") is True:
+                        if isinstance(rejected, dict) and rejected.get("captured") is True:
                             context["validation_feedback"]["rejected_contract"] = rejected["value"]
                     if isinstance(exc, ValidationError):
                         allowed_locations = {"operations", "control", "action", "type", "target_id", "value", "reply", "unknowns", "conflicts"}
@@ -1200,6 +1208,8 @@ class Harness:
                         failed.update(gateway.call_metadata_for_current_call())
                         if isinstance(details.get("schema_errors"), list):
                             failed["schema_errors"] = details["schema_errors"][:3]
+                        if isinstance(details.get("schema_repair_hints"), list):
+                            failed["schema_repair_hints"] = details["schema_repair_hints"][:3]
                         rejected = details.get("rejected_structured_contract")
                         if isinstance(rejected, dict) and rejected.get("captured") is True and isinstance(rejected.get("value"), dict):
                             # Only the gateway's final structured JSON, already
