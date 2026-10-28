@@ -49,7 +49,7 @@ export class TravelSession {
       this.patch({ online: health.status === 'fulfilled' && health.value.database === 'ready', providers: providers.status === 'fulfilled' ? providers.value : null });
       if (this.access) {
         this.patch({ restoring: true });
-        try { await this.sync(); } catch (error) { this.handleError(error); }
+        try { await this.open(); } catch (error) { this.handleError(error); }
         finally { this.patch({ restoring: false }); }
       }
     })();
@@ -57,15 +57,26 @@ export class TravelSession {
   }
 
   async open({ fresh = false } = {}) {
-    if (this.opening) return this.opening;
+    if (this.opening) {
+      try { await this.opening; return true; } catch { return false; }
+    }
     this.opening = (async () => {
-      if (!fresh && this.access) { await this.sync(); return; }
+      if (!fresh && this.access) {
+        try { await this.sync(); return; }
+        catch (error) {
+          if (error.missingSessionId !== this.access?.session_id) throw error;
+          // Keep the old local journal, but never replay it into another trip.
+          this.persistence.set(`${KEY}:unavailable:${this.access.session_id}`, {
+            access: this.access, deliveries: this.deliveries, confirmDelivery: this.confirmDelivery,
+          });
+        }
+      }
       const snapshot = await this.api.request('/api/v1/sessions', { method: 'POST', body: {} });
       if (!snapshot.session_id || !snapshot.session_token) throw new Error('Не удалось создать поездку. Попробуйте ещё раз.');
-      clearTimeout(this.timer); this.mediaController?.abort(); this.runs.clear(); this.cursor = 0;
+      clearTimeout(this.timer); this.mediaController?.abort(); this.runs.clear(); this.cursor = 0; this.mediaKey = null; this.reported = new Set();
       this.access = { session_id: snapshot.session_id, session_token: snapshot.session_token };
       this.deliveries = []; this.confirmDelivery = null; this.liveKinds = {}; this.liveClasses = {}; this.autoAttempts = {}; this.patch({ flightClass: 'economy' }); this.persist();
-      this.patch({ snapshot, messages: [], plans: [], selectedId: null, changes: [], media: {}, quote: null, orders: [], busy: false,
+      this.patch({ snapshot, messages: [], plans: [], selectedId: null, changes: [], media: {}, quote: null, orders: [], busy: false, progress: '', previewing: false, confirming: false,
         deliveries: [], confirmDelivery: null, external: { hotels: null, flights: null }, externalMedia: {}, hotelPagination: { known: false, next: null }, autoAttempts: {}, notice: null, online: true });
     })();
     try { await this.opening; return true; } catch (error) { this.handleError(error); return false; }
@@ -77,7 +88,14 @@ export class TravelSession {
     if (this.syncing) return this.syncing;
     const sessionId = this.access.session_id;
     this.syncing = (async () => {
-      const [snapshot, history, orderData] = await Promise.all([this.request(this.path()), this.request(this.path('/messages')), this.request(this.path('/orders'))]);
+      let snapshot;
+      try { snapshot = await this.request(this.path()); }
+      catch (error) {
+        if (error.status === 404 && error.code === 'not_found') error.missingSessionId = sessionId;
+        throw error;
+      }
+      if (this.access?.session_id !== sessionId) return;
+      const [history, orderData] = await Promise.all([this.request(this.path('/messages')), this.request(this.path('/orders'))]);
       if (this.access?.session_id !== sessionId) return;
       const messages = [...(history.messages || [])].sort((a, b) => a.sequence - b.sequence);
       const ids = [...new Set(messages.map(message => message.run_id).filter(Boolean))];

@@ -1,0 +1,26 @@
+{
+  "finding_id": "UI-SESSION-404-20261028-001",
+  "status": "CLOSED_RELATED_RECOVERY",
+  "scope": "Missing saved session at frontend startup; not full dialogue acceptance",
+  "frontend_tests_passed": 47,
+  "new_recovery_tests_passed": 6,
+  "production_build": "PASS",
+  "actual_browser": {
+    "url": "http://localhost:18082/#studio",
+    "browser": "Chrome via Playwright; Browser plugin not available",
+    "viewport": "1440x960",
+    "synthetic_missing_session_returned_404": true,
+    "fresh_session_creates": 1,
+    "old_local_journal_backed_up_without_replay": true,
+    "greeting_visible_without_manual_reload": true,
+    "same_new_session_and_greeting_preserved_after_reload": true,
+    "session_not_found_message_visible": false,
+    "page_errors": []
+  },
+  "bundle": "index-C5he-Bca.js",
+  "bundle_sha256": "fcb5216e10fa013aa057b8118ad57d31f5ad9616f62289a31ce900e2230e18e1",
+  "same_running_frontend_container_and_start": true,
+  "backend_or_database_reset": false,
+  "new_llm_or_tourist_provider_calls": 0,
+  "limits": "403, service/network failures and missing individual runs preserve the existing session; no full corpus rerun."
+}
