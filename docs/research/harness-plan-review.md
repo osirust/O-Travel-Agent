@@ -1,3 +1,26 @@
+# Текущая проверенная ревизия — R20, 28 октября
+
+**7463 controlled PASS / 0 fail / 0 skip**,451,01с; sourceE9bd2f7d7,87package/301testfiles,source/testsunchanged. [Fullproof](../verification/prefrontend-r20-checkpoint-20261028.json). R20 готовится к публикации/точному Docker/CFnative. R19/7384 был сохранён с rollout HOLD; старые actualFAIL не переименованы в PASS.
+
+| ID | Подтверждено | Что остаётся |
+| --- | --- | --- |
+| HARNESS-001 | R18typedfreshDB:22realHTTP/2hotels/4rooms/3flights/4pax/2photos/2preview/old409/oneBOOKED_DEMO+retry. ИсходныеoracleFAIL иcorrectionsобъявлены. | Не freshcomplexNLU/LIVE_BOOKABLE; supplier-equivalence OPEN. |
+| HARNESS-002 | CanonicalIDs/schema/age/room/dates/budget/версии в7463; fixturebytepins сохраняют проверенныеbytes. | Engineering bounds не productmax; неуниверсальнаяage/DOBattribution. |
+| HARNESS-003 | Scopedundo/cancel/history/CAS/quote/consent/idempotency guards сохранены. | Все свободные языковые ссылки не квалифицированы. |
+| HARNESS-004 | R20 exact079 readonlyreject/validanswer и080independentfacts/pending tested; R19 age/groupcount/roomlabels иR18questionbinding сохранены. | Fresh2CFcase ещё впереди; fulluniform80/106PASSнет,старые date/census/clarification gaps OPEN. |
+| HARNESS-005 | Durablefences/budgets/roles/control/одинactive/ограниченныеattempts проверены. Corpusledgersнеreset. | Vendorlimits отдельно; externalexactly-once не заявлен. |
+| HARNESS-006 | Backendcontract/media/R18Docker19/native31+typedactual готовы. | R20archive/runtimeиfinalfrontend/video/keys/main/tagpending. |
+| HARNESS-007 | ScopedPGfault/WAL/recovery иновыйfreshDBorderreadback сохранены. | Не arbitrarydisk/networkloss;GigaTLSgeneration0. |
+| HARNESS-008 | 697uniqueaccepted/692terminal/5oldqueued,0missing/double/textmismatch; all80historical+newanswersreviewed. | 657completed не равно657semanticPASS; mixedepochs/models/partialoracles/35failed;106fullNLUнет. |
+
+**HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001 — CONTROLLED_SCOPE_CLOSED / FRESH_MODEL_PENDING.** Actual079T5 вопрос изменилrooms. Причины: «Теперь» не было вsharedquestionprefix, аpartyoverride не распознал второйroomtopic. Теперь strictreadonlyrole запрещаетops, validselectorвозвращаетcanonicalparty+rooms; mixedliteralbudget/age не проглатываются.61pure/6readonlyPG/39routingPGи7463. [Repair](../verification/readonly-now-prefix-079-repair-20261028.json). Временная метка READONLY-NOW-PREFIX — alias,неотдельныйfinding. НовыйnativeCF079 должен сохранитьexactpending/state/version/rooms.
+
+**HARNESS-004-GROUP-PENDING-SHORTCUT-SWALLOW-080-001 — CONTROLLED_SCOPE_CLOSED / FRESH_MODEL_PENDING.** Unknownfamilycountshortcut раньше перехватываллюбойtext/0model итерял470k/lowest_total. Теперьearlybranchтолькодлязакрытогоcount2–10; самостоятельныефакты/roster/queryидутвnormalpath, существующийpostmodelguardсохраняетpending/nosearch.54newtargeted(52pure+2PG),143relatedpure overlapнесуммируется,общий7463. [Repair](../verification/group-count-pending-gate-080-repair-20261028.json). ExactoldFAILсохранён; newmodel080ещёнеисполнен.
+
+R19boundedage078, ordinalfamilyadmission076, roomfactlabels077, questionbinding075 входят вновуюревизию; исходныедоказательства и границысм.ниже. GigaOAuth200/TLStimeoutнеуспешнаямодель. Jurykey/ciphertext/video/finalfrontend/main/tag покаOPEN.
+
+## Исторический checkpoint R19 и исходные доказательства
+
 # Текущий проверенный checkpoint — R19, 28 октября
 
 **7384 controlled PASS / 0 fail / 0 skip**, 447,54 с; sourceE `f36166b9…`, 86 package files / 297 test files, source/tests unchanged. [Квитанция](../verification/prefrontend-r19-checkpoint-20261028.json). R19 сохраняется в Git как checkpoint; rollout HOLD до отдельного исправления нового readonly079 дефекта. Live8084 пока R18/4645c24/4e383ff6: exactDocker19 и native31checks с0model/tool. Предыдущие FAIL и фактические языковые ошибки сохранены.

@@ -94,7 +94,7 @@ _NO_CHANGE = re.compile(
     r"(?:меняй|изменяй|добавляй|исправляй|удаляй|создавай|бронируй|оплачивай|трогай|снимай|отменяй)\b"
 )
 _QUESTION_START = re.compile(
-    r"^(?:(?:а|и|ну|тогда|в|на|о|про|сейчас)\s+)*(?:почему|кто|что|где|когда|как|какой|какое|каков|какого|какому|каком|какая|какие|каких|"
+    r"^(?:(?:а|и|ну|тогда|теперь|в|на|о|про|сейчас)\s+)*(?:почему|кто|что|где|когда|как|какой|какое|каков|какого|какому|каком|какая|какие|каких|"
     r"сколько|скоко|откуда|куда|можно|могу|это|ты|вы|у тебя|сейчас у тебя|если|а если|неужели|разве)\b"
 )
 _REMINDER_START = re.compile(
@@ -107,11 +107,18 @@ def readonly_question(text: str) -> bool:
     key = " ".join(text.casefold().replace("ё", "е").split())
     if not key or len(key) > 2500 or explicit_search_request(text):
         return False
-    if re.match(
-        r"^(?:бюджет|общий бюджет|лимит|заезд|выезд|ребенку|детей|взрослых|город отправления|назначение)\b",
-        key,
-    ):
-        return False  # A new fact followed by a question remains a mixed input.
+    # Reuse the existing literal fact-prefix boundary for later clauses too.
+    # A question or a quoted/hypothetical clause is not a new asserted fact.
+    literal = re.sub(r'«[^»]*»|“[^”]*”|"[^"]*"', " ", key)
+    for clause in re.findall(r"[^.!?;]+[.!?;]?", literal):
+        if clause.rstrip().endswith("?"):
+            continue
+        clause = re.sub(r"^(?:(?:а|и|теперь|тогда|сейчас)\s+)*", "", clause.strip())
+        if re.match(
+            r"^(?:бюджет|общий бюджет|лимит|заезд|выезд|ребенку|детей|взрослых|город отправления|назначение)\b",
+            clause,
+        ):
+            return False  # Mixed asserted intake must not disappear into a read-only reply.
     clean = _NO_CHANGE.sub("", key)
     discussion_only = re.search(
         r"\b(?:пока только обсуждаем|только обсуждаем|гипотетический вопрос|ничего не меняй|пока ничего не меняй|никого не добавляй)\b",

@@ -1,0 +1,84 @@
+{
+  "finding_id": "HARNESS-004-READONLY-DISCOURSE-PREFIX-MUTATION-079-001",
+  "status": "SCOPED_SHARED_READONLY_REPAIR_TESTED_FULL_R20_PENDING",
+  "original_evidence": {
+    "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "source_package": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "case": "ZAI100-079",
+    "turn": 5,
+    "raw_snapshot_sha256": "940ed9aa554088119e71b2807cd43399da1508bef0eeadc1b29e84758bec2ee5",
+    "checked_snapshot_sha256": "44c382c6c45204ac4fc302fd9e8dc0aa8b5a780ceb05dcd32faa1fdfd811b0d1",
+    "cause": "The shared question classifier did not admit Теперь before сколько. Independently, the Harness party-only override ignored a second room topic. The general model path then admitted two room mutations from a purely factual question after suppressing only unrequested traveler removal."
+  },
+  "implementation": {
+    "shared_classifier": "The existing repeated question-prefix grammar also accepts теперь. The same existing literal fact-field prefix check is applied to unquoted non-question clauses, including later budget/age fact tails.",
+    "harness_integration": "Only the existing secondary-topic regex gains room/rooming/family cues, preserving the strict read-only schema for compound party plus room questions.",
+    "no_exact_text_branch": true,
+    "mutation_authority": "The normal read-only role forbids all operation/control mutations; invalid cached output is rejected without repair or state changes.",
+    "mixed_inputs": "Imperatives, controls, searches, explicit new literal budget/age facts and short scalar slot answers retain their existing non-read-only paths."
+  },
+  "verification": {
+    "pure_red": {
+      "failed": 7,
+      "passed": 11,
+      "private_report": ".local/readonly-now-prefix-pure-red-20261028.xml"
+    },
+    "cached_pg_red": {
+      "failed": 1,
+      "seconds": 2.73,
+      "reason": "The original pure factual query completed a mutating cached batch instead of rejecting it.",
+      "private_report": ".local/readonly-now-prefix-pg-red-20261028.xml"
+    },
+    "pure_final": {
+      "new_passed": 23,
+      "with_existing_answering_passed": 61,
+      "seconds": 2.85
+    },
+    "readonly_pg_final": {
+      "passed": 6,
+      "seconds": 7.18,
+      "new_exact_cases": 2,
+      "scope": "Real isolated otravel_test/ASGI, cached StubLLM and controlled travel; no external HTTP.",
+      "malicious_output": "INVALID_LLM_OPERATION, one read-only model attempt, no repair; trip/version/rooms/groups/pending/quotes/orders unchanged.",
+      "valid_selector": "party,rooms returns canonical three adults/two children and unchanged first-room members; no source calls or state changes.",
+      "existing_controls": "Four old read-only role/active-quote/reservation/pause tests remain passing."
+    },
+    "routing_pg_final": {
+      "passed": 39,
+      "seconds": 37.92,
+      "scope": "Existing scalar one-adult/no-children, individual child ages, short answers, room counts, explicit mixed edits, questions, controls and cart/quote paths."
+    },
+    "ruff": {
+      "answering_and_new_tests": "PASS",
+      "changed_harness_secondary_line_diagnostics": 0,
+      "whole_legacy_harness": "Not clean: 16 pre-existing diagnostics outside the changed line, not fixed by this scope.",
+      "legacy_codes": {
+        "I001": 4,
+        "UP017": 8,
+        "SIM114": 1,
+        "S112": 1,
+        "BLE001": 2
+      },
+      "undefined_name_or_F_codes": 0
+    }
+  },
+  "limitations": [
+    "Full frozen R20 and rollout are not claimed by this scoped repair.",
+    "The literal fact-tail check uses the pre-existing finite field prefixes and explicit clause boundaries; arbitrary mixed free-form statements are not universally parsed.",
+    "This does not resolve older group/census/model omissions or qualify a fresh live-model dialogue.",
+    "Separate 080 group-pending handling is owned by another repair and does not follow from these tests."
+  ],
+  "files_sha256": {
+    "otravel/answering.py": "62802752fcf7561809d728f0619b7fb4a19720ea8761ea2693007cebdf73cbd3",
+    "tests/test_readonly_now_prefix.py": "4743c1f61021f2a5e00e2c9b68527f1d81f425d6a37498376956fbfc19825c6a",
+    "tests/test_readonly_now_prefix_pg.py": "253dadce62bf46519e847f01b8d337c803f5ee19759445c4c97ae3e656071709",
+    "fixtures/regression/readonly-now-prefix-079-20261028.json": "efbbd708b928c172d304caae1966c759d4cfeb1ec78c4552ec206991a38d6660"
+  },
+  "harness_final_package_binding": "Final whole Harness hash is recorded by Root after the separate 080 integration; this receipt pins the new module/test/fixture files only.",
+  "actions": {
+    "actual_model_http": 0,
+    "actual_supplier_http": 0,
+    "runtime_changes": 0,
+    "database_scope": "isolated otravel_test only"
+  }
+}

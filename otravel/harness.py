@@ -1572,17 +1572,21 @@ class Harness:
                 await self._ensure_current_run(session, run)
                 return ModelResult(operations=[], control={"action": "none"}, reply=reply,
                     unknowns=[], conflicts=[], speech_act="ASK", response_source="canonical_saved_answer"), None
-        secondary = re.search(r"бюджет|лимит|сумм|дат|ноч|вылет|город|маршрут|изменен|цен|стоим|заказ|валют|отел|стран", run["input_text"].casefold())
+        secondary = re.search(r"бюджет|лимит|сумм|дат|ноч|вылет|город|маршрут|изменен|цен|стоим|заказ|валют|отел|стран|номер|комнат|рассел|семь|семей", run["input_text"].casefold())
         if (kinds.intersection({"missing_data", "hypothetical_child", "source", "cart"})
                 or kinds == {"party"} and not secondary):
             # Keep the existing canonical capabilities and addressed intake.
             # A combined roster/budget/date question uses the richer role.
             readonly = False
         pending = session.get("pending_question")
+        from .family_count_answer import closed_family_count_answer
+        family_count_answer = (closed_family_count_answer(run["input_text"])
+                               if pending and pending.get("field") == "group.membership" else None)
         if (pending and pending.get("field") == "group.membership" and not session["state"].get("groups")
-                and (pending.get("context") or {}).get("membership_unknown") is True):
+                and (pending.get("context") or {}).get("membership_unknown") is True
+                and family_count_answer is not None):
             from .group_semantics import guard_group_separation
-            count = guard_group_separation(session["state"], [], run["input_text"],
+            count = guard_group_separation(session["state"], [], str(family_count_answer),
                 {**pending["context"], "field": "group.membership"})
             if count["handled"]:
                 question = count.get("question")

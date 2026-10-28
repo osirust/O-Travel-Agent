@@ -7,3 +7,10 @@ fixtures/regression/world-r4-preferences-20261027.json -text whitespace=cr-at-eo
 fixtures/regression/lite-fees-included-projection-20261027.json -text whitespace=cr-at-eol
 fixtures/evaluation/historical-tests/* -text whitespace=cr-at-eol
 fixtures/regression/adult-age-complex-r1-20261027.json -text whitespace=cr-at-eol
+
+# Preserve captured regression bytes used by the scoped R19/R20 receipts.
+fixtures/regression/room4-age-current-078-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/family-ordinal-count-076-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/room-fact-labels077-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/readonly-now-prefix-079-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/group-pending-budget-080-20261028.json -text whitespace=cr-at-eol
