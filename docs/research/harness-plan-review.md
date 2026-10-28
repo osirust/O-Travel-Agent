@@ -1,3 +1,15 @@
+# Текущий проверенный checkpoint — R22,28октября
+
+**7490controlledPASS/0fail/0skip**,458,76с; sourcec991b44e,87package/303testfiles,source/testsunchanged. [Proof](../verification/prefrontend-r22-checkpoint-20261028.json). СейчасGit/Docker/CF22rolloutиодинfreshSerpphotoquery; C20CFстабилен. ПредыдущийR21full3FAIL сохранён и атрибутированtest-registry pollution;productionкод не менялся при изоляцииэталонныхтестов.
+
+**HARNESS-001-SERP-PROPERTY-PHOTOS-001 — CONTROLLED_AND_CAPTURED_REPLAY_CLOSED / NATIVE_PENDING.** РеальныйR20ответимел20properties/180images,путьmediaтерялфото. View-onlyLRU256/6h/5URLs поexactoffer/propertytoken теперьотдаётsameDTOsourceSERPAPI дляsavedpartialGET/mediaиstandalone live_media. Цены/offers/source_snapshots/digest/consentнеизменны:20samebodyoffersbyteequal,20hotels/100galleryURLs.99targeted/peerREADY/newfull7490. БезопасностьURLsource-specificGooglehost/path,Litepolicyunchanged,noimagefetch/proxy;missplaceholder. [Repair](../verification/serp-property-photos-repair-20261028.json).
+
+**R21-full failure preserved / test-scope repaired.**7487PASS/3goldenFAIL былииз-заglobal_SECRETSsynthetickey,менявшегоТОЛЬКОsearch_request.q;R20/R21пододнимregistrySHAодинаковы. Только2newtestmodules monkeypatchnewset/autorestore;completegolden+fixtureиprivacyпрежние.32ordered/privacyPASS иR22full7490. [Attribution](../verification/serp-photo-golden-redaction-isolation-20261028.json).
+
+Статусы HARNESS002–008, readonly079/groupgate080, money/room/age/sourceguards сохраненыизR20ниже;sourceизменениятолькоmedia/providers/live_searchsidecar. Full80/106languagePASSне заявлен. Jurykey/age/Giga/frontend/video/main/tagOPEN. Послеэтогоphoto-block новыхфункцийдоfrontне добавлять.
+
+## Исторический R20 и прежние доказательства
+
 # Текущая проверенная ревизия — R20, 28 октября
 
 **7463 controlled PASS / 0 fail / 0 skip**,451,01с; sourceE9bd2f7d7,87package/301testfiles,source/testsunchanged. [Fullproof](../verification/prefrontend-r20-checkpoint-20261028.json). R20 готовится к публикации/точному Docker/CFnative. R19/7384 был сохранён с rollout HOLD; старые actualFAIL не переименованы в PASS.

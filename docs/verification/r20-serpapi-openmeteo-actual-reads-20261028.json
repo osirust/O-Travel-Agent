@@ -1,0 +1,150 @@
+{
+  "source_commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+  "source_package": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+  "provider_file_sha256": "34d0bec71a0059824e6bd5bc75f07cdf9319db394e828268b2b2061bcd1a4ec1",
+  "limits": {
+    "serpapi_http_max": 1,
+    "open_meteo_http_max": 1,
+    "retry": 0,
+    "model": 0,
+    "database": 0,
+    "booking_payment": 0
+  },
+  "serpapi_free_flag_confirmed": true,
+  "reads": {
+    "serpapi": {
+      "status": "SUCCESS",
+      "offers_count": 20,
+      "query": {
+        "city": "Istanbul",
+        "q": "Hotels in Istanbul, Turkey",
+        "checkin": "2026-11-10",
+        "checkout": "2026-11-13",
+        "currency": "USD",
+        "occupancies": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      "samples": [
+        {
+          "provider": "serpapi",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_STAY_TOTAL",
+          "amount_minor": 27600,
+          "currency": "USD",
+          "offer_id_present": true,
+          "opaque_offer_id_shape": true,
+          "availability_verified": false,
+          "allocation_verified": false,
+          "normalized_photo_count": 0
+        },
+        {
+          "provider": "serpapi",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_STAY_TOTAL",
+          "amount_minor": 22100,
+          "currency": "USD",
+          "offer_id_present": true,
+          "opaque_offer_id_shape": true,
+          "availability_verified": false,
+          "allocation_verified": false,
+          "normalized_photo_count": 0
+        },
+        {
+          "provider": "serpapi",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_STAY_TOTAL",
+          "amount_minor": 26100,
+          "currency": "USD",
+          "offer_id_present": true,
+          "opaque_offer_id_shape": true,
+          "availability_verified": false,
+          "allocation_verified": false,
+          "normalized_photo_count": 0
+        }
+      ],
+      "price_exponent": 2,
+      "price_minor_unit": "USD cents",
+      "booking_claim": false
+    },
+    "open_meteo": {
+      "status": "SUCCESS",
+      "provider": "open_meteo",
+      "source_type": "LIVE_INDICATIVE",
+      "kind": "FORECAST",
+      "timezone": "Europe/Istanbul",
+      "current": {
+        "time": "2026-10-28T07:45",
+        "interval": 900,
+        "temperature_2m": 14.0,
+        "weather_code": 3
+      },
+      "current_units": {
+        "time": "iso8601",
+        "interval": "seconds",
+        "temperature_2m": "°C",
+        "weather_code": "wmo code"
+      },
+      "daily_dates": [
+        "2026-10-28",
+        "2026-10-29",
+        "2026-10-30",
+        "2026-10-31",
+        "2026-11-01",
+        "2026-11-02",
+        "2026-11-03"
+      ],
+      "daily_units": {
+        "time": "iso8601",
+        "temperature_2m_max": "°C",
+        "temperature_2m_min": "°C",
+        "precipitation_probability_max": "%"
+      },
+      "warning": "Current seven-day forecast is not weather evidence for the November travel dates."
+    }
+  },
+  "actual_http": {
+    "serpapi": 1,
+    "open_meteo": 1
+  },
+  "response_shape": {
+    "serpapi": {
+      "http_status": 200,
+      "response_bytes": 229372,
+      "raw_property_count": 20,
+      "raw_properties_with_property_token": 20,
+      "raw_properties_with_images": 20,
+      "raw_image_count": 180
+    },
+    "open_meteo": {
+      "http_status": 200,
+      "response_bytes": 788
+    }
+  },
+  "finding_id": "HARNESS-001-SERPAPI-OPENMETEO-ACTUAL-READS-20261028",
+  "status": "TWO_BOUNDED_ACTUAL_HTTP_READS_SUCCESS",
+  "verified_at_utc": "2026-10-28T04:47:56.913023+00:00",
+  "private_result_sha256": "871cdd9a6ebde3692d72c48da4cf1e3c0df92c653174dc5243476ed6f1817d9d",
+  "credential_handling": {
+    "selected_serpapi_key_only": true,
+    "existing_free_confirmation_checked": true,
+    "full_master_environment_loaded": false,
+    "secrets_in_public_output": false,
+    "private_files_mode": "0600",
+    "response_headers_saved": false,
+    "request_url_with_query_saved": false
+  },
+  "limitations": [
+    "One real search and one weather request prove only these two bounded responses, not vendor reliability, equivalence of tariffs, or a full travel conversation.",
+    "SerpApi returned LIVE_INDICATIVE search prices; neither actual availability nor room allocation, a supplier reservation or a payable booking was confirmed.",
+    "USD amount_minor uses exponent2: for example27600 means276.00USD for the indicated stay, not27600USD.",
+    "The raw Google Hotels response contained images, but this adapter search normalization exposes zero photos on the returned offer. This probe did not change the adapter or qualify SerpApi frontend photo delivery; LiteAPI media evidence is separate.",
+    "Open-Meteo covers the current next seven days only, not the November10–13 hotel dates.",
+    "No comparative supplier study or extra request/automatic retry was performed."
+  ],
+  "code_runtime_changes": false,
+  "separate_liteapi_duffel_cbr_reference": "docs/verification/r18-typed-real-travel-checkout-20261028.json"
+}

@@ -2297,7 +2297,11 @@ class Harness:
                 await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_COMPLETED", {"kind": kind, "provider": "open_meteo"})
                 return {"weather": weather, "source_type": weather["source_type"], "plans": []}
             await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_COMPLETED", {"kind": kind, "provider": provider, "count": len(offers)})
-            return {"live_offers": offers, "source_type": offers[0].get("source_type", "UNKNOWN") if offers else "NO_MATCHES", "plans": [], "warnings": ["Это отдельные компоненты, не проверенная многогородская корзина. Supplier orders не создаются."]}
+            result = {"live_offers": offers, "source_type": offers[0].get("source_type", "UNKNOWN") if offers else "NO_MATCHES", "plans": [], "warnings": ["Это отдельные компоненты, не проверенная многогородская корзина. Supplier orders не создаются."]}
+            if kind == "hotels" and provider == "serpapi":
+                from .media import MediaResolver
+                result["live_media"] = await MediaResolver(self.travel).resolve_plan({"offers": offers})
+            return result
         except ProviderError as exc:
             await self.store.save_event(session["session_id"], run["run_id"], "TOOL_CALL_FAILED", {"kind": kind, "provider": provider, "code": exc.code})
             if not command.get("demo_fallback"):

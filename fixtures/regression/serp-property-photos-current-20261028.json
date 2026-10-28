@@ -1,0 +1,147 @@
+{
+  "finding_id": "HARNESS-001-SERP-PROPERTY-PHOTOS-001",
+  "provenance": {
+    "scope": "Whitelist of one exact current authenticated Google Hotels property row. Search/account metadata, API key, unrelated properties and seller links omitted; static photo URLs intentionally retained.",
+    "original_response_sha256": "1d03a4eecac6db954b71f8d730f830a5ad5fffc2d34f7839d6b5a7247ac87e68",
+    "redacted_response_sha256": "1752e094a8c6b149c243db0ae2f8c39257cb1e9a9c2fd4fa496564ea7b03792b",
+    "request": {
+      "city": "Istanbul",
+      "q": "Hotels in Istanbul, Turkey",
+      "checkin": "2026-11-10",
+      "checkout": "2026-11-13",
+      "currency": "USD",
+      "no_cache": false,
+      "occupancies": [
+        {
+          "adults": 2,
+          "children": []
+        }
+      ]
+    },
+    "source_status": "Success",
+    "source_as_of": "2026-10-28T04:46:52.408Z",
+    "source_commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+    "source_package": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+    "actual_http_in_separate_capture_phase": 1,
+    "cache_request_flag": false
+  },
+  "property": {
+    "property_token": "ChkIisjU0euLm7pJGg0vZy8xMWI2MzU2NnEzEAE",
+    "name": "Sura Hagia Sophia Hotel İstanbul",
+    "images": [
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLcgu6CgKMSf6PMw7_V6YHTSPHPjpkA_Qrc9GQEEKFGFXu9reZidHYKEqgw2z6DuXRtJqPK-_tuYqH5pA55vyULfJeYMDhTX6t3xxVtpX8Ab70QFC-EWWpEUv0mmfE-IlK3izprPu-4gIjJ6=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcgu6CgKMSf6PMw7_V6YHTSPHPjpkA_Qrc9GQEEKFGFXu9reZidHYKEqgw2z6DuXRtJqPK-_tuYqH5pA55vyULfJeYMDhTX6t3xxVtpX8Ab70QFC-EWWpEUv0mmfE-IlK3izprPu-4gIjJ6=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLcZqGeA1YjJBlJ2KvJff0Z_3IIroEKqwmULLD1yrCh924X8GHtQxp6O42YOMQ9mtz1YMV-kOgFu2yd0FshcnBXQzRcD_4jioRK2AzIo0Jq5wSvGyUjHd0c6_aTK9kJJ-q2kAMe4FcTh5d8O=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcZqGeA1YjJBlJ2KvJff0Z_3IIroEKqwmULLD1yrCh924X8GHtQxp6O42YOMQ9mtz1YMV-kOgFu2yd0FshcnBXQzRcD_4jioRK2AzIo0Jq5wSvGyUjHd0c6_aTK9kJJ-q2kAMe4FcTh5d8O=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLddL3lDdDhSLRkZk9_8i43hG38IR6r2VcslV_ovjKQ8ldzbmgLTiWJH2Qzd3XLmZES-YEXCUK_bRc3TAuaEyt-hNp5n5ARzArPRcsHrj33cZgC4TVVxvyEc9ZC98Reb5FDK_CQPfA=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLddL3lDdDhSLRkZk9_8i43hG38IR6r2VcslV_ovjKQ8ldzbmgLTiWJH2Qzd3XLmZES-YEXCUK_bRc3TAuaEyt-hNp5n5ARzArPRcsHrj33cZgC4TVVxvyEc9ZC98Reb5FDK_CQPfA=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLfK661qDweUvmKBd4HOz2mdVz8M4wgjdrB61Py-1KFSdfm8mOB6-N4ZnnOZMelHgrpTA19Qa0rxBe7pqYMAmp-Enc44esqOOk_xQ2ntZShhx3aU_E1iTlMkmTOsvdNaw3NcfzRmNn-ycaDG=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfK661qDweUvmKBd4HOz2mdVz8M4wgjdrB61Py-1KFSdfm8mOB6-N4ZnnOZMelHgrpTA19Qa0rxBe7pqYMAmp-Enc44esqOOk_xQ2ntZShhx3aU_E1iTlMkmTOsvdNaw3NcfzRmNn-ycaDG=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLcT-YTQtba3ME431jTinz-PmOEiQ3cR-Vi85uQTVJ4RHFWoRvdIBgXrp-3vil42C83LrNaDhzNaQMk-yy2SyP9Ojd3usSJoBBvNr74j5IpvRs-h3ngT6ZslyEq0x2NxAMhExIHO=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLcT-YTQtba3ME431jTinz-PmOEiQ3cR-Vi85uQTVJ4RHFWoRvdIBgXrp-3vil42C83LrNaDhzNaQMk-yy2SyP9Ojd3usSJoBBvNr74j5IpvRs-h3ngT6ZslyEq0x2NxAMhExIHO=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://photos.hotelbeds.com/giata/original/36/364502/364502a_hb_l_005_20260523_200343.jpeg",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-proxy/AIM7gW2yhUp-67jiVlOrR8Cn0cozHXTqa8Qr7D11ynd_AOFbtRsmRDZDWuxVBftRihISE3Bz7yeAgGtjWqk8C7XRsnyyYFPfcjwTXREuDf3yguAG7ksfiXU9vZusuOwl8l3vqI6-ZJgzPqU1g41Ovh0FwHWKahFnNPWGs5C6JkASRWXpTqgydaSqr4qA=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLeQnHlpGLmRgRBkjzo13t1apd8B4L-91Jjorn7OzSr7rnig8750nVltXz47tg8-n-BRqnUVievUnmK11L-cweVErHeVE47D_WiqLd9szMlMSq18DjrP07FVgDY_il8pj2jH4DGUZjD3r5Lm=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLeQnHlpGLmRgRBkjzo13t1apd8B4L-91Jjorn7OzSr7rnig8750nVltXz47tg8-n-BRqnUVievUnmK11L-cweVErHeVE47D_WiqLd9szMlMSq18DjrP07FVgDY_il8pj2jH4DGUZjD3r5Lm=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://lh3.googleusercontent.com/grass-cs/AABkmLfrw3UWuvniH6-XGYSDZCHCJeGSvUmUgZdCWHdep0qs3S0hxRMYMVhVLCKD_rs2zqzaHvxScbt4ZrfcHulP37pf-0qkNncd06fZuRWcONnreoexylzhBneEjPJS2121wk3LDV8I=s10000",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-cs/AABkmLfrw3UWuvniH6-XGYSDZCHCJeGSvUmUgZdCWHdep0qs3S0hxRMYMVhVLCKD_rs2zqzaHvxScbt4ZrfcHulP37pf-0qkNncd06fZuRWcONnreoexylzhBneEjPJS2121wk3LDV8I=s287-w287-h192-n-k-no-v1"
+      },
+      {
+        "original_image": "https://i.giatamedia.com/m.php?m=AQABAAAAla4KAI40nwIFAF0nCwSDbvvv4D-xLMuxmak",
+        "thumbnail": "https://lh3.googleusercontent.com/grass-proxy/AIM7gW16cIaIehYLf4MWonduxznAU8btiHyePcj6LlGg9DnqcHzFTkWxFi4PJICe1-fa9ozUfrtQmFzrfNngVgsWkByKZVAEXOtNbDafYhhGgCvj1XQS3oU0lXegyxo4TB28m4xjD7iuhaJQchakt6Gs9FU3keH6OAzWbn6pX9Hzw1s8YuqTePQMmuo=s287-w287-h192-n-k-no-v1"
+      }
+    ],
+    "total_rate": {
+      "display_price": "$246",
+      "extracted_display_price": 246,
+      "lowest": "$276",
+      "extracted_lowest": 276,
+      "before_taxes_fees": "$246",
+      "extracted_before_taxes_fees": 246,
+      "after_taxes_fees": "$276",
+      "extracted_after_taxes_fees": 276
+    },
+    "rate_per_night": {
+      "display_price": "$82",
+      "extracted_display_price": 82,
+      "lowest": "$92",
+      "extracted_lowest": 92,
+      "before_taxes_fees": "$82",
+      "extracted_before_taxes_fees": 82,
+      "after_taxes_fees": "$92",
+      "extracted_after_taxes_fees": 92
+    }
+  },
+  "replay_clock": "2026-10-28T04:53:03+00:00",
+  "economic_offer_before": {
+    "offer_id": "serpapi:bc39129dfd56f8e346444303",
+    "provider": "serpapi",
+    "source_type": "LIVE_INDICATIVE",
+    "price_kind": "INDICATIVE_STAY_TOTAL",
+    "retrieved_at": "2026-10-28T04:53:03+00:00",
+    "expires_at": "2026-10-28T04:58:03+00:00",
+    "amount_minor": 27600,
+    "currency": "USD",
+    "description": "Sura Hagia Sophia Hotel İstanbul",
+    "details": {
+      "kind": "hotel",
+      "search_request": {
+        "city": "Istanbul",
+        "q": "Hotels in Istanbul, Turkey",
+        "checkin": "2026-11-10",
+        "checkout": "2026-11-13",
+        "currency": "USD",
+        "no_cache": false,
+        "occupancies": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      "as_of": "2026-10-28T04:46:52.408Z",
+      "availability_verified": false,
+      "allocation_verified": false,
+      "itinerary_complete": false,
+      "provider_data": {
+        "property_token": "ChkIisjU0euLm7pJGg0vZy8xMWI2MzU2NnEzEAE",
+        "total_rate": {
+          "display_price": "$246",
+          "extracted_display_price": 246,
+          "lowest": "$276",
+          "extracted_lowest": 276,
+          "before_taxes_fees": "$246",
+          "extracted_before_taxes_fees": 246,
+          "after_taxes_fees": "$276",
+          "extracted_after_taxes_fees": 276
+        },
+        "rate_per_night": {
+          "display_price": "$82",
+          "extracted_display_price": 82,
+          "lowest": "$92",
+          "extracted_lowest": 92,
+          "before_taxes_fees": "$82",
+          "extracted_before_taxes_fees": 82,
+          "after_taxes_fees": "$92",
+          "extracted_after_taxes_fees": 92
+        }
+      },
+      "warning": "Поисковая цена; не подтверждает бронь или удержание инвентаря."
+    }
+  }
+}

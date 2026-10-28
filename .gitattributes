@@ -14,3 +14,4 @@ fixtures/regression/family-ordinal-count-076-20261028.json -text whitespace=cr-a
 fixtures/regression/room-fact-labels077-20261028.json -text whitespace=cr-at-eol
 fixtures/regression/readonly-now-prefix-079-20261028.json -text whitespace=cr-at-eol
 fixtures/regression/group-pending-budget-080-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/serp-property-photos-current-20261028.json -text whitespace=cr-at-eol

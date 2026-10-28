@@ -9,6 +9,7 @@ from __future__ import annotations
 import base64
 import asyncio
 from copy import deepcopy
+from collections import OrderedDict
 from contextvars import ContextVar
 import hashlib
 import json
@@ -1012,6 +1013,8 @@ class TravelGateway(_HTTPGateway):
         # instance-local, bounded and never authorizes a location by its name.
         self._place_hotel_evidence: dict[str, dict] = {}
         self._place_air_evidence: dict[str, dict] = {}
+        # Static presentation never enters an economic offer/snapshot.
+        self._serp_media_evidence: OrderedDict[tuple[str, str], dict] = OrderedDict()
 
         async def capture_retry_after(response):
             if response.status_code == 429:
@@ -1048,6 +1051,33 @@ class TravelGateway(_HTTPGateway):
     def _now(self) -> datetime:
         clock = self.settings.get("clock")
         return clock().astimezone(timezone.utc) if callable(clock) else datetime.now(timezone.utc)
+
+    def _remember_serpapi_media(self, offer: dict, property_row: dict) -> None:
+        from .media import MAX_SERP_CACHED_HOTELS, POSITIVE_TTL_SECONDS, serpapi_property_content
+
+        content = serpapi_property_content(property_row)
+        if content is None or not content["hotelImages"]:
+            return
+        now = self._now()
+        cache_key = (offer["offer_id"], content["id"])
+        self._serp_media_evidence[cache_key] = {"property_token": content["id"],
+            "retrieved_at": now, "expires_at": now + timedelta(seconds=POSITIVE_TTL_SECONDS), "content": content}
+        self._serp_media_evidence.move_to_end(cache_key)
+        while len(self._serp_media_evidence) > MAX_SERP_CACHED_HOTELS:
+            self._serp_media_evidence.popitem(last=False)
+
+    def serpapi_property_media(self, offer_id: str, property_token: str) -> dict | None:
+        """Read static response-bound photos only; no fallback or HTTP lookup."""
+        if not isinstance(offer_id, str) or not isinstance(property_token, str):
+            return None
+        cache_key = (offer_id, property_token)
+        saved = self._serp_media_evidence.get(cache_key)
+        now = self._now()
+        if (saved is None or saved["property_token"] != property_token
+                or not saved["retrieved_at"] <= now < saved["expires_at"]):
+            return None
+        self._serp_media_evidence.move_to_end(cache_key)
+        return deepcopy(saved["content"])
 
     async def resolve_hotels(self, city: str | dict, limit: int = 3) -> list[dict]:
         """Small transient sandbox lookup for the supported cities; no catalogue import."""
@@ -1791,14 +1821,16 @@ class TravelGateway(_HTTPGateway):
             if reference is None:
                 _fail("Нет раскрытой полной поисковой цены номера на запрошенное число гостей; сводная цена продавца её не заменяет.", provider, "NO_MATCHES")
             exponent = 0 if currency in {"JPY", "KRW", "VND", "CLP", "ISK"} else 3 if currency in {"BHD", "JOD", "KWD", "OMR", "TND"} else 2
-            return [self._offer(provider, [property_token, request], Decimal(reference["amount_minor"]).scaleb(-exponent), currency,
+            offer = self._offer(provider, [property_token, request], Decimal(reference["amount_minor"]).scaleb(-exponent), currency,
                 body["name"], {"kind": "hotel", "search_request": request, "supplier_comparison": comparison,
                     "as_of": metadata.get("processed_at", metadata.get("created_at")), "availability_verified": False,
                     "allocation_verified": False, "supplier_verified": False, "itinerary_complete": False,
                     "ready_for_real_booking": False,
                     "provider_data": {"property_token": property_token},
                     "warning": "Поисковая цена конкретного раскрытого тарифа. Разные условия не означают эквивалентные предложения; бронирование не подтверждено."},
-                "LIVE_INDICATIVE", "INDICATIVE_ROOM_RATE_STAY_TOTAL")]
+                "LIVE_INDICATIVE", "INDICATIVE_ROOM_RATE_STAY_TOTAL")
+            self._remember_serpapi_media(offer, body)
+            return [offer]
         if kind == "hotel":
             rows = body.get("properties", [])
         else:
@@ -1827,11 +1859,14 @@ class TravelGateway(_HTTPGateway):
                 selected = {"flights": row.get("flights", []), "total_duration": row.get("total_duration")}
             if amount is None:
                 continue
-            result.append(self._offer(provider, identity, amount, currency, description,
+            offer = self._offer(provider, identity, amount, currency, description,
                 {"kind": kind, "search_request": request, "as_of": metadata.get("processed_at", metadata.get("created_at")),
                  "availability_verified": False, "allocation_verified": False, "itinerary_complete": False,
                  "provider_data": selected, "warning": "Поисковая цена; не подтверждает бронь или удержание инвентаря."},
-                "LIVE_INDICATIVE", price_kind))
+                "LIVE_INDICATIVE", price_kind)
+            if kind == "hotel":
+                self._remember_serpapi_media(offer, row)
+            result.append(offer)
         if rows and not result:
             _fail("В поисковой выдаче нет проверяемой числовой цены.", provider, "INVALID_RESPONSE")
         return result

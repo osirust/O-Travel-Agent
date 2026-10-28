@@ -140,6 +140,7 @@ POST S/messages
 | `run.result.changes` | Проверенные изменения before/after. |
 | `run.result.result.plans` | Планы целой поездки; не путать с отдельными внешними компонентами. |
 | `run.result.result.live_offers` | Отдельные результаты `/live/search`. |
+| `run.result.result.live_media` | Необязательный view-пакет фотографий SerpApi рядом с `live_offers`; `items[].offer_id` связывает тот же DTO из HOTEL_MEDIA.md с конкретным предложением. В цену/offer hash не входит. |
 | `run.result.result.weather` | Ответ погодного адаптера. |
 | `run.result.result.search_explanation` | Необязательные `{text,summary}` с источниками и причинами отклонения компонентов HYBRID-поиска. |
 | `run.llm`, `run.result.result.llm` | Фактические provider/model/попытки, когда был вызов модели. |

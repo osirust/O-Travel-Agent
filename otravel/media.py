@@ -22,6 +22,8 @@ MAX_HOTELS = 5
 MAX_PHOTOS = 5
 MAX_OFFER_ITEMS = 32
 MAX_CACHED_HOTELS = 32
+MAX_SERP_CACHED_HOTELS = 256
+MAX_SERP_MEDIA_HOTELS = 20
 POSITIVE_TTL_SECONDS = 6 * 60 * 60
 NEGATIVE_TTL_SECONDS = 60
 _CDN_PATHS = {
@@ -31,12 +33,25 @@ _CDN_PATHS = {
     "static.cupid.travel": r"/hotels/[A-Za-z0-9/_-]+\.(?:jpe?g|png|webp|avif)",
     "liteapi-travel-static-data.s3.amazonaws.com": r"/images/hotels/[A-Za-z0-9/_-]+\.(?:jpe?g|png|webp|avif)",
 }
-MEDIA_CSP_SOURCES = tuple("https://" + host for host in _CDN_PATHS)
+_SERP_CDN_PATHS = {
+    # Exact host/path observed in an authenticated Google Hotels response.
+    "lh3.googleusercontent.com": r"/(?:grass-cs|grass-proxy)/[A-Za-z0-9_-]{10,2048}(?:=[A-Za-z0-9_-]{1,100})?",
+}
+MEDIA_CSP_SOURCES = tuple("https://" + host for host in (*_CDN_PATHS, *_SERP_CDN_PATHS))
 _RESIZE_QUERY = {"width", "height", "w", "h", "quality", "q", "fit", "crop", "format", "fm", "auto"}
 
 
 def safe_media_url(value) -> str | None:
     """Exact documented CDNs only; no DNS, image download or URL rewriting."""
+    return _safe_media_url(value, _CDN_PATHS)
+
+
+def safe_serp_media_url(value) -> str | None:
+    """Separate source policy; Google additions never broaden LiteAPI URLs."""
+    return _safe_media_url(value, _SERP_CDN_PATHS)
+
+
+def _safe_media_url(value, paths: dict) -> str | None:
     if (not isinstance(value, str) or not 0 < len(value) <= 4096 or not value.isascii()
             or any(ord(char) <= 32 or ord(char) == 127 or char == "\\" for char in value)):
         return None
@@ -55,7 +70,7 @@ def safe_media_url(value) -> str | None:
             address = None
         if address is not None and not address.is_global:
             return None
-        path_pattern = _CDN_PATHS.get(host)
+        path_pattern = paths.get(host)
         if path_pattern is None or re.fullmatch(path_pattern, parsed.path, flags=re.IGNORECASE) is None:
             return None
         query = parse_qsl(parsed.query, keep_blank_values=True, strict_parsing=True, max_num_fields=12)
@@ -89,7 +104,31 @@ def _placeholder(hotel_id=None) -> dict:
         "isActualPropertyPhoto": False, "caption": None, "gallery": []}
 
 
-def _media(hotel_id: str, content: dict) -> dict:
+def serpapi_property_content(row: dict) -> dict | None:
+    """Whitelist images belonging to this exact property row, never a city."""
+    hotel_id = _hotel_id(row.get("property_token")) if isinstance(row, dict) else None
+    if hotel_id is None:
+        return None
+    result = {"id": hotel_id, "name": _text(row.get("name"), 120), "hotelImages": []}
+    seen = set()
+    images = row.get("images")
+    for index, image in enumerate(images[:100] if isinstance(images, list) else []):
+        if not isinstance(image, dict):
+            continue
+        if any(image.get(field, hotel_id) != hotel_id for field in ("sourceHotelId", "property_token", "hotel_id")):
+            continue
+        thumbnail = safe_serp_media_url(image.get("thumbnail"))
+        url = safe_serp_media_url(image.get("original_image")) or thumbnail
+        if url and url not in seen:
+            seen.add(url)
+            result["hotelImages"].append({"url": url, "thumbnailUrl": thumbnail,
+                "defaultImage": index == 0, "order": index})
+            if len(result["hotelImages"]) == MAX_PHOTOS:
+                break
+    return result
+
+
+def _media(hotel_id: str, content: dict, source: str = "LITEAPI") -> dict:
     if not isinstance(content, dict) or content.get("id") != hotel_id:
         return _placeholder(hotel_id)
     name = _text(content.get("name"), 120)
@@ -103,23 +142,24 @@ def _media(hotel_id: str, content: dict) -> dict:
         candidates.append({"url": content["main_photo"], "thumbnailUrl": content.get("thumbnail")})
     photos, seen = [], set()
     thumbnail = None
+    safe_url = safe_serp_media_url if source == "SERPAPI" else safe_media_url
     for row in candidates:
-        url = safe_media_url(row.get("url"))
+        url = safe_url(row.get("url"))
         if url is None or url in seen:
             continue
         seen.add(url)
         caption = _text(row.get("caption"))
         if not photos:
-            thumbnail = safe_media_url(row.get("thumbnailUrl"))
+            thumbnail = safe_url(row.get("thumbnailUrl"))
             if thumbnail is None and url == content.get("main_photo"):
-                thumbnail = safe_media_url(content.get("thumbnail"))
+                thumbnail = safe_url(content.get("thumbnail"))
         photos.append({"url": url, "alt": caption or fallback_alt, "caption": caption})
         if len(photos) == MAX_PHOTOS:
             break
     if not photos:
         return _placeholder(hotel_id)
     return {"url": photos[0]["url"], "thumbnailUrl": thumbnail, "alt": photos[0]["alt"],
-        "kind": "HOTEL", "source": "LITEAPI", "hotelId": hotel_id, "sourceHotelId": content["id"],
+        "kind": "HOTEL", "source": source, "hotelId": hotel_id, "sourceHotelId": content["id"],
         "isActualPropertyPhoto": True, "caption": photos[0]["caption"], "gallery": photos}
 
 
@@ -204,6 +244,7 @@ class MediaResolver:
             result["warnings"].append({"code": "MEDIA_PLAN_INVALID", "message": "Нет списка предложений для фото."})
             return result
         seen = set()
+        seen_serp = set()
         if len(offers) > MAX_OFFER_ITEMS:
             result["warnings"].append({"code": "MEDIA_OFFER_LIMIT", "message": "Фото ограничены первыми32 компонентами."})
         for offer in offers[:MAX_OFFER_ITEMS]:
@@ -216,12 +257,27 @@ class MediaResolver:
             ids = [value for value in (binding.get("hotel_id"), offer.get("hotel_id"), details.get("hotel_id")) if value is not None]
             hotel_id = ids[0] if ids and all(value == ids[0] for value in ids) else None
             hotel_id = _hotel_id(hotel_id)
+            serp = str(offer.get("provider", "")).lower() == "serpapi"
+            if serp:
+                data = details.get("provider_data")
+                token = _hotel_id(data.get("property_token")) if isinstance(data, dict) else None
+                hotel_id = token if token and all(value == token for value in ids) else None
             media = _placeholder(hotel_id)
             item = {"offer_id": offer["offer_id"], "component_id": offer.get("component_id", binding.get("stay_id")), "media": media}
             result["items"].append(item)
             code = None
             if hotel_id is None:
                 code = "MEDIA_HOTEL_ID_UNKNOWN"
+            elif serp and offer.get("source_type") == "LIVE_INDICATIVE":
+                if hotel_id not in seen_serp and len(seen_serp) >= MAX_SERP_MEDIA_HOTELS:
+                    code = "MEDIA_HOTEL_LIMIT"
+                else:
+                    seen_serp.add(hotel_id)
+                    reader = getattr(self.gateway, "serpapi_property_media", None)
+                    content = reader(offer["offer_id"], hotel_id) if callable(reader) else None
+                    item["media"] = _media(hotel_id, content, "SERPAPI")
+                    if not item["media"]["isActualPropertyPhoto"]:
+                        code = "MEDIA_NO_SAFE_PHOTOS"
             elif (offer.get("source_type") not in {"SANDBOX", "LIVE_INDICATIVE", "LIVE_BOOKABLE"}
                     or str(offer.get("provider", "")).lower() != "liteapi"):
                 code = "MEDIA_PROVIDER_UNSUPPORTED"
