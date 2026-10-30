@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-27",
+  "status": "CONTROLLED_FULL_PASS_ACTUAL_PROVIDER_QUALIFICATION_OPEN",
+  "baseline_commit": "216aeb6e651fa8ceb7188bb1780cf50defab5ff1",
+  "full_source_commit": "5f4d0d8a582fe9bcd865da68f83fa1813f99151f",
+  "later_literal_country_fix_covered_separately": "docs/verification/literal-country-wish-20261027.json",
+  "source_file_sha256": {
+    "otravel/providers.py": "e1101dcef995bdedc9fae4a391888c42b0a437c291c9ea9a53f20d6400b3d369",
+    "otravel/config.py": "43ea7173e22d9354e0319e05dd181c7519e02cf41617a541ebd74a257b4a6abe",
+    "otravel/harness.py": "94e3047e45f7e644ec5d72ba46b0ff21d260eeee8607d119b39175fe7dce6723",
+    "otravel/store.py": "c4d2a6774fdc2028765ec33556f935975bed64d1faae2348238a726ebe8203bd",
+    "otravel/api.py": "bd7511997a2930236e8060999e53e3d0711df7f83a57edd519d4a35d89e5403d",
+    "otravel/observability.py": "47120ab90c302c2c043a0f1980964ff5e22a1f879de70c60355f8579baf8b358",
+    "otravel/gigachat_client.py": "f110c3c761ece36ae1cc9471d0f045355d58d74879d028ce457721f4bf7931e2",
+    "otravel/groq_transport.py": "aac42a4b771fb89dce02773b46a5faa3fa25b75822e1dd94013a5a05777d3aaf",
+    "otravel/groq_prompt.py": "a7ca7c73100dd31c4509a933ca4114a79ad2d555c37719bcea744205e7e53650",
+    "otravel/greetings.py": "42aec96aa4932d1b6a87858ea089ef1249e6898d4d61839a1d7f5db7edbca7a3",
+    "scripts/gigachat_backend.py": "48043ed97acbedf981e903d0146929e927cfb31ed7aac15395d716df89a4508b",
+    "scripts/after80_gptoss_backend.py": "d79f834f12692aae01afbcc48967d48992527c2272de63b350af29b4a66d5491",
+    "scripts/configure_keys.py": "780c564214ce5e15232d87a7c31634b6609d7d2b3c7756371652a1b814a8992d",
+    "scripts/configure_gigachat.py": "cca1786dbe68ebb4a5b442abf4927ad4f798003543a1ce108a2e8c14272ac309",
+    "scripts/run_tests.py": "a909217cf089cd82f10d96ecf7f367ae8ee327c52b5f3ac390ad46ceb9523ec0"
+  },
+  "initial_full_before_two_peer_fixes": {
+    "junit": ".local/evaluation/after80-20261027/full-groqv2-giga-greeting.xml",
+    "sha256": "4e517df873bbe1bee138e9b36baeba91e6127b6252cf20ab793d96d14d171c10",
+    "tests": 5383,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 212.861
+  },
+  "post_peer_related": {
+    "junit": ".local/evaluation/after80-20261027/giga-greeting-peer-fixes.xml",
+    "sha256": "898e4f2449a631305d15c146e8e0e9ee07eeb38612724d302193a05e286a2f7f",
+    "tests": 98,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 10.401
+  },
+  "peer_fixes": [
+    "Public ephemeral-token redaction is separate from log-only credential registration.",
+    "Greeting preserves the owned stay target when repeating an existing date question."
+  ],
+  "scope": [
+    "Exact greetings need zero model/tool calls and preserve state, question and explicit pause.",
+    "Groq V2 compact selectors/value guidance retain canonical validation and exact targets.",
+    "Giga Personal OAuth RAM cache/serial flow/strict extraction/provider budget and error guards.",
+    "Registered credential echoes fail before state/trace persistence; AUTH_KEY redaction includes test wrapper.",
+    "Public Retry-After is a bounded numeric hint; no automatic retry or quota reset."
+  ],
+  "controlled_http_only": true,
+  "actual_gigachat_generation_calls": 0,
+  "actual_groq_v2_qualification": "PENDING",
+  "limitations": [
+    "Controlled tests do not qualify actual model quality, external TLS or provider inventory.",
+    "Giga TLS stalls before authorization; key/model/balance unknown.",
+    "Full80/106 language acceptance remains open; old FAILs are retained."
+  ],
+  "final_full": {
+    "junit": ".local/evaluation/after80-20261027/full-groqv2-giga-greeting-final.xml",
+    "sha256": "9057b50f6798a633fdf995ca807f09934be7b17d41ed16a1331ddc4c604af278",
+    "tests": 5385,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 210.578
+  }
+}

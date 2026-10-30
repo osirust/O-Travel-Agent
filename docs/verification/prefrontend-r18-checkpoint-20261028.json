@@ -1,0 +1,84 @@
+{
+  "format": "otravel.prefrontend.r18.release.v1",
+  "created_at_utc": "2026-10-28T03:13:43.330474+00:00",
+  "status": "CONTROLLED_FULL_PASS_ACTUAL_LANGUAGE_GAPS_RETAINED",
+  "package_sha256": "f8bf851db10f5979d8c0b42c2d52146973136a4cc3a405607bf532a770a1f010",
+  "full": {
+    "passed": 7314,
+    "failed": 0,
+    "skipped": 0,
+    "source_unchanged": true,
+    "tests_sha256": "24bed318a3989655a6d4cd51d97c4ad010a13b4353a47a19e2a19b3167cfa905",
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r18-initial.xml",
+    "xml_sha256": "ae6813ee3c07e66c7a415cd7bf5bdf8583eb2f8144c0c7d67f59e1a2fd714ac7",
+    "junit_suite_seconds": 439.976,
+    "pytest_reported_seconds": 440.09
+  },
+  "previous_full": {
+    "revision": "R17",
+    "passed": 7301,
+    "failed": 0,
+    "proof": "docs/verification/prefrontend-r17-checkpoint-20261028.json"
+  },
+  "repair": {
+    "id": "HARNESS-004-QUESTION-TEXT-BINDING-075-001",
+    "scope": "Only untrusted question rendering uses the existing derived field and target; no new intent extraction, person attribution or answer invention.",
+    "proof": "docs/verification/question-text-binding-075-repair-20261028.json",
+    "source_delta": [
+      "otravel/harness.py",
+      "otravel/question_rendering.py"
+    ],
+    "regression": "Captured075 model JSON -> real API/PG -> coherent child-count question -> literal no-child answer with no second model call or trip/version mutation.",
+    "trusted_server_proposals_unchanged": true
+  },
+  "actual_language_evidence_revision": "R17; independent immutable providers/epochs, not fresh R18 NLU.",
+  "language_proofs": [
+    "docs/verification/nemotron-8089-bounded-terminal-20261028.json",
+    "docs/verification/groq-8090-handoff-terminal-20261028.json"
+  ],
+  "open_language_findings": [
+    "Missed explicit word-date edits",
+    "Unnecessary nights questions",
+    "Family membership incomplete or invented by model",
+    "Some explicit complex child-age edits omitted by model",
+    "Incomplete answers about room-specific capability and conditions"
+  ],
+  "original_80_or_106_language_pass_claimed": false,
+  "real_travel_functional_proof_revision": "R14 controlled recorded JSON with actual travel services; not fresh R18 natural language acceptance.",
+  "real_travel_functional_proof": "docs/verification/complex-rebuild-r14-recorded-real-travel-20261028.json",
+  "runtime_dependency_advisory_check": "docs/verification/runtime-python-osv-refresh-20261028.json",
+  "submission": {
+    "separate_jury_key_created": false,
+    "ciphertext_created": false,
+    "master_exported": false,
+    "frontend_video_final_main_tag": "Pending separate integration."
+  },
+  "gigachat": {
+    "oauth_http": 200,
+    "generation_successes": 0,
+    "api_tls_timeout": true,
+    "vpn_routes_global_trust_or_tls_verification_changed": false
+  },
+  "paid_calls": 0,
+  "local_qwen_calls": 0,
+  "real_supplier_booking_payments": 0,
+  "staged_package": {
+    "tested_package_sha256": "f8bf851db10f5979d8c0b42c2d52146973136a4cc3a405607bf532a770a1f010",
+    "staged_package_sha256": "4e383ff6d50442dd207382e72ffe7202e4222b14e2e4c91bfa017c85a0b97551",
+    "package_files": 85,
+    "only_allowed_crlf_normalization": [
+      "otravel/budget_intake.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/intent_grounding.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py",
+      "otravel/route_policy_intent.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

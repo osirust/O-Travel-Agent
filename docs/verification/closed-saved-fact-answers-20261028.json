@@ -1,0 +1,107 @@
+{
+  "format": "otravel.canonical-closed-reminder.v1",
+  "created_at_utc": "2026-10-28T01:00:31.339345+00:00",
+  "status": "CONTROLLED_CLOSED_REMINDER_SCOPE_TESTED_NOT_FULL_REPLYLOSS_CLOSURE",
+  "finding_ids": [
+    "H004-SAVED-FACTS-001",
+    "HARNESS-004-REPLY-LOSS-001"
+  ],
+  "problem": "Critical known roster/childrenages/currentdates/route/budget may be unanswered by a weak remote model. A closed reminder of already saved facts needs no model-authored arithmetic or new search.",
+  "implementation": {
+    "module": "otravel/saved_fact_answers.py",
+    "signature": "canonical_saved_fact_answer(text,state)->str|None",
+    "classification": "EntiremessagefullmatchoneclosedRussianreminder/currentquestion;notkeywordextractionfromamixedmessage.",
+    "formatting": "Reuseanswering.facts_projection.sections+checked_reply/canonicalformatters;noownmoney/datearithmetic.",
+    "topics": [
+      "savedparty",
+      "savedchildrenages",
+      "currenttripdates",
+      "savedroute",
+      "savedwhole-tripbudget"
+    ],
+    "reject": [
+      "newfacts/digits",
+      "editing/control/search/booking",
+      "quotes/hypotheses",
+      "unknownresidualtext",
+      "source/options/externalprice",
+      "historydiff",
+      "visa/passport/legalquestions",
+      "multi-topicsnotexplicitlyintheclosedgrammar"
+    ],
+    "examples": [
+      "Напомни наш состав",
+      "Кто у нас в итоге едет?",
+      "Напомни возраста наших детей",
+      "Напомни наши даты",
+      "Напомни наш маршрут",
+      "Какой у нас сейчас бюджет?"
+    ],
+    "unknowns": "Missingfactsremainunknown,nodata-defaultpeople/city/zero-money;DOBqueryusesexistingper-checkinformatter,notcurrentclock.",
+    "hook_by_root": "Immediatelyaftergreetingbeforepricing/parameterbinding/LLM;ensurecurrentrun;ModelResultASK/none/response_sourcecanonical_saved_answer/model_metaNone. Existingearlyfinishpreservesstate/pending."
+  },
+  "checks": [
+    {
+      "path": ".local/drafts/canonical-saved-facts-20261028/initial-red.xml",
+      "sha256": "b8e043880057ad0a079a1a0edc595f3fd94076c57e421531140e8267423c061f",
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.294
+    },
+    {
+      "path": ".local/drafts/canonical-saved-facts-20261028/public-pure.xml",
+      "sha256": "590f702649fb7b681dd116bd004495c169b28390538276e7d0f005f3625260a9",
+      "tests": 49,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.465
+    },
+    {
+      "path": ".local/drafts/canonical-saved-facts-20261028/public-pg-initial.xml",
+      "sha256": "bfdc8e3db4eb9d4044a0ac37e7d354cdd8a1fdbb939e8b3f66cabe747ec79f3b",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.636
+    }
+  ],
+  "counts": {
+    "final_pure": 49,
+    "final_pg": 3,
+    "different_test_cases": 52,
+    "closed_reminder_messages_inside_pg": 6,
+    "new_remote_llm_calls": 0,
+    "new_supplier_http": 0
+  },
+  "api_pg_facts": {
+    "known_roster_dates_budget": "Threeclosedremindersreturncanonicalcontentwithout_model/extract/search/quote/confirm sideeffects,unchangedTripVersion/status/pending.",
+    "bound_pending_child": "Ownedtraveler.agequestionexactfield/youngtarget/context/stateversionpreserved;unknownageisreportedunknown,older9retained.",
+    "existing_quote": "RealtypedDEMOsearch+explicitthird-planpreviewarecontrolledsetup. Bothsubsequentreminderspreservewholequotehash(includingconsent/TTL),samecurrentselectedplanandtripversion.",
+    "same_quote_confirmation": "Afterreadonlyphase,sameexistingquote+originalconsentconfirmedtwicewithsameidempotencykeycreatesexactlyoneDEMOorder;is_demoTrue/booking_created_at_supplierFalse. No newreprice/search/model;forbiddenhooksproveit."
+  },
+  "scope_counts_note": "0model/tools/quote/orderappliestothe6readonlymessages. Theexplicitcontrolledsetupsearch/previewandpost-readconfirmationareseparate;theconfirmationcreates1DEMOorder,notarealsupplierbooking.",
+  "safety": {
+    "original80_106oracles_or_rawtext_edited": false,
+    "existing_readonly_modeltests_edited": false,
+    "sourcepolicy/plan/quote/pendingfromanother_session_inferred": false,
+    "new_fact_or_model_selection_authority": false,
+    "DB": "Onlyotravel_test,newownedsessions;noNative8084/8086/8088changes"
+  },
+  "red_scope": "RED4demonstratesoldclassify_saved_questionlacks4closedtopics;notafulloldHARNremoteNLUtest.",
+  "not_closed": [
+    "AllREPLYLOSSphrases/languages/freequestions",
+    "Mixedoriginal007/009/011/014andchildageedit+remindinputs;existingpostchangereceiptrequired",
+    "Unknownreferences/whyprices/historyornew-offerexplanations",
+    "Full80/106languageacceptanceorvendoravailability"
+  ],
+  "source_files_sha256": {
+    "otravel/saved_fact_answers.py": "ce3362791523727718f6f7c93c7ec93fc0b9196636f1a656be14b6c5b8c4a7d4",
+    "tests/test_saved_fact_answers.py": "eb94aa90b1cca0ff9c5751a6c95a5bb31ac792cca69a31553f3acb1e9407b714",
+    "tests/test_harness_saved_fact_answers.py": "96a348489f82569afe6560ab3a4d1071d6c8fcd73ae2f58d3779b9997bc6a08c"
+  },
+  "source_frozen_for_root_r16": true
+}

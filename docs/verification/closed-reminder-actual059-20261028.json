@@ -1,0 +1,83 @@
+{
+  "format": "otravel.closed-reminder-actual059.v1",
+  "created_at_utc": "2026-10-28T01:28:35.759800+00:00",
+  "status": "CONTROLLED_EXACT059_EARLY_CANONICAL_PASS_NOT_FULL_REPLYLOSS_OR_NLU",
+  "finding_ids": [
+    "H004-SAVED-FACTS-001",
+    "HARNESS-004-REPLY-LOSS-001"
+  ],
+  "related_prevented_behavior": "HARNESS-004-UNASKED-ADULT-AGE-001",
+  "input": "Сверь пожалуста обе даты и число взрослых. Февраль был только вопросом.",
+  "actual_observation": "Original059/T7aftercanonicalNov5–12and2adultNULLsoughtonlysavedfacts;remote-modelpathpreviouslyguessedadult18. NewR16samefailurewasreportedbyRoot;thisreceiptqualifiescachedcanonicalpath,nottheentireremotedialogue.",
+  "minimal_extension": {
+    "same_module": "otravel/saved_fact_answers.py",
+    "classifier_API": "str|None preserved;oldsingle-topiclabelsunchanged;newclosedtwotopicsselector=dates,party",
+    "new_grammar": "Sver+pojalusta/pozhaluysta optional+both/currentdatesandnumberadults only;noexternalpricecomparisonclassifier.",
+    "footer": "Onlywholetrailingstatement:<oneof12RUnominativemonths> был только вопросом,followingacompletesentence.Nodata/selectedmonth/yearchanged.",
+    "footer_safety": "Stripbefore_FORBIDDENonlyatwholemessageend;unknown/edit/newdigits/external/source/visa/history-questionormulti-monthfooterremainNone. Noafter-footercommandsarehidden.",
+    "formatting": "Existingfacts_projection.sectionsdates+party/checked_reply,noownages/nights/moneyarithmetic.",
+    "legacy_root_reader": "Rootkeptrecognizedoldtrip_answersquestionsontheexistingcanonicalrendererpath. NewuncoveredclosedrecognitionwithrendererNoneusesasafeNoModelerrorandproposed_event. Existingtestsnotweakened/editedbythisagent."
+  },
+  "checks": [
+    {
+      "path": ".local/drafts/closed-facts-r17-20261028/initial-red.xml",
+      "sha256": "bb4c16141fecb8436d64a28309528b9201115267fa795a99861aa58a244504c1",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.306
+    },
+    {
+      "path": ".local/drafts/closed-facts-r17-20261028/public-pure-final.xml",
+      "sha256": "6af52b4a10138f09366bf18bd27dba9eaabc4f01caa0bd381d4d8a9a43e11388",
+      "tests": 81,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.637
+    },
+    {
+      "path": ".local/drafts/closed-facts-r17-20261028/public-pg-final.xml",
+      "sha256": "1cc2a9f8d984f8b5e5eb539ff960dfc9dea3a2b5ce931bea93cc73b7d6b3d873",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.832
+    }
+  ],
+  "counts": {
+    "old_single_topic_pure_preserved": 49,
+    "new_bounded_pure": 32,
+    "combined_pure": 81,
+    "new_pg_exact059": 1,
+    "different_combined_cases": 82,
+    "new_remote_llm": 0,
+    "new_supplier_http": 0,
+    "orders": 0
+  },
+  "pg_facts": {
+    "bootstrap": "ControlledknownKazan→DubaiNov5–12/2adultNULL/150000RUB,DEMOpolicy;notactualsource-searchreproduction.",
+    "forbidden_hooks": "_extract/_search_trip/create_quote/confirm_quoteforbidden;StubLLMwithbadage18answerremainsunused.",
+    "result": "canonical_saved_answer/model_metaNone;bothadultagesNULL;entiretrip/status/wait/pending/versionunchanged.",
+    "answer": "Exact05.11.2026,12.11.2026,2adultfacts;nofake18/noFebruaryreschedule.",
+    "event": "ExactlyoneSAVED_FACTS_ANSWER_PROPOSEDkinddates,party/model_calls0;noMODEL/TOOL/QUOTE/ORDERstarted."
+  },
+  "fallback_adult_age_guard": "SeparateR17agentqualificationusingexplicitlylabelledunknown-tailvariantkeepsthemodelpathreachable;notincludedinour82counts. Earlycanonicalandpost-modelsafetyaredifferentlayers.",
+  "source_files_sha256": {
+    "otravel/saved_fact_answers.py": "92fa0439765f9a6f72e6eb78900696860232783027a8836dc217840019fe148c",
+    "tests/test_saved_fact_answers_actual059.py": "32fba817401755042bbc4de011b8a0bd17f663ea29f7ca4938c1b154719f06f3",
+    "tests/test_harness_saved_fact_answers_actual059.py": "6911a759697ce7b18c571b88243d9e12d707fe45fbff8150b82dfc40989b56b9"
+  },
+  "not_closed": [
+    "Arbitrarymulti-topicquestions/allreminderphrases/languages",
+    "Unknownreference/month/historyinterpretation",
+    "Mixededitsortextwithunknownafter-footercommands;normalpipelineused",
+    "Full80/106remotedialogueacceptance"
+  ],
+  "raw_originals_unchanged": true,
+  "existing_49tests_unchanged": true,
+  "old_failed_XML_preserved": true,
+  "full_r17_source_frozen": "451adca3ceb724c65a2b27ceda938f4413d58f59f79ec5df3aaefb832c49cf4a"
+}

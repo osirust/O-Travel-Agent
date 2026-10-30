@@ -1,0 +1,135 @@
+{
+  "format": "otravel.r18.docker.smoke.v1",
+  "created_at_utc": "2026-10-28T03:24:13.269738+00:00",
+  "status": "EXACT_COMMITTED_ARCHIVE_KEYLESS_DOCKER_PASS",
+  "commit": "4645c24ae29a8a85e93fdcae4829299e6e7410eb",
+  "package_sha256": "4e383ff6d50442dd207382e72ffe7202e4222b14e2e4c91bfa017c85a0b97551",
+  "source_kind": "git archive, no mutable source or overlay",
+  "checks": [
+    {
+      "id": "immutable_checkpoint_package_matches",
+      "passed": true
+    },
+    {
+      "id": "packaging_overlay_does_not_change_core",
+      "passed": true
+    },
+    {
+      "id": "all_example_values_empty",
+      "passed": true
+    },
+    {
+      "id": "no_model_or_travel_credentials_in_container",
+      "passed": true
+    },
+    {
+      "id": "single_local_owned_port",
+      "passed": true
+    },
+    {
+      "id": "non_root_runtime",
+      "passed": true
+    },
+    {
+      "id": "runtime_dependency_versions_match_fresh_osv_set",
+      "passed": true
+    },
+    {
+      "id": "health_database_and_booking_guard",
+      "passed": true
+    },
+    {
+      "id": "debug_html_ready",
+      "passed": true
+    },
+    {
+      "id": "swagger_available_as_documented",
+      "passed": true
+    },
+    {
+      "id": "dynamic_flag_reaches_real_runtime",
+      "passed": true
+    },
+    {
+      "id": "keyless_llm_failure_preserves_empty_trip",
+      "passed": true
+    },
+    {
+      "id": "explicit_demo_form_works_after_llm_failure",
+      "passed": true
+    },
+    {
+      "id": "typed_form_changes_one_revision",
+      "passed": true
+    },
+    {
+      "id": "closed_reminder_works_without_model_key",
+      "passed": true
+    },
+    {
+      "id": "closed_reminder_preserves_exact_trip_and_version",
+      "passed": true
+    },
+    {
+      "id": "no_generation_provider_calls_or_orders",
+      "passed": true
+    },
+    {
+      "id": "db_trip_and_owner_survive_app_restart",
+      "passed": true
+    },
+    {
+      "id": "only_owned_project_removed",
+      "passed": true
+    }
+  ],
+  "db_counts": {
+    "sessions": 1,
+    "model_starts": 0,
+    "tool_starts": 0,
+    "orders": 0
+  },
+  "build_up_seconds": 27.205,
+  "elapsed_seconds": 33.187,
+  "private_report": "/home/aegml/checks/submission-r18-docker-smoke-20261028-031547-5dfcdb41/report.json",
+  "private_report_sha256": "a4b63c0c14f44572c49d2cd7fdb01246abf9ca14c2ef321a8480a6dd4e02588d",
+  "cleanup": "Only two verified own project containers, exact labelled new volume and project networks.",
+  "real_model_or_travel_keys": false,
+  "source_secrets_read": false,
+  "scope": "Fresh PG/nonroot/health/API/DEMO/forms/new closed reminder without any model key/app restart. No actual supplier or NLU qualification.",
+  "runtime_dependency_versions": {
+    "packages": {
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "anyio": "4.15.1",
+      "asyncpg": "0.32.0",
+      "attrs": "26.1.0",
+      "certifi": "2026.10.23",
+      "click": "8.5.0",
+      "fastapi": "0.162.0",
+      "greenlet": "3.5.6",
+      "h11": "0.16.0",
+      "httpcore": "1.0.9",
+      "httpx": "0.28.1",
+      "idna": "3.20",
+      "jsonschema": "4.23.0",
+      "jsonschema-specifications": "2025.9.1",
+      "opentelemetry-api": "1.45.1",
+      "pip": "26.2.2",
+      "pydantic": "2.14.1",
+      "pydantic-core": "2.50.1",
+      "pydantic-settings": "2.16.1",
+      "python-dotenv": "1.2.4",
+      "referencing": "0.37.0",
+      "rpds-py": "2026.9.1",
+      "sqlalchemy": "2.1.6",
+      "starlette": "1.10.0",
+      "typing-extensions": "4.16.0",
+      "typing-inspection": "0.4.4",
+      "tzdata": "2026.5",
+      "uvicorn": "0.54.0"
+    },
+    "manifest_sha256": "e1b13dc0c2c34413e07ee22b10084c47e4c606f1121ee61c39ebd2c0b199d3e2",
+    "fresh_osv_proof_sha256": "4d2797edf19bd729b6ba1650904b45466f50fab1eab2b5828df5a515cae995cd"
+  }
+}

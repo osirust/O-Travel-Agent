@@ -1,0 +1,236 @@
+{
+  "finding_id": "HARNESS-004-GROUP-COUNT-FALSE-CONFLICT-001",
+  "source_case": "PF-GROUP-04",
+  "source_step": "01",
+  "source_commit": "b50d73a74509afb9198a142b0a439789fce726c1",
+  "package_sha256": "886d18200a5b117b86481986b9da6f3bf972ae117b91776b2c8affb481729c92",
+  "source_report_sha256": "693d8d6c27a4ffa91812c1905511f282e2827d463d93d4f65b98badc232d4278",
+  "source_recipe_sha256": "917574bbe7d3f36a40bc391270533fd4d6c04236d116caf44ea67aa7a764bff5",
+  "scope": "Exact input and decoded final contracts; no hidden reasoning, provider keys, owner token, raw wire or synthetic corrected response.",
+  "text": "Включи деморежим. Из Казани в Стамбул 10 ноября 2026, заезд 10.11.2026, выезд 13.11.2026. Затем Анталья: заезд 13.11.2026, выезд 17.11.2026, возвращение в Казань 17 ноября. Двое взрослых и ребёнок 7 лет. Это две семьи: первый взрослый с ребёнком, второй взрослый отдельно. В каждом городе два номера, семьи не смешивать. В первом номере первый взрослый с ребёнком, во втором второй взрослый. Завтрак в Стамбуле обязателен. Общий бюджет 400000 рублей.",
+  "before_trip": {
+    "legs": [],
+    "stays": [],
+    "budget": null,
+    "groups": [],
+    "origin": null,
+    "trip_id": "81168023-b5c0-48b7-802c-fbd117d3473d",
+    "travelers": [],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 0
+  },
+  "validated_raw_contract": {
+    "reply": "Сохранено: исходный пункт Казань, включён демо-режим, добавлены 2 взрослых и ребёнок 7 лет, созданы 2 группы, бюджет 400 000 ₽. Не смог сохранить города и даты из-за внутренних противоречий в задании (количество номеров vs «семьи не смешивать»). Пожалуйста, уточните распределение номеров по городам и семьям.",
+    "control": {
+      "action": "none"
+    },
+    "unknowns": [
+      "Уточните раскладку номеров: в каждом городе по 2 номера на всех или на каждую семью? Верное следствие — «семьи не смешивать» при двух семьях требует в каждом городе не менее 2 номеров-групп (всего 4), либо другой критерий."
+    ],
+    "conflicts": [
+      "Требование «в каждом городе два номера» для одного города и «семьи не смешивать» для двух номеров конфликтуют (семьи не могут поместиться в два номера одного города, если в каждом городе суммарно два номера)."
+    ],
+    "operations": [
+      {
+        "type": "set_origin",
+        "value": {
+          "city": "Казань"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_search_policy",
+        "value": {
+          "mode": "DEMO"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-1",
+          "type": "adult"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-2",
+          "type": "adult"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-3",
+          "age": 7,
+          "type": "child"
+        },
+        "target_id": null
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-3"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-1"
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-2"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-2"
+      },
+      {
+        "type": "set_budget",
+        "value": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 40000000
+        },
+        "target_id": null
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "validated_raw_contract_sha256": "2d20c92871ec468069f01ccfb34e84a53fc12dbe38577f81d5b017cc649e0b0e",
+  "checked_contract": {
+    "reply": "Сохранено: исходный пункт Казань, включён демо-режим, добавлены 2 взрослых и ребёнок 7 лет, созданы 2 группы, бюджет 400 000 ₽. Не смог сохранить города и даты из-за внутренних противоречий в задании (количество номеров vs «семьи не смешивать»). Пожалуйста, уточните распределение номеров по городам и семьям.",
+    "control": {
+      "action": "none"
+    },
+    "unknowns": [
+      "Уточните раскладку номеров: в каждом городе по 2 номера на всех или на каждую семью? Верное следствие — «семьи не смешивать» при двух семьях требует в каждом городе не менее 2 номеров-групп (всего 4), либо другой критерий."
+    ],
+    "conflicts": [
+      "Требование «в каждом городе два номера» для одного города и «семьи не смешивать» для двух номеров конфликтуют (семьи не могут поместиться в два номера одного города, если в каждом городе суммарно два номера)."
+    ],
+    "operations": [
+      {
+        "type": "set_origin",
+        "value": {
+          "city": "Казань"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_search_policy",
+        "value": {
+          "mode": "DEMO"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-1",
+          "type": "adult"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-2",
+          "type": "adult"
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-3",
+          "age": 7,
+          "type": "child"
+        },
+        "target_id": null
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-3"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-1"
+      },
+      {
+        "type": "upsert_group",
+        "value": {
+          "traveler_ids": [
+            "new-traveler-2"
+          ],
+          "keep_separate": true
+        },
+        "target_id": "new-group-2"
+      },
+      {
+        "type": "set_budget",
+        "value": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 40000000
+        },
+        "target_id": null
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "checked_contract_sha256": "52da47cd767a81f73aebdce1561e4dcb86d477c04c78bea8770b4776e39cc6ac",
+  "normalizations": [],
+  "after_trip": {
+    "legs": [],
+    "stays": [],
+    "budget": null,
+    "groups": [],
+    "origin": null,
+    "trip_id": "81168023-b5c0-48b7-802c-fbd117d3473d",
+    "travelers": [],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 0
+  },
+  "after_state_version": 0,
+  "after_status": "WAITING_USER",
+  "user_visible_question": "Что нужно уточнить о поездке, чтобы продолжить?",
+  "state_mutations": 0,
+  "tools_started": 0,
+  "orders": []
+}

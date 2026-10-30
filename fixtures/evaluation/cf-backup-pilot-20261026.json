@@ -1,0 +1,340 @@
+{
+  "scope": "three bounded extraction cases; not full dialogues or contest corpus",
+  "reference_now_utc": "2026-10-25T21:40:00+00:00",
+  "default_timezone": "Europe/Moscow",
+  "model_call_policy": "one attempt per case/model; stop model on wire/HTTP/quota error",
+  "cases": [
+    {
+      "id": "CFP-01",
+      "text": "Из Москвы в Стамбул, один взрослый, детей нет, вылет рано утром.",
+      "trip": {
+        "trip_id": "00000000-0000-4000-8000-000000000026",
+        "state_version": 0,
+        "origin": null,
+        "travelers": [],
+        "groups": [],
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "demo_fallback": true,
+          "guest_nationality": null
+        }
+      },
+      "expected": [
+        "origin=Москва",
+        "stay.city=Стамбул",
+        "adult_count=1",
+        "child_count=0",
+        "budget=null",
+        "departure_preference=early_morning"
+      ],
+      "gold_operations": [
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Москва"
+          }
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-1",
+            "type": "adult"
+          }
+        },
+        {
+          "type": "upsert_stay",
+          "target_id": "new-stay-1",
+          "value": {
+            "city": "Стамбул"
+          }
+        },
+        {
+          "type": "set_preference",
+          "value": {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        }
+      ],
+      "gold_control": "none",
+      "gold_speech_act": "CHANGE"
+    },
+    {
+      "id": "CFP-02",
+      "text": "Сербию знаешь?",
+      "trip": {
+        "trip_id": "00000000-0000-4000-8000-000000000026",
+        "state_version": 0,
+        "origin": null,
+        "travelers": [],
+        "groups": [],
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "demo_fallback": true,
+          "guest_nationality": null
+        }
+      },
+      "expected": [
+        "speech_act=ASK",
+        "operations=[]",
+        "information_subject=Сербия",
+        "trip_unchanged=true"
+      ],
+      "gold_operations": [],
+      "gold_control": "none",
+      "gold_speech_act": "ASK",
+      "gold_information_subject": "Сербия"
+    },
+    {
+      "id": "CFP-03",
+      "text": "Добавь ребёнка 7 лет, уменьши общий бюджет на 20 тысяч и подожди, я ещё дополню.",
+      "trip": {
+        "trip_id": "00000000-0000-4000-8000-000000000027",
+        "state_version": 7,
+        "origin": "Казань",
+        "travelers": [
+          {
+            "id": "adult-1",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": "family-1"
+          },
+          {
+            "id": "adult-2",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": "family-1"
+          },
+          {
+            "id": "adult-3",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": "family-1"
+          },
+          {
+            "id": "adult-4",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": "family-2"
+          },
+          {
+            "id": "adult-5",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": "family-2"
+          },
+          {
+            "id": "adult-6",
+            "type": "adult",
+            "age": null,
+            "birth_date": null,
+            "group_id": "family-2"
+          },
+          {
+            "id": "child-1",
+            "type": "child",
+            "age": 3,
+            "birth_date": null,
+            "group_id": "family-1"
+          },
+          {
+            "id": "child-2",
+            "type": "child",
+            "age": 7,
+            "birth_date": null,
+            "group_id": "family-1"
+          },
+          {
+            "id": "child-3",
+            "type": "child",
+            "age": 15,
+            "birth_date": null,
+            "group_id": "family-2"
+          }
+        ],
+        "groups": [
+          {
+            "id": "family-1",
+            "traveler_ids": [
+              "adult-1",
+              "adult-2",
+              "adult-3",
+              "child-1",
+              "child-2"
+            ],
+            "keep_separate": true
+          },
+          {
+            "id": "family-2",
+            "traveler_ids": [
+              "adult-4",
+              "adult-5",
+              "adult-6",
+              "child-3"
+            ],
+            "keep_separate": true
+          }
+        ],
+        "legs": [
+          {
+            "id": "leg-out",
+            "origin": "Казань",
+            "destination": "Стамбул",
+            "departure_date": "2026-11-06",
+            "mode": "flight"
+          },
+          {
+            "id": "leg-between",
+            "origin": "Стамбул",
+            "destination": "Анталья",
+            "departure_date": "2026-11-09",
+            "mode": "flight"
+          },
+          {
+            "id": "leg-return",
+            "origin": "Анталья",
+            "destination": "Казань",
+            "departure_date": "2026-11-13",
+            "mode": "flight"
+          }
+        ],
+        "stays": [
+          {
+            "id": "stay-istanbul",
+            "city": "Стамбул",
+            "check_in": "2026-11-06",
+            "check_out": "2026-11-09",
+            "rooms": [
+              {
+                "id": "stay-istanbul-room-1",
+                "traveler_ids": [
+                  "adult-1",
+                  "adult-2",
+                  "child-1",
+                  "child-2"
+                ]
+              },
+              {
+                "id": "stay-istanbul-room-2",
+                "traveler_ids": [
+                  "adult-3"
+                ]
+              },
+              {
+                "id": "stay-istanbul-room-3",
+                "traveler_ids": [
+                  "adult-4",
+                  "adult-5",
+                  "adult-6",
+                  "child-3"
+                ]
+              }
+            ],
+            "hotel_id": null
+          },
+          {
+            "id": "stay-antalya",
+            "city": "Анталья",
+            "check_in": "2026-11-09",
+            "check_out": "2026-11-13",
+            "rooms": [
+              {
+                "id": "stay-antalya-room-1",
+                "traveler_ids": [
+                  "adult-1",
+                  "adult-2",
+                  "child-1",
+                  "child-2"
+                ]
+              },
+              {
+                "id": "stay-antalya-room-2",
+                "traveler_ids": [
+                  "adult-3"
+                ]
+              },
+              {
+                "id": "stay-antalya-room-3",
+                "traveler_ids": [
+                  "adult-4",
+                  "adult-5",
+                  "adult-6",
+                  "child-3"
+                ]
+              }
+            ],
+            "hotel_id": null
+          }
+        ],
+        "budget": {
+          "amount_minor": 10000000,
+          "currency": "RUB",
+          "scope": "whole_trip"
+        },
+        "constraints": [
+          {
+            "key": "breakfast",
+            "value": true,
+            "hard": true,
+            "stay_id": null
+          }
+        ],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "demo_fallback": true,
+          "guest_nationality": null
+        }
+      },
+      "expected": [
+        "one_new_child_age=7",
+        "all_existing_travelers_unchanged=true",
+        "budget.amount_minor=8000000",
+        "control.action=wait",
+        "origin_stays_legs_rooms_groups_constraints_preferences_preserved=true"
+      ],
+      "gold_operations": [
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-1",
+            "type": "child",
+            "age": 7
+          }
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "amount_minor": 8000000,
+            "currency": "RUB",
+            "scope": "whole_trip"
+          }
+        }
+      ],
+      "gold_control": "wait",
+      "gold_speech_act": "CHANGE"
+    }
+  ],
+  "gold_schema_and_draft_domain_validated": true
+}

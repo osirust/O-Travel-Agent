@@ -1,0 +1,20 @@
+{
+  "status": "CONTROLLED_SUITE_PASS_ACTUAL_80_OPEN",
+  "tests": 3434,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 103.908,
+  "junit_sha256": "38276fcd2e14d47473859f5bb652d4c62f967f0abf0a62f75e1a10e9157b60cc",
+  "junit_path": ".local\\evaluation\\after80-20261026\\fx-media-full-final.xml",
+  "parent_commit": "54cdd31c4d6e3c1136b59a66215ee5fe5f6a730a",
+  "actual_media_evidence": "hotel-media-api-actual-20261026-attempt2.json",
+  "actual_cbr": "fx_source_unavailable",
+  "full80_actual": "NOT_COMPLETED",
+  "local_qwen_used": false,
+  "limits": [
+    "Controlled passing tests do not qualify all80 NLU or live-bookable trip",
+    "Actual media uses an owned ASGI fixture plan/price and actual LiteAPI content",
+    "Native deployment and strong-model canary recorded separately"
+  ]
+}

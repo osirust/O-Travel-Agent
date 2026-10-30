@@ -1,0 +1,66 @@
+{
+  "format": "otravel.nemotron8091.actual-terminal.v1",
+  "status": "KNOWN_TERMINAL_OWNED8091_STOPPED",
+  "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "phase": "/home/aegml/.local/evaluation/after80-nemotron-8091-final-epoch1-20261028-032035-2f55054a",
+  "new_inputs_submitted": 8,
+  "completed": 6,
+  "failed": 2,
+  "models": 8,
+  "source_http": 0,
+  "failure_codes": {
+    "ZAI100-079:T3": "INVALID_LLM_OPERATION",
+    "ZAI100-080:T2": "INVALID_LLM_OPERATION"
+  },
+  "stop_reason": "Declared new8 HTTP/engineering admission cap; not a new vendor429.",
+  "remaining_input_ids": [
+    "ZAI100-080:T3",
+    "ZAI100-080:T4",
+    "ZAI100-080:T5",
+    "ZAI100-080:T6",
+    "ZAI100-080:T7",
+    "ZAI100-080:T8"
+  ],
+  "remaining_count": 6,
+  "observed_080T3": "No intake/run; known budget reservation failed before setting inflight/POST. Durable user history contains only080T1–2.",
+  "old_nemo_http": {
+    "models": 39,
+    "sources": 79,
+    "unchanged": true
+  },
+  "old_groq_http": {
+    "models": 23,
+    "sources": 34,
+    "unchanged": true
+  },
+  "native_model_total": 70,
+  "operator_cap": 80,
+  "related_supplier_total": 113,
+  "supplier_cap": 500,
+  "vendor_counter_evidence": {
+    "before_used": 42,
+    "before_remaining": 8,
+    "new_requests_after_metadata": 8,
+    "queried_after": false,
+    "fresh_remaining": "UNKNOWN"
+  },
+  "profile_allocation": "New explicitexisting50 Routerpool config, perrun1, hardnew8; no oldenv/40counter reset, no paid model/fallback.",
+  "own8091_stopped": true,
+  "pending": 0,
+  "held": {},
+  "quotes": 0,
+  "orders": 0,
+  "source_or_database_reset": false,
+  "source_R17_unchanged": true,
+  "fallback_or_local_or_supplier_booking": false,
+  "manual_projection_path": "/mnt/e/work/aegml/.local/evaluation/nemotron8091-safe-projection-20261028/079-080-full-safe-dialogues.json",
+  "manual_projection_sha256": "52dab0f97c24e779a4df5e0d42b0c6152616597a35badd90cb2978e8b515a720",
+  "terminal_audit_sha256": "b1567ccb57c3ad8b515836fb234173be2b31e974d69b113e81a3f1a60371de59",
+  "scope": "Declared mixed-model fixed-input suffix on one immutable source. Completion is not semanticPASS or full80/106 qualification.",
+  "operator_preflight_notes": [
+    "A driver fence key-map mismatch stopped before anynewPOST; corrected to verify BOTH prior-provider ledgers. Old0POST epoch retained.",
+    "Terminal audit SELECT initially omitted explicit database and failed read-only; corrected explicit own-eval database, no writes.",
+    "Observed080T3 UNKNOWN_OR_BLOCKED is adjudicated knownUNSUBMITTED by prePOST reserve code, empty inflight and durable two-message prefix."
+  ]
+}

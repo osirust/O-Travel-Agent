@@ -1,0 +1,44 @@
+{
+  "status": "STOPPED_NO_RETRY",
+  "date": "2026-10-27",
+  "reason": "ENGINEERING_BUDGET_NO_WRITE",
+  "source_commit": "73e743715a440f8723e1628fed6a48cf0dcc3e92",
+  "package_sha256": "62536c9647eb9305817e0cec51f4e88732a51b42bf91884b358b298c378f883e",
+  "driver_sha256": "52e131c864ff5f03bcd02f61a9da7f774930e4d1ec38348c7266a91ccac71d4f",
+  "recipe_sha256": "79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea",
+  "private_report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-024241-806f1173/report.json",
+  "private_report_sha256": "3f99bc173c9f50a7046666a0a0ecac65472ff44d0e0fb9e1774563cb69475f90",
+  "model_calls_started": 9,
+  "tool_call_starts": 0,
+  "cases": [
+    {
+      "id": "PF-GEO-01",
+      "status": "PASS",
+      "recorded_steps": 15,
+      "step_status_counts": {
+        "PASS": 15
+      }
+    },
+    {
+      "id": "PF-GROUP-04",
+      "status": "STOPPED",
+      "recorded_steps": 11,
+      "step_status_counts": {
+        "PASS": 5,
+        "FAIL": 5,
+        "STOPPED": 1
+      }
+    }
+  ],
+  "attribution": {
+    "GEO01": "15/15 actual PASS on frozen73e7437.",
+    "GROUP04_T04": "Valid six-operation JSON carried one-room partial snapshots, but full layout semantics would remove saved first rooms and orphan breakfast constraints; batch rejected.",
+    "GROUP04_T05_T06_following": "Old party/budget/date expectations are causally affected by unapplied T04; hypothetical nonmutation itself holds.",
+    "terminal_stop": "Client reserve guard before resume. Nine observed model calls plus a conservative two-call resume reservation exceeded max10. This is not a vendor429 or proof that free quota is exhausted.",
+    "paused_queue": "Old source session remains paused with its pending input; do not resume it after changing code to rewrite the old result."
+  },
+  "local_model_calls": 0,
+  "supplier_orders": 0,
+  "full80_or106": false,
+  "repair_receipt": "room-members-r4-repair-20261027.json"
+}

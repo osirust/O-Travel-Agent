@@ -1,0 +1,71 @@
+{
+  "verification_id": "HARNESS-004-OPENROUTER-FREE-READINESS-20261028",
+  "status": "METADATA_READY_INFERENCE_AND_QUALITY_UNTESTED",
+  "checked_at_utc": "2026-10-28T00:02:27.154201+00:00",
+  "public_models_source": "https://openrouter.ai/api/v1/models",
+  "official_limits_source": "https://openrouter.ai/docs/api_reference/limits",
+  "models": [
+    {
+      "id": "google/gemma-4-31b-it:free",
+      "prompt_price": "0",
+      "completion_price": "0",
+      "context_length": 262144,
+      "max_completion_tokens": 32768,
+      "supported_parameters": ["response_format", "tools", "tool_choice"],
+      "structured_outputs_advertised": false
+    },
+    {
+      "id": "nvidia/nemotron-3.5-super-vl:free",
+      "prompt_price": "0",
+      "completion_price": "0",
+      "context_length": 1000000,
+      "supported_parameters": ["response_format", "structured_outputs", "tools", "tool_choice"]
+    },
+    {
+      "id": "dots-studio/dots-3-note-preview:free",
+      "prompt_price": "0",
+      "completion_price": "0",
+      "context_length": 512000,
+      "supported_parameters": ["response_format", "structured_outputs", "tools", "tool_choice"]
+    }
+  ],
+  "requested_gpt_oss_free_model": {
+    "id": "openai/gpt-oss-120b:free",
+    "listed": false,
+    "paid_nonfree_ids_not_selected": ["openai/gpt-oss-120b", "openai/gpt-oss-120b:batch"]
+  },
+  "key_counters_only": {
+    "http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_model_daily_limit": 50,
+    "free_model_daily_remaining": 50
+  },
+  "counter_interpretation": "The remaining50 was read from the explicit free-request counter. It was not inferred from zero monetary usage. Model variants share the account request allowance.",
+  "runtime_contract_review": {
+    "explicit_free_ids_only": true,
+    "max_price_prompt_completion_request": 0,
+    "allow_fallbacks": false,
+    "require_parameters": true,
+    "response_format": "json_object",
+    "canonical_schema_validation_on_server": true,
+    "changes_made": false
+  },
+  "next_stage": "A separately authorized small paired model check before any larger remaining-dialogue run. No generation GO was inferred from metadata readiness.",
+  "limitations": [
+    "Catalog capabilities do not prove current successful inference, semantic quality or provider availability.",
+    "50 remaining requests do not guarantee processing all77 remaining user inputs or schema repairs.",
+    "Gemma31B does not advertise structured_outputs in current metadata.",
+    "No account identifier, key name/hash, credential or raw authenticated payload is retained."
+  ],
+  "actions": {
+    "new_generations": 0,
+    "tourism_calls": 0,
+    "runtime_changes": 0,
+    "billing_changes": 0,
+    "quota_resets": 0
+  },
+  "private_initial_readiness_receipt_sha256": "f68c81df165696ed3011712e452b2a4b57ccd485e846444724f60458f8f7aad1"
+}

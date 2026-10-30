@@ -1,0 +1,3007 @@
+{
+  "format": "otravel.after80.manual-review.v1",
+  "created_at_utc": "2026-10-27T22:19:17.739681+00:00",
+  "status": "COMPLETE_READ_001_040_NOT_FULL_ACCEPTANCE",
+  "method": "Все user/reply/error/pending/minimalbefore-after прочитаны последовательно, не grep-only.003 перечитан отдельно после первоначального обрезанного вывода.",
+  "source_runtime": {
+    "commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+    "package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+    "provider": "zai",
+    "model": "glm-4.5-flash",
+    "configured2_effective1": "reported_by_source_operator",
+    "current_release_retested": false
+  },
+  "counts": {
+    "cases": 40,
+    "original_user_inputs": 345,
+    "terminal_executed_turns": 342,
+    "queued_not_executed": 3,
+    "execution": {
+      "FAILED": 17,
+      "COMPLETED": 325,
+      "QUEUED_WHILE_USER_PAUSED_NO_AUTO_RESUME": 3
+    },
+    "errors": {
+      "INVALID_LLM_OPERATION": 14,
+      "REQUEST_TIMEOUT": 1,
+      "INVALID_LLM_RESPONSE": 2
+    },
+    "whole_dialogue_acceptance_passes_claimed": 0
+  },
+  "safety": {
+    "new_model_calls": 0,
+    "new_travel_calls": 0,
+    "new_api_requests": 0,
+    "new_db_reads_or_writes": 0,
+    "new_tests": 0,
+    "core_tests_mainplan_modified": false,
+    "excluded_not_read": [
+      "source_events",
+      "headers",
+      "capabilities",
+      "resume-vault",
+      "credentials",
+      "providerrawresponses",
+      "reasoning",
+      "birthdates",
+      "preferences",
+      "hardconstraints",
+      "groups",
+      "fulltransportfacts",
+      "fullplan/quote/orderpayloads"
+    ],
+    "scope": "Отсутствие исключённых полей не доказывает отсутствие факта/пожелания/подтверждённогоstock. NoactualPASStransfer tocurrentb170."
+  },
+  "projection_manifest_sha256": "42f2064983633462ab815fcad4d11404c5bb113351f20f71d3912e46cdd8c426",
+  "interpretation_rules": [
+    "COMPLETED не означает semanticPASS.",
+    "Bareдаты привязываются кфактическому предыдущемуpending, а не кпозиции исходногоскрипта.",
+    "Неотвеченныйroom/citychoice означаетNEEDS_ADAPTIVE, а не автоматическиbrokenSearch.",
+    "REQUEST_TIMEOUT не доказывает исчерпаниеquota/reset; surfaced429 в40нет.",
+    "Поздняяявнаяпоправка не делает предыдущуюненазваннуюмутациюправильной.",
+    "No vendoravailability/booking qualification from visible prose alone.",
+    "Developmentcorpus неheldout и не подтверждённоеформальноетребованиеорганизаторов."
+  ],
+  "known_findings_reused": [
+    {
+      "id": "HARNESS-004-BUDGET-TYPO-DELTA-001",
+      "case_turns": [
+        "002/T7"
+      ],
+      "receipt": "bulk32-literal-repairs-20261027.json"
+    },
+    {
+      "id": "HARNESS-004-CHECKOUT-DATE-SUFFIX-001",
+      "case_turns": [
+        "003/T3"
+      ],
+      "receipt": "bulk32-literal-repairs-20261027.json"
+    },
+    {
+      "id": "HARNESS-004-MORNING-TYPO-COMPOUND-001",
+      "case_turns": [
+        "004/T9"
+      ],
+      "receipt": "bulk32-literal-repairs-20261027.json"
+    },
+    {
+      "id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+      "case_turns": [
+        "005/T3"
+      ],
+      "related_observations": [
+        "012/T3",
+        "021/T8",
+        "031/T5"
+      ],
+      "receipt": "place-choice-independent-facts-20261027.json"
+    },
+    {
+      "id": "HARNESS-004-UNREQUESTED-TRAVELER-REMOVAL-001",
+      "case_turns": [
+        "008/T8"
+      ],
+      "receipt": "after80-bulk-unrequested-removal-20261027.json"
+    },
+    {
+      "id": "HARNESS-004-NONAPPLY-CLAUSE-FALSE-PAUSE-001",
+      "case_turns": [
+        "012/T6"
+      ],
+      "receipt": "after80-bulk-calendar-pause-20261027.json"
+    },
+    {
+      "id": "HARNESS-004-INVALID-CALENDAR-ROLLOVER-001",
+      "case_turns": [
+        "017/T8"
+      ],
+      "receipt": "invalid-calendar-rollover-20261028.json"
+    },
+    {
+      "id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+      "case_turns": [
+        "003/T4"
+      ],
+      "related_observations": [
+        "009/T5",
+        "016/T1",
+        "021/T6",
+        "034/T4",
+        "035/T4"
+      ],
+      "receipt": "r11-policy-assertions-revision-20261028.json"
+    },
+    {
+      "id": "H004-SAVED-FACTS-001",
+      "related_id": "HARNESS-004-REPLY-LOSS-001",
+      "case_turns": [
+        "007/T7",
+        "011/T9",
+        "014/T2",
+        "014/T8",
+        "022/T8",
+        "024/T6",
+        "025/T2",
+        "026/T8",
+        "030/T9",
+        "031/T9",
+        "032/T8",
+        "036/T8",
+        "037/T9"
+      ],
+      "receipt": "saved-facts-answer-20261026.json",
+      "limitation": "Это повтор видимого класса; не утверждение общего rootcause или покрытия всехформулировок старыми four-topics/morningtests."
+    }
+  ],
+  "new_permanent_behavior_findings": [
+    {
+      "id": "HARNESS-004-REMOVED-CITY-AS-DESTINATION-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Удаляемый город создан как единственное проживание",
+      "case_id": "ZAI100-023",
+      "turn": 7,
+      "user": "Убери всёже вторую остановку, Анталью. Верни маршрут только со Стамбулом; его даты и общий бюджет прежние.",
+      "assistant": [
+        "Корзина превышает общий бюджет.\n\nВ текущем расчёте: проживание — тестовые тарифы (SANDBOX); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+      ],
+      "before": {
+        "origin": "Казань",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 12000000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": []
+      },
+      "after": {
+        "origin": "Казань",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 12000000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Анталья",
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-14",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Единственный stay должен стать Стамбулом 10–14 Nov либо нужен адресный безопасныйASK;Анталью создавать нельзя.",
+      "projection_sha256": "0058344888850894b0ada633e4a7c7beb98a174fc17966b0e390df0b8002c8d7"
+    },
+    {
+      "id": "HARNESS-004-RELATIVE-CHECKOUT-CURRENT-BASE-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Относительный выезд использует неверную текущую базу/дельту",
+      "case_id": "ZAI100-024",
+      "turn": 8,
+      "user": "А теперь выезд на один день позжэ относительно того, что сейчас записано. Напомни обе даты.",
+      "assistant": [
+        "Сохранённый маршрут: Москва → Казань → Москва.\n\nОстановка 1, Казань: заезд 15.11.2026, выезд 20.11.2026; 5 ночей. Переезд 1, Москва → Казань: отправление 15.11.2026. Переезд 2, Казань → Москва: отправление 20.11.2026.\n\nТекущий состав: 1 взрослый; дети в сохранённом составе не указаны.\n\nСохранённый бюджет на всю поездку: 75 000,00 RUB.\n\nВариант 1. Сохранённая расчётная сумма: 26 309,85 RUB. План смешанный. DEMO-компонентов: 2; их цены и наличие вымышлены. SANDBOX-компонентов: 2; это ответы тестового API. Реальная бронь этим ответом не создаётся.\n\nВ текущем расчёте: проживание — демонстрационный расчёт (DEMO); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nПроживание: Казань: получить проверяемый ответ источника не удалось.\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+      ],
+      "before": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "check_in": "2026-11-15",
+            "check_out": "2026-11-18",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "check_in": "2026-11-15",
+            "check_out": "2026-11-20",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Exactцепочка 20→18→+1 должна дать 19 Nov с прежним заездом 15; проверить currentversionbase, старуюкорзину и отсутствие неназванных hard 5 ночей.",
+      "projection_sha256": "c739901fc4e712ae3eeb9fc8e4bf1be409ad548a1037b2520a4fb8e1f9935d82"
+    },
+    {
+      "id": "HARNESS-004-UNSPECIFIED-TRAVELER-TYPES-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Число людей без категорий превращено во взрослых",
+      "case_id": "ZAI100-025",
+      "turn": 1,
+      "user": "Нас четверо, хотим из Санкт-Петербурга в Сочи. Возраст и состав я ещё не перечислил, не угадывай.",
+      "assistant": [
+        "Текущий состав: 4 взрослых; дети в сохранённом составе не указаны. На какую дату планируете заезд в городе «Сочи»?"
+      ],
+      "before": {
+        "origin": null,
+        "budget": null,
+        "party": [],
+        "stays": []
+      },
+      "after": {
+        "origin": "Санкт-Петербург",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-3",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-4",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Сочи",
+            "check_in": null,
+            "check_out": null,
+            "rooms": []
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Не создавать 4 adult при явном запрете угадывать; сохранить известное количество/уточнить категории, затем принять явный 2 adult+children 4/12 без лишнихлюдей.",
+      "projection_sha256": "dd5ecd286765d151c748355a9b8e6abca98db4c9a0fe8137fb5a1fa1879c0fc4"
+    },
+    {
+      "id": "HARNESS-004-ROUTE-END-HOTEL-CONFLATION-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Конечный город маршрута заменяет город гостиницы",
+      "case_id": "ZAI100-035",
+      "turn": 7,
+      "user": "Подтверждаю завершение в Москве после Дубая. Начало всё ещё Казань, не меняй его на Москву.",
+      "assistant": [
+        "Собрана оценочная поездка. Источник каждого компонента указан отдельно; оформление только имитируется.\n\nВ текущем расчёте: проживание — демонстрационный расчёт (DEMO); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nПроживание: Москва: в ответе не подтверждены все обязательные сборы.\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+      ],
+      "before": {
+        "origin": "Санкт-Петербург",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 12500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Дубай",
+            "check_in": "2026-12-03",
+            "check_out": "2026-12-09",
+            "requested_nights": 6,
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "origin": "Санкт-Петербург",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 12500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Москва",
+            "check_in": "2026-12-03",
+            "check_out": "2026-12-09",
+            "requested_nights": 6,
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "EndpointMoscow меняет только transport/endsemantics;Dubaihotel/dates/rooms сохраняются. Если setterнеподдержан, конкретныйASK, но неhotelretarget. Отдельно воспроизвести originT 5.",
+      "projection_sha256": "4a1d46f0d84eae775fc809130cc37cdcae7f5d1077e110eae31d3b12656163cb"
+    },
+    {
+      "id": "HARNESS-004-ALIAS-QUESTION-STAY-REMOVAL-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Вопрос об алиасах удаляет единственное проживание",
+      "case_id": "ZAI100-038",
+      "turn": 6,
+      "user": "Бюджет 65к рублей общий. Питер и Санкт-Петербург у тебя ведь один город? Мне две остановки не нужны.",
+      "assistant": [
+        "Отправление: Москва. Остановки: пока не указаны. Транспортные плечи и возвращение ещё не заданы.\n\nДаты поездки пока не указаны.\n\nТекущий состав: 1 взрослый; дети в сохранённом составе не указаны.\n\nСохранённый бюджет на всю поездку: 65 000,00 RUB.\n\nСанкт-Петербург — Россия. Питер и Санкт-Петербург — названия одного города.\n\nВ какой город вы хотите поехать?"
+      ],
+      "before": {
+        "origin": "Москва",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Санкт-Петербург",
+            "check_in": "2026-12-05",
+            "check_out": "2026-12-08",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 6500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": []
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Exactinput сединственнымSPbstay сохраняет ID/даты/номер/party и отвечаетaliases+budget. Настоящее explicitdelete должно оставаться возможным отдельнымконтролем.",
+      "projection_sha256": "cd10f70df71a03a439b0e32ef0bc03bcf2f3fd3c7228aaccbade56380574d4a7"
+    },
+    {
+      "id": "HARNESS-004-NEGATED-DESTINATION-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Явно исключённый город становится назначением",
+      "case_id": "ZAI100-040",
+      "turn": 6,
+      "user": "Бюджет 75 тысяч на двоих за поездку. Не в Сочи: я выбрал Казань. Сочи упоминаю только чтобы исключить, не меняй направление.",
+      "assistant": [
+        "На какую дату планируете заезд в городе «Сочи»?"
+      ],
+      "before": {
+        "origin": "Санкт-Петербург",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Казань",
+            "check_in": null,
+            "check_out": "2026-11-02",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "origin": "Санкт-Петербург",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Сочи",
+            "check_in": null,
+            "check_out": "2026-11-02",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ]
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Применить только budget 75000;сохранитьKazan/geoID/dates/party, не искатьSochi. PositiveexplicitSochi edit остаётся возможным.",
+      "projection_sha256": "27e5b9483fd05e9113fc3108bc7b29382b7f9e8b4f10528494af87c91c80a177"
+    },
+    {
+      "id": "HARNESS-004-ENGLISH-PLACE-QUERY-ROUTING-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Englishroom/origin инструкции принимаются за cityquery",
+      "case_id": "ZAI100-039",
+      "turn": 5,
+      "user": "One room, please",
+      "assistant": [
+        "Не нашёл подтверждения города «One room, please». Проверьте написание или укажите другой город и регион."
+      ],
+      "before": {
+        "origin": "Казань",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "check_in": null,
+            "check_out": null,
+            "rooms": []
+          }
+        ]
+      },
+      "after": {
+        "origin": "Казань",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "check_in": null,
+            "check_out": null,
+            "rooms": []
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Не посылать room/fullorigin инструкции как cityquery; сохранять независимыефакты иfreshplacechoice. Реальные новыеcitylabels/номера кандидатов должны работать.",
+      "projection_sha256": "bf50ad003baeb9497b487bc1497cb2c138e623806d21765ef410b676d3792b7d"
+    },
+    {
+      "id": "HARNESS-004-EXPLICIT-DESTINATION-NONAPPLY-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Явная смена города/страны не применяется без понятного уточнения",
+      "case_id": "ZAI100-028",
+      "turn": 3,
+      "user": "Тогда явно меняем страну на Турцию и едем в Стамбул. Подтверждаю замену Нови-Сада.",
+      "assistant": [
+        "Что нужно уточнить о поездке, чтобы продолжить?"
+      ],
+      "before": {
+        "origin": "Казань",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-3",
+            "type": "child",
+            "age": 9
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Нови-Сад",
+            "check_in": null,
+            "check_out": null,
+            "rooms": []
+          }
+        ]
+      },
+      "after": {
+        "origin": "Казань",
+        "budget": null,
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-2",
+            "type": "adult",
+            "age": null
+          },
+          {
+            "id": "new-traveler-3",
+            "type": "child",
+            "age": 9
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Нови-Сад",
+            "check_in": null,
+            "check_out": null,
+            "rooms": []
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Exact 028/T 3 иrelated 021/T 6,029/T 6,015/T 7 квалифицировать раздельно:commitподтверждённого направления либо конкретныйchoice/consent,не silentoldcity/genericwait.",
+      "projection_sha256": "d9c1833f1b55432aab912658d65661e83da20debe75d156565a6cba055c0beee"
+    },
+    {
+      "id": "HARNESS-004-GENERIC-STAY-KEEP-FALSE-PIN-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Сохранить гостиничное проживание ошибочно значит выбрать конкретныйhotel",
+      "case_id": "ZAI100-033",
+      "turn": 6,
+      "user": "Пересадки всё-таки не хочу: теперь только прямой перелёт. Стамбул и гостиницу там сохраняем.",
+      "assistant": [
+        "Чтобы сохранить конкретный отель, выберите актуальный вариант через просмотр корзины. Первый показанный план сам по себе не означает ваш выбор."
+      ],
+      "before": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 10500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "check_in": null,
+            "check_out": "2026-11-20",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 10500000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Стамбул",
+            "check_in": null,
+            "check_out": "2026-11-20",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ]
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Genericstaykeep сохраняетstayиобрабатываетnonstopбезfakehotelpin/previewrequirement. Явный keepконкретноговыбранногоhotel всё ещё требует freshselectionproof.",
+      "projection_sha256": "020a1f1cad9ef36755e14c9ed33f662e74e811630ec4edd1eade29a0453df3bc"
+    },
+    {
+      "id": "HARNESS-004-DATE-CONFLICT-QUESTION-BINDING-001",
+      "status": "CONFIRMED_OLD_RUNTIME_BEHAVIOR_CURRENT_RELEASE_RETEST_OPEN",
+      "title": "Отклонённый неверныйcheckout объясняется вопросом про заезд",
+      "case_id": "ZAI100-016",
+      "turn": 4,
+      "user": "Исправь только выезд на 9 ноября 2026. Заезд 10 ноября обязательно оставь, я понимаю, что тут может быть противоречие.",
+      "assistant": [
+        "На какую дату планируете заезд?"
+      ],
+      "before": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7000000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Сочи",
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-15",
+            "requested_nights": 5,
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "origin": "Москва",
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7000000
+        },
+        "party": [
+          {
+            "id": "new-traveler-1",
+            "type": "adult",
+            "age": null
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Сочи",
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-15",
+            "requested_nights": 5,
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cause": "UNKNOWN: модельный finalcontract/guardtrace исключены из этого ручного просмотра.",
+      "required_action_and_closing_condition": "Exactinvalidorder:объяснитьcheckoutдолженбытьпозже 10 Nov и спросить выезд именноэтогоstay. Related 018/T 6 долженобъяснятьsame-dayorder,неroomcount.",
+      "projection_sha256": "df883ed981f2d5ecdc21a7e5610c0f7efaa80c7355888678b7b41192cbf8d6a9"
+    }
+  ],
+  "cases": [
+    {
+      "id": "ZAI100-001",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-repair2-epoch3-20261027-200304-b80861b6/ZAI100-001.json",
+      "source_file_sha256": "1a78e65b8405395834bbc53e58e32076ef42ae6f5b81872fb3e50f7185239843",
+      "projection_sha256": "86e19d133e03bc114aa15e75ee297f7985462c4c10dc58e6b05570c51e2d925c",
+      "summary": "Контракт начальной полной заявки отвергнут; точный badfield UNKNOWN. После явных уточнений Москва→SPb, даты и бюджет сохранены. Ответ SPb на actual origin-question не считать ошибкой роли.",
+      "successful_behavior": [
+        "T2 country/capital question is answered without changing destination.",
+        "T5 explicit origin-role correction sets Moscow without changing destination;T6–7 dates andT8 room count persist.",
+        "T10 honestly says the party remains unknown;T11 does not invent a first plan or booking."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1
+          ],
+          "category": "CONTRACT_FAILURE_UNKNOWN_BADFIELD",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "INVALID_LLM_OPERATION leaves fresh canonical facts empty. Exact rejected field is unavailable in the permitted projection; do not call this429 or infer a particular badenum."
+        }
+      ],
+      "adaptive_notes": [
+        "T3 says leave party/early flight as before althoughT1 transaction failed; no prior stored party exists. Asking origin/adults later is not itself loss of previously committed state.",
+        "T4 Санкт-Петербург answers the actual origin question, so assigning it as origin is consistent with current pending;the original script appears to echo destination and needs adaptive correction (givenT5)."
+      ],
+      "limitations": [
+        "Early-flight preference is outside this minimal projection.",
+        "Initial needed facts are missing becauseT1 failed;no completed journey can be claimed."
+      ],
+      "errors": [
+        {
+          "turn": 1,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-002",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-repair2-epoch3-20261027-200304-b80861b6/ZAI100-002.json",
+      "source_file_sha256": "aa4c80836fa5a3350e5af20e056504ad653aeffb547c58f47d50ccdc77886a13",
+      "projection_sha256": "c9c7451f81ebd68f49d3ad88a0c82d62ea18ab6306a0336a8c8bf6ee3a0aac0c",
+      "summary": "Возрастная гипотеза не применена, явное 4→5 корректно. Бюджет 150000−20000 ошибочно 148000 вместо 130000 RUB; поздние план/корзина ссылки без ответа о номерах требуют adaptive actor.",
+      "successful_behavior": [
+        "T1 stores2adults/children4and9/Kazan→Antalya;T2–3 store dates10–17Nov.",
+        "T5 hypothetical age5 changes nothing;T6 changes only younger child4→5 and older9 persists.",
+        "T8 recall preserves party/budget and pending room question;T10–11 refuse to invent a valid cart or existing order."
+      ],
+      "observations": [
+        {
+          "turns": [
+            7,
+            8,
+            11
+          ],
+          "category": "WRONG_BUDGET_DELTA",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-BUDGET-TYPO-DELTA-001",
+          "facts": "150000minor-majorbudget150000RUB minus20000 should130000RUB;canonical amount becomes14800000minor=148000RUB and later recalls inherit it."
+        }
+      ],
+      "adaptive_notes": [
+        "T8 claims the agent did not answer about children, butT7 visible reply already lists5and9;do not score that user complaint as an independent fact.",
+        "No room count is ever supplied despite repeated specific request. T9–10 refer to a displayed first plan/checked100750RUBcart not established by this transcript;checkout failures require NEEDS_ADAPTIVE rather than inventing offers."
+      ],
+      "limitations": [
+        "Quote/order objects are excluded;no complete checkout acceptance is scored."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-003",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-repair2-epoch3-20261027-200304-b80861b6/ZAI100-003.json",
+      "source_file_sha256": "3348a00eb2c926563cfbaba1acd5c4b17aa1666c9bb7a8ecb48622c63a3cd8ef",
+      "projection_sha256": "ec63e77313be557b51f2ed9c4bf49c0337616e9b10ed3c387147412ec303c177",
+      "summary": "Явный checkout 10 NovT 3 пропущен; T 4 бюджетная реплика поздно применяет дату и неназванные hard 4 ночи. Whole-trip/per-night суммы не смешаны. Номер ещё не указан.",
+      "successful_behavior": [
+        "T1 stores2adultfriends/Moscow→Sochi without invented child;T2 accepts check-in6Nov.",
+        "T5 budget recall is read-only;T6 changes whole-trip budget90k→75k correctly;T7 is an effective no-op.",
+        "T8 explicitly declines unsupported5000/night filter and preserves75000whole-trip budget.",
+        "T9–10 ask the still-missing room count and do not invent availability."
+      ],
+      "observations": [
+        {
+          "turns": [
+            3,
+            4
+          ],
+          "category": "SUFFIX_DATE_OMISSION_AND_LATE_RECOVERY",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-CHECKOUT-DATE-SUFFIX-001",
+          "facts": "Fresh checkout answer10Nov2026выезжаем is ignored atT3;checkout10Nov is only saved alongside unrelated budgetT4."
+        },
+        {
+          "turns": [
+            4
+          ],
+          "category": "UNREQUESTED_HARD_DURATION",
+          "status": "CONFIRMED_RELATED_KNOWN",
+          "known_id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+          "facts": "T4 adds requested_nights4 althoughsourceT1–4 specify dates,not a distinct hard-night constraint."
+        }
+      ],
+      "adaptive_notes": [
+        "The script never supplies a room count afterT4;repeated room question atT6/T7/T9 is justified,not a new loopbug."
+      ],
+      "limitations": [
+        "No actual priced plan is reached in this transcript."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-004",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-004.json",
+      "source_file_sha256": "f1e3b66f986227bef4de5f788de41ca12e28ede5de0a53b240639ad841dc5579",
+      "projection_sha256": "dc50bff83665ed7bad144f19d106770e329596879fcc4bb7043c5aa795ae0c87",
+      "summary": "Казань→Москва/12–15 Nov сохранены. T 9 рано утрам+вопрос о checkout получает genericno-change. МоскваT 3 не отвечала check-in, повтор вопроса оправдан.",
+      "successful_behavior": [
+        "T1 does not promote tentative Petersburg origin;T2 explicitly sets Kazan while destinationMoscow/oneadult stay intact.",
+        "T4–5 dates12–15Nov andT6 room count1 persist.",
+        "T7 states the correct saved route;T8 records70000RUB and keeps source labels distinct."
+      ],
+      "observations": [
+        {
+          "turns": [
+            9
+          ],
+          "category": "MORNING_TYPO_AND_DATE_REPLY_LOSS",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-MORNING-TYPO-COMPOUND-001",
+          "facts": "After valid early-flight preference and a saved checkout question,visible reply is onlygenericno-change;the stored date is still15Nov."
+        }
+      ],
+      "adaptive_notes": [
+        "T3 Москва is not a date answer to the current check-in question;reprompting is appropriate."
+      ],
+      "limitations": [
+        "Canonical room contains no member IDs despite oneadult/livesalone;effective provider allocation is excluded,so no capacity/booking defect is inferred.",
+        "Structured plans/prices/preferences are outside the minimal projection;do not infer budget compliance or loss merely from omission in prose."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-005",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-005.json",
+      "source_file_sha256": "c1cccc864b5d9d14488ccd6b6981296bcf7cb845e1ec11ad3cea695c18af4b4a",
+      "projection_sha256": "fab9bc49b86fecfbd1cac88a0672395432584626de369686e5d610b23788e278",
+      "summary": "ГеовыборDubai теряется при независимой дате; infant 0, добавление взрослого и checkout+1 позже корректны. BareDubai не выбирает физического кандидата 1/2/3.",
+      "successful_behavior": [
+        "T1 recognizes infantage0 and oneadult,without falsely turning0years into nochildren.",
+        "T4–5 retain18–24Nov and allocate adult/infant to one room;T7 correctly recalls both.",
+        "T8 adds oneadult sister while preserving the same infant and room membership;T9 shifts checkout24→25Nov only and correctly reports7nights.",
+        "T9 describes138243.28RUB as a mixed DEMO/SANDBOX estimate,not a real booking."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1,
+            2,
+            3
+          ],
+          "category": "UNRESOLVED_PLACE_CHOICE_LOST_AFTER_INDEPENDENT_DATE",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+          "facts": "After asking a numbered Dubai candidate choice,T2bareDubai does not resolve it;T3date replaces the place question instead of preserving unresolved identity."
+        }
+      ],
+      "adaptive_notes": [
+        "T2 repeats an ambiguous city label instead of selecting1/2/3;it is legitimate to continue asking the choice,not auto-select first."
+      ],
+      "limitations": [
+        "Physical place refs/infant DOB are excluded;no claim that eight-month tariff/DOB rules are fully qualified."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-006",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-006.json",
+      "source_file_sha256": "852723d9b6b05e89ea55d4fb406e52878714e69415885732e511544657d94e96",
+      "projection_sha256": "c592fc843cdcac4cb346249b00e2dcc24ab2742c0d091042b7129e21c312bb81",
+      "summary": "Свежая family-заявка получает сообщение о сохранённых группах без сохранения маршрута. Позднее party/child 10→11/150000 сохранены. Rawgroup UNKNOWN; даты не отвечают actual group/origin-уточнениям.",
+      "successful_behavior": [
+        "T2 eventually stores4adults/children3,6,10;T7 corrects only youngest-in-second-family10→11 while other ages persist.",
+        "T4 records150000RUB;T5/T8 honestly say no room distribution/current offers exist.",
+        "T8 reply preserves two separate family memberships in prose;the minimal projection excludes groups,so internal group flags cannot be independently checked."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1,
+            2,
+            3,
+            6
+          ],
+          "category": "INITIAL_FAMILY_CONFLICT_AND_NONPROGRESS",
+          "status": "OBSERVED_BEHAVIOR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "T1 starts from completely empty state but says a different number of families was specified and asks which saved groups to keep;no origin/destination/party is committed. T2 saves party only,not explicitKazan/Istanbul. Later room mapping cannot progress because no stay exists.",
+          "attribution": "The reply may come from a legitimate guard rejecting a wrong model group batch or from a false conflict. Exact raw group values are excluded;do not invent a badfield or duplicate a permanent codefinding."
+        }
+      ],
+      "adaptive_notes": [
+        "T2/T3 give bare dates although the actual pending is group clarification/origin,not an addressed date question. The fixed script must answer actual clarification before claiming all later failures.",
+        "T6 has a clear group partition,but still no current destination;asking origin/destination is a real missing-state condition inherited fromT1/T2."
+      ],
+      "limitations": [
+        "No source search/booking stage is reached.",
+        "Groups/constraints excluded;family persistence cannot be proved from their absence in this projection."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-007",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-007.json",
+      "source_file_sha256": "ebd5296eae73f1a95d5c1c11a3aad580066b179fbbe89f7cd9e668397ad79fcd",
+      "projection_sha256": "b45e9c322b9ff08517fc60eb88ac3e672e170d011c81627369e061039dfcbc00",
+      "summary": "Даты 8–16→8–14 Nov изменены правильно. T 7 напомнить даты заменено roomquestion. Номера ни разу не заданы: отсутствие финального плана законно.",
+      "successful_behavior": [
+        "T1 adultparty2/Moscow→Antalya;T2–3 accept8–16Nov;T4 budget130000RUB.",
+        "T5 same-country geography answer leaves city/state intact.",
+        "T6 shortens checkout16→14Nov by2nights and preserves check-in8Nov.",
+        "T8 does not invent a displayed plan while room count is still absent."
+      ],
+      "observations": [
+        {
+          "turns": [
+            7
+          ],
+          "category": "COMPOUND_SAVED_DATE_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "related_primary_id": "HARNESS-004-MORNING-TYPO-COMPOUND-001",
+          "facts": "User explicitly asks to recall dates alongside cheaper-search wording withподишевле. Reply only repeats the room-count question;canonical dates remain8–14Nov.",
+          "attribution": "Cannot tell whether model omitted date prose or Harness replaced it. Do not assume the004morning-specific fix also closes this lexically different case."
+        }
+      ],
+      "adaptive_notes": [
+        "No room count is supplied anywhere. Repeated room questions and lack of a final plan are not independently a search-loop defect."
+      ],
+      "limitations": [
+        "Preferences excluded;do not infer cost-preference loss solely from missing prose."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-008",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-008.json",
+      "source_file_sha256": "644336fe90c183e2973864a5007ee29aa2343e3694a0f06451e82da44663b4ae",
+      "projection_sha256": "7aeb68560c64d4eb8e5d6475a5bacab248d179b4a992a451e06a1fb23c95ccf1",
+      "summary": "Явное удаление ребёнка корректно. T 8 бюджет/recall без запроса удаляет ещё взрослого: осталось 1 вместо 2. Это canonical mutation, не только ошибочный текст.",
+      "successful_behavior": [
+        "T1 stores2adults and child8 withSPb→Sochi;T3–4 dates2–7Nov.",
+        "T5 room explicitly includes all3;T6 hypothetical child absence changes nothing.",
+        "T7 explicit child removal preserves both adults/dates and removes only child membership.",
+        "Mixed plan labels and source failure disclaimer are visible instead of a realbooking claim."
+      ],
+      "observations": [
+        {
+          "turns": [
+            8
+          ],
+          "category": "UNREQUESTED_ADULT_REMOVAL",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-UNREQUESTED-TRAVELER-REMOVAL-001",
+          "facts": "Budget/party recall request85k removes one of the2remaining adults and its room membership,leaving1adult. This is an unrequested actual canonical mutation,not merely a reply typo."
+        }
+      ],
+      "adaptive_notes": [
+        "T2 Sochi does not answer current check-in question;the safe reprompt is appropriate."
+      ],
+      "limitations": [
+        "Source warning says no verifiable source response;actual provider/network/fee cause is not visible and remainsUNKNOWN.",
+        "The lower final price is calculated for the incorrectly reduced party;do not treat it as proof of the requested two-adult trip."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-009",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-009.json",
+      "source_file_sha256": "131bc54ff74ed678f96ddfe137c2fbbe79680c2a4862c4e25d0c98fc5763f869",
+      "projection_sha256": "8ee25971774a0724f86e496b520583a91de77d6abaa9757d7a1f759840bdbf26",
+      "summary": "Начальная 1 adult поездка, гипотеза без мутации, +child 7 и correction 8 корректны; ответы source/cart по существу. Неназванный hardduration 5 наблюдается, hotel sourceerror честно обозначен.",
+      "successful_behavior": [
+        "Начальный состав 1 взрослый и Москва→Казань сохранены; даты13–18ноября, номер и бюджет75000RUB приняты.",
+        "T6 гипотеза о ребёнке не меняет поездку;T7 явное добавление7лет иT8 поправка8лет корректны, взрослый и распределение сохранены.",
+        "T8 отвечает составом и сохранёнными фактами;T9 объясняет смешанные источники и необходимость нового preview без покупки."
+      ],
+      "observations": [
+        {
+          "turns": [
+            5
+          ],
+          "category": "UNASKED_HARD_DURATION",
+          "status": "OBSERVED_LEGACY_DURATION_SCOPE",
+          "known_id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+          "facts": "После отдельных дат13–18ноября в состоянии появляется requested_nights=5, хотя явной команды жёстко сохранить длительность не было. В этом чате последующего конфликта дат нет."
+        }
+      ],
+      "adaptive_notes": [
+        "T2 Казань не отвечает уже заданному вопросу о дате; повтор даты-вопроса оправдан."
+      ],
+      "limitations": [
+        "Проверка источника проживания не удалась, причинаUNKNOWN; ответы честно маркируют DEMO/SANDBOX."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-010",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-010.json",
+      "source_file_sha256": "718c65f349835be958a7d419dcb41e3c808b0ce02bc0c1bb50c9b6df5ec73b93",
+      "projection_sha256": "ecffa808ea03b38621c723924439b9f0a2a5940ce7bf6b306ad2ac106b5fa3ae",
+      "summary": "Whole-trip 120000, добавление друга и 135000 верны. Новый взрослый не вошёл в явный номер; T 7 общий estimate, T 9 актуального плана нет. Эффективный coverage требует отдельной проверки.",
+      "successful_behavior": [
+        "1взрослый, Казань→Дубай,16–22ноября,1номер и120000RUB сохранены.",
+        "T6 корректно объясняет whole_trip;T7 добавляет второго взрослого, бюджет остаётся120000;T8 повышает именно на15000 до135000;T9 правильно сообщает сумму и2взрослых."
+      ],
+      "observations": [
+        {
+          "turns": [
+            7,
+            8,
+            9
+          ],
+          "category": "ADDED_ADULT_UNALLOCATED_AND_NO_CURRENT_PLAN",
+          "status": "OBSERVED_COMPLETENESS_NEEDS_ATTRIBUTION",
+          "known_id": null,
+          "facts": "После добавления друга party=2, но сохранённый номер содержит только первого взрослого. T7 ещё сообщает собранную оценочную поездку, T8 выводит предупреждение об изменении явного распределения, T9 честно говорит актуального плана нет.",
+          "attribution": "Не доказано, требовала ли политика автоматически заселить друга в тот же номер или обязана запросить распределение. Нельзя считать этот вариант полным на2человек; эффективные offer coverage/allocations исключены."
+        }
+      ],
+      "adaptive_notes": [
+        "T2 Дубай не отвечает вопросу о заезде."
+      ],
+      "limitations": [
+        "Группы и полный план исключены: причина предупреждения о распределении UNKNOWN; не доказываем ложную стоимость по одному тексту."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-011",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-011.json",
+      "source_file_sha256": "8e867ac2e9e5e196b67d18fb906c972659e03bb6a9afba436281a7800df0ec2d",
+      "projection_sha256": "0cd5668ce3089b20fce9bb07c826e28fce3813398ad48c20242af6a3685fa6d9",
+      "summary": "2 adult/Москва→Стамбул/23–29 Nov/110000 сохранены. T 9 даты/остаток утреннего требования не отвечены. Снятие prefs нельзя доказать без исключённых preference fields.",
+      "successful_behavior": [
+        "2взрослых, Москва→Стамбул,23–29ноября,1номер на2,110000RUB сохранены.",
+        "T6 гипотеза о вечере не меняет даты/состав/бюджет; ответ сохраняет утреннее пожелание и явно маркирует смешанный план."
+      ],
+      "observations": [
+        {
+          "turns": [
+            9
+          ],
+          "category": "COMPOUND_SAVED_FACTS_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "related_primary_id": "HARNESS-004-MORNING-TYPO-COMPOUND-001",
+          "facts": "На явный вопрос о текущих датах и остатке утреннего требования приходит только «Поездка и показанные варианты не изменены». Канонические даты23–29ноября не меняются.",
+          "attribution": "Без model trace нельзя отделить модельный no-op/пропуск ответа от замены ответа Harness. Предпочтения исключены: T7/T8 удаление утреннего пожелания по проекции не квалифицируется."
+        }
+      ],
+      "adaptive_notes": [
+        "T2 Стамбул не отвечает вопросу о заезде."
+      ],
+      "limitations": [
+        "T6 включает старые before→after фрагменты не о текущей гипотезе; это шум/неясный historical scope, а не доказательство текущей мутации.",
+        "Корректность снятия предпочтения требует permitted preference projection или отдельного targeted replay."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-012",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-012.json",
+      "source_file_sha256": "eda50d849edd3dfd0075b6bdc71073550b09528382fbed002c12e9fe4652c422",
+      "projection_sha256": "fbe9ce1650a4a602b04e4a09dd44c86042deaf18854d2e0f76cf4bcc85a4f208",
+      "summary": "Пока ничего не меняйT 6 ошибочно становится user_pause; T 7–9 queued, не исполнялись. Ранняя дата также заменяет неподтверждённый геовопрос.",
+      "successful_behavior": [
+        "T1 сохраняет originSPb,2взрослых и17-летнего ребёнка,Анталью;T3–5 даты3–10декабря,семейный номер на3 и150000RUB.",
+        "Очередь после user_pause не запускает поиск или скрытое изменение без resume."
+      ],
+      "observations": [
+        {
+          "turns": [
+            6,
+            7,
+            8,
+            9
+          ],
+          "category": "NONAPPLY_QUESTION_FALSE_USER_PAUSE",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-NONAPPLY-CLAUSE-FALSE-PAUSE-001",
+          "facts": "«Что ещё нужно уточнить ... Пока ничего не меняй» вызывает явную пользовательскую паузу. T7–9 остаются QUEUED_WHILE_USER_PAUSED_NO_AUTO_RESUME без ответов и без обработки новых фактов.",
+          "attribution": "T6 ложная пауза известна отдельным receipt. Не считать T7–9 тремя самостоятельными ошибками LLM: они не исполнялись."
+        },
+        {
+          "turns": [
+            1,
+            2,
+            3
+          ],
+          "category": "PLACE_UNCONFIRMED_THEN_REPLACED_BY_DATE",
+          "status": "OBSERVED_RELATED_CHOICE_PENDING",
+          "known_id": null,
+          "related_primary_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+          "facts": "Сначала не удаётся подтвердить Анталью; bareдатаT3 заменяет place.city_query на checkout. По урезанной проекции не доказано, была ли позже геоидентичность подтверждена."
+        }
+      ],
+      "adaptive_notes": [
+        "T3 дата дана вместо ответа на текущий place.city_query; нужен adaptive ответ/выбор, а не предположение о подтверждённом гео.",
+        "Три последние исходные реплики сохранены, но НЕ считаются выполненными ответами/проверками возрастного перехода."
+      ],
+      "limitations": [
+        "Источник отказа геокаталога вT1–2 UNKNOWN; не объявляем сетевую/квотную причину."
+      ],
+      "errors": [],
+      "not_executed_turns": [
+        7,
+        8,
+        9
+      ],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-013",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-013.json",
+      "source_file_sha256": "5c2f65fb56526840cb1607eaa4f3fc3a47dd2b0a5e7e63d05569aa3426e835f8",
+      "projection_sha256": "9efa9992b43d26d20d215e5be5d95fe294fbb213b80f5d59e8d90122d98f3dd2",
+      "summary": "Сербия/Белгород приводят к БелградуRS; T 3 сменаSPbRU contracterror. Поздний RU/MS выбор может терять явную страну, exactcauseUNKNOWN. Bareдаты не ответ на candidate 1/2.",
+      "successful_behavior": [
+        "T1 контекст Сербии и Белгород корректно приводит к выбору БелградаRS; originМосква и1взрослый сохранены.",
+        "T2 правильно отличает БелгородRU от БелградаRS без мутации; T7 сохраняет85000RUB независимо от выбора места;T8 честно говорит остановок пока нет."
+      ],
+      "observations": [
+        {
+          "turns": [
+            3
+          ],
+          "category": "DESTINATION_CHANGE_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "Явная смена на Санкт-Петербург в России завершается INVALID_LLM_OPERATION; точный отвергнутый fieldUNKNOWN, старый pendingБелград остаётся, ранее сохранённые факты целы."
+        },
+        {
+          "turns": [
+            4
+          ],
+          "category": "EXPLICIT_COUNTRY_NOT_REFLECTED_IN_CITY_CHOICES",
+          "status": "OBSERVED_FILTER_SCOPE_UNKNOWN",
+          "known_id": null,
+          "facts": "После явной России вT3 и замены городаT4 предлагаются Санкт-ПетербургRU и Санкт-ПетербургMS. Не доказано, был ли country lost моделью, отброшен wholebatch послеT3 или отсутствовал фильтр coordinator."
+        }
+      ],
+      "adaptive_notes": [
+        "T5/6 bareдаты не отвечают текущему выбору1/2. Отсутствие заселения/маршрута вT8 само по себе не дефект; нужен явный выбор кандидата."
+      ],
+      "limitations": [
+        "Физические refs/country context исключены; причинная атрибуция country-filter требует отдельной диагностики."
+      ],
+      "errors": [
+        {
+          "turn": 3,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-014",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-014.json",
+      "source_file_sha256": "1aff65452d6bd43e86b00a095637df727489f35c6ebb72b3bb42688642c3c730",
+      "projection_sha256": "82508d85181aa98ab669e0a518ed4d09c71ff80815d499ba24f774cf8d1fea23",
+      "summary": "RU/EN маршрут и budget 95000→105000 распознаны; savedfactsT 2/T 8 не отвечены, T 3 contracterror. ПослеfailedT 3 T 4 дата 20 Nov относится к check-in, не к предполагаемому checkout.",
+      "successful_behavior": [
+        "Смешанный RU/EN ввод распознаёт Казань→Стамбул и1взрослого;T5 whole_trip95000RUB/номер иT7 бюджет105000 корректны.",
+        "ПослеT3 ошибки состояние не мутировано;T4 bareдата относится к актуальному check_in, поэтому20ноября сохраняется как заезд."
+      ],
+      "observations": [
+        {
+          "turns": [
+            2,
+            8
+          ],
+          "category": "BILINGUAL_SAVED_FACTS_REPLY_OMISSION",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T2 вопрос об отправлении/назначении иT8 вопрос о сохранённом бюджете получают только no-change; нужные Казань/Стамбул и105000RUB уже существуют."
+        },
+        {
+          "turns": [
+            3
+          ],
+          "category": "DATED_COMPOUND_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "Повтор origin/destination+отправление14ноября завершаетсяINVALID_LLM_OPERATION; точный badfieldUNKNOWN."
+        }
+      ],
+      "adaptive_notes": [
+        "T4 скрипт, вероятно, предполагал checkout20ноября, но T3 не прошёл и pending остаётся check_in. Нельзя называть назначение20ноября заездом ошибкой роли.",
+        "T6/T7 бюджет не отвечают отсутствующему checkout; повтор нужного вопроса корректен."
+      ],
+      "limitations": [
+        "Предпочтения минимальной стоимости исключены; не объявляем их потерю по отсутствию текста."
+      ],
+      "errors": [
+        {
+          "turn": 3,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-015",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-015.json",
+      "source_file_sha256": "fdb265d3d3efde3392c61ca7198a687b4348a7db960e42a56771facfa350544c",
+      "projection_sha256": "ea6503dffd94c1f0b89bb33d339bf02cd20229222d9de19d47e0eb8adbc08b08",
+      "summary": "TypoT 1 contracterror; явные SPb иSPbRU позднее не становятся city. Даты/2 adult/90000 сохраняются. Повтор origin после failedT 1 не означает потерю committedKazan.",
+      "successful_behavior": [
+        "Позднее сохраняются даты5–11декабря,2взрослых,1номер и90000RUB;T7 выезд+1→12декабря,даты иparty вT8 верно объяснены."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1
+          ],
+          "category": "TYPO_INITIAL_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "Начальное Санкт-Петербрг с явной просьбой исправить написание вызываетINVALID_LLM_OPERATION; точный badfieldUNKNOWN."
+        },
+        {
+          "turns": [
+            3,
+            7
+          ],
+          "category": "EXPLICIT_CITY_NOT_COMMITTED",
+          "status": "OBSERVED_CITY_INTAKE_NONPROGRESS",
+          "known_id": null,
+          "facts": "T3 Санкт-Петербург не создаёт destination;T7 явное «именно Санкт-Петербург вРоссии» меняет даты, но city остаётсяnull, задаётся «Какой город встранеРоссия».",
+          "attribution": "Это наблюдаемая потеря явного города; без raw contract не различаем модель/guard/coordinator. Нельзя называть это подтверждённым исправленным typoID без related replay."
+        }
+      ],
+      "adaptive_notes": [
+        "T4/T5 даты не отвечают actual origin question; Казань из failedT1 не была сохранена. Повторorigin не сам по себе новая потеря state."
+      ],
+      "limitations": [
+        "Источник физической геоидентичности/pending context исключён; точная причинная атрибуцияUNKNOWN."
+      ],
+      "errors": [
+        {
+          "turn": 1,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-016",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-016.json",
+      "source_file_sha256": "373024fd85a3d86d6c732d7d4a1acfe25637667eab43d29b34ce63cd0b218ac7",
+      "projection_sha256": "df883ed981f2d5ecdc21a7e5610c0f7efaa80c7355888678b7b41192cbf8d6a9",
+      "summary": "Даты словами 10–15 Nov приняты; checkout 9 Nov безопасно блокирован, но спрашивают известный check-in безtarget. Исправление 16 Nov работает; поздняя жалоба на неприменение расходится соstate.",
+      "successful_behavior": [
+        "Даты словами вT1 распознаны10–15ноября;T2 верно названы,1взрослый/Москва→Сочи сохранены.",
+        "T4 выезд9ноября раньшезаезда безопасно НЕ применяется;T5 исправляет на16ноября;T6/T8 повтор не изменяет уже верное значение;T7 правильно сообщает10–16ноября/6ночей."
+      ],
+      "observations": [
+        {
+          "turns": [
+            4
+          ],
+          "category": "INVALID_DATE_ORDER_WRONG_CLARIFICATION",
+          "status": "CONFIRMED_FEEDBACK_DEFECT_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "На явное противоречие checkout9Nov<checkin10Nov приходит вопрос о ЗАЕЗДЕ без target, хотя заезд явно велено сохранить. Каноника остаётся10–15, что безопасно; проблема объяснения/привязки уточнения."
+        },
+        {
+          "turns": [
+            1
+          ],
+          "category": "UNASKED_HARD_DURATION",
+          "status": "OBSERVED_LEGACY_DURATION_SCOPE",
+          "known_id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+          "facts": "Конкретные даты словами порождаютrequested_nights5 без отдельного запроса сохранить ночи;позднее6 послеисправления."
+        }
+      ],
+      "adaptive_notes": [
+        "T7 жалоба «неудаётсяпоменять» не подтверждается state: выезд16 уже сохранён вT5. Не считать повторное требованиеT8 независимой ошибкой."
+      ],
+      "limitations": [
+        "Обширная история before→after и дублированные признаки рейса/завтрака вT7 делают ответ шумным; underlying providerfacts не проверяются данным аудитом."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-017",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-017.json",
+      "source_file_sha256": "a89b4dcd760bdac7c5523f073c94b83a07aa0a891447cdc9399db0d4a7f8aabb",
+      "projection_sha256": "90c5c0baf2dc42290457b79b6de68d37af4363acc4e678938966b3b0e07ca5bb",
+      "summary": "31 Nov молча становится 1 Dec с реальной сменой state. Следующий REQUEST_TIMEOUT отдельный transport/resource outcome. Жалоба о повторном вопросе Москвы не подтверждается actual pending.",
+      "successful_behavior": [
+        "2взрослых/Казань→Москва/25–30ноября/номерна2/80000RUB сохранены;T7 верно5ночей.",
+        "Обязательные сборы не подтверждены честно: hotelDEMO,flightSANDBOX,transferDEMO;нет ложнойреальнойброни."
+      ],
+      "observations": [
+        {
+          "turns": [
+            8
+          ],
+          "category": "INVALID_CALENDAR_SILENT_ROLLOVER",
+          "status": "CONFIRMED_KNOWN",
+          "known_id": "HARNESS-004-INVALID-CALENDAR-ROLLOVER-001",
+          "facts": "Явное невозможное31ноября без подтверждения превращается вcheckout1декабря+requested_nights6, состояние действительно изменено."
+        },
+        {
+          "turns": [
+            9
+          ],
+          "category": "PROVIDER_TIMEOUT",
+          "status": "OBSERVED_RESOURCE_OR_TRANSPORT_FAILURE",
+          "known_id": null,
+          "facts": "REQUEST_TIMEOUT на окончательнуюдату1декабря; не смешивать сT8 семантическойошибкой, reset/квотаUNKNOWN."
+        }
+      ],
+      "adaptive_notes": [
+        "T2 повтор полноймаршрутнойфразы/T3 Москва не отвечают check_in;агент не спрашивал Москву заново. T7 жалоба скрипта вэтойчасти неверна."
+      ],
+      "limitations": [
+        "T9 не закрываетT8: автоматическаядатамутилаstateдо явногоисправления. Не объявлять позднийправильныйвыезд доказательством корректной исходнойоперации."
+      ],
+      "errors": [
+        {
+          "turn": 9,
+          "code": "REQUEST_TIMEOUT",
+          "message": "Провайдер не ответил вовремя."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-018",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-018.json",
+      "source_file_sha256": "7ba76e9ea400ab1bbfe70cedec19adbc4cfb4fbdeb2387f07fb7975c21d08af4",
+      "projection_sha256": "a01c2cf4d9f719271b841b3b2eb2aee26138581b6270f2f35f953b0c1c554d72",
+      "summary": "Party/child 6/19–23 Nov/100000 сохранены. Zero-night безопасно не применён, но ошибка объясняется roomquestion; следующее relative+1 даёт contracterror. Номер не задан.",
+      "successful_behavior": [
+        "Мама+папа+ребёнок6лет правильно2взрослых/1ребёнок;Москва→SPb,19–23ноября,100000RUB;T5/T8 состав/4ночи точны.",
+        "T6 zero-night edit не портит исходныедаты;T7 rejectedoperation оставляетstate прежним."
+      ],
+      "observations": [
+        {
+          "turns": [
+            6
+          ],
+          "category": "INVALID_DATE_ORDER_NO_EXPLANATION",
+          "status": "CONFIRMED_FEEDBACK_DEFECT_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Установитьвыезд втотжедень вместо объяснения недопустимойнулевойдлительности приводит толькоквопросуономерах. Датамутации нет."
+        },
+        {
+          "turns": [
+            7
+          ],
+          "category": "RELATIVE_CHECKOUT_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "Явный выезд+1день после прежнеговыезда даётINVALID_LLM_OPERATION;badfieldUNKNOWN, прежний23Novсохранён."
+        }
+      ],
+      "adaptive_notes": [
+        "Номерникогданезадан. Отсутствие итоговогоплана не ошибкапоиска, а реальнаянедостача."
+      ],
+      "limitations": [
+        "Не переносить исправление017невозможногокалендаря наfeedbackнулевойдлительности/relativecontract безtargetedпроверки."
+      ],
+      "errors": [
+        {
+          "turn": 7,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-019",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-019.json",
+      "source_file_sha256": "4d733e14ddc47335cd85f735f4fe7b1de21d4a5b15e312e3930c65445913ed0a",
+      "projection_sha256": "ecdc08e197c0ebf9b7d6f1578e9325d2876d6ec2b654678740dcb579bbefe7a4",
+      "summary": "Гипотетические 80 k/100 k не меняют 110 k; явные 95 k и before→after корректны, overbudget честно указан. Полная цена/coverage вне проекции.",
+      "successful_behavior": [
+        "2взрослых/SPb→Стамбул/7–13декабря/номерна2/110000RUB;T6 readonlybudget верен.",
+        "T7 неопределённые80000или100000 сзапретомприменять не меняют110000;T8 явные95000 применены, before→after110000→95000 отражён, превышениебюджетачестноотмечено."
+      ],
+      "observations": [],
+      "adaptive_notes": [
+        "T2 Стамбул не отвечаетcheck_in;repromptобоснован."
+      ],
+      "limitations": [
+        "По тексту нет fakebookableclaims, но итог/покрытие/размер превышенияпроверитьнельзябезplanDTO."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-020",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-020.json",
+      "source_file_sha256": "2b3ce434c69c1dc1d72c801c0db9bd8e3f47a36fe28d60e492f76f4c77981c43",
+      "projection_sha256": "cc6fd4e4d8c9c5679851be90ce66e0af9ae767ae7474556f6451221a93c06831",
+      "summary": "2 rooms→1 familyroom назначает всех 4 существующих людей; гипотеза не возвращает 2 rooms. T 5 не называет число номеров, T 7 не объясняет отсутствие цены гипотезы. T 8 premise подходящего плана не доказан.",
+      "successful_behavior": [
+        "2взрослых/дети5и12/Moscow→Dubai/2номера/10–17декабря/150000RUB сохранены.",
+        "T6 явная замена на1семейныйномер назначает ровно4существующихпутешественников без изменениясостава;T7 гипотезане возвращает2номера.",
+        "T8 невыдумывает завтраки/отмену/актуальныйплан при отсутствииподтверждённыхтарифов."
+      ],
+      "observations": [
+        {
+          "turns": [
+            5,
+            7
+          ],
+          "category": "ROOM_COUNT_AND_HYPOTHETICAL_PRICE_ANSWER_INCOMPLETE",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T5 просит взрослых/детей/номеров: ответтолькосостав,без2номеров. T7 спрашивает стоимость гипотетических2номеров: ответтолькотекущий1номер/бюджет,нетобъяснениячтоальтернативнаяценаещёнесчиталась."
+        }
+      ],
+      "adaptive_notes": [
+        "T8 premise«одинномердалвариант»неследуетизT6:тамсказанопревышениебюджета,неподтверждённыйподходящийплан."
+      ],
+      "limitations": [
+        "T1–4 двапустыхспискаmembers не доказываютневернуюэффективнуюallocation: providerпокрытие/деталипланов исключены."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-021",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-021.json",
+      "source_file_sha256": "802dcb881da4abb2c713d6ac04d91d675910df83ae1bbc5f3123bfae9f5932e7",
+      "projection_sha256": "c286276b38f185d0bea6d13f290aeced2cecb3c866c0bd844c4aff89de0f5310",
+      "summary": "Геовопрос не отвечен; явный Antalya→DubaiT 6 не применён, повторныйconsentT 7 затем заменён roomquestion. T 8 не отвечает да/нет, поэтому autoDubai недопустим; pending всё же должен сохраняться.",
+      "successful_behavior": [
+        "1взрослый/Kazan→Antalya/24–30ноября/100000RUB;T5 вопроспроDubaiне меняетмаршрут;T8 сохранённыймаршрутибюджет верноназваны."
+      ],
+      "observations": [
+        {
+          "turns": [
+            5
+          ],
+          "category": "GEOGRAPHY_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "На«ДубайвтойжестранечтоАнталья?»толькоnochange,географическогоответанет."
+        },
+        {
+          "turns": [
+            6,
+            7,
+            8
+          ],
+          "category": "EXPLICIT_COUNTRY_CHANGE_NONPROGRESS_AND_PENDING_REPLACEMENT",
+          "status": "OBSERVED_INTENT_LOSS_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "related_primary_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+          "facts": "T6 явно подтверждаетDubai+сменустраны,ноостаётсяАнталья;T7 создаётповторныйconsentвопрос;T8 independentrecall/cheaper заменяетегона roomquestion,Антальяостаётся.",
+          "attribution": "Неясно, модельпропустилаT6илиguardзатребовалновоеподтверждение; исчезновениеpendingнаблюдаемо,физическиереfыисключены."
+        }
+      ],
+      "adaptive_notes": [
+        "T8 не отвечаетда/нетнаT7consent;нельзяавтоприменитьDubai.Ноpendingвыборадолженнепропадатьотдругихфактов.",
+        "Комнатуникогданезадали,итоговыйпоискнеобязандойтидоплана."
+      ],
+      "limitations": [
+        "Условиепитания/дешёвыйprefнеразрешенывпроекции;T9жалобанедоказываетдобавленныйguardомзапретзавтрака."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-022",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-022.json",
+      "source_file_sha256": "71720d502955131f1004735c0ce320ee99fdb557023f8513036752fa6d03393a",
+      "projection_sha256": "257c86d56223f79382751e3b7bc94d48c1c13cfe265e447bf56ee67ab68efae9",
+      "summary": "Dubai не становится hotelstay. T 9 mandatorynonstop объяснён; T 8 вопрос сохранено ли условие проигнорирован. Соответствие каждого flightsegment исключено из проверки.",
+      "successful_behavior": [
+        "Dubaiтолькопересадканепревращёнвотель;единственныйstayIstanbul9–14ноября,1взрослый/1номер/90000RUB.",
+        "T9 явнообъясняетmandatorynonstopиsourceSANDBOX/DEMO,нетобещаниялучшейрыночнойценыилиреальнойброни."
+      ],
+      "observations": [
+        {
+          "turns": [
+            8
+          ],
+          "category": "SAVED_CONSTRAINT_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "На«прямойрейсобязателен.Тыэтоусловиесохранил?»толькоnochange;наследующийточныйвопросT9условиеназвано."
+        }
+      ],
+      "adaptive_notes": [],
+      "limitations": [
+        "Canonicalconstraints/legsисключены:соответствиенонстопкаждогосегментанепроверенотолькооттекста."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-023",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-023.json",
+      "source_file_sha256": "929ea5306c6c5f4448a71a746a0861a65034ecd178f0435af92aac18d28a2c57",
+      "projection_sha256": "0058344888850894b0ada633e4a7c7beb98a174fc17966b0e390df0b8002c8d7",
+      "summary": "Явный Istanbul первоначально не сохранён. T 7 убериAntalya/толькоIstanbul создаёт наоборот Antalya 10–14 Nov. T 8 предполагает вторую остановку при фактически одной, dependentcontracterror.",
+      "successful_behavior": [
+        "OriginKazan/2взрослых/120000RUBсохранены;T5честнопоказываетнетостановок/дат."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1,
+            2,
+            3,
+            6
+          ],
+          "category": "INITIAL_CITY_AND_MULTICITY_INTAKE_NONPROGRESS",
+          "status": "OBSERVED_FACT_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ЯвныйСтамбулT1непопадаетвstays,обаданныхответомнаточныйpendingдатынесохраняются;T6явныедвагорода/датытожеоставляютstaysпустым."
+        },
+        {
+          "turns": [
+            7
+          ],
+          "category": "REMOVED_CITY_CREATED_AS_ONLY_STAY",
+          "status": "CONFIRMED_SEMANTIC_STATE_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Команда«Убери...Анталью.ВернимаршруттолькосоСтамбулом»создаётединственнуюАнталью10–14ноября,вместоСтамбула.Этофактическоеневерноеназначение,нерасхождениетекста."
+        },
+        {
+          "turns": [
+            8
+          ],
+          "category": "ABSENT_SECOND_STAY_DELETE_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "«Удаливторуюостановкуцеликом»приединственнойсохранённойАнтальедаётINVALID_LLM_OPERATION,badfieldUNKNOWN."
+        }
+      ],
+      "adaptive_notes": [
+        "T4номерподанбезсуществующегоподтверждённогоstay;вопроскакойостановкеоправдан.",
+        "T8предполагает2остановкипосленеуспешногоT6/неверногоT7,нуженadaptiveдиалог."
+      ],
+      "limitations": [
+        "Физическиерефы/pendingcontext/rawopsисключены,причиныinitialcitylossневыдумываются."
+      ],
+      "errors": [
+        {
+          "turn": 8,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-024",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-024.json",
+      "source_file_sha256": "eb92642f8f7fee07d12fa5cddea507d55e2ceb750c8cffa7199c064ad8732c6a",
+      "projection_sha256": "c739901fc4e712ae3eeb9fc8e4bf1be409ad548a1037b2520a4fb8e1f9935d82",
+      "summary": "T 7 checkout 20→18 Nov верен. T 8 +1 оттекущего даёт 20 вместо 19. T 6 явный saveddate вопрос не отвечен. Точный model/guardcause неверной базы UNKNOWN.",
+      "successful_behavior": [
+        "1взрослый/Moscow→Kazan/15–20ноября/1номер/75000RUB;T7 сдвигвыезда−2корректен18ноября,заезд15сохранён."
+      ],
+      "observations": [
+        {
+          "turns": [
+            6
+          ],
+          "category": "SAVED_CHECKOUT_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "На«Накакуюдатусейчасстоитвыезд?Простоскажисохранённоечисло»приходиттолькоnochange."
+        },
+        {
+          "turns": [
+            8
+          ],
+          "category": "RELATIVE_DATE_USES_WRONG_BASE_OR_DELTA",
+          "status": "CONFIRMED_SEMANTIC_STATE_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Послеcheckout18ноябряточное«наодинденьпозжэотносительнотого,чтосейчасзаписано»должнобыть19;получается20.Заезд15/party/budgetсохранены.",
+          "attribution": "Безrawнеотделяеммодельнуюарифметику/устаревшийконтекст/guard.Заведомоевыбирание20заосновупослеT7некорректно."
+        }
+      ],
+      "adaptive_notes": [
+        "T2Kazannнеотвечаетcheck_in,repromptнормален."
+      ],
+      "limitations": [
+        "Ответыисточниковпроживаниянеподтверждены,ноэточестноотмеченоDEMO;causeUNKNOWN."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-025",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-025.json",
+      "source_file_sha256": "1f251c1f6c1614420c67149a94bccc70b2141bf1b5ba2aeba7b9edafea4820d0",
+      "projection_sha256": "dd5ecd286765d151c748355a9b8e6abca98db4c9a0fe8137fb5a1fa1879c0fc4",
+      "summary": "T 1 нас 4/составещёненазван/неугадывай становится 4 adult; T 2 проблема не объяснена. Явный итоговый 2 adult+children 4/12 и correction 13 позже правильны.",
+      "successful_behavior": [
+        "T3явныйокончательныйсостависправляетровно2взрослых+дети4/12безлишнихлюдей.",
+        "T5–7даты12–18декабря,1номерсровно4членами,130000RUB;T8только12→13лет,младший4сохранён."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1
+          ],
+          "category": "UNSPECIFIED_PARTY_DEFAULTED_TO_ALL_ADULTS",
+          "status": "CONFIRMED_SEMANTIC_STATE_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "«Насчетверо.Возрастисоставещёненазвал,неугадывай»вfreshstateсохраняет4adult.Этоявнонезапрошеннаякатегоризация,аT3позднееисправлениенеотменяетT1."
+        },
+        {
+          "turns": [
+            2
+          ],
+          "category": "PARTY_DEFAULT_CHALLENGE_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "На«Незаписалли4взрослыхбезмоегосогласия?»ответnochangeвместочестного4adultилиуточнения."
+        }
+      ],
+      "adaptive_notes": [
+        "T4Сочинеотвечаетcheck_in,repromptобоснован."
+      ],
+      "limitations": [
+        "Группа/паспортныедатыисключены;толькоявныекатегории/возрастквалифицированы."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-026",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-026.json",
+      "source_file_sha256": "d1c4caf9c4b720ee6ab610a5e4df7c599d9aee046a113705d0891b48ebdfcd5e",
+      "projection_sha256": "e6911038258c1896375cd9bc1cf6ba0886df3d85fbe96fda0abbf54b4d790b92",
+      "summary": "Belgrade без автозамены сохранён; гипотетический budget не меняется, checkout 9 Nov верен. Гео/capability и origin/datesrecall не отвечены. Номер не указан: supplieravailability не проверена.",
+      "successful_behavior": [
+        "T1 вопрос не создаёт поездку;T2 явное направление Kazan→Belgrade и2adult приняты без произвольнойзамены.",
+        "4–8ноября/100000RUB сохранены;T6 гипотетические200000 не применены;T7 checkout9ноября исправлен, checkin4сохранён."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1,
+            6,
+            8
+          ],
+          "category": "GEOGRAPHY_CAPABILITY_AND_SAVED_FACTS_REPLY_OMISSION",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T1 не отвечает о Сербии/Белграде/доступности поиска,толькоnochange. T6 вместо влияния гипотетическогобюджета толькоsavedbudget. T8 наorigin+party+dates отвечаеттолькосоставомирoomquestion."
+        }
+      ],
+      "adaptive_notes": [
+        "Номерниразунеуказан;отсутствиепланаобусловленонеполнымифактами,непровереннымзапретомБелграда."
+      ],
+      "limitations": [
+        "Поддержкаsuppliercoverageнепроверенатурпоиском;знатьгороднеравноиметьоффер."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-027",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-027.json",
+      "source_file_sha256": "cfa29d94989eff0d5e3172206db3d1260e249c3d7234106dcebf24c948aad63b",
+      "projection_sha256": "c9894ed515c57f5080ee48e66f2677a2b3e324a8705aab45b34fb9f6b5a29755",
+      "summary": "БелгородRU не подменёнБелградом; явныеKazan и originMoscow позже верны. T 2 геоконтраст не отвечен. Coverageотказ старогорелиза не является вечным запретом worldcities.",
+      "successful_behavior": [
+        "ЯвныйБелгородRUнеподменяетсяБелградомRS;originSPb/2adultсохранены,unsupportedcoverageчестнообъяснено.",
+        "T3 явнаязаменаКазань;12–16ноября/90000RUB;T7 толькоoriginMoscow, T8 маршрутMoscow→Kazan→Moscow и2adultверны."
+      ],
+      "observations": [
+        {
+          "turns": [
+            2
+          ],
+          "category": "GEOGRAPHY_CONTRAST_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ВопросБелгородvsБелградикакуюстранупонялполучаеттолькоnochange."
+        }
+      ],
+      "adaptive_notes": [
+        "Номернесообщался;нетплана/повторвопросаономерахобоснованы."
+      ],
+      "limitations": [
+        "ОтказадаптераБелгорода — фактическийтекстстарогорелиза;неприниматьегокаквечныйworldcapabilityrestriction."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-028",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-028.json",
+      "source_file_sha256": "16339237262b7a406102e30d66ec409001681316296dcd5c300f1627dfa4d7f1",
+      "projection_sha256": "d9c1833f1b55432aab912658d65661e83da20debe75d156565a6cba055c0beee",
+      "summary": "NoviSad/party/child 9→10 сохранены, отсутствие sourceoffers честно. Явный IstanbulTRT 3 не применён; genericfieldnull. Поздние даты не доказывают состоявшуюся замену города.",
+      "successful_behavior": [
+        "T1 NoviSad/Serbia/Kazan/2adult+child9сохраненыбезложногооффера.",
+        "T6 честноневыдумываетпредложенияНовиСада;T7 меняеттолькоchild9→10,состав/даты/150000RUBсохранены;T8 показываетвозрастнойbefore→after."
+      ],
+      "observations": [
+        {
+          "turns": [
+            2
+          ],
+          "category": "SOURCE_CAPABILITY_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "«Почемузнаешьгород,нонельзяискатьотели?»заменяетсявопросомозаезде."
+        },
+        {
+          "turns": [
+            3
+          ],
+          "category": "EXPLICIT_COUNTRY_CITY_CHANGE_DROPPED_GENERIC_PENDING",
+          "status": "CONFIRMED_INTENT_NONAPPLICATION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Явно«меняемстранунаТурцию...Стамбул,подтверждаюзаменуНовиСада»неизменяетгород;возникаетgenericpendingfieldnull.Позднеедатысохраняютсяпо-прежнемудляНовиСада."
+        },
+        {
+          "turns": [
+            8
+          ],
+          "category": "PRICE_EXPLANATION_INCOMPLETE",
+          "status": "OBSERVED_REPLY_OMISSION",
+          "known_id": null,
+          "facts": "Вопроспочемуценаможетостатьсятойженеотвечен;shownhistoryдаты/бюджетнеобъясняет,чтоактуальногоsourceofferвообщенет."
+        }
+      ],
+      "adaptive_notes": [
+        "T4 bareдатаответомgenericquestionнесвязываетСтамбул;нужнопроверитькакойгородприменён,неприниматьпредыдущуюзаменузауспешную."
+      ],
+      "limitations": [
+        "Хардкритерии/refsисключены,невосстанавливаемпричинныйguard/modelfield."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-029",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-029.json",
+      "source_file_sha256": "05d36a8e947bca4454651ca975797a0ad31a9e696cd0b71d2892698ffb7e2927",
+      "projection_sha256": "28001adedd9e117ab38b89edd3a0328042a65812351271790420782c24532c33",
+      "summary": "GeorgiaT 1 responseerror. Явный DubaiUAET 6 не применён; T 10 geographyDubai верна, но сохранённыйMoscow не назван. T 3 Moscow отвечал actualdestinationpending, не origin.",
+      "successful_behavior": [
+        "GeorgiaнеавтоподменяетсягородомприT1ошибке;T2текстомраспознанаГрузиякакстрана.",
+        "Поздние1adult/2–7декабря/1номер/130000RUBсохранены;T10 Dubai→UAE вернофактически."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1
+          ],
+          "category": "AMBIGUOUS_GEOGRAPHY_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "INVALID_LLM_RESPONSEнаGeorgia.Причинаbadfield/JSONUNKNOWN;не429."
+        },
+        {
+          "turns": [
+            6
+          ],
+          "category": "EXPLICIT_COUNTRY_CITY_CHANGE_NOT_APPLIED",
+          "status": "CONFIRMED_INTENT_NONAPPLICATION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ЯвнаясменанаОАЭ/DubaiнеизменяетсохранённуюМоскву;остаётсяcheckinМосквы."
+        },
+        {
+          "turns": [
+            10
+          ],
+          "category": "CURRENT_COUNTRY_QUESTION_INCOMPLETE",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ОтвечаетгеографиюDubai,нонекакаястрана/городсохранены:фактическийstayMoscow,неDubai."
+        }
+      ],
+      "adaptive_notes": [
+        "T3 Москваприdestination.cityформальноответназаданныйвопрос;скореефиксированныйскриптсчиталегоorigin.Т1failedoriginнебылсохранён,нуженadaptiveуточняющийдиалог.",
+        "T4число1/T5Нетнеответыcheck_in,безопасныйrepromptоправдан."
+      ],
+      "limitations": [
+        "Страновойpendingконтекстисключён:принятиеMoscowпослеGeorgiaможеттребоватьcross-countryconsent,ноточныйпакетнепроверен."
+      ],
+      "errors": [
+        {
+          "turn": 1,
+          "code": "INVALID_LLM_RESPONSE",
+          "message": "Ответ LLM нарушает контракт извлечения операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-030",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-030.json",
+      "source_file_sha256": "8fab08e0b37ca30bf5bf94b1cc3ecc25bf8a24211dac7ec6cd2073ae8afe82ef",
+      "projection_sha256": "bae4b66853f720430ad758ca42adc5b3b7a727d8d4e16d5218712024115d8582",
+      "summary": "Турция без autoIstanbul, party сохранён; выборAntalyaT 3 contracterror. Age 6→7 верен, T 9 recall не отвечен. Bareдаты после неуспешного выбора не доказывают ожидаемый dateflow.",
+      "successful_behavior": [
+        "Турциябезвыборагородаостаётсястраной,нетавтовыбораСтамбула;2adult+child6/originMoscowсохранены.",
+        "T7 честнонетstays,ребёнокнепотерян;T8 onlychild6→7,145000RUBсохранены."
+      ],
+      "observations": [
+        {
+          "turns": [
+            3,
+            5
+          ],
+          "category": "CITY_SELECTION_OR_DATE_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "T3 явнаяАнталья/TRиT5bareдатаприводятINVALID_LLM_OPERATION;badfieldsUNKNOWN."
+        },
+        {
+          "turns": [
+            9
+          ],
+          "category": "AGE_BUDGET_SAVED_FACTS_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Сохранённыеage7/budget145000неотвечены:толькоnochange."
+        }
+      ],
+      "adaptive_notes": [
+        "T4/5датынеотвечаютнеуспешномувыборугородаT3/повторномуподтверждениюгео;последующееналичиеплананельзяпредполагать.",
+        "T6roomбезсохранённогоstayзаконноуточняетостановку."
+      ],
+      "limitations": [
+        "Геокаталог«неудалосьподтвердить»неуказываетvendor/networkпричину."
+      ],
+      "errors": [
+        {
+          "turn": 3,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        },
+        {
+          "turn": 5,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-031",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-031.json",
+      "source_file_sha256": "69056e1c8c7d5d04e39200c881cab5d5406e98e46993d68e2c00902c035ad94d",
+      "projection_sha256": "eeed651e76905f02726ff6c0a151dc366ec7d506aba78456c1389460673327c4",
+      "summary": "Dubai 1/2/3 pending сохраняется на датах, но заменяется room/origin фактами. Hypotheticalorigin не меняетKazan, явныйMoscow применяется; T 9 generic. Кандидат не выбран ни разу.",
+      "successful_behavior": [
+        "T1Kazan/2adultсохранены;T2 Dubaiприводиткявномуномерномувыбору,неавтовыборупервогопункта.",
+        "T6 гипотетическийoriginMoscowсзапретомнеизменяетKazan;T7явноMoscowприменён;T8честноnoStays,2adult/160000RUB."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1
+          ],
+          "category": "COUNTRY_CAPABILITY_REQUEST_UNANSWERED",
+          "status": "OBSERVED_REPLY_OMISSION",
+          "known_id": null,
+          "facts": "«ВОАЭ.Какойгороддоступен?»→неудалосьподтвердитьгородвместострана/cityquestion;stateневыдуман."
+        },
+        {
+          "turns": [
+            5,
+            7
+          ],
+          "category": "UNRESOLVED_PLACE_SELECTION_REPLACED_BY_OTHER_FACTS",
+          "status": "OBSERVED_RELATED_CHOICE_PENDING",
+          "known_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+          "facts": "ПослеDubai1/2/3выбораT3/4егосохраняют,ноT5room+budgetзаменяютнарoomquestion,T7destination.city.Сохранённогогео/refнет."
+        },
+        {
+          "turns": [
+            9
+          ],
+          "category": "ORIGIN_DESTINATION_SAVED_FACTS_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ВместоMoscow/noDestinationgeneric«могупомочь...уточнитечтохотите»."
+        }
+      ],
+      "adaptive_notes": [
+        "Ниразуневыбранкандидат1/2/3;T3/4датынеотвечаютplace.resolution. НельзяобъявлятьDubaiподтверждённымstayвT8."
+      ],
+      "limitations": [
+        "БезrefsисточникlostpendingUNKNOWN,старая005repairнезакрываетэтотexactroom/originpathсамапосебе."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-032",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-032.json",
+      "source_file_sha256": "57b364f7fabdea1d5d6491f3a60cea58c05e189a3571976cfb1f3cf66d2de0b6",
+      "projection_sha256": "b105729396948584e236d06c06e59a107a6f6c88d7d0cf50d8c5c2da8308b906",
+      "summary": "Sochi выбран явно; child 4→5,85000,roompair верны. T 2 список городов иT 8 five-night вопрос не отвечены. HotelDEMOsourceerror не означает доказанный current providerfailure.",
+      "successful_behavior": [
+        "OriginMoscow/1adult+child4, Россиябезавтовыборагорода;T3 явноSochi,9–14ноября/1номерсобоими/85000RUB.",
+        "T7 onlychild4→5,Sochiсохранён;T8 составточный."
+      ],
+      "observations": [
+        {
+          "turns": [
+            2,
+            8
+          ],
+          "category": "CAPABILITY_OR_COMPOUND_DATES_QUESTION_UNANSWERED",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T2 доступныеRUгороданеназваны,толькоnochange;T8 отвечаетсостав,ноне5ночей/даты."
+        }
+      ],
+      "adaptive_notes": [],
+      "limitations": [
+        "Необъявляемвесьисточник/планPASS;hotelDEMOsourceerrorчестноотмечен,причинаUNKNOWN."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-033",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-033.json",
+      "source_file_sha256": "90214e5651ae396eee0a98f4959b6041ac5cf50abd7f673202f54e763c0e7128",
+      "projection_sha256": "020a1f1cad9ef36755e14c9ed33f662e74e811630ec4edd1eade29a0453df3bc",
+      "summary": "ТолькоIstanbulhotel; invalid 25 Novcheckin при 20 Novcheckout блокирован. T 6 generic гостиницусохраняем превращается в specifichotel-previewASK. Первый slot былcheckout, неcheckin.",
+      "successful_behavior": [
+        "ТолькогостиницаIstanbul,неDubai;originMoscow/1adult/105000RUBсохранены.",
+        "T2 дата20Novправильнопривязанакcurrentcheckout;T3 checkin25Nov>checkout20Novблокированяснымобъяснением;T8mandatorynonstopназван."
+      ],
+      "observations": [
+        {
+          "turns": [
+            6
+          ],
+          "category": "GENERIC_ACCOMMODATION_KEEP_FALSE_SPECIFIC_HOTEL_PIN",
+          "status": "OBSERVED_OVERBROAD_CLARIFICATION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "«Стамбулигостиницутамсохраняем»присмененонстоп вызываетобязательныйpreviewдлясохраненияконкретногоотеля,хотяконкретныйhotelневыбран/неупомянут.ЭтоотвлекающийgenericfieldnullASKвместообработкиflightintent."
+        }
+      ],
+      "adaptive_notes": [
+        "НачальныйвопросCHECKOUT,неCHECKIN.T2=checkout20,поэтомуT3=checkin25недопустим;скриптнуждаетсявадаптации.Нельзясчитатьэтоошибкойdatevalidator.",
+        "Roomcountпозжесохранён,ноcheckinвсёравнонеизвестен;нетпланаобоснован."
+      ],
+      "limitations": [
+        "Constraints/legsисключены,нонстопкритерийтолькоuser-facing,неквалифицируетсякаждыйсегмент."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-034",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-034.json",
+      "source_file_sha256": "6ca69a1e2e0ddcaa0ef6b64fccc057dfa5f6a2701b49505170f61e9c99ef4d14",
+      "projection_sha256": "c011c02b797e35c71b25a7161146b0edff09bebbd8291d161e20b668c864f66d",
+      "summary": "Известный checkout 13 Nov спрашивается заново сtargetnull. ДобавитьAntalya/no-return contracterrors/неприменение; traincapability не отвечена. Phantomreturn по жалобе не доказан: legs исключены.",
+      "successful_behavior": [
+        "2adult/Kazan→Istanbul;T2 явныйзаезд10Nov, T3 равныйвыезд10Novбезопасноблокированобъяснением.",
+        "T4 сохраняетIstanbul10–13Nov/150000RUB;безложногоплана."
+      ],
+      "observations": [
+        {
+          "turns": [
+            4
+          ],
+          "category": "KNOWN_CHECKOUT_REASKED_WITHOUT_TARGET",
+          "status": "CONFIRMED_QUESTION_BINDING_DEFECT_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Сохранивcheckout13Nov,задаётзановоcheckoutвопросfieldstay.check_outtargetnull."
+        },
+        {
+          "turns": [
+            5,
+            8
+          ],
+          "category": "MULTISTAY_OR_RETURN_CONTROL_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "ДобавитьAntalya13–18Novсno-return(T5)иудалитьобратныйрейс(T8)даютINVALID_LLM_OPERATION,badfieldUNKNOWN."
+        },
+        {
+          "turns": [
+            6,
+            7
+          ],
+          "category": "SECOND_STAY_NOT_APPLIED_AND_TRAIN_CAPABILITY_UNANSWERED",
+          "status": "OBSERVED_INTENT_AND_REPLY_OMISSION",
+          "known_id": null,
+          "facts": "T6 отдельнаяяснаякомандадобавитьAntalyaнеизменяетstays;T7 вопроспроtrainвместоответаповторяетroomquestion."
+        }
+      ],
+      "adaptive_notes": [
+        "T3 bare10NovотвечаетCHECKOUT,аcheckin10ужеизвестен:нулеваяночьнедопустима,невалидаторныйбаг."
+      ],
+      "limitations": [
+        "Транспортныеlegs/return_edit_kindисключены,нельзяподтвердитьпредположениепользователяобобязательномобратномрейсе;можноподтвердитьтолькоошибкуконтракта."
+      ],
+      "errors": [
+        {
+          "turn": 5,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        },
+        {
+          "turn": 8,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-035",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-035.json",
+      "source_file_sha256": "d59a376589a8c44469333382ef92125abc48d185365742479ca00b074e53bfe8",
+      "projection_sha256": "4a1d46f0d84eae775fc809130cc37cdcae7f5d1077e110eae31d3b12656163cb",
+      "summary": "ЯвныйoriginKazanT 5 не применён. Route-endMoscowT 7 заменяет hotelDubai→Moscow; T 10 удаляет единственныйstay. Доказана потеря hotel-role, точные returnlegs для этого не нужны.",
+      "successful_behavior": [
+        "Начальные1adult/SPb→Dubai/3–9декабря/1номер/125000RUBсохранены;оценкичестноSANDBOX/DEMO.",
+        "T6 readonlyобсуждениезаканчиваетсяошибкой,ноstateнеизменён."
+      ],
+      "observations": [
+        {
+          "turns": [
+            5
+          ],
+          "category": "EXPLICIT_ORIGIN_CHANGE_NOT_APPLIED",
+          "status": "CONFIRMED_INTENT_NONAPPLICATION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ТочнаякомандаoriginKazanвместоSPbнеизменяетorigin;текстобщейоценкискрываетнеприменённость."
+        },
+        {
+          "turns": [
+            6
+          ],
+          "category": "ROUTE_END_HYPOTHETICAL_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "INVALID_LLM_RESPONSEнавопросзакончитьMoscowпослеDubai,badfieldUNKNOWN."
+        },
+        {
+          "turns": [
+            7,
+            9,
+            10
+          ],
+          "category": "ROUTE_END_CONFUSED_WITH_HOTEL_CITY",
+          "status": "CONFIRMED_SEMANTIC_STATE_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "ЯвноезавершениевMoscowпослеDubaiзаменяетединственныйhotelstayDubai3–9DecнаMoscowтехжедат. T9 явноеlastflightDubai→Moscowнеисправляетhotel;T10нетгостиницыMoscowудаляетединственныйstay,такчтопервоначальноеDubaiпроживаниепотеряно."
+        }
+      ],
+      "adaptive_notes": [
+        "T7утверждает«началовсёещёKazan»,ноT5failed-применениенеменялоSPb;нуженadaptivecheckorigin.",
+        "T10удалениеMoscowкакhotelсоответствуетявномуотказуоттакогопроживания,носледствиепервоначальногоперепутыванияролейT7неисправляетDubai."
+      ],
+      "limitations": [
+        "Фактическийreturnlegнепросмотрен;ошибкатутдоказанапоcityвhotelstay,нетребуетдогадокопродолжениирейсов."
+      ],
+      "errors": [
+        {
+          "turn": 6,
+          "code": "INVALID_LLM_RESPONSE",
+          "message": "Ответ LLM нарушает контракт извлечения операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-036",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-036.json",
+      "source_file_sha256": "4284397f75c8826ccea839ae8584283e566350e2cb49ebc8cce6426d1129ae8e",
+      "projection_sha256": "a7a228a21dad271bb730d05b21c19bc77b4d16325b81213c94657db13c02e58c",
+      "summary": "Tomorrow 29 Octcheckout и неверныеcheckin 29/30 блокированы; roomT 5 не сохранён. Invalidsame-daycompound contracterror, recalldateT 8 пропущен. Скрипт требует другой порядок/clock:29→29 не 2 ночи.",
+      "successful_behavior": [
+        "1adult/Moscow→SPb;T2Tomorrow29OctвCHECKOUT, T3/4checkin29/30Octблокируютсяяснымпорядкомдат.",
+        "T6 честнозаезданет/checkout29Oct/45000RUB;T8нетактуальногоплана/брони."
+      ],
+      "observations": [
+        {
+          "turns": [
+            5
+          ],
+          "category": "EXPLICIT_ROOM_NOT_PERSISTED",
+          "status": "OBSERVED_FACT_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "«Одинномер»непопадаетвrooms,состояниевсёещёrooms[].Нетguard/contextпричинывдопустимомwhitelist."
+        },
+        {
+          "turns": [
+            7
+          ],
+          "category": "SAME_DAY_COMPOUND_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "Checkout29Oct/checkinTomorrow(=29Oct)→INVALID_LLM_OPERATIONвместопонятногоуточнения;badfieldUNKNOWN."
+        },
+        {
+          "turns": [
+            8
+          ],
+          "category": "DATE_RECALL_OMITTED_WHEN_SOURCE_QUESTION_PRESENT",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Отвечаетпроотсутствиеброни,ноненазываетсохранённуюдатувыезда/неизвестныйзаезд."
+        }
+      ],
+      "adaptive_notes": [
+        "Скриптпредполагаетдругойпорядоквопросов/возможностаруюдатуnow:«завтра»наэтомпрогоне29Oct,первымбылCHECKOUT. «Это2ночи?»неверно,нельзяподгонятьcalendarкожиданиюскрипта."
+      ],
+      "limitations": [
+        "Нормативнаяclockreferenceизmetadataнеизучалась;сохранённыедаты/объяснениямеждусобойсогласованывпределахпросмотренногоответа."
+      ],
+      "errors": [
+        {
+          "turn": 7,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-037",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-037.json",
+      "source_file_sha256": "dd3269cb44452f23be65ff4d31ee12a56d842d670f451b5ffa22e67f9fbcf34c",
+      "projection_sha256": "e3bfc90a361c7085d90777b0bb76882a6bc969802c5acc6dc4294402127cde85",
+      "summary": "АнтлаьюT 1 contracterror, явнаяAntalyaT 2 не записана; genericfieldnull вместо нужныхorigin/city/check-in. T 9 recall не отвечен.145 тыщ сразу сохранено 145000: жалоба про 1.45 млн неверна.",
+      "successful_behavior": [
+        "ПослеT1ошибкиT2восстанавливаетparty2adult+child8;T5номерна3;T6ровно145000RUB;T7checkout21→20Nov.",
+        "Скриптоваяжалобапро1.45млннедоказана:T6сохранил145000правильно."
+      ],
+      "observations": [
+        {
+          "turns": [
+            1,
+            3
+          ],
+          "category": "TYPO_INITIAL_OR_BARE_DATE_CONTRACT_FAILURE",
+          "status": "OBSERVED_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "АнтлаьюT1и14NovT3даютINVALID_LLM_OPERATION;badfieldsUNKNOWN."
+        },
+        {
+          "turns": [
+            2,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "category": "EXPLICIT_CITY_LOST_AND_GENERIC_PENDING_LOOP",
+          "status": "OBSERVED_NONPROGRESS_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T2Антальянесохраняетcity;позднеепустойcity/нетorigin/checkin.T4–8повторяется«Чтоуточнить...»fieldnullвместонужныхконкретныхвопросов."
+        },
+        {
+          "turns": [
+            6,
+            9
+          ],
+          "category": "GEOGRAPHY_AND_SAVED_FACTS_REPLY_OMISSION",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T6вопросдалеколиСтамбулнеотвечен;T9budget145000/party2+child8неотвечены,толькоnochange."
+        }
+      ],
+      "adaptive_notes": [
+        "T3/T4скриптсчитаетпервуюдатуcheckin,ноT2задаётCHECKOUT;currentbindingдолженбытьучтён,непереименовываемT4checkout21вошибочныйзаезд.",
+        "T7/T8 повторбюджетапослеужеуспешногоT6неявляетсяещёоднойошибкойденег."
+      ],
+      "limitations": [
+        "Страновойконтекст/refsисключены;недоказываемкакойguardпотерялАнталью/Казань."
+      ],
+      "errors": [
+        {
+          "turn": 1,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        },
+        {
+          "turn": 3,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-038",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-038.json",
+      "source_file_sha256": "b3791285455ad8e0b8dcb456d3e12fb5cc457a0ee93f2067393add484100a366",
+      "projection_sha256": "cd10f70df71a03a439b0e32ef0bc03bcf2f3fd3c7228aaccbade56380574d4a7",
+      "summary": "AliasвопросПитер/SPb и 2 остановкиненужны удаляет единственныйstay сдатами/номером. T 7 зависимый contracterror после удаления, а не отдельное доказательство неверной dateарифметики.",
+      "successful_behavior": [
+        "ПитерраспознанкакSPb,1adult/Moscow/5–8декабря/1номер;T6budget65000RUBпринятwhole_trip.",
+        "T8честноговоритдатнетпослефактическогоудаления,бюджет65000сохранён."
+      ],
+      "observations": [
+        {
+          "turns": [
+            6
+          ],
+          "category": "ALIAS_QUESTION_DELETES_ONLY_STAY",
+          "status": "CONFIRMED_SEMANTIC_STATE_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "«ПитериSPbодингород?Мнедвеостановкиненужны»приодномstayудаляетединственноеSPbпроживаниевместесдатами/номером.Этоутратаstate,неотсутствиеprice."
+        },
+        {
+          "turns": [
+            7
+          ],
+          "category": "FOLLOWUP_CHECKOUT_CONTRACT_FAILURE_AFTER_STAY_LOSS",
+          "status": "OBSERVED_DEPENDENT_ERROR_CAUSE_UNKNOWN",
+          "known_id": null,
+          "facts": "Продлитьна1ночь/checkout9Decпослеудаленияstay→INVALID_LLM_OPERATION.ОсновнойдефектT6,невыдумываемнезависимыйrootcause."
+        }
+      ],
+      "adaptive_notes": [
+        "T2Питернеотвечаетcheckin,repromptнормален.",
+        "T7/T8скриптпредполагаетсохранённыйstay,которогопослеT6ужефактическиненет;нуженремонтпотери,аНет4ночейнеотдельныйотсчёт."
+      ],
+      "limitations": [
+        "НикакихдоказательствлегитимногоподтвержденияудалитьединственныйstayврепликеT6нет."
+      ],
+      "errors": [
+        {
+          "turn": 7,
+          "code": "INVALID_LLM_OPERATION",
+          "message": "Ответ модели нарушает контракт доступных операций."
+        }
+      ],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-039",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-039.json",
+      "source_file_sha256": "995903a300cde71618800fbeea4915729029fdbeae028e1d8a39dfba181ae7f6",
+      "projection_sha256": "bf50ad003baeb9497b487bc1497cb2c138e623806d21765ef410b676d3792b7d",
+      "summary": "English One room,please и полнаяorigin-editреплика становятсяcityquery. Budget 100000/originMoscow сохранены, routequestionsgeneric. Даты не отвечали physicalplace 1/2/3; displayname неselectedref.",
+      "successful_behavior": [
+        "Kazan/1adult/Istanbuldisplaystayсохранены;выборреальногогеокандидатанеавтосделан.",
+        "T6wholetrip100000RUBиT7originMoscowсохраняются;бюджетT8неуменьшен."
+      ],
+      "observations": [
+        {
+          "turns": [
+            5,
+            7
+          ],
+          "category": "ENGLISH_NONCITY_TEXT_INTERPRETED_AS_CITY_QUERY",
+          "status": "CONFIRMED_QUESTION_ROUTING_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "related_primary_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+          "facts": "«One room,please»весьцеликомискалсякакгород;T7полноеEnglishorigin-editсообщениезаменяетcity_query.Нетпопыткиboundотделитьместоотостальныхинструкций."
+        },
+        {
+          "turns": [
+            3,
+            6,
+            8
+          ],
+          "category": "SAVED_ROUTE_QUESTION_OR_DATE_GENERIC_REPLY",
+          "status": "CONFIRMED_REPLY_OMISSION_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "T3неповторяетполезныйchoice(хотяpacketсохранён),T6неотвечаетcurrentorigin/destination,T8сноваgenerichelp."
+        }
+      ],
+      "adaptive_notes": [
+        "IstanbulT2неномер/IDвыбора;T3/4датынеотвечаютplace.resolution,необъявлятьреальноеselectedplaceготовым.",
+        "CanonicaldisplaystaynameIstanbulсампособенедоказываетпроверенныйref."
+      ],
+      "limitations": [
+        "Точностьанглийскогоintentclass/modelrawневидна;новыезаголовки/токены/URLнечитались."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    },
+    {
+      "id": "ZAI100-040",
+      "full_transcript_manually_read": true,
+      "reviewed_turns": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-040.json",
+      "source_file_sha256": "475082015fd03a5eb13d0f5616c3680ea1c2a97df1a9c51519c9d9431ca7a7fd",
+      "projection_sha256": "27e5b9483fd05e9113fc3108bc7b29382b7f9e8b4f10528494af87c91c80a177",
+      "summary": "Не вSochi/выбранаKazan/Sochiтолькоисключить меняетKazan→Sochi.75 k+10 k=85 k верно. Первым былcheckout:2 Nov→6 Nov не утверждённый check-in/out, повтор 85 k не выявляет moneybug.",
+      "successful_behavior": [
+        "SPb/2adult/Kazanизначальносохранены;T3checkout2Nov,T4checkin6Nov>checkoutблокированясно.",
+        "T8бюджет75000+10000→85000правилен;T9тежесамые85000no-op,нетденежнойошибки."
+      ],
+      "observations": [
+        {
+          "turns": [
+            6
+          ],
+          "category": "NEGATED_CITY_SELECTED_AS_DESTINATION",
+          "status": "CONFIRMED_SEMANTIC_STATE_ERROR_ATTRIBUTION_UNKNOWN",
+          "known_id": null,
+          "facts": "Явно«НевСочи:явыбралКазань.Сочиупоминаютолькочтобыисключить,неменяй»меняетединственныйstayKazan→Sochi.Origin/partyиbudgetсохранены,ноназначениеневерное."
+        }
+      ],
+      "adaptive_notes": [
+        "Первымвопросомcheckout,поэтомуT3=2NovcheckoutиT4=6Novcheckinнедопустим;скриптожидаетcheckin→checkoutпорядок,T7«со2по6»неподтверждёнstate.",
+        "T9жалобапро75+10ненужна:T8ужеправильно85000.Необъявлятьwrongmoney."
+      ],
+      "limitations": [
+        "ПолитикипротивnegatedcityдолжныпроверятьсяexactT6,replayдругогогеокейсанезакрываетэтотпуть."
+      ],
+      "errors": [],
+      "not_executed_turns": [],
+      "whole_dialogue_acceptance_pass": null
+    }
+  ],
+  "next": [
+    "Exacttargetedreplay новыхstateошибок на currentfrozenrelease ссохранениемoldFAIL.",
+    "Причиннаяатрибуцияrejectedcontract изновогоboundedtrace;покаbadfieldUNKNOWN.",
+    "Содержательныеoraclessavedfacts/Englishquery иadaptiveповторыactualquestionflow;неуниверсализироватьmorningfix.",
+    "041–080 manualreview отдельно;данные40 невыдаватьза80/106полнуюквалификацию."
+  ]
+}

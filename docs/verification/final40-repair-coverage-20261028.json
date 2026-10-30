@@ -1,0 +1,2092 @@
+{
+  "format": "otravel.final40.repair_coverage.v1",
+  "created_at_utc": "2026-10-28T17:25:16.842463+00:00",
+  "candidate_commit": "a95eca834c2708006f51fd68b15faedd2e527629",
+  "source_of_findings": {
+    "census_path": ".local/evaluation/final40-final-census-20261028/REPORT.json",
+    "census_sha256": "6dac2b478660293f759a007344cbd2b6bad161ef0844a2ba4bbf80ddeeef953a",
+    "baseline_commit_as_reported": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+    "baseline_package_as_reported_by_census": "9d143cf06126b98967ac9e41a2a4036fbbd64897dacaf0d502f7b3f90e0e3765",
+    "audit_receipts": [
+      {
+        "label": "001-020",
+        "sha256": "da68533f661aae3bccb690f45263b79facc71055ff8ce3263bda4708208dabdf"
+      },
+      {
+        "label": "021-040",
+        "sha256": "6ee0226daeb26982e6bb9606705cff660440a40f7ce5c80d0e727f31f07192c4"
+      }
+    ]
+  },
+  "status": "SCOPED_REPAIR_MAPPING_NOT_FULL40_OR106_PASS",
+  "actual_retake_status": "TARGETED_RESULTS_RECORDED_NOT_FULL_CORPUS_ACCEPTANCE",
+  "original_execution_scope": {
+    "stories": 40,
+    "user_turns": 437,
+    "original_ids": 106,
+    "original_messages": 129,
+    "turn_statuses": {
+      "completed": 415,
+      "failed": 22
+    },
+    "semantic_status": "PARTIAL_OR_UNBOUND_OR_FAILED_NOT106PASS",
+    "setup_not_injected_ids": [
+      "BOOK-02",
+      "BOOK-03",
+      "BOOK-04",
+      "BOOK-08",
+      "HOTEL-02",
+      "HOTEL-03",
+      "MONEY-02",
+      "MONEY-03",
+      "SYSTEM-01",
+      "SYSTEM-02",
+      "SYSTEM-03",
+      "SYSTEM-04",
+      "SYSTEM-09",
+      "SYSTEM-10",
+      "UX-01",
+      "UX-02"
+    ]
+  },
+  "classification_counts": {
+    "repaired_in_controlled_scope": 11,
+    "partial": 6,
+    "open": 10
+  },
+  "finding_record_count": 27,
+  "repair_receipts": {
+    "budget": {
+      "path": "docs/verification/final40-budget-repair-20261028.json",
+      "sha256": "418c387cc8ff2be01a8d6fe00c24b725ba170980ede0ed7ca2fea4990cda0bcb",
+      "reported_status": "CONTROLLED_REPRODUCTIONS_PASS_FINAL_ACTUAL_RETAKE_PENDING",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "party": {
+      "path": "docs/verification/final40-party-repair-20261028.json",
+      "sha256": "0b520d17fdda919bfde9be1f17773655aac9c8368bcc4255ec86f004e7cd57ce",
+      "reported_status": "SCOPED_CONTROLLED_REGRESSIONS_GREEN_ACTUAL_NLU_PENDING",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "party_r7": {
+      "path": "docs/verification/final40-party-r7-regression-repair-20261028.json",
+      "sha256": "98340cc6c328af0a94f07c5acfdb41775d0fc62d52742e33e451a3802615a093",
+      "reported_status": "TWO_EXACT_R7_REGRESSIONS_GREEN_CONTROLLED_SCOPE",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "geo_date_booking": {
+      "path": "docs/verification/final40-geo-date-booking-20261028.json",
+      "sha256": "f23dfe486b9390207f088bcb2e4d596423f9d5811c102a1e0033e88f8d2cda1e",
+      "reported_status": "RELATED_CONTROLLED_PASS_ACTUAL_RETAKE_PENDING",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "financial": {
+      "path": "docs/verification/final40-financial-requirements-repair-20261028.json",
+      "sha256": "312efab3a22be62e0871a9f7d609716c92737a34b08e2e82c3c733c937a72442",
+      "reported_status": "CONTROLLED_FINANCIAL_SAFETY_REPAIRED_ACTUAL_NLU_RETEST_OPEN",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "financial_scope": {
+      "path": "docs/verification/final40-financial-wrong-stay-waiver-20261028.json",
+      "sha256": "5c4734f912d8d993d635a3547ad3f74f07e2fc89d87b9746c94c057a5d3a85a5",
+      "reported_status": "CONTROLLED_CURRENT_SCOPE_BINDING_REPAIRED_ACTUAL_NLU_RETEST_OPEN",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "financial_groq": {
+      "path": "docs/verification/final40-financial-groq-schema-integration-20261028.json",
+      "sha256": "000c566fc46ccc2ce9ff3e2de82488728331613cc79ffbb5a7a402d6dcf0ace1",
+      "reported_status": "RELATED_GROQ_DYNAMIC_FINANCIAL_PG_PASS_FULL_R8_PENDING",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    },
+    "room_reask": {
+      "path": "docs/verification/final40-owned-room-reask-20261028.json",
+      "sha256": "d00599c75731b3d97ba11a85f13607fac37d76be0a6bad1a8c3b95e430878896",
+      "reported_status": "RELATED_CONTROLLED_PASS_GLOBAL_FINAL_SUITE_PENDING",
+      "qualification": "Incremental controlled repair receipt; may predate a later listed integration repair. Not fresh actual LLM acceptance or the combined final full-suite terminal."
+    }
+  },
+  "classification_meaning": {
+    "repaired_in_controlled_scope": "Only the specifically stated safety/transition behavior has related controlled/pure/PG proof. It is not a whole-dialogue/live-model feature-complete claim.",
+    "partial": "A named subtype or adjacent boundary is repaired, while original subcases/general behavior remain unqualified.",
+    "open": "No exact new related repair proof establishes closure. Existing safety checks or a different PASS do not close the source finding."
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-FINAL40-BUDGET-RESERVE-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "020T4 checked set_budget.amount_minor=120000,currency=RUB;020T9 ответ1 200,00RUB. В020T11 настоящий MIXED расчёт99 978,76RUB отклонён относительно ошибочного1 200RUB. Это ошибка извлечения/приёмки бюджета, а не FX или отображение копеек.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "budget"
+      ],
+      "controlled_scope": "Процент резерва не превращает100тысяч в1200RUB: неверный set_budget подавляется, требуется расходуемый предел. Уточнение блокирует старое подтверждение без измененияrevision.",
+      "remaining": "Резерв не вычисляется автоматически; точный расходуемый предел должен указать пользователь. Actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_budget_requirements.py",
+        "tests/test_final40_budget_requirements_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-020",
+          "turn": 4,
+          "source_sha256": "726529abd00178ab617932b57741d51d89a16da1e6bd0d76c307aad6f7210de4",
+          "user_sha256": "518b4a139ccbc28098fdf3ac52975d2188e5a19f9c84d4e384b1df7676ec816b",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-020",
+          "turn": 9,
+          "source_sha256": "726529abd00178ab617932b57741d51d89a16da1e6bd0d76c307aad6f7210de4",
+          "user_sha256": "3285c5d310091b0571f6346f0a1a98c463efdf03a2d87b6c3de5f7f3ad2a1b05",
+          "json_pointers": [
+            "/turns/8"
+          ]
+        },
+        {
+          "case_id": "FINAL40-020",
+          "turn": 11,
+          "source_sha256": "726529abd00178ab617932b57741d51d89a16da1e6bd0d76c307aad6f7210de4",
+          "user_sha256": "95a06ea35cd0699c2d1c59c04d5efb495e6ce3d9c819bb23a38414ca4b3c8dea",
+          "json_pointers": [
+            "/turns/10"
+          ]
+        }
+      ],
+      "actual_retake_status": "targeted_actual_model_pass",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "FINAL40-020:T4",
+            "checks": {
+              "completed": true,
+              "not_1200_rubles": true,
+              "reserve_unresolved": true,
+              "orders0": true
+            },
+            "pass": true,
+            "qualification": "ACTUAL_FREE_ZAI_HARNESS_RELATED_PASS"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-004-FINAL40-UNSUPPORTED-POISON-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "002T5 на ответAD1/0CH/1room модель дважды возвращает валидные add_traveler/upsert_group/set_room_members вместе с set_preference.value={value:evening} безkey. Весь batch rejected, взрослый не сохранён. 010T3/T4,013T1,017T3/T4 повторяют отсутствующиеkey для unsupported условий.",
+      "status": "partial",
+      "proof_receipts": [
+        "geo_date_booking",
+        "party",
+        "party_r7",
+        "financial_groq"
+      ],
+      "controlled_scope": "Закрытые ответы о составе/выезде обходят отдельные ошибочные модельные batches; диагностируется nullable city enum. Устранены24 интеграционные schema/Groq регрессии R7 отдельным receipt.",
+      "remaining": "Не закрыты все исходные missing-key/unsupported preference/connecting/accessibility/baggage/stars/rating batches. Общий recovery всех вариантов моделей не доказан.",
+      "test_modules": [
+        "tests/test_final40_geo_date_booking.py",
+        "tests/test_final40_geo_date_booking_pg.py",
+        "tests/test_final40_party_preservation.py",
+        "tests/test_groq_temporal_constraint.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-002",
+          "turn": 5,
+          "source_sha256": "7a66d9bc848cab2b2da97d15b0a93f5d6dcb88105cc48c39ba28d789ffbbe106",
+          "user_sha256": "936306f2a8061e8388c9c934cdee53b91b56bc3589fed3920a7caeb53af4e592",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-010",
+          "turn": 3,
+          "source_sha256": "cdf679eb94f28aaae1f6890e6259a00a530f6f66333637eeeb526de57f13f0ca",
+          "user_sha256": "3710cd5875430bb39764bf4385a9ac18e4d207929f7b1cb5f07dab5230c6be64",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-010",
+          "turn": 4,
+          "source_sha256": "cdf679eb94f28aaae1f6890e6259a00a530f6f66333637eeeb526de57f13f0ca",
+          "user_sha256": "3e2db31c6eb5c7b0c925d5591999e07856ffb9c0813dfbddb2bb7c0fdf671ee6",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-013",
+          "turn": 1,
+          "source_sha256": "b16841dfce47575eae57035f451a7aa80d0fd8c040754fac6e19625c1a2550d3",
+          "user_sha256": "387813d6ee4f116dcf18ec67c147ca52db6a48f50c3d9b7bda6039e9488f4667",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-017",
+          "turn": 3,
+          "source_sha256": "b071989efc8c54189fa8f63c93804d0d7346d0026ceabfc26afdaf4b12873cac",
+          "user_sha256": "9eac7cbff523d14a55683e83be444d147416501d5d520e3d666db95b3279743e",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-017",
+          "turn": 4,
+          "source_sha256": "b071989efc8c54189fa8f63c93804d0d7346d0026ceabfc26afdaf4b12873cac",
+          "user_sha256": "35ffd7246cff57d70822a01ed87e3aa6d733b31d29511e86db3567ef9f29634a",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-ANSWER-DISCARD-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "001T4 weather-вопрос классифицирован какdates,route,preferences,geography и получил справку о пустом маршруте.001T6 вопрос о снеге имеет содержательный model_reply, но user-visible только«Поездка...не изменены».002T6 self-transfer,008T4 отзывы,009T3 багаж/концерт,019T4/T6 разницацен также не получают предметного пользовательского ответа.004T1 PROPOSE возвращаетno-change.",
+      "status": "partial",
+      "proof_receipts": [
+        "room_reask",
+        "geo_date_booking"
+      ],
+      "controlled_scope": "Исправлен только дополнительный свежий server-owned room-target reask040T6; booking restore имеет отдельный canonical readonly путь.",
+      "remaining": "Исходные вопросы001о погоде/снеге,002о пересадке,004PROPOSE,008об отзывах,009о багаже/концерте,019об изменении цены не считаются исправленными этим узким изменением.",
+      "test_modules": [
+        "tests/test_final40_owned_room_reask.py",
+        "tests/test_final40_owned_room_reask_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [
+        "FINAL40-040:T6"
+      ],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-001",
+          "turn": 4,
+          "source_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+          "user_sha256": "0c61c4147329e1e18cc8e25404ee1f0d621e28500e83083243f2020503764a4d",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-001",
+          "turn": 6,
+          "source_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+          "user_sha256": "2cd5bd957608b77de591f312d1f21a5eba74d40e9a52f60af7ae4ed0cc563d38",
+          "json_pointers": [
+            "/turns/5"
+          ]
+        },
+        {
+          "case_id": "FINAL40-002",
+          "turn": 6,
+          "source_sha256": "7a66d9bc848cab2b2da97d15b0a93f5d6dcb88105cc48c39ba28d789ffbbe106",
+          "user_sha256": "4a6946057efd6dbaa422dec3136296aa062708e4a3a8ead0594e24f018b54bd5",
+          "json_pointers": [
+            "/turns/5"
+          ]
+        },
+        {
+          "case_id": "FINAL40-004",
+          "turn": 1,
+          "source_sha256": "e4ec765335e433be3d95e3fc074862ca99ac6522ed84a92d1b10cc4fabdd91de",
+          "user_sha256": "deaf813c7a49da9b5265d1e4263ff1521709da277539e64fc73318f89e3adfee",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-008",
+          "turn": 4,
+          "source_sha256": "a1652d7996c64e871cb5ec7bae3e8f1a52e08b28017c2c0e7cad76968cce2cf2",
+          "user_sha256": "2dd76ffde8265a35a9983b8e48f3460ca558f86b2a91571e9e0d7c105d407792",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-009",
+          "turn": 3,
+          "source_sha256": "9ec02c53edfff15044fb9156b194ba2783bdf0acbbd150c0393ccbd0aa7749dc",
+          "user_sha256": "51f84b8a3f0f7bd0dc903245f360f821a3645e4d364fcb56cab444beb2b22ac3",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-019",
+          "turn": 4,
+          "source_sha256": "4c3619525a11ea5b6d629528fe479ab6da958d64f9692e16f53d39e0fd17967d",
+          "user_sha256": "aa60475dcb76eb485c61bd07c504082be8ac501f3aeef7db42e0f4db1a3e98a2",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-019",
+          "turn": 6,
+          "source_sha256": "4c3619525a11ea5b6d629528fe479ab6da958d64f9692e16f53d39e0fd17967d",
+          "user_sha256": "e5555843635d83f1938a8565c48c497586d970448e82e23d57c690a9707638f4",
+          "json_pointers": [
+            "/turns/5"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-MISSING-CITY-PENDING-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "009T2/T4/T5,010T2,014T3,015T6 имеют violation missing_city, но pending_question.field=null и ответ«Что нужно уточнить...». В018T3 custom вопрос о людях тоже не получает typedfield, следующие валидныеAD1-дополнения не извлекаются.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Нет относящегося repair receipt для всех исходных missing_city/пустогоstay уточнений.",
+      "remaining": "Нужна предметная привязка исходных009T2/010T2/014T3/015T6 и других адресов; общая generic pending проблема остаётся открытой.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-009",
+          "turn": 2,
+          "source_sha256": "9ec02c53edfff15044fb9156b194ba2783bdf0acbbd150c0393ccbd0aa7749dc",
+          "user_sha256": "77ee1b07c6d281b701a5ea5483f7fc7f18486adb551fc0327d1d1ccf82c531c9",
+          "json_pointers": [
+            "/turns/1"
+          ]
+        },
+        {
+          "case_id": "FINAL40-009",
+          "turn": 4,
+          "source_sha256": "9ec02c53edfff15044fb9156b194ba2783bdf0acbbd150c0393ccbd0aa7749dc",
+          "user_sha256": "8dc5df846747543b1ede16b398866d913254aac14836f05d9c4b2788c6d59c2f",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-009",
+          "turn": 5,
+          "source_sha256": "9ec02c53edfff15044fb9156b194ba2783bdf0acbbd150c0393ccbd0aa7749dc",
+          "user_sha256": "24fe182c22f3d17f2101981aaeb03c7ca0f6a58e775522143c9f56e878bfd686",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-010",
+          "turn": 2,
+          "source_sha256": "cdf679eb94f28aaae1f6890e6259a00a530f6f66333637eeeb526de57f13f0ca",
+          "user_sha256": "d0438c1eb0abc65340159a9f5490c99ec74706cdb4968a9c8b1e8402675afc2c",
+          "json_pointers": [
+            "/turns/1"
+          ]
+        },
+        {
+          "case_id": "FINAL40-014",
+          "turn": 3,
+          "source_sha256": "f40b20025abece72632810282365e453ff6c46151051434d269e675b75252f7e",
+          "user_sha256": "1e029f9e940dc18ac092b7b186a594fca0bd58676420478d5911b8d9fcc19741",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-015",
+          "turn": 6,
+          "source_sha256": "41713f6fab56a3b754d0ecf94a4a72cee4aa4003819ba76c91abf383a72a1a66",
+          "user_sha256": "dde453e0ee9699aaadc1fac6ab9b45ffccfdb87d3db6bb85af6315e5efb5fe55",
+          "json_pointers": [
+            "/turns/5"
+          ]
+        },
+        {
+          "case_id": "FINAL40-018",
+          "turn": 3,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "e1fbb37950f36a1ee1194bf2e88422f7959606a18f0f5fe0c3e96f8999fe15da",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-018",
+          "turn": 7,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "f8aa534d010921b3eab6a468d8dd59424cb8c06bf7340a567e77c2452fc33fa5",
+          "json_pointers": [
+            "/turns/6"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-REFUND-DEADLINE-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "006T3 проситrefundability до дня заезда12.11; вTripState остаётся толькоboolrefundable. Technicalprobe1 ready=true сLiteAPI cancellation_deadline=2026-11-11T10:00:00Z. Probe3 preview200,confirm200,retry200,одинBOOKED_DEMO. Это корректная идемпотентность заказа,нонеполная семантическая проверка условия.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "financial",
+        "financial_scope",
+        "financial_groq"
+      ],
+      "controlled_scope": "Требование отмены до заезда хранится отдельным strict hard key; неподтверждённый источник не даёт READY/quote/староеconfirm. Снятие привязано к текущему owned stay/room.",
+      "remaining": "Положительная произвольная проверка supplier deadline/TZ/checkin-time не реализована: условие остаётся blocking до подтверждения поддержанной возможностью или явного отказа. Старые потерянные требования из одного refundablebool не мигрируются.",
+      "test_modules": [
+        "tests/test_financial_requirements.py",
+        "tests/test_financial_requirements_pg.py",
+        "tests/test_groq_temporal_constraint.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-006",
+          "turn": 3,
+          "source_sha256": "ddb9a916371d0bed74afa4f8a35da6c12ceeae2bd1919b20e9543c12a0da58f6",
+          "user_sha256": "ba536b04de7cffc9833d790fccd47695abd497c959bc6518e01335b323dc1388",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-006",
+          "turn": null,
+          "source_sha256": "ddb9a916371d0bed74afa4f8a35da6c12ceeae2bd1919b20e9543c12a0da58f6",
+          "user_sha256": null,
+          "json_pointers": [
+            "/technical_probes/1/result/run/result/result/plans/0/offers/0/details/cancellation_deadline"
+          ]
+        },
+        {
+          "case_id": "FINAL40-006",
+          "turn": null,
+          "source_sha256": "ddb9a916371d0bed74afa4f8a35da6c12ceeae2bd1919b20e9543c12a0da58f6",
+          "user_sha256": null,
+          "json_pointers": [
+            "/technical_probes/3"
+          ]
+        }
+      ],
+      "actual_retake_status": "targeted_actual_persistence_pass_positive_supplier_deadline_open",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "FINAL40-006:T3",
+            "checks": {
+              "completed": false,
+              "until_checkin_hard_condition": false,
+              "no_false_ready": false,
+              "quotes0": true
+            },
+            "pass": false,
+            "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        },
+        {
+          "proof": "cloudflare",
+          "target": {
+            "id": "FINAL40-006:T3",
+            "checks": {
+              "completed": true,
+              "persistent_until_checkin": true,
+              "no_orders": true
+            },
+            "pass": true
+          },
+          "provider_scope": "One actual model request; recorded prior setup/DEMO state isolation. No source quote/whole-world claim."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-004-FINAL40-CHILD-BIRTHDAY-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "011T1 «1год11месяцев,нонаобратномисполнитсядва» сохранено какage1/birth_date=null безвопроса оDOB. Позднее actualDuffelrequest и outbound,иreturn передаютage1; return response infant_without_seat1, готовыйmixedplan. Дата рождения неизвестна, поэтому неутверждается какая конкретно дата верна;необходимость проверкиперехода возраста точно потеряна.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Нет относящегося нового доказательства для возрастного перехода на обратном пути011.",
+      "remaining": "DOB/дата двухлетия и возраст на каждом плече требуют отдельного исправления/приёмки; общие party safeguards не закрывают этот finding.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-011",
+          "turn": 1,
+          "source_sha256": "3ab8a59584fc3d38a4bf671094ee416e8150ca9a4553fd72a4295a3ed25f5f57",
+          "user_sha256": "1cc8bfed0914dba884e390eed0cc3581228f06301a0dc7caf146dd52b7f2c42e",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-011",
+          "turn": 9,
+          "source_sha256": "3ab8a59584fc3d38a4bf671094ee416e8150ca9a4553fd72a4295a3ed25f5f57",
+          "user_sha256": "3285c5d310091b0571f6346f0a1a98c463efdf03a2d87b6c3de5f7f3ad2a1b05",
+          "json_pointers": [
+            "/turns/8"
+          ]
+        },
+        {
+          "case_id": "FINAL40-011",
+          "turn": null,
+          "source_sha256": "3ab8a59584fc3d38a4bf671094ee416e8150ca9a4553fd72a4295a3ed25f5f57",
+          "user_sha256": null,
+          "json_pointers": [
+            "/technical_probes/0/result/run/result/result/plans/0/offers/2/details/search_request/passengers"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-TRANSPORT-MODE-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "018T1явно«Не хочу самолётов;...поездомизКазани»,ноT2 создаётобаlegs.mode=flight.016T5 проситночнойпоезд,последующийготовыйmixedplanиactualsourcequeries используютDuffelflight. Нетявногоуведомления онеподдержанномжелезнодорожномисточнике/согласиязаменитьтранспорт.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Конфликт nonstop/пересадка проверяется отдельно, но это не доказательство сохранения train/no-flight018.",
+      "remaining": "Явный запрет самолётов/ночной поезд до созданияdatedlegs и соответствующий источник остаются открытыми.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-018",
+          "turn": 1,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "197522a735e9d66bbfd7062e29e170408b48351d73cc1455ba66c3f5fcc3a60d",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-018",
+          "turn": 2,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "52fcfdb3ef169510dd7fb283cd43a4e4ce55dd56fa54b363db9ae5f1885f6cc0",
+          "json_pointers": [
+            "/turns/1"
+          ]
+        },
+        {
+          "case_id": "FINAL40-018",
+          "turn": 5,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "e016d4dd9cda18933a65ad8aa2930208201c1f2daa4d02e465fcb995ba744d06",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-016",
+          "turn": 5,
+          "source_sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+          "user_sha256": "3cbbdf994a2d0ecffdd230a51e5b4c5162e641149763580b8db05bd8b9d8dbb5",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-016",
+          "turn": 10,
+          "source_sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+          "user_sha256": "7f4b37b69d2be38b93edd6f751606031207616b407e35875472ee0646bd4e21e",
+          "json_pointers": [
+            "/turns/9"
+          ]
+        },
+        {
+          "case_id": "FINAL40-016",
+          "turn": null,
+          "source_sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+          "user_sha256": null,
+          "json_pointers": [
+            "/technical_probes/0"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-COMPOUND-DATE-CONFLICT-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "018T5«Вылет...1ноября,возвращаюсь7-го;хочу7ночей»послестарых12–22ноября создаёт12–19ноября/7ночей. Literalновыедатыигнорируются,несовместимые6ночейи7ночейнеуточнены;версияувеличивается.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Узкий date-slot исправляет точный checkout, но не исходную составную команду018T5.",
+      "remaining": "1–7ноября против7ночей и старого12–22ноября требуют адресного уточнения; нет нового относящегося результата.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-018",
+          "turn": 4,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "72f39437520b553b7c519cc61b58adbc04673f5c02dab0cb8830b5219d0b9d44",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-018",
+          "turn": 5,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "e016d4dd9cda18933a65ad8aa2930208201c1f2daa4d02e465fcb995ba744d06",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-018",
+          "turn": 6,
+          "source_sha256": "19e5654f4e523f09d28b9be428801d2f395e133485f55a3121e44ad2f0b9bd8d",
+          "user_sha256": "3285c5d310091b0571f6346f0a1a98c463efdf03a2d87b6c3de5f7f3ad2a1b05",
+          "json_pointers": [
+            "/turns/5"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-FAMILY-MAPPING-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "010T1из6AD+3CH/двесемьираздельномодельсоздаётgroup1=6AD,group2=3CHиroom3=толькодети3/7/15. Пользовательнеуказалсоставкаждойсемьи. ВT9/technicalsearchhotelнеподобран«Нельзяраспределить...безсмешениясемей».Guardнедопустилнеправильныйотель,ноисходнаянесогласованнаягруппировкасохранена.",
+      "status": "open",
+      "proof_receipts": [
+        "party"
+      ],
+      "controlled_scope": "Сохранение людей/запрет вымышленных новых взрослых исправлены, но не подтверждают состав двух семей010.",
+      "remaining": "Группировка6ADпротив3CH и children-only room в010 не квалифицированы новым targeted результатом. Требуется спросить состав семей, не выдумывая соответствиеID.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-010",
+          "turn": 1,
+          "source_sha256": "cdf679eb94f28aaae1f6890e6259a00a530f6f66333637eeeb526de57f13f0ca",
+          "user_sha256": "e4a4fd4392b24a57ac76e373311338ca70c66b78f1bc2225bd8129d4bf0f6d55",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-010",
+          "turn": 9,
+          "source_sha256": "cdf679eb94f28aaae1f6890e6259a00a530f6f66333637eeeb526de57f13f0ca",
+          "user_sha256": "95a06ea35cd0699c2d1c59c04d5efb495e6ce3d9c819bb23a38414ca4b3c8dea",
+          "json_pointers": [
+            "/turns/8"
+          ]
+        },
+        {
+          "case_id": "FINAL40-010",
+          "turn": null,
+          "source_sha256": "cdf679eb94f28aaae1f6890e6259a00a530f6f66333637eeeb526de57f13f0ca",
+          "user_sha256": null,
+          "json_pointers": [
+            "/technical_probes/0"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-ROOM-COVERAGE-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "001T12,007T10,012T10:известныйAD1ипредшествующее«номернавсех»,ноcontextualslot1создаётtraveler_ids=[].001/007searchдаютstay_guest_coverage;динамическийplaceDEMOfallbackнеполучаетallocation. Вlegacyпохожих009/015plannerможетвывестираспределение,поэтомупроблемаинтерфейсасостояния/планировщика,неуниверсальноеотсутствиеавторазмещения. Отельныеproviderfailостаютсяотдельнымфактом.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "party",
+        "party_r7"
+      ],
+      "controlled_scope": "Точный свежий ответ1номер для одного известногоAD/одногоstay заполняет существующий travelerID и сохраняетroomID; исходный001T12 покрыт captured/PG.",
+      "remaining": "Это только solo/single-stay/single-room scope. Много людей/несколько семей/сложный layout не получили общее автоматическое распределение; provider/pet отказ012 не объявляется исправленным размещением.",
+      "test_modules": [
+        "tests/test_final40_party_preservation.py",
+        "tests/test_final40_party_preservation_pg.py"
+      ],
+      "receipt_finding_aliases": [
+        "HARNESS-004-F40-SOLO-ROOM-ALLOCATION-001"
+      ],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-001",
+          "turn": 3,
+          "source_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+          "user_sha256": "936306f2a8061e8388c9c934cdee53b91b56bc3589fed3920a7caeb53af4e592",
+          "json_pointers": [
+            "/turns/2"
+          ]
+        },
+        {
+          "case_id": "FINAL40-001",
+          "turn": 12,
+          "source_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+          "user_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+          "json_pointers": [
+            "/turns/11"
+          ]
+        },
+        {
+          "case_id": "FINAL40-001",
+          "turn": 13,
+          "source_sha256": "61b2ba57f3c0f2c6ef2aa305e195d0dcc128f7a813204c415fdb77bfce9a2e0b",
+          "user_sha256": "95a06ea35cd0699c2d1c59c04d5efb495e6ce3d9c819bb23a38414ca4b3c8dea",
+          "json_pointers": [
+            "/turns/12"
+          ]
+        },
+        {
+          "case_id": "FINAL40-007",
+          "turn": 10,
+          "source_sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+          "user_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+          "json_pointers": [
+            "/turns/9"
+          ]
+        },
+        {
+          "case_id": "FINAL40-007",
+          "turn": 11,
+          "source_sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+          "user_sha256": "95a06ea35cd0699c2d1c59c04d5efb495e6ce3d9c819bb23a38414ca4b3c8dea",
+          "json_pointers": [
+            "/turns/10"
+          ]
+        },
+        {
+          "case_id": "FINAL40-012",
+          "turn": 10,
+          "source_sha256": "1817fb33f16a6e591639e12ea22b23a5898786272caf180f79bde59f3ab3cd56",
+          "user_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+          "json_pointers": [
+            "/turns/9"
+          ]
+        },
+        {
+          "case_id": "FINAL40-012",
+          "turn": 11,
+          "source_sha256": "1817fb33f16a6e591639e12ea22b23a5898786272caf180f79bde59f3ab3cd56",
+          "user_sha256": "95a06ea35cd0699c2d1c59c04d5efb495e6ce3d9c819bb23a38414ca4b3c8dea",
+          "json_pointers": [
+            "/turns/10"
+          ]
+        }
+      ],
+      "actual_retake_status": "related_zero_model_runtime_pass_exact_original_case_pending",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "RELATED-OWNED-PARTY-SOLO-ROOM",
+            "checks": {
+              "completed": true,
+              "model0": true,
+              "solo_adult": true,
+              "unique_room_allocation": true
+            },
+            "pass": true,
+            "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-004-FINAL40-GEO-COUNTRY-FILTER-001",
+      "original_severity": "P2",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "005T5 literalLondon,Канада,extractedresolve.country_iso2=CA,носписокGB/CA/US.007T5Сочи,РоссияпоказываетMX;016T6Берлин,ГерманияпоказываетUS. Пользовательпотомсамвыбираетнужныйномер;автоматическойподменыстранынезаявляется.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "geo_date_booking"
+      ],
+      "controlled_scope": "Полная текущая пара«Выбираем[город]QUERY,COUNTRY» получает verified pinned CLDR countryRef; настоящий controlled directory wire фильтруетCA/RU, foreign source rows отвергаются, auto-admission отсутствует.",
+      "remaining": "Это source-filter boundary при наличии разрешённого resolve request; не доказательство всего natural extraction любых городов. Bare pair безявнойроли неавторизуется; actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_geo_date_booking.py",
+        "tests/test_final40_country_pair_boundary.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-005",
+          "turn": 5,
+          "source_sha256": "97b2bc117f4b3fadde60327a8aeeeb78a0259fec1c312b1b6e4e7ef0d30d4a5f",
+          "user_sha256": "1b60bb81606f24a533a5eed98595a60e064824112dc2ae76a8935d25509f66b6",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-007",
+          "turn": 5,
+          "source_sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+          "user_sha256": "9701859a25a31524424141cb732ec90b2e1d03ea393375a50e42afded3c99cbc",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-016",
+          "turn": 6,
+          "source_sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+          "user_sha256": "f04c996abfe8606a3fc9d4d10052a1e073d08ff2fc07d7898893115b5b9b3679",
+          "json_pointers": [
+            "/turns/5"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-GEO-CANONICAL-LITERAL-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "013T10приизвестномplaceID551487модельменяетU+2019наASCIIапострофвcityKazan'ивесьupsertcheck_outдваждыrejectedoneOf. Датавыезданесохранена. Похожий016T1Берлиннапрямуювupsertвместоresolveтакжеschemaerror.",
+      "status": "partial",
+      "proof_receipts": [
+        "geo_date_booking"
+      ],
+      "controlled_scope": "Исходный Kazan’ checkout проходит date-only owned shortcut безcity/placeID coercion. Nullable enum ошибка получает bounded server leaf diagnostics.",
+      "remaining": "Общий произвольный city echo/spelling repair и начальный upsertБерлин внеclosedcityschema остаются не квалифицированы. Неверная операция по-прежнему отвергается.",
+      "test_modules": [
+        "tests/test_final40_geo_date_booking.py",
+        "tests/test_final40_geo_date_booking_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-013",
+          "turn": 10,
+          "source_sha256": "b16841dfce47575eae57035f451a7aa80d0fd8c040754fac6e19625c1a2550d3",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/9"
+          ]
+        },
+        {
+          "case_id": "FINAL40-016",
+          "turn": 1,
+          "source_sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+          "user_sha256": "e0414c208a4781cdd194893909f7d8cce32e468a2aa7127e71d122c35ffd259d",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-UNMODELED-HARD-REQUEST-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "007T1/T4/T7 море/пешком/центр/1000заночьнесохраненыинеобъяснены;008T7тяжёлаяаллергиянеуточнена,позжеready;011T4кроватка/позднеезаселениеиT7прилёт03:00безсборовпотеряны;013T2queenbedиT5нельзяходить;015T1/T4/T5ночнойзаезд/конференция;016T2arrival22:50призакрытии22:00. Поддержанныеbreakfast/pets/nonstopчастичноработают,носхеманепредставляетвсекритерии.",
+      "status": "open",
+      "proof_receipts": [
+        "financial"
+      ],
+      "controlled_scope": "Новое until-checkin требование имеет отдельный fail-closed scope, но оно учтено отдельным finding.",
+      "remaining": "Исходные море/пешком/аллергия/queen/кроватка/ночнойзаезд/конференция/закрытиеотеля не получили общей canonical representation или source-проверки. Нельзя считать их соблюдёнными.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-007",
+          "turn": 1,
+          "source_sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+          "user_sha256": "07ec34ce75ad998cf4c841e40dccc7d9117afccac14d5964c07d120b6afcd703",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-007",
+          "turn": 4,
+          "source_sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+          "user_sha256": "9337ab3a7dc454b8667c671b287c2944c9d1ff63e17f2a05bc2adcd2797c116e",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-007",
+          "turn": 7,
+          "source_sha256": "703fa43a88350ad81cd9718f0e16f197477b0c6aca0b19fa6bc848ed90ad5d30",
+          "user_sha256": "9a2a44e6b7219138b86760ac773da980940a2f581fd90b5d4589e40ccf133c75",
+          "json_pointers": [
+            "/turns/6"
+          ]
+        },
+        {
+          "case_id": "FINAL40-008",
+          "turn": 7,
+          "source_sha256": "a1652d7996c64e871cb5ec7bae3e8f1a52e08b28017c2c0e7cad76968cce2cf2",
+          "user_sha256": "c1f31f47e8385e43583c6634bd83482be08441f682db434cfa356db85a125ef8",
+          "json_pointers": [
+            "/turns/6"
+          ]
+        },
+        {
+          "case_id": "FINAL40-011",
+          "turn": 4,
+          "source_sha256": "3ab8a59584fc3d38a4bf671094ee416e8150ca9a4553fd72a4295a3ed25f5f57",
+          "user_sha256": "031e6d75d4614bf7e7c41d14920ab7d49d83131f7ad4496d196198b1188d5340",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-011",
+          "turn": 7,
+          "source_sha256": "3ab8a59584fc3d38a4bf671094ee416e8150ca9a4553fd72a4295a3ed25f5f57",
+          "user_sha256": "0afb2e691fdf1a91f770fce8c493aadb6235c961f0fbef59b1b26da172240d6b",
+          "json_pointers": [
+            "/turns/6"
+          ]
+        },
+        {
+          "case_id": "FINAL40-013",
+          "turn": 2,
+          "source_sha256": "b16841dfce47575eae57035f451a7aa80d0fd8c040754fac6e19625c1a2550d3",
+          "user_sha256": "ab2dd4b521cc1d195b7f62b298676fa8963bd4321aff8157135cc1119cf50b2c",
+          "json_pointers": [
+            "/turns/1"
+          ]
+        },
+        {
+          "case_id": "FINAL40-013",
+          "turn": 5,
+          "source_sha256": "b16841dfce47575eae57035f451a7aa80d0fd8c040754fac6e19625c1a2550d3",
+          "user_sha256": "c65f8ef8e789da20f1cc6903e0df0bbf2f30c3c9655db4bb54017b2cba27164a",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-015",
+          "turn": 1,
+          "source_sha256": "41713f6fab56a3b754d0ecf94a4a72cee4aa4003819ba76c91abf383a72a1a66",
+          "user_sha256": "8aee63cc4dabeac271abf57f9e46cbe5b7e323eac5fd4a4caf8660a762f7d299",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-015",
+          "turn": 4,
+          "source_sha256": "41713f6fab56a3b754d0ecf94a4a72cee4aa4003819ba76c91abf383a72a1a66",
+          "user_sha256": "cccb977fa8cdcd794c3de95131174ce8239bd6be422d07ee61132ea06348af08",
+          "json_pointers": [
+            "/turns/3"
+          ]
+        },
+        {
+          "case_id": "FINAL40-015",
+          "turn": 5,
+          "source_sha256": "41713f6fab56a3b754d0ecf94a4a72cee4aa4003819ba76c91abf383a72a1a66",
+          "user_sha256": "18f07e21b43255d09ed96426dd19fe478036d1ba3398a357a3bafc61168f6cdc",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-016",
+          "turn": 2,
+          "source_sha256": "1522888f537929e4d85ef263454be558dd37f0f7ce12f5c790b159a19113c176",
+          "user_sha256": "053798bc554c5bd7af81b8b72ad5d6d623da8a3f82ad746a88e0f50b56830129",
+          "json_pointers": [
+            "/turns/1"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-BUDGET-COMPONENT-SCOPE-001",
+      "original_severity": "P1",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "003T5«120тысячнавсех,включая...едуибагаж»сохраняеттолькосумму. T7иtechnicalsearchreadyMIXED~84тыс содержитотель/2перелёта/трансфер;нетотдельнойоценкиедыилиуведомленияочастичномохватебюджета. BaseDuffelfees_scopeисключаетoptionalservices;наличиебагажногоquantityнеподтверждает23кг/всесборы.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "budget"
+      ],
+      "controlled_scope": "Явно включённые питание/багаж сохраняются какнепроверенные обязательныерасходы и блокируют полныйплан/quote; гипотеза/цитата/пауза не снимают hardguard, явноеисключение ограничено нужнойкатегорией.",
+      "remaining": "Стоимостьеды/optionalbaggage неоценивается автоматически; безопаснаянеполнотавместо выдуманноговсегоитога. Actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_budget_requirements.py",
+        "tests/test_final40_budget_requirements_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-003",
+          "turn": 5,
+          "source_sha256": "5b1f42f163b368387c7a8dc9eddaec6b957273f0c21f0519fc5548bb60e30a37",
+          "user_sha256": "5efc5bcbca1769cac4559f85d58a0ad9bb3bb26dca0bff5ee1d2954dae135c50",
+          "json_pointers": [
+            "/turns/4"
+          ]
+        },
+        {
+          "case_id": "FINAL40-003",
+          "turn": 7,
+          "source_sha256": "5b1f42f163b368387c7a8dc9eddaec6b957273f0c21f0519fc5548bb60e30a37",
+          "user_sha256": "95a06ea35cd0699c2d1c59c04d5efb495e6ce3d9c819bb23a38414ca4b3c8dea",
+          "json_pointers": [
+            "/turns/6"
+          ]
+        },
+        {
+          "case_id": "FINAL40-003",
+          "turn": null,
+          "source_sha256": "5b1f42f163b368387c7a8dc9eddaec6b957273f0c21f0519fc5548bb60e30a37",
+          "user_sha256": null,
+          "json_pointers": [
+            "/technical_probes/0"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-FINAL40-DAYS-NIGHTS-001",
+      "original_severity": "P2",
+      "original_audit_index": 0,
+      "original_status": "OPEN_REPRODUCED_READONLY_AUDIT",
+      "original_summary": "009T1«на4дня»создаётrequested_nights=4;послеявныхдат12–15ноябряT2нормализуетдо3ночей. Финальнаядлительностьисправлена,неутверждаетсяошибкафинальнойцены.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Последующие явныедаты009давали3ночи ещёвисходномпрогоне; это не новоезакрытие initial4дня→4ночи.",
+      "remaining": "Новый результат первойреплики о днях/ночах отсутствует; предположение остаётся открытым.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-009",
+          "turn": 1,
+          "source_sha256": "9ec02c53edfff15044fb9156b194ba2783bdf0acbbd150c0393ccbd0aa7749dc",
+          "user_sha256": "8bbc3ebbc54045779438e07df62273a65358ab723b26069600e29ea3f6e14e0f",
+          "json_pointers": [
+            "/turns/0"
+          ]
+        },
+        {
+          "case_id": "FINAL40-009",
+          "turn": 2,
+          "source_sha256": "9ec02c53edfff15044fb9156b194ba2783bdf0acbbd150c0393ccbd0aa7749dc",
+          "user_sha256": "77ee1b07c6d281b701a5ea5483f7fc7f18486adb551fc0327d1d1ccf82c531c9",
+          "json_pointers": [
+            "/turns/1"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-F40-CHILD-REMOVAL-MISREAD-024-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED",
+      "original_summary": "024T4 says the only child is not going. Raw and checked operations clear age instead of removing the child; the saved party remains2adults+1child and the next question asks the age.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "party",
+        "party_r7"
+      ],
+      "controlled_scope": "Текущий явный отказ от поездки уникального ребёнка удаляет именно ребёнка, не стирает его возраст; canonical domain чистит rooms/groups.",
+      "remaining": "Поддержаны только доказанные owned текущие утверждения/ID; неоднозначный ребёнок требуетуточнения. Actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_party_preservation.py",
+        "tests/test_final40_party_preservation_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-024",
+          "turn": 4,
+          "source_sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+          "user_sha256": "a4c5639b72aad717e6b99993bd4c7cd4aaddb99f60da0e52041d206473738900",
+          "json_pointers": [
+            "/turns/3/user",
+            "/turns/3/before/trip",
+            "/turns/3/after/trip",
+            "/turns/3/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "targeted_actual_model_pass_with_recorded_setup",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "FINAL40-024:T4",
+            "checks": {
+              "completed": false,
+              "two_adults_only": false
+            },
+            "pass": false,
+            "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        },
+        {
+          "proof": "cloudflare",
+          "target": {
+            "id": "FINAL40-024:T4",
+            "checks": {
+              "completed": true,
+              "two_adults_only": true
+            },
+            "pass": true
+          },
+          "provider_scope": "One actual model request; recorded prior setup/DEMO state isolation. No source quote/whole-world claim."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-004-F40-UNREQUESTED-PARTY-029-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED",
+      "original_summary": "029T4 only selects Tbilisi/Georgia. No party was ever supplied, but the model invents Moscow+one adult. The origin guard removes Moscow while the checked batch still adds an unrequested adult.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "party",
+        "party_r7"
+      ],
+      "controlled_scope": "City-only ответ больше не разрешает вымышленных новых взрослых; текущий party fact илиfreshparty-slot необходимы.",
+      "remaining": "Общее качество извлечения сложных составных реплик остаётся отдельной приёмкой; actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_party_preservation.py",
+        "tests/test_final40_party_preservation_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-029",
+          "turn": 4,
+          "source_sha256": "39f2563d2663c9e7c478cd9086aefc00fb2143c8d16707ac648d44e78e5c0754",
+          "user_sha256": "32139f02995ac46175f35a805319d5031c2483978a5f8959ca0b7e61252b9c01",
+          "json_pointers": [
+            "/turns/3/user",
+            "/turns/3/before/trip",
+            "/turns/3/after/trip",
+            "/turns/3/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "targeted_actual_guard_pass_static_geography_only",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "FINAL40-029:T4",
+            "checks": {
+              "completed": false,
+              "no_unasked_people": true,
+              "origin_not_invented": true
+            },
+            "pass": false,
+            "qualification": "INFRASTRUCTURE_BLOCKED_NOT_SEMANTIC_ACCEPTANCE"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        },
+        {
+          "proof": "cloudflare",
+          "target": {
+            "id": "FINAL40-029:T4",
+            "checks": {
+              "completed": true,
+              "no_unasked_people": true,
+              "no_invented_origin": true
+            },
+            "pass": true
+          },
+          "provider_scope": "One actual model request; recorded prior setup/DEMO state isolation. No source quote/whole-world claim."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-003-F40-BOOKING-RESTORE-UNDO-024-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED_REFERENCE_SCOPE",
+      "original_summary": "024T11 asks to restore a canceled booking while orders_before/after are0. Raw undo is applied to the last unrelated child-age edit and changes7→unknown. Missing canceled-order setup prevents BOOK05 acceptance, but does not authorize undoing an unrelated traveler field.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "geo_date_booking"
+      ],
+      "controlled_scope": "Узкий полный вопрос о восстановлении бронирования идёт в canonical saved-order ответ; orders=[] и существующийBOOKED_DEMO не меняютtrip/pending/version/orders.",
+      "remaining": "Реальные внешние брони не восстанавливаются; произвольные ссылки на историю/заказ не получили универсального разрешения undo. Actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_geo_date_booking.py",
+        "tests/test_final40_geo_date_booking_pg.py"
+      ],
+      "receipt_finding_aliases": [
+        "HARNESS-004-FINAL40-BOOKING-RESTORE-UNDO-001"
+      ],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-024",
+          "turn": 11,
+          "source_sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+          "user_sha256": "14d8c652c2ef29bda6e953a60e84b378e6b96b7acb3ba563ee393db7a089b728",
+          "json_pointers": [
+            "/turns/10/user",
+            "/turns/10/before/trip/travelers",
+            "/turns/10/after/trip/travelers",
+            "/turns/10/orders_before",
+            "/turns/10/orders_after",
+            "/turns/10/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "targeted_zero_model_runtime_pass",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "FINAL40-024:T11",
+            "checks": {
+              "completed": true,
+              "trip_unchanged": true,
+              "version_unchanged": true,
+              "model0": true,
+              "orders0": true
+            },
+            "pass": true,
+            "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-004-F40-INCLUSIVE-PARTY-CENSUS-026-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED",
+      "original_summary": "026T3 explicitly clarifies four total including a child; the accepted update keeps4adults/0children and no clarification is raised. Later2adults+2children succeeds but does not close the earlier failure.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "party",
+        "party_r7"
+      ],
+      "controlled_scope": "Четверо всего включая ребёнка не превращаются молча в4AD; противоречивыйсостав вызывает concrete party.composition clarification безвыбора взрослого дляконвертации.",
+      "remaining": "Это устранение ложного census через уточнение, не автоматическаяидентификация всех членовсемьи; actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_party_preservation.py",
+        "tests/test_final40_party_preservation_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-026",
+          "turn": 3,
+          "source_sha256": "58cd0f2b58e7f71c9a21a05a845e8891409634c79d6b58a9a2d45478a01980d2",
+          "user_sha256": "f6b776f91bc2fca5a15c52b11d68167794dfddf90020d8e85b48307e6550caa3",
+          "json_pointers": [
+            "/turns/2/user",
+            "/turns/2/before/trip",
+            "/turns/2/after/trip",
+            "/turns/2/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-026",
+          "turn": 6,
+          "source_sha256": "58cd0f2b58e7f71c9a21a05a845e8891409634c79d6b58a9a2d45478a01980d2",
+          "user_sha256": "ecb5949e8ee3528aaa782b6befe754436108df4b8b9be6caece3c1be69f6bb8f",
+          "json_pointers": [
+            "/turns/5/user",
+            "/turns/5/before/trip",
+            "/turns/5/after/trip",
+            "/turns/5/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-F40-CONTRADICTORY-CONSTRAINTS-021-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED",
+      "original_summary": null,
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "financial",
+        "financial_scope",
+        "financial_groq"
+      ],
+      "controlled_scope": "Одновременныеfreecancel+nonrefundable и directonly+conditionalconnection блокируютвесьbatch и требуют выбора; hardнепонижаетсямолча.",
+      "remaining": "Отдельный P2 ложногоотклонения явного nonstop=false relaxation сохраняется вretainedsuite. Это не положительнаяпроверкавсех supplierусловий.",
+      "test_modules": [
+        "tests/test_financial_requirements.py",
+        "tests/test_financial_requirements_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-021",
+          "turn": 2,
+          "source_sha256": "3e58a99a736df159568101d556d3926a356f1b31c66d6193f5f7dd5fda0b9e12",
+          "user_sha256": "855644087edbe02400b39d568f871f9013e8c5ddb4921d82402187553dbd6815",
+          "json_pointers": [
+            "/turns/1/user",
+            "/turns/1/before/trip",
+            "/turns/1/after/trip",
+            "/turns/1/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-023",
+          "turn": 1,
+          "source_sha256": "a575551d93fbbbcb4271c086283d3f091ed9f9fa815f6bfd0d136d6dc61b42eb",
+          "user_sha256": "c0e2e8cb5491466dd45d09968abbd2bdfd6c3d7f1003fb36d734c318e364f3a1",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-023",
+          "turn": 7,
+          "source_sha256": "a575551d93fbbbcb4271c086283d3f091ed9f9fa815f6bfd0d136d6dc61b42eb",
+          "user_sha256": "954e601acf3c2bdc1d3316dcd1fea4ab79b1387c8f4db85c5f6b85475242ad81",
+          "json_pointers": [
+            "/turns/6/user",
+            "/turns/6/before/trip",
+            "/turns/6/after/trip",
+            "/turns/6/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-F40-ASK-CLARIFICATION-DROPPED-025-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED_RESPONSE_ROUTING",
+      "original_summary": "A broad ASK/no-operations path discards substantive raw questions/refusals and often their unknowns, returning only Trip/options unchanged. This blocks fresh intake and fails to explain boundaries despite safe unchanged state.",
+      "status": "partial",
+      "proof_receipts": [
+        "room_reask"
+      ],
+      "controlled_scope": "Исправлен один дополнительный точно подтверждённый subtype040T6: свежий server-owned room-target question отображается безrawmodelreply и безсменыpending/version.",
+      "remaining": "025T1/T2/T6 ипрочиепредложения/сравнения/источники/переводы/подтвержденияизисходногоаудитанеобъявляютсяисправленными. Универсальныйответныйслойнеменялся.",
+      "test_modules": [
+        "tests/test_final40_owned_room_reask.py",
+        "tests/test_final40_owned_room_reask_pg.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [
+        "FINAL40-040:T6"
+      ],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-025",
+          "turn": 1,
+          "source_sha256": "0cc40dbf6e7293474550ad8e2608eb1dd7084a5a277ce401f7cdaf67d4bb521d",
+          "user_sha256": "adf893ce926840f058a4a30d6863853ffad03b5d930452fa16228630f28162f6",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-025",
+          "turn": 2,
+          "source_sha256": "0cc40dbf6e7293474550ad8e2608eb1dd7084a5a277ce401f7cdaf67d4bb521d",
+          "user_sha256": "4a73ae1bbd8d054f787b6a8332e94c585fe38d593df6f82250060849552fa364",
+          "json_pointers": [
+            "/turns/1/user",
+            "/turns/1/before/trip",
+            "/turns/1/after/trip",
+            "/turns/1/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-025",
+          "turn": 6,
+          "source_sha256": "0cc40dbf6e7293474550ad8e2608eb1dd7084a5a277ce401f7cdaf67d4bb521d",
+          "user_sha256": "b392e0bb55a2d90018f4ec44a68b5af1f876e40ded61fa763b872e63dae72f86",
+          "json_pointers": [
+            "/turns/5/user",
+            "/turns/5/before/trip",
+            "/turns/5/after/trip",
+            "/turns/5/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-026",
+          "turn": 7,
+          "source_sha256": "58cd0f2b58e7f71c9a21a05a845e8891409634c79d6b58a9a2d45478a01980d2",
+          "user_sha256": "e47fe42b8162bc8fa7d72db666143b4e5f022d9c452bebb79f896acf69038730",
+          "json_pointers": [
+            "/turns/6/user",
+            "/turns/6/before/trip",
+            "/turns/6/after/trip",
+            "/turns/6/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-027",
+          "turn": 1,
+          "source_sha256": "29f860fc3d963e807520886d655745fcd155d98ff6dcd64789132fd7d90c4248",
+          "user_sha256": "18fe35a9cd517b78cdc13ba5adead4755a3f461cffd0146216a77160c85e68e5",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-028",
+          "turn": 8,
+          "source_sha256": "054ed406a25fd2c53eb675ec5677acccc5fd0367c51ceda4c52fedb145d0d74e",
+          "user_sha256": "3e320b3f43e24e290ae740ca18c3556fe088ce543c42f1a8697c21d8b33e1595",
+          "json_pointers": [
+            "/turns/7/user",
+            "/turns/7/before/trip",
+            "/turns/7/after/trip",
+            "/turns/7/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-033",
+          "turn": 2,
+          "source_sha256": "3fb8ff2639d4bba9ca677b0acdf1e2fb1e47a074f63aae0b81cf26183afbc271",
+          "user_sha256": "f6ad9819f5075599c726c19c03d27bbf01d130e5aeeae1aa7fe3688153eea78a",
+          "json_pointers": [
+            "/turns/1/user",
+            "/turns/1/before/trip",
+            "/turns/1/after/trip",
+            "/turns/1/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-034",
+          "turn": 1,
+          "source_sha256": "85b905f8f86e5bf33e0d696d677291a87187af086a4c71979de4ef20ccf66821",
+          "user_sha256": "d71fea1cffdb93d0a14b4ea1c98fe411dbf26c118393e989a330a2033d6a22ec",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-034",
+          "turn": 2,
+          "source_sha256": "85b905f8f86e5bf33e0d696d677291a87187af086a4c71979de4ef20ccf66821",
+          "user_sha256": "b80a5f55d15f736bb46c9f7a92f96821885487428c51250da8052a19142b46e8",
+          "json_pointers": [
+            "/turns/1/user",
+            "/turns/1/before/trip",
+            "/turns/1/after/trip",
+            "/turns/1/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-036",
+          "turn": 1,
+          "source_sha256": "1f42f657edf4e269a5976de2bd51faf9fdfb6163a1f7a48a2f3bc243f0a35c32",
+          "user_sha256": "623849ea8d2f550dfffefb177fe3a23c542f4b7a36932f2203dd1a88db8170ac",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-037",
+          "turn": 1,
+          "source_sha256": "d0a5f37fa4ea195b1df9fe75257a1c32a83170c7bbd31919d5bb8e95c3a27fb7",
+          "user_sha256": "dbfd0d2e8d9e321243b302f6f6e06b0069df65b2c4860f48827a2088871ab909",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-039",
+          "turn": 1,
+          "source_sha256": "061f8a3d9edbb1903ea1965308123be5e89cce961362d08743d4d3156f684d66",
+          "user_sha256": "3e3b4b821dc3dc600ed1c844d33fab7de013308ff2d46d34c7adf60132d0ada6",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-040",
+          "turn": 1,
+          "source_sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+          "user_sha256": "69c495ad50e472098224b36db5ff493932431ce54e323324b96aef09517b4b47",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-040",
+          "turn": 5,
+          "source_sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+          "user_sha256": "2b71e8c09983eee6429e610445534afa20cb9867e6f64cb3085f720c67b3736f",
+          "json_pointers": [
+            "/turns/4/user",
+            "/turns/4/before/trip",
+            "/turns/4/after/trip",
+            "/turns/4/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_REPEATED_NEW_LITERAL_SUBTYPES",
+      "original_summary": null,
+      "status": "partial",
+      "proof_receipts": [
+        "geo_date_booking"
+      ],
+      "controlled_scope": "Comma country qualifier теперьдоходитчерезverifiedCLDRref вdirectoryfilter приразрешённомresolve request.",
+      "remaining": "Отдельный subtype optional city noun→unanchored setter suppression032/036/037/039 неимеетотносящегосянового ground_intent-retention proof. Countryfilter-unit неравен полной NLU/role-приёмке.",
+      "test_modules": [
+        "tests/test_final40_country_pair_boundary.py",
+        "tests/test_final40_geo_date_booking.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-032",
+          "turn": 7,
+          "source_sha256": "81afdffc81d0222ac3bc7f50ed950e229d92043801f1e464802a16c597c99cb8",
+          "user_sha256": "fbb4b772c5e8fc48676244a67353c7b762723a2f51d37cc4ffc32fa3f1d937a3",
+          "json_pointers": [
+            "/turns/6/user",
+            "/turns/6/before/trip",
+            "/turns/6/after/trip",
+            "/turns/6/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-036",
+          "turn": 6,
+          "source_sha256": "1f42f657edf4e269a5976de2bd51faf9fdfb6163a1f7a48a2f3bc243f0a35c32",
+          "user_sha256": "13fcc97793850a0dd5149686dbf4496cffdd43e5c3af08543619793c4f4474bb",
+          "json_pointers": [
+            "/turns/5/user",
+            "/turns/5/before/trip",
+            "/turns/5/after/trip",
+            "/turns/5/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-037",
+          "turn": 8,
+          "source_sha256": "d0a5f37fa4ea195b1df9fe75257a1c32a83170c7bbd31919d5bb8e95c3a27fb7",
+          "user_sha256": "fbb4b772c5e8fc48676244a67353c7b762723a2f51d37cc4ffc32fa3f1d937a3",
+          "json_pointers": [
+            "/turns/7/user",
+            "/turns/7/before/trip",
+            "/turns/7/after/trip",
+            "/turns/7/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-039",
+          "turn": 8,
+          "source_sha256": "061f8a3d9edbb1903ea1965308123be5e89cce961362d08743d4d3156f684d66",
+          "user_sha256": "fbb4b772c5e8fc48676244a67353c7b762723a2f51d37cc4ffc32fa3f1d937a3",
+          "json_pointers": [
+            "/turns/7/user",
+            "/turns/7/before/trip",
+            "/turns/7/after/trip",
+            "/turns/7/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-036",
+          "turn": 7,
+          "source_sha256": "1f42f657edf4e269a5976de2bd51faf9fdfb6163a1f7a48a2f3bc243f0a35c32",
+          "user_sha256": "9701859a25a31524424141cb732ec90b2e1d03ea393375a50e42afded3c99cbc",
+          "json_pointers": [
+            "/turns/6/user",
+            "/turns/6/before/trip",
+            "/turns/6/after/trip",
+            "/turns/6/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-F40-OWNED-CHECKOUT-REPAIR-031-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_VALID_INPUT_MODEL_SCHEMA_RECOVERY",
+      "original_summary": "The full valid answer Checkout2026-11-19.Checkinunchanged reaches a fresh owned checkout question. 031T8/032T11/039T11/040T11 fail because the model repeatedly emits unsupported update_stay; the same phrase works in027/033/036 and repair succeeds in037. This is not bad actor language.",
+      "status": "repaired_in_controlled_scope",
+      "proof_receipts": [
+        "geo_date_booking"
+      ],
+      "controlled_scope": "Точнаяfreshowned фраза checkout+checkinunchanged ставит толькоcheck_out безLLM/unknownupdate_stay и безкопированияcanonicalcity.",
+      "remaining": "Составные новыеизменения/неполныегоды/foreign-or-stale pending неподхватываютсяshortcut; actual retake pending.",
+      "test_modules": [
+        "tests/test_final40_geo_date_booking.py",
+        "tests/test_final40_geo_date_booking_pg.py"
+      ],
+      "receipt_finding_aliases": [
+        "HARNESS-004-FINAL40-OWNED-CHECKOUT-SUFFIX-001"
+      ],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-031",
+          "turn": 8,
+          "source_sha256": "740598e9c00f30ae445c9981a13759f94644ce8449d3004016dd91508827d591",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/7/user",
+            "/turns/7/before/trip",
+            "/turns/7/after/trip",
+            "/turns/7/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-032",
+          "turn": 11,
+          "source_sha256": "81afdffc81d0222ac3bc7f50ed950e229d92043801f1e464802a16c597c99cb8",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/10/user",
+            "/turns/10/before/trip",
+            "/turns/10/after/trip",
+            "/turns/10/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-039",
+          "turn": 11,
+          "source_sha256": "061f8a3d9edbb1903ea1965308123be5e89cce961362d08743d4d3156f684d66",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/10/user",
+            "/turns/10/before/trip",
+            "/turns/10/after/trip",
+            "/turns/10/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-040",
+          "turn": 11,
+          "source_sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/10/user",
+            "/turns/10/before/trip",
+            "/turns/10/after/trip",
+            "/turns/10/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-027",
+          "turn": 14,
+          "source_sha256": "29f860fc3d963e807520886d655745fcd155d98ff6dcd64789132fd7d90c4248",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/13/user",
+            "/turns/13/before/trip",
+            "/turns/13/after/trip",
+            "/turns/13/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-033",
+          "turn": 10,
+          "source_sha256": "3fb8ff2639d4bba9ca677b0acdf1e2fb1e47a074f63aae0b81cf26183afbc271",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/9/user",
+            "/turns/9/before/trip",
+            "/turns/9/after/trip",
+            "/turns/9/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-037",
+          "turn": 11,
+          "source_sha256": "d0a5f37fa4ea195b1df9fe75257a1c32a83170c7bbd31919d5bb8e95c3a27fb7",
+          "user_sha256": "fdae80521cdfc25243069f9ba026ebd552b6b41a5a112c65c5456d59d960b18c",
+          "json_pointers": [
+            "/turns/10/user",
+            "/turns/10/before/trip",
+            "/turns/10/after/trip",
+            "/turns/10/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "targeted_zero_model_runtime_pass",
+      "actual_retake_observations": [
+        {
+          "proof": "zai",
+          "target": {
+            "id": "FINAL40-031:T8",
+            "checks": {
+              "completed": true,
+              "model0": true,
+              "check_in_preserved": true,
+              "check_out_set": true
+            },
+            "pass": true,
+            "qualification": "CANONICAL_ZERO_MODEL_OWNED_STATE_RELATED_PASS"
+          },
+          "provider_scope": "See qualification: native execution may be zero-model canonical path; not inferred LLM quality."
+        }
+      ]
+    },
+    {
+      "id": "HARNESS-004-R25-ACTUAL-INTAKE-INVALID-OPERATION-001",
+      "original_severity": "P1",
+      "original_audit_index": 1,
+      "original_status": "OPEN_REPEATED_SCHEMA_RECOVERY_PRODUCT_LIMITATION",
+      "original_summary": "Supported user/GEN intent ends in generic model-operation/schema errors, often with the same malformed output after repair. Rejecting the unsafe contract preserves state correctly, but normal intake/recovery does not finish. Unsupported hotel requirements should be explained rather than guessed.",
+      "status": "partial",
+      "proof_receipts": [
+        "geo_date_booking",
+        "party",
+        "party_r7",
+        "financial_groq"
+      ],
+      "controlled_scope": "Закрытые party/dateслоты обходят частьошибочныхbatches;точечныеschema diagnostics улучшены;R7Groq schema regressions отдельноисправлены.",
+      "remaining": "Полныйспектрисходныхinvalid operation/missingkeys/unsupportedhotelrequirements021/022/026/028/029/033 остаётся неqualified свежимactualNLU. Нельзя считать каждыйстарыйschemaFAILзакрытым.",
+      "test_modules": [
+        "tests/test_final40_geo_date_booking.py",
+        "tests/test_final40_party_preservation.py",
+        "tests/test_groq_temporal_constraint.py"
+      ],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-021",
+          "turn": 1,
+          "source_sha256": "3e58a99a736df159568101d556d3926a356f1b31c66d6193f5f7dd5fda0b9e12",
+          "user_sha256": "3b22f52a1558a41034509bd47c3d2d6d79565871936fefa4144cffede6e28ac9",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-021",
+          "turn": 4,
+          "source_sha256": "3e58a99a736df159568101d556d3926a356f1b31c66d6193f5f7dd5fda0b9e12",
+          "user_sha256": "6c177328d277a9c3c9c8d93f5f538ac62f97d63bdd4e3c44b761980a2e3e7bbd",
+          "json_pointers": [
+            "/turns/3/user",
+            "/turns/3/before/trip",
+            "/turns/3/after/trip",
+            "/turns/3/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-022",
+          "turn": 1,
+          "source_sha256": "be8243f2193038b41ff265ab2aaf406eacff999a4f2a93373f3e5fb3d84d4c38",
+          "user_sha256": "6c6a65266847ece806b749d8b40ed46180e0b07ff098efc8b7929df05a3fe3b1",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-026",
+          "turn": 8,
+          "source_sha256": "58cd0f2b58e7f71c9a21a05a845e8891409634c79d6b58a9a2d45478a01980d2",
+          "user_sha256": "3e2e18c16082e09d344cec7e69f3ddbda16d6acf4fda5a8a73d6427ff005be47",
+          "json_pointers": [
+            "/turns/7/user",
+            "/turns/7/before/trip",
+            "/turns/7/after/trip",
+            "/turns/7/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-028",
+          "turn": 9,
+          "source_sha256": "054ed406a25fd2c53eb675ec5677acccc5fd0367c51ceda4c52fedb145d0d74e",
+          "user_sha256": "a558f82542e7da5049c735f698a6d3c363e59b8ccf93c064c337720319f87bd9",
+          "json_pointers": [
+            "/turns/8/user",
+            "/turns/8/before/trip",
+            "/turns/8/after/trip",
+            "/turns/8/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-029",
+          "turn": 2,
+          "source_sha256": "39f2563d2663c9e7c478cd9086aefc00fb2143c8d16707ac648d44e78e5c0754",
+          "user_sha256": "154e18c0aec96dcc0726e6eedb21c3986b2fb05c51a335fc166e6f848870cc53",
+          "json_pointers": [
+            "/turns/1/user",
+            "/turns/1/before/trip",
+            "/turns/1/after/trip",
+            "/turns/1/source_events"
+          ]
+        },
+        {
+          "case_id": "FINAL40-033",
+          "turn": 1,
+          "source_sha256": "3fb8ff2639d4bba9ca677b0acdf1e2fb1e47a074f63aae0b81cf26183afbc271",
+          "user_sha256": "6ba006c1bb52fbb5c5dfb8194cd2d0e2e249e5b655345588691019d6c4749bd8",
+          "json_pointers": [
+            "/turns/0/user",
+            "/turns/0/before/trip",
+            "/turns/0/after/trip",
+            "/turns/0/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-F40-VERIFIED-PLACE-RECALL-028-001",
+      "original_severity": "P2",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED_DISPLAY_FACT_CONSISTENCY",
+      "original_summary": "028T10 calls the saved stay city unknown while also displaying the verified CityRef Kazan’/Russia in the same answer. The stored city/reference exists and no mutation occurs.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Нет нового относящегосяdisplay-fact receipt.",
+      "remaining": "Readonly route/date label длясохранённогоverifiedKazan’/Berlin/Bāli долженбытьсогласовансCityRef;страна/геопоискнеподтверждаютисправлениетекстаrecall.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-028",
+          "turn": 10,
+          "source_sha256": "054ed406a25fd2c53eb675ec5677acccc5fd0367c51ceda4c52fedb145d0d74e",
+          "user_sha256": "3285c5d310091b0571f6346f0a1a98c463efdf03a2d87b6c3de5f7f3ad2a1b05",
+          "json_pointers": [
+            "/turns/9/user",
+            "/turns/9/before/trip",
+            "/turns/9/after/trip",
+            "/turns/9/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-F40-DURATION-CONFLICT-QUESTION-024-001",
+      "original_severity": "P2",
+      "original_audit_index": 1,
+      "original_status": "OPEN_CONFIRMED_QUESTION_RENDERING_SCOPE",
+      "original_summary": "024T10 supplies dates spanning5nights while a previous7night request exists. A conflict is legitimate, but its specific checked-conflict explanation becomes only Whatneedstobeclarified with no field/target, so the user cannot see the actual discrepancy.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Нет нового targeted результата пояснения исходного5ночейпротив7.",
+      "remaining": "Сохранение старогоstateнасамомконфликтеправильно,нопредметныйвопроссдлительностьюиstaytargetещёнеподтверждён.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-024",
+          "turn": 10,
+          "source_sha256": "8ec09f30409366cbfc9c1adfa2360fa8088e980edbbe5db5f8ae85372b301bcb",
+          "user_sha256": "d5de500250544afbd8a30335e0992e1c5149eeeb530e1d5fdcf064a2cd1e3b49",
+          "json_pointers": [
+            "/turns/9/user",
+            "/turns/9/before/trip",
+            "/turns/9/after/trip",
+            "/turns/9/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    },
+    {
+      "id": "HARNESS-004-UNREQUESTED-PREFERENCE-001",
+      "original_severity": "P2",
+      "original_audit_index": 1,
+      "original_status": "OPEN_REPEATED_LITERAL_FALSE_POSITIVE",
+      "original_summary": "021T2 explicitly says cheapest but price_priority=lowest_total is suppressed as unrequested. The independent cancellation contradiction must still block/clarify the batch, so this boundary alone cannot close the preference classifier.",
+      "status": "open",
+      "proof_receipts": [],
+      "controlled_scope": "Новая атомарнаяпроверкапротиворечия021неявляетсяположительнымlowest_total boundary test.",
+      "remaining": "Литералcheap/самыйдешёвыйпослеявногоразрешенияпротиворечия нуждаетсявотдельномрезультате; исходныйложныйsuppressionостаётсяоткрытым.",
+      "test_modules": [],
+      "receipt_finding_aliases": [],
+      "additional_repaired_case_refs": [],
+      "original_case_refs": [
+        {
+          "case_id": "FINAL40-021",
+          "turn": 2,
+          "source_sha256": "3e58a99a736df159568101d556d3926a356f1b31c66d6193f5f7dd5fda0b9e12",
+          "user_sha256": "855644087edbe02400b39d568f871f9013e8c5ddb4921d82402187553dbd6815",
+          "json_pointers": [
+            "/turns/1/user",
+            "/turns/1/before/trip",
+            "/turns/1/after/trip",
+            "/turns/1/source_events"
+          ]
+        }
+      ],
+      "actual_retake_status": "pending"
+    }
+  ],
+  "counting_rules": [
+    "All27 original finding records retained once; receipt aliases do not create extra records.",
+    "Related test runs overlap. No total of205+612+... is presented as unique tests/dialogues/source scenarios.",
+    "Completed turns and metadata checks do not imply semantic PASS.",
+    "16 required source/fault setups were not injected; their original corpus acceptance remains BLOCKED.",
+    "Every actual_retake_status remains pending in this documentation snapshot; combined R8/actual/Docker are independently reported by parent."
+  ],
+  "handoff_open_focus": [
+    "HARNESS-004-FINAL40-MISSING-CITY-PENDING-001",
+    "HARNESS-004-FINAL40-CHILD-BIRTHDAY-001",
+    "HARNESS-004-FINAL40-TRANSPORT-MODE-001",
+    "HARNESS-004-FINAL40-COMPOUND-DATE-CONFLICT-001",
+    "HARNESS-004-FINAL40-FAMILY-MAPPING-001",
+    "HARNESS-004-FINAL40-UNMODELED-HARD-REQUEST-001",
+    "HARNESS-004-FINAL40-DAYS-NIGHTS-001",
+    "HARNESS-004-F40-VERIFIED-PLACE-RECALL-028-001",
+    "HARNESS-004-F40-DURATION-CONFLICT-QUESTION-024-001",
+    "HARNESS-004-UNREQUESTED-PREFERENCE-001"
+  ],
+  "handoff_partial_focus": [
+    "HARNESS-004-FINAL40-UNSUPPORTED-POISON-001",
+    "HARNESS-004-FINAL40-ANSWER-DISCARD-001",
+    "HARNESS-004-FINAL40-GEO-CANONICAL-LITERAL-001",
+    "HARNESS-004-F40-ASK-CLARIFICATION-DROPPED-025-001",
+    "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+    "HARNESS-004-R25-ACTUAL-INTAKE-INVALID-OPERATION-001"
+  ],
+  "additional_safety_peer_repairs_not_added_to_27": [
+    {
+      "id": "BUDGET-REVIEW-HYPOTHETICAL-CLEAR-001",
+      "receipt": "budget",
+      "scope": "Preserve existing unpricedhardcost on empty/hypothetical/quoted/pause statements."
+    },
+    {
+      "id": "FINANCIAL-REVIEW-WRONG-STAY-WAIVER-001",
+      "receipt": "financial_scope",
+      "scope": "Current named-stay/room authority before removing temporalhardrequirement."
+    }
+  ],
+  "known_retained_limitations": [
+    "Positive arbitrary suppliercancellationdeadline verification is unsupported; saved temporalhardkey safelyblockscheckout untilexplicitwaiver.",
+    "Generic key-onlyclear withoutstay_id may conservativelyask evenwithallhotels/unique-scopedstay; independentpeer retained thissafeoverblocking.",
+    "Unmodeled allergies/crib/earlycheckin/walking/time/birthday/train conditions are not declared fulfilled.",
+    "General ASK/discovery/offercomparison is not closed by the one owned-room-target reask.",
+    "Original private owned-roomreask RED receipt was overwritten; original failing tooltrace and unchanged capturedcase retained, loss explicitly documented in its repair receipt."
+  ],
+  "work_boundaries": {
+    "documentation_only": true,
+    "app_edits": 0,
+    "test_edits": 0,
+    "runtime_edits": 0,
+    "git_stage_commit_push": 0,
+    "model_http": 0,
+    "supplier_http": 0,
+    "pg_access": 0
+  },
+  "actual_retake_updated_at_utc": "2026-10-28T17:34:33.033647+00:00",
+  "actual_retake_proofs": {
+    "cloudflare": {
+      "path": "docs/verification/r27-cloudflare-related-actual-canary-20261028.json",
+      "sha256": "5aba2bd77f2b12bd964e8740758a00505455bd2bc33acf69b3587fcd47863bee"
+    },
+    "zai": {
+      "path": "docs/verification/r27-targeted-actual-canary-20261028.json",
+      "sha256": "e2bef8b9993f7a7535cfcb3cb65e93cfa73772e75460f2f3c27b96fd0dc4ef06"
+    }
+  }
+}

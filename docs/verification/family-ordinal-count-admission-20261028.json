@@ -1,0 +1,73 @@
+{
+  "finding_id": "HARNESS-004-FAMILY-PARTITION-COVERAGE-076-001",
+  "status": "SCOPED_ADMISSION_GUARD_TESTED_FULL_R19_PENDING",
+  "original_evidence": {
+    "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "source_package": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "case": "ZAI100-076",
+    "turn": 6,
+    "raw_snapshot_sha256": "2f66223bcfe5c64735e8d2b5c062483a2119bafc5673ba32a2d12c6caf703db6",
+    "checked_snapshot_sha256": "f71d4743219d97332d5270d73ed08b200804de94bd4c362b2dda9f5a5632b130",
+    "cause": "The model supplied correct three room setters but a single family containing all five adults and no children. The guard only understood cardinal family counts, so an asserted first/second-family declaration did not enforce a two-group admission boundary."
+  },
+  "implementation": {
+    "scope": "Existing group_semantics.guard_group_separation only; no Harness or membership-parser change.",
+    "current_assertion": "Unquoted, non-question, non-hypothetical/non-historical first-family placement followed by second-family placement, together with an explicit no-mixing policy.",
+    "admission": "When no explicit cardinal count uses the old path, candidate group count must equal two. A mismatch blocks the entire extracted batch and asks an owned group.membership clarification.",
+    "no_synthesis": "No group, person, room, ID or family membership is invented or selected. Correct two-group operations and existing cardinal empty-group intake remain unchanged.",
+    "excluded": [
+      "Questions",
+      "Quotes",
+      "History/hypothesis",
+      "Alternative declarations",
+      "Permission to mix",
+      "Pause wording",
+      "Third family",
+      "First/second room without the asserted family pair"
+    ]
+  },
+  "verification": {
+    "pure_new_passed": 27,
+    "related_pure_passed": 91,
+    "cached_pg_red": {
+      "failed": 1,
+      "seconds": 2.7,
+      "reason": "Original cached final JSON changed the trip to one group containing all adults.",
+      "private_report": ".local/family-ordinal-count-pg-red-20261028.xml"
+    },
+    "cached_pg_final": {
+      "passed": 3,
+      "seconds": 2.84,
+      "scope": "Real isolated otravel_test / ASGI / controlled cached model, no external HTTP.",
+      "cases": [
+        "Exact wrong single group is not applied: state/version unchanged, precise group question, no search/order.",
+        "Explicit correct two families and three room assignments are applied without changing ownership.",
+        "Existing cardinal two-family path still preserves unresolved empty membership intake."
+      ]
+    },
+    "ruff": "PASS"
+  },
+  "limitations": [
+    "This repairs admission of the narrow declared ordinal family count; it does not extract arbitrary family membership.",
+    "Unspecified/invented family allocation in 078/T1 and wholesale census omission in 078/T9 remain OPEN.",
+    "No fresh model or supplier request, runtime rollout, or full R19 suite was performed in this repair block."
+  ],
+  "files_sha256": {
+    "otravel/group_semantics.py": "1696a65933503469eb48514ed6401ad5b5697ddae1c513dd79f0f7761a5faf6e",
+    "tests/test_family_ordinal_count.py": "3aca5721db891a713876d8cc76e530720e1ded8a0eb137f2a903dad74f8fac95",
+    "tests/test_family_ordinal_count_pg.py": "bdd9108112b65f888a40ba74f5de95e73e7f7c149e1478907d9f718d2077124c",
+    "fixtures/regression/family-ordinal-count-076-20261028.json": "16146a3a53a24cabfe0a05f2446721811cd77fe061e045b7b2d75fc06982e6b3"
+  },
+  "wording_refinement": {
+    "prior_group_semantics_sha256": "075051db96c71bd0912346b501dce3e964bac11d7c8aba6e50ded3dda41b4b50",
+    "change": "Only user-facing wording removes extractor/group implementation details; same admission logic.",
+    "verification": {
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": ".local/peer_reviews/r19-final-family-room-targeted-20261028.xml",
+      "sha256": "3e3cebf971263009ecd42fc539828ea26cebf2f45daafaa1f8502336c60787b4"
+    }
+  }
+}

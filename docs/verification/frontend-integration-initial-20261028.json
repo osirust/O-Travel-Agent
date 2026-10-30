@@ -1,0 +1,28 @@
+{
+  "scope": "frontend/travel-studio 544d0a65 merged with backend 4f7a248 working tree",
+  "initial_full_python": {"tests": 7508, "passed": 7507, "failed": 1, "skipped": 0, "duration_seconds": 503.374},
+  "initial_failure": {
+    "test": "test_source_derived_details_survive_gateway_store_and_public_run_wrapper_without_false_bookability",
+    "cause": "Serp hotel detail branch returned a list to the frontend pagination tuple caller",
+    "action": "Return (offers, null page) only when include_pagination is true; retain the direct search contract",
+    "related_after_fix": {"passed": 117, "failed": 0}
+  },
+  "targeted_api_provider_media": {"passed": 164, "failed": 0},
+  "frontend_unit": {"passed": 36, "failed": 0},
+  "frontend_build": "PASS",
+  "browser_controlled": {
+    "viewports": ["1440x1000", "390x844"],
+    "gallery": "PASS", "price_minor": "27600 USD minor -> 276 USD",
+    "reply_preserved": true, "cart_selection": "PASS", "console_errors": 0,
+    "data": "EXPLICIT_SYNTHETIC_HTTP_FIXTURES_NOT_ACTUAL_SUPPLIERS"
+  },
+  "integration_repairs": [
+    "HARNESS-006-FRONTEND-MEDIA-SIDECAR-001: photos and ratings outside economic offer",
+    "HARNESS-006-FRONTEND-REPLY-OVERWRITE-001: preserve substantive replies mentioning DEMO",
+    "HARNESS-006-FRONTEND-GEO-REF-001: preserve place_id on date edits, verified airport bindings"
+  ],
+  "actual_ui": "BLOCKED: own container start twice rejected by automatic policy, including after explicit human approval; no bypass",
+  "actual_full_80": "Separate ongoing frozen-source evaluation; not 80/106 semantic PASS",
+  "real_booking_or_payment": false,
+  "remaining": ["Actual rendered UI with supplier photos", "Final integrated full Python rerun", "80 adaptive dialogues with explicit 106-scenario coverage"]
+}

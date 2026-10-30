@@ -1,0 +1,38 @@
+/* Keep the navigation and chat usable on narrow and short viewports. */
+@media (max-width: 767px), (max-width: 1050px) and (max-height: 500px) {
+  .parameter-bar {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .chat-panel {
+    height: max(270px, calc(100dvh - 208px - env(safe-area-inset-bottom, 0px)));
+    min-height: 270px;
+  }
+
+  .workspace {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-navigation {
+    height: calc(69px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .editor-tabs {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .editor-content input:not([type=checkbox]),
+  .editor-content select,
+  .composer > textarea,
+  .hotel-filter-grid input {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .route-policy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

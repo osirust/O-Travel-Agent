@@ -1,0 +1,335 @@
+{
+  "format": "otravel.prefrontend.cloudflare.acceptance.v1",
+  "date": "2026-10-27",
+  "status": "STOPPED_NO_RETRY_NOT_ALL_PASS",
+  "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "package_sha256": "2d9f2d88d0b673236ec860518e7c783b61f8cb2837b31eaac36eadf95a08b714",
+  "driver_sha256": "b8d9328de499d2055d172c4dc5f5b976107eabd79c89447feea3e8d12aef1f36",
+  "recipe_path": "fixtures/evaluation/prefrontend-dialogues-20261027-r2.json",
+  "recipe_sha256": "fc40e7aab1083633fb09fd3702772c6af50618b0dde04a38481ec73d7a9bb64e",
+  "source_report_private_path": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-012305-e541d0e5/report.json",
+  "source_report_sha256": "ec5c7e7dc701a2228f1f0de3e58bec60774f28c9eedc94dabc3f016fc749d3d9",
+  "source_plan_sha256": "cb91a5e2b6a361d9d0bd417087dc44f923b8d528c97a5570af0b4efc2cdfe9fc",
+  "scope": {
+    "development_connected_cases": 8,
+    "full80_or106": false,
+    "holdout": false,
+    "one_explicit_typed_bootstrap": "PF-TRANSPORT-05",
+    "simulated_booking_only": true,
+    "no_runtime_code_profile_or_key_changes": true,
+    "no_local_model": true,
+    "no_automatic_retry": true
+  },
+  "profile": {
+    "name": "cloudflare-nemotron",
+    "model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "free_confirmed": true,
+    "paid_fallback": false,
+    "parallel": 1,
+    "pacing_seconds": 15,
+    "max_model_calls": 40,
+    "max_tool_calls": 160,
+    "provider_remaining": "UNKNOWN"
+  },
+  "counts": {
+    "recorded_steps": 83,
+    "observed_actions": 81,
+    "observed_language_messages": 71,
+    "not_reached_steps": 2,
+    "step_statuses": {
+      "PASS": 72,
+      "FAIL": 9,
+      "NOT_REACHED": 2
+    },
+    "model_calls_started": 24,
+    "tool_call_started_events": 7,
+    "vendor_wire_request_count": "UNKNOWN_TOOL_EVENTS_INCLUDE_VALIDATION_BOUNDARIES_AND_NOT_PREVIEW_REFRESH",
+    "local_model_calls": 0,
+    "supplier_orders": 0,
+    "simulated_orders": 1
+  },
+  "cases": [
+    {
+      "id": "PF-GEO-01",
+      "recorded_status": "FAIL",
+      "expected_steps": 15,
+      "recorded_steps": 15,
+      "observed_steps": 15,
+      "failed_checks": [
+        {
+          "step": "07",
+          "check": {
+            "op": "stay",
+            "city": "Белград"
+          }
+        },
+        {
+          "step": "12",
+          "check": {
+            "op": "unchanged",
+            "path": "/trip"
+          }
+        }
+      ],
+      "not_reached": []
+    },
+    {
+      "id": "PF-GEO-02",
+      "recorded_status": "FAIL",
+      "expected_steps": 12,
+      "recorded_steps": 5,
+      "observed_steps": 4,
+      "failed_checks": [
+        {
+          "step": "04",
+          "check": {
+            "op": "eq",
+            "path": "/pending_question/context/confirmation_required",
+            "value": true
+          }
+        }
+      ],
+      "not_reached": [
+        {
+          "step": "05",
+          "reason": "PUBLIC_CONVERSATION_PREREQUISITE_NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "id": "PF-DURATION-03",
+      "recorded_status": "FAIL",
+      "expected_steps": 19,
+      "recorded_steps": 19,
+      "observed_steps": 19,
+      "failed_checks": [
+        {
+          "step": "01",
+          "check": {
+            "op": "eq",
+            "path": "/trip/search_policy/mode",
+            "value": "DEMO"
+          }
+        }
+      ],
+      "not_reached": []
+    },
+    {
+      "id": "PF-GROUP-04",
+      "recorded_status": "FAIL",
+      "expected_steps": 12,
+      "recorded_steps": 4,
+      "observed_steps": 3,
+      "failed_checks": [
+        {
+          "step": "01",
+          "check": {
+            "op": "eq",
+            "path": "/trip/search_policy/mode",
+            "value": "DEMO"
+          }
+        }
+      ],
+      "not_reached": [
+        {
+          "step": "04",
+          "reason": "PUBLIC_CONVERSATION_PREREQUISITE_NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "id": "PF-TRANSPORT-05",
+      "recorded_status": "PASS",
+      "expected_steps": 12,
+      "recorded_steps": 12,
+      "observed_steps": 12,
+      "failed_checks": [],
+      "not_reached": []
+    },
+    {
+      "id": "PF-SOURCE-06",
+      "recorded_status": "FAIL",
+      "expected_steps": 10,
+      "recorded_steps": 10,
+      "observed_steps": 10,
+      "failed_checks": [
+        {
+          "step": "10",
+          "check": {
+            "op": "reply_contains",
+            "parts": [
+              "тестов"
+            ]
+          }
+        }
+      ],
+      "not_reached": []
+    },
+    {
+      "id": "PF-SOURCE-07",
+      "recorded_status": "FAIL",
+      "expected_steps": 8,
+      "recorded_steps": 8,
+      "observed_steps": 8,
+      "failed_checks": [
+        {
+          "step": "01",
+          "check": {
+            "op": "eq",
+            "path": "/trip/search_policy/mode",
+            "value": "DEMO"
+          }
+        }
+      ],
+      "not_reached": []
+    },
+    {
+      "id": "PF-PAUSE-08",
+      "recorded_status": "STOPPED",
+      "expected_steps": 10,
+      "recorded_steps": 10,
+      "observed_steps": 10,
+      "failed_checks": [
+        {
+          "step": "02",
+          "check": {
+            "op": "unchanged",
+            "path": "/trip"
+          }
+        },
+        {
+          "step": "10",
+          "check": {
+            "op": "run_status",
+            "value": "completed"
+          }
+        }
+      ],
+      "not_reached": []
+    }
+  ],
+  "confirmed_business_findings": [
+    {
+      "id": "HARNESS-004-DEMO-COMMAND-IGNORED-001",
+      "status": "OPEN_ACTUAL_REPRODUCED",
+      "cases_steps": [
+        "PF-DURATION-03/01",
+        "PF-GROUP-04/01",
+        "PF-SOURCE-07/01"
+      ],
+      "fact": "Explicit Включи деморежим left search_policy.mode HYBRID; itinerary/party/budget facts otherwise passed.",
+      "closing_condition": "Repeat full natural initial commands with DEMO selected, no implicit live tools, and then complete group compound-edit dialogue."
+    },
+    {
+      "id": "HARNESS-004-LATE-ORIGIN-TYPO-001",
+      "status": "OPEN_ACTUAL_REPRODUCED",
+      "cases_steps": [
+        "PF-GEO-02/04"
+      ],
+      "fact": "An explicit typo edit of origin to Сант-Петербург while pending check-in repeated the date question and did not create an addressed origin consent.",
+      "closing_condition": "Actual full dialogue produces addressed city correction; no rejects/late yes corrupt previous Moscow/Antalya/party."
+    },
+    {
+      "id": "HARNESS-004-ORDER-REPLY-SUPPRESSED-001",
+      "status": "OPEN_ACTUAL_REPRODUCED",
+      "cases_steps": [
+        "PF-SOURCE-06/10"
+      ],
+      "fact": "Model gave substantive test-order/no-real-booking answer, but harness replaced it with a generic unchanged-trip sentence.",
+      "model_reply": "Тестовый заказ есть, но настоящей брони нет — ответы тестового API и демонстрационные расчёты не создают реального бронирования.",
+      "shown_reply": "Поездка и показанные варианты не изменены.",
+      "orders_evidence": {
+        "count": 1,
+        "status": "BOOKED_DEMO",
+        "is_demo": true,
+        "booking_created_at_supplier": false
+      },
+      "closing_condition": "Repeat natural post-confirm question; display truthful canonical order status and explicitly no supplier booking, without creating an order or state mutation."
+    }
+  ],
+  "open_context_findings": [
+    {
+      "id": "HARNESS-004-UNSUPPORTED-CITY-CONTEXT-001",
+      "status": "OPEN_ACTUAL_OBSERVED_NEEDS_FIX_OR_SCOPE_DECISION",
+      "fact": "T5 exact pending city Белград/RS became country Сербия/RS after T6 Стамбул в Сербии and T7 compound refusal+child. Country, party, budget preserved; prior unsupported city intent lost.",
+      "closing_condition": "Retain previous requested city through rejected country proposal or explicitly ask about retaining that city without fabricating a bookable stay."
+    }
+  ],
+  "oracle_limitations": [
+    {
+      "id": "PREFRONT-ORACLE-UNSUPPORTED-STAY-001",
+      "cases_steps": [
+        "PF-GEO-01/07"
+      ],
+      "fact": "r2 changed only T5 per reviewed scope; T7 retained seeded canonical stay predicate and therefore failed. This is not evidence that a covered Belgrade stay should exist.",
+      "old_fail_preserved": true
+    },
+    {
+      "id": "PREFRONT-ORACLE-PAUSE-REVISION-001",
+      "cases_steps": [
+        "PF-GEO-01/12",
+        "PF-PAUSE-08/02"
+      ],
+      "fact": "whole trip unchanged includes state_version; actual pause changed only revision, not semantic travel fields. Failed predicates retained."
+    },
+    {
+      "id": "PREFRONT-ORACLE-SOURCE-ANSWER-001",
+      "cases_steps": [
+        "PF-SOURCE-06/02",
+        "PF-SOURCE-06/04",
+        "PF-SOURCE-06/07"
+      ],
+      "fact": "Automatic checks assert preserved state/policy/plans, not substantive source text. Manual readback verified 2DEMO/2SANDBOX and no real booking for this run only."
+    }
+  ],
+  "positive_actual_scopes": [
+    {
+      "case": "PF-TRANSPORT-05",
+      "recorded_status": "PASS",
+      "observed_steps": 12,
+      "fact": "Public leg mode, stale quote refusal, actual language hotel replacement/selective restoration preserving train and other conditions passed in explicit typed-bootstrap scope."
+    },
+    {
+      "case": "PF-DURATION-03",
+      "recorded_status": "FAIL",
+      "duration_subscope": "PASS",
+      "fact": "5 requested nights survived 15 readonly questions; addressed check-in derived checkout and return leg; later return shift produced 7 nights. Full case fails the independent DEMO command."
+    },
+    {
+      "case": "PF-SOURCE-06",
+      "recorded_status": "FAIL",
+      "mixed_checkout_subscope": "PASS",
+      "fact": "Natural LLM intake reached 2Duffel SANDBOX flights, CBR reference FX, explicit DEMO hotel/transfer after LiteAPI rates error. Preview200, false confirmation409, confirmation200, repeat200 one BOOKED_DEMO. Full case fails the post-order reply.",
+      "not_claimed": [
+        "successful LiteAPI hotel quote in this run",
+        "LIVE_BOOKABLE",
+        "supplier booking",
+        "wire request count from tool event count"
+      ]
+    }
+  ],
+  "resource_stop": {
+    "case_step": "PF-PAUSE-08/10",
+    "http_status": 429,
+    "app_code": "RATE_LIMITED",
+    "provider_failure_kind": "unknown",
+    "limit_source": "unknown",
+    "business_code": null,
+    "daily_quota_confirmed": false,
+    "engineering_wait_seconds": 300,
+    "retry_attempts_by_driver": 0,
+    "state_preserved": true,
+    "not_claimed": [
+      "daily allowance exhausted",
+      "known reset time",
+      "last-step semantic failure"
+    ]
+  },
+  "historical_epoch": {
+    "path": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-011250-2736e290/report.json",
+    "recipe_sha256": "cbaf7b168e0574aca26a9f30b043a7dd86d91dbca5d273f26b786ca413ffdad6",
+    "status": "STOPPED_NO_RETRY_ZERO_MODEL_CONTRACT_BROKEN",
+    "calls": 2,
+    "fact": "Old T5 canonical-stay mismatch and T6 actual call under incorrect zero model policy remain unchanged."
+  }
+}

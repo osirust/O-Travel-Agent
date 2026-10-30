@@ -1,0 +1,236 @@
+{
+  "format": "otravel.historical_owner_input_regression.v1",
+  "id": "OWNER-COMPOUND-HISTORY-01",
+  "revision": 1,
+  "provenance_class": "historical_owner_regression_input_not_holdout",
+  "frozen_at_utc": "2026-10-25T18:21:16.903605+00:00",
+  "source": {
+    "kind": "Exact eight owner inputs relayed from the full user transcript",
+    "owner_full_transcript_available": true,
+    "snapshot_contains_assistant_messages": false,
+    "snapshot_is_full_chat_byte_export": false,
+    "input_sha256": "60737706915bb8a776a533bf3c40c8439608f919e82f980a6913b2458dd4fb04",
+    "input_hash_kind": "UTF-8 JSON messages array; ensure_ascii=false; comma/colon separators; no final LF",
+    "historical_assistant_questions_were_erroneous": true
+  },
+  "initial_trip": {},
+  "messages": [
+    "белград в сербии из москвы рано утром, детей нет, один взрослый",
+    "1",
+    "нет",
+    "белград",
+    "Санкт-Петербург",
+    "да",
+    "26.10.2026",
+    "завтра"
+  ],
+  "input_count": 8,
+  "turns": [
+    {
+      "index": 1,
+      "text": "белград в сербии из москвы рано утром, детей нет, один взрослый",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Белград",
+        "destination_country_code": "RS",
+        "must_not_ask_known_party_counts_again": true,
+        "preserve_all_explicit_compound_facts": true
+      }
+    },
+    {
+      "index": 2,
+      "text": "1",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true
+      },
+      "historical_slot_answer_automatically_valid_after_fix": false,
+      "qualification": "Historical answer to an erroneous repeated adult question. In corrected flow, bind only to the actual current pending slot or ASK; do not unconditionally mutate party, budget, dates, pause or cancellation."
+    },
+    {
+      "index": 3,
+      "text": "нет",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true
+      },
+      "historical_slot_answer_automatically_valid_after_fix": false,
+      "qualification": "Historical answer to an erroneous repeated children question. In corrected flow, bind only to the actual current pending slot or ASK; do not unconditionally mutate party, budget, dates, pause or cancellation."
+    },
+    {
+      "index": 4,
+      "text": "белград",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Белград",
+        "destination_country_code": "RS",
+        "no_duplicate_selected_stays": true
+      }
+    },
+    {
+      "index": 5,
+      "text": "Санкт-Петербург",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "intended_change_target": "destination",
+        "destination_candidate_city": "Санкт-Петербург",
+        "destination_candidate_country_code": "RU",
+        "never_origin_saint_petersburg": true
+      },
+      "qualification": "Owner explicitly means a new destination. Confirm/disambiguate destination replacement when required by actual pending context; never overwrite Moscow origin."
+    },
+    {
+      "index": 6,
+      "text": "да",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Санкт-Петербург",
+        "destination_country_code": "RU"
+      },
+      "required_previous_context": "Explicit destination-change confirmation Belgrade->Saint Petersburg. If change already applied, yes is not permission for another slot; missing suitable context is a flow dependency."
+    },
+    {
+      "index": 7,
+      "text": "26.10.2026",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Санкт-Петербург",
+        "check_in": "2026-10-26"
+      },
+      "required_previous_context": "stay.check_in"
+    },
+    {
+      "index": 8,
+      "text": "завтра",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Санкт-Петербург",
+        "check_in": "2026-10-26",
+        "checkout_collision_requires_ask": true,
+        "do_not_commit_checkout_on_or_before_checkin": true,
+        "do_not_auto_shift_to_27_october": true,
+        "no_invalid_llm_terminal_failure": true
+      },
+      "required_previous_context": "stay.check_out or explicit return-date question",
+      "clock_policy_ref": "inline:clock_policy"
+    }
+  ],
+  "clock_policy": {
+    "reference_date": "2026-10-25",
+    "timezone": "Europe/Moscow",
+    "check_in": "2026-10-26",
+    "tomorrow_resolves_to": "2026-10-26",
+    "runtime_reference_clock_binding_required": true,
+    "must_block_on_different_or_unverified_runtime_reference_date": true
+  },
+  "qualification": "Historical inputs are exact, but not all are automatically valid slot answers in the corrected flow: old 1/no followed wrong repeated questions. Historical replay is not a fixed-flow whole-dialogue PASS.",
+  "execution": {
+    "status": "NOT_RUN",
+    "llm_calls_by_this_task": 0,
+    "http_calls_by_this_task": 0,
+    "not_original_106": true,
+    "old_owner3_pass_does_not_apply": true
+  }
+}

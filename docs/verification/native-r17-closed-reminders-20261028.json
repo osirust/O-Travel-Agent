@@ -1,0 +1,157 @@
+{
+  "format": "otravel.native-r17.closed-reminders-canary.v1",
+  "created_at_utc": "2026-10-28T02:23:21.626709+00:00",
+  "scope": "Real local8084 API, synthetic own session, code-owned saved facts only.",
+  "status": "THREE_NATIVE_REMINDERS_PASS_ZERO_MODELS_TOOLS",
+  "turns": [
+    {
+      "turn": 1,
+      "input": "Сверь пожалуста обе даты и число взрослых. Февраль был только вопросом.",
+      "run_status": "completed",
+      "assistant": "Остановка 1, Дубай: заезд 05.11.2026, выезд 12.11.2026; 7 ночей. Переезд 1, Казань → Дубай: отправление 05.11.2026. Переезд 2, Дубай → Казань: отправление 12.11.2026.\n\nТекущий состав: 2 взрослых; дети в сохранённом составе не указаны.",
+      "saved_facts_kind": "dates,party",
+      "checks": {
+        "completed": true,
+        "model_calls_zero": true,
+        "tool_calls_zero": true,
+        "trip_unchanged": true,
+        "version_unchanged": true,
+        "adult_ages_null": true,
+        "one_saved_fact_proposal": true,
+        "no_order_or_quote_events": true,
+        "response_source_saved": true,
+        "date_and_party_truth": true,
+        "no_invented_age": true
+      },
+      "model_events": 0,
+      "tool_events": 0,
+      "quote_order_events": []
+    },
+    {
+      "turn": 2,
+      "input": "Напомни наш состав",
+      "run_status": "completed",
+      "assistant": "Текущий состав: 2 взрослых; дети в сохранённом составе не указаны.",
+      "saved_facts_kind": "party",
+      "checks": {
+        "completed": true,
+        "model_calls_zero": true,
+        "tool_calls_zero": true,
+        "trip_unchanged": true,
+        "version_unchanged": true,
+        "adult_ages_null": true,
+        "one_saved_fact_proposal": true,
+        "no_order_or_quote_events": true,
+        "response_source_saved": true,
+        "party_truth": true
+      },
+      "model_events": 0,
+      "tool_events": 0,
+      "quote_order_events": []
+    },
+    {
+      "turn": 3,
+      "input": "Какой у нас сейчас бюджет?",
+      "run_status": "completed",
+      "assistant": "Сохранённый бюджет на всю поездку: 150 000,00 RUB.",
+      "saved_facts_kind": "budget",
+      "checks": {
+        "completed": true,
+        "model_calls_zero": true,
+        "tool_calls_zero": true,
+        "trip_unchanged": true,
+        "version_unchanged": true,
+        "adult_ages_null": true,
+        "one_saved_fact_proposal": true,
+        "no_order_or_quote_events": true,
+        "response_source_saved": true,
+        "budget_truth": true
+      },
+      "model_events": 0,
+      "tool_events": 0,
+      "quote_order_events": []
+    }
+  ],
+  "provider_credentials_read": false,
+  "direct_sql": false,
+  "source_or_runtime_or_configuration_changes": 0,
+  "resends": 0,
+  "orders_or_quotes_created": 0,
+  "external_model_calls": 0,
+  "external_travel_calls": 0,
+  "private_capability_directory": "/home/aegml/checks/native-r17-closed-reminders-20261028-022321",
+  "runtime_before": {
+    "readiness_sha256": "5fdec608515388e5932409b3e3c3078f0d867b59cea5cabf169fbf7bbb12db71",
+    "commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "file_count": 84,
+    "source": "/home/aegml/projects/otravel-after80-20261026",
+    "database": "otravel_zai_eval",
+    "process": {
+      "pid": 1075816,
+      "uid": 1000,
+      "start_ticks": 7779813,
+      "cwd": "/home/aegml/projects/otravel-after80-20261026"
+    }
+  },
+  "preflight": {
+    "source_fixture_sha256": "91fd2d2d03bbaf512d211357e4f5e25d32a1e681dc279c9062674792c91499ae",
+    "policy": "DEMO",
+    "closed_kinds": [
+      "dates,party",
+      "party",
+      "budget"
+    ],
+    "classifier_from_native_source": true
+  },
+  "profile_before": {
+    "runtime": {
+      "llm_provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    },
+    "groq": {
+      "configured": true,
+      "model": "openai/gpt-oss-120b",
+      "free_tier_confirmed": true,
+      "paid_fallback": false,
+      "include_reasoning": false,
+      "structured_transport": true,
+      "transport_version": 3,
+      "reasoning_effort": "low"
+    }
+  },
+  "profile_after": {
+    "runtime": {
+      "llm_provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    },
+    "groq": {
+      "configured": true,
+      "model": "openai/gpt-oss-120b",
+      "free_tier_confirmed": true,
+      "paid_fallback": false,
+      "include_reasoning": false,
+      "structured_transport": true,
+      "transport_version": 3,
+      "reasoning_effort": "low"
+    }
+  },
+  "runtime_after": {
+    "readiness_sha256": "5fdec608515388e5932409b3e3c3078f0d867b59cea5cabf169fbf7bbb12db71",
+    "commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "file_count": 84,
+    "source": "/home/aegml/projects/otravel-after80-20261026",
+    "database": "otravel_zai_eval",
+    "process": {
+      "pid": 1075816,
+      "uid": 1000,
+      "start_ticks": 7779813,
+      "cwd": "/home/aegml/projects/otravel-after80-20261026"
+    }
+  },
+  "runtime_profile_source_before_after_match": true,
+  "session_policy": "DEMO",
+  "baseline_budget_minor": 15000000,
+  "check_count": 31
+}

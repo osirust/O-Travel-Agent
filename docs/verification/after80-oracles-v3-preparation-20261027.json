@@ -1,0 +1,247 @@
+{
+  "format": "otravel.verification_receipt.v1",
+  "date": "2026-10-27",
+  "permanent_id": "HARNESS-008-AFTER80-ORACLES-V3-001",
+  "status": "OFFLINE_PARTIAL_ORACLE_PREPARATION_VERIFIED_NOT_ACTUAL80_PASS",
+  "fact": "All80 immutable historical dialogs have partial substantive predicates, while full response semantics and specific unsupported obligations remain open.",
+  "action": "Merged four reviewed development fragments with original v2 without changing its194 rules; verified input bindings, evaluator compatibility and declared positive/counterfactual controls for every new kind.",
+  "closure_condition": "Preparation scope closes only with exact input/rule preservation, supported executable predicates and honest UNBOUND labels. Actual80 language acceptance remains OPEN until fresh complete runs, manual/adaptive adjudication and response-content checks exist.",
+  "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "artifacts": [
+    {
+      "path": "fixtures/evaluation/after80-oracles-v3.json",
+      "sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+      "bytes": 1120743
+    },
+    {
+      "path": "fixtures/evaluation/after80-oracles-v3.manifest.json",
+      "sha256": "5a6b243b5a86715012fbddb6b529a7f5a2d09299cdfd1452a559516505c9e728",
+      "bytes": 12948
+    },
+    {
+      "path": ".local/evaluation/after80-20261027/oracle-v3-comparator-controls.json",
+      "sha256": "f28b7ad9057c1bcba7db1c82dd4c3caee24b7402f067d22cdb0cd457afee0d43",
+      "bytes": 154921
+    },
+    {
+      "path": ".local/evaluation/after80-20261027/assemble_oracle_v3.py",
+      "sha256": "1948ac698ef88009b6cdf99df1040959dd2f4a7b6fc7cd0bc3ddf9374575b093"
+    }
+  ],
+  "coverage": {
+    "cases": 80,
+    "turn_ids": 697,
+    "case_specific_cases": 80,
+    "case_specific_bound_turns": 657,
+    "case_specific_checks": 781,
+    "old_v2_checks_preserved": 194,
+    "new_v3_checks": 587,
+    "fully_bound_cases": 0
+  },
+  "offline_validation": {
+    "existing_grader_validate_manifest": "PASS",
+    "source_file_sha_verified": true,
+    "all697_source_user_sha_verified": true,
+    "all80_raw_line_sha_verified": true,
+    "original194_rule_objects_identical": true,
+    "unique_check_ids": true,
+    "all_rule_parameters_invoked_on_old_observations": 781,
+    "unexpected_exceptions": 0,
+    "old_observation_diagnostics_not_new_runtime_PASS": {
+      "OLD_FALSE": 100,
+      "OLD_TRUE": 675,
+      "UNSUPPORTED": 2,
+      "NEEDS_ADAPTIVE": 3,
+      "BLOCKED_DEPENDENCY": 1
+    },
+    "expected_dependencies": [
+      {
+        "status": "BLOCKED_DEPENDENCY",
+        "reason": "ROOM_COUNT_NOT_COMMITTED_BEFORE_ADDRESSING",
+        "count": 1
+      },
+      {
+        "status": "NEEDS_ADAPTIVE",
+        "reason": "OLD_EXPECTATION_REFERRED_TO_UNCOMMITTED_CHILD",
+        "count": 1
+      },
+      {
+        "status": "NEEDS_ADAPTIVE",
+        "reason": "ORIGINAL_SHORT_ANSWER_SLOT_CHANGED",
+        "count": 2
+      },
+      {
+        "status": "UNSUPPORTED",
+        "reason": "PER_ROOM_TARIFF_CAPABILITY_NOT_FULFILLED",
+        "count": 2
+      }
+    ],
+    "new_kind_declared_positive_and_counterfactual_negative_controls": {
+      "budget_delta": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-040-T08-BUDGET_DELTA-1",
+        "selected_old_observation_false": true
+      },
+      "budget_preference": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-039-T08-BUDGET_PREFERENCE-1",
+        "selected_old_observation_false": false
+      },
+      "budget_unchanged": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "V3-062-T08-BUDGET_UNCHANGED-1",
+        "selected_old_observation_false": true
+      },
+      "date_slot": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-016-T05-DATE_SLOT-2",
+        "selected_old_observation_false": true
+      },
+      "declared_total": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-029-T01-DECLARED_TOTAL-1",
+        "selected_old_observation_false": true
+      },
+      "initial": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-004-T01-INITIAL-1",
+        "selected_old_observation_false": true
+      },
+      "no_domain_change": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-035-T06-NO_DOMAIN_CHANGE-1",
+        "selected_old_observation_false": true
+      },
+      "only_age": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-006-T07-ONLY_AGE-1",
+        "selected_old_observation_false": false
+      },
+      "only_budget": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-037-T06-ONLY_BUDGET-1",
+        "selected_old_observation_false": true
+      },
+      "room_count": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-004-T06-ROOM_COUNT-1",
+        "selected_old_observation_false": false
+      },
+      "room_map": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-006-T06-ROOM_MAP-1",
+        "selected_old_observation_false": false
+      },
+      "room_tariffs_not_broadened": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-035-T07-ROOM_TARIFFS_NOT_BROADENED-1",
+        "selected_old_observation_false": true
+      },
+      "rooms_unchanged": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-014-T03-ROOMS_UNCHANGED-1",
+        "selected_old_observation_false": true
+      },
+      "separation": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-006-T06-SEPARATION-1",
+        "selected_old_observation_false": true
+      },
+      "short_slot": {
+        "positive": true,
+        "negative": false,
+        "rule_id": "O80-V3-004-T03-SHORT_SLOT-1",
+        "selected_old_observation_false": false
+      }
+    },
+    "comparator_controls": {
+      "path": ".local/evaluation/after80-20261027/oracle-v3-comparator-controls.json",
+      "sha256": "f28b7ad9057c1bcba7db1c82dd4c3caee24b7402f067d22cdb0cd457afee0d43",
+      "bytes": 154921
+    },
+    "grader_sha256": "1f288c0b085b08d0fe71b5e3093754d01e35784b912d3b7f93377cc9e0b36ffd",
+    "legacy_source_record_sha256": "Preserved verbatim from v2. New source_raw_line_sha256 explicitly binds raw JSONL lines; legacy algorithm is not silently redefined."
+  },
+  "execution": {
+    "new_model_calls": 0,
+    "external_API": 0,
+    "Native_changes": 0,
+    "PostgreSQL": 0,
+    "grader_or_application_source_changed": false,
+    "source_corpus_changed": false
+  },
+  "limitations": [
+    "Development bindings after inspection of the complete old corpus and audits; not holdout data and not new runtime acceptance.",
+    "Substantive response truth/completeness, current supplier availability/prices and historical mid-dialogue action timing remain UNBOUND; state predicates do not qualify a whole dialogue.",
+    "All 80 cases and 697 source user hashes are indexed, but fully bound conversations remain 0. A partially bound turn is not a passing turn.",
+    "Original v2 rules and their IDs are preserved exactly, including conditional legacy rules. Their earlier grades are not rewritten.",
+    "UNSUPPORTED comparator outcomes remain UNBOUND capability obligations; they are never counted as successful implementation.",
+    "Short answers require the specified current pending slot; different fresh dialogue flow may be NEEDS_ADAPTIVE. Historical failure-recovery followups are not automatically fresh intents.",
+    "Relative date arithmetic, percentages, partial compound money/demographic edits, soft constraints, detailed city-role/consent predicates and USD updates remain UNBOUND where no supported kind expresses them.",
+    "No pause/resume exercise exists in this original80 corpus; pause acceptance remains UNBOUND_NO_SOURCE_EXERCISE.",
+    "no_domain_change compares the complete trip including state_version. It must not be reinterpreted as a pause/control transition oracle.",
+    "ZAI100-077:T8 permits explanation or a legitimate room-scope correction; its preserved strict no-change rule needs manual alternative-outcome adjudication.",
+    "ZAI100-079:T3 may require an explicit choice of which adult leaves the second room; its preserved removal rule needs manual alternative-outcome adjudication.",
+    "Provider-blocked fresh replay attempts are STOP results, not completed dialogue runs or 80-dialogue PASS.",
+    "ZAI100-079:T4 conditionally inherits the unresolved adult-identity ASK from T3; its legacy removal rule needs manual cascade adjudication without rewriting the source or prior grade."
+  ],
+  "manual_alternative_outcome_adjudication": {
+    "ZAI100-077:T8": {
+      "preserved_rule_ids": [
+        "O80-077-T08-NO_DOMAIN_CHANGE-1"
+      ],
+      "reason": "An explanation or a legitimate room-scope correction can be appropriate. Do not count the legacy strict no-change rule alone as a definitive conversational failure."
+    },
+    "ZAI100-079:T3": {
+      "preserved_rule_ids": [
+        "O80-079-T03-REMOVE_SECOND_ROOM_ADULT-1"
+      ],
+      "reason": "If two adults remain candidates, a targeted identity clarification can be appropriate. Existing rule has no alternative ASK branch; human adjudication remains UNBOUND."
+    },
+    "ZAI100-079:T4": {
+      "preserved_rule_ids": [
+        "O80-079-T04-REMOVE_SECOND_ROOM_ADULT-1"
+      ],
+      "condition": "T3 ended in an unresolved targeted identity clarification and no adult was removed.",
+      "reason": "The T4 pronoun may still be unbound after a legitimate ASK on T3. A legacy removal-rule failure alone must not become a new independent backend defect; retain the original result and adjudicate the unresolved reference manually."
+    }
+  },
+  "peer_review": {
+    "status": "INDEPENDENT_READ_ONLY_INTEGRITY_AND_SEMANTIC_SPOT_CHECKS_PASS_WITH_MANUAL_CASCADE_NOTE",
+    "old194_exact": true,
+    "source_and_all697_user_sha": true,
+    "case_count": 80,
+    "partial_bound_turns": 657,
+    "fully_bound": 0,
+    "old_diagnostic_only": {
+      "TRUE": 675,
+      "FALSE": 100,
+      "UNSUPPORTED": 2,
+      "NEEDS_ADAPTIVE": 3,
+      "BLOCKED_DEPENDENCY": 1
+    },
+    "semantic_samples": [
+      "036/051 relative clock not forced to historical dates",
+      "052 unknown origin/rooms not guessed",
+      "045 departure-age remains unbound",
+      "066 USD/percent not forced to RUB constants",
+      "Root018/020/022/023 partial predicates retain response/compound gaps"
+    ],
+    "resolved_P2": "Added only conditional079T4manual cascade note. Preserved original rule and original outcomes.",
+    "new_runtime_acceptance": false
+  }
+}

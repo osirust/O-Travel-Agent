@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="1.706" timestamp="2026-10-26T00:47:57.772172+03:00" hostname="Libvi21"><testcase classname="tests.test_harness_context_lifecycle" name="test_consumed_tokens_are_persisted_when_generation_fails_validation[json]" time="0.602"><failure message="AssertionError: {'code': 'MODEL_BUDGET_EXHAUSTED', 'details': {}, 'message': 'Дневной лимит вызовов LLM исчерпан.', 'retryable': False}&#10;assert []">tests/test_harness_context_lifecycle.py:170: in test_consumed_tokens_are_persisted_when_generation_fails_validation
+    assert requests, run.get("error")
+E   AssertionError: {'code': 'MODEL_BUDGET_EXHAUSTED', 'details': {}, 'message': 'Дневной лимит вызовов LLM исчерпан.', 'retryable': False}
+E   assert []</failure></testcase><testcase classname="tests.test_harness_context_lifecycle" name="test_consumed_tokens_are_persisted_when_generation_fails_validation[schema]" time="0.224"><failure message="AssertionError: {'code': 'MODEL_BUDGET_EXHAUSTED', 'details': {}, 'message': 'Дневной лимит вызовов LLM исчерпан.', 'retryable': False}&#10;assert []">tests/test_harness_context_lifecycle.py:170: in test_consumed_tokens_are_persisted_when_generation_fails_validation
+    assert requests, run.get("error")
+E   AssertionError: {'code': 'MODEL_BUDGET_EXHAUSTED', 'details': {}, 'message': 'Дневной лимит вызовов LLM исчерпан.', 'retryable': False}
+E   assert []</failure></testcase></testsuite></testsuites>

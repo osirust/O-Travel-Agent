@@ -1,0 +1,97 @@
+{
+  "provider": "zai",
+  "model": "glm-4.5-flash",
+  "started_at_utc": "2026-10-25T21:35:51.528122+00:00",
+  "scope": "one diagnostic adapter call; not full harness",
+  "maximum_http_attempts": 1,
+  "status": "PASS_BOUND_SUBSET_ONLY",
+  "checks": {
+    "origin": true,
+    "destination": true,
+    "adult": true,
+    "budget": true
+  },
+  "metadata": {
+    "provider": "zai",
+    "model": "glm-4.5-flash",
+    "request_metrics": {
+      "system_utf8_bytes": 10074,
+      "context_utf8_bytes": 3873,
+      "schema_utf8_bytes": 5573,
+      "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+      "prompt_sha256": "9798b7d5843cbeec624afe3a405bc20d257ab1ee006c619376eea65c990524bb"
+    },
+    "usage": {
+      "input_tokens": 3798,
+      "output_tokens": 385,
+      "total_tokens": 4183
+    }
+  },
+  "structured_contract": {
+    "sha256": "a7ff1181c499e63e3a705bd9ff1e49c02380ff5764893c92f50713b0a7805964",
+    "utf8_bytes": 999,
+    "captured": true,
+    "value": {
+      "operations": [
+        {
+          "type": "set_origin",
+          "value": {
+            "city": "Москва"
+          },
+          "target_id": null
+        },
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-1",
+            "type": "adult"
+          },
+          "target_id": null
+        },
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Стамбул",
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-14",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ]
+          },
+          "target_id": "new-stay-1"
+        },
+        {
+          "type": "set_budget",
+          "value": {
+            "amount_minor": 10000000,
+            "currency": "RUB",
+            "scope": "whole_trip"
+          },
+          "target_id": null
+        },
+        {
+          "type": "set_preference",
+          "value": {
+            "key": "departure_time",
+            "value": "early_morning"
+          },
+          "target_id": null
+        }
+      ],
+      "control": {
+        "action": "continue"
+      },
+      "reply": "Я добавил информацию о поездке из Москвы в Стамбул с 10 по 14 ноября 2026 года для одного взрослого. Бюджет установлен в 100 тысяч рублей с предпочтением раннего вылета.",
+      "unknowns": [],
+      "conflicts": [],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    }
+  },
+  "latency_ms": 10250
+}

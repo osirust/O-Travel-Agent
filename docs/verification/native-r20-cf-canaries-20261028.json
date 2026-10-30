@@ -1,0 +1,143 @@
+{
+  "format": "otravel.native-r20.cf-two-canaries.v1",
+  "status": "TWO_ACTUAL_CF_CANARIES_PASS_READONLY_REGRADE",
+  "checked_at_utc": "2026-10-28T04:38:25.791632+00:00",
+  "commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+  "package_sha256": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+  "source_file_count": 87,
+  "turns": [
+    {
+      "case": "readonly079",
+      "input": "Теперь сколько взрослых и детей осталось? Первый номер сохранился прежним?",
+      "status": "completed",
+      "assistant": "Текущий состав: 3 взрослых; 2 ребёнка (4 года, 9 лет).\n\nАнталья, номер №1: взрослый №1, взрослый №2, ребёнок №1. Анталья, номер №2: взрослый №3, ребёнок №2. Семья/группа №1: взрослый №1, взрослый №2, ребёнок №1; раздельное размещение обязательно. Семья/группа №2: взрослый №3, ребёнок №2; раздельное размещение обязательно.",
+      "checks": {
+        "completed": true,
+        "one_model": true,
+        "zero_tool_events": true,
+        "no_quotes_or_orders": true,
+        "one_accepted_run": true,
+        "trip_unchanged": true,
+        "state_version_unchanged": true,
+        "pending_question_unchanged": true,
+        "waiting_reason_unchanged": true,
+        "status_unchanged": true,
+        "readonly_role": true,
+        "canonical_readonly_reply": true,
+        "party_and_first_room_truth": true
+      },
+      "model_starts": 1,
+      "tool_starts": 0,
+      "source_private_record_sha256": "9bef9e6f5cafeae2f6c4fc13170a180f5e6669c24783b1f90c2db703c30e5fec",
+      "quote_order_count_basis": "Original actual-run SQL read count0/0 + final HTTP orders[] + no quote/order events.",
+      "budget_after": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 28000000
+      },
+      "preferences_after": [],
+      "pending_field_after": "stay.check_in"
+    },
+    {
+      "case": "pending080",
+      "input": "Общий бюджет теперь 470000 рублей. Добавь приоритет минимальной общей стоимости. Все девять и распределение номеров остаются.",
+      "status": "completed",
+      "assistant": "Пожелания по поездке сохранены. Сколько отдельных семей едет и кто входит в каждую? Состав номеров без этого не распределяю.",
+      "checks": {
+        "completed": true,
+        "one_model": true,
+        "zero_tool_events": true,
+        "no_quotes_or_orders": true,
+        "one_accepted_run": true,
+        "only_budget_and_preference_changed": true,
+        "one_new_revision": true,
+        "family_question_retained": true,
+        "awaits_family_answer": true
+      },
+      "model_starts": 1,
+      "tool_starts": 0,
+      "source_private_record_sha256": "d32c629471e4c30b3c82e4b133d2489f0d1f5879440f4069ec08f5bfd18184d3",
+      "quote_order_count_basis": "Original actual-run SQL read count0/0 + final HTTP orders[] + no quote/order events.",
+      "budget_after": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 47000000
+      },
+      "preferences_after": [
+        {
+          "key": "price_priority",
+          "value": "lowest_total",
+          "weight": 1.0
+        }
+      ],
+      "pending_field_after": "group.membership"
+    }
+  ],
+  "original_report_sha256": "bf1c550c9ffdd450218b6933de055fc3f9a6fe8ea04ef67977f2506e7ddd4d72",
+  "original_report_preserved": true,
+  "initial_driver_status": "STOPPED_NO_RESEND",
+  "oracle_correction": "Expected budget omitted the existing canonical scope=whole_trip. Preserve all prior budget fields and change only explicit amount/currency.",
+  "regrade_model_posts": 0,
+  "regrade_supplier_posts": 0,
+  "regrade_database_access": 0,
+  "setup_scope": "CONTROLLED_SESSION_AND_PENDING_SETUP; exact historical canonical trips/questions, fresh own API sessions and owner/version/empty-queue CAS, not full NLU intake.",
+  "source_scope": "Zero TOOL_CALL_STARTED and quote/order events observed; no physical supplier-wire deny wrapper installed.",
+  "resends": 0,
+  "actual_cf_model_posts_accounting": 2,
+  "max_authorized_cf_posts": 3,
+  "model_accounting_basis": "Two submitted messages, per-run1, two MODEL_CALL_STARTED/two successful responses; single-request gateway has no automatic retries/fallback.",
+  "private_directory": "/home/aegml/checks/native-r20-cf-validation-20261028-043656",
+  "runtime_before": {
+    "commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+    "package_sha256": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+    "process": {
+      "pid": 1246953,
+      "uid": 1000,
+      "start_ticks": 8828122,
+      "argv": [
+        "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+        "-m",
+        "uvicorn",
+        "otravel.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8084",
+        "--no-access-log"
+      ],
+      "cwd": "/home/aegml/projects/otravel-after80-20261026",
+      "executable": "/usr/bin/python3.12"
+    },
+    "readiness_sha256": "5127b12ab084ab7fb3e0cc3b7db43b0f92ac5bed6b3f388d601d0104b3dcc92d"
+  },
+  "runtime_after": {
+    "commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+    "package_sha256": "286442757679803b3d850e6c9deaf306adc0aecdff528bd4228facf11439f0a7",
+    "process": {
+      "pid": 1246953,
+      "uid": 1000,
+      "start_ticks": 8828122,
+      "argv": [
+        "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+        "-m",
+        "uvicorn",
+        "otravel.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8084",
+        "--no-access-log"
+      ],
+      "cwd": "/home/aegml/projects/otravel-after80-20261026",
+      "executable": "/usr/bin/python3.12"
+    },
+    "readiness_sha256": "5127b12ab084ab7fb3e0cc3b7db43b0f92ac5bed6b3f388d601d0104b3dcc92d"
+  },
+  "profile_before_after_match": true,
+  "check_count": 22,
+  "provider": "cloudflare",
+  "model": "@cf/nvidia/nemotron-3-120b-a12b",
+  "free_tier_confirmed": true,
+  "paid_fallback": false,
+  "local_model_calls": 0
+}

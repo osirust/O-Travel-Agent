@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-27",
+  "status": "FROZEN_CORE_4921_PASS_ACTUAL_GPTOSS_QUALIFICATION_PENDING",
+  "tests": 4921,
+  "failures": 0,
+  "skipped": 0,
+  "seconds": 183.263,
+  "junit": ".local/evaluation/after80-20261027/full-country-gptoss-final.xml",
+  "junit_sha256": "0b92955ab00d56326bdecd98038cff0e77b509f175f76501a211541baa31721b",
+  "source_sha256": {
+    "otravel/country_intake.py": "8854637ce4f4e0daecc1971bc00e4fe90f0739f0614d24e0464430d580009154",
+    "otravel/harness.py": "3c45ab32f4e8f017cf7117677b7bbc566e91880ebdd124b2e563d30eaf6dc773",
+    "otravel/providers.py": "1e61107e04e71cac7c4c4587542ad749c1a220ac2e336821e75ac19dcc014d41",
+    "otravel/config.py": "91312af6b61b66ea83e777ed9d58512140b45ed196edc5a9891442984c5b56a4",
+    "scripts/after80_gptoss_backend.py": "f90a36903e2e49abf62622b55fcbf077c8222c500e99c972b3a6509577931ccd",
+    "scripts/replay_after80.py": "e5b78a1db65d455d6d054a0222512a7db5df5b012b64305e97d468c4af0b44d0"
+  },
+  "repairs": [
+    "Country-only destination uncertainty narrowly differs from a genuine conflicting batch. Proven independent fresh-intake facts persist; city is never guessed.",
+    "Prompt distinguishes missing city/capacity and per-stay rooms from incompatible user facts; real conflicts still block application.",
+    "Explicit Free GPT-OSS120 profile, low effort, include_reasoningfalse, bounded2048tokens and strict transport; Qwen profile retained.",
+    "The same Groq1000 application ledger and provider availability fences are shared; no quota reset or hidden model fallback."
+  ],
+  "related_overlapping": {
+    "country_geo": 229,
+    "controller_client_provider": 75,
+    "combined": 289,
+    "counts_are_not_additive": true
+  },
+  "actual_model_HTTP_by_this_verification": 0,
+  "supplier_HTTP": 0,
+  "local_inference": 0,
+  "payments": 0,
+  "limitations": [
+    "Fresh actual model dialogues required after pinned deployment.",
+    "Original Qwen strict-wire responses were valid but false conflicts blocked intake; those FAIL remain.",
+    "Prompt clarity alone is not proof of improved extraction.",
+    "Full80/106 and exact real supplier equivalence remain open."
+  ],
+  "primary_GPT_sources": [
+    "https://console.groq.com/docs/model/openai/gpt-oss-120b",
+    "https://console.groq.com/docs/structured-outputs",
+    "https://console.groq.com/docs/reasoning",
+    "https://console.groq.com/docs/rate-limits"
+  ]
+}

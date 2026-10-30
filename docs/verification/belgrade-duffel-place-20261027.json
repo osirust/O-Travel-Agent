@@ -1,0 +1,49 @@
+{
+  "status": "ACTUAL_TEST_PLACE_BEG_RS_CONFIRMED",
+  "query": "BEG",
+  "HTTP_cap": 1,
+  "requests": [
+    {
+      "method": "GET",
+      "endpoint": "/places/suggestions",
+      "query": "BEG",
+      "status": 200,
+      "latency_ms": 342,
+      "response_sha256": "d277794a3e90ff6a78ccd7c1566aa42ff684d30925ab0a1c57a27e467f315a40"
+    }
+  ],
+  "real_models": 0,
+  "flight_offer_requests": 0,
+  "prebook_book_pay": 0,
+  "DB_writes": 0,
+  "Native_changes": 0,
+  "private_folder": "/home/aegml/checks/belgrade-duffel-place-20261027-9b3067d5",
+  "primary_source": "https://duffel.com/docs/api/places",
+  "returned_places": 4,
+  "matches": [
+    {
+      "id": "cit_beg_rs",
+      "type": "city",
+      "name": "Belgrade",
+      "city_name": null,
+      "iata_code": "BEG",
+      "iata_country_code": "RS",
+      "iata_city_code": "BEG",
+      "time_zone": null
+    },
+    {
+      "id": "arp_beg_rs",
+      "type": "airport",
+      "name": "Belgrade Nikola Tesla Airport",
+      "city_name": "Belgrade",
+      "iata_code": "BEG",
+      "iata_country_code": "RS",
+      "iata_city_code": "BEG",
+      "time_zone": "Europe/Belgrade"
+    }
+  ],
+  "token_mode": "TEST",
+  "eligibility": "Location identity only; no flight offer/availability checked.",
+  "actual_HTTP_requests": 1,
+  "finished_at_utc": "2026-10-27T11:10:34.778701+00:00"
+}

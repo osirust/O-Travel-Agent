@@ -1,0 +1,63 @@
+{
+  "finding_id": "HARNESS-004-ROOM-FACT-LABEL-077-001",
+  "recorded_at_utc": "2026-10-28T03:41:22.607944+00:00",
+  "status": "CONTROLLED_RENDERING_SCOPE_TESTED_FULL_R19_PENDING",
+  "original": {
+    "case": "ZAI100-077",
+    "turn": 5,
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "raw_checked_contract_sha256": "d75e32373104e03982b66b665e5a01a3d716bd6c49f65ab4f20d11c84e7b980d",
+    "cause": "Correct saved room1 refundable/room2 breakfast constraints were rendered as generic for the specified room, losing the distinction requested by the user."
+  },
+  "change": "Saved requirement labels use the exact stay_id/room_id match and visible canonical ordinals/city. Missing or non-unique references are labelled unresolved; no first-ID selection or price/provider guarantee is introduced.",
+  "verification": {
+    "initial_draft_red": {
+      "tests": 5,
+      "failures": 5,
+      "errors": 0,
+      "skipped": 0,
+      "path": ".local/peer_reviews/room-fact-label077-red-20261028.xml",
+      "sha256": "3d06de1016ce94da3216fdcedcfb29f77ee5cdd5c31c9e2a1f178a2065a7de05"
+    },
+    "draft_limitation": "One draft negative used a room constraint without the mandatory stay_id; canonical schema correctly rejected it. It was corrected to assert that existing schema boundary. Original draft XML is retained.",
+    "valid_red": {
+      "tests": 6,
+      "failures": 5,
+      "errors": 0,
+      "skipped": 0,
+      "path": ".local/peer_reviews/room-fact-label077-valid-red-20261028.xml",
+      "sha256": "37128a50b87e8c8e5704757fcb2e34de00cc1d15893bedb8dba3e7d35ca3ddfe"
+    },
+    "related_green": {
+      "tests": 74,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": ".local/peer_reviews/room-fact-label077-related-green-20261028.xml",
+      "sha256": "832a9000d95c94825854b4ef315bf8fd1f6201e0d6798922bd7c6391084ec4e3"
+    },
+    "final_green_with_family_boundary": {
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": ".local/peer_reviews/r19-final-family-room-targeted-20261028.xml",
+      "sha256": "3e3cebf971263009ecd42fc539828ea26cebf2f45daafaa1f8502336c60787b4"
+    },
+    "pg_scope": "Captured question and saved trip through real ASGI/PostgreSQL; one controlled readonly topic-selector call, no remote inference/search/quote/order. Exact trip/version/status/pending preserved.",
+    "ruff": "PASS after import ordering only",
+    "actual_model_http": 0,
+    "actual_supplier_http": 0
+  },
+  "file_sha256": {
+    "otravel/answering.py": "642f9eda056f3256fe8a79946cf71b5397220bdfb02807a5891a9787c6409f01",
+    "tests/test_room_fact_labels077.py": "6d9cff6ac6557e1ba2b2a42a6215c7e08c2e104146cc2748db1fa39053985c0e",
+    "tests/test_room_fact_labels077_pg.py": "3b3d1afa06a8634899e0dab5c0a8365021002893af5387ba9c282af5ff1c05fd",
+    "fixtures/regression/room-fact-labels077-20261028.json": "3eeaa44a31eae9e31ef19e8810bbaa0ed0def41af7d400f7e4c707b94cbeb90e"
+  },
+  "limits": [
+    "This is a canonical rendering repair, not a model-quality ranking or new supplier capability.",
+    "Full frozen R19 and fresh actual language replay remain separately tracked."
+  ]
+}

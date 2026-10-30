@@ -1,0 +1,124 @@
+{
+  "format": "otravel.prefrontend.r22.release.v1",
+  "created_at_utc": "2026-10-28T05:27:25.672097+00:00",
+  "status": "CONTROLLED_FULL_PASS_CURRENT_PHOTO_REPLAY_PASS_RUNTIME_PENDING",
+  "package_sha256": "c991b44eddbe37bf2efb7d1363a06403255a8b8397a7925de2426a8af274e1b9",
+  "package_file_count": 87,
+  "full": {
+    "passed": 7490,
+    "failed": 0,
+    "skipped": 0,
+    "junit_suite_seconds": 458.635,
+    "source_and_tests_unchanged": true,
+    "test_file_count": 303,
+    "tests_sha256": "9a4aac12e478dcc1103bd10b00b5c4b3b68035f89ec2f85b3083e9aea1f14aa1",
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r22-initial.xml",
+    "xml_sha256": "bde1d966b42223327ebb42c54a9015e31063354c84e0c9aadfd8abfd38f18f7b",
+    "actual_provider_calls": 0,
+    "pytest_reported_seconds": 458.76
+  },
+  "previous_release": {
+    "revision": "R20",
+    "commit": "4529ddb37577f8b3f252fd7dc1838241f430a429",
+    "passed": 7463,
+    "docker_checks": 19,
+    "actual_cf_checks": 22,
+    "actual_cf_calls": 2,
+    "proof": "docs/verification/prefrontend-r20-checkpoint-20261028.json",
+    "actual_proof": "docs/verification/native-r20-cf-canaries-20261028.json"
+  },
+  "repair": {
+    "finding_id": "HARNESS-001-SERP-PROPERTY-PHOTOS-001",
+    "proof": "docs/verification/serp-property-photos-repair-20261028.json",
+    "scope": "Source-bound view-only property photos for saved/partial media and standalone live_media sidecar. No photos enter the economic offer/hash.",
+    "actual_capture_calls": 1,
+    "post_capture_calls_in_repair": 0,
+    "same_captured_response_hotels_with_photos": 20,
+    "gallery_urls": 100,
+    "same_economic_offers_sha256": "78d8ad1cb12879e51e9d6bc2106af5d6b566c4b5ea9137f70c234d7afb78d09f",
+    "cache": "Process-local LRU256/six hours/five images per property; missing or expired entries are placeholders without HTTP.",
+    "native_fresh_search_and_exact_archive_test": "Pending separate Root qualification."
+  },
+  "previous_actual_tourism": {
+    "revision": "R18",
+    "supplier_http": 22,
+    "model_http": 0,
+    "proof": "docs/verification/r18-typed-real-travel-checkout-20261028.json",
+    "booking": "One BOOKED_DEMO; real supplier booking/payment0; initial oracle failures/corrections retained."
+  },
+  "language_coverage": {
+    "accepted_unique": 697,
+    "completed": 657,
+    "failed": 35,
+    "old_queued_not_executed": 5,
+    "full80_or106_semantic_pass_claimed": false,
+    "proof": "docs/verification/actual80-unique-input-coverage-20261028.json"
+  },
+  "delivery_open": [
+    "Separate jury key and root binary age envelope",
+    "Final frontend/archive integration",
+    "Public demo video/README link",
+    "Final official main/submission tag"
+  ],
+  "gigachat": {
+    "oauth_http": 200,
+    "generation_successes": 0,
+    "api_tls_timeout": true,
+    "vpn_routes_mtu_global_trust_or_tls_verification_changed": false
+  },
+  "paid_local_qwen_image_download_supplier_booking_payment": false,
+  "historical_full_failure": {
+    "revision": "R21",
+    "passed": 7487,
+    "failed": 3,
+    "source_unchanged": true,
+    "source_sha256": "c991b44eddbe37bf2efb7d1363a06403255a8b8397a7925de2426a8af274e1b9",
+    "original_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r21-initial.xml",
+    "cause": "Earlier synthetic key in global providers._SECRETS redacted only the query text; both app versions produced identical economics under that same registry.",
+    "test_only_repair": "New captured-golden test modules use scoped pytest monkeypatch registry with automatic restoration. Full golden fields and production redactor/core remain unchanged.",
+    "proof": "docs/verification/serp-photo-golden-redaction-isolation-20261028.json"
+  },
+  "fixture_git_bytes_exact": {
+    "path": "fixtures/regression/serp-property-photos-current-20261028.json",
+    "sha256": "2673d3bc16671a830a2fca46350a8ce217c7bc04740c47debc1e84ae704d964c"
+  },
+  "staged_package": {
+    "tested_package_sha256": "c991b44eddbe37bf2efb7d1363a06403255a8b8397a7925de2426a8af274e1b9",
+    "staged_package_sha256": "de24c5604f42449be3e796e1ae5453ad8da27af3c32d83dbd6113edd37a0db10",
+    "package_files": 87,
+    "only_allowed_crlf_normalization": [
+      "otravel/budget_intake.py",
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/intent_grounding.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py",
+      "otravel/route_policy_intent.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  },
+  "staged_tests": {
+    "tested_manifest_sha256": "9a4aac12e478dcc1103bd10b00b5c4b3b68035f89ec2f85b3083e9aea1f14aa1",
+    "staged_manifest_sha256": "64c412c6cda50902c7dc6ce45cfbcc7d8d77ea5008087b1a946a98173da0e8ef",
+    "files": 303,
+    "non_eol_changes": 0,
+    "only_crlf_normalization": [
+      "tests/test_budget_raw_authority.py",
+      "tests/test_dynamic_place_contract.py",
+      "tests/test_dynamic_place_suppliers.py",
+      "tests/test_group_room_scope.py",
+      "tests/test_place_refs.py",
+      "tests/test_place_run.py",
+      "tests/test_place_run_pg.py",
+      "tests/test_rate_failure_peer_regressions.py",
+      "tests/test_route_end_and_unknown_party.py",
+      "tests/test_traveler_addition_grounding.py",
+      "tests/test_traveler_addition_repair_pg.py",
+      "tests/test_traveler_final_roster_pg.py"
+    ]
+  }
+}

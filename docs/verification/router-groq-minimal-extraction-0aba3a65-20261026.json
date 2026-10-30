@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-26",
+  "status": "TWO_INDEPENDENT_MINIMAL_EXTRACTION_HTTP200",
+  "source_sha": "0aba3a65cef49e3a434c6a4ae4e8ed610733aee2",
+  "source_manifest_sha256": "5b5097ac3525644d602a1d39bd9234a5e4b32cb1c802579b809618f37979261f",
+  "scope": "One minimal extraction per independent provider; not long contexts, sustained throughput or all80 acceptance",
+  "native_profile_unchanged": "zai/glm-4.5-flash",
+  "native_identity_unchanged": true,
+  "private_evidence_sha256": "2780624728015c00ed5fd0e4b97ac134c09daaeb94a61b4bca46863155d5aa0b",
+  "providers": [
+    {
+      "provider": "openrouter",
+      "requested_model": "dots-studio/dots-3-note-preview:free",
+      "model_selection": "MASTER_EXPLICIT_FREE_MODEL",
+      "status": "COMPLETED",
+      "ledger_reservations": 1,
+      "generation_http_requests": 1,
+      "http_statuses": [
+        200
+      ],
+      "rate_metadata_observed": [
+        {}
+      ],
+      "elapsed_ms": 4486,
+      "facts": {
+        "origin_moscow": true,
+        "adult_one": true,
+        "child_zero": true,
+        "city_kazan": true,
+        "budget75000": true,
+        "dates_not_invented": true
+      },
+      "request_proofs": [
+        {
+          "request_body_sha256": "f1e5c2c2be6b2ca151ec8596364a9dcca1bf582a888e369b3fbc63e30249b919",
+          "request_bytes": 21049,
+          "model": "dots-studio/dots-3-note-preview:free",
+          "configured_values_absent": true,
+          "extraction_trip_context": true,
+          "pay_zero_wire": true
+        }
+      ],
+      "usage": {
+        "input_tokens": 5137,
+        "total_tokens": 5308,
+        "output_tokens": 171
+      },
+      "request_metrics": {
+        "prompt_sha256": "8d0d70726c5a1d991e598de783e05acebf36d622c77d536c3266425337bddfe4",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 6920
+      },
+      "raw_contract_sha256": "35aa751c5d86fd4d169d0781cd670c78b6a5f4fa70d2dff0c8009322d787a1f7",
+      "raw_operations_count": 3,
+      "raw_speech_act": "ASK",
+      "provider_reported_cost": [
+        0
+      ]
+    },
+    {
+      "provider": "groq",
+      "requested_model": "qwen/qwen3.8-27b",
+      "model_selection": null,
+      "status": "COMPLETED",
+      "ledger_reservations": 1,
+      "generation_http_requests": 1,
+      "http_statuses": [
+        200
+      ],
+      "rate_metadata_observed": [
+        {
+          "x-ratelimit-limit-requests": "1000",
+          "x-ratelimit-remaining-requests": "999",
+          "x-ratelimit-reset-requests": "1m26.4s"
+        }
+      ],
+      "elapsed_ms": 1671,
+      "facts": {
+        "origin_moscow": true,
+        "adult_one": true,
+        "child_zero": true,
+        "city_kazan": true,
+        "budget75000": true,
+        "dates_not_invented": true
+      },
+      "request_proofs": [
+        {
+          "request_body_sha256": "53855aab214b4c434437eaa0bcc39c85e26badfeeadf6e6ebf57b5872109b5ba",
+          "request_bytes": 20868,
+          "model": "qwen/qwen3.8-27b",
+          "configured_values_absent": true,
+          "extraction_trip_context": true
+        }
+      ],
+      "usage": {
+        "input_tokens": 5030,
+        "total_tokens": 5347,
+        "output_tokens": 317
+      },
+      "request_metrics": {
+        "prompt_sha256": "8e19e580b45f0d1ffd0fab5b41d0cfc70b11825631f3230c1590db0db52bf37d",
+        "schema_sha256": "bd8b22e2e29438ead67f889fe047eb36b870986cb180f2b4dad95e35548f78b6",
+        "schema_utf8_bytes": 7349,
+        "system_utf8_bytes": 12015,
+        "context_utf8_bytes": 6920
+      },
+      "raw_contract_sha256": "275ff43d826bd4cc5b62f942976e42da74152c9a1c29aee3ac161f1f0ccab305",
+      "raw_operations_count": 4,
+      "raw_speech_act": "CHANGE",
+      "provider_reported_cost": [
+        null
+      ]
+    }
+  ],
+  "automatic_retries": 0,
+  "supplier_tools": 0,
+  "orders": 0,
+  "no_billing_or_account_actions": true,
+  "limitations": [
+    "Groq remaining/reset header values are literal observations, not inferred daily chat allowance.",
+    "OpenRouter returned no observed rate metadata headers; quota remaining unknown.",
+    "OpenRouter wire explicitly used free model and max_price0 with provider fallback false; key credit ceiling unchanged.",
+    "Both probes used new sessions, no supplier tools or orders, and did not alter native ZAI profile.",
+    "No further provider calls were made after these2probes."
+  ]
+}

@@ -1,0 +1,1485 @@
+{
+  "case": "ZAI100-010",
+  "turn": 7,
+  "source_case": "/home/aegml/.local/evaluation/new80-zai45-20261028-071538-645fdb70/ZAI100-010.json",
+  "source_case_sha256": "252098e69fe22d0eb568858e41fe48d9b46042a17d5f02cc24061c2dcfc62eb2",
+  "user": "Добавь ещё одного взрослого, моего друга. Бюджет на всю поездку остаётся прежним, детей нет.",
+  "before": {
+    "session_id": "8a85d4ce-49c9-45ab-a17e-301b4ef471e2",
+    "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+    "state_version": 4,
+    "trip_version": 4,
+    "status": "OPTIONS_READY",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [
+        {
+          "id": "leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8",
+          "mode": "flight",
+          "origin": "Казань",
+          "destination": "Дубай",
+          "departure_date": "2026-11-16"
+        },
+        {
+          "id": "leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f",
+          "mode": "flight",
+          "origin": "Дубай",
+          "destination": "Казань",
+          "departure_date": "2026-11-22"
+        }
+      ],
+      "stays": [
+        {
+          "id": "new-stay-1",
+          "city": "Дубай",
+          "rooms": [
+            {
+              "id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ]
+            }
+          ],
+          "check_in": "2026-11-16",
+          "hotel_id": null,
+          "check_out": "2026-11-22"
+        }
+      ],
+      "budget": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 12000000
+      },
+      "groups": [],
+      "origin": "Казань",
+      "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+      "travelers": [
+        {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "route_policy": {
+        "kind": "round_trip",
+        "end_city": null
+      },
+      "search_policy": {
+        "mode": "HYBRID",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "duffel",
+        "guest_nationality": "RU"
+      },
+      "state_version": 4
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "after": {
+    "session_id": "8a85d4ce-49c9-45ab-a17e-301b4ef471e2",
+    "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+    "state_version": 5,
+    "trip_version": 5,
+    "status": "TRIP_DRAFT",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [
+        {
+          "id": "leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8",
+          "mode": "flight",
+          "origin": "Казань",
+          "destination": "Дубай",
+          "departure_date": "2026-11-16"
+        },
+        {
+          "id": "leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f",
+          "mode": "flight",
+          "origin": "Дубай",
+          "destination": "Казань",
+          "departure_date": "2026-11-22"
+        }
+      ],
+      "stays": [
+        {
+          "id": "new-stay-1",
+          "city": "Дубай",
+          "rooms": [
+            {
+              "id": "new-room-1",
+              "traveler_ids": [
+                "new-traveler-1"
+              ]
+            }
+          ],
+          "check_in": "2026-11-16",
+          "hotel_id": null,
+          "check_out": "2026-11-22"
+        }
+      ],
+      "budget": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 12000000
+      },
+      "groups": [],
+      "origin": "Казань",
+      "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+      "travelers": [
+        {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        {
+          "id": "new-traveler-2",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "route_policy": {
+        "kind": "round_trip",
+        "end_city": null
+      },
+      "search_policy": {
+        "mode": "HYBRID",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "duffel",
+        "guest_nationality": "RU"
+      },
+      "state_version": 5
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "assistant": [
+    "Текущий состав: 2 взрослых; дети в сохранённом составе не указаны.\n\nВ текущем расчёте: проживание — тестовые тарифы (SANDBOX); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+  ],
+  "raw_contract": {
+    "value": {
+      "reply": "Добавлен еще один взрослый путешественник. Текущий состав: 2 взрослых; дети в сохранённом составе не указаны.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-2",
+            "type": "adult"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "12b535ed705ef32d4da64b191795f5fe96149fe10696f33488b7ad805e756ded",
+    "captured": true,
+    "utf8_bytes": 424
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Добавлен еще один взрослый путешественник. Текущий состав: 2 взрослых; дети в сохранённом составе не указаны.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "add_traveler",
+          "value": {
+            "id": "new-traveler-2",
+            "type": "adult"
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "e665988af8271404d29909844eb53a7d2a22028f36b3409b767ef2d2aec01467",
+    "captured": true,
+    "utf8_bytes": 424
+  },
+  "search_result": {
+    "llm": {
+      "model": "glm-4.5-flash",
+      "usage": {
+        "input_tokens": 6318,
+        "total_tokens": 6455,
+        "output_tokens": 137
+      },
+      "attempts": [
+        {
+          "model": "glm-4.5-flash",
+          "usage": {
+            "input_tokens": 6318,
+            "total_tokens": 6455,
+            "output_tokens": 137
+          },
+          "outcome": "response",
+          "provider": "zai",
+          "latency_ms": 4690,
+          "request_metrics": {
+            "prompt_sha256": "ea0f4e8f2cd64e9d71ee26bd6fb937a029337ecd7a0be0325ff4a6584d35751e",
+            "schema_sha256": "86452b2706c96319b98a4ca6ed49e3c06355f9ae325ae0f71df8b92616ddcd21",
+            "schema_utf8_bytes": 10634,
+            "system_utf8_bytes": 15608,
+            "context_utf8_bytes": 11413
+          }
+        }
+      ],
+      "provider": "zai",
+      "latency_ms": 4690,
+      "request_metrics": {
+        "prompt_sha256": "ea0f4e8f2cd64e9d71ee26bd6fb937a029337ecd7a0be0325ff4a6584d35751e",
+        "schema_sha256": "86452b2706c96319b98a4ca6ed49e3c06355f9ae325ae0f71df8b92616ddcd21",
+        "schema_utf8_bytes": 10634,
+        "system_utf8_bytes": 15608,
+        "context_utf8_bytes": 11413
+      }
+    },
+    "plans": [],
+    "fx_error": null,
+    "warnings": [
+      "Live transfer gateway не подключён; трансферы могут быть только явно обозначенными DEMO fallback-компонентами.",
+      "liteapi:50163f563d17f764f4f8a88a: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+      "duffel:af521914e1bdb696a279e22a: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+      "duffel:12265328f70589c6f30cacd8: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+      "Сумма является simulated estimate; DEMO/SANDBOX не подтверждают реальные цены и наличие.",
+      "Справочный пересчёт ЦБ на 2026-10-28; банковские комиссии и курс оплаты неизвестны. Это reference estimate для simulated checkout, не цена покупки."
+    ],
+    "questions": [],
+    "price_kind": "simulated_estimate",
+    "violations": [
+      {
+        "code": "changed_allocation",
+        "details": {
+          "room_id": "new-room-1",
+          "offer_id": "liteapi:50163f563d17f764f4f8a88a"
+        },
+        "message": "Предложение изменило явное распределение группы."
+      }
+    ],
+    "model_reply": "Добавлен еще один взрослый путешественник. Текущий состав: 2 взрослых; дети в сохранённом составе не указаны.",
+    "source_type": "MIXED",
+    "partial_plan": {
+      "offers": [
+        {
+          "details": {
+            "kind": "hotel",
+            "rates": [
+              {
+                "name": "Premium Studio with King Bed",
+                "perks": [],
+                "rateId": "I42FSRCPJVJFOR2VGNDUSTSSLJDTIMSUJVNEEU2HIEZVIR2OLJKUONBSKRGU4QSXJBCTGR2NJVJFCRZUGNKE2T2KLBDVCM2EKFGVEUKHLJJEITKPJJLU2VJTIRHU2USRI5MVURCNJZFFOR2SGZCEGSK2KNDUCWSEJVGUUUSHIUZUQWKNKJIUOSJTIRBU2SSTI5FDMR2LGNJTOS2WJJMFSVKTKZIFESSGJNIVINCHJJAVIQKRGM2EOUJSKRCU6TBUJZDESR2PKZFUSUCRLFKE6T2KKRDUKM2UIVHFUVCHJVNEIT2OINCUWSSOIZBUSWSSI42DIRCDJ5FFOSCFKJKE2TSSK5DFKWKUJ5HUEUSIIUZUIUZXINHUWSSEIU2DOQSTI5AVURCJJVBFGR2JLFCEGTKCKFDUENSEJFHUYNCLJFMVIQ2OJJIVAUJSIRIU6QSVJBCTERCBJEZFGSRUKJKTIVKTI5FFSUSUIVGUEU2HKFLVIQKNKJHEOSKZINAU2SSRJBEVSRCBJFMXYNBYHA2DSLRUGB6HYUSPPR6HY7CQOJSW22LVNUQFG5DVMRUW6IDXNF2GQICLNFXGOICCMVSHYMBOGAYHYMBOGAYHY7BQFYYDA7BQFYYDA",
+                "remarks": "All guests are required to present a valid debit or credit card upon arrival at check-in. \n\nThe card will be kept securely on file to cover any potential damages or liabilities related to the hotel room or property. \n\nThis applies even if no additional charges are made during the stay.<br/>All special requests are subject to availability at the time of check-in and cannot be guaranteed in advance.\nOur team will always do their best to accommodate guest preferences.\n\nWe appreciate your cooperation and understanding.<br/>Guest Payment Policy: All guests are required to present a valid debit or credit card upon arrival at check-in. \n\nThe card will be kept securely on file to cover any potential damages or liabilities related to the hotel room or property. \n\nThis applies even if no additional charges are made during the stay.<br/>",
+                "rateCode": "WH08001R",
+                "boardName": "Room Only",
+                "boardType": "RO",
+                "priceType": "commission",
+                "adultCount": 2,
+                "childCount": 0,
+                "commission": [
+                  {
+                    "amount": 0,
+                    "currency": "RUB"
+                  }
+                ],
+                "promotions": null,
+                "retailRate": {
+                  "total": [
+                    {
+                      "amount": 48849.4,
+                      "currency": "RUB"
+                    }
+                  ],
+                  "initialPrice": [
+                    {
+                      "amount": 48849.4,
+                      "currency": "RUB"
+                    }
+                  ],
+                  "taxesAndFees": [
+                    {
+                      "amount": 8971.93,
+                      "currency": "RUB",
+                      "included": true,
+                      "description": "VAT of 22.5% per room per night (Included in price)"
+                    }
+                  ],
+                  "suggestedSellingPrice": [
+                    {
+                      "amount": 56176.81,
+                      "source": "",
+                      "currency": "RUB"
+                    }
+                  ]
+                },
+                "childrenAges": [],
+                "maxOccupancy": 2,
+                "paymentTypes": [
+                  "NUITEE_PAY"
+                ],
+                "occupancyNumber": 1,
+                "providerCommission": {
+                  "amount": 0,
+                  "currency": ""
+                },
+                "cancellationPolicies": {
+                  "hotelRemarks": [],
+                  "refundableTag": "NRFN",
+                  "cancelPolicyInfos": []
+                }
+              }
+            ],
+            "issues": [],
+            "binding": {
+              "city": "Дубай",
+              "checkin": "2026-11-16",
+              "stay_id": "new-stay-1",
+              "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+              "checkout": "2026-11-22",
+              "hotel_id": "lp1b30d1",
+              "room_ids": [
+                "new-room-1"
+              ],
+              "state_version": 5,
+              "room_assignments": [
+                {
+                  "room_id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2"
+                  ]
+                }
+              ]
+            },
+            "checkin": "2026-11-16",
+            "checkout": "2026-11-22",
+            "hotel_id": "lp1b30d1",
+            "warnings": [],
+            "room_facts": [
+              {
+                "occupancy_number": 1,
+                "capacity_verified": true,
+                "reported_capacity": 2,
+                "guest_counts_match": true
+              }
+            ],
+            "occupancies": [
+              {
+                "adults": 2,
+                "children": []
+              }
+            ],
+            "source_type": "SANDBOX",
+            "supplier_id": "2",
+            "fees_included": true,
+            "supplier_name": "nuitee",
+            "search_request": {
+              "checkin": "2026-11-16",
+              "checkout": "2026-11-22",
+              "currency": "RUB",
+              "hotelIds": [
+                "lp1b30d1",
+                "lpcdd85",
+                "lp728d1"
+              ],
+              "occupancies": [
+                {
+                  "adults": 2,
+                  "children": []
+                }
+              ],
+              "guestNationality": "RU"
+            },
+            "native_offer_id": "AwJ2MQAAAABq4vaDCJ89ZJP5uwkX5selwesaFunRHWVpjzsDOnApohLIr_Skz04Cj6jRCv61qI5_ZZpEyjLIdbV7BsQPeMGQlaKa0CeIXQtDjBQUERvTlxbAj1DO-7ceXsJtsTCYGvapMDf46Y8DFiFdUYU-cbGwjdbSwKhqRcSYW77ciXxcQemMLhOeJWNaJY-wncJHOKcXoI6AVc3adhXQusL68Y_NBAevsxbODfSmHmDfsIrmAqYkX1_cEbAoFlA0plErpXrTi_HowHoAHDErrwgAaLjmNRSFM2-km3Gid35E_MrJ9dIBWUlGaO0yN6rDKxeMCHx6ut49b0nEU6rSZL92FalrmZfmDiOZ7i4eEXzGKL1CsRDR1tXTa1QdW9FHx9Eh6aBHLHWs8oRybqFFbD9Eluh-YmRGELkB-k2PPdxCebEpAW7m1obuyLD-c18wpMm9gAJt6MiJPIaaNXfp2ZjuEa94MKjONOCdBWx-P4r9KvpjdHVerjkx_v6oMKSYgtIRvXYFB0Vrr2goFFQJXpg_DVVmo7ZBOLVvDzsvsu-9Hkb85ztceIgiyFohytQJzpnVUGs5BiCtvfA3dvQLxYQ1vNak2g-g4999KhmLa-Ex9_hQRsDfRWFoSuyQC1Cp9PtzvcTLlc8uUmDZOSibFWb3fMa2Zwamk3Wc22Xz-73Cz6Y2E0Ed6cJWf6Yu0psBihDtT68aY-MWUw8ZGB7OEAeX182MdHTXZU1zcR0N9_-pEFe58FwHISPVeMLtddytz1KZPNu1Q3Q4wGXNktkKPnfkJ8dIc9Q9DBs06jznH1zoChp5byert1i8qdJUg-0eZtx1vSupRm2Jl-sStVHvJS3pWbEygTngoY0x3awoJZc1sn7lRG-jxdaA5AjTqtX8Bi9BvV6LAa_lbaRY-FcoRqK3qEJKLoWFaoaQKsYqzuT6CXhkH9q_8qSmk2VD0zfjZJwgZIBeh6Oh25iKaCykYkdLqCG73FfzYcWyWwxA6v_ZisycOVRX-rAUxImTuCeUyssoUOqn4H_NQTs9f5xCbouxsS8Rmu3TQtaWS1lACKSTMTwq_Fdx3wy44UNxTEyzNgTt0Xhw6pGb6Rj5eDpOjAbqPyFwYRlydNXCsCNt_8sN_2BpP8JjteRlftiEoNyjn7btoDHA0QC5WP4ZHFePMJFwtjXmf5Lf",
+            "capacity_verified": true,
+            "supplier_verified": false,
+            "allocation_verified": true,
+            "constraint_evidence": {
+              "breakfast": false,
+              "refundable": false
+            },
+            "cancellation_by_room": [
+              {
+                "refundable_tag": "NRFN",
+                "occupancy_number": 1,
+                "cancellation_deadline": null,
+                "free_cancellation_now": false,
+                "cancellation_charge_applies_now": null
+              }
+            ],
+            "mandatory_fees_known": true,
+            "refundable_from_tags": false,
+            "availability_verified": false,
+            "cancellation_deadline": null,
+            "free_cancellation_now": false,
+            "ready_for_real_booking": false,
+            "refundable_tag_verified": true
+          },
+          "currency": "RUB",
+          "offer_id": "liteapi:50163f563d17f764f4f8a88a",
+          "provider": "liteapi",
+          "expires_at": "2026-10-28T07:37:19.740838+00:00",
+          "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+          "description": "lp1b30d1",
+          "source_type": "SANDBOX",
+          "amount_minor": 4884940,
+          "retrieved_at": "2026-10-28T07:32:19.740838+00:00"
+        },
+        {
+          "details": {
+            "kind": "flight",
+            "slices": [
+              {
+                "id": "sli_0000BBrc3ks5w7LlqoGor9",
+                "origin": {
+                  "id": "arp_kzn_ru",
+                  "city": null,
+                  "name": "Kazan International Airport",
+                  "type": "airport",
+                  "latitude": 55.609823,
+                  "city_name": "Kazan",
+                  "iata_code": "KZN",
+                  "icao_code": "UWKD",
+                  "longitude": 49.281206,
+                  "time_zone": "Europe/Moscow",
+                  "iata_city_code": "KZN",
+                  "iata_country_code": "RU"
+                },
+                "duration": "PT5H7M",
+                "segments": [
+                  {
+                    "id": "seg_0000BBrc3ks5w7LlqoGor6",
+                    "media": [],
+                    "stops": [],
+                    "origin": {
+                      "id": "arp_kzn_ru",
+                      "city": null,
+                      "name": "Kazan International Airport",
+                      "type": "airport",
+                      "latitude": 55.609823,
+                      "city_name": "Kazan",
+                      "iata_code": "KZN",
+                      "icao_code": "UWKD",
+                      "longitude": 49.281206,
+                      "time_zone": "Europe/Moscow",
+                      "iata_city_code": "KZN",
+                      "iata_country_code": "RU"
+                    },
+                    "aircraft": null,
+                    "distance": "3411.6264747708246",
+                    "duration": "PT5H7M",
+                    "passengers": [
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrc3kgkcIHBHcxlBS",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      },
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrc3kgkcIHBHcxlBW",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      }
+                    ],
+                    "arriving_at": "2026-11-16T17:43:00",
+                    "destination": {
+                      "id": "arp_dxb_ae",
+                      "city": {
+                        "id": "cit_dxb_ae",
+                        "name": "Dubai",
+                        "type": "city",
+                        "latitude": null,
+                        "city_name": null,
+                        "iata_code": "DXB",
+                        "icao_code": null,
+                        "longitude": null,
+                        "time_zone": null,
+                        "iata_city_code": "DXB",
+                        "iata_country_code": "AE"
+                      },
+                      "name": "Dubai International Airport",
+                      "type": "airport",
+                      "latitude": 25.252987,
+                      "city_name": "Dubai",
+                      "iata_code": "DXB",
+                      "icao_code": "OMDB",
+                      "longitude": 55.365035,
+                      "time_zone": "Asia/Dubai",
+                      "iata_city_code": "DXB",
+                      "iata_country_code": "AE"
+                    },
+                    "departing_at": "2026-11-16T11:36:00",
+                    "origin_terminal": "2",
+                    "marketing_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "operating_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "destination_terminal": "1",
+                    "marketing_carrier_flight_number": "0812",
+                    "operating_carrier_flight_number": "0812"
+                  }
+                ],
+                "ngs_shelf": 1,
+                "conditions": {
+                  "priority_boarding": null,
+                  "priority_check_in": null,
+                  "advance_seat_selection": null,
+                  "change_before_departure": {
+                    "allowed": true,
+                    "penalty_amount": "50.00",
+                    "penalty_currency": "EUR"
+                  }
+                },
+                "destination": {
+                  "id": "arp_dxb_ae",
+                  "city": {
+                    "id": "cit_dxb_ae",
+                    "name": "Dubai",
+                    "type": "city",
+                    "latitude": null,
+                    "city_name": null,
+                    "iata_code": "DXB",
+                    "icao_code": null,
+                    "longitude": null,
+                    "time_zone": null,
+                    "iata_city_code": "DXB",
+                    "iata_country_code": "AE"
+                  },
+                  "name": "Dubai International Airport",
+                  "type": "airport",
+                  "latitude": 25.252987,
+                  "city_name": "Dubai",
+                  "iata_code": "DXB",
+                  "icao_code": "OMDB",
+                  "longitude": 55.365035,
+                  "time_zone": "Asia/Dubai",
+                  "iata_city_code": "DXB",
+                  "iata_country_code": "AE"
+                },
+                "origin_type": "airport",
+                "comparison_key": "FHYs",
+                "fare_brand_name": "Basic",
+                "destination_type": "airport"
+              }
+            ],
+            "binding": {
+              "origin": "Казань",
+              "leg_ids": [
+                "leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8"
+              ],
+              "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+              "destination": "Дубай",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2"
+              ],
+              "state_version": 5,
+              "departure_date": "2026-11-16"
+            },
+            "fees_scope": "base_fare_including_taxes_excluding_optional_services",
+            "group_quote": true,
+            "search_request": {
+              "adults": 2,
+              "slices": [
+                {
+                  "origin": "KZN",
+                  "destination": "DXB",
+                  "departure_date": "2026-11-16"
+                }
+              ],
+              "children": 0,
+              "currency": "RUB",
+              "passengers": [
+                {
+                  "type": "adult"
+                },
+                {
+                  "type": "adult"
+                }
+              ]
+            },
+            "native_offer_id": "off_034ndPbGJngG1V6mttQc6q",
+            "passengers_count": 2,
+            "passenger_evidence": {
+              "reason": "type_age_multiset_match",
+              "source": "response.passengers",
+              "status": "verified",
+              "passengers": [
+                {
+                  "id": "pas_0000BBrc3kgkcIHBHcxlBS",
+                  "age": null,
+                  "type": "adult"
+                },
+                {
+                  "id": "pas_0000BBrc3kgkcIHBHcxlBW",
+                  "age": null,
+                  "type": "adult"
+                }
+              ]
+            },
+            "constraint_evidence": {
+              "nonstop": true
+            },
+            "mandatory_fees_known": true,
+            "availability_verified": false,
+            "nonstop_evidence_source": "response.slices.segments.stops",
+            "received_passengers_count": 2,
+            "requested_passengers_count": 2
+          },
+          "currency": "EUR",
+          "offer_id": "duffel:af521914e1bdb696a279e22a",
+          "provider": "duffel",
+          "expires_at": "2026-10-28T08:02:20.054184Z",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "description": "Тестовый авиатариф Duffel",
+          "source_type": "SANDBOX",
+          "amount_minor": 29728,
+          "retrieved_at": "2026-10-28T07:32:20.920320+00:00"
+        },
+        {
+          "details": {
+            "kind": "flight",
+            "slices": [
+              {
+                "id": "sli_0000BBrc4IyBD7VkYnsXpz",
+                "origin": {
+                  "id": "arp_dxb_ae",
+                  "city": {
+                    "id": "cit_dxb_ae",
+                    "name": "Dubai",
+                    "type": "city",
+                    "latitude": null,
+                    "city_name": null,
+                    "iata_code": "DXB",
+                    "icao_code": null,
+                    "longitude": null,
+                    "time_zone": null,
+                    "iata_city_code": "DXB",
+                    "iata_country_code": "AE"
+                  },
+                  "name": "Dubai International Airport",
+                  "type": "airport",
+                  "latitude": 25.252987,
+                  "city_name": "Dubai",
+                  "iata_code": "DXB",
+                  "icao_code": "OMDB",
+                  "longitude": 55.365035,
+                  "time_zone": "Asia/Dubai",
+                  "iata_city_code": "DXB",
+                  "iata_country_code": "AE"
+                },
+                "duration": "PT5H7M",
+                "segments": [
+                  {
+                    "id": "seg_0000BBrc4IyBD7VkYnsXps",
+                    "media": [],
+                    "stops": [],
+                    "origin": {
+                      "id": "arp_dxb_ae",
+                      "city": {
+                        "id": "cit_dxb_ae",
+                        "name": "Dubai",
+                        "type": "city",
+                        "latitude": null,
+                        "city_name": null,
+                        "iata_code": "DXB",
+                        "icao_code": null,
+                        "longitude": null,
+                        "time_zone": null,
+                        "iata_city_code": "DXB",
+                        "iata_country_code": "AE"
+                      },
+                      "name": "Dubai International Airport",
+                      "type": "airport",
+                      "latitude": 25.252987,
+                      "city_name": "Dubai",
+                      "iata_code": "DXB",
+                      "icao_code": "OMDB",
+                      "longitude": 55.365035,
+                      "time_zone": "Asia/Dubai",
+                      "iata_city_code": "DXB",
+                      "iata_country_code": "AE"
+                    },
+                    "aircraft": null,
+                    "distance": "3411.6264747708246",
+                    "duration": "PT5H7M",
+                    "passengers": [
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrc4ImTuc9ZyWPCbw",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      },
+                      {
+                        "cabin": {
+                          "name": "economy",
+                          "amenities": {
+                            "seat": {
+                              "type": null,
+                              "pitch": "30",
+                              "legroom": "n/a"
+                            },
+                            "wifi": {
+                              "cost": "paid",
+                              "available": true
+                            },
+                            "power": {
+                              "available": true
+                            }
+                          },
+                          "marketing_name": "Economy"
+                        },
+                        "baggages": [
+                          {
+                            "type": "checked",
+                            "quantity": 1
+                          },
+                          {
+                            "type": "carry_on",
+                            "quantity": 1
+                          }
+                        ],
+                        "cabin_class": "economy",
+                        "passenger_id": "pas_0000BBrc4ImptIR9zcZU8s",
+                        "fare_basis_code": "Y20LGTN2",
+                        "cabin_class_marketing_name": "Economy"
+                      }
+                    ],
+                    "arriving_at": "2026-11-22T20:22:00",
+                    "destination": {
+                      "id": "arp_kzn_ru",
+                      "city": null,
+                      "name": "Kazan International Airport",
+                      "type": "airport",
+                      "latitude": 55.609823,
+                      "city_name": "Kazan",
+                      "iata_code": "KZN",
+                      "icao_code": "UWKD",
+                      "longitude": 49.281206,
+                      "time_zone": "Europe/Moscow",
+                      "iata_city_code": "KZN",
+                      "iata_country_code": "RU"
+                    },
+                    "departing_at": "2026-11-22T16:15:00",
+                    "origin_terminal": "2",
+                    "marketing_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "operating_carrier": {
+                      "id": "arl_00009VME7D6ivUu8dn35WK",
+                      "name": "Duffel Airways",
+                      "iata_code": "ZZ",
+                      "logo_lockup_url": null,
+                      "logo_symbol_url": "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/ZZ.svg",
+                      "conditions_of_carriage_url": "https://duffelairways.com/dummy-url/conditions-of-carriage"
+                    },
+                    "destination_terminal": "1",
+                    "marketing_carrier_flight_number": "0812",
+                    "operating_carrier_flight_number": "0812"
+                  }
+                ],
+                "ngs_shelf": 1,
+                "conditions": {
+                  "priority_boarding": null,
+                  "priority_check_in": null,
+                  "advance_seat_selection": null,
+                  "change_before_departure": {
+                    "allowed": true,
+                    "penalty_amount": "50.00",
+                    "penalty_currency": "EUR"
+                  }
+                },
+                "destination": {
+                  "id": "arp_kzn_ru",
+                  "city": null,
+                  "name": "Kazan International Airport",
+                  "type": "airport",
+                  "latitude": 55.609823,
+                  "city_name": "Kazan",
+                  "iata_code": "KZN",
+                  "icao_code": "UWKD",
+                  "longitude": 49.281206,
+                  "time_zone": "Europe/Moscow",
+                  "iata_city_code": "KZN",
+                  "iata_country_code": "RU"
+                },
+                "origin_type": "airport",
+                "comparison_key": "BsSPSw==",
+                "fare_brand_name": "Basic",
+                "destination_type": "airport"
+              }
+            ],
+            "binding": {
+              "origin": "Дубай",
+              "leg_ids": [
+                "leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f"
+              ],
+              "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+              "destination": "Казань",
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2"
+              ],
+              "state_version": 5,
+              "departure_date": "2026-11-22"
+            },
+            "fees_scope": "base_fare_including_taxes_excluding_optional_services",
+            "group_quote": true,
+            "search_request": {
+              "adults": 2,
+              "slices": [
+                {
+                  "origin": "DXB",
+                  "destination": "KZN",
+                  "departure_date": "2026-11-22"
+                }
+              ],
+              "children": 0,
+              "currency": "RUB",
+              "passengers": [
+                {
+                  "type": "adult"
+                },
+                {
+                  "type": "adult"
+                }
+              ]
+            },
+            "native_offer_id": "off_034ndPkdkgVX8j2fnXsmJc",
+            "passengers_count": 2,
+            "passenger_evidence": {
+              "reason": "type_age_multiset_match",
+              "source": "response.passengers",
+              "status": "verified",
+              "passengers": [
+                {
+                  "id": "pas_0000BBrc4ImTuc9ZyWPCbw",
+                  "age": null,
+                  "type": "adult"
+                },
+                {
+                  "id": "pas_0000BBrc4ImptIR9zcZU8s",
+                  "age": null,
+                  "type": "adult"
+                }
+              ]
+            },
+            "constraint_evidence": {
+              "nonstop": true
+            },
+            "mandatory_fees_known": true,
+            "availability_verified": false,
+            "nonstop_evidence_source": "response.slices.segments.stops",
+            "received_passengers_count": 2,
+            "requested_passengers_count": 2
+          },
+          "currency": "EUR",
+          "offer_id": "duffel:12265328f70589c6f30cacd8",
+          "provider": "duffel",
+          "expires_at": "2026-10-28T08:02:26.018736Z",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "description": "Тестовый авиатариф Duffel",
+          "source_type": "SANDBOX",
+          "amount_minor": 28908,
+          "retrieved_at": "2026-10-28T07:32:26.920166+00:00"
+        },
+        {
+          "city": "Дубай",
+          "date": "2026-11-16",
+          "kind": "transfer",
+          "name": "DEMO — Синтетический трансфер",
+          "is_demo": true,
+          "currency": "RUB",
+          "offer_id": "demo-transfer-ac57ba7ed9f0de3f7332",
+          "breakdown": [
+            {
+              "kind": "demo_transfer_passenger",
+              "quantity": 2,
+              "unit_minor": 40000,
+              "amount_minor": 80000
+            }
+          ],
+          "max_pet_kg": 20,
+          "price_kind": "synthetic",
+          "source_type": "DEMO",
+          "total_minor": 80000,
+          "availability": "synthetic_not_live",
+          "component_id": "transfer-new-stay-1",
+          "pets_allowed": true,
+          "traveler_ids": [
+            "new-traveler-1",
+            "new-traveler-2"
+          ]
+        }
+      ],
+      "plan_id": "assembled-ab29bf8798302f930e583705",
+      "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+      "blockers": [
+        {
+          "code": "changed_allocation",
+          "details": {
+            "room_id": "new-room-1",
+            "offer_id": "liteapi:50163f563d17f764f4f8a88a"
+          },
+          "message": "Предложение изменило явное распределение группы."
+        }
+      ],
+      "coverage": {
+        "covered": [
+          "hotel:new-stay-1:new-room-1",
+          "leg:leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f",
+          "leg:leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8",
+          "transfer:new-stay-1"
+        ],
+        "missing": [],
+        "complete": true,
+        "required": [
+          "hotel:new-stay-1:new-room-1",
+          "leg:leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8",
+          "leg:leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f",
+          "transfer:new-stay-1"
+        ],
+        "overlapping": []
+      },
+      "currency": "RUB",
+      "warnings": [
+        "liteapi:50163f563d17f764f4f8a88a: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+        "duffel:af521914e1bdb696a279e22a: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+        "duffel:12265328f70589c6f30cacd8: статус SANDBOX; supplier booking не создаётся, точные стыковки/инвентарь не гарантируются.",
+        "Сумма является simulated estimate; DEMO/SANDBOX не подтверждают реальные цены и наличие.",
+        "Справочный пересчёт ЦБ на 2026-10-28; банковские комиссии и курс оплаты неизвестны. Это reference estimate для simulated checkout, не цена покупки."
+      ],
+      "comparison": {
+        "changes": [
+          {
+            "after": {
+              "currency": "RUB",
+              "offer_id": "liteapi:50163f563d17f764f4f8a88a",
+              "source_type": "SANDBOX",
+              "amount_minor": 4884940,
+              "snapshot_hash": "990f12a279b5609c03c0d1c42130ce63033a6ac6abc3d57d20952e785ed2b544",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 4884940
+            },
+            "before": {
+              "currency": "RUB",
+              "offer_id": "liteapi:0102e578c17b8d836f699aae",
+              "source_type": "SANDBOX",
+              "amount_minor": 4884940,
+              "snapshot_hash": "ceb10dc85612baee2eb241ea48c7128c350ec2c0577a66d4899901d61b563b9b",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 4884940
+            },
+            "component_id": "hotel:new-stay-1:new-room-1"
+          },
+          {
+            "after": {
+              "currency": "EUR",
+              "offer_id": "duffel:12265328f70589c6f30cacd8",
+              "source_type": "SANDBOX",
+              "amount_minor": 28908,
+              "snapshot_hash": "eedfab272de2feb609871ade57c9a01feb73aed50e741d39ef484928a04a7a89",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 2604544
+            },
+            "before": {
+              "currency": "EUR",
+              "offer_id": "duffel:1ccb49fdf578c84bb7153585",
+              "source_type": "SANDBOX",
+              "amount_minor": 14758,
+              "snapshot_hash": "2c4a484254278a7110c19cda835affd013d959a97dab92bcfa32135f3a0f51ec",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 1329662
+            },
+            "component_id": "leg:leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f"
+          },
+          {
+            "after": {
+              "currency": "EUR",
+              "offer_id": "duffel:af521914e1bdb696a279e22a",
+              "source_type": "SANDBOX",
+              "amount_minor": 29728,
+              "snapshot_hash": "017ed7a9aa36d733673997c6fd5e535d79c7960e9c04adc1d017c4e63d40d7d2",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 2678424
+            },
+            "before": {
+              "currency": "EUR",
+              "offer_id": "duffel:e17ac863c9dc1412f4cc3291",
+              "source_type": "SANDBOX",
+              "amount_minor": 14429,
+              "snapshot_hash": "19daf4cbda9368c39294a4265d2c7faf5e1b2afd02bf0bad136abcaf531ff044",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 1300020
+            },
+            "component_id": "leg:leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8"
+          },
+          {
+            "after": {
+              "currency": "RUB",
+              "offer_id": "demo-transfer-ac57ba7ed9f0de3f7332",
+              "source_type": "DEMO",
+              "amount_minor": 80000,
+              "snapshot_hash": "0fc63147f22f5e51a6a0972c9d9192d932f74f7a4254265c57ca14a4e568fe79",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 80000
+            },
+            "before": {
+              "currency": "RUB",
+              "offer_id": "demo-transfer-03922072dfc98bcd56ec",
+              "source_type": "DEMO",
+              "amount_minor": 40000,
+              "snapshot_hash": "3f704f647c5cb03cb2a1744dbd9ac1093d77393f76908856b51f1d513058f0d8",
+              "budget_currency": "RUB",
+              "budget_amount_minor": 40000
+            },
+            "component_id": "transfer:new-stay-1"
+          }
+        ],
+        "currency": "RUB",
+        "delta_minor": null,
+        "source_changed": false,
+        "after_total_minor": null,
+        "before_total_minor": 7554622,
+        "requires_new_confirmation": true
+      },
+      "components": [
+        {
+          "covers": [
+            "hotel:new-stay-1:new-room-1"
+          ],
+          "binding": {
+            "city": "Дубай",
+            "checkin": "2026-11-16",
+            "stay_id": "new-stay-1",
+            "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+            "checkout": "2026-11-22",
+            "hotel_id": "lp1b30d1",
+            "room_ids": [
+              "new-room-1"
+            ],
+            "state_version": 5,
+            "room_assignments": [
+              {
+                "room_id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          },
+          "currency": "RUB",
+          "provider": "liteapi",
+          "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+          "source_type": "SANDBOX",
+          "amount_minor": 4884940,
+          "component_id": "liteapi:50163f563d17f764f4f8a88a",
+          "demo_fallback": false,
+          "snapshot_hash": "990f12a279b5609c03c0d1c42130ce63033a6ac6abc3d57d20952e785ed2b544",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 4884940
+        },
+        {
+          "covers": [
+            "leg:leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8"
+          ],
+          "binding": {
+            "origin": "Казань",
+            "leg_ids": [
+              "leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8"
+            ],
+            "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+            "destination": "Дубай",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ],
+            "state_version": 5,
+            "departure_date": "2026-11-16"
+          },
+          "currency": "EUR",
+          "provider": "duffel",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "source_type": "SANDBOX",
+          "amount_minor": 29728,
+          "component_id": "duffel:af521914e1bdb696a279e22a",
+          "demo_fallback": false,
+          "snapshot_hash": "017ed7a9aa36d733673997c6fd5e535d79c7960e9c04adc1d017c4e63d40d7d2",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 2678424
+        },
+        {
+          "covers": [
+            "leg:leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f"
+          ],
+          "binding": {
+            "origin": "Дубай",
+            "leg_ids": [
+              "leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f"
+            ],
+            "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+            "destination": "Казань",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ],
+            "state_version": 5,
+            "departure_date": "2026-11-22"
+          },
+          "currency": "EUR",
+          "provider": "duffel",
+          "price_kind": "GROUP_ITINERARY_TOTAL",
+          "source_type": "SANDBOX",
+          "amount_minor": 28908,
+          "component_id": "duffel:12265328f70589c6f30cacd8",
+          "demo_fallback": false,
+          "snapshot_hash": "eedfab272de2feb609871ade57c9a01feb73aed50e741d39ef484928a04a7a89",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 2604544
+        },
+        {
+          "covers": [
+            "transfer:new-stay-1"
+          ],
+          "binding": {
+            "city": "Дубай",
+            "date": "2026-11-16",
+            "stay_id": "new-stay-1",
+            "trip_id": "237ce98b-ac54-4231-8c86-c88213ca2728",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ],
+            "state_version": 5
+          },
+          "currency": "RUB",
+          "provider": "demo_inventory",
+          "price_kind": "synthetic",
+          "source_type": "DEMO",
+          "amount_minor": 80000,
+          "component_id": "demo-transfer-ac57ba7ed9f0de3f7332",
+          "demo_fallback": true,
+          "snapshot_hash": "0fc63147f22f5e51a6a0972c9d9192d932f74f7a4254265c57ca14a4e568fe79",
+          "budget_currency": "RUB",
+          "budget_amount_minor": 80000
+        }
+      ],
+      "price_kind": "simulated_estimate",
+      "state_hash": "7164a2d8b6284d09143f83be10aed11708846e9a0c3a5570dc7150c939571c2e",
+      "violations": [
+        {
+          "code": "changed_allocation",
+          "details": {
+            "room_id": "new-room-1",
+            "offer_id": "liteapi:50163f563d17f764f4f8a88a"
+          },
+          "message": "Предложение изменило явное распределение группы."
+        }
+      ],
+      "fx_snapshot": {
+        "as_of": "2026-10-28",
+        "provider": "cbr",
+        "expires_at": "2026-10-28T13:32:20.946837+00:00",
+        "source_url": "https://www.cbr.ru/scripts/XML_daily.asp?[QUERY_REDACTED]",
+        "snapshot_id": "cbr-40851888099531d13932104d0fb371a5640472dbc140501d7b597c4016689526",
+        "ttl_seconds": 21600,
+        "fees_unknown": true,
+        "requested_on": "2026-10-28",
+        "retrieved_at": "2026-10-28T07:32:20.946837+00:00",
+        "source_quotes": {
+          "EUR": {
+            "nominal": 1,
+            "value_rub": "90.0977"
+          },
+          "RUB": {
+            "nominal": 1,
+            "value_rub": "1"
+          },
+          "USD": {
+            "nominal": 1,
+            "value_rub": "80.5307"
+          }
+        },
+        "reference_only": true,
+        "schema_version": 1,
+        "raw_source_sha256": "14a0b8431fcac03a87d9a8e0a42fe9e44b6c524e8c36766f37f5173a72699e50",
+        "rates_rub_per_unit": {
+          "EUR": "90.0977",
+          "RUB": "1",
+          "USD": "80.5307"
+        },
+        "max_source_age_days": 7,
+        "real_booking_supported": false
+      },
+      "source_type": "MIXED",
+      "total_minor": null,
+      "checkout_mode": "SIMULATED",
+      "snapshot_hash": "ab29bf8798302f930e5837051996b916af25244af8c104c8ff5a1883bfa31c74",
+      "state_version": 5,
+      "fx_snapshot_id": "cbr-40851888099531d13932104d0fb371a5640472dbc140501d7b597c4016689526",
+      "booking_created": false,
+      "currency_totals": {
+        "EUR": 58636,
+        "RUB": 4964940
+      },
+      "fx_fees_unknown": true,
+      "room_assignments": {
+        "new-stay-1": [
+          {
+            "room_id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          }
+        ]
+      },
+      "source_snapshots": [
+        {
+          "offer_id": "liteapi:50163f563d17f764f4f8a88a",
+          "expires_at": "2026-10-28T07:37:19.740838+00:00",
+          "source_type": "SANDBOX",
+          "retrieved_at": "2026-10-28T07:32:19.740838+00:00",
+          "snapshot_hash": "990f12a279b5609c03c0d1c42130ce63033a6ac6abc3d57d20952e785ed2b544"
+        },
+        {
+          "offer_id": "duffel:af521914e1bdb696a279e22a",
+          "expires_at": "2026-10-28T08:02:20.054184Z",
+          "source_type": "SANDBOX",
+          "retrieved_at": "2026-10-28T07:32:20.920320+00:00",
+          "snapshot_hash": "017ed7a9aa36d733673997c6fd5e535d79c7960e9c04adc1d017c4e63d40d7d2"
+        },
+        {
+          "offer_id": "duffel:12265328f70589c6f30cacd8",
+          "expires_at": "2026-10-28T08:02:26.018736Z",
+          "source_type": "SANDBOX",
+          "retrieved_at": "2026-10-28T07:32:26.920166+00:00",
+          "snapshot_hash": "eedfab272de2feb609871ade57c9a01feb73aed50e741d39ef484928a04a7a89"
+        },
+        {
+          "offer_id": "demo-transfer-ac57ba7ed9f0de3f7332",
+          "expires_at": null,
+          "source_type": "DEMO",
+          "retrieved_at": null,
+          "snapshot_hash": "0fc63147f22f5e51a6a0972c9d9192d932f74f7a4254265c57ca14a4e568fe79"
+        }
+      ],
+      "fx_reference_only": true,
+      "known_subtotal_minor": 10247908,
+      "ready_for_real_booking": false,
+      "ready_for_simulated_checkout": false
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "max_tool_calls": 16,
+    "response_source": "llm",
+    "tool_calls_used": 5,
+    "comparison_scope": "first_600_returned_offers_per_component_not_global_market_minimum",
+    "component_errors": [],
+    "search_explanation": {
+      "text": "В текущем расчёте: проживание — тестовые тарифы (SANDBOX); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика.",
+      "summary": {
+        "format": "otravel.hybrid_search_explanation.v1",
+        "status": "partial",
+        "reasons": [],
+        "applicable": true,
+        "uses_sandbox": true,
+        "contains_demo": true,
+        "source_counts": {
+          "DEMO": 1,
+          "SANDBOX": 3
+        },
+        "uses_indicative": false,
+        "omitted_reason_count": 0,
+        "real_booking_confirmed": false
+      }
+    },
+    "selection_diagnostics": [
+      {
+        "kind": "hotel",
+        "provider": "liteapi",
+        "scan_limit": 600,
+        "component_id": "new-stay-1",
+        "eligible_rows": 82,
+        "scan_truncated": false,
+        "rejected_reasons": [
+          "mandatory_fees_unknown"
+        ],
+        "source_rows_examined": 578,
+        "source_rows_received": 578,
+        "source_rows_not_examined": 0
+      },
+      {
+        "kind": "flight",
+        "provider": "duffel",
+        "scan_limit": 600,
+        "component_id": "leg-936fb3e0-84db-4a7e-bef2-8d5f3032b3c8",
+        "eligible_rows": 9,
+        "scan_truncated": false,
+        "rejected_reasons": [],
+        "source_rows_examined": 9,
+        "source_rows_received": 9,
+        "source_rows_not_examined": 0
+      },
+      {
+        "kind": "flight",
+        "provider": "duffel",
+        "scan_limit": 600,
+        "component_id": "leg-6a30b146-1048-4b9c-b6eb-5f7434c3201f",
+        "eligible_rows": 4,
+        "scan_truncated": false,
+        "rejected_reasons": [],
+        "source_rows_examined": 4,
+        "source_rows_received": 4,
+        "source_rows_not_examined": 0
+      }
+    ],
+    "ready_for_real_booking": false,
+    "conversational_response": {
+      "kinds": [
+        "party"
+      ],
+      "facts_source": "canonical_state_and_shown_plans"
+    },
+    "operation_normalizations": []
+  }
+}

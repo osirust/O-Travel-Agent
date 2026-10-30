@@ -1,0 +1,243 @@
+{
+  "format": "otravel.after80.oracle_preparation.v2",
+  "date": "2026-10-27",
+  "status": "PREPARED_PARTIAL_CONTENT_ORACLES_NOT_RUNTIME_PASS",
+  "source": {
+    "path": ".local/evaluation/zai-full100-20261026/dialogues.jsonl",
+    "sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "case_count": 80,
+    "user_turn_count": 697
+  },
+  "old_manifest_sha256": "266e78b7c21f8bda379a130b291417b78ab4cf021242103668358bdf14054340",
+  "new_manifest": {
+    "path": "fixtures/evaluation/after80-oracles-v2.json",
+    "sha256": "92adc28e0154b26f22049b72a604f9408dbc6c7a50debfb654ceb4967dcc36a1"
+  },
+  "selected_new_source_case_ids": [
+    "ZAI100-001",
+    "ZAI100-003",
+    "ZAI100-005",
+    "ZAI100-007",
+    "ZAI100-008",
+    "ZAI100-009",
+    "ZAI100-010",
+    "ZAI100-011",
+    "ZAI100-012",
+    "ZAI100-015",
+    "ZAI100-017",
+    "ZAI100-019",
+    "ZAI100-021",
+    "ZAI100-024"
+  ],
+  "selected_new_whole_dialogues": 14,
+  "selected_new_user_turns": 124,
+  "new_content_checks": 129,
+  "new_bound_turns": 119,
+  "old_content_checks_preserved": 65,
+  "old_partial_case_count_preserved": 6,
+  "combined_coverage": {
+    "cases": 80,
+    "turn_ids": 697,
+    "case_specific_cases": 20,
+    "case_specific_bound_turns": 172,
+    "case_specific_checks": 194,
+    "fully_bound_cases": 0
+  },
+  "fully_bound_dialogues": 0,
+  "pause_coverage": "UNBOUND_NO_SOURCE_EXERCISE",
+  "limitations": [
+    "Short bare answers require exact expected_pending; changed intake flow becomes NEEDS_ADAPTIVE, not guessed intent or an automatic semantic FAIL.",
+    "No pause/resume utterance, action or user_pause snapshot exists in original80. Pause coverage is UNBOUND_NO_SOURCE_EXERCISE; do not fabricate source turns.",
+    "Generic identity/status/metadata checks never count as content coverage or whole-dialogue PASS.",
+    "Only implemented grader kinds are executable. Relative date arithmetic, city-role mutation, adult/child category transition, exact new-adult/removed-child identity, preferences/constraints and response text remain explicitly unbound where noted.",
+    "LIVE/HYBRID responses, prices, source labels and quote/orderIDs are variable; no historical DEMO totals or supplier identities are asserted as current truth.",
+    "Existing no_domain_change compares full trip including version: used only for genuine no-op/hypothesis/invalid-input turns, never explicit pause/resume.",
+    "All cases remain partially bound;14selectedIDs is whole-dialogue selection coverage, not14passed tests or14fullyqualified conversations."
+  ],
+  "case_unbound_obligations": {
+    "ZAI100-001": {
+      "1": [
+        "Exact country/city consent and origin-only edit need role-aware partial-state predicates; do not force an unsupported city into a bookable stay.",
+        "early_morning preference preservation is not asserted by initial kind."
+      ],
+      "3": [
+        "Exact country/city consent and origin-only edit need role-aware partial-state predicates; do not force an unsupported city into a bookable stay."
+      ],
+      "5": [
+        "Exact country/city consent and origin-only edit need role-aware partial-state predicates; do not force an unsupported city into a bookable stay."
+      ],
+      "10": [
+        "lowest_total preference and substantive city/party answer need new content predicates."
+      ]
+    },
+    "ZAI100-003": {
+      "8": [
+        "Nightly-cap capability text and supported/unsupported filter semantics need separate assertions; whole-trip budget retention alone is bound."
+      ],
+      "9": [
+        "Compound explicit budget+date request lacks a partial independent budget-equality predicate in current grader."
+      ],
+      "3": [
+        "Original user never supplies room count in this whole dialogue; availability/checkout premises are not guaranteed in the new stricter flow."
+      ]
+    },
+    "ZAI100-005": {
+      "8": [
+        "Total3 does not prove two adults plus the same infant age0/ID; exact adult-addition identity predicate is still needed."
+      ],
+      "9": [
+        "Relative checkout+1 requires current actual before-date arithmetic and invariant check-in; no guessed absolute date is bound."
+      ]
+    },
+    "ZAI100-007": {
+      "6": [
+        "Relative checkout-2 needs a before-date delta predicate; current date_slot cannot safely encode a fixed transcript base."
+      ],
+      "7": [
+        "lowest_total and no repeated checkout shift need typed preference/date-delta predicates and substantive answer checking."
+      ],
+      "3": [
+        "No explicit room-count answer appears in this transcript; old search success is not a new-flow premise."
+      ]
+    },
+    "ZAI100-008": {
+      "7": [
+        "Total2 is only a cardinality invariant: exact removed child8 and stable adult IDs need a child-removal predicate."
+      ],
+      "8": [
+        "Party answer completeness is unbound; only-budget checks retain the actual preceding roster, not silently repair a failed removal."
+      ]
+    },
+    "ZAI100-009": {
+      "5": [
+        "Independent budget75000 inside the same room-setting turn needs a partial snapshot-money predicate."
+      ],
+      "8": [
+        "only_age proves identity and all unchanged facts, not the substantive roster answer."
+      ]
+    },
+    "ZAI100-010": {
+      "5": [
+        "Budget120000 plus room-setting needs independent money equality; do not use only_budget to forbid the requested room change."
+      ],
+      "7": [
+        "Total2 does not independently prove a new adult and original adult identity; exact adult-add predicate remains unbound."
+      ]
+    },
+    "ZAI100-011": {
+      "7": [
+        "Exact departure_time preference removal requires a dedicated supported preference predicate, not no_domain_change."
+      ],
+      "8": [
+        "Exact departure_time preference removal requires a dedicated supported preference predicate, not no_domain_change."
+      ],
+      "1": [
+        "early_morning is an explicit initial preference but initial kind does not assert preferences."
+      ],
+      "5": [
+        "Compound room+110000budget independent amount is unbound by current grader."
+      ]
+    },
+    "ZAI100-012": {
+      "5": [
+        "Compound room+150000budget amount requires a partial snapshot-money predicate."
+      ],
+      "7": [
+        "Total3 does not prove same sonID converted child17->adult18; category-transition/clarification semantics remain unbound."
+      ]
+    },
+    "ZAI100-015": {
+      "1": [
+        "A typo may create a proposed destination rather than a canonical stay; initial kind does not admit both safe candidate and confirmed state with correct origin role."
+      ],
+      "6": [
+        "Room+90000budget independent amount is unbound by current grader."
+      ],
+      "7": [
+        "Compound city confirmation plus checkout+1 requires fresh consent and actual before-date arithmetic; do not treat bare yes as global consent."
+      ]
+    },
+    "ZAI100-017": {
+      "6": [
+        "Room+80000budget amount is unbound by current grader."
+      ],
+      "8": [
+        "State retention is bound; human invalid-date clarification text is not. 31November must not become an inferred valid date."
+      ],
+      "2": [
+        "This is an old provider-timeout recovery; a successful new T1 may change pending flow. Its repeated explicit route facts still remain independently valid."
+      ]
+    },
+    "ZAI100-019": {
+      "5": [
+        "Compound room+110000budget amount is unbound by current grader."
+      ],
+      "8": [
+        "Budget95000 is bound; before->after explanation and exact textual decrease15000 are not asserted."
+      ]
+    },
+    "ZAI100-021": {
+      "6": [
+        "Destination-only replacement/explicit cross-country consent with stable stay identity and all other facts requires a dedicated predicate."
+      ],
+      "7": [
+        "Old schema-failure recovery may be redundant in new flow; destination-only setter semantics remain unbound."
+      ],
+      "8": [
+        "Lowest-cost preference and country/city answer need typed content predicates; no exact provider prices are assumed."
+      ],
+      "9": [
+        "Removing unrequested breakfast=false without forcing breakfast=true requires constraint-scope predicate."
+      ],
+      "3": [
+        "No room-count answer appears in this whole dialogue; an old DEMO plan is not a guaranteed HYBRID premise."
+      ]
+    },
+    "ZAI100-024": {
+      "7": [
+        "Relative checkout delta must use actual before value (-2 then+1), preserve check-in and prevent replay; existing date_slot only checks constants."
+      ],
+      "8": [
+        "Relative checkout delta must use actual before value (-2 then+1), preserve check-in and prevent replay; existing date_slot only checks constants."
+      ],
+      "5": [
+        "Compound room+75000budget amount is unbound by current grader."
+      ]
+    }
+  },
+  "offline_validation": {
+    "existing_grader_validate_manifest": "PASS",
+    "source_text_hashes": "PASS",
+    "unique_content_check_ids": "PASS",
+    "old_rules_unchanged": "PASS",
+    "old_85160ef_source_observation_diagnostic_only": {
+      "FAIL": 16,
+      "PASS": 113
+    },
+    "source_positive_and_counterfactual_negative_examples": {
+      "no_domain_change": 24,
+      "short_slot": 11,
+      "date_slot": 31,
+      "room_count": 11,
+      "only_budget": 9,
+      "budget_unchanged": 13,
+      "declared_total": 4,
+      "rooms_unchanged": 7,
+      "new_child": 1,
+      "only_age": 1,
+      "budget_delta": 1
+    },
+    "controlled_declared_facts_positive_and_counterfactual_negative_examples": {
+      "initial": 14
+    },
+    "NOTE": "These are offline comparator integrity checks and old-source diagnostics, not new LLM acceptance."
+  },
+  "execution": {
+    "new_model_calls": 0,
+    "external_API": 0,
+    "Native_changes": 0,
+    "PostgreSQL": 0,
+    "grader_or_application_source_changed": false,
+    "source_corpus_changed": false
+  }
+}

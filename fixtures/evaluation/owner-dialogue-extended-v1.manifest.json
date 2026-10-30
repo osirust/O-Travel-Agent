@@ -1,0 +1,29 @@
+{
+  "format": "otravel.owner_dialogue_extended_manifest.v1",
+  "revision": 1,
+  "input_count": 11,
+  "source_snapshot_sha256": "4e5efc4557d1f137f0618e40870273d0dcf520d1d1c9d9f1fdf5ea1e85c5ec6f",
+  "input_sha256": "98d090da188161f1d0ad1165c773afd8aac9f2ff15b5a174714ab5dd11cb08fd",
+  "files": [
+    {
+      "path": "fixtures/evaluation/owner-dialogue-extended-v1.json",
+      "bytes": 15464,
+      "sha256": "4c628fb7928dcd159c6a174adf4276586936544df17edbfd5d2f6c69c027dd22"
+    },
+    {
+      "path": "fixtures/evaluation/owner-dialogue-extended-v1.inputs.txt",
+      "bytes": 162,
+      "sha256": "4e5efc4557d1f137f0618e40870273d0dcf520d1d1c9d9f1fdf5ea1e85c5ec6f"
+    }
+  ],
+  "execution_status": "NOT_RUN",
+  "prior_owner3_result_applies": false,
+  "provenance_class": "development_regression",
+  "frozen_before_first_actual_replay": true,
+  "code_fixes_already_in_progress_when_frozen": true,
+  "holdout": false,
+  "provenance_revision": 2,
+  "previous_fixture_sha256": "25c88e1fedcfaaec4f70a892ddcdec9c358bd6862836dd978c56b917a0b87ffa",
+  "oracle_content_sha256": "9e7fb1805650235c938b344a38944bec7d2f7b14e2718d27c0f8bebba53712f8",
+  "provenance_amendment_only": true
+}

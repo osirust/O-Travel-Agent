@@ -1,0 +1,204 @@
+{
+  "permanent_id": "HARNESS-004-COUNTRY-COMPOUND-INTAKE-001",
+  "provenance": "SANITIZED_CAPTURED_ACTUAL_FAILURE_NOT_SYNTHETIC_PASS",
+  "source": {
+    "report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-073849-75554e48/report.json",
+    "sha256_at_capture": "693d8d6c27a4ffa91812c1905511f282e2827d463d93d4f65b98badc232d4278",
+    "case_id": "PF-GEO-01",
+    "step_id": "01"
+  },
+  "text": "Хочу в Сербию. Отправление из Москвы. Один взрослый, детей нет, общий бюджет 80000 рублей. Даты ещё не выбрал.",
+  "before_state": {
+    "legs": [],
+    "stays": [],
+    "budget": null,
+    "groups": [],
+    "origin": null,
+    "trip_id": "0be71898-4cba-41e8-b72c-bbe083fabb36",
+    "travelers": [],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 0
+  },
+  "raw_validated": {
+    "reply": "Хорошо, фиксирую départ из Москвы, 1 взрослый и общий бюджет 80 000 ₽. Даты уточним позже. Только уточните город в Сербии (например, Белград или Нови-Сад) — страна напрямую в систему не попадает.",
+    "control": {
+      "action": "none"
+    },
+    "unknowns": [
+      "Выберите город в Сербии из перечня или уточните желаемый город (Белград, Нови-Сад и т.д.)."
+    ],
+    "conflicts": [
+      "Серbia is a country, not a bookable city from the supported list (Москва, Стамбул, …). Need to pick a city (e.g. Белград/Нови-Сад) or explicit confirmation to treat Serbia as destination."
+    ],
+    "operations": [
+      {
+        "type": "set_origin",
+        "value": {
+          "city": "Москва"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_budget",
+        "value": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "raw_checked": {
+    "reply": "Хорошо, фиксирую départ из Москвы, 1 взрослый и общий бюджет 80 000 ₽. Даты уточним позже. Только уточните город в Сербии (например, Белград или Нови-Сад) — страна напрямую в систему не попадает.",
+    "control": {
+      "action": "none"
+    },
+    "unknowns": [
+      "Выберите город в Сербии из перечня или уточните желаемый город (Белград, Нови-Сад и т.д.)."
+    ],
+    "conflicts": [
+      "Серbia is a country, not a bookable city from the supported list (Москва, Стамбул, …). Need to pick a city (e.g. Белград/Нови-Сад) or explicit confirmation to treat Serbia as destination."
+    ],
+    "operations": [
+      {
+        "type": "set_origin",
+        "value": {
+          "city": "Москва"
+        },
+        "target_id": null
+      },
+      {
+        "type": "set_budget",
+        "value": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 8000000
+        },
+        "target_id": null
+      },
+      {
+        "type": "add_traveler",
+        "value": {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": null,
+          "birth_date": null
+        },
+        "target_id": null
+      }
+    ],
+    "speech_act": "CHANGE",
+    "information_subject": null
+  },
+  "observed_failure": {
+    "after_state": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": null,
+      "trip_id": "0be71898-4cba-41e8-b72c-bbe083fabb36",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "route_policy": {
+        "kind": "round_trip",
+        "end_city": null
+      },
+      "search_policy": {
+        "mode": "HYBRID",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "duffel",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "pending_question": {
+      "text": "Что нужно уточнить о поездке, чтобы продолжить?",
+      "field": null,
+      "reason": "clarification",
+      "context": {
+        "children_count": 0,
+        "children_known": true,
+        "force_clarification": true
+      },
+      "questions": [
+        "Что нужно уточнить о поездке, чтобы продолжить?"
+      ],
+      "target_id": null,
+      "question_id": "58d2706e-6e47-417a-af45-78d6e20ed45c-question",
+      "state_version": 0
+    },
+    "reply": "Что нужно уточнить о поездке, чтобы продолжить?",
+    "checks": [
+      {
+        "check": {
+          "op": "eq",
+          "path": "/trip/origin",
+          "value": "Москва"
+        },
+        "status": "FAIL"
+      },
+      {
+        "check": {
+          "op": "party",
+          "adults": 1,
+          "ages": []
+        },
+        "status": "FAIL"
+      },
+      {
+        "check": {
+          "op": "eq",
+          "path": "/trip/budget/amount_minor",
+          "value": 8000000
+        },
+        "status": "FAIL"
+      },
+      {
+        "check": {
+          "op": "eq",
+          "path": "/pending_question/context/requested_destination/country_code",
+          "value": "RS"
+        },
+        "status": "FAIL"
+      },
+      {
+        "check": {
+          "op": "run_status",
+          "value": "completed"
+        },
+        "status": "PASS"
+      }
+    ]
+  },
+  "scope": "Country-not-city is a missing city clarification; independent unambiguous origin/adult/budget facts were lost. No supplier or booking calls are replayed."
+}

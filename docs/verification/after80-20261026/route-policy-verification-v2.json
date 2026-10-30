@@ -1,0 +1,34 @@
+{
+  "scope": "typed/pure topology+clear preference+explicit nationality; no actual NLU/API",
+  "source_baseline": "e71875b",
+  "related_tests_passed": 424,
+  "new_route_policy_cases": 68,
+  "new_external_HTTP": 0,
+  "new_LLM_calls": 0,
+  "schema_utf8_bytes": {
+    "legacy_empty": 5573,
+    "full_empty": 6289,
+    "legacy_sample": 6712,
+    "full_sample": 7429
+  },
+  "schema_performance_contract": "legacy-only strict25% vs immutable a93; new2ops growth<=800 bytes engineering limit (actual716/717), no claim full schema25% reduction",
+  "files": {
+    "otravel/domain.py": "d83fe43c0a6d3b8e16dd589b084043b95d8fde55d03d6838ed6ebe8991b9df1e",
+    "otravel/clarifications.py": "fc654ab95c2a7d52511147e4e77c9d7b68752675b62b8dec137db600a91d92cd",
+    "otravel/llm_contract.py": "911f940fe457a644bb64020a8cba69909eba9e34b1e2ebf5cf730765eff101a2",
+    "otravel/inventory.py": "441226be7f5105c9fb432678cc9c8aab3234684569312edefc31e01e91504f74",
+    "otravel/planning.py": "04001c2e90d5753b95d56d429e13e0ea5702b93451682213a8bf5ddda93a1e91",
+    "tests/test_route_policy.py": "a6bf217b6c3a1e831a517d67c250ca1789ac9956c4cdbe0f1abd244d3fcf6bd6",
+    "tests/test_llm_contract.py": "411fc33469cd63dc0fa118c7788b7014196b19175f02d146c5f3a8655db36283"
+  },
+  "initial_failures": "E:\\work\\aegml\\.local\\evaluation\\after80-20261026\\route-policy-initial-failures.json",
+  "final_junit": "E:\\work\\aegml\\.local\\evaluation\\after80-20261026\\route-policy-pure-final-v2.xml",
+  "open": [
+    "actual model extraction/replay",
+    "real nonstop validation",
+    "transport-only connections",
+    "independent first-flight dates/overnight schedule"
+  ],
+  "additional_guard": "Citizenship slot does not infer nationality from В Сербию хочу/To Russia or swallow RU+сними завтрак.",
+  "caller_integration": "Root owns OPERATION_GUIDE/conflicts/human ASK mapping; domain unknown preference code=unknown_preference, no silent success."
+}

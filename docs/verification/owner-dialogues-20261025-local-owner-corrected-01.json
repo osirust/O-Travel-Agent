@@ -1,0 +1,1653 @@
+{
+  "mode": "ACTUAL_HTTP_HARNESS_EVALUATION",
+  "fixture": "fixtures/evaluation/frozen-owner-dialogues.json",
+  "fixture_sha256": "5b78429fdb2c4bdc806ac34bc508d6b74e3ddf09a0737b261f66e3652f54037d",
+  "oracle_sha256": "b853f61906c4fafcf55fdaafb7f7fd546c87cd9d0e70bf759e43af0b2fd4d00b",
+  "selected_case_ids": [
+    "OWNER-DIALOGUE-01",
+    "OWNER-DIALOGUE-02",
+    "OWNER-DIALOGUE-03"
+  ],
+  "turns": 8,
+  "attempt_cap": 12,
+  "base_url": "http://localhost:8083",
+  "report": "docs/verification/owner-dialogues-20261025-local-owner-corrected-01.json",
+  "oracle_functions": [
+    "_assert_question",
+    "_assert_trip",
+    "_pointer",
+    "_requested_country"
+  ],
+  "stub_execution": false,
+  "status": "PASS_HARNESS_DIALOGUES",
+  "started_at": "2026-10-25T17:35:23.172928+00:00",
+  "cases": [
+    {
+      "id": "OWNER-DIALOGUE-01",
+      "title": "Сербия, другой город и исправление географического факта",
+      "status": "PASS",
+      "turns": [
+        {
+          "index": 1,
+          "text": "в сербию может быть поехать?",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "session_status",
+              "passed": true
+            },
+            {
+              "name": "waiting_reason",
+              "passed": true
+            },
+            {
+              "name": "pending_country",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "actual_model_metadata",
+              "passed": true
+            },
+            {
+              "name": "llm_has_actual_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "llm",
+          "evaluation_path": "llm_extraction_with_server_guards",
+          "actual_model_attempts": 1,
+          "actual_model_metadata": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 19369
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 19369
+          },
+          "elapsed_seconds": 30.576,
+          "assistant_text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+          "state_before": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "NEW",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+              ],
+              "target_id": null,
+              "question_id": "run-3-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-01-turn-01.json"
+          ]
+        },
+        {
+          "index": 2,
+          "text": "стамбул?",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "session_status",
+              "passed": true
+            },
+            {
+              "name": "waiting_reason",
+              "passed": true
+            },
+            {
+              "name": "pending_country",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "frozen_known_geography",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "slot_has_no_model_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "contextual_slot",
+          "evaluation_path": "contextual_slot",
+          "actual_model_attempts": 0,
+          "actual_model_metadata": null,
+          "elapsed_seconds": 12.203,
+          "assistant_text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+          "state_before": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+              ],
+              "target_id": null,
+              "question_id": "run-3-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "proposed_destination": {
+                  "kind": "city",
+                  "name": "Стамбул",
+                  "country_code": "TR"
+                },
+                "confirmation_required": true,
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?"
+              ],
+              "target_id": null,
+              "question_id": "run-12-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-01-turn-02.json"
+          ]
+        },
+        {
+          "index": 3,
+          "text": "стамбул это же турция",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "frozen_known_geography",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "slot_has_no_model_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "contextual_slot",
+          "evaluation_path": "contextual_slot",
+          "actual_model_attempts": 0,
+          "actual_model_metadata": null,
+          "elapsed_seconds": 12.267,
+          "assistant_text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+          "state_before": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "proposed_destination": {
+                  "kind": "city",
+                  "name": "Стамбул",
+                  "country_code": "TR"
+                },
+                "confirmation_required": true,
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?"
+              ],
+              "target_id": null,
+              "question_id": "run-12-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-1",
+            "trip_id": "trip-2",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "proposed_destination": {
+                  "kind": "city",
+                  "name": "Стамбул",
+                  "country_code": "TR"
+                },
+                "confirmation_required": true,
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Город «Стамбул» находится в стране «Турция». Ранее обсуждали страну «Сербия». Меняем страну назначения на «Турция» и выбираем этот город?"
+              ],
+              "target_id": null,
+              "question_id": "run-19-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-2",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-01-turn-03.json"
+          ]
+        }
+      ],
+      "session_alias": "session-1"
+    },
+    {
+      "id": "OWNER-DIALOGUE-02",
+      "title": "Опечатка в известном сербском городе без выдуманного покрытия поиска",
+      "status": "PASS",
+      "turns": [
+        {
+          "index": 1,
+          "text": "в сербию хочу",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "pending_country",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "actual_model_metadata",
+              "passed": true
+            },
+            {
+              "name": "llm_has_actual_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "llm",
+          "evaluation_path": "llm_extraction_with_server_guards",
+          "actual_model_attempts": 1,
+          "actual_model_metadata": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 602
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 602
+          },
+          "elapsed_seconds": 12.25,
+          "assistant_text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+          "state_before": {
+            "session_id": "session-26",
+            "trip_id": "trip-27",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "NEW",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-27",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-26",
+            "trip_id": "trip-27",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+              ],
+              "target_id": null,
+              "question_id": "run-28-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-27",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-02-turn-01.json"
+          ]
+        },
+        {
+          "index": 2,
+          "text": "белгрод",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "frozen_known_geography",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "slot_has_no_model_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "contextual_slot",
+          "evaluation_path": "contextual_slot",
+          "actual_model_attempts": 0,
+          "actual_model_metadata": null,
+          "elapsed_seconds": 12.188,
+          "assistant_text": "Вы имеете в виду город «Белград»?",
+          "state_before": {
+            "session_id": "session-26",
+            "trip_id": "trip-27",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+              ],
+              "target_id": null,
+              "question_id": "run-28-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-27",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-26",
+            "trip_id": "trip-27",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Вы имеете в виду город «Белград»?",
+              "field": "destination.city",
+              "reason": "clarification",
+              "context": {
+                "proposed_destination": {
+                  "kind": "city",
+                  "name": "Белград",
+                  "country_code": "RS"
+                },
+                "confirmation_required": true,
+                "requested_destination": {
+                  "kind": "country",
+                  "name": "Сербия",
+                  "country_code": "RS",
+                  "suggested_cities": [
+                    {
+                      "name": "Белград",
+                      "available": false,
+                      "country_code": "RS"
+                    },
+                    {
+                      "name": "Нови-Сад",
+                      "available": false,
+                      "country_code": "RS"
+                    }
+                  ]
+                }
+              },
+              "questions": [
+                "Вы имеете в виду город «Белград»?"
+              ],
+              "target_id": null,
+              "question_id": "run-37-question",
+              "state_version": 0,
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-27",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-02-turn-02.json"
+          ]
+        }
+      ],
+      "session_alias": "session-26"
+    },
+    {
+      "id": "OWNER-DIALOGUE-03",
+      "title": "Короткий ответ взрослого и число без зацикливания вопроса",
+      "status": "PASS",
+      "turns": [
+        {
+          "index": 1,
+          "text": "из Москвы",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "actual_model_metadata",
+              "passed": true
+            },
+            {
+              "name": "llm_has_actual_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "llm",
+          "evaluation_path": "llm_extraction_with_server_guards",
+          "actual_model_attempts": 1,
+          "actual_model_metadata": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 661
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 661
+          },
+          "elapsed_seconds": 12.29,
+          "assistant_text": "Сколько взрослых поедет в поездку?",
+          "state_before": {
+            "session_id": "session-44",
+            "trip_id": "trip-45",
+            "state_version": 0,
+            "trip_version": 0,
+            "status": "NEW",
+            "waiting_reason": null,
+            "pending_question": null,
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": null,
+              "trip_id": "trip-45",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 0
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-44",
+            "trip_id": "trip-45",
+            "state_version": 1,
+            "trip_version": 1,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Сколько взрослых поедет в поездку?",
+              "field": "party.adults",
+              "reason": "clarification",
+              "context": {},
+              "questions": [
+                "Сколько взрослых поедет в поездку?"
+              ],
+              "target_id": null,
+              "question_id": "run-46-question",
+              "state_version": 1
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-45",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 1
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-03-turn-01.json"
+          ]
+        },
+        {
+          "index": 2,
+          "text": "я взрослый",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "adult_count",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "slot_has_no_model_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "contextual_slot",
+          "evaluation_path": "contextual_slot",
+          "actual_model_attempts": 0,
+          "actual_model_metadata": null,
+          "elapsed_seconds": 12.243,
+          "assistant_text": "Поедут ли с вами дети? Если да, сколько их будет?",
+          "state_before": {
+            "session_id": "session-44",
+            "trip_id": "trip-45",
+            "state_version": 1,
+            "trip_version": 1,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Сколько взрослых поедет в поездку?",
+              "field": "party.adults",
+              "reason": "clarification",
+              "context": {},
+              "questions": [
+                "Сколько взрослых поедет в поездку?"
+              ],
+              "target_id": null,
+              "question_id": "run-46-question",
+              "state_version": 1
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-45",
+              "travelers": [],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 1
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-44",
+            "trip_id": "trip-45",
+            "state_version": 2,
+            "trip_version": 2,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Поедут ли с вами дети? Если да, сколько их будет?",
+              "field": "party.children",
+              "reason": "clarification",
+              "context": {
+                "children_known": false
+              },
+              "questions": [
+                "Поедут ли с вами дети? Если да, сколько их будет?"
+              ],
+              "target_id": null,
+              "question_id": "run-55-question",
+              "state_version": 2
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-45",
+              "travelers": [
+                {
+                  "id": "traveler-adult-1",
+                  "age": null,
+                  "type": "adult",
+                  "group_id": null,
+                  "birth_date": null
+                }
+              ],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 2
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-03-turn-02.json"
+          ]
+        },
+        {
+          "index": 3,
+          "text": "1",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "completed_actual_run",
+              "passed": true
+            },
+            {
+              "name": "forbidden_error_codes",
+              "passed": true
+            },
+            {
+              "name": "frozen_trip_assertions",
+              "passed": true
+            },
+            {
+              "name": "adult_count",
+              "passed": true
+            },
+            {
+              "name": "one_durable_assistant_reply",
+              "passed": true
+            },
+            {
+              "name": "frozen_human_question",
+              "passed": true
+            },
+            {
+              "name": "no_internal_ids_in_chat",
+              "passed": true
+            },
+            {
+              "name": "no_order_created",
+              "passed": true
+            },
+            {
+              "name": "no_supplier_tool_calls",
+              "passed": true
+            },
+            {
+              "name": "no_stub_model_provider",
+              "passed": true
+            },
+            {
+              "name": "slot_has_no_model_attempt",
+              "passed": true
+            }
+          ],
+          "response_source": "contextual_slot",
+          "evaluation_path": "contextual_slot",
+          "actual_model_attempts": 0,
+          "actual_model_metadata": null,
+          "elapsed_seconds": 12.25,
+          "assistant_text": "Сколько лет будет ребёнку на дату поездки?",
+          "state_before": {
+            "session_id": "session-44",
+            "trip_id": "trip-45",
+            "state_version": 2,
+            "trip_version": 2,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Поедут ли с вами дети? Если да, сколько их будет?",
+              "field": "party.children",
+              "reason": "clarification",
+              "context": {
+                "children_known": false
+              },
+              "questions": [
+                "Поедут ли с вами дети? Если да, сколько их будет?"
+              ],
+              "target_id": null,
+              "question_id": "run-55-question",
+              "state_version": 2
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-45",
+              "travelers": [
+                {
+                  "id": "traveler-adult-1",
+                  "age": null,
+                  "type": "adult",
+                  "group_id": null,
+                  "birth_date": null
+                }
+              ],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 2
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "state_after": {
+            "session_id": "session-44",
+            "trip_id": "trip-45",
+            "state_version": 3,
+            "trip_version": 3,
+            "status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_question": {
+              "text": "Сколько лет будет ребёнку на дату поездки?",
+              "field": "traveler.age",
+              "reason": "clarification",
+              "context": {
+                "children_count": 1,
+                "children_known": true
+              },
+              "questions": [
+                "Сколько лет будет ребёнку на дату поездки?"
+              ],
+              "target_id": "traveler-child-1",
+              "question_id": "run-62-question",
+              "state_version": 3
+            },
+            "trip": {
+              "legs": [],
+              "stays": [],
+              "budget": null,
+              "groups": [],
+              "origin": "Москва",
+              "trip_id": "trip-45",
+              "travelers": [
+                {
+                  "id": "traveler-adult-1",
+                  "age": null,
+                  "type": "adult",
+                  "group_id": null,
+                  "birth_date": null
+                },
+                {
+                  "id": "traveler-child-1",
+                  "age": null,
+                  "type": "child",
+                  "group_id": null,
+                  "birth_date": null
+                }
+              ],
+              "constraints": [],
+              "preferences": [],
+              "search_policy": {
+                "mode": "DEMO",
+                "demo_fallback": true,
+                "hotel_provider": "liteapi",
+                "flight_provider": "serpapi",
+                "guest_nationality": null
+              },
+              "state_version": 3
+            },
+            "available_actions": [
+              "commands",
+              "demo",
+              "search",
+              "control",
+              "checkout/preview"
+            ]
+          },
+          "evidence_paths": [
+            "docs/verification/owner-dialogues-20261025-local-owner-corrected-01/OWNER-DIALOGUE-03-turn-03.json"
+          ]
+        }
+      ],
+      "session_alias": "session-44"
+    }
+  ],
+  "scope": "Three owner dialogues, not the original106 corpus or raw-model NLU. Server guards may override LLM output; contextual slots are counted separately.",
+  "model_calls_authorization": "Explicit --confirm-inference, backend owns credentials and durable budgets",
+  "runtime_provider_metadata": {
+    "llm_provider": "ollama",
+    "model": "qwen3.5:4b"
+  },
+  "conservative_attempt_reservation_per_turn": 1,
+  "actual_model_attempts": 3,
+  "finished_at": "2026-10-25T17:38:36.974670+00:00",
+  "response_path_counts": {
+    "contextual_slot": 5,
+    "llm_extraction_with_server_guards": 3,
+    "unknown": 0
+  }
+}

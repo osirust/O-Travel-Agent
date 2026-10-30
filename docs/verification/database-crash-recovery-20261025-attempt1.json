@@ -1,0 +1,40 @@
+{
+  "checked_at_utc": "2026-10-25T14:52:06.761450+00:00",
+  "project": "otravel-recoverycheck-20261025",
+  "scope": "new_temporary_internal_compose_project",
+  "status": "FAIL",
+  "checks": [],
+  "external_api_calls": 0,
+  "llm_calls": 0,
+  "main_project_mutations": 0,
+  "existing_volumes_deleted": false,
+  "session_tokens_recorded": false,
+  "secrets_recorded": false,
+  "stage": "starting_temporary_project",
+  "local_http_requests": 180,
+  "main_container_ids": {
+    "app": "d55ef21b344dbd66f330d12443ad9ff122ad20333c590256e961cd6c1c245e0f",
+    "db": "1819611d2a68dbfeba2c922823376bda2fab170273893015d18b194922a42eef"
+  },
+  "immutable_image_ids": {
+    "app": "sha256:529248a8511db9ea99adfb8cd23b49583ac0a20be494b9b55f3a5bce67dc0d22",
+    "db": "sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe"
+  },
+  "error": "temporary_backend_health_timeout",
+  "cleanup": {
+    "complete": true,
+    "removed_owned_resources": [
+      "app",
+      "db",
+      "volume",
+      "network"
+    ],
+    "main_database_same_running_container": true
+  },
+  "limitations": [
+    "Одна контролируемая точка SIGKILL после committed order/pause, не полный fault matrix",
+    "Нет проверки Windows reboot, основной БД или frontend",
+    "Локальный HTTP проверен из собственной WSL",
+    "Только DEMO; поставщики и LLM недоступны в internal network"
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "checked_at_utc": "2026-10-25T13:58:19.623791+00:00",
+  "mode": "ASGI in-process + real PostgreSQL otravel_test + StubLLM/NoTravelHTTP",
+  "actual_model_calls": 0,
+  "external_vendor_http_calls": 0,
+  "runtime_database_used": false,
+  "test_database": "otravel_test",
+  "initial_report_preserved": {
+    "path": "docs/verification/corpus-evaluation-20261025.json",
+    "sha256": "c9fe1a1d2e1601bdcba12a654628a13575ea50bc28a10bd06fba6f83fd6dea19"
+  },
+  "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+  "junit_path": "docs/verification/corpus-harness-20261025.xml",
+  "junit_sha256": "1dad32f774b493c2d6028d337cab6d946fef3dcd0c63765f7c38b4b46a1b6cbf",
+  "test_source_sha256": "d36f768b5dce8594ff53f2b7a04d8a6da1bf1214bd8d3d8c4231e4259282163f",
+  "execution_counts": {
+    "ASSERTIONS_PASS": 10,
+    "ASSERTIONS_FAIL": 0,
+    "BLOCKED": 4
+  },
+  "full_original_corpus_nlu_passes": 0,
+  "code_fingerprint_observed_after_run": {
+    "otravel/api.py": "921e757b832a679965529b71cfc3c8b4aab2539c120a6e9d7767ebad9be71b7d",
+    "otravel/harness.py": "efbd1e0655c4a402ca687fa4473b6212bd8e5a27964c22d8fd545d66bd104013",
+    "otravel/store.py": "d74e213de694379cb58c894213dd26f61a2f2b8cf0ba7aab6d9eb4647996b29c",
+    "otravel/planning.py": "0359ed88cf0672d85a309f905657d935a64bf83eb334d58d4e6e392ddc1a827b"
+  },
+  "cases": [
+    {
+      "case_id": "STATE-01",
+      "test": "tests/test_corpus_harness.py::test_corpus_STATE_01_history_restore_then_new_refund",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.605,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "BOOK-01",
+      "test": "tests/test_corpus_harness.py::test_corpus_BOOK_01_text_is_not_quote_or_consent",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.262,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "BOOK-02",
+      "test": "tests/test_corpus_harness.py::test_corpus_BOOK_02_concurrent_same_operation",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.205,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "BOOK-04",
+      "test": "tests/test_corpus_harness.py::test_corpus_BOOK_04_response_lost_after_committed_order",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.212,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "BOOK-08",
+      "test": "tests/test_corpus_harness.py::test_corpus_BOOK_08_write_failure_rolls_back_success",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.217,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "SOURCE-07",
+      "test": "tests/test_corpus_harness.py::test_corpus_SOURCE_07_confirmation_is_explicitly_demo",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.188,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "SYSTEM-06",
+      "test": "tests/test_corpus_harness.py::test_corpus_SYSTEM_06_other_session_is_not_revealed",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.209,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "SYSTEM-07",
+      "test": "tests/test_corpus_harness.py::test_corpus_SYSTEM_07_attempt_budget_stops_without_mutation",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.149,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "SYSTEM-08",
+      "test": "tests/test_corpus_harness.py::test_corpus_SYSTEM_08_client_reload_retains_state_and_one_order",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.278,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    },
+    {
+      "case_id": "SYSTEM-10",
+      "test": "tests/test_corpus_harness.py::test_corpus_SYSTEM_10_concurrent_order_lists_are_isolated",
+      "execution_status": "ASSERTIONS_PASS",
+      "duration_seconds": 0.264,
+      "source_sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "full_nlu_evaluated": false,
+      "scope": "controlled intent/typed ASGI handlers + real PostgreSQL otravel_test",
+      "finding_id": null
+    }
+  ],
+  "remaining_harness_cases": [
+    {
+      "case_id": "MONEY-07",
+      "gap_id": "C106-MONEY-07",
+      "status": "BLOCKED_SOURCE_PRICE_FAULT",
+      "missing": "Нужен авторитетный source snapshot/reprice hook: сохранённая цена82000→91000, доказательство новой цены и отклонение старого согласия при unchanged TripState. Изменение только бюджета не является этим сценарием."
+    },
+    {
+      "case_id": "BOOK-03",
+      "gap_id": "C106-BOOK-03",
+      "status": "BLOCKED_SOURCE_PRICE_FAULT",
+      "missing": "Нужна контролируемая смена именно источникового тарифа+15% между search/preview/confirm с актуализацией snapshot и повторным consent. Подмена поля total в готовой корзине могла бы обойти source validation и не является достоверной инъекцией."
+    },
+    {
+      "case_id": "STATE-09",
+      "gap_id": "C106-STATE-09",
+      "status": "BLOCKED_PARTIAL_HISTORY_FIXTURE",
+      "missing": "Нужно определить прошлый hotel offer/current transport, выбрать историческое подмножество и проверить совместимость при сохранении реально изменённого транспорта. Последовательный full undo не доказывает selective restore; нужны явные IDs/версии/транспортное изменение."
+    },
+    {
+      "case_id": "UX-08",
+      "gap_id": "C106-UX-08",
+      "status": "BLOCKED_SOURCE_AVAILABILITY_FAULT",
+      "missing": "Нужен контролируемый source unavailable-after-selection на сохранённый offer, проверка отсутствия ложного успеха и предложение нового варианта с новым consent. unknown_hotel/пустой каталог до выбора не воспроизводят эту гонку."
+    }
+  ],
+  "limitations": [
+    "Stub/extracted operations bypass original-language understanding",
+    "No real supplier, real price or live inventory qualification",
+    "Lifespan recreation is not a Docker/Windows/browser restart",
+    "Source CASE STATE-01 uses explicit typed single-edit undo sequence, not an evaluated interpretation of first idea"
+  ]
+}

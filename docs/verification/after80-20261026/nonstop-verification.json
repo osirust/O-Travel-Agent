@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-26",
+  "scope": "F002/022 typed nonstop support; controlled provider responses, no actual supplier or model HTTP",
+  "status": "PURE_AND_MOCK_HTTP_PASS_ACTUAL_NLU_AND_SUPPLIER_QUALIFICATION_OPEN",
+  "initial": {"new_tests_failed": 8, "related_passed": 268, "related_failed": 4,
+    "preserved_junit": ".local/evaluation/after80-20261026/nonstop-related-initial.xml",
+    "failures": ["native schema and DEMO did not support nonstop", "Duffel filter absent", "new schema feature exceeded old full-scope byte expectation", "two old nationality tests expected obsolete automatic DEMO rather than human preflight"]},
+  "final": {"passed": 466, "failed": 0, "skipped": 0, "new_nonstop_cases": 29,
+    "junit": ".local/evaluation/after80-20261026/nonstop-related-final.xml",
+    "junit_sha256": "8abf47802da73bd3dd17b423791b570479fd086b64c9704fc2d9ac5fcb740a7f",
+    "ruff_new_file": "PASS", "real_model_http": 0, "real_supplier_http": 0, "runtime_changes": 0, "database_calls": 0},
+  "contract": {
+    "canonical": "Constraint key=nonstop, strict bool, trip-wide flights only; stay_id and room_id forbidden. True requires no connections or technical stops; false allows connections rather than requiring them; clear_constraint preferred to remove requirement.",
+    "duffel_filter": "True passes request.nonstop and wire max_connections=0. This request filter is never response evidence.",
+    "response_proof": "All actual response slices must match requested slice count, endpoint IATA/city codes, first departure date and connected segment chain. True requires one segment and explicit stops=[] for every slice; connecting/technical-stop facts false; incomplete or mismatched facts unknown.",
+    "refresh": "Duffel GET offer refresh recomputes evidence from new response and cannot retain an old true after connections appear.",
+    "demo": "Finite synthetic single-leg flight facts are nonstop=true, segment_count=1, stops_count=0, source synthetic_demo_catalogue; source stays DEMO and real booking false.",
+    "planning": "Hard true checked only for flight components. Unknown/false/nonbool facts block quote; marked DEMO fallback remains permitted by existing policy. SerpApi has no inferred proof.",
+    "nationality_oracles": "Only two pre-existing expectations updated to root-authorized new contract: missing nationality stops all gateway calls, no inferred RU, human question before search. Initial failures retained."
+  },
+  "schema_bytes": {"frozen_a93_unchanged": true, "legacy_projection": {"empty": 5573, "sample": 6712, "strict_25_percent": true},
+    "prior_group_room_scope": {"empty": 7125, "sample": 8281}, "full_with_nonstop": {"empty": 7332, "sample": 8488},
+    "nonstop_added_bytes": 207, "engineering_added_bytes_cap": 250, "full_schema_25_percent_claim": false},
+  "official_sources": ["https://duffel.com/docs/api/v2/offer-requests", "https://duffel.com/docs/api/v2/offers"],
+  "source_interpretation": "Duffel documents max_connections=0 as one segment within each slice. Because segment stops may exist, code uses the stricter explicit stops proof for canonical nonstop.",
+  "limitations": ["No actual Duffel request was made; current response shape and provider availability still require bounded central verification.",
+    "No actual NLU replay of original dialogue022; schema/controlled payload support does not qualify extraction quality.",
+    "LLMGateway, native secrets, runtime and money implementation were not changed by this task.",
+    "No supplier orders, cancellation or payment endpoints were used; no commit or staging performed."]
+}

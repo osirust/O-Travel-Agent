@@ -1,0 +1,137 @@
+{
+  "format": "otravel.native_integrated_release_geo_date_actual.v1",
+  "checked_at_utc": "2026-10-28T13:18:20.767255+00:00",
+  "status": "NOT_ALL_PASS_ACTUAL_FAILURES_RETAINED",
+  "release_commit": "ae7d2b45f654be0dfd9bc5b0660db0c3d23198d3",
+  "package_sha256": "28acfd1b40434ba7be14443e0aeaae462a8819dec35778fdd171e0f33b64bbbb",
+  "source": "/home/aegml/projects/otravel-integrated-release-20261028",
+  "scope": "DECLARED_TYPED_START_OWN_PG_ACTUAL_MODEL_AND_SOURCES_NOT_FRESH_EMPTY_TRIP",
+  "declared_initial_setup": "Captured canonical trips; own Store-owned Serbia pending fixture, no production bootstrap or SQL mutation.",
+  "actual_http": {
+    "model": 4,
+    "model_http_statuses": [
+      200,
+      200,
+      200,
+      200
+    ],
+    "source": 1,
+    "source_http_statuses": [
+      200
+    ],
+    "source_geocoding_query": {
+      "name": "санкт-петербург",
+      "countryCode": null,
+      "language": "ru"
+    },
+    "local": 0,
+    "paid_fallback": false,
+    "real_booking_or_payment": 0
+  },
+  "checks": [
+    {
+      "id": "geo_actual_completed",
+      "status": "PASS"
+    },
+    {
+      "id": "geo_current_RU_reached_source",
+      "status": "FAIL"
+    },
+    {
+      "id": "geo_source_candidates_only_RU",
+      "status": "FAIL"
+    },
+    {
+      "id": "geo_no_automatic_candidate_admission",
+      "status": "PASS"
+    },
+    {
+      "id": "geo_unrelated_party_origin_kept",
+      "status": "PASS"
+    },
+    {
+      "id": "calendar_invalid_request_completed",
+      "status": "FAIL"
+    },
+    {
+      "id": "calendar_impossible_literal_keeps_trip",
+      "status": "PASS"
+    },
+    {
+      "id": "calendar_pending_has_exact_stay_target",
+      "status": "FAIL"
+    },
+    {
+      "id": "calendar_full_correction_completed",
+      "status": "FAIL"
+    },
+    {
+      "id": "calendar_only_checkout_return_and_revision_changed",
+      "status": "FAIL"
+    },
+    {
+      "id": "calendar_owned_correction_needs_no_model_http",
+      "status": "FAIL"
+    },
+    {
+      "id": "canaries_no_orders_created",
+      "status": "PASS"
+    },
+    {
+      "id": "actual_http_limits_respected",
+      "status": "PASS"
+    }
+  ],
+  "findings": [
+    {
+      "id": "HARNESS-004-N80-EXPLICIT-CITY-COUNTRY-CONTEXT-013-001",
+      "status": "ACTUAL_RETEST_FAIL_COORDINATOR_AUTHORITY_GAP_OPEN",
+      "facts": [
+        "Actual ZaiGLM4.5 response completed, actual OpenMeteo search returned200, but request countryCode wasnull and candidates includedRU/MS.",
+        "The helper repair proves a current literal RU hint reaches the controlled coordinator. Actual coordinator uses only a verified country_ref as filter and intentionally ignores the hint; the earlier controlled check did not cover this final layer."
+      ],
+      "cause_location": "otravel/place_resolution.py: city branch immediately before directory.search_city",
+      "next_action": "Bridge the proven current literal country into the existing verified owned country_ref flow; do not trust arbitrary model country hints or auto-select a city candidate."
+    },
+    {
+      "id": "HARNESS-004-N80-INVALID-DATE-FOLLOWUP-TARGET-017-001",
+      "status": "ACTUAL_RETEST_BLOCKED_EARLIER_BY_MODEL_SCHEMA_FAILURE",
+      "facts": [
+        "31Nov model output twice used unknown set_stay/set_leg operations; both attempts were safely rejected by the operation schema before the date helper, trip unchanged and pending absent.",
+        "Subsequent full correction needed another model call because no bound pending existed. It failed domain validation invalid_age; the next attempt was denied by this canary own four-call cap.",
+        "The four-call cap is local test admission, not a claim that the shared Zai account free quota is exhausted."
+      ],
+      "next_action": "Consider a deterministic current impossible-calendar clarification before model/schema extraction; retain strict operation-name validation and existing stale/foreign target guards."
+    }
+  ],
+  "observed_runs": [
+    {
+      "input": "Тогда Сербию отменяем, выбираю Санкт-Петербург в России. Москву оставь городом отправления.",
+      "status": "completed",
+      "error_code": null,
+      "state_changed": true
+    },
+    {
+      "input": "Перенеси только выезд на 31 ноября 2026 года.",
+      "status": "failed",
+      "error_code": "INVALID_LLM_OPERATION",
+      "state_changed": false
+    },
+    {
+      "input": "Извени, имел в виду первое декабря 2026. Это окончательный выезд; заезд не меняем.",
+      "status": "failed",
+      "error_code": "MODEL_BUDGET_EXHAUSTED",
+      "state_changed": false
+    }
+  ],
+  "production_database_modified": false,
+  "own_resources_removed": true,
+  "immutable_release_source_unchanged": true,
+  "private_evidence_sha256": "8937e8670b08e7533f1c8730d2d443068f6eb48413880ff135b6f8f3d70f73bf",
+  "limitations": [
+    "This is not a successful full-dialogue or source106 acceptance run.",
+    "Typed starting fixtures are declared and do not qualify fresh initial intake.",
+    "Model structured-contract capture is present in run errors for calendar schema rejection; geo raw model operations were not separately retained as events in this driver.",
+    "Healthy production startup proof remains separate: no runtime process/code was changed by these failed own-DB canaries."
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "started_at_utc": "2026-10-28T16:54:34.183009+00:00",
+  "finished_at_utc": "2026-10-28T17:05:40.372569+00:00",
+  "duration_seconds": 666.192,
+  "source_tests_unchanged": true,
+  "source_package_sha256": "ffe586e9dfd79b2f82a1cdbc47fcc6477e6edb208189e815ad2c261a66a59c80",
+  "test_sha256": "8a42bb5ec803f84697e99898661056d75a17638138dea7c988711fb062f0a9e0",
+  "test_file_count": 324,
+  "returncode": 1,
+  "remote_llm_or_supplier_requests": 0,
+  "junit": {
+    "tests": "7926",
+    "failures": "26",
+    "errors": "0",
+    "skipped": "0",
+    "time": "660.912"
+  },
+  "status": "NOT_QUALIFIED_REGRESSIONS_REPRODUCED",
+  "actual_40_semantic_pass": false,
+  "groups": [
+    {
+      "id": "HARNESS-004-FINAL40-BOOL-SCHEMA-GROQ-REGRESSION-001",
+      "failures": 24,
+      "fact": "New server temporal requirement changed canonical schema; reviewed Groq compact shape rejected it.",
+      "action": "Keep creation server-only; expose strict saved-key schema and explicitly review its compact shape. Preserve historical pins."
+    },
+    {
+      "id": "HARNESS-004-FINAL40-PARTY-GUARD-REGRESSION-001",
+      "failures": 2,
+      "fact": "A compound explicit adult fact and adding a child with unknown age were overblocked.",
+      "action": "Ground individual current party clauses without treating unrelated unknown age/no-child wording as a ban."
+    }
+  ],
+  "old_failed_xml_preserved": true,
+  "next": "Related repairs, then R8 on a new frozen source."
+}

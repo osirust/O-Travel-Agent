@@ -1,0 +1,502 @@
+{
+  "format": "otravel.preserved-hotel.actual-cached.v1",
+  "captured_at": "2026-10-27T05:41:38.482715+00:00",
+  "source_folder": "/home/aegml/checks/one-wow-transition-1-f8e2f027",
+  "source_commit": "3208f0383d7be522f5d6690d5f34809c3a790063",
+  "package_sha256": "5e9f6860cbefabcc3518f6930db4dd8cbbe13af9677e3a92bdf2c40e2c9cd3c8",
+  "report_sha256": "982e8b56c4fecbf54cde412ff246c32c1fc250df71e20e036252d3e829e2b8aa",
+  "run_sha256": "297d0f45e5c56a5b29e4f54265d04cde09936a58a7687272e9ed91d6338d6b8c",
+  "events_sha256": "33a76b2cedc1de7617e403987d66914d3988167185225775d69e66be61c7b96e",
+  "scope": "Actual single LLM/harness transition after explicit typed pre-turn state bootstrap. Not a new whole natural conversation.",
+  "selected_preview_position": 1,
+  "selected_hotel_id_in_actual_quote": "Not separately persisted in the operator files; fresh PG preview identities are tested independently.",
+  "before_state": {
+    "legs": [
+      {
+        "id": "leg-98e16cdb-468e-4c52-9880-2da66b659178",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Стамбул",
+        "departure_date": "2026-11-10"
+      },
+      {
+        "id": "leg-06d90d18-3692-4b51-b1d0-2e9fe7e1e9f7",
+        "mode": "flight",
+        "origin": "Стамбул",
+        "destination": "Анталья",
+        "departure_date": "2026-11-13"
+      },
+      {
+        "id": "leg-bf0317cc-2130-499c-8c7c-944d85968965",
+        "mode": "flight",
+        "origin": "Анталья",
+        "destination": "Казань",
+        "departure_date": "2026-11-17"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Стамбул",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "check_out": "2026-11-13",
+        "requested_nights": 3
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Анталья",
+        "rooms": [
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-4",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": null,
+        "check_out": "2026-11-17",
+        "requested_nights": 4
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 40000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-3"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-2"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Казань",
+    "trip_id": "8ef20aa3-b5db-4066-9a3e-e48a48afadd5",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      }
+    ],
+    "constraints": [
+      {
+        "key": "breakfast",
+        "hard": true,
+        "value": true,
+        "room_id": null,
+        "stay_id": "new-stay-1"
+      }
+    ],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "DEMO",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 0
+  },
+  "after_state": {
+    "legs": [
+      {
+        "id": "leg-98e16cdb-468e-4c52-9880-2da66b659178",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Стамбул",
+        "departure_date": "2026-11-10"
+      },
+      {
+        "id": "leg-06d90d18-3692-4b51-b1d0-2e9fe7e1e9f7",
+        "mode": "flight",
+        "origin": "Стамбул",
+        "destination": "Анталья",
+        "departure_date": "2026-11-13"
+      },
+      {
+        "id": "leg-bf0317cc-2130-499c-8c7c-944d85968965",
+        "mode": "flight",
+        "origin": "Анталья",
+        "destination": "Казань",
+        "departure_date": "2026-11-19"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Стамбул",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-2",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "check_out": "2026-11-13",
+        "requested_nights": 3
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Анталья",
+        "rooms": [
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-4",
+            "traveler_ids": [
+              "new-traveler-2",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": "demo-hotel-antalya-family",
+        "check_out": "2026-11-19",
+        "requested_nights": 6
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 38000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-3"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-2",
+          "new-traveler-4"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Казань",
+    "trip_id": "8ef20aa3-b5db-4066-9a3e-e48a48afadd5",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": 8,
+        "type": "child",
+        "group_id": "new-group-2",
+        "birth_date": null
+      }
+    ],
+    "constraints": [
+      {
+        "key": "breakfast",
+        "hard": true,
+        "value": true,
+        "room_id": null,
+        "stay_id": "new-stay-1"
+      }
+    ],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "DEMO",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 1
+  },
+  "text": "Добавь ребёнка восьми лет во вторую семью ко второму взрослому: в обоих городах они живут во втором номере. Замени отель в Анталье на «DEMO — Семейный берег» из второго показанного плана. Уменьши общий бюджет на 20000 рублей и перенеси возвращение на два дня позже. Первый отель и обязательный завтрак в Стамбуле сохрани. Покажи, что изменилось.",
+  "raw_validated": [
+    {
+      "value": {
+        "reply": "Внесены изменения: добавлен ребёнок 8 лет во вторую семью, заселён во второй номер в Стамбуле и Анталье; отель в Анталье заменён на «DEMO — Семейный берег»; бюджет уменьшен на 20 000 ₽; возврат перенесён на 2 дня позже (2026-11-19). Первый отель и завтрак в Стамбуле сохранены.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-4",
+              "age": 8,
+              "type": "child",
+              "group_id": "new-group-2"
+            }
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ],
+              "keep_separate": false
+            },
+            "target_id": "new-group-2"
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-1",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-2"
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-2",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-4"
+          },
+          {
+            "type": "replace_hotel",
+            "value": {
+              "hotel_id": "demo-hotel-antalya-family"
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 38000000
+            }
+          },
+          {
+            "type": "shift_return",
+            "value": {
+              "days": 2
+            }
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "sha256": "a7cf0e42e3de52a47b3d5dd336a05f9c3670dda2cc49acce65dbeeb647c0494c",
+      "captured": true,
+      "utf8_bytes": 1365
+    }
+  ],
+  "checked": [
+    {
+      "value": {
+        "reply": "Внесены изменения: добавлен ребёнок 8 лет во вторую семью, заселён во второй номер в Стамбуле и Анталье; отель в Анталье заменён на «DEMO — Семейный берег»; бюджет уменьшен на 20 000 ₽; возврат перенесён на 2 дня позже (2026-11-19). Первый отель и завтрак в Стамбуле сохранены.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-4",
+              "age": 8,
+              "type": "child",
+              "group_id": "new-group-2"
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-2"
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-1",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-2"
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-2",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-4"
+          },
+          {
+            "type": "replace_hotel",
+            "value": {
+              "hotel_id": "demo-hotel-antalya-family"
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 38000000
+            },
+            "target_id": null
+          },
+          {
+            "type": "shift_return",
+            "value": {
+              "days": 2
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "sha256": "afe7064a45b9ff34c5f3fb330e77e3162700c1a796de2325efe1841b1aa534fe",
+      "captured": true,
+      "utf8_bytes": 1415
+    }
+  ],
+  "report_checks": {
+    "completed": true,
+    "ready_status": true,
+    "pending_none": true,
+    "new_plans": true,
+    "budget380000": true,
+    "party": true,
+    "first_selected_hotel_kept": false,
+    "second_hotel_changed": true,
+    "checkout_and_return19": true,
+    "room_ids_order_kept": true,
+    "breakfast_constraints_kept": true,
+    "child_second_family_room": true,
+    "orders0": true
+  },
+  "run_status": "completed",
+  "error": null,
+  "returned_first_city_hotel_ids": [
+    [
+      "demo-hotel-istanbul-garden"
+    ],
+    [
+      "demo-hotel-istanbul-family"
+    ]
+  ],
+  "interpretation": "The explicit preservation wish is not pinned in Trip.hotel_id. Do not infer a real first-hotel/price switch from a null pin alone.",
+  "vault_read": false
+}

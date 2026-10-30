@@ -1,0 +1,2654 @@
+{
+  "format": "otravel.prefrontend.dialogues.v1",
+  "revision": 2,
+  "date": "2026-10-27",
+  "scope": "Development connected dialogue acceptance; not original80/106 or holdout",
+  "geo_source": {
+    "path": "fixtures/regression/geography-dialogues-20261027.json",
+    "sha256": "1b2c09f2e4bf1a1370a4b99a9447f9dc16c1ae3a8aa85ffdb7e3a59652255e77",
+    "source_dialogues": 5,
+    "source_turns": 38,
+    "adaptation": "No Store seed_pending; country question must be reached through normal intake or NOT_REACHED"
+  },
+  "side_effect_policy": "Only own sessions; no supplier booking/payment; no runtime control/keys/DB; simulated confirmation explicit per-step",
+  "cases": [
+    {
+      "id": "PF-GEO-01",
+      "title": "Сербия, опечатка, конфликт страны, независимые дополнения и пауза",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Хочу в Сербию. Отправление из Москвы. Один взрослый, детей нет, общий бюджет 80000 рублей. Даты ещё не выбрал.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 8000000
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "message",
+          "text": "Стамбул",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "03",
+          "kind": "message",
+          "text": "нет",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "absent",
+              "path": "/pending_question/context/proposed_destination"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "04",
+          "kind": "message",
+          "text": "да",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "absent",
+              "path": "/pending_question/context/proposed_destination"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "Белгород.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 8000000
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination",
+              "value": {
+                "kind": "city",
+                "name": "Белград",
+                "country_code": "RS"
+              }
+            },
+            {
+              "op": "eq",
+              "path": "/trip/stays",
+              "value": []
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Белград"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed",
+          "scope": "unsupported_city_retained_as_request_not_bookable",
+          "oracle_rationale": "Belgrade is outside the seven supported search destinations. Require corrected Serbia city intent without fake covered stay or forced Russian destination."
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "Стамбул в Сербии",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Турц"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Нет, добавь ребёнка семи лет. Существующий взрослый остаётся.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": [
+                7
+              ]
+            },
+            {
+              "op": "stay",
+              "city": "Белград"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 8000000
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "absent",
+              "path": "/pending_question/context/proposed_destination"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "да",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "absent",
+              "path": "/pending_question/context/proposed_destination"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "09",
+          "kind": "message",
+          "text": "Стамбул",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "10",
+          "kind": "message",
+          "text": "Да, исправь возраст ребёнка на восемь лет.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": [
+                8
+              ]
+            },
+            {
+              "op": "stay",
+              "city": "Стамбул"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 8000000
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "11",
+          "kind": "message",
+          "text": "Стамбул в Турции? Это вопрос, ничего не меняй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Турц"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "12",
+          "kind": "message",
+          "text": "подожди",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            }
+          ],
+          "model_policy_basis": "exact_pause_control"
+        },
+        {
+          "id": "13",
+          "kind": "queued_message",
+          "text": "Теперь установи общий бюджет 70000 рублей.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            },
+            {
+              "op": "run_status",
+              "value": "pending"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            }
+          ]
+        },
+        {
+          "id": "14",
+          "kind": "resume",
+          "text": "продолжай",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": [
+                8
+              ]
+            },
+            {
+              "op": "stay",
+              "city": "Стамбул"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 7000000
+            },
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            }
+          ]
+        },
+        {
+          "id": "15",
+          "kind": "message",
+          "text": "Напомни текущий маршрут поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва",
+                "Стамбул"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        }
+      ],
+      "derived_from": "GEO27-01/03; public language intake replaces PG seed_pending"
+    },
+    {
+      "id": "PF-GEO-02",
+      "title": "Опечатки отправления и независимые возраст/бюджет",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Из Мосвкы в Анталью хочу. Один взрослый без детей, общий бюджет 90000 рублей. Дат пока нет.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "stay",
+              "city": "Анталья"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9000000
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "message",
+          "text": "да",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "stay",
+              "city": "Анталья"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9000000
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "03",
+          "kind": "message",
+          "text": "Анталья в Турции? Это вопрос, ничего не меняй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Турц"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "04",
+          "kind": "message",
+          "text": "Теперь отправление Санкт-Петербрг. Направление и бюджет оставь прежними.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "stay",
+              "city": "Анталья"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9000000
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "нет",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "absent",
+              "path": "/pending_question/context/proposed_destination"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "да",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "absent",
+              "path": "/pending_question/context/proposed_destination"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Измени только отправление: теперь из Санкт-Петербурга.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Санкт-Петербург"
+            },
+            {
+              "op": "stay",
+              "city": "Анталья"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9000000
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "Теперь добавь ребёнка семи лет. Взрослый остаётся.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": [
+                7
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Санкт-Петербург"
+            },
+            {
+              "op": "stay",
+              "city": "Анталья"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9000000
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "09",
+          "kind": "message",
+          "text": "Ребёнку восемь лет, не семь. Исправь только возраст.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": [
+                8
+              ]
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/origin"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/stays"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/budget"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "10",
+          "kind": "message",
+          "text": "Ищи минимальную стоимость, общий бюджет не изменяй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9000000
+            },
+            {
+              "op": "preference",
+              "key": "price_priority",
+              "value": "lowest_total"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": [
+                8
+              ]
+            },
+            {
+              "op": "stay",
+              "city": "Анталья"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "11",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 9000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "12",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Санкт-Петербург"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        }
+      ],
+      "derived_from": "GEO27-04/05; fresh public intake instead of controlled extraction"
+    },
+    {
+      "id": "PF-DURATION-03",
+      "title": "Пять ночей переживают 15 вопросов и уточнение заезда",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Включи деморежим. Из Москвы в Казань, один взрослый без детей, один номер. Хочу на 5 ночей, общий бюджет 75000 рублей. Даты пока неизвестны.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 7500000
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "DEMO"
+            },
+            {
+              "op": "stay",
+              "city": "Казань",
+              "requested_nights": 5,
+              "check_in": null,
+              "check_out": null
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "message",
+          "text": "Сколько ночей мы выбрали?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "03",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 7500000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "04",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "Какой наш маршрут поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва",
+                "Казань"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "Какие даты поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Сколько ночей мы выбрали?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 7500000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "09",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "10",
+          "kind": "message",
+          "text": "Какой наш маршрут поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва",
+                "Казань"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "11",
+          "kind": "message",
+          "text": "Какие даты поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "12",
+          "kind": "message",
+          "text": "Сколько ночей мы выбрали?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "13",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 7500000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "14",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "15",
+          "kind": "message",
+          "text": "Какой наш маршрут поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва",
+                "Казань"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "16",
+          "kind": "message",
+          "text": "Какие даты поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "unchanged",
+              "path": "/pending_question"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "17",
+          "kind": "message",
+          "text": "Заезд 10.11.2026",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "stay",
+              "city": "Казань",
+              "requested_nights": 5,
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-15"
+            },
+            {
+              "op": "last_leg_date",
+              "value": "2026-11-15"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 7500000
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "18",
+          "kind": "message",
+          "text": "Перенеси возвращение на два дня позже, людей и бюджет оставь прежними.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "stay",
+              "city": "Казань",
+              "requested_nights": 7,
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-17"
+            },
+            {
+              "op": "last_leg_date",
+              "value": "2026-11-17"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 7500000
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "19",
+          "kind": "message",
+          "text": "Сколько ночей мы выбрали?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_nights",
+              "value": 7
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        }
+      ],
+      "long_history_exception": true
+    },
+    {
+      "id": "PF-GROUP-04",
+      "title": "Две семьи, две остановки и составная пересборка",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Включи деморежим. Из Казани в Стамбул 10 ноября 2026, заезд 10.11.2026, выезд 13.11.2026. Затем Анталья: заезд 13.11.2026, выезд 17.11.2026, возвращение в Казань 17 ноября. Двое взрослых и ребёнок 7 лет. Это две семьи: первый взрослый с ребёнком, второй взрослый отдельно. В каждом городе два номера, семьи не смешивать. В первом номере первый взрослый с ребёнком, во втором второй взрослый. Завтрак в Стамбуле обязателен. Общий бюджет 400000 рублей.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Казань"
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 40000000
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "DEMO"
+            },
+            {
+              "op": "stay",
+              "city": "Стамбул",
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-13",
+              "rooms": 2
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-17",
+              "rooms": 2
+            },
+            {
+              "op": "allocation_complete",
+              "rooms": 2
+            },
+            {
+              "op": "group_count",
+              "value": 2
+            }
+          ],
+          "capture": {
+            "name": "group_plans",
+            "kind": "current_plans"
+          },
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "message",
+          "text": "Какие даты поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_dates",
+              "values": [
+                "2026-11-10",
+                "2026-11-17"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "03",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 40000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "04",
+          "kind": "message",
+          "text": "Добавь ребёнка восьми лет во вторую семью ко второму взрослому: в обоих городах они живут во втором номере. Замени отель в Анталье на «{hotel_b_name}» из второго показанного плана. Уменьши общий бюджет на 20000 рублей и перенеси возвращение на два дня позже. Первый отель и обязательный завтрак в Стамбуле сохрани. Покажи, что изменилось.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7,
+                8
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 38000000
+            },
+            {
+              "op": "stay",
+              "city": "Стамбул",
+              "check_in": "2026-11-10",
+              "check_out": "2026-11-13",
+              "rooms": 2
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_in": "2026-11-13",
+              "check_out": "2026-11-19",
+              "rooms": 2
+            },
+            {
+              "op": "hotel_capture",
+              "city": "Анталья",
+              "capture": "hotel_b_id"
+            },
+            {
+              "op": "allocation_complete",
+              "rooms": 2
+            },
+            {
+              "op": "constraint",
+              "key": "breakfast",
+              "value": true,
+              "hard": true,
+              "city": "Стамбул"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 38000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "requires": [
+            {
+              "op": "plans_min",
+              "value": 2
+            }
+          ],
+          "prepare": {
+            "hotel_b_name": {
+              "kind": "hotel",
+              "plan_index": 1,
+              "city": "Анталья",
+              "field": "name"
+            },
+            "hotel_b_id": {
+              "kind": "hotel",
+              "plan_index": 1,
+              "city": "Анталья",
+              "field": "hotel_id"
+            }
+          },
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "Что изменилось в составе и бюджете? Ничего больше не меняй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_age",
+              "value": 8
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 38000000,
+              "currency": "RUB",
+              "topic": "budget"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 40000000,
+              "currency": "RUB",
+              "topic": "budget"
+            },
+            {
+              "op": "reply_change_marker"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "А если взять ещё ребёнка четырёх лет? Пока не добавляй его.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7,
+                8
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Младшему ребёнку шесть лет вместо семи. Ребёнку восьми лет оставь возраст без изменений.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                6,
+                8
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 38000000
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_out": "2026-11-19",
+              "rooms": 2
+            },
+            {
+              "op": "hotel_capture",
+              "city": "Анталья",
+              "capture": "hotel_b_id"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 38000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "09",
+          "kind": "message",
+          "text": "подожди",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            }
+          ],
+          "model_policy_basis": "exact_pause_control"
+        },
+        {
+          "id": "10",
+          "kind": "queued_message",
+          "text": "Установи общий бюджет 400000 рублей, даты и состав не меняй.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            },
+            {
+              "op": "run_status",
+              "value": "pending"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            }
+          ]
+        },
+        {
+          "id": "11",
+          "kind": "resume",
+          "text": "продолжай",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 40000000
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                6,
+                8
+              ]
+            },
+            {
+              "op": "stay",
+              "city": "Анталья",
+              "check_out": "2026-11-19",
+              "rooms": 2
+            },
+            {
+              "op": "hotel_capture",
+              "city": "Анталья",
+              "capture": "hotel_b_id"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "kind": "message",
+          "text": "Какие даты поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_dates",
+              "values": [
+                "2026-11-10",
+                "2026-11-19"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        }
+      ]
+    },
+    {
+      "id": "PF-TRANSPORT-05",
+      "title": "Публичный transport setter, selective hotel restore и stale quote",
+      "initial_trip": {
+        "origin": "Москва",
+        "travelers": [
+          {
+            "id": "a",
+            "type": "adult"
+          }
+        ],
+        "stays": [
+          {
+            "id": "s",
+            "city": "Казань",
+            "check_in": "2026-11-10",
+            "check_out": "2026-11-15",
+            "rooms": [
+              {
+                "id": "r",
+                "traveler_ids": [
+                  "a"
+                ]
+              }
+            ]
+          }
+        ],
+        "legs": [
+          {
+            "id": "out",
+            "origin": "Москва",
+            "destination": "Казань",
+            "departure_date": "2026-11-10"
+          },
+          {
+            "id": "back",
+            "origin": "Казань",
+            "destination": "Москва",
+            "departure_date": "2026-11-15"
+          }
+        ],
+        "budget": {
+          "amount_minor": 10000000,
+          "currency": "RUB",
+          "scope": "whole_trip"
+        },
+        "search_policy": {
+          "mode": "DEMO"
+        }
+      },
+      "bootstrap_scope": "EXPLICIT_TYPED_BOOTSTRAP_FOR_PUBLIC_LEG_MODE_AND_HISTORICAL_REFERENCE_NOT_FRESH_NLU_INTAKE",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Подбери варианты поездки под сохранённые условия.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 10000000
+            },
+            {
+              "op": "plans_min",
+              "value": 2
+            }
+          ],
+          "capture": {
+            "name": "first_hotel",
+            "kind": "hotel",
+            "plan_index": 0,
+            "city": "Казань",
+            "field": "hotel_id"
+          },
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "preview",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "http_status",
+              "value": 200
+            },
+            {
+              "op": "order_count",
+              "value": 0
+            }
+          ],
+          "requires": [
+            {
+              "op": "plans_min",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": "03",
+          "kind": "set_leg_mode",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "leg_mode",
+              "index": 0,
+              "value": "train"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/stays"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/travelers"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/budget"
+            }
+          ],
+          "mode": "train",
+          "leg_index": 0
+        },
+        {
+          "id": "04",
+          "kind": "confirm_stale",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "http_status",
+              "value": 409
+            },
+            {
+              "op": "order_count",
+              "value": 0
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            }
+          ]
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "Поищи заново с учётом выбранного поезда. Отель, даты, люди и бюджет остаются прежними.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "leg_mode",
+              "index": 0,
+              "value": "train"
+            },
+            {
+              "op": "plans_min",
+              "value": 2
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "Замени отель в Казани на «{second_name}» из второго показанного плана. Поезд оставь.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "hotel_capture",
+              "city": "Казань",
+              "capture": "second_id"
+            },
+            {
+              "op": "leg_mode",
+              "index": 0,
+              "value": "train"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/budget"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/travelers"
+            }
+          ],
+          "prepare": {
+            "second_name": {
+              "kind": "hotel",
+              "plan_index": 1,
+              "city": "Казань",
+              "field": "name"
+            },
+            "second_id": {
+              "kind": "hotel",
+              "plan_index": 1,
+              "city": "Казань",
+              "field": "hotel_id"
+            }
+          },
+          "requires": [
+            {
+              "op": "plans_min",
+              "value": 2
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Верни самый первый показанный отель, но поезд оставь. Даты и людей не меняй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "hotel_capture",
+              "city": "Казань",
+              "capture": "first_hotel"
+            },
+            {
+              "op": "leg_mode",
+              "index": 0,
+              "value": "train"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/travelers"
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip/budget"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "Какой наш маршрут поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва",
+                "Казань"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "09",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "10",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 10000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "11",
+          "kind": "message",
+          "text": "Сколько ночей мы выбрали?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_nights",
+              "value": 5
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "12",
+          "kind": "message",
+          "text": "Кто сейчас едет?",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "взросл"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        }
+      ]
+    },
+    {
+      "id": "PF-SOURCE-06",
+      "title": "Вопрос об источниках не меняет HYBRID и согласие на конкретный quote",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Из Москвы в Казань. Заезд 20.11.2026, выезд 23.11.2026. Один взрослый без детей, один номер. Общий бюджет 120000 рублей. Гражданство Россия. Подбери поездку через реальные тестовые API; демонстрационный резерв разрешаю.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 12000000
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "HYBRID"
+            },
+            {
+              "op": "stay",
+              "city": "Казань",
+              "check_in": "2026-11-20",
+              "check_out": "2026-11-23",
+              "rooms": 1
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "message",
+          "text": "Эти цены настоящие или демонстрационные? Можно посмотреть тестовую корзину без покупки?",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "HYBRID"
+            },
+            {
+              "op": "plans_unchanged"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "03",
+          "kind": "preview",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "http_status",
+              "value": 200
+            },
+            {
+              "op": "order_count",
+              "value": 0
+            }
+          ],
+          "requires": [
+            {
+              "op": "ready_plan"
+            }
+          ]
+        },
+        {
+          "id": "04",
+          "kind": "message",
+          "text": "Если я только смотрю тестовую корзину, нужно включить деморежим? Ничего не меняй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "HYBRID"
+            },
+            {
+              "op": "plans_unchanged"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 12000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "06",
+          "kind": "confirm_false",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "http_status",
+              "value": 409
+            },
+            {
+              "op": "order_count",
+              "value": 0
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            }
+          ]
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Какие компоненты показанной поездки демонстрационные, а какие получены от поставщиков?",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "HYBRID"
+            },
+            {
+              "op": "plans_unchanged"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "08",
+          "kind": "confirm",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "http_status",
+              "value": 200
+            },
+            {
+              "op": "order_count",
+              "value": 1
+            },
+            {
+              "op": "only_simulated_orders"
+            }
+          ]
+        },
+        {
+          "id": "09",
+          "kind": "repeat_confirm",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "http_status",
+              "value": 200
+            },
+            {
+              "op": "order_count",
+              "value": 1
+            },
+            {
+              "op": "same_order"
+            }
+          ]
+        },
+        {
+          "id": "10",
+          "kind": "message",
+          "text": "Есть ли у нас тестовый заказ и создана ли настоящая бронь?",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "order_count",
+              "value": 1
+            },
+            {
+              "op": "only_simulated_orders"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "тестов"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        }
+      ],
+      "source_failure_policy": "If ready plan or provider refresh is unavailable, dependent checkout steps are NOT_REACHED, never fabricated"
+    },
+    {
+      "id": "PF-SOURCE-07",
+      "title": "Ошибки валидации LiteAPI/SerpApi и сохранение контекста",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Включи деморежим. Из Москвы в Сочи, один взрослый, детей нет, общий бюджет 80000 рублей. Даты пока уточняю.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 8000000
+            },
+            {
+              "op": "stay",
+              "city": "Сочи"
+            },
+            {
+              "op": "eq",
+              "path": "/trip/search_policy/mode",
+              "value": "DEMO"
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "live_validation",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "run_error",
+              "codes": [
+                "INVALID_REQUEST"
+              ]
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "order_count",
+              "value": 0
+            }
+          ],
+          "provider": "liteapi",
+          "request": {
+            "checkin": "2026-11-20",
+            "checkout": "2026-11-23",
+            "hotelIds": [],
+            "currency": "RUB",
+            "guestNationality": "RU",
+            "occupancies": [
+              {
+                "adults": 1,
+                "children": []
+              }
+            ]
+          }
+        },
+        {
+          "id": "03",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 8000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "04",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "05",
+          "kind": "live_validation",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "run_error",
+              "codes": [
+                "INVALID_REQUEST"
+              ]
+            },
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "order_count",
+              "value": 0
+            }
+          ],
+          "provider": "serpapi",
+          "request": {
+            "city": "Сочи",
+            "checkin": "2026-11-20",
+            "checkout": "2026-11-23",
+            "currency": "RUB",
+            "adults": -1,
+            "children": 0
+          }
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "Какой наш маршрут поездки?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва",
+                "Сочи"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Ребёнка пока не добавляй. Только спрашиваю, сможем ли позже пересобрать поездку?",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "party",
+              "adults": 1,
+              "ages": []
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 8000000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        }
+      ],
+      "source_failure_policy": "Explicit invalid-request boundary only; not a claim that vendor outage was injected or any upstream HTTP occurred"
+    },
+    {
+      "id": "PF-PAUSE-08",
+      "title": "Уточнение страны переживает UI pause, дополнение и resume",
+      "initial_trip": {},
+      "bootstrap_scope": "fresh_empty_session",
+      "steps": [
+        {
+          "id": "01",
+          "kind": "message",
+          "text": "Стамбул в Сербии. Из Москвы. Нас двое взрослых, детей нет, общий бюджет 100000 рублей. Даты пока не выбрали.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 10000000
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "02",
+          "kind": "control",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            },
+            {
+              "op": "http_status",
+              "value": 200
+            }
+          ],
+          "action": "pause"
+        },
+        {
+          "id": "03",
+          "kind": "queued_message",
+          "text": "Установи общий бюджет 95000 рублей. Город и страну пока не меняй.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            },
+            {
+              "op": "run_status",
+              "value": "pending"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/waiting_reason",
+              "value": "user_pause"
+            }
+          ]
+        },
+        {
+          "id": "04",
+          "kind": "resume",
+          "text": "продолжай",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9500000
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": []
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "05",
+          "kind": "message",
+          "text": "Стамбул находится в Турции? Это только вопрос, ничего не меняй.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/requested_destination/country_code",
+              "value": "RS"
+            },
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Турц"
+              ]
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "06",
+          "kind": "message",
+          "text": "Да, добавь ребёнка семи лет.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "stay",
+              "city": "Стамбул"
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9500000
+            },
+            {
+              "op": "eq",
+              "path": "/trip/origin",
+              "value": "Москва"
+            }
+          ],
+          "requires": [
+            {
+              "op": "eq",
+              "path": "/pending_question/context/confirmation_required",
+              "value": true
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        },
+        {
+          "id": "07",
+          "kind": "message",
+          "text": "Откуда мы едем?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_contains",
+              "parts": [
+                "Москва"
+              ]
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:route"
+        },
+        {
+          "id": "08",
+          "kind": "message",
+          "text": "Напомни общий бюджет поездки.",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "reply_money",
+              "amount_minor": 9500000,
+              "currency": "RUB",
+              "topic": "budget"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:budget"
+        },
+        {
+          "id": "09",
+          "kind": "message",
+          "text": "Сколько ночей мы выбрали?",
+          "model_policy": "zero",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            }
+          ],
+          "model_policy_basis": "canonical_saved_fact:dates"
+        },
+        {
+          "id": "10",
+          "kind": "message",
+          "text": "Нет, другое направление пока не выбираю. Оставь Стамбул и все остальные данные.",
+          "model_policy": "possible",
+          "checks": [
+            {
+              "op": "unchanged",
+              "path": "/trip"
+            },
+            {
+              "op": "stay",
+              "city": "Стамбул"
+            },
+            {
+              "op": "party",
+              "adults": 2,
+              "ages": [
+                7
+              ]
+            },
+            {
+              "op": "eq",
+              "path": "/trip/budget/amount_minor",
+              "value": 9500000
+            }
+          ],
+          "model_policy_basis": "fresh_pending_not_assumed"
+        }
+      ],
+      "derived_from": "HARNESS-004-PAUSE-CLARIFICATION-LOSS-001; public UI control replaces direct Store fixtures"
+    }
+  ],
+  "supersedes_recipe": {
+    "path": "fixtures/evaluation/prefrontend-dialogues-20261027.json",
+    "sha256": "cbaf7b168e0574aca26a9f30b043a7dd86d91dbca5d273f26b786ca413ffdad6",
+    "preservation": "Original r1 recipe and actual results remain immutable; not relabelled PASS."
+  },
+  "revision_rationale": [
+    "Fresh public intake differs from the PG-seeded geography gold. Unsupported Belgrade is retained as an exact pending request, not claimed as a covered/bookable stay.",
+    "A free-form message or short answer with unknown fresh pending may use one model call. possible reserves and paces capacity; it never forces a model call.",
+    "zero is retained only for canonical saved-fact questions, exact pause/queued controls and explicitly typed API actions. Other business predicates are unchanged.",
+    "Original CF r1 T5 stay failure is an oracle/scope mismatch; r1 T6 business predicates passed but the client zero-call assertion stopped that epoch."
+  ]
+}

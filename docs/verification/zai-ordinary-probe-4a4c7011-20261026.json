@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-26",
+  "status": "HTTP200_ONE_ORDINARY_ZAI_READONLY_PROBE",
+  "scope": "Availability observed for one short readonly selector; not long extraction, sustained free quota or all80 acceptance",
+  "source_sha": "4a4c7011ab783d7938331ab41ac4e451e2019e18",
+  "source_manifest_sha256": "cf1d61627aafe4a3dc06fad2a74fb9390c10ddd743a3773c64ddc0c04349f421",
+  "native_profile_unchanged": "cloudflare-nemotron",
+  "native_identity_unchanged": true,
+  "actual_model_reservations": 1,
+  "actual_http_requests": 1,
+  "http_status": 200,
+  "provider_business_error_code": null,
+  "precall_cooldown_blocked": false,
+  "provider": "zai",
+  "model": "glm-4.5-flash",
+  "harness_elapsed_ms": 2722,
+  "provider_latency_ms": 2647,
+  "usage": {
+    "input_tokens": 2177,
+    "total_tokens": 2239,
+    "output_tokens": 62
+  },
+  "request_metrics": {
+    "prompt_sha256": "2c0ffd037de75df5e333388a19c990864187e66ed443f98bbb0c6ad42e00e252",
+    "schema_sha256": "73ebe6e8aa6683d4dfba88fe749f0dc857fd968db998aa2bcc24954177f007b4",
+    "schema_utf8_bytes": 894,
+    "system_utf8_bytes": 2368,
+    "context_utf8_bytes": 6369
+  },
+  "raw_selector_contract": {
+    "value": {
+      "reply": "party,budget",
+      "control": {
+        "action": "none"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [],
+      "speech_act": "ASK",
+      "information_subject": null
+    },
+    "sha256": "7905bc40dd9a9570f365037e47e105781a0f83a0c4fcc3a187c48e9bc41bc579",
+    "captured": true,
+    "utf8_bytes": 143
+  },
+  "canonical_state_and_pending_exact": true,
+  "tools": 0,
+  "orders": 0,
+  "automatic_retries": 0,
+  "private_evidence_sha256": "b3721fd562eb52183373a02dd18c0b440cc4a9e21d8dcc61d8653ae22ae82e14",
+  "limitations": [
+    "No1302/1113 response occurred in this probe; previous429cause is not retrospectively inferred.",
+    "A200 response does not prove readiness for5k+token extraction or hundreds of requests.",
+    "No native profile, process, source, existing sessions or supplier endpoint was changed."
+  ]
+}

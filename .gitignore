@@ -1,33 +1,24 @@
-# Local configuration and secrets
 .env
+secrets.env.age
+jury.env
 .env.*
 !.env.example
-*.pem
-*.key
-
-# Private preparation must never enter the public repository
-.private/
-private/
-team-private/
-
-# Python and tools
-__pycache__/
-*.py[cod]
+!.env.local.example
 .venv/
 venv/
+__pycache__/
+*.py[cod]
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
 build/
 dist/
-.coverage
-htmlcov/
-
-# Editors, OS, local outputs
-.idea/
-.vscode/
-.DS_Store
-Thumbs.db
-output/
 artifacts/
 *.log
+.coverage
+.local/
+node_modules/
+frontend/test-results/
+*.pem
+!certs/gigachat-root-ca.pem
+*.key

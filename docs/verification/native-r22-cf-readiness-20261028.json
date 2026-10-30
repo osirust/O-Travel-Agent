@@ -1,0 +1,32 @@
+{
+  "format": "otravel.r22.native.cf.readiness.v1",
+  "created_at_utc": "2026-10-28T05:34:45.001533+00:00",
+  "status": "RUNNING_TARGETED_NATIVE_CF_VALIDATION_REPORTED_SEPARATELY",
+  "commit": "615b1e09b50a7c087cba8ea0fa57cc6d36f0598a",
+  "url": "http://localhost:8084/debug",
+  "package_sha256": "de24c5604f42449be3e796e1ae5453ad8da27af3c32d83dbd6113edd37a0db10",
+  "source": "/home/aegml/projects/otravel-after80-20261026",
+  "database": "otravel_zai_eval",
+  "manager": "after80_cf_live8084_r22_backend.py",
+  "process": {
+    "pid": 1309474,
+    "uid": 1000,
+    "start_ticks": 9166798,
+    "cwd": "/home/aegml/projects/otravel-after80-20261026"
+  },
+  "loaded_manifest_matches": true,
+  "install_env_metadata_unchanged": true,
+  "installation_report_sha256": "1c07d3c2f682a43c27d7de577dcf195277abe3e805d52629b7291c2a67e4b8d4",
+  "private_readiness_sha256": "2275415c2a5329fdf743f822bc29cfdad6520e44111d9796f0488ef5c0b2cab2",
+  "startup_model_requests": 0,
+  "model": "@cf/nvidia/nemotron-3-120b-a12b",
+  "provider": "cloudflare",
+  "application_model_limit_per_day": 40,
+  "per_run_attempts": 1,
+  "vendor_neurons_remaining": "UNKNOWN",
+  "local_or_paid_model_fallback": false,
+  "actual_canary_report": "docs/verification/native-r20-cf-canaries-20261028.json",
+  "actual_canary_report_sha256": "abc49cce61277b400c05fdb2b39b164b1d0bead6a44402ade7782a009e08b5d0",
+  "scope": "Existing data and ledger preserved. Startup health/profile is separate from the two controlled synthetic-session actual-CF validations, and neither means whole80/106 acceptance.",
+  "inherited_llm_canary_revision": "R20; readonly079/group080 interpretation code unchanged; not repeated on this media-only revision."
+}

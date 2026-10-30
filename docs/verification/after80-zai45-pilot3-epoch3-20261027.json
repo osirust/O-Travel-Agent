@@ -1,0 +1,131 @@
+{
+  "format": "otravel.after80.zai45.pilot3.epoch3.v1",
+  "date": "2026-10-27",
+  "status": "EXECUTION_FINISHED_SEMANTIC_NOT_ALL_PASS",
+  "runtime": {
+    "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+    "complete_package_sha256": "cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+    "package_files": 76,
+    "profile_revision": "zai45-repair2",
+    "provider": "zai",
+    "model": "glm-4.5-flash",
+    "port": 8086,
+    "database": "otravel_zai45_80_eval_20261027",
+    "configured_calls_per_run": 2,
+    "maximum_observed_calls_per_run": 1,
+    "local_calls": 0,
+    "paid_fallback": false,
+    "startup_model_counter_before": 7,
+    "startup_model_counter_after": 7,
+    "database_history_preserved": true,
+    "hba_and_source_env_unchanged": true,
+    "other8084_master_vpn_touched": false,
+    "ready_receipt_sha256": "a1a46c487c50d112710eb6c45201d789a19d46f59fd0dc3d72505bfe00159265"
+  },
+  "corpus": {
+    "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+    "oracle_v3_sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+    "selected_cases": ["ZAI100-001", "ZAI100-002", "ZAI100-003"],
+    "original_user_turns": 32,
+    "seed": "EXPLICIT_HYBRID_LITEAPI_DUFFEL_DEMOFALLBACK_RU_NOT_EMPTY_NATURAL",
+    "fully_bound_case_oracles": 0,
+    "fixed_transcript_not_adaptive": true
+  },
+  "execution": {
+    "actual_model_calls": 23,
+    "trip_search_tool_calls": 0,
+    "completed_runs": 31,
+    "failed_runs": 1,
+    "resource_stop": false,
+    "held_budget_after_completion": {},
+    "model_cap": 64,
+    "tool_cap": 100,
+    "message_post_spacing_seconds": 2,
+    "parallel": 1,
+    "failed_post_resends": 0,
+    "semantic_failures_did_not_stop_other_original_turns": true,
+    "simulated_checkout_stage_enabled": false,
+    "source_search_prebook_or_confirm_not_qualified_by_this_pilot": true,
+    "vendor_remaining_quota": "UNKNOWN"
+  },
+  "partial_grading": {
+    "PASS": 184,
+    "FAIL": 5,
+    "NEEDS_ADAPTIVE": 1,
+    "comparison_tags": {"NEEDS_ADAPTIVE": 2, "NOT_COMPARABLE": 1},
+    "full_behavioral_status": "INCOMPLETE_ORACLES_NOT_80PASS",
+    "case_counts": {
+      "ZAI100-001": {"PASS": 61, "FAIL": 2, "NEEDS_ADAPTIVE": 1},
+      "ZAI100-002": {"PASS": 64, "FAIL": 1},
+      "ZAI100-003": {"PASS": 59, "FAIL": 2}
+    }
+  },
+  "findings": [
+    {
+      "id": "HARNESS-004-ZAI-PREFERENCE-KEY-MISSING-001",
+      "status": "OPEN_ACTUAL_MODEL_CONTRACT_REJECTION",
+      "evidence": "ZAI100-001:T1",
+      "fact": "The rejected final JSON has operations[3] set_preference with value early_morning and weight null, but no required key. Dynamic schema reports oneOf at operations[3].",
+      "rejected_contract_sha256": "92c2552e87e6a0b0c093e91aa09fe99e7c319227a5a546268acdc5e05051335d",
+      "trip_unchanged": true,
+      "consequence": "The initial origin/adult facts were not committed. Later original short replies encounter a different pending slot; that cascade is not counted as an independent geography defect.",
+      "next_check": "Qualify explicit same-model schema repair or a stricter provider contract, then rerun this original initial message without relaxing the operation schema."
+    },
+    {
+      "id": "HARNESS-004-ZAI-REPAIR-CLAMP-001",
+      "status": "OPEN_SOURCE_CONFIRMED_NO_SECOND_ATTEMPT",
+      "fact": "The pinned Harness._extract includes zai in its one-attempt provider set and clamps attempts=min(1,attempts), even with max_llm_calls_per_run2. The profile allows two but does not enable actual repair.",
+      "actual_schema_repair_effectiveness": "NOT_TESTED",
+      "next_check": "An explicit opt-in code policy and its tests are required before claiming repair2; retain the one-attempt result and compare a new immutable epoch."
+    },
+    {
+      "id": "HARNESS-004-BUDGET-DELTA-SCALE-001",
+      "related_prior_ids": ["RV100-01", "ZAI-F004"],
+      "status": "OPEN_ACTUAL_INCORRECT_SAVED_BUDGET",
+      "evidence": "ZAI100-002:T7",
+      "input": "Урежь обший бюджет на 20 тысяч рублей и напомни теперь возраста обоих детей.",
+      "before_minor_RUB": 15000000,
+      "expected_minor_RUB": 13000000,
+      "actual_minor_RUB": 14800000,
+      "raw_contract_sha256": "42d30f5b8b63194e1dbd826e153f638e901bcb892c13ed3fa0417e6d9f4e4008",
+      "checked_contract_sha256": "73dea44c29799e5207c84f63097851ae1452c74b7a858feedda1f34814563df1",
+      "attribution": "The model computed minus2000 instead of minus20000; checked operations retained that amount unchanged. The child-age5 update in the same batch was a harmless existing-value no-op.",
+      "next_check": "Ground explicit relative budget arithmetic against the saved budget and declared currency using deterministic amount parsing; preserve unrelated operations and block ambiguity."
+    },
+    {
+      "id": "HARNESS-004-CHECKOUT-DATE-SUFFIX-001",
+      "status": "OPEN_ACTUAL_DATE_OMISSION_AND_DELAYED_CARRY",
+      "evidence": ["ZAI100-003:T3", "ZAI100-003:T4"],
+      "input": "10 ноября 2026 года выезжаем.",
+      "pending_field": "stay.check_out",
+      "expected": "2026-11-10",
+      "actual_at_T3": null,
+      "raw_contract_sha256": "7b2878c35a8982096081afecf74e6ce15c6c518ec1266b7b0bb0f37df52148b1",
+      "checked_contract_sha256": "e118d35eb2cf59daae34d279a07a4cc2ed261c839c89f7430a4c4c5c0c0bf3f4",
+      "attribution": "The model discussed the date in its reply but proposed only an unasked nonstop=false constraint. The auxiliary guard correctly suppressed that constraint. No date operation remained and the pending checkout question repeated. On T4 the model supplied the historical date together with the current budget, causing the only-budget oracle failure as a secondary symptom.",
+      "next_check": "Recognize explicit date plus suffix departure wording in the correctly bound pending stay slot, preserving ownership/date-order rules; repeat the cached chain and fresh actual input."
+    }
+  ],
+  "positive_boundaries": [
+    "ZAI100-002 extracted two adults and children4/9, then preserved the hypothetical age change and applied only the explicit younger-child correction to5.",
+    "Read-only questions retained state and reported saved budgets/party, rather than inventing unavailable plans or orders.",
+    "ZAI100-003 preserved total budget75000 when asked about a separate unsupported per-night limit, and stated that limitation explicitly.",
+    "The unrequested nonstop constraint at003:T3 was suppressed.",
+    "Cases002/003 never supply a room count. Their later assumptions about shown plans/orders are invalid fixed-transcript premises; no travel-provider failure or successful search can be inferred from no plans."
+  ],
+  "private_evidence_folder": "/home/aegml/.local/evaluation/after80-zai45-8086-repair2-epoch3-20261027-200304-b80861b6",
+  "evidence_sha256": {
+    "progress.json": "3e786e93243f4738738e82721b8e79809902553fcc5033a90f27816f8d3b898b",
+    "offline-v3-grade.json": "2588c10bca31b0775af3be9ee1e1c03190770a1ddb1bc401aea88e6f06da2e6a",
+    "ZAI100-001.json": "1a78e65b8405395834bbc53e58e32076ef42ae6f5b81872fb3e50f7185239843",
+    "ZAI100-002.json": "aa4c80836fa5a3350e5af20e056504ad653aeffb547c58f47d50ccdc77886a13",
+    "ZAI100-003.json": "3348a00eb2c926563cfbaba1acd5c4b17aa1666c9bb7a8ecb48622c63a3cd8ef"
+  },
+  "old_epoch_reports_unchanged": true,
+  "bulk80_started": false,
+  "limitations": [
+    "184 partial checks are not three fully accepted semantic conversations or full80 NLU PASS.",
+    "No fresh tourism search/prebook/confirm path was reached by these original transcripts.",
+    "The configured two-attempt profile did not bypass the pinned one-attempt ZAI clamp."
+  ]
+}

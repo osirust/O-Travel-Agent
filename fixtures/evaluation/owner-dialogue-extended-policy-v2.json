@@ -1,0 +1,108 @@
+{
+  "format": "otravel.owner_dialogue_policy_overlay.v2",
+  "revision": 2,
+  "provenance_class": "development_regression_owner_override",
+  "created_at_utc": "2026-10-25T18:10:18.183537+00:00",
+  "status": "POLICY_PLAN_NOT_RUN",
+  "base_fixture": {
+    "path": "fixtures/evaluation/owner-dialogue-extended-v1.json",
+    "sha256": "4c628fb7928dcd159c6a174adf4276586936544df17edbfd5d2f6c69c027dd22",
+    "input_sha256": "98d090da188161f1d0ad1165c773afd8aac9f2ff15b5a174714ab5dd11cb08fd",
+    "historical_v1_unchanged": true
+  },
+  "reason": "Latest explicit owner policy supersedes the earlier always-confirm interpretation for Белгород under strong RS context. This does not retroactively qualify earlier model results.",
+  "overrides": [
+    {
+      "turn_indices": [
+        5,
+        10
+      ],
+      "superseded_check_ids": [
+        "belgorod_is_not_belgrade",
+        "repeat_is_not_autocorrect_consent"
+      ],
+      "rule": "When the retained requested country is RS and no explicit Russia/Belgorod-RU intent contradicts it, interpret Белгород as a contextually resolved typo for Белград, preserve the raw user message, and visibly acknowledge the normalization. Do not ask a redundant confirmation in that strong-context branch.",
+      "expected_requested_city": {
+        "name": "Белград",
+        "country_code": "RS"
+      },
+      "required_visible_ack": true,
+      "confirmation_still_required_when": [
+        "genuinely ambiguous city/country context",
+        "explicit Russia or explicit Белгород-RU intent",
+        "conflicting country instruction not yet resolved"
+      ],
+      "no_silent_source_change": true,
+      "oracle_status": "UNBOUND_PLAN"
+    }
+  ],
+  "inherited_invariants": [
+    "FAQ is not destination consent",
+    "Istanbul/TR rejected on no; requested RS survives",
+    "price_priority=lowest_total is a preference, never numeric budget",
+    "origin Moscow, one adult, zero children survive unrelated turns",
+    "seven-city DEMO catalogue unchanged; no inventory/booking/global-minimum claim"
+  ],
+  "domain_policy": {
+    "canonical_city": "Accept only curated known geographic cities, separately from the seven-city inventory list. Countries remain invalid city values.",
+    "preferences_allowed_pairs": [
+      {
+        "key": "price_priority",
+        "value": "lowest_total"
+      },
+      {
+        "key": "departure_time",
+        "value": "early_morning"
+      }
+    ],
+    "early_morning_has_no_invented_clock_time": true
+  },
+  "new_compound_scenario_plan": {
+    "status": "SEMANTIC_RECIPE_NOT_EXACT_CONTINUATION_TRANSCRIPT",
+    "first_exact_input": "белград в сербии из москвы рано утром, детей нет, один взрослый",
+    "first_turn_required_facts": {
+      "destination_city": "Белград",
+      "destination_country_code": "RS",
+      "origin": "Москва",
+      "adult_count": 1,
+      "child_count": 0,
+      "preference": {
+        "key": "departure_time",
+        "value": "early_morning"
+      },
+      "numeric_budget": null
+    },
+    "continuation_semantic_steps": [
+      {
+        "input_kind": "bare SPb city candidate",
+        "raw_input_not_provided_in_this_handoff": true,
+        "expected": "Disambiguate/confirm the intended origin replacement, preserving destination, party and preference."
+      },
+      {
+        "input_kind": "affirmative confirmation",
+        "raw_input_not_provided_in_this_handoff": true,
+        "expected": "Set origin Санкт-Петербург only for the explicit pending-origin-change confirmation; preserve all compound facts."
+      },
+      {
+        "input_kind": "check-in date 26.10.2026",
+        "raw_input_not_provided_in_this_handoff": true,
+        "expected_check_in": "2026-10-26"
+      },
+      {
+        "input_kind": "завтра as checkout/return answer",
+        "reference_date": "2026-10-25",
+        "timezone": "Europe/Moscow",
+        "resolved_date": "2026-10-26",
+        "expected": "ASK for a valid later checkout/return date because the resolved answer equals check-in. Retain the valid prior facts; do not silently add a day or end as INVALID_LLM_*."
+      }
+    ],
+    "clock_binding_required_before_actual_replay": true,
+    "inventory_bookability_not_claimed": true
+  },
+  "execution": {
+    "status": "NOT_RUN",
+    "llm_calls": 0,
+    "http_calls": 0,
+    "prior_owner3_or_11_results_do_not_apply": true
+  }
+}

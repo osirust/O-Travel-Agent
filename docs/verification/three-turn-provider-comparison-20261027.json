@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-27",
+  "scope": "Three original ZAI100-001 messages on the same a63c2fc package and explicit HYBRID/RU seed",
+  "package_sha256": "9706a5a7d2b0dbdc5481b9c43638dd34072b33150dfa36d753f39b14f76c6242",
+  "groq": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "completed": 3,
+    "failed": 0,
+    "model_calls": 3,
+    "checks": {
+      "geography_question_no_state_change": true,
+      "destination_changed_to_SPB": true,
+      "origin_preserved": true,
+      "party_preserved": true,
+      "preferences_preserved": true
+    },
+    "private_folder": "/home/aegml/checks/pilot-groq-compare-r2-20261027-190104",
+    "private_report_sha256": "94ea11713642eb1d973f6c6b6cafc8822920b8c14c1c1a961c3152949a92a137"
+  },
+  "zai": {
+    "provider": "zai",
+    "model": "glm-4.5-flash",
+    "completed": 2,
+    "failed": 1,
+    "model_calls": 3,
+    "failure_code": "INVALID_LLM_OPERATION",
+    "exact_bad_field": "UNKNOWN_NOT_PERSISTED",
+    "private_folder": "/home/aegml/.local/evaluation/after80-zai45-8086-20261027-185745-a37e057e"
+  },
+  "limits": [
+    "This compares provider plus its transport/prompt, not model weights in isolation",
+    "Not a full dialogue/corpus benchmark",
+    "No quota reset, paid fallback, local Qwen or supplier booking"
+  ]
+}

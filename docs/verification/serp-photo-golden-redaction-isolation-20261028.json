@@ -1,0 +1,59 @@
+{
+  "finding_id": "HARNESS-TEST-SERP-GOLDEN-REDACTION-ORDER-001",
+  "status": "TEST_ISOLATION_REPAIR_TARGETED_ORDERED_PASS_FULL_R22_PENDING",
+  "runtime_finding_id": "HARNESS-001-SERP-PROPERTY-PHOTOS-001",
+  "original_full_r21": {
+    "passed": 7487,
+    "failed": 3,
+    "original_artifacts_preserved": true,
+    "private_xml": ".local/evaluation/after80-20261027/full-final-prefrontend-r21-initial.xml",
+    "private_xml_sha256": "4fd33aae27db99c578cc9942062b6ee3269d9db9a5eee60c3461296fb60b96c4",
+    "failed_tests": [
+      "test_exact_captured_property_gains_same_bound_media_dto_without_changing_economic_offer",
+      "test_saved_partial_plan_media_api_is_owner_bound_and_photo_changes_leave_all_price_snapshots_unchanged",
+      "test_standalone_serp_result_exposes_live_media_sidecar_outside_unchanged_economic_offers_and_owner_run"
+    ]
+  },
+  "cause": {
+    "differing_value_paths": [
+      "$.details.search_request.q"
+    ],
+    "effect": "An earlier test registered a synthetic short credential in the global provider secret-redaction registry. Its substring also occurs in the captured query. The intended redactor changed that string, while the fixed golden came from an isolated fresh process.",
+    "current_registry_cross_version_check": "The same captured request, fixed clock and explicit prior synthetic secret produce byte-identical R20 and R21 economic output.",
+    "same_registry_economic_offer_sha256_R20": "6fc9b5ed697efc880afd438161e18e5b41fa57f6587215ba9e6f4d3203dc50c8",
+    "same_registry_economic_offer_sha256_R21": "6fc9b5ed697efc880afd438161e18e5b41fa57f6587215ba9e6f4d3203dc50c8",
+    "production_redaction_bug_claimed": false
+  },
+  "repair": {
+    "scope": "Only two newly added captured-media test files.",
+    "mechanism": "Function-scoped autouse pytest monkeypatch installs a new empty provider _SECRETS set for the isolated capture; the gateway registers its controlled key normally. Prior registry object/content is restored automatically after each test.",
+    "full_golden_equality_retained": true,
+    "expected_fixture_values_or_fields_dropped": false,
+    "production_code_redactor_or_economic_changes": false
+  },
+  "verification": {
+    "ordered_regression": {
+      "passed": 32,
+      "seconds": 5.99,
+      "sequence": [
+        "Private controlled prior test registers a short synthetic credential.",
+        "All 26 new media tests plus one cached standalone PG case execute with full original economic assertions.",
+        "Private following test proves the earlier secret was restored and still redacts.",
+        "Three existing provider/privacy tests run afterwards and retain strict redaction."
+      ],
+      "private_xml": ".local/serp-property-media-full-order-isolation-20261028.xml"
+    },
+    "actual_http_or_models": 0,
+    "runtime_changes": 0,
+    "database_scope": "isolated otravel_test only"
+  },
+  "test_files_sha256": {
+    "tests/test_serp_property_media.py": "ae70acbae3b8ee581670f092ce08883fbc347cb6b5de6853791b4e98b5a0dacb",
+    "tests/test_serp_property_media_pg.py": "2191490f3866ee06ebeb334f2a479ba43cadbc45c8df3310ddf2eaa571b3bb6d"
+  },
+  "fixture_sha256_unchanged": "2673d3bc16671a830a2fca46350a8ce217c7bc04740c47debc1e84ae704d964c",
+  "limitations": [
+    "Fresh whole R22 is a separate Root verification; this targeted result does not erase the original three full-suite failures.",
+    "Production secret filtering remains enabled and may intentionally alter text if a real registered secret collides with it."
+  ]
+}

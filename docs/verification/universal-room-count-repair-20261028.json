@@ -1,0 +1,62 @@
+{
+  "finding_id": "HARNESS-004-UNIVERSAL-ROOM-COUNT-COVERAGE-001",
+  "status": "CACHED_COMPLETENESS_GUARD_TESTED_GENERAL_ALLOCATION_OPEN",
+  "original": {
+    "source_package_sha256": "b170deda2396b53451e13f60d6af7da711ab9681f6bdee18d48f54f2339eb793",
+    "raw_contract_sha256": "9be02cf3724e1a62a10b9325d5bfe1ed38c6e29f850a5771cd3a6d09fcb87b0e",
+    "checked_contract_sha256": "4d2ca0c1d1caa8113ed41b42fa48eac731e1e76e05c97af75e9cd3232dfc478e",
+    "cached_private_projection_sha256": "dcb5badde994e210331154d51ca8e93d4aba909ac1f32aa7913cb18d6db21c20",
+    "cause": "Original model compound declared only one existing room setter per city despite current explicit two-room-in-each-city requirement. Existing explicit allocation guard skipped room-count grounding; initial-only completion deliberately ignored prior filled layouts.",
+    "actual_room_counts": [
+      1,
+      1
+    ],
+    "actual_hotels_for_new_four_person_party": 0,
+    "actual_orders": 0
+  },
+  "repair": {
+    "scope": "Model-only complete-domain projection with an asserted unambiguous same room count in every city/hotel and at least two stays.",
+    "action": "Check projected room count in each stay. If incomplete, block the whole batch, show exact requested count and affected cities, preserve own room-mapping question, perform no search. Do not invent IDs, assignments or family membership; correct complete layouts are untouched.",
+    "outside_scope": [
+      "quoted, hypothetical, historical or negated counts",
+      "alternative counts and city-specific exceptions",
+      "one-city requests",
+      "other domain errors",
+      "generic group membership repair"
+    ]
+  },
+  "verification": {
+    "new_pure_passed": 22,
+    "old_initial_room_pure_passed": 21,
+    "combined_related_pure_passed": 221,
+    "combined_related_unconfigured_pg_skip": [
+      "tests.test_fulfilled_return_clarification::test_applied_date_change_does_not_leave_phantom_question_or_stop_search"
+    ],
+    "cached_pg_passed": 1,
+    "combined_return_and_count_pg_passed": 5,
+    "combined_pg_seconds": 4.35,
+    "database": "isolated otravel_test",
+    "controlled_models_only": true,
+    "external_http": 0,
+    "result": {
+      "atomic_state_unchanged": true,
+      "pending_field": "stay.rooms",
+      "requested_rooms_each": 2,
+      "owned_precise_question": true,
+      "search_calls": 0,
+      "orders": 0
+    }
+  },
+  "limitations": [
+    "Original actual source chain stays WITH_DEFECTS, not converted into successful original compound.",
+    "A fresh actual run on repaired source is still required.",
+    "No automatic room/group reconstruction introduced; general allocation remains open.",
+    "Does not close all 80 dialogues or 106 scenario language acceptance."
+  ],
+  "files_sha256": {
+    "otravel/initial_room_layout.py": "5f6bcbb6a2cf0aa9a2950b4460b56f5f36817f81fb0b57c62a675b904b1b02b0",
+    "tests/test_universal_room_count.py": "0aebecf1858ffbb733d6da12f2c0293d19591b396994b0577969c0b2337b2de6",
+    "tests/test_universal_room_count_pg.py": "f5faf793fa38a5d0432c79ff7c1ec51632857be58bb39a23bcd5f34cd748d870",
+    "fixtures/regression/universal-room-count-complex-r5-20261028.json": "1bf3473b75830264723238e32353bba8692e431c2f7e0a5a7c514f7617b4bb05"
+  }
+}

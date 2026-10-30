@@ -1,0 +1,4 @@
+# Preserve supplied snapshots including their original CRLF and whitespace.
+* -text -whitespace
+manifest.json text eol=lf whitespace
+.gitattributes text eol=lf whitespace

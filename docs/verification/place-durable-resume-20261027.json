@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-PLACE-DURABLE-RESUME-001",
+  "status": "DURABLE_ACTION_QUEUE_SCOPE_TESTED_CONTROL_ACCEPTANCE_CRASH_OPEN",
+  "files_sha256": {
+    "otravel/place_resume.py": "aee559edc2c9ba00028f8984fd03392ea02fb062d206f27088dc365fe85fb706",
+    "otravel/store.py": "7a1bd841241cbb6d54fe80f2204918b7f1a95dd42812774c5266d6ec69440501",
+    "otravel/api.py": "2323ac4a4c706ef6d43da81f81b02125c3e30bb6d24cafcdd394c18feec4483f",
+    "tests/test_place_resume.py": "aaa6ca9b1145a31e58691140a90162c2cd858ed1fcb0f57812499eae958e8009",
+    "tests/test_place_resume_pg.py": "0fb34b63aa32a809486e752edde9287fd159be376b194859895e4e1d78cd94d3"
+  },
+  "root_hook": "Harness typed kind resume_place dispatched before base_state_hash through resume_deferred_place_run; queued stale wait does not repause after USER_RESUMED. Harness file is Root-owned.",
+  "verification": {
+    "tests": 68,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 9.263,
+    "junit": ".local/evaluation/after80-20261027/place-resume-related-final.xml",
+    "junit_sha256": "955afa5775f6ca5a6a2854221fc177b8c6ebb98a462da3fafe14b66971c7344d",
+    "new_scope_tests": 19,
+    "new_pure": 8,
+    "new_pg_asgi": 11,
+    "ruff_new_helper_and_tests": "PASS",
+    "shared_file_lint": "Existing whole-file Store/API lint debt was not reformatted in this scoped patch."
+  },
+  "facts": [
+    "Resume records a server-owned system message plus pending continuation in the same session-lock transaction as control revision and rebased pending authority",
+    "Durable queue item follows previously accepted paused additions; repository reopen can claim the saved queue item without model selection",
+    "resume_id and latest resume_run_id bind the continuation across independent fact revisions; superseded/completed markers do not repeat source actions",
+    "Store verifies exact indexed run/message provenance, system role, server client key and matching payload before a marker is accepted",
+    "Current deferred trip/version/scope and nested candidate/source TTL are revalidated; country source timestamps and expiry never refresh",
+    "Plaintext and button resume perform controlled source resolution after saved budget additions, without an extra model call",
+    "Expired/damaged candidate/epoch/foreigntrip data asks a fresh question and does not enqueue or execute stale source work",
+    "Foreign session calls and user-created typed markers cannot finish/copy work between sessions",
+    "Public messages hide only recognized system continuation markers; control response exposes optional resume_run_id for polling"
+  ],
+  "execution": {
+    "database": "otravel_test only, own sessions; no schema/truncate/reset or other DB changes",
+    "actual_travel_http": 0,
+    "actual_llm": 0,
+    "vpn_changes": 0,
+    "native_changes": 0,
+    "supplier_orders": 0,
+    "payments": 0
+  },
+  "preserved_artifacts": [
+    ".local/evaluation/after80-20261027/place-resume-pg-initial.xml",
+    ".local/evaluation/after80-20261027/place-resume-pg-extended.xml"
+  ],
+  "remaining_boundary": {
+    "id": "HARNESS-004-PLAINTEXT-CONTROL-CRASH-OPEN",
+    "fact": "The existing plaintext control path commits set_control before separately completing its accepted control run. A crash in that earlier boundary can leave the plaintext control pending for recovery; the new continuation itself is already durable.",
+    "status": "CLOSED_AFTER_CONTROL_COMMIT_SCOPE",
+    "required": "Atomic completion of accepted plaintext control in set_control, or a proven server-owned recovery shortcut before NLU. No claim that all distributed/worker crash outcomes are closed.",
+    "exact_trigger": "Process stops after Store.set_control commits USER_RESUMED and its durable marker but before Harness.control_message separately finishes the accepted plaintext resume run; recovery may treat that pending plaintext as NLU.",
+    "closure_condition": "Controlled crash exactly at the commit/finish boundary, restart, zero repeated NLU/control, preserved queued facts, one execution of current continuation, stale/expired authority rejection, and completed-control idempotence.",
+    "runtime_note": "docs/verification/PLACE_RESUME_RUNTIME_20261027.md",
+    "runtime_note_sha256": "d0abad17c2d994a5c355fcb69b86f5bf687d1a60b6a77b95718e2f62567eb7da",
+    "root_decision": "Explicitly deferred to the next control-recovery checkpoint; no production expansion in this phase.",
+    "historical_status": "OPEN_REPORTED_TO_ROOT",
+    "superseded_by": "docs/verification/control-message-atomicity-20261027.json",
+    "superseded_by_sha256": "c702bb715bc3d9fd0d5e72a83153478e334f755fa08f2f7f52c67f3b739a2b66",
+    "closure_evidence": "Initial2PGfailures then8PG/ASGIpasses on atomic accepted-control completion; no second Harness finish transaction."
+  },
+  "limits": [
+    "No actual provider, model, full-language or frontend acceptance is implied",
+    "External read-only HTTP is not claimed exactly-once across arbitrary crashes after wire and before result persistence",
+    "Current session CAS/lease and normal place_run/catalog guards remain authoritative",
+    "Only the durable place action queue is newly qualified; existing generic resume/control lifecycle retains separately reported crash boundary"
+  ],
+  "remaining_precommit_boundary": {
+    "finding_id": "HARNESS-004-ACCEPTED-CONTROL-PRECOMMIT-001",
+    "status": "CLOSED_BOUNDED_AUTHENTICATED_RECOVERY_SCOPE",
+    "trigger": "Plaintext resume is durably accepted by intake_message, then process stops before the control transaction commits while session is user_paused. Existing startup claim/drain rejects paused sessions; duplicate input does not itself rerun control.",
+    "closure": "A separately authorized exact-control recovery/claim path proves that accepted pending pause/resume reaches atomic completion once before NLU, retains owner/version checks, preserves queued facts, and rejects stale input.",
+    "note": "This is before the first control commit and distinct from the closed after-commit gap. No full distributed or arbitrary crash-recovery claim.",
+    "historical_status": "OPEN",
+    "superseded_by": "docs/verification/control-precommit-recovery-20261027.json",
+    "superseded_by_sha256": "aba3855643b963b7984fcaa613323240100ea23815954cb8dc2ffcb968ec17d1"
+  }
+}

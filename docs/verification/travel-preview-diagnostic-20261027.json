@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "finding_id": "TRAVEL-ACTUAL-MIXED-PREVIEW-HTTP-001",
+  "date": "2026-10-27",
+  "status": "ORIGINAL_NATIVE_503_UNREPRODUCED_ALL_SELECTED_FLIGHTS_AND_FRESH_HOTELS_PASS",
+  "source_commit": "ab378d299639b484774c2697130adf71c56ecacb",
+  "original_native_observation": {
+    "ready_for_simulated_checkout": true,
+    "source_type": "MIXED",
+    "currency": "RUB",
+    "total_minor": 34395538,
+    "sandbox_hotels": 2,
+    "rooms": 4,
+    "sandbox_flights": 3,
+    "demo_transfers": 2,
+    "preview_http_status": 503,
+    "preview_error_code": "HTTP_ERROR",
+    "preview_retryable": false,
+    "preview_public_provider": "not_exported",
+    "supplier_order_calls": 0,
+    "events_end_at": "QUOTE_PREVIEW_STARTED",
+    "source_report_sha256": "ec1a7f03a4cedf7ff6a7bb3baa23566aff5ec51547f17093457a335660686963",
+    "failure_cause": "UNKNOWN"
+  },
+  "isolated_selected_flight_refresh": {
+    "source": "frozen Native TravelGateway.reprice; no Native files changed",
+    "actual_http_calls": 3,
+    "all_http_statuses": [
+      200,
+      200,
+      200
+    ],
+    "all_same_selected_native_ids": true,
+    "all_same_amount_and_currency": true,
+    "amounts_minor": [
+      39146,
+      17841,
+      44752
+    ],
+    "currency": "EUR",
+    "source_type": "SANDBOX",
+    "observed_accept_header": "*/*",
+    "observed_content_type_header": null,
+    "provider_error_fields": [],
+    "automatic_retries": 0
+  },
+  "selected_hotel_limitations": {
+    "hotel_ids": [
+      "lp8a2f3",
+      "lp55de7"
+    ],
+    "saved_expiries_utc": [
+      "2026-10-27T00:51:32.234330+00:00",
+      "2026-10-27T00:51:38.730910+00:00"
+    ],
+    "at_diagnosis": "Both original offers expired; normal adapter guard prevents HTTP before prebook.",
+    "hotel_http_calls_in_this_diagnostic": 0,
+    "expiry_bypass": false,
+    "original_failure_attribution": "Not proved: may involve one hotel prebook or a transient supplier response. Flight success afterwards does not retrospectively prove the failed supplier."
+  },
+  "primary_documentation": [
+    "https://duffel.com/docs/api/v2/offers",
+    "https://duffel.com/docs/api/overview/making-requests"
+  ],
+  "documented_header_contract": {
+    "accept_application_json_required": true,
+    "observed_missing_header_caused_failure": false,
+    "note": "Docs require Accept: application/json, but all three unmodified GET refreshes returned 200. Do not label the missing header as the observed preview root cause."
+  },
+  "safety": {
+    "model_calls": 0,
+    "supplier_booking_calls": 0,
+    "payment_calls": 0,
+    "native_changes": 0,
+    "new_searches": 2,
+    "paid_fallback": false,
+    "raw_supplier_ids_or_credentials_exported": false
+  },
+  "remaining": [
+    "The original failed supplier and upstream status were not persisted; original 503 remains unexplained, not retrospectively fixed.",
+    "Expose only safe provider/upstream_http_status metadata for future quote-refresh failures, with no raw upstream body, URL or credentials.",
+    "A separate fresh Native search -> prebook/refresh -> simulated confirmation and idempotent repeat passed in actual-group-checkout-20261027.json; the original 503 cause remains UNKNOWN."
+  ],
+  "frozen_source_file_sha256": "bac8de7b425212fe3dd0d1aa5091694579638ba0ba226897a91f33d5abb3e2d8",
+  "fresh_exact_group_hotel_qualification": {
+    "actual_http_calls": 4,
+    "cases": [
+      {
+        "hotel_id": "lp8a2f3",
+        "request": {
+          "checkin": "2026-11-10",
+          "checkout": "2026-11-13",
+          "currency": "RUB",
+          "hotelIds": [
+            "lp8a2f3"
+          ],
+          "occupancies": [
+            {
+              "adults": 1,
+              "children": [
+                6
+              ]
+            },
+            {
+              "adults": 1,
+              "children": [
+                12
+              ]
+            }
+          ],
+          "guestNationality": "RU"
+        },
+        "status": "ACTUAL_SELECTED_PREBOOK_PASS",
+        "http_start_index": 0,
+        "offers_count": 146,
+        "eligible_count": 146,
+        "search_issue_counts": {},
+        "selected_amount_minor": 8971394,
+        "selected_id_sha256": "0b599465fc11f39623f0c7513f211a3fda828f3c39386aaae7ab3be14c46e6d6",
+        "refreshed_amount_minor": 8971394,
+        "currency": "RUB",
+        "same_public_id": true,
+        "same_native_id": true,
+        "allocation_verified": true,
+        "fees_included": true,
+        "source_type": "SANDBOX",
+        "sandbox_prebook_verified": true,
+        "supplier_booking_created": false,
+        "http_end_index": 2
+      },
+      {
+        "hotel_id": "lp55de7",
+        "request": {
+          "checkin": "2026-11-13",
+          "checkout": "2026-11-17",
+          "currency": "RUB",
+          "hotelIds": [
+            "lp55de7"
+          ],
+          "occupancies": [
+            {
+              "adults": 1,
+              "children": [
+                7
+              ]
+            },
+            {
+              "adults": 1,
+              "children": [
+                12
+              ]
+            }
+          ],
+          "guestNationality": "RU"
+        },
+        "status": "ACTUAL_SELECTED_PREBOOK_PASS",
+        "http_start_index": 2,
+        "offers_count": 149,
+        "eligible_count": 149,
+        "search_issue_counts": {
+          "board_mixed_or_unknown": 132
+        },
+        "selected_amount_minor": 16469628,
+        "selected_id_sha256": "94cb56beb2915cdc744c74e99b4addd9fe6ee0fb7bca931934adc9f6e6dba57b",
+        "refreshed_amount_minor": 16469628,
+        "currency": "RUB",
+        "same_public_id": true,
+        "same_native_id": true,
+        "allocation_verified": true,
+        "fees_included": true,
+        "source_type": "SANDBOX",
+        "sandbox_prebook_verified": true,
+        "supplier_booking_created": false,
+        "http_end_index": 4
+      }
+    ],
+    "http": [
+      {
+        "provider": "liteapi",
+        "kind": "search",
+        "http_status": 200,
+        "elapsed_seconds": 12.331,
+        "errors": []
+      },
+      {
+        "provider": "liteapi",
+        "kind": "prebook",
+        "http_status": 200,
+        "elapsed_seconds": 7.876,
+        "errors": []
+      },
+      {
+        "provider": "liteapi",
+        "kind": "search",
+        "http_status": 200,
+        "elapsed_seconds": 7.033,
+        "errors": []
+      },
+      {
+        "provider": "liteapi",
+        "kind": "prebook",
+        "http_status": 200,
+        "elapsed_seconds": 7.493,
+        "errors": []
+      }
+    ],
+    "scope": "Frozen Native adapter only; exact original hotel/date/currency/occupancy requests, fresh selected offers, immediate prebook. No API quote or confirmation.",
+    "all_checks": true
+  },
+  "total_diagnostic_http_calls": 7,
+  "automatic_retries": 0,
+  "request_count_scope": "Historical diagnostic phases only; updating this record performs zero new supplier requests.",
+  "request_phases": {
+    "initial_selected_flight_refresh": {
+      "http_calls": 3,
+      "new_searches": 0,
+      "selected_offer_get_refreshes": 3
+    },
+    "fresh_exact_group_hotel_qualification": {
+      "http_calls": 4,
+      "new_searches": 2,
+      "selected_offer_prebooks": 2
+    },
+    "aggregate": {
+      "http_calls": 7,
+      "new_searches": 2,
+      "selected_offer_get_refreshes": 3,
+      "selected_offer_prebooks": 2
+    }
+  },
+  "superseded_by": {
+    "path": "docs/verification/actual-group-checkout-20261027.json",
+    "public_receipt_sha256": "58e796f5917f627a7fce38e1a5c42ece5fd4fc1f755ca6ad6955af2d5e92a850",
+    "source_report_sha256": "d0d041fd31e2803f58c2d59b0df79b96ecdf044129b51affb1d919263f4de549",
+    "status": "ACTUAL_MIXED_GROUP_SEARCH_PREBOOK_REFRESH_SIMCONFIRM_PASS",
+    "scope": "A separate fresh Native typed mixed group search/preview/simulated-confirmation passed. It does not identify or retrospectively fix the original 503 cause."
+  }
+}

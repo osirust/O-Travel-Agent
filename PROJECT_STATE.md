@@ -1,15 +1,28 @@
-# Состояние AegML · 19 октября 2026
+# O!Travel Agent - public portfolio snapshot
 
-Цель: подготовить публичный фундамент команды из четырёх участников для трека «О!дин запрос».
+Updated: 30 October 2026.
 
-Сделано: офлайн CLI на стандартной библиотеке Python, структурированные запросы, синтетический каталог, валидация, интерфейсы будущих провайдеров, документация, оформление и GitHub Actions. Команда разделена на четыре сопоставимых потока без назначения неизвестных имён.
+## Scope
 
-Проверено локально: Windows / Python 3.14.5 — 13 из 13 unittest; полный и неполный демонстрационные запросы; независимая проверка кода и поведения local/API без fallback. Демонстрация не вызывает LLM или сеть, не подтверждает наличие и не создаёт бронь.
+This repository contains the complete application, tests and supporting evidence imported from the team's official hackathon submission (`0d8d193`). The original source is `ostrovok-hackathon-2026/aegml`; the `submission` tag identifies that historical release. The public `main` adds portfolio documentation and does not claim a new runtime qualification.
 
-Публикация: фундамент отправлен в `main`, исходный commit `d445bafceaf428d5954b1fd090381254cbf546c3` подтверждён удалённым head; README проверен в браузере. Закрытые рабочие материалы в публичную историю не добавлены. Описание и темы репозитория настроены.
+Vladimir Ivanov owned backend/agent-harness development, integrations and automated testing. The frontend was developed by the team. This is a hackathon prototype; no commercial deployment, real bookings or competition victory is claimed.
 
-CI запускается автоматически для Ubuntu/Python 3.11 и Windows/Python 3.14. Актуальные результаты относятся к конкретному commit и доступны в [Actions](https://github.com/osirust/AegML_OneRequest/actions/workflows/ci.yml); локальные 13/13 сами по себе не подтверждают CI.
+## Verified engineering
 
-Открыто: модель/мощности/API; полное задание и критерии; допустимость подготовленного кода и AI-инструментов; актуальная редакция правил и условия публикации конкурсного решения. Известные положения и вопросы собраны в `docs/OPEN_QUESTIONS.md`. Лицензия конкурсного решения не выбрана.
+- Canonical trip state, typed model operations, schema validation and bounded repair.
+- Read-only answers based on canonical facts, with limits on model-proposed state changes.
+- PostgreSQL revisions, durable runs/events, optimistic concurrency and idempotent simulated orders.
+- Independent LLM and travel-provider adapters, explicit DEMO/SANDBOX/indicative source types.
+- A frozen backend checkpoint with 7,968 successful checks; clean Compose and external-wire checks are separate evidence.
+- 52 frontend tests and production build at the last frontend checkpoint.
 
-Ближайший шаг команды: каждому из четырёх участников выполнить чистый запуск и выбрать свой участок; зафиксировать допуск 21 октября и ответы организаторов. Дальнейший объём уточняется после задания; реальные интеграции не объявлены готовыми.
+These results are scoped: the 40-dialogue and 106-scenario suites are not represented as a complete semantic PASS. External availability and quotas are outside a local health check.
+
+## Public setup
+
+Follow README: copy `.env.example` to `.env`, provide your own supported LLM/travel API credentials and run `docker compose up --build`. The interface is at http://localhost:8080. Forms and explicit DEMO workflows are available without external API keys.
+
+Working credentials are not included in the public tree. The judge-only encrypted envelope is excluded from public `main`. Original historical Git objects retain the encrypted artifact; the publication check found no plaintext working credentials. The public recipient key alone cannot decrypt the envelope.
+
+The old demonstration video has been removed by its owner; screenshots remain as examples. No future execution, service startup or automation is requested by this state file.

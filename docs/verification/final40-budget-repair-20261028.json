@@ -1,0 +1,60 @@
+{
+  "format": "otravel.final40_budget_repair.v1",
+  "created_at_utc": "2026-10-28T16:53:54.374619+00:00",
+  "status": "CONTROLLED_REPRODUCTIONS_PASS_FINAL_ACTUAL_RETAKE_PENDING",
+  "baseline_git": "91e6ee4cb2855bcc8cc8febaded66de5f411c14d",
+  "finding_ids": [
+    "HARNESS-004-FINAL40-BUDGET-RESERVE-001",
+    "HARNESS-004-FINAL40-BUDGET-COMPONENT-SCOPE-001",
+    "BUDGET-REVIEW-HYPOTHETICAL-CLEAR-001"
+  ],
+  "baseline": {
+    "original_private_pure": "4FAIL/3PASS",
+    "original_private_pg": "2FAIL",
+    "original_evidence_preserved": true
+  },
+  "checks": [
+    "100 тысяч + резерв 20% не становятся лимитом 1200 RUB; нужен расходуемый предел",
+    "Явно включённые питание и багаж сохраняются как непроверенные обязательные расходы",
+    "Флаги непроверенных расходов блокируют полный план/котировку; суммы не выдумываются",
+    "Гипотеза/цитата/история/вопрос не снимают ранее сохранённое обязательное условие",
+    "Явный отказ от учёта питания снимает только питание, сохраняя багаж",
+    "Неизменившаяся revision при неоднозначном бюджете всё равно блокирует старое подтверждение",
+    "Закрытое извлечение суммы не обходит проверку непроверенных расходов",
+    "Гипотеза вместе с явной паузой не изменяет поездку и не запускает поиск"
+  ],
+  "related": {
+    "path": ".local/evaluation/final40-budget-peer-fix-final-20261028.xml",
+    "sha256": "dce9201236acbbcee1e60c715a609d2751d5e4537f30a393013121aea70b27a8",
+    "tests": "205",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "13.090"
+  },
+  "new_with_last_pg_pause": {
+    "path": ".local/evaluation/final40-budget-paused-peer-20261028.xml",
+    "sha256": "8862638c9c50d42fe543ba2961e75916ccc5616ecb4f99e290fd1e7127b5af5f",
+    "tests": "31",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "8.873"
+  },
+  "overlapping_test_sets_not_summed": true,
+  "changed_files_sha256": {
+    "otravel/budget_requirements.py": "1b65be242076cc4ed48688c9a567d6f9e4047e37214646990c5d3458dc47675a",
+    "otravel/money.py": "840d3153937d1de447297febf1131149220fd1eaa42aa98eaf3c2866a4e62e1a",
+    "otravel/api.py": "c2070f84afa553fc33a328febc633beac591c86e56992e4a174ca27dc908399d",
+    "otravel/harness.py": "d68110d42e23fdf0c380c84e482647ade7ccb617876036b2d6874688c591c1d2",
+    "tests/test_final40_budget_requirements.py": "b8c133b0db499f48e41c1565083d3125a549c710c51d6b94ac5fb4612709601f",
+    "tests/test_final40_budget_requirements_pg.py": "df8867ff4375f921d1917a60d82bc6f4211cae9356aa2712491a0967428777e8"
+  },
+  "model_http": 0,
+  "supplier_http": 0,
+  "real_bookings_or_payments": 0,
+  "scope_limits": [
+    "Расходы на питание не оцениваются автоматически.",
+    "Два контролируемых набора не являются новым семантическим PASS всех 40 диалогов."
+  ]
+}

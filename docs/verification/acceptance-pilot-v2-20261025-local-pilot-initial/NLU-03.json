@@ -1,0 +1,410 @@
+{
+  "observation": {
+    "case_id": "NLU-03",
+    "request_text": "Хочу в Сочи на недельку с семьёй, не дороже 100к.",
+    "state_before": {
+      "session_id": "session-13",
+      "trip_id": "trip-14",
+      "state_version": 0,
+      "trip_version": 0,
+      "status": "NEW",
+      "waiting_reason": null,
+      "pending_question": null,
+      "trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "trip-14",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control",
+        "checkout/preview"
+      ]
+    },
+    "state_after": {
+      "session_id": "session-13",
+      "trip_id": "trip-14",
+      "state_version": 1,
+      "trip_version": 1,
+      "status": "WAITING_USER",
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Сколько взрослых поедет в поездку?",
+        "field": "party.adults",
+        "reason": "clarification",
+        "context": {},
+        "questions": [
+          "Сколько взрослых поедет в поездку?"
+        ],
+        "target_id": null,
+        "question_id": "run-15-question",
+        "state_version": 1
+      },
+      "trip": {
+        "legs": [],
+        "stays": [],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 1000000
+        },
+        "groups": [],
+        "origin": "Сочи",
+        "trip_id": "trip-14",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control",
+        "checkout/preview"
+      ]
+    },
+    "actual_run": {
+      "run_id": "run-15",
+      "session_id": "session-13",
+      "status": "completed",
+      "based_version": 0,
+      "result": {
+        "run": {
+          "id": "run-15",
+          "error": null,
+          "result": null,
+          "run_id": "run-15",
+          "status": "completed",
+          "created_at": "2026-10-25T18:21:29.611555+00:00",
+          "session_id": "session-13",
+          "started_at": "2026-10-25T18:21:29.620304+00:00",
+          "finished_at": null,
+          "based_version": 0,
+          "current_status": "completed",
+          "input_message_id": "id-16",
+          "client_message_id": "id-17",
+          "request_expected_version": 0
+        },
+        "error": null,
+        "reply": "Сколько взрослых поедет в поездку?",
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 1000000
+          },
+          "groups": [],
+          "origin": "Сочи",
+          "trip_id": "trip-14",
+          "travelers": [],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 1
+        },
+        "result": {
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1816
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1816
+          },
+          "model_reply": "Понял: Сочи и бюджет до 100 тысяч рублей. Уточните даты выезда и количество гостей.",
+          "response_source": "llm",
+          "operation_normalizations": []
+        },
+        "run_id": "run-15",
+        "status": "WAITING_USER",
+        "changes": [
+          {
+            "after": "Сочи",
+            "field": "origin",
+            "before": null,
+            "operation": "set_origin",
+            "target_id": null
+          },
+          {
+            "after": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 1000000
+            },
+            "field": "budget",
+            "before": null,
+            "operation": "set_budget",
+            "target_id": null
+          }
+        ],
+        "message": {
+          "id": "id-18",
+          "role": "assistant",
+          "text": "Сколько взрослых поедет в поездку?",
+          "run_id": "run-15",
+          "sequence": 337,
+          "created_at": "2026-10-25T18:21:31.471146+00:00",
+          "session_id": "session-13",
+          "client_message_id": null
+        },
+        "session": {
+          "state": {
+            "legs": [],
+            "stays": [],
+            "budget": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 1000000
+            },
+            "groups": [],
+            "origin": "Сочи",
+            "trip_id": "trip-14",
+            "travelers": [],
+            "constraints": [],
+            "preferences": [],
+            "search_policy": {
+              "mode": "DEMO",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "serpapi",
+              "guest_nationality": null
+            },
+            "state_version": 1
+          },
+          "status": "WAITING_USER",
+          "trip_id": "trip-14",
+          "created_at": "2026-10-25T18:21:19.418863+00:00",
+          "session_id": "session-13",
+          "updated_at": "2026-10-25T18:21:31.469421+00:00",
+          "state_version": 1,
+          "waiting_reason": "clarification",
+          "pending_question": {
+            "text": "Сколько взрослых поедет в поездку?",
+            "field": "party.adults",
+            "reason": "clarification",
+            "context": {},
+            "questions": [
+              "Сколько взрослых поедет в поездку?"
+            ],
+            "target_id": null,
+            "question_id": "run-15-question",
+            "state_version": 1
+          }
+        },
+        "trip_id": "trip-14",
+        "created_at": "2026-10-25T18:21:19.418863+00:00",
+        "session_id": "session-13",
+        "updated_at": "2026-10-25T18:21:31.469421+00:00",
+        "state_version": 1,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Сколько взрослых поедет в поездку?",
+          "field": "party.adults",
+          "reason": "clarification",
+          "context": {},
+          "questions": [
+            "Сколько взрослых поедет в поездку?"
+          ],
+          "target_id": null,
+          "question_id": "run-15-question",
+          "state_version": 1
+        },
+        "assistant_message": {
+          "id": "id-18",
+          "role": "assistant",
+          "text": "Сколько взрослых поедет в поездку?",
+          "run_id": "run-15",
+          "sequence": 337,
+          "created_at": "2026-10-25T18:21:31.471146+00:00",
+          "session_id": "session-13",
+          "client_message_id": null
+        }
+      },
+      "error": null,
+      "llm": {
+        "model": "qwen3.5:4b",
+        "attempts": [
+          {
+            "model": "qwen3.5:4b",
+            "outcome": "response",
+            "provider": "ollama",
+            "latency_ms": 1816
+          }
+        ],
+        "provider": "ollama",
+        "latency_ms": 1816
+      },
+      "created_at": "2026-10-25T18:21:29.611555+00:00",
+      "finished_at": "2026-10-25T18:21:31.472076+00:00",
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control"
+      ]
+    },
+    "current_run_events": [
+      {
+        "sequence": 845,
+        "event_id": "id-19",
+        "session_id": "session-13",
+        "run_id": "run-15",
+        "event_type": "USER_MESSAGE_RECEIVED",
+        "state_version": 0,
+        "payload": {
+          "message_id": "id-16"
+        },
+        "created_at": "2026-10-25T18:21:29.612959+00:00"
+      },
+      {
+        "sequence": 846,
+        "event_id": "id-20",
+        "session_id": "session-13",
+        "run_id": "run-15",
+        "event_type": "RUN_STARTED",
+        "state_version": 0,
+        "payload": {},
+        "created_at": "2026-10-25T18:21:29.621441+00:00"
+      },
+      {
+        "sequence": 847,
+        "event_id": "id-21",
+        "session_id": "session-13",
+        "run_id": "run-15",
+        "event_type": "MODEL_CALL_STARTED",
+        "state_version": 0,
+        "payload": {
+          "provider": "ollama"
+        },
+        "created_at": "2026-10-25T18:21:29.637325+00:00"
+      },
+      {
+        "sequence": 848,
+        "event_id": "id-22",
+        "session_id": "session-13",
+        "run_id": "run-15",
+        "event_type": "MODEL_RESPONSE_RECEIVED",
+        "state_version": 0,
+        "payload": {
+          "model": "qwen3.5:4b",
+          "attempt": 1,
+          "provider": "ollama",
+          "latency_ms": 1816,
+          "operations": 2
+        },
+        "created_at": "2026-10-25T18:21:31.459526+00:00"
+      },
+      {
+        "sequence": 849,
+        "event_id": "id-23",
+        "session_id": "session-13",
+        "run_id": "run-15",
+        "event_type": "RUN_COMPLETED",
+        "state_version": 1,
+        "payload": {
+          "error": null,
+          "domain_changed": true
+        },
+        "created_at": "2026-10-25T18:21:31.472822+00:00"
+      }
+    ],
+    "orders": [],
+    "session_created_events": [
+      {
+        "sequence": 844,
+        "event_id": "id-24",
+        "session_id": "session-13",
+        "run_id": null,
+        "event_type": "SESSION_CREATED",
+        "state_version": 0,
+        "payload": {},
+        "created_at": "2026-10-25T18:21:19.421259+00:00"
+      }
+    ]
+  },
+  "grading": {
+    "case_id": "NLU-03",
+    "binding_revision": 2,
+    "subset_status": "FAIL_BOUND_CHECKS",
+    "full_case_status": "BLOCKED_ORACLE",
+    "unbound_check_ids": [
+      "original_behavior",
+      "requested_duration_not_lost"
+    ],
+    "checks": [
+      {
+        "check_id": "family_occupancy_not_assumed",
+        "passed": true
+      },
+      {
+        "check_id": "budget_scope_not_silently_changed",
+        "passed": false
+      },
+      {
+        "check_id": "completed_run",
+        "passed": true
+      },
+      {
+        "check_id": "no_structured_offers_before_missing_parameters",
+        "passed": true
+      },
+      {
+        "check_id": "no_supplier_tool_calls",
+        "passed": true
+      },
+      {
+        "check_id": "no_order_created",
+        "passed": true
+      },
+      {
+        "check_id": "missing_parameters_have_question",
+        "passed": true
+      },
+      {
+        "check_id": "origin_not_invented",
+        "passed": false
+      },
+      {
+        "check_id": "explicit_destination_sochi",
+        "passed": false
+      }
+    ]
+  }
+}

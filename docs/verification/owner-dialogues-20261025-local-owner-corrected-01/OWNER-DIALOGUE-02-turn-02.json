@@ -1,0 +1,482 @@
+{
+  "case_id": "OWNER-DIALOGUE-02",
+  "turn_index": 2,
+  "request_text": "белгрод",
+  "state_before": {
+    "session_id": "session-26",
+    "trip_id": "trip-27",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "questions": [
+        "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+      ],
+      "target_id": null,
+      "question_id": "run-28-question",
+      "state_version": 0,
+      "requested_destination": {
+        "kind": "country",
+        "name": "Сербия",
+        "country_code": "RS",
+        "suggested_cities": [
+          {
+            "name": "Белград",
+            "available": false,
+            "country_code": "RS"
+          },
+          {
+            "name": "Нови-Сад",
+            "available": false,
+            "country_code": "RS"
+          }
+        ]
+      }
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-27",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "state_after": {
+    "session_id": "session-26",
+    "trip_id": "trip-27",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "WAITING_USER",
+    "waiting_reason": "clarification",
+    "pending_question": {
+      "text": "Вы имеете в виду город «Белград»?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "proposed_destination": {
+          "kind": "city",
+          "name": "Белград",
+          "country_code": "RS"
+        },
+        "confirmation_required": true,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "questions": [
+        "Вы имеете в виду город «Белград»?"
+      ],
+      "target_id": null,
+      "question_id": "run-37-question",
+      "state_version": 0,
+      "requested_destination": {
+        "kind": "country",
+        "name": "Сербия",
+        "country_code": "RS",
+        "suggested_cities": [
+          {
+            "name": "Белград",
+            "available": false,
+            "country_code": "RS"
+          },
+          {
+            "name": "Нови-Сад",
+            "available": false,
+            "country_code": "RS"
+          }
+        ]
+      }
+    },
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-27",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "actual_run": {
+    "run_id": "run-37",
+    "session_id": "session-26",
+    "status": "completed",
+    "based_version": 0,
+    "result": {
+      "run": {
+        "id": "run-37",
+        "error": null,
+        "result": null,
+        "run_id": "run-37",
+        "status": "completed",
+        "created_at": "2026-10-25T17:37:07.153019+00:00",
+        "session_id": "session-26",
+        "started_at": "2026-10-25T17:37:07.160568+00:00",
+        "finished_at": null,
+        "based_version": 0,
+        "current_status": "completed",
+        "input_message_id": "id-38",
+        "client_message_id": "id-39",
+        "request_expected_version": 0
+      },
+      "error": null,
+      "reply": "Вы имеете в виду город «Белград»?",
+      "state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "trip-27",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "result": {
+        "response_source": "contextual_slot"
+      },
+      "run_id": "run-37",
+      "status": "WAITING_USER",
+      "changes": [],
+      "message": {
+        "id": "id-40",
+        "role": "assistant",
+        "text": "Вы имеете в виду город «Белград»?",
+        "run_id": "run-37",
+        "sequence": 60,
+        "created_at": "2026-10-25T17:37:07.170223+00:00",
+        "session_id": "session-26",
+        "client_message_id": null
+      },
+      "session": {
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "trip-27",
+          "travelers": [],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 0
+        },
+        "status": "WAITING_USER",
+        "trip_id": "trip-27",
+        "created_at": "2026-10-25T17:36:40.633851+00:00",
+        "session_id": "session-26",
+        "updated_at": "2026-10-25T17:37:07.169676+00:00",
+        "state_version": 0,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "Вы имеете в виду город «Белград»?",
+          "field": "destination.city",
+          "reason": "clarification",
+          "context": {
+            "proposed_destination": {
+              "kind": "city",
+              "name": "Белград",
+              "country_code": "RS"
+            },
+            "confirmation_required": true,
+            "requested_destination": {
+              "kind": "country",
+              "name": "Сербия",
+              "country_code": "RS",
+              "suggested_cities": [
+                {
+                  "name": "Белград",
+                  "available": false,
+                  "country_code": "RS"
+                },
+                {
+                  "name": "Нови-Сад",
+                  "available": false,
+                  "country_code": "RS"
+                }
+              ]
+            }
+          },
+          "questions": [
+            "Вы имеете в виду город «Белград»?"
+          ],
+          "target_id": null,
+          "question_id": "run-37-question",
+          "state_version": 0,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        }
+      },
+      "trip_id": "trip-27",
+      "created_at": "2026-10-25T17:36:40.633851+00:00",
+      "session_id": "session-26",
+      "updated_at": "2026-10-25T17:37:07.169676+00:00",
+      "state_version": 0,
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Вы имеете в виду город «Белград»?",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {
+          "proposed_destination": {
+            "kind": "city",
+            "name": "Белград",
+            "country_code": "RS"
+          },
+          "confirmation_required": true,
+          "requested_destination": {
+            "kind": "country",
+            "name": "Сербия",
+            "country_code": "RS",
+            "suggested_cities": [
+              {
+                "name": "Белград",
+                "available": false,
+                "country_code": "RS"
+              },
+              {
+                "name": "Нови-Сад",
+                "available": false,
+                "country_code": "RS"
+              }
+            ]
+          }
+        },
+        "questions": [
+          "Вы имеете в виду город «Белград»?"
+        ],
+        "target_id": null,
+        "question_id": "run-37-question",
+        "state_version": 0,
+        "requested_destination": {
+          "kind": "country",
+          "name": "Сербия",
+          "country_code": "RS",
+          "suggested_cities": [
+            {
+              "name": "Белград",
+              "available": false,
+              "country_code": "RS"
+            },
+            {
+              "name": "Нови-Сад",
+              "available": false,
+              "country_code": "RS"
+            }
+          ]
+        }
+      },
+      "assistant_message": {
+        "id": "id-40",
+        "role": "assistant",
+        "text": "Вы имеете в виду город «Белград»?",
+        "run_id": "run-37",
+        "sequence": 60,
+        "created_at": "2026-10-25T17:37:07.170223+00:00",
+        "session_id": "session-26",
+        "client_message_id": null
+      }
+    },
+    "error": null,
+    "llm": null,
+    "created_at": "2026-10-25T17:37:07.153019+00:00",
+    "finished_at": "2026-10-25T17:37:07.170716+00:00",
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control"
+    ]
+  },
+  "messages": [
+    {
+      "sequence": 57,
+      "id": "id-29",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "client_message_id": "id-30",
+      "role": "user",
+      "text": "в сербию хочу",
+      "created_at": "2026-10-25T17:36:48.801226+00:00"
+    },
+    {
+      "sequence": 58,
+      "id": "id-31",
+      "session_id": "session-26",
+      "run_id": "run-28",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+      "created_at": "2026-10-25T17:36:49.437767+00:00"
+    },
+    {
+      "sequence": 59,
+      "id": "id-38",
+      "session_id": "session-26",
+      "run_id": "run-37",
+      "client_message_id": "id-39",
+      "role": "user",
+      "text": "белгрод",
+      "created_at": "2026-10-25T17:37:07.153019+00:00"
+    },
+    {
+      "sequence": 60,
+      "id": "id-40",
+      "session_id": "session-26",
+      "run_id": "run-37",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Вы имеете в виду город «Белград»?",
+      "created_at": "2026-10-25T17:37:07.170223+00:00"
+    }
+  ],
+  "current_run_events": [
+    {
+      "sequence": 151,
+      "event_id": "id-41",
+      "session_id": "session-26",
+      "run_id": "run-37",
+      "event_type": "USER_MESSAGE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "message_id": "id-38"
+      },
+      "created_at": "2026-10-25T17:37:07.154049+00:00"
+    },
+    {
+      "sequence": 152,
+      "event_id": "id-42",
+      "session_id": "session-26",
+      "run_id": "run-37",
+      "event_type": "RUN_STARTED",
+      "state_version": 0,
+      "payload": {},
+      "created_at": "2026-10-25T17:37:07.161744+00:00"
+    },
+    {
+      "sequence": 153,
+      "event_id": "id-43",
+      "session_id": "session-26",
+      "run_id": "run-37",
+      "event_type": "RUN_COMPLETED",
+      "state_version": 0,
+      "payload": {
+        "error": null,
+        "domain_changed": false
+      },
+      "created_at": "2026-10-25T17:37:07.171448+00:00"
+    }
+  ],
+  "orders": [],
+  "http_routes": [
+    "POST /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/runs/{run_id}",
+    "GET /api/v1/sessions/{session_id}",
+    "GET /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/sessions/{session_id}/events",
+    "GET /api/v1/sessions/{session_id}/orders"
+  ]
+}

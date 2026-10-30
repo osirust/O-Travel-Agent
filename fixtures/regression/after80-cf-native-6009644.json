@@ -1,0 +1,501 @@
+{
+  "source_code_sha": "6009644be59d2f5bcb998df41ee1355fa468b6d3",
+  "source_manifest_sha256": "e2bdb67f1eca8ec74822313b01d589494c5c5a2b40f6a95cdd54a7bbf664b017",
+  "private_report_sha256": "87bc431f0af0fe2a4684a245a6e2a5173a246791b077658d83ae5ed7752d5033",
+  "kind": "Minimal synthetic actualCF raw payload regression fixtures; not original80 corpus",
+  "cases": [
+    {
+      "id": "CF10-06",
+      "user": "Из Москвы в Стамбул, затем Анталья. Нас две семьи: первая — двое взрослых и ребёнок шести лет; вторая — двое взрослых и ребёнок десяти лет. В каждом городе каждой семье нужен свой отдельный номер, семьи не смешивать. Всего четыре взрослых и двое детей, по два номера в каждом городе. Общий бюджет 500000 рублей. Даты ещё не выбраны, их не придумывай.",
+      "before_state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "7c80c47b-e8be-4f1f-b79a-d395553c2d0d",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "raw": {
+        "reply": "Принято: Москва → Стамбул → Анталья, две семьи с отдельными номерами, бюджет 500000 ₽. Даты не указаны — уточните, пожалуйста, даты заезда и выезда для каждого города.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [
+          "Даты заезда и выезда для Стамбула",
+          "Даты заезда и выезда для Антальи"
+        ],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_origin",
+            "value": {
+              "city": "Москва"
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 50000000
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-3",
+              "age": 6,
+              "type": "child",
+              "group_id": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-4",
+              "age": null,
+              "type": "adult",
+              "group_id": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-5",
+              "age": null,
+              "type": "adult",
+              "group_id": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-6",
+              "age": 10,
+              "type": "child",
+              "group_id": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-2",
+                "new-traveler-3"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-1"
+          },
+          {
+            "type": "upsert_group",
+            "value": {
+              "traveler_ids": [
+                "new-traveler-4",
+                "new-traveler-5",
+                "new-traveler-6"
+              ],
+              "keep_separate": true
+            },
+            "target_id": "new-group-2"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Стамбул",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2",
+                    "new-traveler-3"
+                  ]
+                },
+                {
+                  "id": "new-room-2",
+                  "traveler_ids": [
+                    "new-traveler-4",
+                    "new-traveler-5",
+                    "new-traveler-6"
+                  ]
+                }
+              ]
+            },
+            "target_id": "new-stay-1"
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Анталья",
+              "rooms": [
+                {
+                  "id": "new-room-3",
+                  "traveler_ids": [
+                    "new-traveler-1",
+                    "new-traveler-2",
+                    "new-traveler-3"
+                  ]
+                },
+                {
+                  "id": "new-room-4",
+                  "traveler_ids": [
+                    "new-traveler-4",
+                    "new-traveler-5",
+                    "new-traveler-6"
+                  ]
+                }
+              ]
+            },
+            "target_id": "new-stay-2"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "raw_sha256": "7bb3e49ebde8ecdf5e429ce1530a9d1f50c06bee6ac2dcfdc44a6dd5a42782ac",
+      "checked_conflicts": [
+        "В одной реплике предложены разные значения поля «group_membership.new-traveler-1». Уточните итоговое значение.",
+        "В одной реплике предложены разные значения поля «group_membership.new-traveler-2». Уточните итоговое значение.",
+        "В одной реплике предложены разные значения поля «group_membership.new-traveler-3». Уточните итоговое значение.",
+        "В одной реплике предложены разные значения поля «group_membership.new-traveler-4». Уточните итоговое значение.",
+        "В одной реплике предложены разные значения поля «group_membership.new-traveler-5». Уточните итоговое значение.",
+        "В одной реплике предложены разные значения поля «group_membership.new-traveler-6». Уточните итоговое значение."
+      ]
+    },
+    {
+      "id": "CF10-10",
+      "user": "Добавь ребёнка пяти лет в первую семью, сократи общий бюджет на 20000 рублей и продли последнее проживание на два дня. Первое проживание, отели и всех остальных участников не меняй. Возвращение сдвигается вслед за новым выездом.",
+      "before_state": {
+        "legs": [
+          {
+            "id": "leg-out",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Стамбул",
+            "departure_date": "2026-11-06"
+          },
+          {
+            "id": "leg-between",
+            "mode": "flight",
+            "origin": "Стамбул",
+            "destination": "Анталья",
+            "departure_date": "2026-11-09"
+          },
+          {
+            "id": "leg-return",
+            "mode": "flight",
+            "origin": "Анталья",
+            "destination": "Казань",
+            "departure_date": "2026-11-13"
+          }
+        ],
+        "stays": [
+          {
+            "id": "stay-istanbul",
+            "city": "Стамбул",
+            "rooms": [
+              {
+                "id": "stay-istanbul-room-1",
+                "traveler_ids": [
+                  "adult-1",
+                  "adult-2",
+                  "child-1",
+                  "child-2"
+                ]
+              },
+              {
+                "id": "stay-istanbul-room-2",
+                "traveler_ids": [
+                  "adult-3"
+                ]
+              },
+              {
+                "id": "stay-istanbul-room-3",
+                "traveler_ids": [
+                  "adult-4",
+                  "adult-5",
+                  "adult-6",
+                  "child-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-06",
+            "hotel_id": null,
+            "check_out": "2026-11-09"
+          },
+          {
+            "id": "stay-antalya",
+            "city": "Анталья",
+            "rooms": [
+              {
+                "id": "stay-antalya-room-1",
+                "traveler_ids": [
+                  "adult-1",
+                  "adult-2",
+                  "child-1",
+                  "child-2"
+                ]
+              },
+              {
+                "id": "stay-antalya-room-2",
+                "traveler_ids": [
+                  "adult-3"
+                ]
+              },
+              {
+                "id": "stay-antalya-room-3",
+                "traveler_ids": [
+                  "adult-4",
+                  "adult-5",
+                  "adult-6",
+                  "child-3"
+                ]
+              }
+            ],
+            "check_in": "2026-11-09",
+            "hotel_id": null,
+            "check_out": "2026-11-13"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 80000000
+        },
+        "groups": [
+          {
+            "id": "family-1",
+            "traveler_ids": [
+              "adult-1",
+              "adult-2",
+              "adult-3",
+              "child-1",
+              "child-2"
+            ],
+            "keep_separate": true
+          },
+          {
+            "id": "family-2",
+            "traveler_ids": [
+              "adult-4",
+              "adult-5",
+              "adult-6",
+              "child-3"
+            ],
+            "keep_separate": true
+          }
+        ],
+        "origin": "Казань",
+        "trip_id": "9dde8e47-2aa7-4c0f-904d-6dfc627865a2",
+        "travelers": [
+          {
+            "id": "adult-1",
+            "age": null,
+            "type": "adult",
+            "group_id": "family-1",
+            "birth_date": null
+          },
+          {
+            "id": "adult-2",
+            "age": null,
+            "type": "adult",
+            "group_id": "family-1",
+            "birth_date": null
+          },
+          {
+            "id": "adult-3",
+            "age": null,
+            "type": "adult",
+            "group_id": "family-1",
+            "birth_date": null
+          },
+          {
+            "id": "adult-4",
+            "age": null,
+            "type": "adult",
+            "group_id": "family-2",
+            "birth_date": null
+          },
+          {
+            "id": "adult-5",
+            "age": null,
+            "type": "adult",
+            "group_id": "family-2",
+            "birth_date": null
+          },
+          {
+            "id": "adult-6",
+            "age": null,
+            "type": "adult",
+            "group_id": "family-2",
+            "birth_date": null
+          },
+          {
+            "id": "child-1",
+            "age": 3,
+            "type": "child",
+            "group_id": "family-1",
+            "birth_date": null
+          },
+          {
+            "id": "child-2",
+            "age": 7,
+            "type": "child",
+            "group_id": "family-1",
+            "birth_date": null
+          },
+          {
+            "id": "child-3",
+            "age": 15,
+            "type": "child",
+            "group_id": "family-2",
+            "birth_date": null
+          }
+        ],
+        "constraints": [
+          {
+            "key": "breakfast",
+            "hard": true,
+            "value": true,
+            "room_id": null,
+            "stay_id": null
+          }
+        ],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "raw": {
+        "reply": "Добавлен ребёнок 5 лет в первую семью, бюджет сокращён на 20000 рублей, последнее проживание продлено на два дня, возвращение сдвинуто соответственно.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-1",
+              "age": 5,
+              "type": "child",
+              "group_id": "family-1"
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 60000000
+            },
+            "target_id": null
+          },
+          {
+            "type": "upsert_stay",
+            "value": {
+              "city": "Анталья",
+              "rooms": [
+                {
+                  "id": "stay-antalya-room-1",
+                  "traveler_ids": [
+                    "adult-1",
+                    "adult-2",
+                    "child-1",
+                    "child-2"
+                  ]
+                },
+                {
+                  "id": "stay-antalya-room-2",
+                  "traveler_ids": [
+                    "adult-3"
+                  ]
+                },
+                {
+                  "id": "stay-antalya-room-3",
+                  "traveler_ids": [
+                    "adult-4",
+                    "adult-5",
+                    "adult-6",
+                    "child-3"
+                  ]
+                }
+              ],
+              "check_in": "2026-11-09",
+              "hotel_id": null,
+              "check_out": "2026-11-15"
+            },
+            "target_id": "stay-antalya"
+          },
+          {
+            "type": "shift_return",
+            "value": {
+              "days": 2
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "raw_sha256": "c85677febfb819caf391498d614bcc6bc2c750b8deb217501dac4e6fa2bfdf4d",
+      "checked_conflicts": [
+        "В одной реплике предложены разные значения поля «trip.return_edit_kind». Уточните итоговое значение."
+      ]
+    }
+  ]
+}

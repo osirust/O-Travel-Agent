@@ -1,0 +1,74 @@
+{
+  "status": "FULL_CONTROLLED_ROOM_AND_SELECTION_RELEASE_PASS_ACTUAL_PENDING",
+  "date": "2026-10-27",
+  "base_commit": "73e743715a440f8723e1628fed6a48cf0dcc3e92",
+  "full": {
+    "path": ".local/evaluation/after80-20261027/full-room-and-selection-release-final2.xml",
+    "sha256": "e78d8c629d7c79bbe26ee37130b4bbf784d1c38939dd30e6e8cd9b2092302ed5",
+    "tests": 4292,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 145.178
+  },
+  "production_files": [
+    {
+      "path": "otravel/domain.py",
+      "sha256": "9e3eac79955822996261d844f63ec0c4514adb69d2bce9203e049666a7db5f8c"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "6779a013212a38262418324c95ce8519bfec9ecb02191803dc9fc76a6b16e78f"
+    },
+    {
+      "path": "otravel/llm_contract.py",
+      "sha256": "b56b683ed26afc68294eef420a88da38b5098bc7aee4833915080f5d5e733051"
+    },
+    {
+      "path": "otravel/room_intent.py",
+      "sha256": "b86164bfcaa8349bef4c897e5a564ba156254babbea19e6266c8d82d3ff9cf27"
+    },
+    {
+      "path": "otravel/room_additions.py",
+      "sha256": "3c2e55b85c63256d7587992dd608891dc482e91e37918bcc1426953a7c79fe48"
+    },
+    {
+      "path": "otravel/store.py",
+      "sha256": "345b9cd4e11bcbe7acfd1b50f04f73d41f4ba259fe87cf0fa910ce66bb05b652"
+    },
+    {
+      "path": "otravel/selected_plan.py",
+      "sha256": "5205db059c86f5dee04988d3fbd6d81502872336db6997ea09ec684c7174a9c7"
+    },
+    {
+      "path": "otravel/answering.py",
+      "sha256": "ad3019de13e7177b91bc7d33f20a299bad929e1f4f31a30cb278eaf4f3495df4"
+    },
+    {
+      "path": "otravel/conversational.py",
+      "sha256": "6e04be342660f83af885bd817fd6de78e6095589df76e1d977922aa05d6802e7"
+    }
+  ],
+  "features": [
+    "Scoped set_room_members primitive; old full layout operation unchanged",
+    "Addition-only sparse-output compatibility, no guessed occupants or room deletion",
+    "Count-only preservation and cross-layout/room-patch conflicts",
+    "Semantic domain failure is distinct from JSON/schema failure",
+    "Fresh current preview identity in extraction and read-only facts; no consent or prices in identity projection",
+    "Explicit plan ordinals override default selection; display numbering stays intact"
+  ],
+  "external_model_http_calls_in_suite": 0,
+  "supplier_http_calls_in_suite": 0,
+  "supplier_booking_calls": 0,
+  "payment_calls": 0,
+  "limitations": [
+    "Not full80/106 language acceptance.",
+    "Actual new room primitive and selected UI plan coreference need a new model epoch.",
+    "Read-only selected plan sums refer to saved displayed offers; API preview is authoritative for current quote/confirmation."
+  ],
+  "excluded_validation_run": {
+    "path": ".local/evaluation/after80-20261027/full-room-and-selection-release-final.xml",
+    "sha256": "e8052b7a1bfe6e4937e5876a150e1b98285464eda275a00c6b8889be56dafcdb",
+    "reason": "The test incorrectly expected one extraction across a read-only and a separate cart request; code and tests were edited while it was running. Preserved as a non-immutable failed run, not release qualification."
+  }
+}

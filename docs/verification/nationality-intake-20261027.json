@@ -1,0 +1,75 @@
+{
+  "format": "otravel.nationality_intake.v1",
+  "finding_id": "HARNESS-004-EXPLICIT-HOTEL-NATIONALITY-OMISSION-001",
+  "status": "PURE_AND_CACHED_ACTUAL_CONTRACT_API_PG_PASS_ACTUAL_RETEST_SEPARATE",
+  "scope": "Recover a current explicit complete citizenship clause as hotel-search guest_nationality, never infer passports from geography, language or history.",
+  "source_failure": {
+    "actual_events": "/home/aegml/checks/world-actual-r2-20261027-154144/turn4-events.json",
+    "event_sha256": "5bb435a2cd85743eed6e23ed5d493fc4067df6607b54e9e0d7e6ae09a00f87b5",
+    "actual_model": "groq/openai/gpt-oss-120b",
+    "raw_operations": 5,
+    "raw_guest_nationality_setter": false,
+    "explicit_input_clause": "Гражданство Россия.",
+    "old_actual_evidence_changed": false
+  },
+  "helper": {
+    "file": "otravel/nationality_intake.py",
+    "sha256": "85c302f70fbaeef0885c362fab48563719ec1c60252ba1154b5b6923b4cb6d3d",
+    "signature": "ground_explicit_nationality(state,text,operations)->(copied_dict_operations,meta)",
+    "reference": "Pinned RU/EN CLDR249-country labels/forms and uppercase ISO-2; exact complete value, no fuzzy country guessing.",
+    "personal_clause_scope": "Exactly one canonical traveler, who is an adult, after the grounded proposed operations.",
+    "group_scope": "Only an explicit instruction such as Для поиска отеля используй гражданство Россия. No individual traveler passport attributes are created.",
+    "no_inference_from": ["origin city", "destination", "language", "saved discussion", "another person's passport", "one adult's passport when children or other adults are present"],
+    "blocked_declaration_contexts": ["quoted declaration", "hypothesis", "history", "negation", "question", "named other person", "unknown or incomplete country label"],
+    "model_contradiction": "Human conflict, original model operations preserved for audit; no silent overwrite.",
+    "same_saved_or_same_model_country": "No extra operation or fake revision.",
+    "added_operation": {"type": "set_search_policy", "target_id": null, "value": {"guest_nationality": "RU"}},
+    "other_source_policy_fields_modified": false,
+    "parent_hook": "After normal intent grounding and room-count grounding, before group separation/final validation; only CHANGE/no conflicts. Parent owns Harness integration."
+  },
+  "pure": {
+    "test_file": "tests/test_nationality_intake.py",
+    "sha256": "9bddfa382c3b637f8ef837eb039d7b22ed134f62901958350a8752b577de6ea3",
+    "passed": 45,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.92,
+    "junit": ".local/evaluation/after80-20261027/nationality-intake-pure-final.xml",
+    "junit_sha256": "734844cbbdc9e76d8dc7e71862245bcc1f938f62db384d72cb594acf0ae054d3",
+    "ruff": "PASS"
+  },
+  "cached_api_pg": {
+    "test_file": "tests/test_world_actual_nationality_cached.py",
+    "sha256": "9b2d66f6e71e854b037a3dc5c34697a7f5e501249a6ba80c69a0a3f1229ca3f2",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 2.46,
+    "junit": ".local/evaluation/after80-20261027/world-actual-r2-nationality-cached-final.xml",
+    "junit_sha256": "dc8a123cab33ec4373271ac7610f002e43d14b8a174637294e497f09d6b6a798",
+    "test_database": "otravel_test",
+    "verified": [
+      "Country -> city query -> explicit homonym choice is reached through ordinary public API messages.",
+      "The exact unchanged five actual model operations pass through the current real Harness/Store.",
+      "The parent hook adds only RU, preserving origin/adult/group/owned world city and refs/dates/room/budget.",
+      "No repeated nationality question remains; MODEL_OPERATIONS_CHECKED records the recovery normalization.",
+      "Travel source methods deliberately return controlled CONFIG_MISSING. State survives, but no ready plan/order is claimed."
+    ],
+    "ruff": "PASS"
+  },
+  "initial_test_setup_failures_preserved": {
+    "junit": ".local/evaluation/after80-20261027/nationality-intake-pure-initial.xml",
+    "junit_sha256": "32dc654e57f3cabb6ef6245155298b05113a808423b36566ff7a103693315f17",
+    "passed": 43,
+    "failed": 2,
+    "cause": "Unit setup bypassed the required owned-place intent grounding and tried to create a legacy language preference through a currently unsupported public setter. Fixtures were corrected to the real hook input and a declared old Preference DTO; country/consent assertions were not relaxed."
+  },
+  "actual_new_model_or_supplier_http_calls_by_these_tests": 0,
+  "native_or_other_databases_changed": false,
+  "limits": [
+    "This is a literal omission fallback, not general passport extraction or a permission filter for every existing model nationality operation.",
+    "Complete raw model operations must undergo normal intent grounding before this helper; it does not repair invalid room/city/group batches.",
+    "A successful controlled source-error retention test is not actual hotel availability, world trip readiness or new inference.",
+    "A separate immutable actual R3 run is required before claiming the new conversational path accepted."
+  ]
+}

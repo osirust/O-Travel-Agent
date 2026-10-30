@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "finding_id": "HARNESS-004-STALE-DERIVED-DURATION-001",
+  "recorded_on": "2026-10-27",
+  "status": "NEW_UNASKED_DURATION_GUARDED_EXISTING_PROVENANCE_OPEN",
+  "scope": "Предотвращение нового незаказанного requested_nights в модельном upsert_stay с обеими полными датами. Старые сохранённые ненулевые значения не удаляются.",
+  "implemented": {
+    "module": "otravel/duration_grounding.py",
+    "function": "guard_unasked_duration_operations(before_state, operations, text, model_generated=True)",
+    "hook": "Root подключил после date_intake в пути извлечения модельных операций; typed commands обходят этот путь.",
+    "all_required_conditions": [
+      "Операция модели upsert_stay; определён непустой target",
+      "Новая остановка либо существующая с requested_nights=None",
+      "В этой же операции присутствуют обе полные ISO-даты и выезд позже заезда",
+      "requested_nights — валидное положительное целое число",
+      "В текущей реплике нет duration-language: ночей, дней, недель, «на неделю» и аналогичных выражений"
+    ],
+    "action": "Удаляется только новый requested_nights; даты, комнаты, путешественники, бюджет и остальные операции сохраняются.",
+    "conservative_veto": "Даже цитируемое, отрицательное или условное упоминание duration-language блокирует это узкое удаление. Guard не определяет, к какой остановке оно относилось.",
+    "no_change_boundaries": [
+      "Любой existing requested_nights != None",
+      "Явная или неоднозначная продолжительность в текущем сообщении",
+      "model_generated != True либо reserved typed command prefix",
+      "Неполные/некорректные даты или неверный тип длительности",
+      "Никаких новых дат, вопросов, source вызовов или записи БД из самого helper"
+    ]
+  },
+  "cached_source": {
+    "fixture": "fixtures/regression/duration-initial-complex-r3-20261027.json",
+    "source_package_sha256": "ddc54528e15b02f1d20119120948bfc2fabbef6bcc95e39401b962e83a7707c3",
+    "initial_raw_contract_sha256_reported": "f819b8347d64fb0d437aaadbe5ce2fb9925d00a3fc1207062e107eeb7bcc7bc6",
+    "followup_raw_contract_sha256_reported": "91f453d0515745c931cd8f1544c878277ab1b23acb55bfad19d2e926c70e1f0d",
+    "transform": "Заменён только исходный before_trip.trip_id на стабильный fixture ID. Текст и модельные операции сохранены. Значения контракта получены как semantic PostgreSQL JSONB projection; порядок ключей может отличаться от первоначального in-memory snapshot, поэтому reported source SHA и canonical projection SHA явно разделены.",
+    "capabilities_account_ids_keys_quotes_headers_urls_included": false,
+    "before_without_guard": "Модель создаёт requested_nights=3/4 из дат; последующий checkout 19 ноября без нового requested_nights вызывает duration_mismatch.",
+    "after_with_guard": "Первичный даты-only batch сохраняется с requested_nights=None/None. Тот же cached followup меняет checkout Антальи и обратное плечо на 19 ноября без duration_mismatch."
+  },
+  "validation": {
+    "status": "RELATED_CONTROLLED_PASS",
+    "tests": 284,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "junit_seconds": 12.330,
+    "artifact": ".local/evaluation/after80-20261027/duration-grounding-related-20261027.xml",
+    "artifact_sha256": "7c65772bc018364ac55445ac42bffea72a4aa01b85d35de4a9a975d76250f85d",
+    "new_pure_domain_cases": 51,
+    "new_pg_cases": 3,
+    "pg_artifact": ".local/evaluation/after80-20261027/duration-grounding-pg-initial-20261027.xml",
+    "database": "otravel_test",
+    "model_and_travel": "Контролируемые adapters; фактическая PostgreSQL/ASGI обработка.",
+    "actual_model_http": 0,
+    "actual_travel_http": 0,
+    "pg_assertions": [
+      "Cached initial raw проходит настоящий model hook и сохраняет отсутствие неназванных hard nights; следующий cached batch сохраняет checkout19, четыре участника и два номера в каждом городе",
+      "Existing ненулевые 3/4 сохраняются; несовместимый batch отклоняется атомарно с duration_mismatch и без новых заказов",
+      "Явно заданные ночи и typed operations сохраняют requested_nights; typed путь не вызывает LLM"
+    ],
+    "existing_oracles_modified": false,
+    "initial_new_test_failures_retained_in_tool_history": "Два компактных написания на3ночи/for2weeks выявили недостаточный lexical boundary; исправлен код veto. Третий новый тест ошибочно ожидал byte-rehash JSONB projection; исправлена provenance-модель fixture с отдельными canonical digests."
+  },
+  "file_binding": {
+    "otravel/duration_grounding.py": "4770863a63e6a67ffe92ffbf007d9fdbcbcb7617e366f3e1fc15ced1f56a376a",
+    "tests/test_duration_grounding.py": "f1b3558757def19d6eb997839e4f5a175aa78e0951c7a20ff304ab35856bbe3c",
+    "tests/test_duration_grounding_pg.py": "076e2412748d8e1f5092608c9a759b844d49a8485b7d86dbfdaad052bc1f4195",
+    "fixtures/regression/duration-initial-complex-r3-20261027.json": "065c5965ece3938086898c64cc6c8bf456482a9b53ea53d2e754761d2bc55c41"
+  },
+  "remaining": [
+    "Происхождение старых сохранённых derived requested_nights=4 не восстановлено; они остаются неприкосновенными и могут требовать отдельного явного исправления.",
+    "Фактический новый LLM+supplier комплексный прогон после этого изменения ещё не выполнен этой квитанцией.",
+    "Не заявлены full 80/106, общий запуск всего тестового набора или завершение полного multi-city checkout."
+  ],
+  "closure_condition": "Свежая actual поездка с dates-only initial запросом не приобретает ложные hard nights; последующий compound date/party/room edit доходит до новых supplier предложений, двух фото, refresh и одного simulated order. Старые provenance-неопределённые ограничения остаются отдельным открытым scope."
+}

@@ -1,0 +1,110 @@
+{
+  "format": "otravel.verification_receipt.v1",
+  "date": "2026-10-27",
+  "permanent_id": "HARNESS-008-GROUP04-EXPLICIT-SELECTION-SETUP-001",
+  "status": "RECIPE_PRECONDITION_REPAIRED_AND_PURE_TESTED_ACTUAL_R6_EXECUTION_OPEN",
+  "fact": "R5 GROUP04/T4 asks to preserve the first hotel, but its preceding natural intake and saved-fact questions never make a UI plan selection. A shown candidate is not a user choice. With no saved hotel pin and no fresh selected quote, the preserve helper correctly asks for a selection instead of silently taking the first shown hotel.",
+  "historical_evidence": {
+    "recipe": {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r5.json",
+      "sha256": "917574bbe7d3f36a40bc391270533fd4d6c04236d116caf44ea67aa7a764bff5"
+    },
+    "actual_context_audit": {
+      "path": "docs/verification/groq-group04-t4-context-costs-20261027.json",
+      "sha256": "0dbafd89512116bb2d0741088a88043a0eb1b697c6b125f90fdbf725ed6c93b7"
+    },
+    "source_actual_report_sha256": "ab84df6c4fa23f87ac7417178e55add4c8ba2b1c837278c5e8aeb37de5c4f99c",
+    "source_commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+    "current_quote_rows": 0,
+    "selection_at_original_request": "NONE_PROVEN_NO_QUOTE_ROWS",
+    "caution": "This establishes a missing selection setup, not the cause of the separately retained upstream HTTP413. Old actual reports and R5 scores are not changed."
+  },
+  "action": {
+    "new_recipe": {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r6.json",
+      "sha256": "54e72c3a9b46909dd90d24796521b83573c7f6aa8351bf7f1fcdba7a7c330d47"
+    },
+    "UI_step": "New03a between03 and04 publicly previews the first current plan, with at least2 current plans required. This is an explicit UI choice, not a natural-language inferred default.",
+    "purchase_policy": "Preview sends only plan_id/state_version. It sends no confirmed flag, idempotency key or purchase request; no order is created by this setup.",
+    "capture": "selected_first_hotel_id is taken only from the successful preview response with matching session/trip/current state version/first plan identity and exactly one Istanbul hotel. No fallback to displayed options or an old capture is permitted.",
+    "additive_T4_checks": "Existing R5 T4 predicates remain verbatim; T4 additionally requires the owned current preview selection and must pin the Istanbul hotel to its captured ID.",
+    "failure_policy": "Missing, unsuccessful, unowned, stale or ambiguous preview fails03a and leaves the subsequent model step NOT_REACHED, without sending the compound message.",
+    "bootstrap_scope": "fresh_natural_initial_with_explicit_public_UI_preview_selection",
+    "typed_trip_seed": false,
+    "preservation": "All R5 utterances, original step IDs01..12, case ordering, existing checks and other cases remain unchanged. Only the explicit03a UI action, GROUP04 bootstrap label and additive T4 selection predicates differ.",
+    "driver": "Default recipeR6/hash pinned; one new bounded preview_selection predicate and preview_hotel capture. OldR2/R3/R4/R5 tests read their frozen recipe files explicitly."
+  },
+  "verification": {
+    "pure_tests": 141,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": "1.356",
+    "artifact": {
+      "path": ".local/evaluation/geo-20261027/prefrontend-r6-pure-final.xml",
+      "sha256": "68b53dd031403a80ebc965f87b04611b8c4218353f95b70f0e60f0470d9068fa"
+    },
+    "ruff": "Driver and own pure test file passed.",
+    "counterfactuals": [
+      "No quote, foreign owner/session/trip/plan, stale or boolean versions, inactive quote, inconsistent quote aliases, missing/empty/duplicate hotel IDs, stale shown-plan metadata and failed preview are rejected.",
+      "A synthetic preview property ID deliberately differs from the displayed candidate to prove that capture reads the public preview response; this is a comparator control, not acceptance of supplier property substitution.",
+      "T4 KEEP passes only for the captured preview property; a displayed candidate ID or null pin fails."
+    ],
+    "dry_gpt120": {
+      "case": "PF-GROUP-04",
+      "steps": 13,
+      "language_messages": 12,
+      "max_model_calls": 6,
+      "HTTP_calls": 0,
+      "Native_fence_calls": 0,
+      "output_directory_created": false,
+      "typed_bootstrap_cases": []
+    },
+    "all_cases": 8,
+    "all_steps": 99,
+    "all_language_messages": 88,
+    "fully_qualified_original80_or106": false
+  },
+  "frozen_historical_recipes": [
+    {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r2.json",
+      "sha256": "fc40e7aab1083633fb09fd3702772c6af50618b0dde04a38481ec73d7a9bb64e"
+    },
+    {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r3.json",
+      "sha256": "c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5"
+    },
+    {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r4.json",
+      "sha256": "79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea"
+    },
+    {
+      "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r5.json",
+      "sha256": "917574bbe7d3f36a40bc391270533fd4d6c04236d116caf44ea67aa7a764bff5"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "scripts/evaluate_prefrontend_dialogues.py",
+      "sha256": "c32a9a277a55c95121b215123bf4719863589a7e64c71d9bcda6586ece263209"
+    },
+    {
+      "path": "tests/test_prefrontend_dialogues.py",
+      "sha256": "f93352e13f307bfed4955f8f56e38d4e36117adfd8f25391c747737e0babc964"
+    }
+  ],
+  "execution": {
+    "actual_model_calls": 0,
+    "actual_public_API_calls": 0,
+    "tourism_API_calls": 0,
+    "PostgreSQL": 0,
+    "Native_or_engine_changes": 0,
+    "application_source_changes": 0
+  },
+  "closure_condition": "The recipe correction closes only the missing explicit-selection precondition. A new pinned R6 actual execution must independently reach the natural initial setup, perform public preview, preserve the selected first hotel through T4, retain all prior state/flow checks and report its own outcomes. R5 scores remain historical.",
+  "limitations": [
+    "Pure tests use HTTP doubles and declared observation controls; they do not qualify a real model or backend session.",
+    "R6 includes an explicit UI selection, so its whole-case result cannot be relabelled as a no-UI all-language R5 score.",
+    "No preserve-helper relaxation, default-first-shown selection or production source change was made."
+  ]
+}

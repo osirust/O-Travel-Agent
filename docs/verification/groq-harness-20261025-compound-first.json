@@ -1,0 +1,683 @@
+{
+  "scope": "SINGLE_ACTUAL_HARNESS_BOUND_SUBSET_NOT_FULL_NLU",
+  "case_id": "compound",
+  "fixture_sha256": "b80c9e60eb8841501df67a6251cedc421dee702c1e97ad2af274067f899a5d9f",
+  "request_text": "белград в сербии из москвы рано утром, детей нет, один взрослый",
+  "executor_sha256": "38a2d3f14e1942bd38457376128035f23c01f6c315b37eec2b7c4ecd91b0abd4",
+  "package_fingerprint": {
+    "sha256": "3837e5849bc9d71ace31b359dad2e89fc200605959fdf100a23503d9fc9f26bb",
+    "files": [
+      {
+        "path": "otravel/__init__.py",
+        "bytes": 82,
+        "sha256": "b5c31cd60462d55a93adb848ab9fac5a5bc8911cbaa793732896695af1ecfa4a"
+      },
+      {
+        "path": "otravel/api.py",
+        "bytes": 26173,
+        "sha256": "b7c7ebebdb647a9092187f1e37570a20af79ca71ee66a1eb73a0342299929f05"
+      },
+      {
+        "path": "otravel/clarifications.py",
+        "bytes": 29025,
+        "sha256": "d9a538e37e96ca37c827a1a2638c108409b9888240ae1f9fce5b03ad0f825457"
+      },
+      {
+        "path": "otravel/config.py",
+        "bytes": 5609,
+        "sha256": "fb7caffbd6717bbafd983a0f045105d12d761239cd21299b3a1a442a99f0356d"
+      },
+      {
+        "path": "otravel/date_slots.py",
+        "bytes": 5847,
+        "sha256": "627cd1a7d4bceb9ecb6200416cca6ad4f69a1d2478189c04051db0e4d592c92b"
+      },
+      {
+        "path": "otravel/domain.py",
+        "bytes": 26953,
+        "sha256": "65d1416826e64aa3dabf089fab934574a6c941dfc9bb63e6ca8b58ec3f977514"
+      },
+      {
+        "path": "otravel/geography.py",
+        "bytes": 9262,
+        "sha256": "080c064d1686b8cd7f3780855655c4e94840ff098e84b8dfc83b58b21c3c67f5"
+      },
+      {
+        "path": "otravel/harness.py",
+        "bytes": 62913,
+        "sha256": "c2f75f4327ccc04e9efd38969bc2b32a889ead659a6a50bd9e8538b54ca7fbe6"
+      },
+      {
+        "path": "otravel/history.py",
+        "bytes": 6726,
+        "sha256": "425a94fe6b287bf43e263c08884781969f1adec6539c0af4af24bbf1192e85eb"
+      },
+      {
+        "path": "otravel/inventory.py",
+        "bytes": 28020,
+        "sha256": "5c4084aa1a0e0bf5fdced24d0abbc98b6ffa660cb9e230177bf8dd4003a57b99"
+      },
+      {
+        "path": "otravel/llm_contract.py",
+        "bytes": 8814,
+        "sha256": "8b81b5ea56a759eb5f1341268fb4fcc8a1817c7386cbef464803e38e793fdeca"
+      },
+      {
+        "path": "otravel/money.py",
+        "bytes": 10768,
+        "sha256": "08cb7c6fdec0da25b53f4abc3bd6c04a64d3fb42493a98dd6fe444742cd33c8d"
+      },
+      {
+        "path": "otravel/orchestrator.py",
+        "bytes": 20451,
+        "sha256": "55768d2034e0b551d4863a618453e261edb409d9272fde0b51c4678695c14c23"
+      },
+      {
+        "path": "otravel/planning.py",
+        "bytes": 27405,
+        "sha256": "0359ed88cf0672d85a309f905657d935a64bf83eb334d58d4e6e392ddc1a827b"
+      },
+      {
+        "path": "otravel/provider_facts.py",
+        "bytes": 16393,
+        "sha256": "29d9062d7794f87385f659ede87b9cd39a8e6e62e7e597a7ae325ab8fdf8ec55"
+      },
+      {
+        "path": "otravel/providers.py",
+        "bytes": 65408,
+        "sha256": "61c9174d6f6101dd34615f47a9236b90cda7e3acd36a8b6266b65555c7419530"
+      },
+      {
+        "path": "otravel/static/chat.css",
+        "bytes": 7362,
+        "sha256": "fb32fe81daf5bb49fb57c0e1ad66a93a5b030b6dcafa823825ebede85ce867ef"
+      },
+      {
+        "path": "otravel/static/chat.js",
+        "bytes": 11857,
+        "sha256": "d2c2c3c722351769e5bf903fcd0c10162a0ce7b002bff17c1c4cd146b2d655a1"
+      },
+      {
+        "path": "otravel/static/debug.html",
+        "bytes": 3583,
+        "sha256": "ddea33d746d7dd3cf766f2aa7651e7b536ad9a9db31f9b9f7e87dcd84292d3bf"
+      },
+      {
+        "path": "otravel/store.py",
+        "bytes": 55823,
+        "sha256": "3d4ec97d7f6b242e7c73eee197f06f87ddc358fb3004e22bc0bb09ad7f0b284e"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 870,
+        "sha256": "64e616db211d786cccc588f5fd15acab0ef9373fadbcb317baa11a161d418e52"
+      }
+    ],
+    "scope": "CLIENT_PACKAGE_SOURCE_ON_DISK_NOT_LOADED_PROCESS_PROOF"
+  },
+  "full_case_status": "BLOCKED_ORACLE",
+  "actual_model_attempts": 1,
+  "status": "PASS_BOUND_SUBSET_ONLY",
+  "grader_sha256": "a6d851eb3b1d4c3568742e183ec6f56c96a419b3ec8a1f64d5bcdde176a7836a",
+  "runtime": {
+    "llm_provider": "groq",
+    "model": "qwen/qwen3.8-27b"
+  },
+  "server_creation_clock": "2026-10-25T18:59:14.717545+00:00",
+  "started_at_utc": "2026-10-25T18:59:14.740926+00:00",
+  "observation": {
+    "case_id": "compound",
+    "request_text": "белград в сербии из москвы рано утром, детей нет, один взрослый",
+    "state_before": {
+      "session_id": "session-1",
+      "trip_id": "id-2",
+      "state_version": 0,
+      "trip_version": 0,
+      "status": "NEW",
+      "waiting_reason": null,
+      "pending_question": null,
+      "trip": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": null,
+        "trip_id": "id-2",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control",
+        "checkout/preview"
+      ]
+    },
+    "state_after": {
+      "session_id": "session-1",
+      "trip_id": "id-2",
+      "state_version": 1,
+      "trip_version": 1,
+      "status": "WAITING_USER",
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "На какую дату планируете заезд в городе «Белград»?",
+        "field": "stay.check_in",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true
+        },
+        "questions": [
+          "На какую дату планируете заезд в городе «Белград»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "id-3-question",
+        "state_version": 1
+      },
+      "trip": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Белград",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ]
+              }
+            ],
+            "check_in": null,
+            "hotel_id": null,
+            "check_out": null
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "id-2",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [
+          {
+            "key": "departure_time",
+            "value": "early_morning",
+            "weight": 1.0
+          }
+        ],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 1
+      },
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control",
+        "checkout/preview"
+      ]
+    },
+    "actual_run": {
+      "run_id": "id-3",
+      "session_id": "session-1",
+      "status": "completed",
+      "based_version": 0,
+      "result": {
+        "run": {
+          "id": "id-3",
+          "error": null,
+          "result": null,
+          "run_id": "id-3",
+          "status": "completed",
+          "created_at": "2026-10-25T18:59:14.748381+00:00",
+          "session_id": "session-1",
+          "started_at": "2026-10-25T18:59:14.760395+00:00",
+          "finished_at": null,
+          "based_version": 0,
+          "current_status": "completed",
+          "input_message_id": "id-4",
+          "client_message_id": "id-5",
+          "request_expected_version": 0
+        },
+        "error": null,
+        "reply": "Пожелания по поездке сохранены. На какую дату планируете заезд в городе «Белград»?",
+        "state": {
+          "legs": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Белград",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "id-2",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "constraints": [],
+          "preferences": [
+            {
+              "key": "departure_time",
+              "value": "early_morning",
+              "weight": 1.0
+            }
+          ],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 1
+        },
+        "result": {
+          "llm": {
+            "model": "qwen/qwen3.8-27b",
+            "attempts": [
+              {
+                "model": "qwen/qwen3.8-27b",
+                "outcome": "response",
+                "provider": "groq",
+                "latency_ms": 1775
+              }
+            ],
+            "provider": "groq",
+            "latency_ms": 1775
+          },
+          "model_reply": "Я сохранил ваши данные: вылет из Москвы, ранний утренний рейс, поездка в Белград на одного взрослого.",
+          "response_source": "llm",
+          "operation_normalizations": []
+        },
+        "run_id": "id-3",
+        "status": "WAITING_USER",
+        "changes": [
+          {
+            "after": "Москва",
+            "field": "origin",
+            "before": null,
+            "operation": "set_origin",
+            "target_id": null
+          },
+          {
+            "after": [
+              {
+                "key": "departure_time",
+                "value": "early_morning",
+                "weight": 1.0
+              }
+            ],
+            "field": "preferences",
+            "before": [],
+            "operation": "set_preference",
+            "target_id": null
+          },
+          {
+            "after": [
+              {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              }
+            ],
+            "field": "travelers",
+            "before": [],
+            "operation": "add_traveler",
+            "target_id": null
+          },
+          {
+            "after": [
+              {
+                "id": "new-stay-1",
+                "city": "Белград",
+                "rooms": [
+                  {
+                    "id": "new-room-1",
+                    "traveler_ids": [
+                      "new-traveler-1"
+                    ]
+                  }
+                ],
+                "check_in": null,
+                "hotel_id": null,
+                "check_out": null
+              }
+            ],
+            "field": "stays",
+            "before": [],
+            "operation": "upsert_stay",
+            "target_id": "new-stay-1"
+          }
+        ],
+        "message": {
+          "id": "id-6",
+          "role": "assistant",
+          "text": "Пожелания по поездке сохранены. На какую дату планируете заезд в городе «Белград»?",
+          "run_id": "id-3",
+          "sequence": 96,
+          "created_at": "2026-10-25T18:59:16.580675+00:00",
+          "session_id": "session-1",
+          "client_message_id": null
+        },
+        "session": {
+          "state": {
+            "legs": [],
+            "stays": [
+              {
+                "id": "new-stay-1",
+                "city": "Белград",
+                "rooms": [
+                  {
+                    "id": "new-room-1",
+                    "traveler_ids": [
+                      "new-traveler-1"
+                    ]
+                  }
+                ],
+                "check_in": null,
+                "hotel_id": null,
+                "check_out": null
+              }
+            ],
+            "budget": null,
+            "groups": [],
+            "origin": "Москва",
+            "trip_id": "id-2",
+            "travelers": [
+              {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult",
+                "group_id": null,
+                "birth_date": null
+              }
+            ],
+            "constraints": [],
+            "preferences": [
+              {
+                "key": "departure_time",
+                "value": "early_morning",
+                "weight": 1.0
+              }
+            ],
+            "search_policy": {
+              "mode": "DEMO",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "serpapi",
+              "guest_nationality": null
+            },
+            "state_version": 1
+          },
+          "status": "WAITING_USER",
+          "trip_id": "id-2",
+          "created_at": "2026-10-25T18:59:14.712533+00:00",
+          "session_id": "session-1",
+          "updated_at": "2026-10-25T18:59:16.577205+00:00",
+          "state_version": 1,
+          "waiting_reason": "clarification",
+          "pending_question": {
+            "text": "На какую дату планируете заезд в городе «Белград»?",
+            "field": "stay.check_in",
+            "reason": "clarification",
+            "context": {
+              "children_count": 0,
+              "children_known": true
+            },
+            "questions": [
+              "На какую дату планируете заезд в городе «Белград»?"
+            ],
+            "target_id": "new-stay-1",
+            "question_id": "id-3-question",
+            "state_version": 1
+          }
+        },
+        "trip_id": "id-2",
+        "created_at": "2026-10-25T18:59:14.712533+00:00",
+        "session_id": "session-1",
+        "updated_at": "2026-10-25T18:59:16.577205+00:00",
+        "state_version": 1,
+        "waiting_reason": "clarification",
+        "pending_question": {
+          "text": "На какую дату планируете заезд в городе «Белград»?",
+          "field": "stay.check_in",
+          "reason": "clarification",
+          "context": {
+            "children_count": 0,
+            "children_known": true
+          },
+          "questions": [
+            "На какую дату планируете заезд в городе «Белград»?"
+          ],
+          "target_id": "new-stay-1",
+          "question_id": "id-3-question",
+          "state_version": 1
+        },
+        "assistant_message": {
+          "id": "id-6",
+          "role": "assistant",
+          "text": "Пожелания по поездке сохранены. На какую дату планируете заезд в городе «Белград»?",
+          "run_id": "id-3",
+          "sequence": 96,
+          "created_at": "2026-10-25T18:59:16.580675+00:00",
+          "session_id": "session-1",
+          "client_message_id": null
+        }
+      },
+      "error": null,
+      "llm": {
+        "model": "qwen/qwen3.8-27b",
+        "attempts": [
+          {
+            "model": "qwen/qwen3.8-27b",
+            "outcome": "response",
+            "provider": "groq",
+            "latency_ms": 1775
+          }
+        ],
+        "provider": "groq",
+        "latency_ms": 1775
+      },
+      "created_at": "2026-10-25T18:59:14.748381+00:00",
+      "finished_at": "2026-10-25T18:59:16.581844+00:00",
+      "available_actions": [
+        "commands",
+        "demo",
+        "search",
+        "control"
+      ]
+    },
+    "current_run_events": [
+      {
+        "sequence": 258,
+        "event_id": "id-7",
+        "session_id": "session-1",
+        "run_id": "id-3",
+        "event_type": "USER_MESSAGE_RECEIVED",
+        "state_version": 0,
+        "payload": {
+          "message_id": "id-4"
+        },
+        "created_at": "2026-10-25T18:59:14.751995+00:00"
+      },
+      {
+        "sequence": 259,
+        "event_id": "id-8",
+        "session_id": "session-1",
+        "run_id": "id-3",
+        "event_type": "RUN_STARTED",
+        "state_version": 0,
+        "payload": {},
+        "created_at": "2026-10-25T18:59:14.762425+00:00"
+      },
+      {
+        "sequence": 260,
+        "event_id": "id-9",
+        "session_id": "session-1",
+        "run_id": "id-3",
+        "event_type": "MODEL_CALL_STARTED",
+        "state_version": 0,
+        "payload": {
+          "provider": "groq"
+        },
+        "created_at": "2026-10-25T18:59:14.784650+00:00"
+      },
+      {
+        "sequence": 261,
+        "event_id": "id-10",
+        "session_id": "session-1",
+        "run_id": "id-3",
+        "event_type": "MODEL_RESPONSE_RECEIVED",
+        "state_version": 0,
+        "payload": {
+          "model": "qwen/qwen3.8-27b",
+          "attempt": 1,
+          "provider": "groq",
+          "latency_ms": 1775,
+          "operations": 4,
+          "speech_act": "CHANGE",
+          "speech_act_explicit": true
+        },
+        "created_at": "2026-10-25T18:59:16.566403+00:00"
+      },
+      {
+        "sequence": 262,
+        "event_id": "id-11",
+        "session_id": "session-1",
+        "run_id": "id-3",
+        "event_type": "RUN_COMPLETED",
+        "state_version": 1,
+        "payload": {
+          "error": null,
+          "domain_changed": true
+        },
+        "created_at": "2026-10-25T18:59:16.583647+00:00"
+      }
+    ],
+    "orders": [],
+    "assistant_text": "Пожелания по поездке сохранены. На какую дату планируете заезд в городе «Белград»?",
+    "assistant_reply_count": 1,
+    "clock_local_date": "2026-10-25",
+    "runtime_clock_verified": true
+  },
+  "grading": {
+    "subset_status": "PASS_BOUND_CHECKS",
+    "full_scenario_status": "BLOCKED_ORACLE",
+    "checks": [
+      {
+        "id": "completed_without_error",
+        "status": "PASS"
+      },
+      {
+        "id": "no_order",
+        "status": "PASS"
+      },
+      {
+        "id": "no_search_tool",
+        "status": "PASS"
+      },
+      {
+        "id": "one_persisted_assistant_reply",
+        "status": "PASS"
+      },
+      {
+        "id": "human_reply_without_raw_slots",
+        "status": "PASS"
+      },
+      {
+        "id": "no_invented_numeric_budget",
+        "status": "PASS"
+      },
+      {
+        "id": "clock_bound_to_25_oct_msk",
+        "status": "PASS"
+      },
+      {
+        "id": "compound_origin_moscow",
+        "status": "PASS"
+      },
+      {
+        "id": "compound_one_adult_zero_children",
+        "status": "PASS"
+      },
+      {
+        "id": "early_morning_preference_saved",
+        "status": "PASS"
+      },
+      {
+        "id": "no_repeated_party_question",
+        "status": "PASS"
+      },
+      {
+        "id": "compound_belgrade_rs",
+        "status": "PASS"
+      },
+      {
+        "id": "morning_has_no_invented_clock",
+        "status": "PASS"
+      }
+    ]
+  },
+  "provider_integrity": true,
+  "actual_model_metadata": {
+    "model": "qwen/qwen3.8-27b",
+    "attempts": [
+      {
+        "model": "qwen/qwen3.8-27b",
+        "outcome": "response",
+        "provider": "groq",
+        "latency_ms": 1775
+      }
+    ],
+    "provider": "groq",
+    "latency_ms": 1775
+  },
+  "finished_at_utc": "2026-10-25T18:59:16.693126+00:00",
+  "source_unchanged": true
+}

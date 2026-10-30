@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-10-27",
+  "status": "ACTUAL_REBUILD_STATE_CORRECT_SEARCH_BLOCKED_BY_PHANTOM_CLARIFICATION",
+  "source_package_sha256": "e08e1d347444f3245480e6834fed191890419f918b03c108c43ef8101c015578",
+  "private_evidence_folder": "/home/aegml/checks/complex-actual-r2-20261027-193133",
+  "report_sha256": "2cd8ec5f698e14c4b5bc29794209039ca84080126f561f32e713edda24bb1f16",
+  "original_scenario_oracles_sha256": "dbc83f9de0675181871a9bc17b603bdd2afd6dc94766258a884529aab49646f4",
+  "additional_adult_age_birthdate_oracles_sha256": "04f1f4d23e4cf266739407d955562da6295197d308d99594495c3aa3dc6a1396",
+  "original_r1_oracles_changed": false,
+  "execution": {
+    "exit_code": 0,
+    "semantic_status": "COMPLETED_WITH_SEMANTIC_FAILURES",
+    "user_turns": 2,
+    "actual_model": "Groq openai/gpt-oss-120b strict-v3",
+    "model_requests": 2,
+    "model_http_statuses": [200, 200],
+    "source_requests": 14,
+    "executed_predeclared_checks": 15,
+    "passed_predeclared_checks": 14,
+    "failed_predeclared_checks": 1,
+    "stopped_phase": "rebuild_facts_or_clarifications_failed",
+    "initial_actual_intake_and_preview": "PASS",
+    "rebuilt_source_search": "NOT_EXECUTED",
+    "rebuilt_photos_refresh_confirmation": "NOT_EXECUTED",
+    "confirmed_orders": 0,
+    "supplier_booking_payment_requests": 0,
+    "local_model_requests": 0,
+    "paid_fallback": false,
+    "runtime_8084_8086_changed": false
+  },
+  "previous_findings_observed": {
+    "HARNESS-004-EACH-CITY-ROOM-SCOPE-001": {
+      "status": "ACTUAL_SAVED_ROOM_PARTITIONS_REPAIRED_FULL_REBUILD_CHECKOUT_STILL_OPEN",
+      "fact": "Второй actual model batch сохранил по два номера в Стамбуле и Анталье: первый прежний взрослый с детьми 7 и 4 лет, второй взрослый отдельно. Ложного уточнения города и возврата к одному номеру больше нет."
+    },
+    "HARNESS-004-UNREQUESTED-ADULT-AGE-001": {
+      "status": "ACTUAL_STORED_UNKNOWN_VALUES_CORRECT",
+      "adult_ages": [null, null],
+      "all_birth_dates": [null, null, null, null],
+      "qualification": "В этом новом actual ответе модель сама вернула null для взрослых. Тест подтверждает корректное состояние; подавление выдуманного age=30 проверяется отдельной controlled-регрессией Root, а не этим raw ответом."
+    }
+  },
+  "new_finding": {
+    "finding_id": "HARNESS-004-FULFILLED-RETURN-CLARIFICATION-001",
+    "status": "OPEN_ACTUAL_FAIL",
+    "fact": "После правильного compound batch в TripState уже сохранены требуемые комнаты, дети, бюджет и дата обратного плеча 19.11.2026. Модель одновременно выдала unknown return_flight_date_change, считая изменение даты рейса неподдерживаемым. Harness оставил уже удовлетворённое уточнение блокирующим и превратил его в общий вопрос с field=null; новый поиск не начался.",
+    "raw_event": "MODEL_EXTRACTION_VALIDATED",
+    "raw_contract_sha256": "9986a26d425ca069d7cb46eac08685318a358ac49f6114fb38151cf6cbcfd52f",
+    "checked_event": "MODEL_OPERATIONS_CHECKED",
+    "checked_contract_sha256": "e88e685073b5a712b595979976f36eddaed2ac7884cef0d7dbefee3760be944d",
+    "speech_act": "ASK",
+    "control_action": "continue",
+    "raw_and_checked_unknowns": ["return_flight_date_change"],
+    "persisted_pending_field": null,
+    "persisted_question": "Что нужно уточнить о поездке, чтобы продолжить?",
+    "contract_context": "LLM-контракт предоставляет shift_return(days), но не отдельный absolute leg-date setter. Изменение последнего checkout уже синхронизировало обратное плечо, поэтому данный date-change вопрос удовлетворён фактическим результатом batch.",
+    "next_action": "Проверять удовлетворённость именно этого return-date уточнения после применения операций и сверки с явной текущей командой. Не удалять произвольные неизвестные поля или неподтверждённые жёсткие условия.",
+    "closure_condition": "Controlled-регрессия сохранённого raw batch с корректным продолжением поиска плюс negatives для действительно неизвестной/неоднозначной даты; затем свежий actual проход до нового поиска, фото двух отелей, refresh и одного имитированного заказа."
+  },
+  "offline_final_state_addendum": {
+    "scope": "Read-only проверка сохранённого состояния и validate_trip после терминала. Не новая LLM-попытка и не изменение первоначального знаменателя 14/15.",
+    "artifact": "offline-fulfilled-return-diagnostic.json",
+    "existing_traveler_ids_preserved": true,
+    "children_ages_4_7": true,
+    "adult_ages_unknown": true,
+    "birth_dates_unknown": true,
+    "budget_minor_118000000": true,
+    "two_correctly_partitioned_rooms_each_city": true,
+    "istanbul_10_13_unchanged": true,
+    "antalya_13_19": true,
+    "return_leg_19": true,
+    "domain_missing_or_invalid_issues": []
+  },
+  "flight_chronology_diagnostic_addendum": {
+    "scope": "Только реальные initial предложения для двух взрослых и ребёнка 7 лет и их initial refresh. Для новой версии с четырьмя путешественниками и возвратом 19 ноября предложений не получено.",
+    "artifact": "offline-flight-chronology-audit.json",
+    "new_source_requests": 0,
+    "timezone_method": "Naive departing_at/arriving_at из response interpreted через response airport.time_zone и ZoneInfo; сравнение в UTC.",
+    "initial_and_refreshed_segments": [
+      {
+        "route": "KZN → IST",
+        "departure_local": "2026-11-10T06:58:00",
+        "origin_timezone": "Europe/Moscow",
+        "departure_utc": "2026-11-10T03:58:00+00:00",
+        "arrival_local": "2026-11-10T10:27:00",
+        "destination_timezone": "Europe/Istanbul",
+        "arrival_utc": "2026-11-10T07:27:00+00:00",
+        "passengers": 3,
+        "cabin_class_all_passengers": "economy"
+      },
+      {
+        "route": "IST → AYT",
+        "departure_local": "2026-11-13T09:17:00",
+        "origin_timezone": "Europe/Istanbul",
+        "departure_utc": "2026-11-13T06:17:00+00:00",
+        "arrival_local": "2026-11-13T10:33:00",
+        "destination_timezone": "Europe/Istanbul",
+        "arrival_utc": "2026-11-13T07:33:00+00:00",
+        "passengers": 3,
+        "cabin_class_all_passengers": "economy"
+      },
+      {
+        "route": "AYT → KZN",
+        "departure_local": "2026-11-17T12:23:00",
+        "origin_timezone": "Europe/Istanbul",
+        "departure_utc": "2026-11-17T09:23:00+00:00",
+        "arrival_local": "2026-11-17T16:18:00",
+        "destination_timezone": "Europe/Moscow",
+        "arrival_utc": "2026-11-17T13:18:00+00:00",
+        "passengers": 3,
+        "cabin_class_all_passengers": "economy"
+      }
+    ],
+    "all_arrivals_after_departures": true,
+    "adjacent_leg_gaps_seconds": [255000, 352200],
+    "arrivals_after_destination_hotel_checkout_observed": false,
+    "source_passenger_evidence": "verified: adult, adult, child age7; group_quote=true; request/response/segment counts all3",
+    "initial_refresh_times_and_group_consistent": true,
+    "rebuilt_four_person_chronology": "NOT_EXECUTED_NO_NEW_OFFERS",
+    "general_runtime_chronology_guard_qualified": false,
+    "limitations": "Это предметный аудит сохранённых предложений, а не доказательство общего runtime-валидатора, minimum-connection-times, фактической доступности мест или бронирования."
+  },
+  "other_guard_observation": {
+    "initial_model_budget_minor": 1200000,
+    "grounded_budget_minor": 120000000,
+    "source": "explicit_rub_literal 1 200 000",
+    "note": "Money grounder исправил масштаб исходного model budget до правильных минимальных единиц."
+  },
+  "preserved_limits": [
+    "R1 и R2 исходные результаты и oracles не переписаны.",
+    "Правильное сохранённое состояние не квалифицирует ещё не выполненный финальный поиск и checkout.",
+    "Sandbox тарифы и DEMO-трансферы не являются полностью live поездкой.",
+    "Результат не закрывает полные 80 диалогов или 106 сценариев."
+  ]
+}

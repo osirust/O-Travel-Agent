@@ -1,0 +1,64 @@
+{
+  "status": "CONTROLLED_FULL_PASS_DYNAMIC_ACTUAL_ACCEPTANCE_OPEN",
+  "finding_ids": [
+    "GEO-DYNAMIC-001",
+    "HARNESS-004-DYNAMIC-PLACE-HYPOTHETICAL-PAUSE-001",
+    "HARNESS-004-PLACE-REF-INTENT-IDENTITY-001",
+    "HARNESS-004-PLACE-SEARCH-ADMISSION-001",
+    "CABIN-CLASS-E2E-001"
+  ],
+  "scope": "Complete pure, controlled provider and isolated PostgreSQL suite; no actual inference or supplier requests",
+  "source_package_sha256": "6d12c99bc72f7269ea68fd12b1d4f5e9600558a774535b63cab4952a842390e6",
+  "source_file_count": 69,
+  "tests_sha256": "103d6d8bed913909a8b2e9b9f4ec35e3da5d3b3c257fa33945955cf31c62610b",
+  "source_and_tests_unchanged_during_execution": true,
+  "junit": ".local/evaluation/after80-20261027/full-dynamic-global-integration-initial.xml",
+  "junit_sha256": "d36921c0e9ad7b7b7322b5de5bdf448451155b634c6b907febd0bf674f923047",
+  "tests": 6185,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 239.824,
+  "business_filter": {
+    "duffel_body_cabin_class": "business",
+    "controlled_wire_assertion": true,
+    "chat_state_to_all_segments_verified": false,
+    "screenshot_amount_bound_to_raw_response": false
+  },
+  "actual_source_scope": {
+    "dynamic_world_conversation_executed": false,
+    "prior_owner12_r2": "12 original + 3 adaptive turns, 4 successful model responses, 17 tourist HTTP, 27 related checks; PARTIAL missing transfer",
+    "prior_owner12_r2_safe_proof_sha256": "f2a7b3fa1175c2a18d96d203807dc1a47625b42b679f41c8fa76adfba4cf51a1"
+  },
+  "open": [
+    "Dynamic actual country/city/choice/LLM/supplier flow",
+    "Explicit replacement of an existing CityRef by a new source revision",
+    "Unresolved informational world geography and broad country-role NLU",
+    "Generic non-place hypothetical operations combined with wait",
+    "HARNESS-004-PLAINTEXT-CONTROL-CRASH-OPEN",
+    "Complete transfer coverage and full ready checkout for new world destinations",
+    "CABIN-CLASS-E2E-001",
+    "All 80/106/D250 actual language acceptance"
+  ],
+  "deployment_8084": "Still 0bf71be; no rollout of the new experimental geography flag in this proof",
+  "local_qwen_calls": 0,
+  "paid_calls": 0,
+  "supplier_bookings": 0,
+  "payments": 0,
+  "staged_package": {
+    "tested_package_sha256": "6d12c99bc72f7269ea68fd12b1d4f5e9600558a774535b63cab4952a842390e6",
+    "staged_package_sha256": "aa3a7f5a1a3e83e336aca410e853aecb98a9cd19ce0190202ba34b5daaec67d0",
+    "package_files": 69,
+    "only_allowed_crlf_normalization": [
+      "otravel/domain.py",
+      "otravel/groq_place_prompt.py",
+      "otravel/groq_transport.py",
+      "otravel/llm_contract.py",
+      "otravel/place_refs.py",
+      "otravel/place_run.py",
+      "otravel/provider_cities.py"
+    ],
+    "source_or_data_changes": 0,
+    "cldr_git_bytes_exact": true
+  }
+}

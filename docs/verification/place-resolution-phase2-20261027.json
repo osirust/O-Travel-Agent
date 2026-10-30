@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-DYNAMIC-PLACE-COORDINATOR-001",
+  "status": "PURE_MOCK_TESTED_INTEGRATION_ACTUAL_OPEN",
+  "files_sha256": {
+    "otravel/place_resolution.py": "a4a5d82dcacba4fb74de14382240fced60ec1ca53d1bb7bfcf6fb9c8410c3e4d",
+    "tests/test_place_resolution.py": "0f2f60f34caad7eeff46ef9ccb66e1248614f295bfc2735c3b99018420dd5d23"
+  },
+  "verification": {
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.256,
+    "junit": ".local/evaluation/after80-20261027/place-resolution-ttl-final.xml",
+    "ruff": "PASS"
+  },
+  "execution": {
+    "actual_http": 0,
+    "sql": 0,
+    "model": 0,
+    "trip_mutations": 0,
+    "supplier_orders": 0,
+    "payments": 0
+  },
+  "contracts": {
+    "class": "PlaceResolutionCoordinator(catalog,directory,travel,clock=None)",
+    "resolve": "resolve(request,state,*,before_call) -> packet",
+    "select": "select(selection,pending,state,*,before_call) -> packet",
+    "short_reply": "interpret_short_reply(pending,text,state,*,now=None) -> {selection,question}",
+    "packet_actions": [
+      "ask",
+      "selected",
+      "no_match",
+      "unavailable"
+    ]
+  },
+  "verified": [
+    "Unconfirmed country_iso2 hint never filters city search",
+    "Country choice persists code-owned trip/version/role/stay/source context and asks city without choosing capital",
+    "No candidate is chosen automatically; multiple candidates plus yes reasks without HTTP",
+    "Explicit bound city choice validates latest RU source, same-ID EN physical identity, atomic RU/EN catalog witness and canonical EN snapshot",
+    "Foreign/stale/expired/tampered selections emit no setters",
+    "Only selected city emits original canonical setter plus trusted resolved_places; current trip is untouched",
+    "Owned stay city switch clears old hotel pin and preserves dates, party, origin and budget",
+    "Callback denial prevents country/directory wire; raw exception details are not returned",
+    "Choice expiry is rechecked after awaited EN lookup and before returning setter; the original frozen defect is preserved in a controlled replay."
+  ],
+  "initial_results_preserved": [
+    ".local/evaluation/after80-20261027/place-resolution-initial.xml",
+    ".local/evaluation/after80-20261027/place-resolution-final.xml"
+  ],
+  "initial_test_fixture_correction": "One additional preservation test used invalid synthetic field names; canonical fixture corrected without production change. Initial 31-pass/1-fixture-fail retained.",
+  "scope_limits": [
+    "No full Harness/API integration has been qualified by these tests",
+    "No new actual geocoding or travel request was performed",
+    "No automatic multi-place queue or missing multi-stay target choice; explicit clarification remains",
+    "No price, availability, IATA or supplier capability is inferred from geographic identity",
+    "No arbitrary typo fuzzy matching or global availability claim"
+  ],
+  "previous_verification": {
+    "tests": 32,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.203,
+    "junit": ".local/evaluation/after80-20261027/place-resolution-final-corrected-fixture.xml",
+    "ruff": "PASS"
+  },
+  "peer_finding": {
+    "id": "PLACE-RESOLUTION-TTL-01",
+    "status": "CLOSED_CONTROLLED_CLOCK_SCOPE",
+    "fact": "Original frozen coordinator could return a setter when the 900-second choice expired during awaited EN lookup; geographic directory TTL remained fresh.",
+    "initial_reproduction": {
+      "finding_id": "PLACE-RESOLUTION-TTL-01",
+      "source_sha256": "a5b579cf4f81824d906f2f29e14d38963769ac3fafc4e1a95ef217b640d1037f",
+      "initial_action": "selected",
+      "setter_count": 1,
+      "admissions": 1,
+      "mock_http": 2,
+      "actual_http": 0,
+      "sql": 0,
+      "clock_past_expiry_seconds": 1
+    },
+    "initial_reproduction_path": ".local/evaluation/after80-20261027/place-resolution-ttl-initial-repro.json",
+    "initial_reproduction_sha256": "d24b8f01d6fa9a412c61d594dfd93b7122d2e59f385c358e7ef15675196d9d3c",
+    "change": "Repeat owned packet freshness validation after EN lookup before admission, and again before emitting setters.",
+    "closure": "New controlled clock test crosses expiry during EN callback: ask/expired_choice, zero admission/setter. No actual HTTP or SQL."
+  }
+}

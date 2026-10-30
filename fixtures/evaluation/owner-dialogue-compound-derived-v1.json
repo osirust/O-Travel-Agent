@@ -1,0 +1,198 @@
+{
+  "format": "otravel.derived_dialogue_acceptance_plan.v1",
+  "id": "OWNER-COMPOUND-DERIVED-01",
+  "revision": 1,
+  "provenance_class": "derived_development_acceptance_not_original_transcript_not_106",
+  "frozen_at_utc": "2026-10-25T18:21:16.906127+00:00",
+  "source": {
+    "based_on_historical_input_fixture": "fixtures/evaluation/owner-dialogue-compound-history-v1.json",
+    "historical_fixture_sha256": "3145cc98f2e2093214192cf4c16ed8a35d2ed9030f9f8553cd4ae865a12863af",
+    "explicit_destination_change_sentence_authorized_by_owner": true,
+    "input_sha256": "d62ce11daf84f76b70da4bf99071f1ca698bf9c5d7b82b4c4841d106d668e616",
+    "input_hash_kind": "UTF-8 JSON candidate messages array; conditional yes is included but not always executed."
+  },
+  "initial_trip": {},
+  "messages": [
+    "белград в сербии из москвы рано утром, детей нет, один взрослый",
+    "Замени направление Белград на Санкт-Петербург",
+    "да",
+    "26.10.2026",
+    "завтра"
+  ],
+  "candidate_input_count": 5,
+  "active_input_count_min": 4,
+  "active_input_count_max": 5,
+  "turns": [
+    {
+      "index": 1,
+      "text": "белград в сербии из москвы рано утром, детей нет, один взрослый",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Белград",
+        "destination_country_code": "RS",
+        "must_not_ask_known_party_counts_again": true,
+        "preserve_all_explicit_compound_facts": true
+      }
+    },
+    {
+      "index": 2,
+      "text": "Замени направление Белград на Санкт-Петербург",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "intended_change_target": "destination",
+        "destination_candidate_city": "Санкт-Петербург",
+        "destination_candidate_country_code": "RU",
+        "never_origin_saint_petersburg": true
+      },
+      "allowed_outcomes": [
+        "destination_changed_to_saint_petersburg",
+        "explicit_destination_change_confirmation_requested"
+      ]
+    },
+    {
+      "index": 3,
+      "text": "да",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Санкт-Петербург",
+        "destination_country_code": "RU"
+      },
+      "conditional": {
+        "kind": "destination_change_confirmation_if_needed",
+        "send_only_when": "Actual pending confirmation explicitly authorizes replacing destination Belgrade with Saint Petersburg, keeping Moscow origin.",
+        "skip_when": "Destination is already Saint Petersburg and origin is Moscow; do not send an extra yes.",
+        "otherwise": "BLOCKED_FLOW_DEPENDENCY: neither the intended change nor its specific confirmation occurred. Never send yes to an origin/party/other question."
+      }
+    },
+    {
+      "index": 4,
+      "text": "26.10.2026",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Санкт-Петербург",
+        "destination_country_code": "RU",
+        "check_in": "2026-10-26"
+      },
+      "required_previous_context": "stay.check_in"
+    },
+    {
+      "index": 5,
+      "text": "завтра",
+      "oracle_status": "UNBOUND_PLAN",
+      "expect": {
+        "origin": "Москва",
+        "adult_count": 1,
+        "child_count": 0,
+        "preferences_contain": [
+          {
+            "key": "departure_time",
+            "value": "early_morning"
+          }
+        ],
+        "numeric_budget": null,
+        "no_orders": true,
+        "no_fabricated_offers_or_live_inventory_claims": true,
+        "no_invented_exact_departure_hour": true,
+        "destination_city": "Санкт-Петербург",
+        "destination_country_code": "RU",
+        "check_in": "2026-10-26",
+        "resolved_checkout_candidate": "2026-10-26",
+        "required_behavior": "ASK_FOR_LATER_CHECKOUT",
+        "do_not_commit_checkout_on_or_before_checkin": true,
+        "do_not_auto_shift_to_27_october": true,
+        "no_invalid_llm_terminal_failure": true
+      },
+      "required_previous_context": "stay.check_out or explicit return-date question",
+      "clock_policy_ref": "inline:clock_policy"
+    }
+  ],
+  "clock_policy": {
+    "reference_date": "2026-10-25",
+    "timezone": "Europe/Moscow",
+    "check_in": "2026-10-26",
+    "tomorrow_resolves_to": "2026-10-26",
+    "runtime_reference_clock_binding_required": true,
+    "must_block_on_different_or_unverified_runtime_reference_date": true
+  },
+  "global_invariants": {
+    "origin": "Москва",
+    "adult_count": 1,
+    "child_count": 0,
+    "preferences_contain": [
+      {
+        "key": "departure_time",
+        "value": "early_morning"
+      }
+    ],
+    "numeric_budget": null,
+    "no_orders": true,
+    "no_fabricated_offers_or_live_inventory_claims": true,
+    "no_invented_exact_departure_hour": true
+  },
+  "qualification": [
+    "Derived acceptance deliberately removes obsolete repeated-party answers 1/no and makes destination change explicit.",
+    "Conditional yes is sent only for its specific pending destination confirmation. Skipping it after an immediate correct change is expected branching, not ignored assertions.",
+    "Tomorrow collision is BLOCKED_CLOCK unless backend reference date 25 October Moscow is verified/injected.",
+    "Known-city identity does not expand seven-city DEMO inventory or prove source availability.",
+    "Full oracle remains UNBOUND_PLAN. No application, model or HTTP calls by this freeze."
+  ],
+  "execution": {
+    "status": "NOT_RUN",
+    "llm_calls_by_this_task": 0,
+    "http_calls_by_this_task": 0,
+    "not_original_106": true,
+    "old_owner3_pass_does_not_apply": true
+  }
+}

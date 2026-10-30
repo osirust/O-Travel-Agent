@@ -1,0 +1,285 @@
+{
+  "case_id": "OWNER-DIALOGUE-02",
+  "turn_index": 1,
+  "request_text": "в сербию хочу",
+  "state_before": {
+    "session_id": "session-14",
+    "trip_id": "trip-15",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "NEW",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-15",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "state_after": {
+    "session_id": "session-14",
+    "trip_id": "trip-15",
+    "state_version": 0,
+    "trip_version": 0,
+    "status": "RECOVERABLE_ERROR",
+    "waiting_reason": null,
+    "pending_question": null,
+    "trip": {
+      "legs": [],
+      "stays": [],
+      "budget": null,
+      "groups": [],
+      "origin": "Москва",
+      "trip_id": "trip-15",
+      "travelers": [],
+      "constraints": [],
+      "preferences": [],
+      "search_policy": {
+        "mode": "DEMO",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "serpapi",
+        "guest_nationality": null
+      },
+      "state_version": 0
+    },
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control",
+      "checkout/preview"
+    ]
+  },
+  "actual_run": {
+    "run_id": "run-16",
+    "session_id": "session-14",
+    "status": "failed",
+    "based_version": 0,
+    "result": {
+      "run": {
+        "id": "run-16",
+        "error": null,
+        "result": null,
+        "run_id": "run-16",
+        "status": "failed",
+        "created_at": "2026-10-25T17:45:19.146142+00:00",
+        "session_id": "session-14",
+        "started_at": "2026-10-25T17:45:19.158603+00:00",
+        "finished_at": null,
+        "based_version": 0,
+        "current_status": "failed",
+        "input_message_id": "id-17",
+        "client_message_id": "id-18",
+        "request_expected_version": 0
+      },
+      "error": {
+        "code": "MODEL_BUDGET_EXHAUSTED",
+        "details": {},
+        "message": "Дневной лимит вызовов LLM исчерпан.",
+        "retryable": false
+      },
+      "reply": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+      "state": {
+        "legs": [],
+        "stays": [],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "trip-15",
+        "travelers": [],
+        "constraints": [],
+        "preferences": [],
+        "search_policy": {
+          "mode": "DEMO",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "serpapi",
+          "guest_nationality": null
+        },
+        "state_version": 0
+      },
+      "result": null,
+      "run_id": "run-16",
+      "status": "RECOVERABLE_ERROR",
+      "changes": [],
+      "message": {
+        "id": "id-19",
+        "role": "assistant",
+        "text": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+        "run_id": "run-16",
+        "sequence": 94,
+        "created_at": "2026-10-25T17:45:19.199496+00:00",
+        "session_id": "session-14",
+        "client_message_id": null
+      },
+      "session": {
+        "state": {
+          "legs": [],
+          "stays": [],
+          "budget": null,
+          "groups": [],
+          "origin": "Москва",
+          "trip_id": "trip-15",
+          "travelers": [],
+          "constraints": [],
+          "preferences": [],
+          "search_policy": {
+            "mode": "DEMO",
+            "demo_fallback": true,
+            "hotel_provider": "liteapi",
+            "flight_provider": "serpapi",
+            "guest_nationality": null
+          },
+          "state_version": 0
+        },
+        "status": "RECOVERABLE_ERROR",
+        "trip_id": "trip-15",
+        "created_at": "2026-10-25T17:45:10.950197+00:00",
+        "session_id": "session-14",
+        "updated_at": "2026-10-25T17:45:19.199044+00:00",
+        "state_version": 0,
+        "waiting_reason": null,
+        "pending_question": null
+      },
+      "trip_id": "trip-15",
+      "created_at": "2026-10-25T17:45:10.950197+00:00",
+      "session_id": "session-14",
+      "updated_at": "2026-10-25T17:45:19.199044+00:00",
+      "state_version": 0,
+      "waiting_reason": null,
+      "pending_question": null,
+      "assistant_message": {
+        "id": "id-19",
+        "role": "assistant",
+        "text": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+        "run_id": "run-16",
+        "sequence": 94,
+        "created_at": "2026-10-25T17:45:19.199496+00:00",
+        "session_id": "session-14",
+        "client_message_id": null
+      }
+    },
+    "error": {
+      "code": "MODEL_BUDGET_EXHAUSTED",
+      "details": {},
+      "message": "Дневной лимит вызовов LLM исчерпан.",
+      "retryable": false
+    },
+    "llm": null,
+    "created_at": "2026-10-25T17:45:19.146142+00:00",
+    "finished_at": "2026-10-25T17:45:19.200032+00:00",
+    "available_actions": [
+      "commands",
+      "demo",
+      "search",
+      "control"
+    ]
+  },
+  "messages": [
+    {
+      "sequence": 93,
+      "id": "id-17",
+      "session_id": "session-14",
+      "run_id": "run-16",
+      "client_message_id": "id-18",
+      "role": "user",
+      "text": "в сербию хочу",
+      "created_at": "2026-10-25T17:45:19.146142+00:00"
+    },
+    {
+      "sequence": 94,
+      "id": "id-19",
+      "session_id": "session-14",
+      "run_id": "run-16",
+      "client_message_id": null,
+      "role": "assistant",
+      "text": "Не удалось завершить обработку. Поездка сохранена; доступны формы и явный DEMO-сценарий.",
+      "created_at": "2026-10-25T17:45:19.199496+00:00"
+    }
+  ],
+  "current_run_events": [
+    {
+      "sequence": 253,
+      "event_id": "id-20",
+      "session_id": "session-14",
+      "run_id": "run-16",
+      "event_type": "USER_MESSAGE_RECEIVED",
+      "state_version": 0,
+      "payload": {
+        "message_id": "id-17"
+      },
+      "created_at": "2026-10-25T17:45:19.148323+00:00"
+    },
+    {
+      "sequence": 254,
+      "event_id": "id-21",
+      "session_id": "session-14",
+      "run_id": "run-16",
+      "event_type": "RUN_STARTED",
+      "state_version": 0,
+      "payload": {},
+      "created_at": "2026-10-25T17:45:19.159584+00:00"
+    },
+    {
+      "sequence": 255,
+      "event_id": "id-22",
+      "session_id": "session-14",
+      "run_id": "run-16",
+      "event_type": "MODEL_SKIPPED_COOLDOWN",
+      "state_version": 0,
+      "payload": {
+        "model": "dots-studio/dots-3-note-preview:free",
+        "reason": "timeout_cooldown",
+        "provider": "openrouter",
+        "retry_after": 572
+      },
+      "created_at": "2026-10-25T17:45:19.187536+00:00"
+    },
+    {
+      "sequence": 256,
+      "event_id": "id-23",
+      "session_id": "session-14",
+      "run_id": "run-16",
+      "event_type": "RUN_FAILED",
+      "state_version": 0,
+      "payload": {
+        "code": "MODEL_BUDGET_EXHAUSTED",
+        "details": {},
+        "message": "Дневной лимит вызовов LLM исчерпан.",
+        "retryable": false
+      },
+      "created_at": "2026-10-25T17:45:19.200777+00:00"
+    }
+  ],
+  "orders": [],
+  "http_routes": [
+    "POST /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/runs/{run_id}",
+    "GET /api/v1/sessions/{session_id}",
+    "GET /api/v1/sessions/{session_id}/messages",
+    "GET /api/v1/sessions/{session_id}/events",
+    "GET /api/v1/sessions/{session_id}/orders"
+  ]
+}

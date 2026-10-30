@@ -1,0 +1,142 @@
+{
+  "format": "otravel.geo.actual-cached.v1",
+  "source": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-020041-d217d861/report.json",
+  "source_commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+  "captured_at": "2026-10-27T02:06:17.300657+00:00",
+  "report_snapshot_sha256": "9d40b199ac2a4566c19ff0f36e13cc282c0070e422c9a2c1fece25d7fa501357",
+  "capture_sha256": "255365ad827e76b373571505acf21319dfc8c58b6adc1fa457ac74c5dde75753",
+  "scope": "Whitelisted single observation while the actual epoch continues. Its later final report may add steps; captured step is preserved.",
+  "observation": {
+    "case_id": "PF-GEO-01",
+    "step_id": "06",
+    "text": "Стамбул в Сербии",
+    "before_state": {
+      "legs": [],
+      "stays": [],
+      "budget": {
+        "scope": "whole_trip",
+        "currency": "RUB",
+        "amount_minor": 8000000
+      },
+      "groups": [
+        {
+          "id": "new-group-1",
+          "traveler_ids": [
+            "new-traveler-1"
+          ],
+          "keep_separate": true
+        }
+      ],
+      "origin": "Москва",
+      "trip_id": "9185aea4-585e-4bba-b825-d1ca443291c2",
+      "travelers": [
+        {
+          "id": "new-traveler-1",
+          "age": null,
+          "type": "adult",
+          "group_id": "new-group-1",
+          "birth_date": null
+        }
+      ],
+      "constraints": [],
+      "preferences": [],
+      "route_policy": {
+        "kind": "round_trip",
+        "end_city": null
+      },
+      "search_policy": {
+        "mode": "HYBRID",
+        "demo_fallback": true,
+        "hotel_provider": "liteapi",
+        "flight_provider": "duffel",
+        "guest_nationality": null
+      },
+      "state_version": 1
+    },
+    "before_pending": {
+      "text": "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "children_count": 0,
+        "children_known": true,
+        "contextual_correction": {
+          "basis": "requested_country",
+          "country_code": "RS",
+          "original_text": "Белгород.",
+          "interpreted_city": "Белград"
+        },
+        "requested_destination": {
+          "kind": "city",
+          "name": "Белград",
+          "country_code": "RS"
+        }
+      },
+      "questions": [
+        "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+      ],
+      "target_id": null,
+      "question_id": "8540de3e-84ba-42f5-a5d0-95931845a0ae-question",
+      "state_version": 1,
+      "requested_destination": {
+        "kind": "city",
+        "name": "Белград",
+        "country_code": "RS"
+      }
+    },
+    "raw_validated": {
+      "reply": "Вы сказали «Стамбул в Сербии», но Стамбул находится в Турции, а Сербия — отдельная страна. Уточните, какой город в Сербии вы имеете в виду (например, Белград), или вы хотите перенести поездку в Стамбул (Турция)?",
+      "control": {
+        "action": "none"
+      },
+      "unknowns": [
+        "destination.city"
+      ],
+      "conflicts": [],
+      "operations": [],
+      "speech_act": "ASK",
+      "information_subject": "Сербия"
+    },
+    "actual_reply": "Да, Сербия — страна. Могу помочь обсудить маршрут и условия поездки; ваш вопрос сам по себе не меняет поездку.",
+    "actual_pending": {
+      "text": "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?",
+      "field": "destination.city",
+      "reason": "clarification",
+      "context": {
+        "children_count": 0,
+        "children_known": true,
+        "contextual_correction": {
+          "basis": "requested_country",
+          "country_code": "RS",
+          "original_text": "Белгород.",
+          "interpreted_city": "Белград"
+        },
+        "requested_destination": {
+          "kind": "city",
+          "name": "Белград",
+          "country_code": "RS"
+        }
+      },
+      "questions": [
+        "Понял как «Белград», Сербия. Город «Белград» находится в стране «Сербия», но пока не входит в каталог поиска. Сохраняем это направление без поиска или вы хотите его изменить?"
+      ],
+      "target_id": null,
+      "question_id": "8540de3e-84ba-42f5-a5d0-95931845a0ae-question",
+      "state_version": 1,
+      "requested_destination": {
+        "kind": "city",
+        "name": "Белград",
+        "country_code": "RS"
+      }
+    },
+    "event_types": [
+      "USER_MESSAGE_RECEIVED",
+      "RUN_STARTED",
+      "MODEL_CALL_STARTED",
+      "MODEL_EXTRACTION_VALIDATED",
+      "MODEL_OPERATIONS_CHECKED",
+      "MODEL_RESPONSE_RECEIVED",
+      "RUN_COMPLETED"
+    ]
+  }
+}

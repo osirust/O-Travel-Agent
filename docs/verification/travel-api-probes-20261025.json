@@ -1,0 +1,116 @@
+{
+  "checked_at": "2026-10-25T12:46:49.624651+00:00",
+  "checks": [
+    {
+      "name": "liteapi_sandbox_rates",
+      "status": "offers_received",
+      "offers_count": 586,
+      "source_types": [
+        "SANDBOX"
+      ],
+      "price_kinds": [
+        "PROVIDER_ROOMS_STAY_TOTAL"
+      ],
+      "currencies": [
+        "USD"
+      ]
+    },
+    {
+      "name": "duffel_test_flights",
+      "status": "offers_received",
+      "offers_count": 9,
+      "source_types": [
+        "SANDBOX"
+      ],
+      "price_kinds": [
+        "GROUP_ITINERARY_TOTAL"
+      ],
+      "currencies": [
+        "EUR"
+      ]
+    },
+    {
+      "name": "serpapi_account",
+      "status": "response_received",
+      "free_plan": true,
+      "searches_left_before": 250,
+      "allow_two_searches": true
+    },
+    {
+      "name": "serpapi_hotels_indicative",
+      "status": "offers_received",
+      "offers_count": 20,
+      "source_types": [
+        "LIVE_INDICATIVE"
+      ],
+      "price_kinds": [
+        "INDICATIVE_STAY_TOTAL"
+      ],
+      "currencies": [
+        "USD"
+      ]
+    },
+    {
+      "name": "serpapi_flights_indicative",
+      "status": "offers_received",
+      "offers_count": 4,
+      "source_types": [
+        "LIVE_INDICATIVE"
+      ],
+      "price_kinds": [
+        "INDICATIVE_ITINERARY_TOTAL"
+      ],
+      "currencies": [
+        "USD"
+      ]
+    },
+    {
+      "name": "open_meteo_weather",
+      "status": "response_received",
+      "source_type": "LIVE_INDICATIVE",
+      "forecast_days": 7,
+      "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)"
+    }
+  ],
+  "http": [
+    {
+      "host": "api.liteapi.travel",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "host": "api.liteapi.travel",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "host": "api.duffel.com",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "host": "serpapi.com",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "host": "serpapi.com",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "host": "serpapi.com",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "host": "api.open-meteo.com",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "supplier_orders_created": 0,
+  "llm_calls": 0,
+  "max_http_requests": 7,
+  "scope": "synthetic inputs; sandbox and indicative components, not a validated live trip"
+}

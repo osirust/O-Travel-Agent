@@ -1,0 +1,239 @@
+{
+  "finding_id": "HARNESS-004-PLACE-CHOICE-LOST-INDEPENDENT-DATE-001",
+  "source_case": "ZAI100-005",
+  "source_epoch": "after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5",
+  "source_case_sha256": "c1cccc864b5d9d14488ccd6b6981296bcf7cb845e1ec11ad3cea695c18af4b4a",
+  "source_transform": [
+    "Only trip/question/resolution IDs replaced by stable fixture IDs; candidate IDs recomputed by existing server _choice_id for those replacements. Source candidates, metadata hashes, expiry, date text and raw/checked operations unchanged.",
+    "MODEL snapshots are semantic JSONB projections; recorded original hashes retained separately from canonical fixture projection digests.",
+    "No capabilities, account identifiers, provider keys, quote data, headers or URLs copied."
+  ],
+  "reference_clock": "2026-10-27T20:12:59.728655+00:00",
+  "input": "18.11.2026",
+  "before_trip": {
+    "legs": [],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Дубай",
+        "rooms": [],
+        "check_in": null,
+        "hotel_id": null,
+        "check_out": null
+      }
+    ],
+    "budget": null,
+    "groups": [],
+    "origin": "Санкт-Петербург",
+    "trip_id": "cached-place-005",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": 0,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 1
+  },
+  "before_pending": {
+    "text": "Выберите конкретное место по номеру или ID: 1. Дубай (AE, Дубай); 2. Дубаи Инвестменц Парк (AE, Дубай); 3. Дубай Марина (AE, Дубай).",
+    "field": "place.resolution",
+    "reason": "clarification",
+    "context": {
+      "field": "place.resolution",
+      "target_id": "new-stay-1",
+      "place_resolution": {
+        "role": "destination",
+        "owner": "place_resolution.v1",
+        "query": "Дубай",
+        "stage": "city_choice",
+        "stay_id": "new-stay-1",
+        "trip_id": "cached-place-005",
+        "candidates": [
+          {
+            "key": {
+              "role": "destination",
+              "count": 5,
+              "query": "дубай",
+              "language": "ru",
+              "provider": "openmeteo",
+              "operation": "search_city",
+              "country_iso2": null
+            },
+            "kind": "city",
+            "label": "Дубай",
+            "source_id": 292223,
+            "fact_sha256": "49811d77bc11fa85b8f61d39995fac59d64d3996d60f1ecd84258f1cb18a9910",
+            "candidate_id": "pc-8f4739a0c5c95f05dd428b4e6cd94ce0",
+            "country_iso2": "AE",
+            "country_name": "ОАЭ",
+            "response_sha256": "da87f50e1fba2a9320b4e076c49c7811660a6fde0dc6d674897ba0d64421009b",
+            "administrative_areas": [
+              {
+                "name": "Дубай",
+                "level": 1,
+                "external_id": 292224
+              }
+            ]
+          },
+          {
+            "key": {
+              "role": "destination",
+              "count": 5,
+              "query": "дубай",
+              "language": "ru",
+              "provider": "openmeteo",
+              "operation": "search_city",
+              "country_iso2": null
+            },
+            "kind": "city",
+            "label": "Дубаи Инвестменц Парк",
+            "source_id": 11048853,
+            "fact_sha256": "5211681832a7a5fb88398d50dbed87c2c35e08369343045f57ff70e6576c175b",
+            "candidate_id": "pc-7e5ff983b2dcf2a0b336874a7174b1fb",
+            "country_iso2": "AE",
+            "country_name": "ОАЭ",
+            "response_sha256": "da87f50e1fba2a9320b4e076c49c7811660a6fde0dc6d674897ba0d64421009b",
+            "administrative_areas": [
+              {
+                "name": "Дубай",
+                "level": 1,
+                "external_id": 292224
+              }
+            ]
+          },
+          {
+            "key": {
+              "role": "destination",
+              "count": 5,
+              "query": "дубай",
+              "language": "ru",
+              "provider": "openmeteo",
+              "operation": "search_city",
+              "country_iso2": null
+            },
+            "kind": "city",
+            "label": "Дубай Марина",
+            "source_id": 8469788,
+            "fact_sha256": "f2213c388be07a9ef63ea4b20542adfb0daec0422f9d540c08baed8edf17732c",
+            "candidate_id": "pc-f56aca91b06bb303ed2da88320633e82",
+            "country_iso2": "AE",
+            "country_name": "ОАЭ",
+            "response_sha256": "da87f50e1fba2a9320b4e076c49c7811660a6fde0dc6d674897ba0d64421009b",
+            "administrative_areas": [
+              {
+                "name": "Дубай",
+                "level": 1,
+                "external_id": 292224
+              }
+            ]
+          }
+        ],
+        "expires_at": "2026-10-27T20:27:52.137778+00:00",
+        "country_ref": null,
+        "resolution_id": "pr-55555555555555555555555555555555",
+        "state_version": 1
+      },
+      "place_remaining_requests": []
+    },
+    "questions": [
+      "Выберите конкретное место по номеру или ID: 1. Дубай (AE, Дубай); 2. Дубаи Инвестменц Парк (AE, Дубай); 3. Дубай Марина (AE, Дубай)."
+    ],
+    "target_id": "new-stay-1",
+    "question_id": "cached-place-question",
+    "state_version": 1
+  },
+  "raw_contract": {
+    "value": {
+      "reply": "Я добавила дату заезда 18.11.2026 в Дубай. Необходимо уточнить дату выезда.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [
+        "Дата выезда из Дубай"
+      ],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Дубай",
+            "check_in": "2026-11-18",
+            "hotel_id": null,
+            "place_id": null,
+            "check_out": null,
+            "requested_nights": null
+          },
+          "target_id": "new-stay-1"
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "7b429725aade2054ff57b8dfd3bd7eafc8bd875e07dfeae1a29ea351ec637e33",
+    "captured": true,
+    "utf8_bytes": 479
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Я добавила дату заезда 18.11.2026 в Дубай. Необходимо уточнить дату выезда.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [
+        "Дата выезда из Дубай"
+      ],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "upsert_stay",
+          "value": {
+            "city": "Дубай",
+            "check_in": "2026-11-18",
+            "hotel_id": null,
+            "check_out": null,
+            "requested_nights": null
+          },
+          "target_id": "new-stay-1"
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "5db9396f7203c93f574a4f643dfd9d452d8407a14297652b53176aeedb692beb",
+    "captured": true,
+    "utf8_bytes": 463
+  },
+  "projection_digests": {
+    "raw_value_canonical_sha256": "db5581efce7f3d2c750eaa4a571a72d8b9bb92ca85f38b9803a1f2ee1733012a",
+    "checked_value_canonical_sha256": "ac07f98301397d8c26498853a1b874dd25ec0f308b91482c8f251b6ec67d1b05"
+  },
+  "observed_after": {
+    "check_in": "2026-11-18",
+    "state_version": 2,
+    "pending_field": "stay.check_out",
+    "place_context_lost": true
+  }
+}

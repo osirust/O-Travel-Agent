@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-10-27",
+  "status": "ACTUAL_REBUILD_FAILED_WITH_PRESERVED_TRACE",
+  "source_package_sha256": "4b8eedd251365427a19fa2b2113708d6991ec06360947ba745f6ca2a03f32699",
+  "private_evidence_folder": "/home/aegml/checks/complex-actual-r1-20261027-191441",
+  "report_sha256": "890a6e1840edd22d1dfd79a5095e2bc760010494a122d12e3a21deb4475a75c8",
+  "pinned_oracles_sha256": "dbc83f9de0675181871a9bc17b603bdd2afd6dc94766258a884529aab49646f4",
+  "scenario": {
+    "initial": "Казань → Стамбул 10–13.11.2026 → Анталья 13–17.11.2026 → Казань; два взрослых и ребёнок 7 лет; один номер для всех в каждом городе; общий бюджет 1200000 RUB; гражданство RU.",
+    "compound_change": "Добавить ребёнка 4 лет; в каждом городе два номера: первый взрослый с обоими детьми, второй взрослый отдельно; бюджет уменьшить на 20000 RUB; выезд из Антальи и возвращение в Казань перенести на 19.11.2026; остальные требования сохранить.",
+    "hidden_fact_seed": false,
+    "typed_state_repairs": 0,
+    "source_mode": "HYBRID; LiteAPI и Duffel SANDBOX, разрешённые трансферы DEMO"
+  },
+  "execution": {
+    "process_exit_code": 0,
+    "semantic_status": "COMPLETED_WITH_SEMANTIC_FAILURES",
+    "completed_user_turns": 3,
+    "actual_model": "Groq openai/gpt-oss-120b, strict-v3, low reasoning",
+    "actual_model_http_requests": 3,
+    "model_http_statuses": [200, 200, 200],
+    "actual_source_http_requests": 14,
+    "source_responses": {
+      "liteapi_hotel_identity": [200, 200],
+      "liteapi_rates": [200, 200],
+      "duffel_search": [201, 201, 201],
+      "cbr_reference_fx": [200, 200],
+      "liteapi_sandbox_prebook": [200, 200],
+      "duffel_refresh": [200, 200, 200]
+    },
+    "initial_actual_intake_and_preview": "PASS_RELATED_INITIAL_SCOPE",
+    "predeclared_checks_executed": 13,
+    "predeclared_checks_passed": 12,
+    "predeclared_checks_failed": 1,
+    "final_rebuild_checks_skipped_by_early_stop": true,
+    "photo_checks_after_rebuild": "NOT_EXECUTED",
+    "refresh_after_rebuild": "NOT_EXECUTED",
+    "confirmed_orders": 0,
+    "supplier_booking_payment_requests": 0,
+    "local_model_requests": 0,
+    "paid_model_fallback": false,
+    "runtime_8084_8086_changed": false
+  },
+  "findings": [
+    {
+      "finding_id": "HARNESS-004-EACH-CITY-ROOM-SCOPE-001",
+      "status": "OPEN_ACTUAL_FAIL",
+      "responsible_path": "otravel/room_intent.py: ground_room_count_operations, _ALLOCATION_EDIT, _protect_count_only_memberships",
+      "fact": "Вторая настоящая LLM-реплика содержала корректные два номера для каждой из двух остановок и правильное распределение четырёх путешественников. Harness заменил обе предложенные схемы прежними одноместными списками номеров и запросил город, хотя пользователь явно указал каждый город.",
+      "raw_model_evidence": {
+        "event": "MODEL_EXTRACTION_VALIDATED",
+        "turn": 2,
+        "structured_contract_sha256": "cae2b947193892df12d2c10eaa0a4b6a725c829d92a60687b480a025179cccdc",
+        "room_counts_per_stay": [2, 2],
+        "partition_each_stay": [["first_existing_adult", "existing_child_age7", "new_child_age4"], ["second_existing_adult"]]
+      },
+      "checked_harness_evidence": {
+        "event": "MODEL_OPERATIONS_CHECKED",
+        "turn": 2,
+        "structured_contract_sha256": "c6717492c5f60abcd78e79d8ff615a23727f8fa427e58a8ade24977b606012ac",
+        "room_counts_per_stay": [1, 1],
+        "normalization": "count_only_room_membership_preserved",
+        "requested_room_count": 2,
+        "pending_field": "stay.rooms",
+        "room_target_selection_required": true,
+        "final_question": "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание."
+      },
+      "exact_cause": "В выражении «в первом — первый взрослый ... во втором — второй взрослый» опущено повторное слово «номер». Текущий _ALLOCATION_EDIT требует его после порядкового обозначения и не распознаёт явную перестановку гостей. Затем count-only защита восстанавливает старые memberships до проверки уже корректных многогородских room setters.",
+      "offline_reproduction": {
+        "scope": "Повтор только pure guard на сохранённых исходных state, тексте и raw operations; без новой LLM, HTTP, БД или изменения поездки.",
+        "allocation_intent_regex_matches": false,
+        "asserted_room_counts": [2],
+        "raw_room_counts": [2, 2],
+        "guard_room_counts": [1, 1],
+        "artifact": "offline-final-room-diagnostic.json",
+        "frozen_room_intent_sha256": "b86164bfcaa8349bef4c897e5a564ba156254babbea19e6266c8d82d3ff9cf27"
+      },
+      "cascade": "На третьем ходе пользователь повторил распределение для Стамбула и Антальи. Модель, получив уже ошибочно неоднозначный контекст, вернула ASK без операций. Проверенный контракт потерял unknowns; итогом стал общий ответ, а прежний stay.rooms вопрос остался активен.",
+      "next_action": "Распознать ограниченную явную перестановку с эллипсисом и область каждого названного города, сохранить корректные server-validated room setters. Count-only, неоднозначные, цитируемые и гипотетические запросы должны оставаться защищёнными.",
+      "closure_condition": "Регрессия сохранённого T2 raw contract и отрицательные случаи, затем свежий actual повтор: два номера с точной указанной группировкой в обеих остановках без ложного уточнения города; далее полный пересчёт, refresh и один имитированный заказ."
+    },
+    {
+      "finding_id": "HARNESS-004-UNREQUESTED-ADULT-AGE-001",
+      "status": "OPEN_ACTUAL_OBSERVATION",
+      "fact": "На первом ходе модель указала возраст обоих взрослых 30 лет, хотя пользователь сообщил только количество взрослых. Значения прошли в TripState.",
+      "actual_model_adult_ages": [30, 30],
+      "user_provided_adult_ages": null,
+      "included_in_predeclared_check_denominator": false,
+      "next_action": "Отдельно проверить происхождение возрастов и не сохранять выдуманные численные данные взрослых. Не подменять неизвестный возраст условным значением из примера.",
+      "closure_condition": "Сохранённый initial raw contract обрабатывается с неизвестными возрастами взрослых без придумывания значений; явные возрастные данные пользователя по-прежнему принимаются. Свежая actual проверка отдельно от room-scope исправления."
+    }
+  ],
+  "offline_final_state_addendum": {
+    "scope": "Последующая read-only сверка фактически сохранённого состояния с заранее закреплёнными ожиданиями; не новый live-прогон и не замена исходных 12/13 результатов.",
+    "existing_traveler_ids_preserved": true,
+    "children_ages_4_7": true,
+    "existing_child_age7_preserved": true,
+    "budget_minor_118000000": true,
+    "istanbul_dates_10_13_unchanged": true,
+    "antalya_dates_13_19": true,
+    "return_leg_19": true,
+    "two_correctly_partitioned_rooms_each_city": false
+  },
+  "preserved_limits": [
+    "HTTP 200 модели и источников не означает правильной пересборки всей поездки.",
+    "Начальная поездка и первоначальный refresh подтверждены; финальный перерасчёт и оформление после compound-команды не завершены.",
+    "Три настоящих LLM-вызова не квалифицируют все 80 диалогов или 106 сценариев.",
+    "Не выполнялись скрытые typed-правки, принудительная подстановка DEMO-отелей или исправление оригинальных результатов."
+  ]
+}

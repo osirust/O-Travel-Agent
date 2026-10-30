@@ -1,0 +1,99 @@
+{
+  "scope": "ONE_PERSONAL_AUTH_MODELS_BALANCE_ONLY",
+  "status": "STOPPED_NO_GENERATION",
+  "API_request_attempts": 0,
+  "OAuth_responses": 0,
+  "public_CA_fetch_attempts": 1,
+  "generation_calls": 0,
+  "token_or_credentials_persisted": false,
+  "Native_or_DB_changes": 0,
+  "script_sha256": "58a705e89f8439f0c264cc4af214828b967f52d2497ff13c74fc9223841bf2a9",
+  "tls": {
+    "verification_required": true,
+    "hostname_check": true,
+    "global_trust_modified": false,
+    "personal_proxy_env_used": false,
+    "CA_sources": [
+      {
+        "url": "https://gu-st.ru/content/lending/russian_trusted_root_ca_pem.crt",
+        "file_sha256": "936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504",
+        "certificate_der_sha256": "d26d2d0231b7c39f92cc738512ba54103519e4405d68b5bd703e9788ca8ecf31"
+      }
+    ],
+    "default_trust_preflight": "CERTIFICATE_VERIFY_FAILED_NO_AUTH_SENT",
+    "preflight_error_type": "TimeoutError"
+  },
+  "error_code": "PINNED_CA_TLS_NETWORK_FAILED_NO_AUTH_SENT",
+  "error_type": "Stop",
+  "model_ids": null,
+  "balance_counts": null,
+  "auth_key_validity": "UNKNOWN_NOT_READ_OR_SENT",
+  "network_scope": "Verified NGW9443 TLS with official RootCA; API443 TLS stalls from both Windows and WSL. No provider API/auth HTTP or generation has been sent.",
+  "public_CA_asset": {
+    "path": "certs/gigachat-root-ca.pem",
+    "file_sha256": "936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504",
+    "source_url": "https://gu-st.ru/content/lending/russian_trusted_root_ca_pem.crt",
+    "source_TLS_verified": true,
+    "DER_sha256": "d26d2d0231b7c39f92cc738512ba54103519e4405d68b5bd703e9788ca8ecf31"
+  },
+  "Windows_IPv4_API_TLS_probe": {
+    "scope": "ONE_DNS_RETURNED_IPV4_TLS_PROBE_NO_HTTP",
+    "platform": "Windows",
+    "hostname": "api.giga.chat",
+    "DNS_A_records": [
+      "155.212.234.167"
+    ],
+    "target_IP": "155.212.234.167",
+    "SNI": "api.giga.chat",
+    "verification_required": true,
+    "hostname_check": true,
+    "HTTP_requests": 0,
+    "auth_or_key_reads": 0,
+    "system_trust_changes": 0,
+    "TCP_connected": true,
+    "TLS_verified": false,
+    "error_type": "TimeoutError",
+    "seconds": 14.51
+  },
+  "WSL_IPv4_API_TLS_probe": {
+    "scope": "ONE_DNS_RETURNED_IPV4_TLS_PROBE_NO_HTTP",
+    "platform": "WSL",
+    "hostname": "api.giga.chat",
+    "DNS_A_records": [
+      "155.212.234.167"
+    ],
+    "target_IP": "155.212.234.167",
+    "SNI": "api.giga.chat",
+    "verification_required": true,
+    "hostname_check": true,
+    "HTTP_requests": 0,
+    "auth_or_key_reads": 0,
+    "system_trust_changes": 0,
+    "TCP_connected": true,
+    "TLS_verified": false,
+    "error_type": "TimeoutError",
+    "seconds": 14.515
+  },
+  "verified_NGW_and_API_probe": [
+    {
+      "host": "ngw.devices.sberbank.ru",
+      "port": 9443,
+      "scope": "UNAUTHENTICATED_TLS_ONLY",
+      "HTTP_requests": 0,
+      "TCP_connected": true,
+      "TLS_verified": true,
+      "server_leaf_sha256": "20f6f182429b9016492e38e09fa0d248cd72d583bd34ccae6483339d07f60d3d",
+      "seconds": 11.249
+    },
+    {
+      "host": "api.giga.chat",
+      "port": 443,
+      "scope": "UNAUTHENTICATED_TLS_ONLY",
+      "HTTP_requests": 0,
+      "TCP_connected": true,
+      "TLS_verified": false,
+      "error_type": "TimeoutError",
+      "seconds": 13.014
+    }
+  ]
+}

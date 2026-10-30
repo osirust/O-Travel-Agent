@@ -1,0 +1,376 @@
+{
+  "format": "otravel.owner_dialogue_extended.v1",
+  "id": "OWNER-DIALOGUE-EXTENDED-01",
+  "revision": 1,
+  "frozen_at_utc": "2026-10-25T18:03:05.367437+00:00",
+  "status": "FROZEN_NOT_RUN_ORACLE_PLAN",
+  "initial_trip": {},
+  "input_count": 11,
+  "source": {
+    "kind": "owner-provided ordered input list relayed in the task handoff",
+    "source_snapshot_path": "fixtures/evaluation/owner-dialogue-extended-v1.inputs.txt",
+    "source_snapshot_sha256": "4e5efc4557d1f137f0618e40870273d0dcf520d1d1c9d9f1fdf5ea1e85c5ec6f",
+    "source_snapshot_hash_kind": "derived UTF-8 ordered input lines, LF and final LF; not the original full-chat export",
+    "input_sha256": "98d090da188161f1d0ad1165c773afd8aac9f2ff15b5a174714ab5dd11cb08fd",
+    "input_hash_kind": "UTF-8 JSON messages array, ensure_ascii=false, separators comma/colon, no final newline",
+    "note": "No assistant utterances are invented. Required pending slots below are oracle-plan preconditions, not claims about observed assistant messages.",
+    "owner_full_transcript_available": true,
+    "source_snapshot_contains_assistant": false,
+    "snapshot_scope": "Only the exact owner input list was relayed into this subtask; the full owner-supplied transcript, including assistant turns, is available in the parent user message. No assistant phrases are reconstructed here."
+  },
+  "messages": [
+    "сербию знаешь?",
+    "сербия",
+    "стамбул",
+    "нет",
+    "белгород",
+    "минимум стоимости",
+    "москва",
+    "1",
+    "0",
+    "белгород",
+    "белград"
+  ],
+  "turns": [
+    {
+      "index": 1,
+      "text": "сербию знаешь?",
+      "intent": "ASK_FAQ",
+      "expected_observables": [
+        {
+          "check_id": "faq_is_not_destination_consent",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Answer knowledge about Serbia without requiring or committing a destination selection. A follow-up question may be offered but does not imply consent.",
+          "knowledge_entity": {
+            "name": "Сербия",
+            "country_code": "RS"
+          },
+          "selected_country_change_authorized": false
+        },
+        {
+          "check_id": "no_origin_or_city_from_faq",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "No origin/destination city is invented from this informational question."
+        }
+      ],
+      "context_boundary": "A remembered FAQ entity RS is not yet the selected trip destination."
+    },
+    {
+      "index": 2,
+      "text": "сербия",
+      "intent": "ANSWER_DESTINATION_COUNTRY",
+      "expected_observables": [
+        {
+          "check_id": "remember_requested_country_RS",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "The explicit country answer establishes the requested destination-country context as Serbia, RS.",
+          "requested_country_code": "RS"
+        },
+        {
+          "check_id": "country_does_not_pick_city",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Keep city unknown and ask a human city-selection question. Suggestions are not booked or selected cities."
+        }
+      ],
+      "expected_next_question_topic": "destination_city_within_RS"
+    },
+    {
+      "index": 3,
+      "text": "стамбул",
+      "intent": "CITY_CANDIDATE_IN_COUNTRY_CONTEXT",
+      "expected_observables": [
+        {
+          "check_id": "istanbul_is_turkey_candidate",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Recognize Istanbul as TR and explain mismatch with the retained RS request.",
+          "candidate_city": {
+            "name": "Стамбул",
+            "country_code": "TR"
+          },
+          "requested_country_code": "RS"
+        },
+        {
+          "check_id": "candidate_does_not_authorize_country_switch",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Do not change origin, requested country or selected destination before confirmation."
+        }
+      ],
+      "expected_next_question_topic": "confirm_country_change_RS_to_TR"
+    },
+    {
+      "index": 4,
+      "text": "нет",
+      "intent": "REJECT_PENDING_COUNTRY_CHANGE",
+      "required_previous_context": {
+        "kind": "country_change_confirmation",
+        "from_country_code": "RS",
+        "candidate_country_code": "TR"
+      },
+      "expected_observables": [
+        {
+          "check_id": "reject_istanbul_keep_RS",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "No rejects the pending change to Turkey/Istanbul. Serbia remains requested; Istanbul is not selected.",
+          "requested_country_code": "RS",
+          "rejected_city": "Стамбул"
+        },
+        {
+          "check_id": "no_is_not_global_pause",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Do not interpret rejection of this alternative as a user_pause, cancellation of the whole trip or empty destination."
+        }
+      ],
+      "expected_next_question_topic": "destination_city_within_RS"
+    },
+    {
+      "index": 5,
+      "text": "белгород",
+      "intent": "AMBIGUOUS_CITY_WITH_COUNTRY_MISMATCH",
+      "expected_observables": [
+        {
+          "check_id": "belgorod_is_not_belgrade",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Preserve the literal Белгород. Explain or ask confirmation between Белгород (RU) and Белград (RS); do not silently autocorrect.",
+          "literal_input": "белгород",
+          "distinct_candidates": [
+            {
+              "name": "Белгород",
+              "country_code": "RU"
+            },
+            {
+              "name": "Белград",
+              "country_code": "RS"
+            }
+          ]
+        },
+        {
+          "check_id": "keep_RS_during_city_confirmation",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Requested country RS remains until an explicit replacement is authorized; no concrete city is silently selected."
+        }
+      ],
+      "expected_next_question_topic": "confirm_Belgorod_RU_versus_Belgrade_RS"
+    },
+    {
+      "index": 6,
+      "text": "минимум стоимости",
+      "intent": "CHANGE_SOFT_PRICE_PREFERENCE",
+      "expected_observables": [
+        {
+          "check_id": "persist_lowest_total_preference",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Record the soft preference through existing preferences JSON.",
+          "preference": {
+            "key": "price_priority",
+            "value": "lowest_total"
+          }
+        },
+        {
+          "check_id": "no_numeric_budget_from_preference",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Budget stays unknown: no zero, sentinel, default maximum or invented currency amount.",
+          "numeric_budget": null
+        },
+        {
+          "check_id": "do_not_lose_city_or_country_question",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Keep RS and the unresolved city distinction; a later origin/party question may defer, but must not erase, that context."
+        },
+        {
+          "check_id": "no_global_minimum_claim",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Lowest cost means ranking available comparable options; it is not a guarantee of a global minimum."
+        }
+      ],
+      "required_question_before_next_input": {
+        "field": "origin.city",
+        "reason": "The next bare city Москва is intended as the answer about departure. If that slot was not asked, classify the question-flow mismatch separately; do not silently reinterpret it."
+      }
+    },
+    {
+      "index": 7,
+      "text": "москва",
+      "intent": "ANSWER_ORIGIN",
+      "required_previous_context": {
+        "field": "origin.city"
+      },
+      "expected_observables": [
+        {
+          "check_id": "origin_moscow",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Store Moscow in origin; destination country remains RS.",
+          "trip_origin": "Москва",
+          "requested_country_code": "RS"
+        },
+        {
+          "check_id": "moscow_not_destination",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "No Russian destination is selected from the departure answer; numeric budget stays unknown."
+        }
+      ],
+      "required_question_before_next_input": {
+        "field": "party.adults"
+      }
+    },
+    {
+      "index": 8,
+      "text": "1",
+      "intent": "ANSWER_ADULT_COUNT",
+      "required_previous_context": {
+        "field": "party.adults"
+      },
+      "expected_observables": [
+        {
+          "check_id": "exactly_one_adult",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Save exactly one adult, with no duplicate travelers and no numeric-budget mutation.",
+          "adult_count": 1,
+          "numeric_budget": null
+        },
+        {
+          "check_id": "advance_to_children_question",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Ask about children rather than repeating the already answered adult-count question."
+        }
+      ],
+      "required_question_before_next_input": {
+        "field": "party.children"
+      }
+    },
+    {
+      "index": 9,
+      "text": "0",
+      "intent": "ANSWER_CHILD_COUNT",
+      "required_previous_context": {
+        "field": "party.children"
+      },
+      "expected_observables": [
+        {
+          "check_id": "zero_children_preserve_adult",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Zero means no children, not zero adults, age zero, numeric budget zero or cancellation.",
+          "adult_count": 1,
+          "child_count": 0,
+          "numeric_budget": null
+        },
+        {
+          "check_id": "retain_trip_facts",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Preserve Moscow origin, RS country and lowest-total preference."
+        }
+      ],
+      "expected_next_question_topic": "deferred_destination_city_confirmation"
+    },
+    {
+      "index": 10,
+      "text": "белгород",
+      "intent": "REPEATED_LITERAL_CITY_WITH_COUNTRY_MISMATCH",
+      "expected_observables": [
+        {
+          "check_id": "repeat_is_not_autocorrect_consent",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "The repeated Белгород must still not turn into Белград without an explicit answer. A mismatch/which-city confirmation is allowed; preserve the literal candidate.",
+          "literal_input": "белгород",
+          "requested_country_code": "RS"
+        },
+        {
+          "check_id": "preserve_party_origin_preference",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Origin Moscow, one adult, zero children and lowest-total preference remain unchanged."
+        }
+      ],
+      "expected_next_question_topic": "confirm_Belgorod_RU_versus_Belgrade_RS"
+    },
+    {
+      "index": 11,
+      "text": "белград",
+      "intent": "EXPLICIT_CITY_CLARIFICATION",
+      "expected_observables": [
+        {
+          "check_id": "accept_explicit_belgrade_intent",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "The explicit Белград resolves the intended Serbian city; do not convert it to Белгород.",
+          "requested_city": {
+            "name": "Белград",
+            "country_code": "RS"
+          },
+          "representation": "durable intent/pending context is acceptable if canonical Stay.city cannot represent an unsupported search city"
+        },
+        {
+          "check_id": "preserve_all_other_facts",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Keep Moscow origin, one adult, zero children, lowest-total preference and unknown numeric budget.",
+          "trip_origin": "Москва",
+          "adult_count": 1,
+          "child_count": 0,
+          "preference": {
+            "key": "price_priority",
+            "value": "lowest_total"
+          },
+          "numeric_budget": null
+        },
+        {
+          "check_id": "known_city_does_not_expand_inventory",
+          "oracle_status": "UNBOUND_PLAN",
+          "description": "Acknowledge Belgrade as a known requested city while explaining actual catalogue/source coverage. Do not claim that all hotels globally are unavailable or create fabricated offers."
+        }
+      ],
+      "scope_boundary": "Belgrade/Belgorod are not added to the seven-city DEMO catalogue by this fixture."
+    }
+  ],
+  "global_invariants": [
+    {
+      "check_id": "no_orders",
+      "oracle_status": "UNBOUND_PLAN",
+      "description": "No message in this chain authorizes preview/checkout, a supplier order or a simulated order."
+    },
+    {
+      "check_id": "no_live_inventory_claims",
+      "oracle_status": "UNBOUND_PLAN",
+      "description": "No live availability, bookability, real confirmation ID or global cheapest claim without actual matching source evidence."
+    },
+    {
+      "check_id": "no_numeric_budget_in_chain",
+      "oracle_status": "UNBOUND_PLAN",
+      "description": "No utterance gives a numeric budget: 1 and 0 are contextual party answers; lowest cost is a soft preference."
+    },
+    {
+      "check_id": "country_context_survives",
+      "oracle_status": "UNBOUND_PLAN",
+      "description": "After explicit Serbia selection, RS survives rejected/mismatched alternatives and origin/party answers."
+    },
+    {
+      "check_id": "preserve_catalogue_scope",
+      "oracle_status": "UNBOUND_PLAN",
+      "description": "Keep the existing seven DEMO catalogue cities unchanged.",
+      "demo_cities": [
+        "Москва",
+        "Санкт-Петербург",
+        "Сочи",
+        "Казань",
+        "Стамбул",
+        "Анталья",
+        "Дубай"
+      ]
+    }
+  ],
+  "question_flow_qualification": "Numeric and bare-city assertions require the actual preceding question/slot evidence. A missing or wrong prerequisite is a question-flow failure/open oracle dependency, not permission to reinterpret a number as money. Deferred city context must survive intervening questions.",
+  "qualification_limits": [
+    "This is a frozen 11-input chain, not a passed test or an executable complete oracle.",
+    "Past Owner-3 PASS does not qualify this new conversation.",
+    "No source or model execution is performed by this freeze.",
+    "Pending-context/intent storage for known unsupported cities must be bound before full machine grading.",
+    "Source snapshot is a faithful derived input-list snapshot, not a byte-exact original full chat with assistant turns."
+  ],
+  "execution": {
+    "status": "NOT_RUN",
+    "llm_calls": 0,
+    "http_calls": 0,
+    "full_case_pass": false
+  },
+  "provenance_class": "development_regression",
+  "frozen_before_first_actual_replay": true,
+  "code_fixes_already_in_progress_when_frozen": true,
+  "holdout": false,
+  "provenance_revision": 2
+}

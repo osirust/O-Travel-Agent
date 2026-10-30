@@ -1,0 +1,482 @@
+{
+  "scope": "3 bounded extraction cases on 2 CF candidates, not full conversations",
+  "started_at_utc": "2026-10-25T22:06:42.011079+00:00",
+  "results": [
+    {
+      "model": "@cf/google/gemma-4-26b-a4b-it",
+      "case_id": "CFP-01",
+      "raw_checks": {
+        "origin": true,
+        "destination": true,
+        "adults": true,
+        "children": true,
+        "no_invented_budget": true,
+        "morning": true
+      },
+      "grounded_checks": {
+        "origin": true,
+        "destination": true,
+        "adults": true,
+        "children": true,
+        "no_invented_budget": true,
+        "morning": true
+      },
+      "normalizations": [],
+      "status": "PASS_BOUND_SUBSET_ONLY",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/google/gemma-4-26b-a4b-it",
+        "request_metrics": {
+          "system_utf8_bytes": 10074,
+          "context_utf8_bytes": 3740,
+          "schema_utf8_bytes": 5573,
+          "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+          "prompt_sha256": "67c4c516fc2402fe341266590d26e04ee4c1a38f6c66fbaa4b7bacffede8cfb0"
+        },
+        "usage": {
+          "input_tokens": 3876,
+          "output_tokens": 186,
+          "total_tokens": 4062
+        }
+      },
+      "http_status": 200,
+      "http_attempts": 1,
+      "latency_ms": 3581,
+      "structured_contract": {
+        "sha256": "ba0c4f0b706ee7e804e9811971f7665521818f4aad63f1f551c3665d6196171f",
+        "utf8_bytes": 628,
+        "captured": true,
+        "value": {
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              }
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "type": "adult"
+              }
+            },
+            {
+              "type": "upsert_stay",
+              "target_id": "new-stay-1",
+              "value": {
+                "city": "Стамбул"
+              }
+            },
+            {
+              "type": "set_preference",
+              "value": {
+                "key": "departure_time",
+                "value": "early_morning"
+              }
+            }
+          ],
+          "control": {
+            "action": "continue"
+          },
+          "reply": "Я настроил поездку из Москвы в Стамбул для одного взрослого с ранним вылетом. Уточните, пожалуйста, даты поездки.",
+          "unknowns": [
+            "check_in",
+            "check_out"
+          ],
+          "conflicts": [],
+          "speech_act": "CHANGE"
+        }
+      }
+    },
+    {
+      "model": "@cf/google/gemma-4-26b-a4b-it",
+      "case_id": "CFP-02",
+      "raw_checks": {
+        "information_act": true,
+        "no_operations": true,
+        "serbia_subject": true,
+        "trip_unchanged": true
+      },
+      "grounded_checks": {
+        "information_act": true,
+        "no_operations": true,
+        "serbia_subject": true,
+        "trip_unchanged": true
+      },
+      "normalizations": [],
+      "status": "PASS_BOUND_SUBSET_ONLY",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/google/gemma-4-26b-a4b-it",
+        "request_metrics": {
+          "system_utf8_bytes": 10074,
+          "context_utf8_bytes": 3652,
+          "schema_utf8_bytes": 5573,
+          "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+          "prompt_sha256": "edff95a52bb4328ba5575c312b70a5cc99f5704fdc2e856d13ec4f5d4cdea0a3"
+        },
+        "usage": {
+          "input_tokens": 3863,
+          "output_tokens": 63,
+          "total_tokens": 3926
+        }
+      },
+      "http_status": 200,
+      "http_attempts": 1,
+      "latency_ms": 1639,
+      "structured_contract": {
+        "sha256": "50f9be5ccda1bd198d8dbfd07e3154f3cfe8f5a0891dc3171ca83f67f69efbef",
+        "utf8_bytes": 247,
+        "captured": true,
+        "value": {
+          "operations": [],
+          "control": {
+            "action": "none"
+          },
+          "reply": "Да, я знаю про Сербию. Вы хотите спланировать поездку туда?",
+          "unknowns": [],
+          "conflicts": [],
+          "speech_act": "ASK",
+          "information_subject": "Сербия"
+        }
+      }
+    },
+    {
+      "model": "@cf/google/gemma-4-26b-a4b-it",
+      "case_id": "CFP-03",
+      "raw_checks": {
+        "one_new_child_age7": false,
+        "existing_travelers_unchanged": true,
+        "budget": false,
+        "explicit_wait": true,
+        "remaining_fields_unchanged": true
+      },
+      "grounded_checks": {
+        "one_new_child_age7": false,
+        "existing_travelers_unchanged": true,
+        "budget": true,
+        "explicit_wait": true,
+        "remaining_fields_unchanged": true
+      },
+      "normalizations": [
+        {
+          "field": "budget.amount_minor",
+          "before": 9800000,
+          "after": 8000000,
+          "mode": "relative_decrease",
+          "literal": "20 тысяч",
+          "currency": "RUB",
+          "source": "existing_rub_budget_context"
+        }
+      ],
+      "status": "NOT_ALL_BOUND_CHECKS_PASS",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/google/gemma-4-26b-a4b-it",
+        "request_metrics": {
+          "system_utf8_bytes": 11323,
+          "context_utf8_bytes": 6081,
+          "schema_utf8_bytes": 6712,
+          "schema_sha256": "bcf2ec2c071334f764b45293d3f3f2efbc7e0731a77c7c67c0142e6b5e0ec2a3",
+          "prompt_sha256": "a6892c734b98f0163151a5499f65f0a9ea3082f9c6ac0d51eb2c3c9dd55bab97"
+        },
+        "usage": {
+          "input_tokens": 5226,
+          "output_tokens": 131,
+          "total_tokens": 5357
+        }
+      },
+      "http_status": 200,
+      "http_attempts": 1,
+      "latency_ms": 3818,
+      "structured_contract": {
+        "sha256": "e0c0b2ff161cbf1fd402e340226501f7fa561b084cd1e182a0fd1921e9dcd62a",
+        "utf8_bytes": 394,
+        "captured": true,
+        "value": {
+          "operations": [
+            {
+              "type": "update_traveler",
+              "value": {
+                "age": 7
+              },
+              "target_id": "child-2"
+            },
+            {
+              "type": "set_budget",
+              "value": {
+                "amount_minor": 9800000,
+                "currency": "RUB",
+                "scope": "whole_trip"
+              }
+            }
+          ],
+          "control": {
+            "action": "wait"
+          },
+          "reply": "Добавил ребёнка 7 лет и уменьшил бюджет на 20 000 RUB. Жду ваших дополнений.",
+          "unknowns": [],
+          "conflicts": [],
+          "speech_act": "CHANGE"
+        }
+      }
+    },
+    {
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "case_id": "CFP-01",
+      "raw_checks": {
+        "origin": true,
+        "destination": true,
+        "adults": true,
+        "children": true,
+        "no_invented_budget": true,
+        "morning": true
+      },
+      "grounded_checks": {
+        "origin": true,
+        "destination": true,
+        "adults": true,
+        "children": true,
+        "no_invented_budget": true,
+        "morning": true
+      },
+      "normalizations": [],
+      "status": "PASS_BOUND_SUBSET_ONLY",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/nvidia/nemotron-3-120b-a12b",
+        "request_metrics": {
+          "system_utf8_bytes": 10074,
+          "context_utf8_bytes": 3740,
+          "schema_utf8_bytes": 5573,
+          "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+          "prompt_sha256": "67c4c516fc2402fe341266590d26e04ee4c1a38f6c66fbaa4b7bacffede8cfb0"
+        },
+        "usage": {
+          "input_tokens": 3928,
+          "output_tokens": 259,
+          "total_tokens": 4187
+        }
+      },
+      "http_status": 200,
+      "http_attempts": 1,
+      "latency_ms": 4412,
+      "structured_contract": {
+        "sha256": "4ef3cc07fe7f464f8f5ecea2c4f1fccfaa0cd2fbdf662a4f33fc7c430716c491",
+        "utf8_bytes": 597,
+        "captured": true,
+        "value": {
+          "operations": [
+            {
+              "type": "set_origin",
+              "value": {
+                "city": "Москва"
+              },
+              "target_id": null
+            },
+            {
+              "type": "upsert_stay",
+              "value": {
+                "city": "Стамбул"
+              },
+              "target_id": "new-stay-1"
+            },
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "type": "adult"
+              },
+              "target_id": null
+            },
+            {
+              "type": "set_preference",
+              "value": {
+                "key": "departure_time",
+                "value": "early_morning"
+              },
+              "target_id": null
+            }
+          ],
+          "control": {
+            "action": "continue"
+          },
+          "reply": "Принято: Москва → Стамбул, 1 взрослый, без детей, вылет рано утром.",
+          "unknowns": [],
+          "conflicts": [],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      }
+    },
+    {
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "case_id": "CFP-02",
+      "raw_checks": {
+        "information_act": true,
+        "no_operations": true,
+        "serbia_subject": true,
+        "trip_unchanged": true
+      },
+      "grounded_checks": {
+        "information_act": true,
+        "no_operations": true,
+        "serbia_subject": true,
+        "trip_unchanged": true
+      },
+      "normalizations": [],
+      "status": "PASS_BOUND_SUBSET_ONLY",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/nvidia/nemotron-3-120b-a12b",
+        "request_metrics": {
+          "system_utf8_bytes": 10074,
+          "context_utf8_bytes": 3652,
+          "schema_utf8_bytes": 5573,
+          "schema_sha256": "d249958ae144ce9337402fac28b6502888e07b2be9dcfbfed9c8d323961321fc",
+          "prompt_sha256": "edff95a52bb4328ba5575c312b70a5cc99f5704fdc2e856d13ec4f5d4cdea0a3"
+        },
+        "usage": {
+          "input_tokens": 3912,
+          "output_tokens": 56,
+          "total_tokens": 3968
+        }
+      },
+      "http_status": 200,
+      "http_attempts": 1,
+      "latency_ms": 1208,
+      "structured_contract": {
+        "sha256": "025857a55df35bed5e670898836771d66d920f9e7a25c59f041277b94825df9c",
+        "utf8_bytes": 141,
+        "captured": true,
+        "value": {
+          "operations": [],
+          "control": {
+            "action": "none"
+          },
+          "reply": "",
+          "unknowns": [],
+          "conflicts": [],
+          "speech_act": "ASK",
+          "information_subject": "Сербия"
+        }
+      }
+    },
+    {
+      "model": "@cf/nvidia/nemotron-3-120b-a12b",
+      "case_id": "CFP-03",
+      "raw_checks": {
+        "one_new_child_age7": true,
+        "existing_travelers_unchanged": true,
+        "budget": true,
+        "explicit_wait": true,
+        "remaining_fields_unchanged": true
+      },
+      "grounded_checks": {
+        "one_new_child_age7": true,
+        "existing_travelers_unchanged": true,
+        "budget": true,
+        "explicit_wait": true,
+        "remaining_fields_unchanged": true
+      },
+      "normalizations": [],
+      "status": "PASS_BOUND_SUBSET_ONLY",
+      "call_metadata": {
+        "provider": "cloudflare",
+        "model": "@cf/nvidia/nemotron-3-120b-a12b",
+        "request_metrics": {
+          "system_utf8_bytes": 11323,
+          "context_utf8_bytes": 6081,
+          "schema_utf8_bytes": 6712,
+          "schema_sha256": "bcf2ec2c071334f764b45293d3f3f2efbc7e0731a77c7c67c0142e6b5e0ec2a3",
+          "prompt_sha256": "a6892c734b98f0163151a5499f65f0a9ea3082f9c6ac0d51eb2c3c9dd55bab97"
+        },
+        "usage": {
+          "input_tokens": 5351,
+          "output_tokens": 201,
+          "total_tokens": 5552
+        }
+      },
+      "http_status": 200,
+      "http_attempts": 1,
+      "latency_ms": 8225,
+      "structured_contract": {
+        "sha256": "8535ea88fb6a99efe8b827a28e8c8de0e6be048ad0e7dd6eca6cbcde362a7034",
+        "utf8_bytes": 449,
+        "captured": true,
+        "value": {
+          "operations": [
+            {
+              "type": "add_traveler",
+              "value": {
+                "id": "new-traveler-1",
+                "type": "child",
+                "age": 7,
+                "group_id": null
+              }
+            },
+            {
+              "type": "set_budget",
+              "value": {
+                "amount_minor": 8000000,
+                "currency": "RUB",
+                "scope": "whole_trip"
+              }
+            }
+          ],
+          "control": {
+            "action": "wait"
+          },
+          "reply": "Добавил ребёнка 7 лет и уменьшил бюджет на 20 000 ₽. Жду ваших дополнений.",
+          "unknowns": [],
+          "conflicts": [],
+          "speech_act": "CHANGE",
+          "information_subject": null
+        }
+      }
+    }
+  ],
+  "zai_calls": 0,
+  "runtime_changes": false,
+  "automatic_retries": false,
+  "expected_cases_per_model": 3,
+  "completed_at_utc": "2026-10-25T22:07:04.482559+00:00",
+  "attempted_cases": 6,
+  "case_prompt_hashes_match_across_models": true,
+  "fixture_sha256": "5cd8a86002ae62d2509e186c9ae0e9bb28a4ea8d2656083ee93cb06cd14b30a3",
+  "original_runner_sha256": "ab171b7c6e30de1ba8653da03418ca6321e3a89b46d6126605f5e86d4b8ad8e3",
+  "oracle_ast_sha256": "a40496f22c76e6ed3b8088433451515a762ae54eb30f8cc62a66f93fb29542ce",
+  "published_runner": "scripts/evaluate_cf_models.py (explicit --run; new output only)",
+  "source_files_recorded_after_calls": {
+    "otravel/providers.py": "1b931a1a594dc61b90ccbc902abfc32d13516b6f37c8b553b5db9e8a925b4088",
+    "otravel/harness.py": "d1670b7838d763833285adb0ace16552635bdcd29db5fae139ea1aad904d22e0",
+    "otravel/llm_contract.py": "3813a766e0eb2a0ad8969a8ba4dbaf9ded10003d238a98814e4ccf933dacf566",
+    "otravel/money.py": "88ec20323656497ee3869cf372517ca8434cbd97bb9fdbc4eaa4d0871340e6f5"
+  },
+  "summary": {
+    "@cf/google/gemma-4-26b-a4b-it": {
+      "attempted": 3,
+      "bounded_pass": 2,
+      "open_case": "CFP-03 updated existing child-2 instead of adding; raw budget9800000 corrected by grounding to8000000"
+    },
+    "@cf/nvidia/nemotron-3-120b-a12b": {
+      "attempted": 3,
+      "bounded_pass": 3,
+      "scope": "three extraction cases, not full conversation acceptance"
+    }
+  },
+  "generation_profile": {
+    "response_format": {
+      "type": "json_object"
+    },
+    "max_completion_tokens": 2048,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "temperature": null,
+    "temperature_note": "not explicitly sent; each provider model default applies",
+    "automatic_fallback": false,
+    "automatic_retry": false
+  }
+}

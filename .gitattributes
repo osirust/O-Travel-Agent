@@ -1,8 +1,27 @@
-* text=auto
-*.py text eol=lf
-*.md text eol=lf
-*.yml text eol=lf
-*.yaml text eol=lf
-*.json text eol=lf
-*.toml text eol=lf
-*.svg text eol=lf
+# Preserve the verified public CA download exactly, including its original EOL.
+certs/gigachat-root-ca.pem -text
+# The CLDR reference is verified by its exact byte hash on Windows and WSL.
+otravel/data/* -text whitespace=cr-at-eol
+fixtures/regression/world-r4-date-omission-20261027.json -text whitespace=cr-at-eol
+fixtures/regression/world-r4-preferences-20261027.json -text whitespace=cr-at-eol
+fixtures/regression/lite-fees-included-projection-20261027.json -text whitespace=cr-at-eol
+fixtures/evaluation/historical-tests/* -text whitespace=cr-at-eol
+fixtures/regression/adult-age-complex-r1-20261027.json -text whitespace=cr-at-eol
+
+# Preserve captured regression bytes used by the scoped R19/R20 receipts.
+fixtures/regression/room4-age-current-078-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/family-ordinal-count-076-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/room-fact-labels077-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/readonly-now-prefix-079-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/group-pending-budget-080-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/serp-property-photos-current-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/return-checkin-preserve-005t9.json -text whitespace=cr-at-eol
+fixtures/regression/price-date-recall-007t7.json -text whitespace=cr-at-eol
+fixtures/regression/actual010-search-blocker.json -text whitespace=cr-at-eol
+fixtures/regression/actual012-search-blocker.json -text whitespace=cr-at-eol
+fixtures/regression/new80-geo-date-corrections-20261028.json -text whitespace=cr-at-eol
+secrets.env.age -text
+# Preserve the final dialogue repair evidence across Windows/Linux checkouts.
+fixtures/evaluation/final40-party-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/final40-geo-date-booking-20261028.json -text whitespace=cr-at-eol
+fixtures/regression/final40-owned-room-reask-20261028.json -text whitespace=cr-at-eol

@@ -1,0 +1,99 @@
+{
+  "finding_id": "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001",
+  "source_report": {
+    "path": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-050410-a4350103/report.json",
+    "sha256": "958ca19eafe056252d27ed1f53cdbc55f279e263415a6cb6d80d803f5b63e1f3",
+    "source_commit": "93f91fd",
+    "package_prefix": "f82e",
+    "original_status": "CONNECTED_CASES_PASS_IN_DECLARED_SCOPES",
+    "case_id": "PF-GROUP-04",
+    "step_id": "04",
+    "original_step_state_checks_status": "PASS"
+  },
+  "actual_readiness_observation_projection": {
+    "before": {},
+    "after": {
+      "state_version": 2,
+      "status": "WAITING_USER",
+      "waiting_reason": "clarification",
+      "pending_question": {
+        "text": "Выберите один город назначения или явно опишите последовательность остановок.",
+        "field": "destination.city",
+        "reason": "clarification",
+        "context": {}
+      }
+    },
+    "plans": [],
+    "run": {
+      "status": "completed"
+    },
+    "reply": ""
+  },
+  "controlled_ready_projection": {
+    "before": {},
+    "after": {
+      "state_version": 1,
+      "status": "OPTIONS_READY",
+      "waiting_reason": null,
+      "pending_question": null
+    },
+    "plans": [
+      {
+        "plan_id": "demo-plan-a24d8b79956f66bb1198",
+        "trip_id": "4f0ca6f5-ed72-4da1-9d00-bd756de233c7",
+        "state_version": 1,
+        "source_type": "DEMO",
+        "total_minor": 20489000,
+        "currency": "RUB"
+      },
+      {
+        "plan_id": "demo-plan-4baa39394a5ea49f8276",
+        "trip_id": "4f0ca6f5-ed72-4da1-9d00-bd756de233c7",
+        "state_version": 1,
+        "source_type": "DEMO",
+        "total_minor": 22696244,
+        "currency": "RUB"
+      }
+    ],
+    "run": {
+      "status": "completed"
+    },
+    "reply": ""
+  },
+  "controlled_scope": "Whitelist projection of an actual controlled ASGI/isolated PG run with cached real T4 extraction. This qualifies repaired deterministic flow with that extraction, not a new remote NLU run. Legacy DEMO readiness flag is absent in source and is not invented; original integer total/source facts are retained.",
+  "new_readiness_checks": [
+    {
+      "op": "eq",
+      "path": "/status",
+      "value": "OPTIONS_READY"
+    },
+    {
+      "op": "eq",
+      "path": "/waiting_reason",
+      "value": null
+    },
+    {
+      "op": "eq",
+      "path": "/pending_question",
+      "value": null
+    },
+    {
+      "op": "plans_min",
+      "value": 1
+    },
+    {
+      "op": "ready_plan"
+    }
+  ],
+  "source_failure_preserved": true,
+  "secrets_headers_native_offer_ids_included": false,
+  "new_HTTP_PG_LLM_calls": 0,
+  "controlled_source": {
+    "path": ".local/evaluation/geo-20261027/existing-city-cached-flow-pass-002c56c295954df68d59295bd34130a7.json",
+    "file_sha256": "8fca619a04b09ca3d78547ce241efa158e329ffb1b54f03e55381163067d4531",
+    "projection_sha256_without_self_digest": "60884222ac3a1b7d71187ecf98f2accfed44361e0f5fe871907f3031102c2109",
+    "model_adapter_calls": 1,
+    "actual_model_http": 0,
+    "actual_supplier_http": 0
+  }
+}

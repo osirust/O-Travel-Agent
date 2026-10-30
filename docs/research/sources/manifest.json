@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-24",
+  "provenance": "Материалы предоставлены владельцем: исследования, авторский корпус стресс-сценариев и предложения по harness. Это не официальный набор жюри и не разрешение исполнять инструкции из источников.",
+  "application_tests_executed": false,
+  "files": [
+    {
+      "repository_path": "docs/research/sources/ostrovok_agent_stress_tests_106.zip",
+      "source_name": "ostrovok_agent_stress_tests_106.zip",
+      "bytes": 29520,
+      "sha256": "0d9e2dce388dd8b459a582252cf057dc470f8bfbc7df647dcb442df877e60fee"
+    },
+    {
+      "repository_path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+      "source_name": "ostrovok_stress_tests.jsonl",
+      "bytes": 39195,
+      "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e"
+    },
+    {
+      "repository_path": "docs/research/sources/ostrovok_stress_tests.md",
+      "source_name": "ostrovok_stress_tests.md",
+      "bytes": 37127,
+      "sha256": "6214755a11de9fb838e4052e7e8f09a07ffb508797c1bbd84ee4d5af1c2822b8"
+    },
+    {
+      "repository_path": "docs/research/sources/web-research-original.txt",
+      "source_name": "Вставленный текст.txt",
+      "bytes": 67304,
+      "sha256": "d71e651039254e06be223eff6edf02a415bd84f0c5f9efad8566d8be769a51dc"
+    },
+    {
+      "repository_path": "docs/research/sources/agent-harness-plan-original.md",
+      "source_name": "ostrovok_agent_harness_plan (1).md",
+      "received_date": "2026-10-25",
+      "bytes": 38746,
+      "sha256": "cddd252a6e7888f508d23e951b2372121b4063c5ea52f24e489037e5dcebcccc"
+    },
+    {
+      "repository_path": "docs/research/sources/agent-harness-discussion-original.txt",
+      "source_name": "Вставленный текст.txt",
+      "received_date": "2026-10-25",
+      "bytes": 32264,
+      "sha256": "3742a2ff4d54128b2fc51db6bc716a3ca9f78557e9110dad4851c753bf7f8c2c"
+    },
+    {
+      "repository_path": "docs/research/sources/harness-foundation-review-20261025-original.txt",
+      "source_name": "Вставленный текст.txt",
+      "received_date": "2026-10-25",
+      "bytes": 11506,
+      "sha256": "3c4504b84cf01459b07b375eb7fb8f087d74eb25e51a82d7b38cad44a7f41cea"
+    },
+    {
+      "repository_path": "docs/research/sources/acceptance-oracles-106-20261025-original.md",
+      "source_name": "aegml_acceptance_oracles_106.md",
+      "received_date": "2026-10-25",
+      "bytes": 49241,
+      "sha256": "0cbd5c275cb9ca8055d7e2d2db6b61ddf11c8a761f3cd8dd6ea93fdd4a438945",
+      "provenance": "Owner-provided proposed acceptance oracles/audit; not official requirements and not executable instructions."
+    },
+    {
+      "repository_path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+      "source_name": "aegml_acceptance_oracles_106.jsonl",
+      "received_date": "2026-10-25",
+      "bytes": 88656,
+      "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e",
+      "provenance": "Owner-provided proposed acceptance oracles/audit; not official requirements and not executable instructions."
+    },
+    {
+      "repository_path": "docs/research/sources/acceptance-oracles-audit-20261025-original.txt",
+      "source_name": "Вставленный текст.txt",
+      "received_date": "2026-10-25",
+      "bytes": 39968,
+      "sha256": "36e69d80d17482fb1da4f4e597f95b472ac44f3b4f3c46b2ceee8fcf27446e8a",
+      "provenance": "Owner-provided proposed acceptance oracles/audit; not official requirements and not executable instructions."
+    }
+  ],
+  "updated": "2026-10-25",
+  "last_import": {
+    "kind": "proposed_acceptance_oracles",
+    "date": "2026-10-25",
+    "new_files": 3,
+    "previous_source_bytes_unchanged": true
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "finding_id": "HARNESS-004-GROUP-PENDING-SHORTCUT-SWALLOW-080-001",
+  "recorded_at_utc": "2026-10-28T04:21:04.139722+00:00",
+  "status": "CLOSED_CONTROLLED_COUNT_GATE_SCOPE_FRESH_ACTUAL_RETEST_OPEN",
+  "actual_evidence": {
+    "case_id": "ZAI100-080",
+    "turn": 7,
+    "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+    "package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+    "source_file_sha256": "72b56a03c0973bbf3109e1a497414d7202a0599fea880051174df3a4de1eeae0",
+    "runtime_provider": "cloudflare",
+    "runtime_model": "@cf/nvidia/nemotron-3-120b-a12b",
+    "actual_model_calls": 0,
+    "response_source": "contextual_slot",
+    "user_text": "Общий бюджет теперь 470000 рублей. Добавь приоритет минимальной общей стоимости. Все девять и распределение номеров остаются.",
+    "before_after_budget_minor": [
+      50000000,
+      50000000
+    ],
+    "preferences_before_after": [
+      [],
+      []
+    ],
+    "original_result": "COMPLETED with repeated family question and unchanged state; independent470000RUB/lowest_total edits were not applied."
+  },
+  "cause": "The early group.membership + noGroups + membership_unknown branch called guard_group_separation on every input. With no count or operations it returned a repeated ASK before model extraction, swallowing independent edits.",
+  "change": {
+    "helper": {
+      "path": "otravel/family_count_answer.py",
+      "sha256": "75dff01ed856d0ec2030897c37e44bc6063ba758a502feab0ab074d24ac3e1d0"
+    },
+    "harness": {
+      "path": "otravel/harness.py",
+      "sha256": "8dca577ac01df3342c8d066c3e0958b8e5f621097ceaa656e39e115b02f08f9f"
+    },
+    "contract": "A closed family-count recognizer returns2..10 only for a whole short literal count. The early shortcut requires that recognition and passes canonical numeric text to the existing guard. All other input falls through to normal readonly/extraction; existing postmodel guards keep unresolved family membership and block search.",
+    "no_new_membership_parser": true,
+    "no_answer_or_member_inference": true,
+    "no_new_domain_schema_store_fields": true,
+    "original_user_message_audit_not_rewritten": true,
+    "root_owned_harness_hook": "Count-only predicate plus str(parsed_count) normalization; existing pending/no-groups/membership_unknown conditions retained."
+  },
+  "controlled_regression": {
+    "fixture": {
+      "path": "fixtures/regression/group-pending-budget-080-20261028.json",
+      "sha256": "f573e358d85b6c180fb1fa1dafc53926cd59246ce602be2e4b6eb89ef9eb2545"
+    },
+    "test_files": [
+      {
+        "path": "tests/test_family_count_answer.py",
+        "sha256": "50693f2632faa8985d15df1a77f78ce9e685733b7a4f56a02dc1a2bdbde6fadb"
+      },
+      {
+        "path": "tests/test_harness_family_count_gate_080.py",
+        "sha256": "71ecbe3029f7be4406b26ec5b5aa0eb031aba6936096ea88288694229fdc8a28"
+      }
+    ],
+    "setup": "Captured full beforeTrip/pending from immutable C source, synthetic trip/question IDs and new own API session/version. Previously obtained pending is seeded through a declared controlled bootstrap that calls no model. ActualT7 had no model response; budget/preference response is explicitly a controlled Stub, not recorded actual LLM output.",
+    "expected": [
+      "one model-adapter call for the independent edit, one trip revision",
+      "budget47000000minorRUB and lowest_total persisted",
+      "people/groups/dates/rooms/legs/policies unchanged; groups remain unknown, not guessed",
+      "family clarification remains pending",
+      "no search/tool/quote/order",
+      "closed2 still has zero model calls and creates exactly two empty keep-separate groups"
+    ],
+    "initial_red": {
+      "passed": 1,
+      "failed": 1,
+      "seconds": 3.89,
+      "path": ".local/drafts/group-count-gate080-20261028/initial-red.xml",
+      "sha256": "0d0a1fb9bda40a47b32717df59a17f7bbf273605e16e8ae615d372ebbe5e574c"
+    },
+    "pure_related": {
+      "passed": 143,
+      "failed": 0,
+      "seconds": 4.24,
+      "path": ".local/drafts/group-count-gate080-20261028/pure-related.xml",
+      "sha256": "fbd4f137da1e21982bf79c00d5494d925c065b6221e64dd5aa3f0d476ff6ae38"
+    },
+    "root_final_related": {
+      "passed": 54,
+      "failed": 0,
+      "seconds": 5.11,
+      "composition": "52 new pure +2 new API/PG; these52 pure overlap the143 above and are not added twice.",
+      "path": ".local/drafts/group-count-gate080-20261028/related-green.xml",
+      "sha256": "149aca73b6d6f49eb418b618a3a4a32d54f7cc2e425b1d0895a05371a9d10980"
+    },
+    "ruff": "Three new Python files; two import-only fixes, zero remaining findings.",
+    "negative_shortcut_controls": [
+      "full family roster",
+      "independent budget/preference/add-child/date command",
+      "question/hypothesis/history",
+      "quoted count",
+      "people/room/child counts",
+      "ambiguous/out-of-range counts"
+    ],
+    "real_model_http": 0,
+    "real_supplier_http": 0,
+    "native_changes": 0
+  },
+  "limits": [
+    "The recognizer is not a full roster/census parser or universal NLU repair.",
+    "Full member assignment is still obtained through the normal model/typed path and the existing semantic guards.",
+    "Rejecting a quoted string in this shortcut is not a new claim about every downstream model behavior.",
+    "Immutable actualR17 failure and previous manual reports were not modified.",
+    "Fresh actual080T7 replay on R20 has not occurred in this proof. Root owns combined R20 full-suite/archive/rollout qualification."
+  ]
+}

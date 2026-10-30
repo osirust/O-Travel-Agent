@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-10-25",
+  "purpose": "Owner-reported short-answer regressions; freeze before the corrected local-model run.",
+  "scope": "These three dialogues are separate from the original 106-case corpus. Controlled wrong-model PG tests are guard tests, not actual NLU acceptance.",
+  "model_calls_authorized_by_this_fixture": 0,
+  "cases": [
+    {
+      "id": "OWNER-DIALOGUE-01",
+      "title": "Сербия, другой город и исправление географического факта",
+      "initial_trip": {
+        "origin": "Москва"
+      },
+      "turns": [
+        {
+          "text": "в сербию может быть поехать?",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              },
+              {
+                "path": "/stays",
+                "op": "unchanged"
+              },
+              {
+                "path": "/travelers",
+                "op": "unchanged"
+              }
+            ],
+            "session_status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_country_code": "RS",
+            "question": {
+              "human": true,
+              "contains_all": [
+                "серб"
+              ],
+              "contains_any": [
+                "белград",
+                "нови-сад"
+              ]
+            },
+            "no_tool_calls": true,
+            "no_order_created": true
+          }
+        },
+        {
+          "text": "стамбул?",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              },
+              {
+                "path": "/stays",
+                "op": "unchanged"
+              },
+              {
+                "path": "/travelers",
+                "op": "unchanged"
+              }
+            ],
+            "session_status": "WAITING_USER",
+            "waiting_reason": "clarification",
+            "pending_country_code": "RS",
+            "known_geography": {
+              "city": "Стамбул",
+              "country_code": "TR"
+            },
+            "question": {
+              "human": true,
+              "contains_all": [
+                "стамбул",
+                "турц",
+                "серб"
+              ]
+            },
+            "no_tool_calls": true,
+            "no_order_created": true
+          }
+        },
+        {
+          "text": "стамбул это же турция",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              },
+              {
+                "path": "/stays",
+                "op": "unchanged"
+              },
+              {
+                "path": "/travelers",
+                "op": "unchanged"
+              }
+            ],
+            "known_geography": {
+              "city": "Стамбул",
+              "country_code": "TR"
+            },
+            "question": {
+              "human": true,
+              "contains_all": [
+                "стамбул",
+                "турц"
+              ]
+            },
+            "no_tool_calls": true,
+            "no_order_created": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "OWNER-DIALOGUE-02",
+      "title": "Опечатка в известном сербском городе без выдуманного покрытия поиска",
+      "initial_trip": {
+        "origin": "Москва"
+      },
+      "turns": [
+        {
+          "text": "в сербию хочу",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              },
+              {
+                "path": "/stays",
+                "op": "unchanged"
+              },
+              {
+                "path": "/travelers",
+                "op": "unchanged"
+              }
+            ],
+            "pending_country_code": "RS",
+            "question": {
+              "human": true,
+              "contains_all": [
+                "серб",
+                "белград",
+                "нови-сад"
+              ]
+            },
+            "no_tool_calls": true,
+            "no_order_created": true
+          }
+        },
+        {
+          "text": "белгрод",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              },
+              {
+                "path": "/stays",
+                "op": "unchanged"
+              },
+              {
+                "path": "/travelers",
+                "op": "unchanged"
+              }
+            ],
+            "known_geography": {
+              "city": "Белград",
+              "country_code": "RS",
+              "search_coverage_not_claimed": true
+            },
+            "question": {
+              "human": true,
+              "contains_all": [
+                "белград"
+              ]
+            },
+            "unsupported_city_policy": "Recognize or ask confirmation in pending context; do not expand the seven-city DEMO catalogue or invent offers.",
+            "no_tool_calls": true,
+            "no_order_created": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "OWNER-DIALOGUE-03",
+      "title": "Короткий ответ взрослого и число без зацикливания вопроса",
+      "initial_trip": {},
+      "turns": [
+        {
+          "text": "из Москвы",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              }
+            ],
+            "question": {
+              "human": true,
+              "contains_any": [
+                "кто",
+                "взросл",
+                "человек",
+                "путешествен"
+              ]
+            },
+            "no_tool_calls": true,
+            "no_order_created": true
+          }
+        },
+        {
+          "text": "я взрослый",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              }
+            ],
+            "question": {
+              "human": true
+            },
+            "run_error_forbidden": [
+              "INVALID_LLM_RESULT",
+              "INVALID_LLM_OPERATION"
+            ],
+            "no_tool_calls": true,
+            "no_order_created": true,
+            "adult_count": 1
+          }
+        },
+        {
+          "text": "1",
+          "expect": {
+            "assertions": [
+              {
+                "path": "/origin",
+                "op": "eq",
+                "value": "Москва"
+              },
+              {
+                "path": "/travelers/0/type",
+                "op": "eq",
+                "value": "adult"
+              }
+            ],
+            "question": {
+              "human": true,
+              "forbid_regex": [
+                "сколько.*(?:взросл|человек|едет)",
+                "кто\\s+(?:е[дд]ет|путешествует)"
+              ]
+            },
+            "run_error_forbidden": [
+              "INVALID_LLM_RESULT",
+              "INVALID_LLM_OPERATION"
+            ],
+            "no_tool_calls": true,
+            "no_order_created": true,
+            "adult_count": 1
+          }
+        }
+      ],
+      "context_note": "The answer 1 follows the actual human question: it must not duplicate the already saved adult. If the assistant has advanced to children, 1 may mean one child; adult_count stays exactly one."
+    }
+  ]
+}

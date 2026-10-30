@@ -1,0 +1,696 @@
+{
+  "checked_at_utc": "2026-10-27T10:39:28.683497+00:00",
+  "action": "start",
+  "status": "RUNNING",
+  "manager": "gigachat_backend.py",
+  "source": "/home/aegml/projects/otravel-gigachat-20261027",
+  "database": "otravel_gigachat_eval",
+  "url": "http://127.0.0.1:8085",
+  "process": {
+    "pid": 236239,
+    "uid": 1000,
+    "start_ticks": 2328463,
+    "argv": [
+      "/home/aegml/venvs/otravel-harness-20261025/bin/python",
+      "-m",
+      "uvicorn",
+      "otravel.api:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8085",
+      "--no-access-log"
+    ],
+    "cwd": "/home/aegml/projects/otravel-gigachat-20261027",
+    "executable": "/usr/bin/python3.12"
+  },
+  "listeners": [
+    {
+      "address": "127.0.0.1:8085",
+      "pids": [
+        236239
+      ]
+    }
+  ],
+  "current_source_manifest": {
+    "format": "otravel.package_source_manifest.v1",
+    "sha256": "eed0ad2dd123c4619f0a4c2681f0c501a5e6a0d8c733825958f5db356dc1bef7",
+    "file_count": 53,
+    "files": [
+      {
+        "path": "otravel/__init__.py",
+        "bytes": 85,
+        "sha256": "14da2efb72956db369fa3ddc00bdccdd84ff8487dcc5cb36d6d8de0f2367f68a"
+      },
+      {
+        "path": "otravel/answering.py",
+        "bytes": 38869,
+        "sha256": "1c6da1ecdead3742b7d9549167acfb9721ff449090298e7c21ed144db8471d03"
+      },
+      {
+        "path": "otravel/api.py",
+        "bytes": 32078,
+        "sha256": "212872abcc321a4cc88852aed9d071949ac04eb3392c9221bcf1f8e33df2653b"
+      },
+      {
+        "path": "otravel/budget_intent.py",
+        "bytes": 5370,
+        "sha256": "43a1490b4af7a909a6cd55e5f37b5f32a1f4e5d106a6e87238b49dea74f268fb"
+      },
+      {
+        "path": "otravel/clarification_policy.py",
+        "bytes": 9962,
+        "sha256": "986663f7979feb56fe5217ed54851e600ccf6c5e550c0a7b0c633740e326ff67"
+      },
+      {
+        "path": "otravel/clarifications.py",
+        "bytes": 42816,
+        "sha256": "07262a022c365cecd3385dc18f1eedf5435c5b9789172c29e54018b60ec16e60"
+      },
+      {
+        "path": "otravel/config.py",
+        "bytes": 10169,
+        "sha256": "c873aa4d5f2d258cab2a4fb1787b736606aa1a1774e24ab2039b59417e4b54b4"
+      },
+      {
+        "path": "otravel/conversational.py",
+        "bytes": 19215,
+        "sha256": "296697167071500ae6f039b1cacfffe105edfcb24e14aaf98985e481a6bee4f7"
+      },
+      {
+        "path": "otravel/country_intake.py",
+        "bytes": 8258,
+        "sha256": "d9728d873e3695df16b92ab23aef809a6c154463c32fdf92fee6a244a2a967ac"
+      },
+      {
+        "path": "otravel/date_slots.py",
+        "bytes": 35109,
+        "sha256": "39f9b36f7b3b2cca04e1bc64a0d3655465f82c69cb84a725ddd3257f0787eeff"
+      },
+      {
+        "path": "otravel/domain.py",
+        "bytes": 37757,
+        "sha256": "a030d5e634f5129c936eea3b9af8c3a98aeb19bbb9efbb70266336ec54dd31c1"
+      },
+      {
+        "path": "otravel/fx.py",
+        "bytes": 17870,
+        "sha256": "557c49796728481deabd6099b930e36dedb3854b4b02d35317e646929373956c"
+      },
+      {
+        "path": "otravel/geography.py",
+        "bytes": 9450,
+        "sha256": "e31d29309823c93ba12c9c6cdccf4a087560f214ba490875888f4a1354376493"
+      },
+      {
+        "path": "otravel/gigachat_client.py",
+        "bytes": 14551,
+        "sha256": "9fdf9ceafb2d28dc307fe72badfd565814216c5f8838cc9ffed8edfd1f898c66"
+      },
+      {
+        "path": "otravel/greetings.py",
+        "bytes": 1174,
+        "sha256": "4d670a41480db6f19bd8957b3f5a18cb42396ac247a129008165a913fa949eb5"
+      },
+      {
+        "path": "otravel/groq_context.py",
+        "bytes": 7948,
+        "sha256": "f17964150f97cc39b4c41490d78005c5447d7b3e35c5f739b3b0db46304eb01b"
+      },
+      {
+        "path": "otravel/groq_prompt.py",
+        "bytes": 14827,
+        "sha256": "96dedc370e6326e0559020c2686f5f74de6cdbc497bc55aee22363d7735c4081"
+      },
+      {
+        "path": "otravel/groq_transport.py",
+        "bytes": 24061,
+        "sha256": "ef8f23026d680e8d706f6e9ad18dcdd30f7ea53515388e799cdba07e92d2005d"
+      },
+      {
+        "path": "otravel/group_semantics.py",
+        "bytes": 14932,
+        "sha256": "2ef14acfc679177c000cfe694ea0066c99cfc5472240d7a55015b757d3687a75"
+      },
+      {
+        "path": "otravel/harness.py",
+        "bytes": 125980,
+        "sha256": "4612516c92766f109d92d583a8d4988b0eac1388270a56e77c78b9dbb3a79929"
+      },
+      {
+        "path": "otravel/history.py",
+        "bytes": 6863,
+        "sha256": "5af017769f81cab1e3682adf679c83bed68487cd1d6faaab3dfb6570c0cb9776"
+      },
+      {
+        "path": "otravel/hotel_preservation.py",
+        "bytes": 9616,
+        "sha256": "bbfa01c50b48e88807dcb80a1d2c85efaa9adc70c176ef580c6a698ddcfaa62a"
+      },
+      {
+        "path": "otravel/initial_room_layout.py",
+        "bytes": 11708,
+        "sha256": "0baf7e11b26efae75ac4d623b34f13f562d06d5c03be81344a10ebc3dcff40f4"
+      },
+      {
+        "path": "otravel/intent_grounding.py",
+        "bytes": 52144,
+        "sha256": "eaa109fdbc9b287ac2f78fb4b9799cf426b0cff2cbe1778a83e81a711a60ab1d"
+      },
+      {
+        "path": "otravel/inventory.py",
+        "bytes": 37335,
+        "sha256": "5fca3360271f539d583763bf53154b57f4262402d1c7328a09ed2f7bfe09715a"
+      },
+      {
+        "path": "otravel/leg_mode_intent.py",
+        "bytes": 13844,
+        "sha256": "51ea9b7ee475c7881f13506d7a42d8d34af439e40a6a684b2ed96c1c98b3d2af"
+      },
+      {
+        "path": "otravel/llm_contract.py",
+        "bytes": 15065,
+        "sha256": "2f0c7f434c8337c2a64feebfa889301af4857b69e1e6d9968d3e5465a43fe4c1"
+      },
+      {
+        "path": "otravel/media.py",
+        "bytes": 13130,
+        "sha256": "15b2d5cd4b9bca9e8fba055301bc421f900811a94ff1d98a232ab16c66722bce"
+      },
+      {
+        "path": "otravel/money.py",
+        "bytes": 30019,
+        "sha256": "7be8dcce9133afc04a6639195ff962e943883c36f5589b8e8e78a6829f27e777"
+      },
+      {
+        "path": "otravel/observability.py",
+        "bytes": 8751,
+        "sha256": "01a23f2acd8bdff79fde788079888a760bbe78e839cf41b1c6f82489fba5f5c4"
+      },
+      {
+        "path": "otravel/operation_aliases.py",
+        "bytes": 7527,
+        "sha256": "67523cf00f69f99e67a6ca8470ca179a09882f2774a8e2dfedf3055c3805314f"
+      },
+      {
+        "path": "otravel/orchestrator.py",
+        "bytes": 25418,
+        "sha256": "7c093e95a5103c294015f96ff9175c3526cf4b41122de082c3799df4e35994a0"
+      },
+      {
+        "path": "otravel/planning.py",
+        "bytes": 32462,
+        "sha256": "c07303df73e9de7ba06652f65ecf2ae1ca5417f7f84da41451efe86d79b50cd7"
+      },
+      {
+        "path": "otravel/preference_intake.py",
+        "bytes": 1979,
+        "sha256": "26dc258da37b136a4a73019bbe79db5f802f47fb5718578b5ad132ffc6a97023"
+      },
+      {
+        "path": "otravel/provider_facts.py",
+        "bytes": 16677,
+        "sha256": "cc749d577a25da89c6a74669f4a382aea8b7d82d1a822a70a0c763694777283f"
+      },
+      {
+        "path": "otravel/providers.py",
+        "bytes": 124294,
+        "sha256": "da147aa1e6f58b0940a856d6f6d6734e2051a85e5a1eb9ef5085a1833caf35f2"
+      },
+      {
+        "path": "otravel/rate_failures.py",
+        "bytes": 2345,
+        "sha256": "7ba8301fc9f2ecdab7529af6640556cbcffd143860e4883aecaa5bbee9f18746"
+      },
+      {
+        "path": "otravel/room_additions.py",
+        "bytes": 7553,
+        "sha256": "5057f757ec9965c5d47cc919e400d1a45ce43ce8b0bf254896907d756b5e931a"
+      },
+      {
+        "path": "otravel/room_identity.py",
+        "bytes": 5147,
+        "sha256": "dc694bcb6713e9e18fd06c96e86ab4207437796941d5e05463347157faab2757"
+      },
+      {
+        "path": "otravel/room_intent.py",
+        "bytes": 17126,
+        "sha256": "09c39af6598deac8fb833034f26375ccc4d837b215a1c93524fed57d3279fb98"
+      },
+      {
+        "path": "otravel/route_intake.py",
+        "bytes": 7675,
+        "sha256": "a01f668f9057540fc555fa9a8f4ca9ec7b55e34990f3eccced4c01a3ac5716ed"
+      },
+      {
+        "path": "otravel/route_policy_intent.py",
+        "bytes": 6288,
+        "sha256": "9fb8b96fb0cdc7fa05671b4ec37255d9a59c3dc53edf7a93294c24162799c8c8"
+      },
+      {
+        "path": "otravel/search_explanation.py",
+        "bytes": 13772,
+        "sha256": "f2992932d0462811ad6f862a04e6aeb62ec9e0a497b8baba8e4459d53943a047"
+      },
+      {
+        "path": "otravel/search_policy_intent.py",
+        "bytes": 8878,
+        "sha256": "18e9b6ec71ff0730e5405368b0be460214462361038309118ca927371a5dc033"
+      },
+      {
+        "path": "otravel/selected_plan.py",
+        "bytes": 5427,
+        "sha256": "1cd93c457d84c22a1aa90177fe7fb7f447dfd630a34fa4bb10d35789eb6424ae"
+      },
+      {
+        "path": "otravel/static/chat.css",
+        "bytes": 7898,
+        "sha256": "b72527c78590e2c5685dafdb4f9cbdd7228517b8527e36046f3354fffc04e674"
+      },
+      {
+        "path": "otravel/static/chat.js",
+        "bytes": 16477,
+        "sha256": "28ec4ce8a2b8bdecf61902835d2b7bda55615c2e07ad8802383d60291f4a7e2e"
+      },
+      {
+        "path": "otravel/static/debug.html",
+        "bytes": 3630,
+        "sha256": "6021bd985050a3429c09496c1893c9879fb7d27db07e1c0a1b03e2d404020638"
+      },
+      {
+        "path": "otravel/store.py",
+        "bytes": 69922,
+        "sha256": "942bbd0d292cf7d07a71e2c7de5f6f073cf48bc709e6fef6cf60c642ed67630a"
+      },
+      {
+        "path": "otravel/supplier_comparison.py",
+        "bytes": 8524,
+        "sha256": "6fd4f5d9deb3c0fb1e933d706b59884119093ca9194da53aa2b20ab1909b96a1"
+      },
+      {
+        "path": "otravel/travel_runtime.py",
+        "bytes": 6088,
+        "sha256": "d7deab507f7a0770ad361481e944664a067cde93c25d56c83b878da13486e783"
+      },
+      {
+        "path": "otravel/trip_answers.py",
+        "bytes": 18083,
+        "sha256": "c0d2ae8c5dd476645b4f2d2a83e90dae0f1f0718fdb31753f1ec005d6f947f35"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 910,
+        "sha256": "e2cc20a144e6efa2fa335dcf2c1189c138e1a5cc05b90dcf7172e8ce17f54bf0"
+      }
+    ]
+  },
+  "process_start_source_manifest": {
+    "format": "otravel.package_source_manifest.v1",
+    "sha256": "eed0ad2dd123c4619f0a4c2681f0c501a5e6a0d8c733825958f5db356dc1bef7",
+    "file_count": 53,
+    "files": [
+      {
+        "path": "otravel/__init__.py",
+        "bytes": 85,
+        "sha256": "14da2efb72956db369fa3ddc00bdccdd84ff8487dcc5cb36d6d8de0f2367f68a"
+      },
+      {
+        "path": "otravel/answering.py",
+        "bytes": 38869,
+        "sha256": "1c6da1ecdead3742b7d9549167acfb9721ff449090298e7c21ed144db8471d03"
+      },
+      {
+        "path": "otravel/api.py",
+        "bytes": 32078,
+        "sha256": "212872abcc321a4cc88852aed9d071949ac04eb3392c9221bcf1f8e33df2653b"
+      },
+      {
+        "path": "otravel/budget_intent.py",
+        "bytes": 5370,
+        "sha256": "43a1490b4af7a909a6cd55e5f37b5f32a1f4e5d106a6e87238b49dea74f268fb"
+      },
+      {
+        "path": "otravel/clarification_policy.py",
+        "bytes": 9962,
+        "sha256": "986663f7979feb56fe5217ed54851e600ccf6c5e550c0a7b0c633740e326ff67"
+      },
+      {
+        "path": "otravel/clarifications.py",
+        "bytes": 42816,
+        "sha256": "07262a022c365cecd3385dc18f1eedf5435c5b9789172c29e54018b60ec16e60"
+      },
+      {
+        "path": "otravel/config.py",
+        "bytes": 10169,
+        "sha256": "c873aa4d5f2d258cab2a4fb1787b736606aa1a1774e24ab2039b59417e4b54b4"
+      },
+      {
+        "path": "otravel/conversational.py",
+        "bytes": 19215,
+        "sha256": "296697167071500ae6f039b1cacfffe105edfcb24e14aaf98985e481a6bee4f7"
+      },
+      {
+        "path": "otravel/country_intake.py",
+        "bytes": 8258,
+        "sha256": "d9728d873e3695df16b92ab23aef809a6c154463c32fdf92fee6a244a2a967ac"
+      },
+      {
+        "path": "otravel/date_slots.py",
+        "bytes": 35109,
+        "sha256": "39f9b36f7b3b2cca04e1bc64a0d3655465f82c69cb84a725ddd3257f0787eeff"
+      },
+      {
+        "path": "otravel/domain.py",
+        "bytes": 37757,
+        "sha256": "a030d5e634f5129c936eea3b9af8c3a98aeb19bbb9efbb70266336ec54dd31c1"
+      },
+      {
+        "path": "otravel/fx.py",
+        "bytes": 17870,
+        "sha256": "557c49796728481deabd6099b930e36dedb3854b4b02d35317e646929373956c"
+      },
+      {
+        "path": "otravel/geography.py",
+        "bytes": 9450,
+        "sha256": "e31d29309823c93ba12c9c6cdccf4a087560f214ba490875888f4a1354376493"
+      },
+      {
+        "path": "otravel/gigachat_client.py",
+        "bytes": 14551,
+        "sha256": "9fdf9ceafb2d28dc307fe72badfd565814216c5f8838cc9ffed8edfd1f898c66"
+      },
+      {
+        "path": "otravel/greetings.py",
+        "bytes": 1174,
+        "sha256": "4d670a41480db6f19bd8957b3f5a18cb42396ac247a129008165a913fa949eb5"
+      },
+      {
+        "path": "otravel/groq_context.py",
+        "bytes": 7948,
+        "sha256": "f17964150f97cc39b4c41490d78005c5447d7b3e35c5f739b3b0db46304eb01b"
+      },
+      {
+        "path": "otravel/groq_prompt.py",
+        "bytes": 14827,
+        "sha256": "96dedc370e6326e0559020c2686f5f74de6cdbc497bc55aee22363d7735c4081"
+      },
+      {
+        "path": "otravel/groq_transport.py",
+        "bytes": 24061,
+        "sha256": "ef8f23026d680e8d706f6e9ad18dcdd30f7ea53515388e799cdba07e92d2005d"
+      },
+      {
+        "path": "otravel/group_semantics.py",
+        "bytes": 14932,
+        "sha256": "2ef14acfc679177c000cfe694ea0066c99cfc5472240d7a55015b757d3687a75"
+      },
+      {
+        "path": "otravel/harness.py",
+        "bytes": 125980,
+        "sha256": "4612516c92766f109d92d583a8d4988b0eac1388270a56e77c78b9dbb3a79929"
+      },
+      {
+        "path": "otravel/history.py",
+        "bytes": 6863,
+        "sha256": "5af017769f81cab1e3682adf679c83bed68487cd1d6faaab3dfb6570c0cb9776"
+      },
+      {
+        "path": "otravel/hotel_preservation.py",
+        "bytes": 9616,
+        "sha256": "bbfa01c50b48e88807dcb80a1d2c85efaa9adc70c176ef580c6a698ddcfaa62a"
+      },
+      {
+        "path": "otravel/initial_room_layout.py",
+        "bytes": 11708,
+        "sha256": "0baf7e11b26efae75ac4d623b34f13f562d06d5c03be81344a10ebc3dcff40f4"
+      },
+      {
+        "path": "otravel/intent_grounding.py",
+        "bytes": 52144,
+        "sha256": "eaa109fdbc9b287ac2f78fb4b9799cf426b0cff2cbe1778a83e81a711a60ab1d"
+      },
+      {
+        "path": "otravel/inventory.py",
+        "bytes": 37335,
+        "sha256": "5fca3360271f539d583763bf53154b57f4262402d1c7328a09ed2f7bfe09715a"
+      },
+      {
+        "path": "otravel/leg_mode_intent.py",
+        "bytes": 13844,
+        "sha256": "51ea9b7ee475c7881f13506d7a42d8d34af439e40a6a684b2ed96c1c98b3d2af"
+      },
+      {
+        "path": "otravel/llm_contract.py",
+        "bytes": 15065,
+        "sha256": "2f0c7f434c8337c2a64feebfa889301af4857b69e1e6d9968d3e5465a43fe4c1"
+      },
+      {
+        "path": "otravel/media.py",
+        "bytes": 13130,
+        "sha256": "15b2d5cd4b9bca9e8fba055301bc421f900811a94ff1d98a232ab16c66722bce"
+      },
+      {
+        "path": "otravel/money.py",
+        "bytes": 30019,
+        "sha256": "7be8dcce9133afc04a6639195ff962e943883c36f5589b8e8e78a6829f27e777"
+      },
+      {
+        "path": "otravel/observability.py",
+        "bytes": 8751,
+        "sha256": "01a23f2acd8bdff79fde788079888a760bbe78e839cf41b1c6f82489fba5f5c4"
+      },
+      {
+        "path": "otravel/operation_aliases.py",
+        "bytes": 7527,
+        "sha256": "67523cf00f69f99e67a6ca8470ca179a09882f2774a8e2dfedf3055c3805314f"
+      },
+      {
+        "path": "otravel/orchestrator.py",
+        "bytes": 25418,
+        "sha256": "7c093e95a5103c294015f96ff9175c3526cf4b41122de082c3799df4e35994a0"
+      },
+      {
+        "path": "otravel/planning.py",
+        "bytes": 32462,
+        "sha256": "c07303df73e9de7ba06652f65ecf2ae1ca5417f7f84da41451efe86d79b50cd7"
+      },
+      {
+        "path": "otravel/preference_intake.py",
+        "bytes": 1979,
+        "sha256": "26dc258da37b136a4a73019bbe79db5f802f47fb5718578b5ad132ffc6a97023"
+      },
+      {
+        "path": "otravel/provider_facts.py",
+        "bytes": 16677,
+        "sha256": "cc749d577a25da89c6a74669f4a382aea8b7d82d1a822a70a0c763694777283f"
+      },
+      {
+        "path": "otravel/providers.py",
+        "bytes": 124294,
+        "sha256": "da147aa1e6f58b0940a856d6f6d6734e2051a85e5a1eb9ef5085a1833caf35f2"
+      },
+      {
+        "path": "otravel/rate_failures.py",
+        "bytes": 2345,
+        "sha256": "7ba8301fc9f2ecdab7529af6640556cbcffd143860e4883aecaa5bbee9f18746"
+      },
+      {
+        "path": "otravel/room_additions.py",
+        "bytes": 7553,
+        "sha256": "5057f757ec9965c5d47cc919e400d1a45ce43ce8b0bf254896907d756b5e931a"
+      },
+      {
+        "path": "otravel/room_identity.py",
+        "bytes": 5147,
+        "sha256": "dc694bcb6713e9e18fd06c96e86ab4207437796941d5e05463347157faab2757"
+      },
+      {
+        "path": "otravel/room_intent.py",
+        "bytes": 17126,
+        "sha256": "09c39af6598deac8fb833034f26375ccc4d837b215a1c93524fed57d3279fb98"
+      },
+      {
+        "path": "otravel/route_intake.py",
+        "bytes": 7675,
+        "sha256": "a01f668f9057540fc555fa9a8f4ca9ec7b55e34990f3eccced4c01a3ac5716ed"
+      },
+      {
+        "path": "otravel/route_policy_intent.py",
+        "bytes": 6288,
+        "sha256": "9fb8b96fb0cdc7fa05671b4ec37255d9a59c3dc53edf7a93294c24162799c8c8"
+      },
+      {
+        "path": "otravel/search_explanation.py",
+        "bytes": 13772,
+        "sha256": "f2992932d0462811ad6f862a04e6aeb62ec9e0a497b8baba8e4459d53943a047"
+      },
+      {
+        "path": "otravel/search_policy_intent.py",
+        "bytes": 8878,
+        "sha256": "18e9b6ec71ff0730e5405368b0be460214462361038309118ca927371a5dc033"
+      },
+      {
+        "path": "otravel/selected_plan.py",
+        "bytes": 5427,
+        "sha256": "1cd93c457d84c22a1aa90177fe7fb7f447dfd630a34fa4bb10d35789eb6424ae"
+      },
+      {
+        "path": "otravel/static/chat.css",
+        "bytes": 7898,
+        "sha256": "b72527c78590e2c5685dafdb4f9cbdd7228517b8527e36046f3354fffc04e674"
+      },
+      {
+        "path": "otravel/static/chat.js",
+        "bytes": 16477,
+        "sha256": "28ec4ce8a2b8bdecf61902835d2b7bda55615c2e07ad8802383d60291f4a7e2e"
+      },
+      {
+        "path": "otravel/static/debug.html",
+        "bytes": 3630,
+        "sha256": "6021bd985050a3429c09496c1893c9879fb7d27db07e1c0a1b03e2d404020638"
+      },
+      {
+        "path": "otravel/store.py",
+        "bytes": 69922,
+        "sha256": "942bbd0d292cf7d07a71e2c7de5f6f073cf48bc709e6fef6cf60c642ed67630a"
+      },
+      {
+        "path": "otravel/supplier_comparison.py",
+        "bytes": 8524,
+        "sha256": "6fd4f5d9deb3c0fb1e933d706b59884119093ca9194da53aa2b20ab1909b96a1"
+      },
+      {
+        "path": "otravel/travel_runtime.py",
+        "bytes": 6088,
+        "sha256": "d7deab507f7a0770ad361481e944664a067cde93c25d56c83b878da13486e783"
+      },
+      {
+        "path": "otravel/trip_answers.py",
+        "bytes": 18083,
+        "sha256": "c0d2ae8c5dd476645b4f2d2a83e90dae0f1f0718fdb31753f1ec005d6f947f35"
+      },
+      {
+        "path": "pyproject.toml",
+        "bytes": 910,
+        "sha256": "e2cc20a144e6efa2fa335dcf2c1189c138e1a5cc05b90dcf7172e8ce17f54bf0"
+      }
+    ]
+  },
+  "loaded_manifest": {
+    "status": "MATCHES_FULL_START_MANIFEST",
+    "reason": "exact_complete_start_and_current_match",
+    "matches_current": true,
+    "restart_required": false
+  },
+  "default_search": {
+    "mode": "HYBRID",
+    "hotel_provider": "liteapi",
+    "flight_provider": "duffel",
+    "guest_nationality": null
+  },
+  "limits": {
+    "daily_engineering_bound": 40,
+    "generic_daily_engineering_bound": 40,
+    "gigachat_daily_engineering_bound": 1000,
+    "vendor_quota": "UNKNOWN",
+    "calls_per_run": 1,
+    "local_calls": 0,
+    "fallback": false
+  },
+  "source_env_read": false,
+  "inference_requested_by_manager": false,
+  "supplier_requests_by_manager": false,
+  "credentials_recorded": false,
+  "helper_sha256": "48043ed97acbedf981e903d0146929e927cfb31ed7aac15395d716df89a4508b",
+  "readiness": {
+    "database": "ready",
+    "provider": "gigachat",
+    "model": "GigaChat-3-Ultra",
+    "travel": {
+      "liteapi": "SANDBOX",
+      "duffel": "TEST",
+      "serpapi": "LIVE_INDICATIVE"
+    },
+    "supplier_booking": false,
+    "provider_quota_checked": false,
+    "generation_performed": false,
+    "pay_zero_policy": {
+      "freemium_confirmed": true,
+      "billing_enabled_by_manager": false,
+      "fallback": false
+    }
+  },
+  "status_pages": {
+    "/docs": 200,
+    "/debug": 200
+  },
+  "database_setup": {
+    "container_id": "1819611d2a68dbfeba2c922823376bda2fab170273893015d18b194922a42eef",
+    "verified_project": "otravel",
+    "verified_service": "db",
+    "bridge_subnet": "172.18.0.0/16",
+    "target_database": "otravel_gigachat_eval",
+    "runtime_database_untouched": true,
+    "test_database_untouched": true,
+    "database_created": true,
+    "database_oid": 52959,
+    "created_by": "gigachat_backend.py",
+    "hba_before_snapshot": "/home/aegml/projects/otravel-gigachat-20261027/.local/gigachat-backend-8085/pg_hba-before-80df071ccceb46eb8913c037fe45864d.conf",
+    "hba": {
+      "changed": true,
+      "rules": [
+        "host otravel_gigachat_eval otravel 127.0.0.1/32 scram-sha-256",
+        "host otravel_gigachat_eval otravel 172.18.0.1/32 scram-sha-256"
+      ],
+      "before_sha256": "b0c19ca19a143f1efb16a0e01f47dc71fd637e307085b390b1656f9924969230",
+      "after_sha256": "748eb3c3ac7291980f98eed9691ed566da69eecf576a503341d551800a16b970",
+      "client_ipv4": "172.18.0.1",
+      "reload_acknowledged": true,
+      "postgres_restarted": false,
+      "unrelated_bytes_preserved": true
+    },
+    "schema_initialized": true
+  },
+  "database_counts_before": {
+    "agent_events": 0,
+    "agent_runs": 0,
+    "demo_orders": 0,
+    "messages": 0,
+    "quotes": 0,
+    "sessions": 0,
+    "pending_or_running": 0,
+    "model_call_started": 0
+  },
+  "database_counts_after_import": {
+    "agent_events": 0,
+    "agent_runs": 0,
+    "demo_orders": 0,
+    "messages": 0,
+    "quotes": 0,
+    "sessions": 0,
+    "pending_or_running": 0,
+    "model_call_started": 0
+  },
+  "database_counts_after": {
+    "agent_events": 0,
+    "agent_runs": 0,
+    "demo_orders": 0,
+    "messages": 0,
+    "quotes": 0,
+    "sessions": 0,
+    "pending_or_running": 0,
+    "model_call_started": 0
+  },
+  "import_check": {
+    "api_file": "/home/aegml/projects/otravel-gigachat-20261027/otravel/api.py",
+    "provider": "gigachat",
+    "model": "GigaChat-3-Ultra",
+    "daily_limit": 1000,
+    "generic_daily_limit": 40,
+    "freemium_confirmed": true,
+    "run_limit": 1,
+    "local_limit": 0,
+    "search_mode": "HYBRID",
+    "other_model_credentials_present": false
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "status": "CONTROLLED_PASS_NATIVE_RETEST_PENDING",
+  "tests": 3489,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 108.949,
+  "junit_sha256": "fb6d37f7e3529f4a9c80b70ed889c131764c533471685d04bd530037a11e957b",
+  "parent_commit": "71887d2997e845121dc109a76f72c4fbdabf6caf",
+  "finding": "TOUR-PINNED-HOTEL-TRANSFER-001",
+  "actual_closure": "PENDING_FRESH_NATIVE_SEARCH_PREVIEW_SIMULATED_CONFIRM",
+  "model_diagnosis": "SAFE_TPM_TPD_COUNTERS_ADDED_NO_NEW_MODEL_CALL_YET",
+  "full80_actual": "NOT_COMPLETED"
+}

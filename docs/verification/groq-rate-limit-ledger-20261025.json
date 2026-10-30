@@ -1,0 +1,32 @@
+{
+  "scope": "READ_ONLY_GROQ_LEDGER_NO_INFERENCE",
+  "observed_at": "2026-10-25T19:06:48.749500+00:00",
+  "reservations_today": 2,
+  "events": [
+    {
+      "type": "MODEL_CALL_FAILED",
+      "payload": {
+        "code": "RATE_LIMITED",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "groq",
+        "latency_ms": 474,
+        "http_status": 429,
+        "limit_source": "unknown"
+      },
+      "time": "2026-10-25T19:03:18.213916+00:00"
+    },
+    {
+      "type": "MODEL_RESPONSE_RECEIVED",
+      "payload": {
+        "model": "qwen/qwen3.8-27b",
+        "attempt": 1,
+        "provider": "groq",
+        "latency_ms": 1775,
+        "operations": 4,
+        "speech_act": "CHANGE",
+        "speech_act_explicit": true
+      },
+      "time": "2026-10-25T18:59:16.566403+00:00"
+    }
+  ]
+}

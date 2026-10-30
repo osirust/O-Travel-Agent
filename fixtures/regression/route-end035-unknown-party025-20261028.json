@@ -1,0 +1,448 @@
+{
+  "source_release": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "scope": "Sanitized retained final JSON and canonical business facts only; no session capabilities, headers or reasoning.",
+  "records": [
+    {
+      "id": "ZAI100-035",
+      "turn": 7,
+      "input": "Подтверждаю завершение в Москве после Дубая. Начало всё ещё Казань, не меняй его на Москву.",
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-035.json",
+      "source_sha256": "d59a376589a8c44469333382ef92125abc48d185365742479ca00b074e53bfe8",
+      "run_status": "completed",
+      "assistant": [
+        "Собрана оценочная поездка. Источник каждого компонента указан отдельно; оформление только имитируется.\n\nВ текущем расчёте: проживание — демонстрационный расчёт (DEMO); перелёты — тестовые тарифы (SANDBOX); трансферы — демонстрационный расчёт (DEMO).\nПроживание: Москва: в ответе не подтверждены все обязательные сборы.\nЭтот расчёт не подтверждает наличие мест или реальное бронирование у поставщика."
+      ],
+      "before": {
+        "state_version": 4,
+        "trip": {
+          "origin": "Санкт-Петербург",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "groups": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Дубай",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-12-03",
+              "hotel_id": null,
+              "check_out": "2026-12-09",
+              "requested_nights": 6
+            }
+          ],
+          "legs": [
+            {
+              "id": "leg-e8ff58b0-59b4-4931-80dd-7e3c528ffd91",
+              "mode": "flight",
+              "origin": "Санкт-Петербург",
+              "destination": "Дубай",
+              "departure_date": "2026-12-03"
+            },
+            {
+              "id": "leg-bf28e668-5de7-41ab-b30d-dbb0b84a0108",
+              "mode": "flight",
+              "origin": "Дубай",
+              "destination": "Санкт-Петербург",
+              "departure_date": "2026-12-09"
+            }
+          ],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "preferences": [],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 12500000
+          }
+        },
+        "pending": {
+          "field": null,
+          "target_id": null,
+          "text": null
+        }
+      },
+      "after": {
+        "state_version": 5,
+        "trip": {
+          "origin": "Санкт-Петербург",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "groups": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Москва",
+              "rooms": [
+                {
+                  "id": "new-room-1",
+                  "traveler_ids": [
+                    "new-traveler-1"
+                  ]
+                }
+              ],
+              "check_in": "2026-12-03",
+              "hotel_id": null,
+              "check_out": "2026-12-09",
+              "requested_nights": 6
+            }
+          ],
+          "legs": [
+            {
+              "id": "leg-e8ff58b0-59b4-4931-80dd-7e3c528ffd91",
+              "mode": "flight",
+              "origin": "Санкт-Петербург",
+              "destination": "Москва",
+              "departure_date": "2026-12-03"
+            },
+            {
+              "id": "leg-bf28e668-5de7-41ab-b30d-dbb0b84a0108",
+              "mode": "flight",
+              "origin": "Москва",
+              "destination": "Санкт-Петербург",
+              "departure_date": "2026-12-09"
+            }
+          ],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "preferences": [],
+          "budget": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 12500000
+          }
+        },
+        "pending": {
+          "field": null,
+          "target_id": null,
+          "text": null
+        }
+      },
+      "events": [
+        {
+          "event_type": "MODEL_EXTRACTION_VALIDATED",
+          "structured_contract": {
+            "sha256": "acb91bb145dc1698bd382b142760ca795b5a628e0028711f8add4f24ddf59e63"
+          },
+          "final_json": {
+            "operations": [
+              {
+                "type": "set_route_policy",
+                "value": {
+                  "kind": "open_jaw",
+                  "end_city": "Москва"
+                },
+                "target_id": null
+              }
+            ],
+            "control": {
+              "action": "continue"
+            },
+            "reply": "Маршрут изменен: из Казани в Дубай, затем завершение в Москве. Был изменен тип маршрута на open_jaw.",
+            "unknowns": [],
+            "conflicts": [],
+            "speech_act": "CHANGE"
+          },
+          "normalizations": []
+        },
+        {
+          "event_type": "MODEL_OPERATIONS_CHECKED",
+          "structured_contract": {
+            "sha256": "1324e4f2d420cb1150326d9d91fecfc5cc91ce131b3c660dc5fe43581325e544"
+          },
+          "final_json": {
+            "operations": [
+              {
+                "type": "upsert_stay",
+                "value": {
+                  "city": "Москва"
+                },
+                "target_id": "new-stay-1"
+              }
+            ],
+            "control": {
+              "action": "continue"
+            },
+            "reply": "Маршрут изменен: из Казани в Дубай, затем завершение в Москве. Был изменен тип маршрута на open_jaw.",
+            "unknowns": [],
+            "conflicts": [],
+            "speech_act": "CHANGE"
+          },
+          "normalizations": [
+            {
+              "code": "route_policy_change_not_requested",
+              "kind": "open_jaw",
+              "status": "suppressed",
+              "finding_id": "ROUTER8-ROUTE-ASSUMPTION-001"
+            },
+            {
+              "code": "destination_grounded_from_current_literal",
+              "after": "Москва",
+              "target_id": "new-stay-1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ZAI100-025",
+      "turn": 1,
+      "input": "Нас четверо, хотим из Санкт-Петербурга в Сочи. Возраст и состав я ещё не перечислил, не угадывай.",
+      "source_file": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-205114-7e7fad8e/ZAI100-025.json",
+      "source_sha256": "1f251c1f6c1614420c67149a94bccc70b2141bf1b5ba2aeba7b9edafea4820d0",
+      "run_status": "completed",
+      "assistant": [
+        "Текущий состав: 4 взрослых; дети в сохранённом составе не указаны. На какую дату планируете заезд в городе «Сочи»?"
+      ],
+      "before": {
+        "state_version": 0,
+        "trip": {
+          "origin": null,
+          "travelers": [],
+          "groups": [],
+          "stays": [],
+          "legs": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "preferences": [],
+          "budget": null
+        },
+        "pending": {
+          "field": null,
+          "target_id": null,
+          "text": null
+        }
+      },
+      "after": {
+        "state_version": 1,
+        "trip": {
+          "origin": "Санкт-Петербург",
+          "travelers": [
+            {
+              "id": "new-traveler-1",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-2",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-3",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            },
+            {
+              "id": "new-traveler-4",
+              "age": null,
+              "type": "adult",
+              "group_id": null,
+              "birth_date": null
+            }
+          ],
+          "groups": [],
+          "stays": [
+            {
+              "id": "new-stay-1",
+              "city": "Сочи",
+              "rooms": [],
+              "check_in": null,
+              "hotel_id": null,
+              "check_out": null
+            }
+          ],
+          "legs": [],
+          "route_policy": {
+            "kind": "round_trip",
+            "end_city": null
+          },
+          "preferences": [],
+          "budget": null
+        },
+        "pending": {
+          "field": "stay.check_in",
+          "target_id": "new-stay-1",
+          "text": "На какую дату планируете заезд в городе «Сочи»?"
+        }
+      },
+      "events": [
+        {
+          "event_type": "MODEL_EXTRACTION_VALIDATED",
+          "structured_contract": {
+            "sha256": "6c32463b9b312c139b1844b7c5f98bcfe3c8a7edf7dc33c418c00d51afb9e84a"
+          },
+          "final_json": {
+            "operations": [
+              {
+                "type": "set_origin",
+                "value": {
+                  "city": "Санкт-Петербург"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-1",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-2",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-3",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-4",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "upsert_stay",
+                "value": {
+                  "city": "Сочи"
+                },
+                "target_id": "new-stay-1"
+              }
+            ],
+            "control": {
+              "action": "continue"
+            },
+            "reply": "Понял, вы четверо взрослых, летите из Санкт-Петербурга в Сочи. Какой у вас возраст и есть ли дети? Также укажите даты поездки.",
+            "unknowns": [
+              "Возраст путешественников",
+              "Даты поездки"
+            ],
+            "conflicts": [],
+            "speech_act": "CHANGE"
+          },
+          "normalizations": []
+        },
+        {
+          "event_type": "MODEL_OPERATIONS_CHECKED",
+          "structured_contract": {
+            "sha256": "96f3632ce7c832f9bdced9fb852754fc774ee3f9a9228db871e80926f64ac38a"
+          },
+          "final_json": {
+            "operations": [
+              {
+                "type": "set_origin",
+                "value": {
+                  "city": "Санкт-Петербург"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-1",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-2",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-3",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "add_traveler",
+                "value": {
+                  "id": "new-traveler-4",
+                  "age": null,
+                  "type": "adult"
+                },
+                "target_id": null
+              },
+              {
+                "type": "upsert_stay",
+                "value": {
+                  "city": "Сочи"
+                },
+                "target_id": "new-stay-1"
+              }
+            ],
+            "control": {
+              "action": "continue"
+            },
+            "reply": "Понял, вы четверо взрослых, летите из Санкт-Петербурга в Сочи. Какой у вас возраст и есть ли дети? Также укажите даты поездки.",
+            "unknowns": [
+              "Возраст путешественников",
+              "Даты поездки"
+            ],
+            "conflicts": [],
+            "speech_act": "CHANGE"
+          },
+          "normalizations": []
+        }
+      ]
+    }
+  ],
+  "source_projection_sha256": "50891013ac3639fc5a09d34356f1a1d9398ceb4ccd43d341036ba0ffaf60f110"
+}

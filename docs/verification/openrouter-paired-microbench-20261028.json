@@ -1,0 +1,112 @@
+{
+  "verification_id": "HARNESS-004-OPENROUTER-PAIRED-MICROBENCH-20261028",
+  "status": "STOPPED_FIRST_429_NO_MODEL_QUALITY_COMPARISON",
+  "source_package_sha256": "3eca7197628416b4614650ba473121af5aa695298fec28b5e349053799b77564",
+  "scope": "Root-authorized maximum6 API-only generations, three identical semantic cases per model; failfast429/timeout. No Harness app, DB or tourism API execution.",
+  "models": [
+    "google/gemma-4-31b-it:free",
+    "nvidia/nemotron-3.5-super-vl:free"
+  ],
+  "pre_generation_metadata": "Both explicitfree models were rechecked in public catalog with all advertised pricing values0.",
+  "runtime_guard": {
+    "output_max_tokens": 2048,
+    "wall_timeout_seconds": 45,
+    "reasoning_enabled": false,
+    "allow_fallbacks": false,
+    "require_parameters": true,
+    "max_price_all_zero": true,
+    "attempts_per_case": 1,
+    "global_generation_cap": 6
+  },
+  "pair_context_sha256": {
+    "budget_delta_saved_child": "28acb63803fd7ccc6ae001fa2c17a9ce016044f47ce4195cefdfaeef2b5a1e9b",
+    "current_hypothesis_noapply": "0878c4dff59ee059311bf13eb0d424bacec676a84e574259f801779f0728122b",
+    "two_city_owned_two_rooms": "8a17756c8b8e46a0ad8139119d7f748347e5964e82654b7a687b9c1c383d6411"
+  },
+  "first_attempt": {
+    "case": "budget_delta_saved_child",
+    "model": "google/gemma-4-31b-it:free",
+    "context_sha256": "28acb63803fd7ccc6ae001fa2c17a9ce016044f47ce4195cefdfaeef2b5a1e9b",
+    "status": "PROVIDER_OR_SCHEMA_FAIL",
+    "code": "RATE_LIMITED",
+    "failure_stage": "provider",
+    "http_status": 429,
+    "schema_errors": null,
+    "request_metrics": {
+      "system_utf8_bytes": 16342,
+      "context_utf8_bytes": 10698,
+      "schema_utf8_bytes": 11368,
+      "schema_sha256": "23a997cb0e9fb1f0b523ac989ed768759a0f5e9c8b89a8bd0e997a4322d3c4f4",
+      "prompt_sha256": "339d647277f1388e4036552b8ee595de9f777da1eee647b28b7d42616a7d9ec4"
+    },
+    "latency_ms": 356
+  },
+  "provider_error_message": "Provider returned error",
+  "actual_http_generations": 1,
+  "key_before": {
+    "http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_daily_limit": 50,
+    "free_daily_remaining": 50,
+    "at": "2026-10-28T00:12:46.227733+00:00"
+  },
+  "key_after": {
+    "http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_daily_limit": 50,
+    "free_daily_remaining": 50,
+    "at": "2026-10-28T00:12:46.991756+00:00"
+  },
+  "not_executed_pairs": [
+    {
+      "case": "budget_delta_saved_child",
+      "model": "nvidia/nemotron-3.5-super-vl:free"
+    },
+    {
+      "case": "current_hypothesis_noapply",
+      "model": "google/gemma-4-31b-it:free"
+    },
+    {
+      "case": "current_hypothesis_noapply",
+      "model": "nvidia/nemotron-3.5-super-vl:free"
+    },
+    {
+      "case": "two_city_owned_two_rooms",
+      "model": "google/gemma-4-31b-it:free"
+    },
+    {
+      "case": "two_city_owned_two_rooms",
+      "model": "nvidia/nemotron-3.5-super-vl:free"
+    }
+  ],
+  "grading_contract": {
+    "budget_case": "Whole-trip budget minus20000RUB, child age and all nonbudget facts preserved",
+    "hypothesis_case": "ASK/PROPOSE with safecontrolnone may retain candidate operations; canonical noncommit projection must preserve state. Rawoperations[] is not the only valid response.",
+    "room_case": "Two cities, four saved participants, two rooms per city, full declared partition, known room ownership, explicit group membership, remaining facts preserved",
+    "expected_gold_not_sent": true
+  },
+  "conclusion": "Gemma first request was not served. Free request counter remained50/50 and monetary counters were unchanged; this does not prove the source of the429. Nemotron was not called. No semantic comparison or ranking is available.",
+  "limitations": [
+    "Availability failure is not a finding about model reasoning quality.",
+    "All five unexecuted pairs remain NOT_EXECUTED.",
+    "This is not80-dialogue or106-scenario acceptance and cannot promise77 inputs within50 requests.",
+    "No second request or retry was sent after429.",
+    "Only final response JSON retained privately; no provider reasoning, headers, credentials, account/key identifiers are published."
+  ],
+  "actions": {
+    "db_connections": 0,
+    "state_mutations": 0,
+    "tourism_calls": 0,
+    "runtime_changes": 0,
+    "quota_resets": 0,
+    "paid_requests": 0,
+    "local_models": 0
+  },
+  "private_report_sha256": "1f3f2add5feda17abb446197d4c0654f01c18fb731ae22d52c2fc07080a16f74"
+}

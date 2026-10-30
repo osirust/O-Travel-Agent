@@ -1,0 +1,48 @@
+{
+  "format": "otravel.external_llm.actual.v1",
+  "status": "ACTUAL_EXTERNAL_OPENAI_FORMAT_FREE_ZAI_PASS",
+  "scope": "Fresh empty own PostgreSQL session, actual natural intake and read-only reply through external gateway/API/harness",
+  "checked_at_utc": "2026-10-28T13:56:10.377346+00:00",
+  "model": "glm-4.5-flash",
+  "gateway_provider": "external",
+  "api_format": "openai",
+  "source_kind": "IMMUTABLE_PHYSICAL_WORKINGTREE_COPY_NOT_FINAL_GIT_RELEASE",
+  "source_package_sha256": "aee3709af518f44cdeb93f10610f7750417926dc09d17f366972ff46a72bfb17",
+  "model_http": 2,
+  "model_http_statuses": [
+    200,
+    200
+  ],
+  "supplier_http": 0,
+  "orders": 0,
+  "local_models": 0,
+  "paid_or_billing_enabled": false,
+  "initial_trip_seeded": false,
+  "forced_pending": false,
+  "checks": [
+    {
+      "completed": true,
+      "origin": true,
+      "one_adult": true,
+      "no_children": true,
+      "destination": true,
+      "no_invented_dates": true,
+      "no_route_end_misuse": true
+    },
+    {
+      "readonly_completed": true,
+      "readonly_trip_unchanged": true,
+      "readonly_version_unchanged": true
+    }
+  ],
+  "assistant_replies": [
+    "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. На какую дату планируете заезд в городе «Стамбул»?",
+    "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны.\n\nОтправление: Москва. Остановки: Стамбул. Транспортные плечи и возвращение ещё не заданы."
+  ],
+  "credential_provenance": "Existing explicitly allowed free Z.ai project key in RAM/process environment only; no key file/export to recipient",
+  "source_unchanged": true,
+  "own_pg_cleanup": "DONE",
+  "limitation": "This actual call qualifies OpenAI-format transport to Z.ai. Gemini and Anthropic formats have controlled wire+PG tests; no live account/key probes.",
+  "post_probe_change": "Only diagnostic metadata split schema_errors/path+rule and schema_repair_hints; no validation/transport/prompt/domain changes.",
+  "credential_values_in_receipt_files_or_git": false
+}

@@ -1,11 +1,12 @@
-# AegML: инструкции для помощников
+# O!Travel Agent
 
-- Пиши документацию и пояснения по-русски; имена кода — по-английски.
-- Сначала прочитай `PROJECT_STATE.md` и последний запрос владельца.
-- Это публичный подготовительный каркас. Не публикуй конкурсные задания, закрытые данные, credentials, внутренние промпты и неподтверждённые результаты.
-- Финальная LLM и инфраструктура ещё не выбраны. Сохраняй отдельные интерфейсы для модели и источника отелей; не добавляй обязательный внешний API в офлайн-демо.
-- Демо-данные всегда явно маркируй. Не имитируй настоящую бронь или подтверждённую цену.
-- Работай небольшими изменениями. После изменения поведения запусти относящиеся проверки; перед публикацией проверь staged diff.
-- Разделяй реализованный код, выполненные проверки и оставшиеся задачи. Локальный успех не означает успех CI или реальной интеграции.
-- В долгой работе обновляй короткое состояние проекта. Не записывай туда секреты или подробности закрытого решения.
-- Не назначай открытую лицензию конкурсному решению без выяснения прав по регламенту.
+- Read README, PROJECT_STATE.md and docs/PRODUCT_DECISIONS.md before changing the application.
+- Keep model-provider adapters independent from domain rules and travel-provider adapters.
+- PostgreSQL stores canonical state, revisions, runs and idempotency. Keep external HTTP calls outside long database transactions.
+- Validate typed model operations against the server schema and current trip version before applying them.
+- Preserve explicit user pauses until an explicit resume command.
+- Distinguish DEMO, SANDBOX, LIVE_INDICATIVE and LIVE_BOOKABLE. Do not label test data as confirmed inventory.
+- Do not create real supplier bookings or payments. Checkout is a local simulation.
+- Store credentials only in ignored local configuration. Do not commit keys, tokens or judge-only delivery envelopes.
+- Use scoped, meaningful checks for changes and preserve previous failed evidence. Do not infer full semantic acceptance from metadata or a single successful example.
+- Historical hackathon receipts describe their original commits and environments. Do not rewrite them to imply a later test run.

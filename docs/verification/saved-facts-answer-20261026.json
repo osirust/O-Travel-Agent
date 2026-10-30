@@ -1,0 +1,88 @@
+{
+  "status": "PASS_CANONICAL_SAVED_FACTS_SCOPE",
+  "recorded_at": "2026-10-26T09:02:39.889833+00:00",
+  "finding_id": "H004-SAVED-FACTS-001",
+  "scope": "bounded canonical budget/dates/route/one shown plan; not free-form NLU",
+  "worktree_source_sha256": {
+    "otravel/harness.py": "5de73a8ae3d2e7c36f14c60a69c92ed6339109fdf782df20e27e924ef8fd5728",
+    "tests/test_harness_saved_answers.py": "f7c0f750c5050a54ae6ab0737648bb13d4ebdfd887c16f94a3e0f16175dc6dd2",
+    "tests/test_trip_answers.py": "a53852630a3c4ad649f39bf2734006460f819967a3062ca380a1fe1705529492",
+    "otravel/trip_answers.py": "29a023ec8a734e897b54571685964fa30e1e9eb47e18dd2cdf169be4a1b86c29",
+    "tests/test_api.py": "b2c440e3e58acc59949a8c8c5a51a7b537f4a86f075dfd40361e5fc3179080df"
+  },
+  "final_suite": {
+    "path": "docs/verification/full-suite-20261026-saved-answers-final.xml",
+    "sha256": "6a99b2b043dc27bfbc6ec21248ed19cfcdb27382d3ec433a643625a8279587c4",
+    "tests": 1972,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "related_suite": {
+    "path": "docs/verification/saved-answers-related-20261026-v2.xml",
+    "sha256": "e8fb7e3d0b8321268ec62dc47e080f5e5966df6ce83e8d7a26b5872f73abb4ec",
+    "tests": 129,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "persistent_api_suite": {
+    "path": "docs/verification/saved-answers-pg-20261026-final.xml",
+    "sha256": "ace9c1777bc4faabb4914b77702a9966b85a70e99309e96e6318af58b9dc0fe8",
+    "tests": 21,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "preserved_initial_full": {
+    "path": "docs/verification/full-suite-20261026-saved-answers.xml",
+    "sha256": "ecad7950707981c92620463f76f78d60017b1269324b6dadc29ee890fce48ebc",
+    "tests": 1966,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "preserved_initial_api": {
+    "path": "docs/verification/saved-answers-pg-20261026-initial.xml",
+    "sha256": "392085030af3e2eaf4eeab92248f170b08491c6e6f0277c1d846a2d100e1465c",
+    "tests": 20,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "initial_failure_attribution": [
+    "The existing context-isolation test used a pure explanation that now intentionally bypasses extraction; its input changed to an explicit edit, while context/offer ownership/model assertions remain.",
+    "The new ordinal-question test required the literal word plan; its assertion now also accepts variant."
+  ],
+  "verified": [
+    "Recognised pure questions perform zero model, supplier, search, quote or order calls.",
+    "State, version, status, pending context and active quote remain unchanged.",
+    "Latest explicit empty/invalid batch blocks older plans; foreign/stale/future plans are rejected.",
+    "Only own completed runs and assistant messages before this input are evidence.",
+    "Pure fact questions do not get swallowed by date-target fallback; short slot answers retain their path.",
+    "Mixed edit questions retain extraction; model cannot assign itself a server-owned no-model source.",
+    "Renderer failure stays canonical without extraction; proposal event is not a completion receipt.",
+    "Concurrent pause causes CAS conflict without publishing a stale answer.",
+    "Date projection includes actual saved transport departures, without inventing arrival/return from hotel checkout.",
+    "Currency scale must be curated; unknown currencies are not assumed to have two decimals.",
+    "Source labels and lack of fresh availability remain explicit; refundable is not a free-cancellation promise."
+  ],
+  "new_actual_model_calls": 0,
+  "new_travel_http_for_this_packet": 0,
+  "owner_dialogues_read": [
+    "ZAI100-009 previously supplied by owner"
+  ],
+  "owner_current_target": 80,
+  "frozen_8084": {
+    "modified": false,
+    "pid": 421782,
+    "start_ticks": 3488716,
+    "cmdline_sha256": "5a2956d41a94259d068ea9b5b97352d011e947c888b7e4c28226d9dfe82edf70"
+  },
+  "open": [
+    "free-form grounded explanations",
+    "full actual 106 NLU corpus",
+    "owner 80-dialogue analysis pending delivery",
+    "full live travel and real supplier comparison"
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "checked_date": "2026-10-26",
+  "status": "PASS_BOUNDED_NATIVE_CF_READONLY_SELECTOR_CANARY",
+  "scope": "One actual Cloudflare Nemotron readonly selector through native f52 Harness and existing persistent Store; not extraction quality or all80 acceptance",
+  "source_sha": "f52b6222640e921c3a90f5a0a3d95a600cd19038",
+  "source_manifest_sha256": "2155ab3c8e00c3ccfe9f037057cb42ac7e95736d34644df01ee3762894bd8fdc",
+  "source_manifest_file_count": 29,
+  "native_identity_unchanged": true,
+  "provider": "cloudflare",
+  "model": "@cf/nvidia/nemotron-3-120b-a12b",
+  "actual_model_calls": 1,
+  "attempts": 1,
+  "actual_provider_latency_ms": 1885,
+  "harness_elapsed_ms": 1946,
+  "usage": {
+    "input_tokens": 2391,
+    "total_tokens": 2452,
+    "output_tokens": 61
+  },
+  "request_metrics": {
+    "prompt_sha256": "40ca2299c627eddc67eef3e4dedacd941f87629d645b1204f1ecf05b5685b5ae",
+    "schema_sha256": "73ebe6e8aa6683d4dfba88fe749f0dc857fd968db998aa2bcc24954177f007b4",
+    "schema_utf8_bytes": 894,
+    "system_utf8_bytes": 2368,
+    "context_utf8_bytes": 6393
+  },
+  "role": "readonly_answer_v1",
+  "role_reserved_in_persistent_ledger": true,
+  "fixture": {
+    "kind": "explicit_synthetic_sample",
+    "adults": 6,
+    "children": 3,
+    "child_ages": [
+      3,
+      7,
+      15
+    ],
+    "budget_amount_minor": 80000000,
+    "budget_currency": "RUB",
+    "budget_scope": "whole_trip"
+  },
+  "question": "Объясни состав нашей группы: сколько взрослых и детей поедет, какие возраста детей, и какой общий бюджет всей поездки? Ничего не меняй.",
+  "raw_selector_contract": {
+    "value": {
+      "reply": "party,budget",
+      "control": {
+        "action": "none"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [],
+      "speech_act": "ASK",
+      "information_subject": null
+    },
+    "sha256": "7905bc40dd9a9570f365037e47e105781a0f83a0c4fcc3a187c48e9bc41bc579",
+    "captured": true,
+    "utf8_bytes": 143
+  },
+  "assistant_reply": [
+    "Текущий состав: 6 взрослых; 3 ребёнка (3 года, 7 лет, 15 лет).\n\nСохранённый бюджет на всю поездку: 800 000,00 RUB."
+  ],
+  "facts_source": "canonical_projection",
+  "critical_numbers_rendered_by_harness_not_freeform_model": true,
+  "checks": {
+    "ordinary_ledger_model_calls": 1,
+    "actual_provider_cloudflare": true,
+    "readonly_role_bound": true,
+    "canonical_state_and_pending_exact": true,
+    "zero_travel": true,
+    "zero_orders": true
+  },
+  "state_version_before": 0,
+  "state_version_after": 0,
+  "state_sha256_before": "7af82db492539e2eac952960c38f78e685ca51b0144b8c1655a49c554def0a28",
+  "state_sha256_after": "7af82db492539e2eac952960c38f78e685ca51b0144b8c1655a49c554def0a28",
+  "tools": 0,
+  "orders": 0,
+  "supplier_bookings": 0,
+  "automatic_retries": 0,
+  "fallback_used": false,
+  "private_evidence_sha256": "18bd1c2ec99971a161f1b7dc12841868a85c7848604f542102229bf6ea8ab335",
+  "preflight_failures_preserved": [
+    "unreadable private runtime metadata; safe public receipt used instead",
+    "Docker metadata under unprivileged user; read-only root metadata used instead"
+  ],
+  "limitations": [
+    "One readonly selector question, not a benchmark or all80 PASS.",
+    "No native provider/profile, source code, existing sessions, quotes or original corpus changed.",
+    "Actual extraction, complete itineraries and provider travel sources remain outside this canary.",
+    "A second actual model call was not needed and was not made."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "status": "FROZEN_CANDIDATE_R8_RUNNING_NOT_FINAL_QUALIFICATION",
+  "source_package_sha256": "1287953a3d8d09c06e58cf0f03b4b36dc0a714a9dab091792dce90538fe4f26e",
+  "package_files": 96,
+  "test_files": 327,
+  "test_sha256": "2ca223892304c4235bbc362e38a8d4f57a971d60e333333418d6195607059d63",
+  "r7": "7900PASS/26FAIL retained; all26 passed in their related repair suites",
+  "groq_related_pass": 767,
+  "party_r7_related_pass": 123,
+  "owned_reask_related_pass": 155,
+  "test_sets_overlap_not_summed": true,
+  "actual_canary_and_clean_compose": "Allowed on this pinned candidate; runtime switch waits for results",
+  "runtime_8084": "Still R26/91e6ee4; candidate is not installed",
+  "real_bookings_payments_local_models_paid_fallback": false
+}

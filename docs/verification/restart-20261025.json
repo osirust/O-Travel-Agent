@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-10-25T12:48:46.843477+00:00",
+  "status": "PASS",
+  "checks": {
+    "trip_preserved": true,
+    "version_preserved": true,
+    "pause_preserved": true,
+    "token_still_valid": true,
+    "model_calls": 0,
+    "supplier_orders": 0
+  },
+  "scope": "owned app container restart, existing PostgreSQL volume; no in-flight network or Windows reboot qualification"
+}

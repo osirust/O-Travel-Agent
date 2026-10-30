@@ -1,0 +1,276 @@
+{
+  "started_at": "2026-10-25T14:15:33.305799+00:00",
+  "fixture_sha256": "9b1de3ecb35a9a1b879b9206b0f88630ec8d5f0b2c63e00bed5f458313685075",
+  "suite_id": "harness-acceptance-ru-20261025",
+  "cases": [
+    {
+      "id": "ACC-MASS-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/budget/amount_minor",
+            "session_status"
+          ],
+          "model_attempts": 1,
+          "session_status": "TRIP_DRAFT",
+          "llm": {
+            "model": "xingchen-agi/xing4.0-29b-a4b:free",
+            "attempts": [
+              {
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "response",
+                "provider": "openrouter",
+                "latency_ms": 2582
+              }
+            ],
+            "provider": "openrouter",
+            "latency_ms": 2582
+          },
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/budget/amount_minor",
+            "session_status"
+          ],
+          "model_attempts": 2,
+          "session_status": "TRIP_DRAFT",
+          "llm": {
+            "model": "dots-studio/dots-3-note-preview:free",
+            "attempts": [
+              {
+                "code": "RATE_LIMITED",
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 4351,
+                "http_status": 429,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Phala"
+              },
+              {
+                "model": "dots-studio/dots-3-note-preview:free",
+                "outcome": "response",
+                "provider": "openrouter",
+                "latency_ms": 3585
+              }
+            ],
+            "provider": "openrouter",
+            "latency_ms": 3585
+          },
+          "error_code": null
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ACC-CLARIFY-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 2,
+          "session_status": "WAITING_USER",
+          "llm": {
+            "model": "dots-studio/dots-3-note-preview:free",
+            "attempts": [
+              {
+                "code": "RATE_LIMITED",
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 1233,
+                "http_status": 429,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Phala"
+              },
+              {
+                "model": "dots-studio/dots-3-note-preview:free",
+                "outcome": "response",
+                "provider": "openrouter",
+                "latency_ms": 3011
+              }
+            ],
+            "provider": "openrouter",
+            "latency_ms": 3011
+          },
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/groups"
+          ],
+          "model_attempts": 2,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "dots-studio/dots-3-note-preview:free",
+            "attempts": [
+              {
+                "code": "RATE_LIMITED",
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 1634,
+                "http_status": 429,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Phala"
+              },
+              {
+                "model": "dots-studio/dots-3-note-preview:free",
+                "outcome": "response",
+                "provider": "openrouter",
+                "latency_ms": 2670
+              }
+            ],
+            "provider": "openrouter",
+            "latency_ms": 2670
+          },
+          "error_code": null
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ACC-PAUSE-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 0,
+          "session_status": "WAITING_USER",
+          "llm": null,
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 0,
+          "session_status": "WAITING_USER",
+          "llm": null,
+          "error_code": null
+        },
+        {
+          "index": 2,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 2,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "dots-studio/dots-3-note-preview:free",
+            "attempts": [
+              {
+                "code": "RATE_LIMITED",
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 3132,
+                "http_status": 429,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Phala"
+              },
+              {
+                "model": "dots-studio/dots-3-note-preview:free",
+                "outcome": "response",
+                "provider": "openrouter",
+                "latency_ms": 3195
+              }
+            ],
+            "provider": "openrouter",
+            "latency_ms": 3195
+          },
+          "error_code": null
+        },
+        {
+          "index": 3,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 2,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "dots-studio/dots-3-note-preview:free",
+            "attempts": [
+              {
+                "code": "RATE_LIMITED",
+                "model": "xingchen-agi/xing4.0-29b-a4b:free",
+                "outcome": "failed",
+                "provider": "openrouter",
+                "latency_ms": 935,
+                "http_status": 429,
+                "limit_source": "upstream_provider_shared_pool",
+                "provider_name": "Phala"
+              },
+              {
+                "model": "dots-studio/dots-3-note-preview:free",
+                "outcome": "response",
+                "provider": "openrouter",
+                "latency_ms": 1852
+              }
+            ],
+            "provider": "openrouter",
+            "latency_ms": 1852
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ACC-QUOTE-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET",
+      "after_actions": [
+        {
+          "status": "NOT_EXECUTED_DEPENDENCY_FAILED"
+        }
+      ]
+    },
+    {
+      "id": "ACC-UNKNOWN-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET"
+    },
+    {
+      "id": "ACC-MALICIOUS-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET"
+    },
+    {
+      "id": "ACC-CONFLICT-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "NOT_EXECUTED_BUDGET"
+        }
+      ],
+      "status": "PARTIAL_BUDGET"
+    }
+  ],
+  "scope": "actual model HTTP turns; not the entire106 corpus",
+  "actual_model_attempts": 11,
+  "finished_at": "2026-10-25T14:16:04.578697+00:00",
+  "status": "NOT_ALL_PASS"
+}

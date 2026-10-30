@@ -1,0 +1,1555 @@
+{
+  "format": "otravel.actual-wow.pass-projection.v1",
+  "captured_at": "2026-10-27T05:07:51.428359+00:00",
+  "source_report": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-050410-a4350103/report.json",
+  "report_snapshot_sha256": "a4971d1bf9e812702952c435232f88b4b73eba39e3f071a7831b32406a1bbef5",
+  "plan_sha256": "72ba001813216a2eef316120a0080f330b10e10613f6caadb4169b6fa305a5be",
+  "source_commit": "93f91fd",
+  "package_sha256": "f82e210d1e98a0f4a2207207e498d0886afe77cf3fa9b3ccbed923f986740f72",
+  "recipe_sha256": "79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea",
+  "driver_sha256": "65353d9d4f16a13d59d9603bf80bfb99dbef12faf513593a136603dee6dc50c2",
+  "profile": "openrouter-dots",
+  "case_id": "PF-GROUP-04",
+  "case_status_at_snapshot": "IN_PROGRESS",
+  "step_id": "04",
+  "step_status": "PASS",
+  "text": "Добавь ребёнка восьми лет во вторую семью ко второму взрослому: в обоих городах они живут во втором номере. Замени отель в Анталье на «DEMO — Семейный берег» из второго показанного плана. Уменьши общий бюджет на 20000 рублей и перенеси возвращение на два дня позже. Первый отель и обязательный завтрак в Стамбуле сохрани. Покажи, что изменилось.",
+  "recipe_text": "Добавь ребёнка восьми лет во вторую семью ко второму взрослому: в обоих городах они живут во втором номере. Замени отель в Анталье на «{hotel_b_name}» из второго показанного плана. Уменьши общий бюджет на 20000 рублей и перенеси возвращение на два дня позже. Первый отель и обязательный завтрак в Стамбуле сохрани. Покажи, что изменилось.",
+  "captures": {
+    "group_plans": [
+      {
+        "offers": [
+          {
+            "city": "Стамбул",
+            "kind": "hotel",
+            "name": "DEMO — Тихий сад",
+            "nights": 3,
+            "is_demo": true,
+            "check_in": "2026-11-10",
+            "currency": "RUB",
+            "hotel_id": "demo-hotel-istanbul-garden",
+            "offer_id": "demo-stay-d421698baeffd109dda8",
+            "breakdown": [
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-1",
+                "quantity": 3,
+                "unit_minor": 594000,
+                "amount_minor": 1782000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-1",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 3,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 210000
+              },
+              {
+                "age": 7,
+                "kind": "child_nights",
+                "quantity": 3,
+                "unit_minor": 60000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 180000
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 3,
+                "unit_minor": 40000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 120000
+              },
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-2",
+                "quantity": 3,
+                "unit_minor": 594000,
+                "amount_minor": 1782000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-2",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 3,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 210000
+              }
+            ],
+            "breakfast": true,
+            "check_out": "2026-11-13",
+            "rate_type": "breakfast",
+            "max_pet_kg": 10,
+            "price_kind": "synthetic",
+            "refundable": false,
+            "source_type": "DEMO",
+            "total_minor": 4284000,
+            "availability": "synthetic_not_live",
+            "component_id": "new-stay-1",
+            "pets_allowed": true,
+            "room_assignments": [
+              {
+                "room_id": "new-room-1",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-3"
+                ]
+              },
+              {
+                "room_id": "new-room-2",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          },
+          {
+            "city": "Анталья",
+            "kind": "hotel",
+            "name": "DEMO — Тихий сад",
+            "nights": 4,
+            "is_demo": true,
+            "check_in": "2026-11-13",
+            "currency": "RUB",
+            "hotel_id": "demo-hotel-antalya-garden",
+            "offer_id": "demo-stay-a48c372aceeae43c8ecc",
+            "breakdown": [
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-3",
+                "quantity": 4,
+                "unit_minor": 544500,
+                "amount_minor": 2178000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-3",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 4,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 280000
+              },
+              {
+                "age": 7,
+                "kind": "child_nights",
+                "quantity": 4,
+                "unit_minor": 60000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 240000
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 4,
+                "unit_minor": 40000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 160000
+              },
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-4",
+                "quantity": 4,
+                "unit_minor": 544500,
+                "amount_minor": 2178000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-4",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 4,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 280000
+              }
+            ],
+            "breakfast": true,
+            "check_out": "2026-11-17",
+            "rate_type": "breakfast",
+            "max_pet_kg": 10,
+            "price_kind": "synthetic",
+            "refundable": false,
+            "source_type": "DEMO",
+            "total_minor": 5316000,
+            "availability": "synthetic_not_live",
+            "component_id": "new-stay-2",
+            "pets_allowed": true,
+            "room_assignments": [
+              {
+                "room_id": "new-room-3",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-3"
+                ]
+              },
+              {
+                "room_id": "new-room-4",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Казань",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-f0c3ec050833c6b35384",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 700000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 700000
+              },
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 700000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 700000
+              },
+              {
+                "age": 7,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 490000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 490000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Стамбул",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 1890000,
+            "arrival_date": "2026-11-10",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-98e16cdb-468e-4c52-9880-2da66b659178",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-10",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Стамбул",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-094ce5b24b0a57d1b067",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 350000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 350000
+              },
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 350000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 350000
+              },
+              {
+                "age": 7,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 245000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 245000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Анталья",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 945000,
+            "arrival_date": "2026-11-13",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-06d90d18-3692-4b51-b1d0-2e9fe7e1e9f7",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-13",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Анталья",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-2a6f447420d3935e247f",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 750000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 750000
+              },
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 750000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 750000
+              },
+              {
+                "age": 7,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 525000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 525000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Казань",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 2025000,
+            "arrival_date": "2026-11-17",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-bf0317cc-2130-499c-8c7c-944d85968965",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-17",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "city": "Стамбул",
+            "date": "2026-11-10",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-435e6e582714ddf10276",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 3,
+                "unit_minor": 40000,
+                "amount_minor": 120000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 120000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-new-stay-1",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "city": "Анталья",
+            "date": "2026-11-13",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-9df91760a5b42b92d58e",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 3,
+                "unit_minor": 40000,
+                "amount_minor": 120000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 120000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-new-stay-2",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ],
+        "plan_id": "demo-plan-b45adc82952d8e6142d1",
+        "trip_id": "66f0da83-9696-44b5-9d43-aeaa174c17ef",
+        "currency": "RUB",
+        "warnings": [
+          "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+          "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+        ],
+        "price_kind": "synthetic",
+        "violations": [],
+        "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+        "source_type": "DEMO",
+        "total_minor": 14700000,
+        "state_version": 1,
+        "booking_created": false,
+        "room_assignments": {
+          "new-stay-1": [
+            {
+              "room_id": "new-room-1",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-3"
+              ]
+            },
+            {
+              "room_id": "new-room-2",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-2"
+              ]
+            }
+          ],
+          "new-stay-2": [
+            {
+              "room_id": "new-room-3",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-3"
+              ]
+            },
+            {
+              "room_id": "new-room-4",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-2"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "offers": [
+          {
+            "city": "Стамбул",
+            "kind": "hotel",
+            "name": "DEMO — Семейный берег",
+            "nights": 3,
+            "is_demo": true,
+            "check_in": "2026-11-10",
+            "currency": "RUB",
+            "hotel_id": "demo-hotel-istanbul-family",
+            "offer_id": "demo-stay-e61cec0f90a361b9336a",
+            "breakdown": [
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-1",
+                "quantity": 3,
+                "unit_minor": 675000,
+                "amount_minor": 2025000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-1",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 3,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 210000
+              },
+              {
+                "age": 7,
+                "kind": "child_nights",
+                "quantity": 3,
+                "unit_minor": 60000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 180000
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 3,
+                "unit_minor": 40000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 120000
+              },
+              {
+                "kind": "flexible_rate_nights",
+                "room_id": "new-room-1",
+                "quantity": 3,
+                "unit_minor": 101250,
+                "amount_minor": 303750
+              },
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-2",
+                "quantity": 3,
+                "unit_minor": 675000,
+                "amount_minor": 2025000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-2",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 3,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 210000
+              },
+              {
+                "kind": "flexible_rate_nights",
+                "room_id": "new-room-2",
+                "quantity": 3,
+                "unit_minor": 101250,
+                "amount_minor": 303750
+              }
+            ],
+            "breakfast": true,
+            "check_out": "2026-11-13",
+            "rate_type": "flex",
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "refundable": true,
+            "source_type": "DEMO",
+            "total_minor": 5377500,
+            "availability": "synthetic_not_live",
+            "component_id": "new-stay-1",
+            "pets_allowed": true,
+            "room_assignments": [
+              {
+                "room_id": "new-room-1",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-3"
+                ]
+              },
+              {
+                "room_id": "new-room-2",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          },
+          {
+            "city": "Анталья",
+            "kind": "hotel",
+            "name": "DEMO — Семейный берег",
+            "nights": 4,
+            "is_demo": true,
+            "check_in": "2026-11-13",
+            "currency": "RUB",
+            "hotel_id": "demo-hotel-antalya-family",
+            "offer_id": "demo-stay-f37aad2b3a2f4e0f30d1",
+            "breakdown": [
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-3",
+                "quantity": 4,
+                "unit_minor": 618750,
+                "amount_minor": 2475000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-3",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 4,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 280000
+              },
+              {
+                "age": 7,
+                "kind": "child_nights",
+                "quantity": 4,
+                "unit_minor": 60000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 240000
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 4,
+                "unit_minor": 40000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 160000
+              },
+              {
+                "kind": "flexible_rate_nights",
+                "room_id": "new-room-3",
+                "quantity": 4,
+                "unit_minor": 92812,
+                "amount_minor": 371248
+              },
+              {
+                "kind": "room_nights",
+                "room_id": "new-room-4",
+                "quantity": 4,
+                "unit_minor": 618750,
+                "amount_minor": 2475000
+              },
+              {
+                "kind": "extra_adult_nights",
+                "room_id": "new-room-4",
+                "quantity": 0,
+                "unit_minor": 120000,
+                "amount_minor": 0
+              },
+              {
+                "kind": "breakfast_days",
+                "quantity": 4,
+                "unit_minor": 70000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 280000
+              },
+              {
+                "kind": "flexible_rate_nights",
+                "room_id": "new-room-4",
+                "quantity": 4,
+                "unit_minor": 92812,
+                "amount_minor": 371248
+              }
+            ],
+            "breakfast": true,
+            "check_out": "2026-11-17",
+            "rate_type": "flex",
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "refundable": true,
+            "source_type": "DEMO",
+            "total_minor": 6652496,
+            "availability": "synthetic_not_live",
+            "component_id": "new-stay-2",
+            "pets_allowed": true,
+            "room_assignments": [
+              {
+                "room_id": "new-room-3",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-1",
+                  "new-traveler-3"
+                ]
+              },
+              {
+                "room_id": "new-room-4",
+                "capacity": 4,
+                "traveler_ids": [
+                  "new-traveler-2"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Казань",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-f0c3ec050833c6b35384",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 700000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 700000
+              },
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 700000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 700000
+              },
+              {
+                "age": 7,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 490000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 490000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Стамбул",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 1890000,
+            "arrival_date": "2026-11-10",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-98e16cdb-468e-4c52-9880-2da66b659178",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-10",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Стамбул",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-094ce5b24b0a57d1b067",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 350000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 350000
+              },
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 350000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 350000
+              },
+              {
+                "age": 7,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 245000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 245000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Анталья",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 945000,
+            "arrival_date": "2026-11-13",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-06d90d18-3692-4b51-b1d0-2e9fe7e1e9f7",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-13",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "kind": "flight",
+            "name": "DEMO — Синтетический перелёт",
+            "origin": "Анталья",
+            "is_demo": true,
+            "nonstop": true,
+            "currency": "RUB",
+            "offer_id": "demo-transport-2a6f447420d3935e247f",
+            "age_basis": "departure_date",
+            "breakdown": [
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 750000,
+                "traveler_id": "new-traveler-1",
+                "amount_minor": 750000
+              },
+              {
+                "age": null,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 750000,
+                "traveler_id": "new-traveler-2",
+                "amount_minor": 750000
+              },
+              {
+                "age": 7,
+                "kind": "demo_passenger",
+                "quantity": 1,
+                "unit_minor": 525000,
+                "traveler_id": "new-traveler-3",
+                "amount_minor": 525000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "destination": "Казань",
+            "source_type": "DEMO",
+            "stops_count": 0,
+            "total_minor": 2025000,
+            "arrival_date": "2026-11-17",
+            "availability": "synthetic_not_live",
+            "component_id": "leg-bf0317cc-2130-499c-8c7c-944d85968965",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ],
+            "segment_count": 1,
+            "departure_date": "2026-11-17",
+            "route_facts_source": "synthetic_demo_catalogue"
+          },
+          {
+            "city": "Стамбул",
+            "date": "2026-11-10",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-435e6e582714ddf10276",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 3,
+                "unit_minor": 40000,
+                "amount_minor": 120000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 120000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-new-stay-1",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "city": "Анталья",
+            "date": "2026-11-13",
+            "kind": "transfer",
+            "name": "DEMO — Синтетический трансфер",
+            "is_demo": true,
+            "currency": "RUB",
+            "offer_id": "demo-transfer-9df91760a5b42b92d58e",
+            "breakdown": [
+              {
+                "kind": "demo_transfer_passenger",
+                "quantity": 3,
+                "unit_minor": 40000,
+                "amount_minor": 120000
+              }
+            ],
+            "max_pet_kg": 20,
+            "price_kind": "synthetic",
+            "source_type": "DEMO",
+            "total_minor": 120000,
+            "availability": "synthetic_not_live",
+            "component_id": "transfer-new-stay-2",
+            "pets_allowed": true,
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ],
+        "plan_id": "demo-plan-07c0e24abeefd8b5b6eb",
+        "trip_id": "66f0da83-9696-44b5-9d43-aeaa174c17ef",
+        "currency": "RUB",
+        "warnings": [
+          "DEMO: все отели, маршруты, тарифы, цены и наличие вымышлены. Реальная бронь не создаётся.",
+          "Показаны фиксированные DEMO-профили, без обещания лучшей цены на рынке."
+        ],
+        "price_kind": "synthetic",
+        "violations": [],
+        "price_scope": "listed_hotels_transport_transfers_and_selected_demo_extras",
+        "source_type": "DEMO",
+        "total_minor": 17129996,
+        "state_version": 1,
+        "booking_created": false,
+        "room_assignments": {
+          "new-stay-1": [
+            {
+              "room_id": "new-room-1",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-3"
+              ]
+            },
+            {
+              "room_id": "new-room-2",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-2"
+              ]
+            }
+          ],
+          "new-stay-2": [
+            {
+              "room_id": "new-room-3",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-1",
+                "new-traveler-3"
+              ]
+            },
+            {
+              "room_id": "new-room-4",
+              "capacity": 4,
+              "traveler_ids": [
+                "new-traveler-2"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "hotel_b_name": "DEMO — Семейный берег",
+    "hotel_b_id": "demo-hotel-antalya-family"
+  },
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-98e16cdb-468e-4c52-9880-2da66b659178",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Стамбул",
+        "departure_date": "2026-11-10"
+      },
+      {
+        "id": "leg-06d90d18-3692-4b51-b1d0-2e9fe7e1e9f7",
+        "mode": "flight",
+        "origin": "Стамбул",
+        "destination": "Анталья",
+        "departure_date": "2026-11-13"
+      },
+      {
+        "id": "leg-bf0317cc-2130-499c-8c7c-944d85968965",
+        "mode": "flight",
+        "origin": "Анталья",
+        "destination": "Казань",
+        "departure_date": "2026-11-17"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Стамбул",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "check_out": "2026-11-13",
+        "requested_nights": 3
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Анталья",
+        "rooms": [
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-4",
+            "traveler_ids": [
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": null,
+        "check_out": "2026-11-17",
+        "requested_nights": 4
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 40000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-3"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-2"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Казань",
+    "trip_id": "66f0da83-9696-44b5-9d43-aeaa174c17ef",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      }
+    ],
+    "constraints": [
+      {
+        "key": "breakfast",
+        "hard": true,
+        "value": true,
+        "room_id": null,
+        "stay_id": "new-stay-1"
+      }
+    ],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "DEMO",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 1
+  },
+  "after_trip": {
+    "legs": [
+      {
+        "id": "leg-98e16cdb-468e-4c52-9880-2da66b659178",
+        "mode": "flight",
+        "origin": "Казань",
+        "destination": "Стамбул",
+        "departure_date": "2026-11-10"
+      },
+      {
+        "id": "leg-06d90d18-3692-4b51-b1d0-2e9fe7e1e9f7",
+        "mode": "flight",
+        "origin": "Стамбул",
+        "destination": "Анталья",
+        "departure_date": "2026-11-13"
+      },
+      {
+        "id": "leg-bf0317cc-2130-499c-8c7c-944d85968965",
+        "mode": "flight",
+        "origin": "Анталья",
+        "destination": "Казань",
+        "departure_date": "2026-11-19"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Стамбул",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-2",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-10",
+        "hotel_id": null,
+        "check_out": "2026-11-13",
+        "requested_nights": 3
+      },
+      {
+        "id": "new-stay-2",
+        "city": "Анталья",
+        "rooms": [
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-3"
+            ]
+          },
+          {
+            "id": "new-room-4",
+            "traveler_ids": [
+              "new-traveler-2",
+              "new-traveler-4"
+            ]
+          }
+        ],
+        "check_in": "2026-11-13",
+        "hotel_id": "demo-hotel-antalya-family",
+        "check_out": "2026-11-19",
+        "requested_nights": 6
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 38000000
+    },
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1",
+          "new-traveler-3"
+        ],
+        "keep_separate": true
+      },
+      {
+        "id": "new-group-2",
+        "traveler_ids": [
+          "new-traveler-2",
+          "new-traveler-4"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Казань",
+    "trip_id": "66f0da83-9696-44b5-9d43-aeaa174c17ef",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-2",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": 7,
+        "type": "child",
+        "group_id": "new-group-1",
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": 8,
+        "type": "child",
+        "group_id": "new-group-2",
+        "birth_date": null
+      }
+    ],
+    "constraints": [
+      {
+        "key": "breakfast",
+        "hard": true,
+        "value": true,
+        "room_id": null,
+        "stay_id": "new-stay-1"
+      }
+    ],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "DEMO",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 2
+  },
+  "after_status": "WAITING_USER",
+  "after_pending": {
+    "text": "Выберите один город назначения или явно опишите последовательность остановок.",
+    "field": "destination.city",
+    "reason": "clarification",
+    "context": {},
+    "questions": [
+      "Выберите один город назначения или явно опишите последовательность остановок."
+    ],
+    "target_id": null,
+    "question_id": "e7b58c4f-20a0-4747-941c-6f8e93eca38d-question",
+    "state_version": 2
+  },
+  "run_status": "completed",
+  "run_error": null,
+  "reply": "Сохранённый маршрут: Казань → Стамбул → Анталья → Казань.\n\nОстановка 1, Стамбул: заезд 10.11.2026, выезд 13.11.2026; 3 ночи. Дети на дату заезда: 7 лет, 8 лет. Остановка 2, Анталья: заезд 13.11.2026, выезд 19.11.2026; 6 ночей. Дети на дату заезда: 7 лет, 8 лет. Переезд 1, Казань → Стамбул: отправление 10.11.2026. Переезд 2, Стамбул → Анталья: отправление 13.11.2026. Переезд 3, Анталья → Казань: отправление 19.11.2026.\n\nТекущий состав: 2 взрослых; 2 ребёнка (7 лет, 8 лет).\n\nСохранённый бюджет на всю поездку: 380 000,00 RUB.\n\nСтамбул, номер №1: взрослый №1, ребёнок №1. Стамбул, номер №2: взрослый №2, ребёнок №2. Анталья, номер №1: взрослый №1, ребёнок №1. Анталья, номер №2: взрослый №2, ребёнок №2. Семья/группа №1: взрослый №1, ребёнок №1; раздельное размещение обязательно. Семья/группа №2: взрослый №2, ребёнок №2; раздельное размещение обязательно.\n\nУсловие для проживания: включённый завтрак — да (обязательно).\n\nТекущий состав: 2 взрослых; 1 ребёнок (7 лет). → Текущий состав: 2 взрослых; 2 ребёнка (7 лет, 8 лет). Состав семей/групп обновлён. Проживания: Остановка 1, Стамбул: заезд 10.11.2026, выезд 13.11.2026; 3 ночи. Остановка 2, Анталья: заезд 13.11.2026, выезд 17.11.2026; 4 ночи. → Остановка 1, Стамбул: заезд 10.11.2026, выезд 13.11.2026; 3 ночи. Остановка 2, Анталья: заезд 13.11.2026, выезд 17.11.2026; 4 ночи. Сохранённый бюджет на всю поездку: 400 000,00 RUB. → Сохранённый бюджет на всю поездку: 380 000,00 RUB. Проживания: Остановка 1, Стамбул: заезд 10.11.2026, выезд 13.11.2026; 3 ночи. Остановка 2, Анталья: заезд 13.11.2026, выезд 17.11.2026; 4 ночи. → Остановка 1, Стамбул: заезд 10.11.2026, выезд 13.11.2026; 3 ночи. Остановка 2, Анталья: заезд 13.11.2026, выезд 19.11.2026; 6 ночей.\n\nПодтверждённых условий конкретного тарифа в текущей выдаче нет.\n\nВыберите один город назначения или явно опишите последовательность остановок.",
+  "raw_validated": [
+    {
+      "value": {
+        "reply": "Добавлен ребёнок 8 лет во вторую семью (новый traveler-4, группа new-group-2). Во втором номере (new-room-2, new-room-4) теперь второй взрослый и ребёнок. Отель в Анталье заменён на «DEMO — Семейный берег» (demo-hotel-antalya-family). Бюджет уменьшен до 380 000 RUB. Возвращение перенесено на 19 ноября (на 2 дня позже). Первый отель в Стамбуле и завтрак там сохранены.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-4",
+              "age": 8,
+              "type": "child",
+              "group_id": "new-group-2",
+              "birth_date": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-1",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-2"
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-2",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-4"
+          },
+          {
+            "type": "replace_hotel",
+            "value": {
+              "hotel_id": "demo-hotel-antalya-family"
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 38000000
+            },
+            "target_id": null
+          },
+          {
+            "type": "shift_return",
+            "value": {
+              "days": 2
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "sha256": "fe5231e93d8f51ea2ae1822ba71d885623a1ab1f0697b8e320b0fe365d43a9f5",
+      "captured": true,
+      "utf8_bytes": 1407
+    }
+  ],
+  "checked": [
+    {
+      "value": {
+        "reply": "Добавлен ребёнок 8 лет во вторую семью (новый traveler-4, группа new-group-2). Во втором номере (new-room-2, new-room-4) теперь второй взрослый и ребёнок. Отель в Анталье заменён на «DEMO — Семейный берег» (demo-hotel-antalya-family). Бюджет уменьшен до 380 000 RUB. Возвращение перенесено на 19 ноября (на 2 дня позже). Первый отель в Стамбуле и завтрак там сохранены.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [
+          "Выберите один город назначения или явно опишите последовательность остановок."
+        ],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "add_traveler",
+            "value": {
+              "id": "new-traveler-4",
+              "age": 8,
+              "type": "child",
+              "group_id": "new-group-2",
+              "birth_date": null
+            },
+            "target_id": null
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-1",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-2"
+          },
+          {
+            "type": "set_room_members",
+            "value": {
+              "stay_id": "new-stay-2",
+              "traveler_ids": [
+                "new-traveler-2",
+                "new-traveler-4"
+              ]
+            },
+            "target_id": "new-room-4"
+          },
+          {
+            "type": "replace_hotel",
+            "value": {
+              "hotel_id": "demo-hotel-antalya-family"
+            },
+            "target_id": "new-stay-2"
+          },
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 38000000
+            },
+            "target_id": null
+          },
+          {
+            "type": "shift_return",
+            "value": {
+              "days": 2
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "sha256": "3d59811ff18671d3e6c183a9773a47f474287fbe8643c841dc2ad8781182c950",
+      "captured": true,
+      "utf8_bytes": 1554
+    }
+  ],
+  "normalizations": [
+    []
+  ],
+  "event_types": [
+    "USER_MESSAGE_RECEIVED",
+    "RUN_STARTED",
+    "MODEL_CALL_STARTED",
+    "MODEL_EXTRACTION_VALIDATED",
+    "MODEL_OPERATIONS_CHECKED",
+    "MODEL_RESPONSE_RECEIVED",
+    "RUN_COMPLETED"
+  ],
+  "plans": [],
+  "orders": [],
+  "checks": [
+    {
+      "check": {
+        "op": "party",
+        "adults": 2,
+        "ages": [
+          7,
+          8
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "eq",
+        "path": "/trip/budget/amount_minor",
+        "value": 38000000
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "stay",
+        "city": "Стамбул",
+        "check_in": "2026-11-10",
+        "check_out": "2026-11-13",
+        "rooms": 2
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "stay",
+        "city": "Анталья",
+        "check_in": "2026-11-13",
+        "check_out": "2026-11-19",
+        "rooms": 2
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "hotel_capture",
+        "city": "Анталья",
+        "capture": "hotel_b_id"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "allocation_complete",
+        "rooms": 2
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "constraint",
+        "key": "breakfast",
+        "value": true,
+        "hard": true,
+        "city": "Стамбул"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "reply_money",
+        "amount_minor": 38000000,
+        "currency": "RUB",
+        "topic": "budget"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "run_status",
+        "value": "completed"
+      },
+      "status": "PASS"
+    }
+  ],
+  "model_calls_started": 1,
+  "tool_calls_started": 0,
+  "actual_wire_counter_from_report": "UNKNOWN_TOOL_EVENTS_ARE_NOT_WIRE_REQUESTS",
+  "scope": "One completed T4 only. The case and epoch can continue; no later result is implied.",
+  "projection_sha256_without_self_digest": "013052e564c01fb1b465efb6e9a4895c36d2b7f37c79234735e108c4398cfb5e"
+}

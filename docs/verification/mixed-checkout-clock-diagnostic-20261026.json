@@ -1,0 +1,86 @@
+{
+  "scope": "read-only isolated otravel_test; original failed suite window; zero quotes sessions",
+  "suite_start": "2026-10-25T21:21:30.245572+00:00",
+  "suite_end": "2026-10-25T21:22:23.706572+00:00",
+  "sessions": [
+    {
+      "preview_events": [
+        "2026-10-25T21:22:09.741554+00:00"
+      ],
+      "source_snapshots": [
+        {
+          "offer_id": "fixture-hotel-2026-11-06",
+          "retrieved_at": "2026-10-25T21:22:09.652345+00:00",
+          "expires_at": "2026-10-25T21:25:09.652345+00:00"
+        },
+        {
+          "offer_id": "fixture-hotel-2026-11-09",
+          "retrieved_at": "2026-10-25T21:22:09.672080+00:00",
+          "expires_at": "2026-10-25T21:25:09.672080+00:00"
+        },
+        {
+          "offer_id": "fixture-flight-2026-11-06",
+          "retrieved_at": "2026-10-25T21:22:09.680038+00:00",
+          "expires_at": "2026-10-25T21:25:09.680038+00:00"
+        },
+        {
+          "offer_id": "fixture-flight-2026-11-09",
+          "retrieved_at": "2026-10-25T21:22:09.688510+00:00",
+          "expires_at": "2026-10-25T21:25:09.688510+00:00"
+        },
+        {
+          "offer_id": "fixture-flight-2026-11-13",
+          "retrieved_at": "2026-10-25T21:22:09.701831+00:00",
+          "expires_at": "2026-10-25T21:25:09.701831+00:00"
+        }
+      ],
+      "quote_count": 0
+    },
+    {
+      "preview_events": [
+        "2026-10-25T21:22:06.478993+00:00",
+        "2026-10-25T21:22:06.493214+00:00"
+      ],
+      "source_snapshots": [
+        {
+          "offer_id": "fixture-hotel-2026-11-06",
+          "retrieved_at": "2026-10-25T21:22:06.882514+00:00",
+          "expires_at": "2026-10-25T21:25:06.882514+00:00"
+        },
+        {
+          "offer_id": "fixture-hotel-2026-11-09",
+          "retrieved_at": "2026-10-25T21:22:06.904667+00:00",
+          "expires_at": "2026-10-25T21:25:06.904667+00:00"
+        },
+        {
+          "offer_id": "fixture-flight-2026-11-06",
+          "retrieved_at": "2026-10-25T21:22:06.914835+00:00",
+          "expires_at": "2026-10-25T21:25:06.914835+00:00"
+        },
+        {
+          "offer_id": "fixture-flight-2026-11-09",
+          "retrieved_at": "2026-10-25T21:22:06.927174+00:00",
+          "expires_at": "2026-10-25T21:25:06.927174+00:00"
+        },
+        {
+          "offer_id": "fixture-flight-2026-11-13",
+          "retrieved_at": "2026-10-25T21:22:06.936417+00:00",
+          "expires_at": "2026-10-25T21:25:06.936417+00:00"
+        }
+      ],
+      "quote_count": 0
+    }
+  ],
+  "original_failure_xml": {
+    "path": "docs\\verification\\full-suite-20261026-zai.xml",
+    "sha256": "4a38f68524e39cc26e9f57e634f4ec3c0bac0b2f8ebe2b544aab91e4acc96b2c",
+    "preserved": true
+  },
+  "result": {
+    "confirmed": "source retrieval timestamps later than subsequent preview event timestamps in the only two-preview zero-quote session in the failed-suite window",
+    "mechanism": "UNKNOWN; no NTP/WSL cause proven",
+    "change": "fixed aware clock for this price-only test; production freshness guards unchanged",
+    "target_rerun_before_test_change": "1 PASS",
+    "mixed_checkout_module_after_test_change": "16 PASS; fixed-clock XML separate"
+  }
+}

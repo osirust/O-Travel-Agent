@@ -1,0 +1,65 @@
+{
+  "status": "PURE_CONTROLLER_GUARDS_PASS_ACTUAL_START_NOT_PERFORMED",
+  "scope": "Standalone fixed GigaChat personal freemium backend lifecycle; no runtime actions executed during preparation.",
+  "controller": {
+    "file": "scripts/gigachat_backend.py",
+    "sha256": "48043ed97acbedf981e903d0146929e927cfb31ed7aac15395d716df89a4508b",
+    "source": "/home/aegml/projects/otravel-gigachat-20261027",
+    "database": "otravel_gigachat_eval",
+    "loopback_port": 8085,
+    "model": "GigaChat-3-Ultra",
+    "scope": "GIGACHAT_API_PERS",
+    "runtime_namespace": ".local/gigachat-backend-8085",
+    "runtime_evidence_reserved": "docs/verification/gigachat-backend-20261027.json"
+  },
+  "configuration_guards": [
+    "Only selected GIGACHAT_AUTH_KEY, freemium confirmation, optional CA path and three travel-provider credentials are read from the trusted native MASTER.",
+    "SOURCE .env is never read or copied; inherited credentials and arbitrary model/base URL overrides are absent from the constructed child environment.",
+    "Other LLM keys are absent and confirmation flags false; local model budget zero; no implicit fallback.",
+    "Fixed GigaChat engineering bound 1000/day, one call/run; actual vendor quota remains UNKNOWN.",
+    "Optional CA file must be an absolute native path, a regular non-symlink file and not group/world writable; no TLS-verification bypass is configured."
+  ],
+  "lifecycle_guards": [
+    "Plan returns before WSL dispatch, secret reads, runtime directory creation, Docker, SQL or HTTP.",
+    "Windows runtime dispatch is fixed to the C-backed AegML-Hackathon distro.",
+    "Foreign port 8085 listeners refuse startup/stop; recorded PID ownership, start ticks, executable, argv, cwd and creator are checked.",
+    "Stopping uses the inherited verified pidfd/SIGTERM guard; no numeric-PID fallback, force kill or global stop.",
+    "Only the committed native source prepared by the root actor is used; manifest equality fences imports and process launch.",
+    "Startup performs application health/provider status reads only; it does not invoke OAuth, model listing or inference."
+  ],
+  "database_guards": [
+    "Only verified otravel-db-1 with project otravel/service db labels and the owned project network/volume may be used.",
+    "Create only fixed otravel_gigachat_eval if absent; correct role/owner/connection flags, trusted own receipt and stable OID are required for reuse.",
+    "An unrecorded existing database is not adopted; a missing recorded database is not recreated.",
+    "HBA additions are restricted to the fixed database/otravel role and exact 127.0.0.1/32 plus the observed bridge client IPv4/32 using scram-sha-256.",
+    "HBA bytes are snapshotted privately via base64, preserved as an unchanged prefix, read back exactly and checked for parse errors and exact /32 rows; reload only, no PostgreSQL restart.",
+    "Initialize schema only in the own database after identity checks; pending runs block startup.",
+    "Counters before import, after import and after process startup must show zero new model calls; other database counts cannot change during import."
+  ],
+  "verification": {
+    "new_pure_tests_passed": 42,
+    "related_gigachat_and_existing_gptoss_tests_passed": 90,
+    "skipped": 0,
+    "ruff": "PASS",
+    "test_file": "tests/test_gigachat_backend.py",
+    "test_sha256": "5f5d3e51090d06a329b65acffd5119ff9ffe9e108400fcf9f0ded92f1ef1435e",
+    "junit": ".local/evaluation/after80-20261027/gigachat-controller.xml",
+    "related_junit": ".local/evaluation/after80-20261027/gigachat-controller-related.xml",
+    "actual_command_executed": "py scripts/gigachat_backend.py --action plan",
+    "actual_start_status_stop_executed": false,
+    "real_model_calls": 0,
+    "provider_auth_requests": 0,
+    "tourism_requests": 0,
+    "real_docker_operations": 0,
+    "real_sql_operations": 0,
+    "master_reads": 0,
+    "native_source_or_profile_changes": 0
+  },
+  "open": [
+    "Root must install and source-pin the committed GigaChat-capable native archive.",
+    "Root config/client status contract must expose the exact fixed model and freemium_confirmed=true with paid_fallback=false.",
+    "The official CA path and actual readiness facts are qualified separately by the geo/client actors.",
+    "No running chat URL is qualified by this preparation receipt; root GO and guarded actual startup are still required.",
+    "Pure guards do not establish actual inference, harness dialogue correctness or real travel availability."
+  ]
+}

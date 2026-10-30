@@ -1,0 +1,18 @@
+{
+  "scope": "One authenticated GET/key; no inference, billing change or runtime mutation",
+  "llm_calls": 0,
+  "http_status": 200,
+  "is_free_tier": true,
+  "limit": 0.01,
+  "limit_remaining": 0.01,
+  "usage_daily": 0,
+  "rate_limit": {
+    "requests": -1,
+    "interval": "10s"
+  },
+  "free_model_daily_requests": {
+    "used": 0,
+    "limit": 50,
+    "remaining": 50
+  }
+}

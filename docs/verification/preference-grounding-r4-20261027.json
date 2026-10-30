@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-UNREQUESTED-PREFERENCE-001",
+  "status": "KNOWN_PREFERENCE_KEY_SCOPE_PURE_AND_RELATED_PG_TESTED_ACTUAL_RECHECK_OPEN",
+  "files_sha256": {
+    "otravel/preference_grounding.py": "dd28498ed5d65370cdd0bb471f892416e42f0a0e1adb7ee6cd229ca2036634bf",
+    "tests/test_preference_grounding.py": "030b34966d738a9f89cfd7e9d37cbb5d74686e4fbc0817ed0fcb0c3e2cd56b96",
+    "fixtures/regression/world-r4-preferences-20261027.json": "bc11edd7ccc3c5d401dc135d99c5b319f04c1f02460e42815eac3a92535b27c9"
+  },
+  "actual_source": {
+    "case_id": "WORLD-R4-UNREQUESTED-PREFERENCES",
+    "source_files_sha256": {
+      "turn-04.json": "e1008e16a5dadb6effcd32329dcd99c108029fc1bba14227702167198af7d579",
+      "turn4-events-dates.json": "fe52b379b010cbd9b30dfaa4a037c1bd613544c3a3c9fd0a98859bf75fb35107"
+    },
+    "raw_contract_sha256": "c24a21e3e4598237b37052b099fc190d51ec462ec1fb10257a9e357f06651c80",
+    "checked_contract_sha256": "e59c86c6070ced35f628fbcc22eab953c2f05c709989df9ca6813a091c0f285b",
+    "raw_operations": 7,
+    "new_unasked_preferences": [
+      "price_priority",
+      "departure_time"
+    ],
+    "input_contains_preference_request": false
+  },
+  "initial_failures": [
+    {
+      "kind": "Existing ground_auxiliary leaves both actual unasked preferences executable",
+      "tests": 1,
+      "failures": 1,
+      "junit": ".local/evaluation/after80-20261027/preference-r4-existing-red.xml",
+      "sha256": "2b17868d036a9168a24cb37f17b1df9816739bfab0df3ef090d4f40b7227080f"
+    },
+    {
+      "kind": "Draft guard initially discarded explicit numeric weight in its own clause despite a unique current preference family",
+      "tests": 32,
+      "failures": 2,
+      "pass": 30,
+      "junit": ".local/evaluation/after80-20261027/preference-grounding-peer-initial-20261027.xml",
+      "sha256": "5918e0166a293d71ccbbec737c95a79161ea65af27ab612b47b5a058cdd1ff6f"
+    }
+  ],
+  "verification": {
+    "tests": 50,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.942,
+    "junit": ".local/evaluation/after80-20261027/preference-full3-coverage-green.xml",
+    "junit_sha256": "b199480b649fe21df554acb889917048be855a28fd786e65d5768134a21ac0f0",
+    "new_guard_tests": 34,
+    "existing_preference_intake_tests": 16,
+    "ruff": "PASS"
+  },
+  "facts": [
+    "The model supplied valid-shaped but unrequested preferences; the existing auxiliary guard covered constraints/hotel choice, not preference permission",
+    "Protection is by key family, independent of proposed value: price_priority and departure_time/departure_window",
+    "Actual R4 fixture retains the exact five unrelated raw operations and removes both phantom preferences",
+    "Exact saved key/value/effective-weight no-ops remain unchanged; an unasked weight change is suppressed",
+    "Current positive min-cost or morning-flight requests retain their proposal; unspecified new weight defaults to the existing domain default1, existing weights are preserved",
+    "An explicit numeric weight can bind across clauses only when the current named preference family is unique",
+    "Clear requires current removal/free-time authority; quotes, history, hypotheses, prohibited actions and mere old state do not grant mutation authority",
+    "No preference is invented, no key alias promoted to new domain support, no hotel filter or exact departure hour is added",
+    "Root integrates the helper after auxiliary guarding; ASK/wait policy is unchanged by this module"
+  ],
+  "contract": "guard_preference_operations(state,operations,text) -> (copiedOperations,{notes,unknowns,conflicts})",
+  "execution": {
+    "model_actual": 0,
+    "external_api": 0,
+    "sql": 0,
+    "native_changes": 0,
+    "vpn_changes": 0
+  },
+  "open_scope": [
+    "Unknown preference keys and unsupported values remain normal schema/domain validation; no universal preference grounding claim",
+    "Date NULLs in the same actual R4 raw response are intentionally unchanged and handled by a separate date correction",
+    "This48-case pure qualification does not replace Root full2 6370PASS on the prior frozen source",
+    "A new actual LLM response has not been qualified after this guard change; Root full4/rollout remains separate."
+  ],
+  "prior_verification": {
+    "tests": 48,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.931,
+    "junit": ".local/evaluation/after80-20261027/preference-grounding-final.xml",
+    "junit_sha256": "8762dfd22ebab5b41c7044807da9fcb68b7582f8ab2d3f7075b5c60bd2da744b",
+    "new_guard_tests": 32,
+    "existing_preference_intake_tests": 16,
+    "ruff": "PASS"
+  },
+  "prior_files_sha256": {
+    "otravel/preference_grounding.py": "4f7953ab926b67cd77abaab353797545a0aaeb4f2f1a96548226c528b050e3e9",
+    "tests/test_preference_grounding.py": "7ad678d086affad9b06275bdfc49f8ea9913b203c259f5836aacba778698dde5",
+    "fixtures/regression/world-r4-preferences-20261027.json": "bc11edd7ccc3c5d401dc135d99c5b319f04c1f02460e42815eac3a92535b27c9"
+  },
+  "full3_regression_repair": {
+    "initial_full": "Full3 fourteen failures/6428passes on prior merged source; originals retained by Root",
+    "this_scope": [
+      "tests/test_conversation.py::test_minimum_cost_persists_preference_without_invented_budget_or_lost_country",
+      "tests/test_harness_context_lifecycle.py::test_unit_price_cannot_replace_total_budget_and_unambiguous_preference_survives"
+    ],
+    "pure_reproduction": {
+      "failures": 2,
+      "junit": ".local/evaluation/after80-20261027/preference-full3-coverage-red.xml",
+      "junit_sha256": "b6f21839a79852144786d31d1b428f3f0914ce2d9f75e86ef32fce2c177751bb"
+    },
+    "cause": "Guard required an imperative verb and omitted the positive adverb preferably; this rejected the existing exact bare minimum-cost criterion and a separate preferably-cheaper wish alongside a unit-price statement.",
+    "change": "Authorize only the full bare current minimum-cost clause and explicit current preferably wording; quote/history/hypothesis/negative and unrequested R4 protections remain.",
+    "joined_related": {
+      "tests": 77,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 27.093,
+      "junit": ".local/evaluation/after80-20261027/date-pref-full3-related-final.xml",
+      "junit_sha256": "f8d023288b74d9383e736d664a7552699b40d2b1fd98a8d3fe9a6b07869fbcb1",
+      "scope": "Date agent unified batch includes both preference PG nodes and all14 prior full3 failures; do not add this count to the pure50 as a new full-suite total."
+    }
+  }
+}

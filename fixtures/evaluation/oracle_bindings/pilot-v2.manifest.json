@@ -1,0 +1,82 @@
+{
+  "format": "otravel.acceptance_pilot_manifest.v2",
+  "binding_revision": 2,
+  "frozen_at_utc": "2026-10-25T17:55:42.565175+00:00",
+  "frozen_before_actual_model_run": true,
+  "status": "FROZEN_BOUND_SUBSET_NOT_EXECUTED",
+  "cases": [
+    "NLU-01",
+    "NLU-03",
+    "NLU-06",
+    "NLU-09"
+  ],
+  "bound_checks": 34,
+  "unbound_checks": 8,
+  "complete_cases": 0,
+  "actual_model_calls_by_this_task": 0,
+  "http_calls_by_this_task": 0,
+  "db_calls_by_this_task": 0,
+  "oracle_unit_tests": {
+    "passed": 22,
+    "scope": "synthetic saved-observation positive/negative grader controls only; not model acceptance"
+  },
+  "schema_valid": true,
+  "source_messages_and_flags_identical": true,
+  "revision1_unchanged": true,
+  "files": [
+    {
+      "path": "fixtures/evaluation/oracle_bindings/pilot-v2.json",
+      "sha256": "5a0ee3e23743fcdb3ca174ba9db77c73e3023e51e476b516138d693d4c39580d",
+      "bytes": 55994
+    },
+    {
+      "path": "fixtures/evaluation/oracle_bindings/pilot-v2.schema.json",
+      "sha256": "c1c1749be62f89cc4561d40483d68db7bc5571fe16000ceccb9780dc2272b3a4",
+      "bytes": 20135
+    },
+    {
+      "path": "fixtures/evaluation/oracle_bindings/PILOT_V2.md",
+      "sha256": "b150de8c0e01e6bd3f088c0269205ff141f3ce4bc91658d26a36844ed2ee39f5",
+      "bytes": 5857
+    },
+    {
+      "path": "scripts/check_acceptance_pilot.py",
+      "sha256": "4c69178c20d26415d2252ca03041a708e551828c4389b100982f58d43711d870",
+      "bytes": 7120
+    },
+    {
+      "path": "tests/test_acceptance_pilot.py",
+      "sha256": "4908be39b6ecbaf6e745bd86a0cbc2cd92276fcd46f86edd8dc6f85f3dd906f2",
+      "bytes": 5363
+    },
+    {
+      "path": "docs/verification/acceptance-pilot-v2-oracle-unit-20261025.xml",
+      "sha256": "850442a37214e2e508cfbac73c79a90d517bcc478037d53a870bd302fbf72a87",
+      "bytes": 3441
+    }
+  ],
+  "protected_inputs": [
+    {
+      "path": "docs/research/sources/ostrovok_stress_tests.jsonl",
+      "sha256": "17b24b8e38fc81a1317213075aa769c6c7c3722a395f648c73fc5e9f4fa2ed2e",
+      "bytes": 39195
+    },
+    {
+      "path": "docs/research/sources/acceptance-oracles-106-20261025-original.jsonl",
+      "sha256": "4bf487cf049438fc02a9ac1996da7dac3959b9d914e40a01bdaf63566489e20e",
+      "bytes": 88656
+    },
+    {
+      "path": "fixtures/evaluation/llm-dialogues.json",
+      "sha256": "9b1de3ecb35a9a1b879b9206b0f88630ec8d5f0b2c63e00bed5f458313685075",
+      "bytes": 27904
+    },
+    {
+      "path": "fixtures/evaluation/frozen-owner-dialogues.json",
+      "sha256": "5b78429fdb2c4bdc806ac34bc508d6b74e3ddf09a0737b261f66e3652f54037d",
+      "bytes": 8403
+    }
+  ],
+  "dry_run_command": "py scripts/check_acceptance_pilot.py",
+  "adapter_export": "evaluate_observation(case:dict, observation:dict)->dict"
+}

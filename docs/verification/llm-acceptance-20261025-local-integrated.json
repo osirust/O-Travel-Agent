@@ -1,0 +1,323 @@
+{
+  "started_at": "2026-10-25T17:46:00.873874+00:00",
+  "fixture_sha256": "9b1de3ecb35a9a1b879b9206b0f88630ec8d5f0b2c63e00bed5f458313685075",
+  "suite_id": "harness-acceptance-ru-20261025",
+  "selected_case_ids": [
+    "ACC-MASS-01",
+    "ACC-CLARIFY-01",
+    "ACC-PAUSE-01",
+    "ACC-QUOTE-01",
+    "ACC-UNKNOWN-01",
+    "ACC-MALICIOUS-01",
+    "ACC-CONFLICT-01"
+  ],
+  "source_fixture_cases": 7,
+  "attempt_cap": 12,
+  "cases": [
+    {
+      "id": "ACC-MASS-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1935
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1935
+          },
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1662
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1662
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ACC-CLARIFY-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "WAITING_USER",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1464
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1464
+          },
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "FAIL",
+          "failed_checks": [
+            "state:/travelers/6/age",
+            "session_status"
+          ],
+          "model_attempts": 1,
+          "session_status": "WAITING_USER",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1217
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1217
+          },
+          "error_code": null
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "id": "ACC-PAUSE-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 0,
+          "session_status": "WAITING_USER",
+          "llm": null,
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 0,
+          "session_status": "WAITING_USER",
+          "llm": null,
+          "error_code": null
+        },
+        {
+          "index": 2,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1339
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1339
+          },
+          "error_code": null
+        },
+        {
+          "index": 3,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1887
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1887
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ACC-QUOTE-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1735
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1735
+          },
+          "error_code": null
+        },
+        {
+          "index": 1,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "OPTIONS_READY",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1799
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1799
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS",
+      "after_actions": [
+        {
+          "action": "confirm_original_quote",
+          "passed": true,
+          "http_status": 409
+        }
+      ]
+    },
+    {
+      "id": "ACC-UNKNOWN-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "WAITING_USER",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1999
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1999
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ACC-MALICIOUS-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "WAITING_USER",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1379
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1379
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "ACC-CONFLICT-01",
+      "turns": [
+        {
+          "index": 0,
+          "status": "PASS",
+          "failed_checks": [],
+          "model_attempts": 1,
+          "session_status": "WAITING_USER",
+          "llm": {
+            "model": "qwen3.5:4b",
+            "attempts": [
+              {
+                "model": "qwen3.5:4b",
+                "outcome": "response",
+                "provider": "ollama",
+                "latency_ms": 1887
+              }
+            ],
+            "provider": "ollama",
+            "latency_ms": 1887
+          },
+          "error_code": null
+        }
+      ],
+      "status": "PASS"
+    }
+  ],
+  "scope": "selected actual model HTTP turns; not the entire106 corpus",
+  "actual_model_attempts": 11,
+  "finished_at": "2026-10-25T17:46:23.078842+00:00",
+  "status": "NOT_ALL_PASS"
+}

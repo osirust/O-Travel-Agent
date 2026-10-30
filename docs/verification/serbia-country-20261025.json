@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-25T16:04:42.700969+00:00",
+  "status": "PASS",
+  "run_status": "completed",
+  "question": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+  "requested_destination": {
+    "kind": "country",
+    "name": "Сербия",
+    "country_code": "RS",
+    "suggested_cities": [
+      {
+        "name": "Белград",
+        "available": false,
+        "country_code": "RS"
+      },
+      {
+        "name": "Нови-Сад",
+        "available": false,
+        "country_code": "RS"
+      }
+    ]
+  },
+  "llm": {
+    "model": "dots-studio/dots-3-note-preview:free",
+    "attempts": [
+      {
+        "model": "dots-studio/dots-3-note-preview:free",
+        "outcome": "response",
+        "provider": "openrouter",
+        "latency_ms": 2709
+      }
+    ],
+    "provider": "openrouter",
+    "latency_ms": 2709
+  },
+  "error_code": null,
+  "scope": "one actual API+harness country clarification, not all geography/NLU"
+}

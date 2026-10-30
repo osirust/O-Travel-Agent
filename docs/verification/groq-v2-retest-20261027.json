@@ -1,0 +1,408 @@
+{
+  "status": "COUNTRY_PASS_NATURAL_CITY_OBSERVED",
+  "source_commit": "701da371fff15535ce2a2449e7b8a461f974482b",
+  "port": 8084,
+  "cases": [
+    {
+      "case": "literal_country",
+      "steps": [
+        {
+          "input": "привет",
+          "run_status": "completed",
+          "reply": "Здравствуйте! Готов помочь с вашей поездкой.",
+          "state_version": 0,
+          "model_calls": 0,
+          "tool_calls": 0,
+          "pending_question": null,
+          "trip": {
+            "legs": [],
+            "stays": [],
+            "budget": null,
+            "groups": [],
+            "origin": null,
+            "trip_id": "2a16d549-968a-454f-af48-3a7dde1052f3",
+            "travelers": [],
+            "constraints": [],
+            "preferences": [],
+            "route_policy": {
+              "kind": "round_trip",
+              "end_city": null
+            },
+            "search_policy": {
+              "mode": "HYBRID",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "duffel",
+              "guest_nationality": null
+            },
+            "state_version": 0
+          },
+          "llm": null,
+          "error": null,
+          "plans": 0,
+          "offer_sources_across_plans": {},
+          "warnings": []
+        },
+        {
+          "input": "хочу в Сербию",
+          "run_status": "completed",
+          "reply": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+          "state_version": 0,
+          "model_calls": 0,
+          "tool_calls": 0,
+          "pending_question": {
+            "text": "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?",
+            "field": "destination.city",
+            "reason": "clarification",
+            "context": {
+              "requested_destination": {
+                "kind": "country",
+                "name": "Сербия",
+                "country_code": "RS",
+                "suggested_cities": [
+                  {
+                    "name": "Белград",
+                    "available": false,
+                    "country_code": "RS"
+                  },
+                  {
+                    "name": "Нови-Сад",
+                    "available": false,
+                    "country_code": "RS"
+                  }
+                ]
+              }
+            },
+            "questions": [
+              "Понял: Сербия. Какой город выбираем — Белград или Нови-Сад?"
+            ],
+            "target_id": null,
+            "question_id": "6fdaad90-2a6a-4c41-b626-d25e27a35a90-question",
+            "state_version": 0,
+            "requested_destination": {
+              "kind": "country",
+              "name": "Сербия",
+              "country_code": "RS",
+              "suggested_cities": [
+                {
+                  "name": "Белград",
+                  "available": false,
+                  "country_code": "RS"
+                },
+                {
+                  "name": "Нови-Сад",
+                  "available": false,
+                  "country_code": "RS"
+                }
+              ]
+            }
+          },
+          "trip": {
+            "legs": [],
+            "stays": [],
+            "budget": null,
+            "groups": [],
+            "origin": null,
+            "trip_id": "2a16d549-968a-454f-af48-3a7dde1052f3",
+            "travelers": [],
+            "constraints": [],
+            "preferences": [],
+            "route_policy": {
+              "kind": "round_trip",
+              "end_city": null
+            },
+            "search_policy": {
+              "mode": "HYBRID",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "duffel",
+              "guest_nationality": null
+            },
+            "state_version": 0
+          },
+          "llm": null,
+          "error": null,
+          "plans": 0,
+          "offer_sources_across_plans": {},
+          "warnings": []
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "case": "natural_single_city",
+      "steps": [
+        {
+          "input": "Найди поездку: один взрослый, без детей, из Казани в Стамбул с 10 по 15 ноября 2026 года, один номер, общий бюджет 180000 рублей. Нужен перелёт туда и обратно. Ищи через подключённые API.",
+          "run_status": "completed",
+          "reply": "Текущий состав: 1 взрослый; дети в сохранённом составе не указаны. Гражданство какой страны использовать для поиска отеля?",
+          "state_version": 1,
+          "model_calls": 1,
+          "tool_calls": 0,
+          "pending_question": {
+            "text": "Гражданство какой страны использовать для поиска отеля?",
+            "field": "search.guest_nationality",
+            "reason": "clarification",
+            "context": {
+              "children_count": 0,
+              "children_known": true,
+              "requested_destination": {
+                "kind": "city",
+                "name": "Стамбул",
+                "country_code": "TR"
+              }
+            },
+            "questions": [
+              "Гражданство какой страны использовать для поиска отеля?"
+            ],
+            "target_id": null,
+            "question_id": "8034ff03-7dfe-4f59-8142-4a6edcfc4c9c-question",
+            "state_version": 1,
+            "requested_destination": {
+              "kind": "city",
+              "name": "Стамбул",
+              "country_code": "TR"
+            }
+          },
+          "trip": {
+            "legs": [
+              {
+                "id": "leg-aa14147c-5a96-4b3f-a272-69a9d9260f96",
+                "mode": "flight",
+                "origin": "Казань",
+                "destination": "Стамбул",
+                "departure_date": "2026-11-10"
+              },
+              {
+                "id": "leg-05d5ea4e-7ef2-4d9a-b5b0-05d07a387b6f",
+                "mode": "flight",
+                "origin": "Стамбул",
+                "destination": "Казань",
+                "departure_date": "2026-11-15"
+              }
+            ],
+            "stays": [
+              {
+                "id": "new-stay-1",
+                "city": "Стамбул",
+                "rooms": [
+                  {
+                    "id": "new-room-1",
+                    "traveler_ids": [
+                      "new-traveler-1"
+                    ]
+                  }
+                ],
+                "check_in": "2026-11-10",
+                "hotel_id": null,
+                "check_out": "2026-11-15",
+                "requested_nights": 5
+              }
+            ],
+            "budget": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 18000000
+            },
+            "groups": [
+              {
+                "id": "new-group-1",
+                "traveler_ids": [
+                  "new-traveler-1"
+                ],
+                "keep_separate": false
+              }
+            ],
+            "origin": "Казань",
+            "trip_id": "10970097-5e32-4235-894e-5d79dba75afb",
+            "travelers": [
+              {
+                "id": "new-traveler-1",
+                "age": null,
+                "type": "adult",
+                "group_id": "new-group-1",
+                "birth_date": null
+              }
+            ],
+            "constraints": [],
+            "preferences": [],
+            "route_policy": {
+              "kind": "round_trip",
+              "end_city": null
+            },
+            "search_policy": {
+              "mode": "HYBRID",
+              "demo_fallback": true,
+              "hotel_provider": "liteapi",
+              "flight_provider": "duffel",
+              "guest_nationality": null
+            },
+            "state_version": 1
+          },
+          "llm": {
+            "model": "openai/gpt-oss-120b",
+            "usage": {
+              "input_tokens": 3396,
+              "total_tokens": 4120,
+              "output_tokens": 724
+            },
+            "attempts": [
+              {
+                "model": "openai/gpt-oss-120b",
+                "usage": {
+                  "input_tokens": 3396,
+                  "total_tokens": 4120,
+                  "output_tokens": 724
+                },
+                "outcome": "response",
+                "provider": "groq",
+                "latency_ms": 2216,
+                "request_metrics": {
+                  "prompt_sha256": "947c5a052db14fd5fc6757bccd010154c44546968c7f30f6d6e6e84c0e958560",
+                  "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+                  "schema_utf8_bytes": 7760,
+                  "system_utf8_bytes": 7969,
+                  "context_utf8_bytes": 5051
+                },
+                "structured_transport": {
+                  "format": "groq_strict_operations_v2",
+                  "operation_hints": {
+                    "version": "groq_operation_value_hints_v1",
+                    "hints_sha256": "3e4f0b9ac5abee8f61fafdbb484e8242303617a54365a7c842f3c4563df44772",
+                    "operation_types": [
+                      "set_origin",
+                      "set_budget",
+                      "set_preference",
+                      "clear_preference",
+                      "set_route_policy",
+                      "set_search_policy",
+                      "add_traveler",
+                      "upsert_group",
+                      "upsert_stay",
+                      "shift_return",
+                      "set_constraint",
+                      "clear_constraint",
+                      "undo"
+                    ],
+                    "hints_utf8_bytes": 2689,
+                    "original_schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+                    "operation_variant_count": 13,
+                    "reviewed_city_enum_sha256": "7d429976f57f4837e90ff5ef10df22bf5adfd3f35597ca5107d338bd5bfb0f48",
+                    "server_original_schema_required": true,
+                    "original_schema_canonical_sha256": "1c5146e545e6d268ed5f617baab9206b6ef7115d993b2ae97c58ce6d9a070301",
+                    "wire_exact_type_targets_required": true,
+                    "projection_equivalent_json_schema": false
+                  },
+                  "transport_version": 2,
+                  "wire_final_sha256": "5e48ef4a8785eb92d0fd378a91647989505bc05bb4062102d6595d3c5036df58",
+                  "wire_schema_sha256": "e0b7c9fa32e022420bafdb808b10a4ab523c04a374d1d9ac08491c3834af2e2f",
+                  "context_compression": {
+                    "version": "groq_operation_guide_en_v1",
+                    "changed_fields": [
+                      "instruction",
+                      "duration_contract",
+                      "leg_mode_contract",
+                      "group_contract",
+                      "room_constraint_contract",
+                      "room_membership_contract",
+                      "selection_contract",
+                      "constraint_contract",
+                      "route_contract",
+                      "coverage_rules",
+                      "schema_authoritative"
+                    ],
+                    "authority_label": "compact_hints_full_server_validation",
+                    "unrecognized_fields": [],
+                    "saved_value_utf8_bytes": 2409
+                  },
+                  "wire_schema_utf8_bytes": 1353,
+                  "wire_request_body_bytes": 15071,
+                  "semantic_schema_delivery": "compact_hints_full_server_validation",
+                  "wire_request_body_sha256": "242b367d5d5ddb99e7bc62c14582415896ef701b51eacff830672f90d599d02b",
+                  "validated_output_representation": "decoded_canonical_contract"
+                }
+              }
+            ],
+            "provider": "groq",
+            "latency_ms": 2216,
+            "request_metrics": {
+              "prompt_sha256": "947c5a052db14fd5fc6757bccd010154c44546968c7f30f6d6e6e84c0e958560",
+              "schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+              "schema_utf8_bytes": 7760,
+              "system_utf8_bytes": 7969,
+              "context_utf8_bytes": 5051
+            },
+            "structured_transport": {
+              "format": "groq_strict_operations_v2",
+              "operation_hints": {
+                "version": "groq_operation_value_hints_v1",
+                "hints_sha256": "3e4f0b9ac5abee8f61fafdbb484e8242303617a54365a7c842f3c4563df44772",
+                "operation_types": [
+                  "set_origin",
+                  "set_budget",
+                  "set_preference",
+                  "clear_preference",
+                  "set_route_policy",
+                  "set_search_policy",
+                  "add_traveler",
+                  "upsert_group",
+                  "upsert_stay",
+                  "shift_return",
+                  "set_constraint",
+                  "clear_constraint",
+                  "undo"
+                ],
+                "hints_utf8_bytes": 2689,
+                "original_schema_sha256": "2abe67f2be73fe963c51140a6b16436bd91e448d6b11e7dfece5bbd103fd9996",
+                "operation_variant_count": 13,
+                "reviewed_city_enum_sha256": "7d429976f57f4837e90ff5ef10df22bf5adfd3f35597ca5107d338bd5bfb0f48",
+                "server_original_schema_required": true,
+                "original_schema_canonical_sha256": "1c5146e545e6d268ed5f617baab9206b6ef7115d993b2ae97c58ce6d9a070301",
+                "wire_exact_type_targets_required": true,
+                "projection_equivalent_json_schema": false
+              },
+              "transport_version": 2,
+              "wire_final_sha256": "5e48ef4a8785eb92d0fd378a91647989505bc05bb4062102d6595d3c5036df58",
+              "wire_schema_sha256": "e0b7c9fa32e022420bafdb808b10a4ab523c04a374d1d9ac08491c3834af2e2f",
+              "context_compression": {
+                "version": "groq_operation_guide_en_v1",
+                "changed_fields": [
+                  "instruction",
+                  "duration_contract",
+                  "leg_mode_contract",
+                  "group_contract",
+                  "room_constraint_contract",
+                  "room_membership_contract",
+                  "selection_contract",
+                  "constraint_contract",
+                  "route_contract",
+                  "coverage_rules",
+                  "schema_authoritative"
+                ],
+                "authority_label": "compact_hints_full_server_validation",
+                "unrecognized_fields": [],
+                "saved_value_utf8_bytes": 2409
+              },
+              "wire_schema_utf8_bytes": 1353,
+              "wire_request_body_bytes": 15071,
+              "semantic_schema_delivery": "compact_hints_full_server_validation",
+              "wire_request_body_sha256": "242b367d5d5ddb99e7bc62c14582415896ef701b51eacff830672f90d599d02b",
+              "validated_output_representation": "decoded_canonical_contract"
+            }
+          },
+          "error": null,
+          "plans": 0,
+          "offer_sources_across_plans": {},
+          "warnings": []
+        }
+      ],
+      "status": "PASS"
+    }
+  ],
+  "finished_at": "2026-10-27T10:43:09.088427+00:00",
+  "limitations": [
+    "Only the listed steps are qualified; no full80/106 acceptance.",
+    "SANDBOX/DEMO remain labeled; no supplier booking or payment occurred.",
+    "Original5f4 actual country-wish model error is preserved separately."
+  ]
+}

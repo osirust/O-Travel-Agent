@@ -1,0 +1,172 @@
+{
+  "format": "otravel.dialogue_regressions.expected.v1",
+  "revision": 1,
+  "frozen_at_utc": "2026-10-25T18:26:16.788386+00:00",
+  "provenance_class": "DEVELOPMENT_REGRESSION_NOT_HOLDOUT",
+  "sources": {
+    "owner11_v1": {
+      "path": "fixtures/evaluation/owner-dialogue-extended-v1.json",
+      "sha256": "4c628fb7928dcd159c6a174adf4276586936544df17edbfd5d2f6c69c027dd22"
+    },
+    "policy_v2": {
+      "path": "fixtures/evaluation/owner-dialogue-extended-policy-v2.json",
+      "sha256": "6bbdb9493dd24e2b3ce32e14ae7d888bfa59e36bf2207d6d01eaff234410d5c1"
+    },
+    "erratum_v3": {
+      "path": "fixtures/evaluation/owner-dialogue-policy-v3-erratum.json",
+      "sha256": "478dbc1eadc6686afb600b0d94c8fc9242e3b9cbfe4ba4e23662e0e178dcd49d"
+    },
+    "derived_b": {
+      "path": "fixtures/evaluation/owner-dialogue-compound-derived-v1.json",
+      "sha256": "b80c9e60eb8841501df67a6251cedc421dee702c1e97ad2af274067f899a5d9f"
+    },
+    "historical8_provenance_only": {
+      "path": "fixtures/evaluation/owner-dialogue-compound-history-v1.json",
+      "sha256": "3145cc98f2e2093214192cf4c16ed8a35d2ed9030f9f8553cd4ae865a12863af"
+    }
+  },
+  "executor_sha256": "04909598543be390f3cda98bb646ec918f7eecc0a5b10b3353bbb2f5df3d7ec7",
+  "grader_sha256": "04909598543be390f3cda98bb646ec918f7eecc0a5b10b3353bbb2f5df3d7ec7",
+  "grader_embedded_in_executor": true,
+  "helpers": {
+    "scripts/evaluate_acceptance_pilot.py": "b77d9558b5b4cdfa7940e80f74e58fc3ad4ad615e8bec1a74376c335138e252f",
+    "scripts/evaluate_owner_dialogues.py": "36e7d804c9681958496bad22aca10187f5362df697b5fb67bd955322cb3e725c",
+    "scripts/check_acceptance_pilot.py": "4c69178c20d26415d2252ca03041a708e551828c4389b100982f58d43711d870"
+  },
+  "clock": {
+    "reference_date": "2026-10-25",
+    "timezone": "Europe/Moscow",
+    "runtime_clock_injected": false,
+    "actual_b_requires_matching_client_msk_date": true,
+    "server_clock_binding": "INDEPENDENT_WSL_CLOCK_CHECK_THEN_EXPLICIT_OPERATOR_DATE_FLAG_REQUIRED"
+  },
+  "cases": [
+    {
+      "id": "A",
+      "provenance": "EXACT_OWNER11_WITH_V2_V3_POLICY",
+      "messages": [
+        "сербию знаешь?",
+        "сербия",
+        "стамбул",
+        "нет",
+        "белгород",
+        "минимум стоимости",
+        "москва",
+        "1",
+        "0",
+        "белгород",
+        "белград"
+      ]
+    },
+    {
+      "id": "B",
+      "provenance": "DERIVED_DEVELOPMENT_NOT_ORIGINAL_TRANSCRIPT",
+      "messages": [
+        "белград в сербии из москвы рано утром, детей нет, один взрослый",
+        "Замени направление Белград на Санкт-Петербург",
+        "да",
+        "26.10.2026",
+        "завтра"
+      ],
+      "conditional_turn_3": "only actual destination-change confirmation; already selected SPb => NOT_NEEDED"
+    }
+  ],
+  "bound_expectations": {
+    "every_observed_turn": [
+      "completed run without error",
+      "one durable human assistant reply",
+      "no order",
+      "no search tool call",
+      "budget remains null",
+      "provider and handler evidence consistent"
+    ],
+    "A": {
+      "1": [
+        "FAQ about Serbia answers knowledge without any TripState or requested-destination mutation"
+      ],
+      "2": [
+        "requested country RS; no concrete city invented"
+      ],
+      "3": [
+        "TR/RS mismatch explained; explicit destination confirmation; no origin/stay mutation"
+      ],
+      "4": [
+        "requires actual preceding TR confirmation; reject TR, retain RS; not global pause"
+      ],
+      "5,10": [
+        "strong RS typo resolves as Belgrade/RS with visible acknowledgement"
+      ],
+      "6..11": [
+        "price_priority=lowest_total persists; never numeric budget"
+      ],
+      "7": [
+        "requires actual origin.city question; origin Moscow; missing prerequisite is DEPENDENCY, not A6 forced-flow failure"
+      ],
+      "8": [
+        "requires actual party.adults question; exactly one adult"
+      ],
+      "9": [
+        "requires actual party.children question; zero children explicitly remembered"
+      ],
+      "7..11": [
+        "Moscow retained"
+      ],
+      "8..11": [
+        "one adult retained"
+      ],
+      "9..11": [
+        "zero children retained"
+      ],
+      "11": [
+        "Belgrade RS intent retained in canonical stay or durable requested-city context"
+      ]
+    },
+    "B": {
+      "1": [
+        "Belgrade RS; Moscow origin; adult1/child0; departure_time=early_morning; no invented exact hour; no repeated party question"
+      ],
+      "2": [
+        "SPb replaces DESTINATION or specific destination confirmation; Moscow never replaced"
+      ],
+      "3": [
+        "send yes only for specific destination confirmation; already SPb => NOT_NEEDED; otherwise DEPENDENCY"
+      ],
+      "4": [
+        "requires stay.check_in question; check_in=2026-10-26"
+      ],
+      "5": [
+        "requires stay.check_out question; on verified25OctMSK tomorrow equals check-in; keep checkout unknown and ask later date; no silent +1day or INVALID_LLM failure"
+      ],
+      "all": [
+        "all explicit compound facts/preferences retained",
+        "verified runtime reference date25OctMSK required"
+      ]
+    }
+  },
+  "binding": {
+    "status": "BOUND_DEVELOPMENT_CHECKS_ONLY",
+    "grader_entrypoint": "grade_turn",
+    "unbound": [
+      "complete natural-language behavior",
+      "all106",
+      "live search availability",
+      "global cheapest",
+      "full UI"
+    ],
+    "full_scenario_status": "BLOCKED_ORACLE"
+  },
+  "policy": {
+    "previous_slot_required": true,
+    "no_reinterpretation_of_bare_numbers": true,
+    "actual_provider": "ollama",
+    "actual_model": "qwen3.5:4b",
+    "max_actual_model_attempts": 12,
+    "original106_used": false,
+    "no_supplier_requests": true
+  },
+  "execution": {
+    "status": "NOT_RUN",
+    "http_calls": 0,
+    "model_calls": 0
+  }
+}

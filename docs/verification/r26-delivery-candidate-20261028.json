@@ -1,0 +1,69 @@
+{
+  "status": "UNIVERSAL_API_AND_JURY_DELIVERY_CANDIDATE",
+  "base_commit": "ae7d2b45f654be0dfd9bc5b0660db0c3d23198d3",
+  "external_llm": {
+    "formats": [
+      "openai",
+      "gemini",
+      "anthropic"
+    ],
+    "related_passed": 392,
+    "actual_openai_compatible_http": 2,
+    "actual_checks_passed": 10,
+    "gemini_anthropic": "controlled wire and PostgreSQL only"
+  },
+  "geo": {
+    "controlled_passed": 546,
+    "actual_model_http": 1,
+    "actual_directory_http": 1,
+    "auto_city_admission": false
+  },
+  "frontend": {
+    "unit_passed": 38,
+    "production_build": "PASS",
+    "actual_property_photos": "20 hotel offers, actual JPEGs decoded",
+    "booked_state": "controlled browser PASS, zero repeated POSTs"
+  },
+  "fx": {
+    "bounded_timeout_seconds": 20,
+    "prior_bound_seconds": 10,
+    "actual_xml_get_seconds": 11.098,
+    "actual_xml_get_status": 200,
+    "related_passed": 137,
+    "original_single_timeout_assertion_failure_retained": true
+  },
+  "final_targeted": {
+    "passed": 62,
+    "failed": 0,
+    "scope": "external formats, real API/PG, private trace and travel-only key delivery"
+  },
+  "full_r4": {
+    "passed": 7663,
+    "failed": 1,
+    "source_changed_during_test": true,
+    "qualified_final_release": false
+  },
+  "full_r5": {
+    "passed": 7663,
+    "failed": 1,
+    "source_changed_during_test": false,
+    "failure": "New external Anthropic PG test did not finish within shared 3s polling helper; no schema/state assertion failed"
+  },
+  "polling_test_change": "Only the new external PG module uses a bounded10s monotonic deadline with unchanged terminal/privacy/state/model-count assertions; legacy helpers remain unchanged",
+  "full_r6": "PENDING_FROZEN_SOURCE_RUN",
+  "final_40": "PLANNED_NOT_RUN",
+  "old_80": "Stopped by owner at known completed boundary; not continued",
+  "secrets": {
+    "filename": "secrets.env.age",
+    "binary_age": true,
+    "bytes": 2109,
+    "ciphertext_sha256": "0a6f6b336548bee747aba1ee5fe2b05da5050317f7a3d15ead06844c3f5649c9",
+    "travel_credentials": 3,
+    "developer_llm_credentials": 0,
+    "env_names": 78,
+    "recipient_llm_configuration_required": true,
+    "provenance": "Owner-authorized existing project sandbox/test/search keys"
+  },
+  "real_supplier_booking_or_payment": false,
+  "local_qwen_calls": 0
+}

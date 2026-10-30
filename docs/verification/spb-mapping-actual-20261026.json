@@ -1,0 +1,359 @@
+{
+  "started_at": "2026-10-26T13:34:58.798863+00:00",
+  "status": "PASS_ACTUAL_SPB_LOOKUP_MAPPING",
+  "source_commit": "6009644be59d2f5bcb998df41ee1355fa468b6d3",
+  "manifest_sha256": "e2bdb67f1eca8ec74822313b01d589494c5c5a2b40f6a95cdd54a7bbf664b017",
+  "fixture_sha256": "aadcf375420a06676c9a350bb8e4d5db169a41dcfe755e82a61aee55a8da3bd8",
+  "scope": "actual typed SPb lookup/rates via deployed TravelGateway; no NLU or checkout",
+  "llm_calls": 0,
+  "preview_calls": 0,
+  "orders_created": 0,
+  "supplier_HTTP_count": "UNKNOWN_PUBLIC_API_TOOL_EVENTS_ARE_NOT_WIRE_COUNTERS",
+  "lookup_rows": 3,
+  "hotel_rates_count": 14,
+  "tool_calls_used": 4,
+  "durable_tool_counts": {
+    "resolve_hotels": 1,
+    "search_hotels": 1,
+    "search_flights": 2
+  },
+  "plan_count": 1,
+  "plans": [
+    {
+      "source_type": "MIXED",
+      "currency": "RUB",
+      "total_minor": 4507077,
+      "coverage": {
+        "covered": [
+          "hotel:stay-spb:room-solo",
+          "leg:leg-back",
+          "leg:leg-out",
+          "transfer:stay-spb"
+        ],
+        "missing": [],
+        "complete": true,
+        "required": [
+          "hotel:stay-spb:room-solo",
+          "leg:leg-out",
+          "leg:leg-back",
+          "transfer:stay-spb"
+        ],
+        "overlapping": []
+      },
+      "ready_for_real_booking": false,
+      "ready_for_simulated_checkout": true,
+      "components": [
+        {
+          "kind": "hotel",
+          "source_type": "SANDBOX",
+          "provider": "liteapi",
+          "currency": "RUB",
+          "amount_minor": 2667077,
+          "retrieved_at": "2026-10-26T13:35:05.371991+00:00",
+          "expires_at": "2026-10-26T13:40:05.371991+00:00",
+          "price_kind": "PROVIDER_ROOMS_STAY_TOTAL",
+          "mandatory_fees_known": true,
+          "allocation_verified": true,
+          "capacity_verified": true,
+          "availability_verified": false,
+          "native_offer_sha256": "b333a3faaa548dd63fa9c5a007eea507e66bc62143b506097599e55f213868fd",
+          "hotel_id": "lp34fe1"
+        },
+        {
+          "kind": "flight",
+          "source_type": "DEMO",
+          "provider": "demo_inventory",
+          "currency": "RUB",
+          "amount_minor": 900000,
+          "retrieved_at": null,
+          "expires_at": null,
+          "price_kind": "synthetic",
+          "mandatory_fees_known": null,
+          "allocation_verified": null,
+          "capacity_verified": null,
+          "availability_verified": null,
+          "native_offer_sha256": null,
+          "hotel_id": null
+        },
+        {
+          "kind": "flight",
+          "source_type": "DEMO",
+          "provider": "demo_inventory",
+          "currency": "RUB",
+          "amount_minor": 900000,
+          "retrieved_at": null,
+          "expires_at": null,
+          "price_kind": "synthetic",
+          "mandatory_fees_known": null,
+          "allocation_verified": null,
+          "capacity_verified": null,
+          "availability_verified": null,
+          "native_offer_sha256": null,
+          "hotel_id": null
+        },
+        {
+          "kind": "transfer",
+          "source_type": "DEMO",
+          "provider": "demo_inventory",
+          "currency": "RUB",
+          "amount_minor": 40000,
+          "retrieved_at": null,
+          "expires_at": null,
+          "price_kind": "synthetic",
+          "mandatory_fees_known": null,
+          "allocation_verified": null,
+          "capacity_verified": null,
+          "availability_verified": null,
+          "native_offer_sha256": null,
+          "hotel_id": null
+        }
+      ]
+    }
+  ],
+  "component_rejections": [
+    {
+      "code": "NO_VERIFIED_COMPONENT",
+      "reason_codes": [
+        "unpriced_or_fx_required"
+      ]
+    },
+    {
+      "code": "NO_VERIFIED_COMPONENT",
+      "reason_codes": [
+        "unpriced_or_fx_required"
+      ]
+    }
+  ],
+  "runtime_identity_before": {
+    "pid": 1066443,
+    "start_ticks": 9170528,
+    "manifest_sha256": "e2bdb67f1eca8ec74822313b01d589494c5c5a2b40f6a95cdd54a7bbf664b017"
+  },
+  "runtime_identity_after": {
+    "pid": 1066443,
+    "start_ticks": 9170528,
+    "manifest_sha256": "e2bdb67f1eca8ec74822313b01d589494c5c5a2b40f6a95cdd54a7bbf664b017"
+  },
+  "runtime_unchanged": true,
+  "completed_at": "2026-10-26T13:35:06.098711+00:00",
+  "local_HTTP_count": 35,
+  "POST_counts": {
+    "session": 1,
+    "search": 1
+  },
+  "local_HTTP_ledger": [
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:58.807100+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:58.830852+00:00",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "kind": "session",
+      "at": "2026-10-26T13:34:58.839843+00:00",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "kind": "search",
+      "at": "2026-10-26T13:34:58.853682+00:00",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:58.871089+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:59.134698+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:59.410410+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:59.676418+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:34:59.941193+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:00.206493+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:00.471696+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:00.736176+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:01.001199+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:01.266335+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:01.531755+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:01.796745+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:02.062431+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:02.327524+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:02.592774+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:02.857316+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:03.122725+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:03.388530+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:03.654129+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:03.919830+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:04.184492+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:04.449150+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:04.713078+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:04.978084+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:05.243453+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:05.507868+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:05.772185+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:06.038326+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:06.053899+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:06.068792+00:00",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "kind": "read",
+      "at": "2026-10-26T13:35:06.083251+00:00",
+      "status": 200
+    }
+  ],
+  "private_vault_mode": "0o600",
+  "private_vault_sha256": "54323ab4de6811c34166b7eaf6a0455beca5b72ecebeb013b6abad36dd048681",
+  "runner_sha256": "0eaf1fa032acc54909eed442d6f79ea5721af070b845b31ed54a161ac36757f4"
+}

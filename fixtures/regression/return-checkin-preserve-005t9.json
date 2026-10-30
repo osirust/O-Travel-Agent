@@ -1,0 +1,201 @@
+{
+  "finding_id": "HARNESS-004-UNASKED-RETURN-REPLAY-001",
+  "source_case": "/home/aegml/.local/evaluation/new80-zai45-20261028-071538-645fdb70/ZAI100-005.json",
+  "source_case_sha256": "1267e6b1bd732f58e5a7d55b71ae7d4d48bc763f21acb53cbac5f8391de250a4",
+  "turn_pointer": "/turns/8",
+  "input": "Сделай выезд на один день позжэ, заезд не трогай. Сколько ночей получится?",
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-7c9c051b-fff2-454a-95ed-bdb4c4028013",
+        "mode": "flight",
+        "origin": "Санкт-Петербург",
+        "destination": "Дубай",
+        "departure_date": "2026-11-18"
+      },
+      {
+        "id": "leg-5fee8ced-8af9-4069-845c-89dc9abbf741",
+        "mode": "flight",
+        "origin": "Дубай",
+        "destination": "Санкт-Петербург",
+        "departure_date": "2026-11-24"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Дубай",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ],
+        "check_in": "2026-11-18",
+        "hotel_id": null,
+        "check_out": "2026-11-24",
+        "requested_nights": 6
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 14000000
+    },
+    "groups": [],
+    "origin": "Санкт-Петербург",
+    "trip_id": "184aee3b-2440-469b-9735-fe21fa87949e",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": 0,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 5
+  },
+  "raw_contract": {
+    "value": {
+      "reply": "Если сдать выезд на один день позже, то количество ночей в Дубае станет 7.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "shift_return",
+          "value": {
+            "days": 1
+          },
+          "target_id": null
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "c868d1ae28459a03e4470c6c6eaa8ab4710103a9dbac82b0cd9bb27313775ab3",
+    "captured": true,
+    "utf8_bytes": 329
+  },
+  "observed_after_trip": {
+    "legs": [
+      {
+        "id": "leg-7c9c051b-fff2-454a-95ed-bdb4c4028013",
+        "mode": "flight",
+        "origin": "Санкт-Петербург",
+        "destination": "Дубай",
+        "departure_date": "2026-11-18"
+      },
+      {
+        "id": "leg-5fee8ced-8af9-4069-845c-89dc9abbf741",
+        "mode": "flight",
+        "origin": "Дубай",
+        "destination": "Санкт-Петербург",
+        "departure_date": "2026-11-24"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Дубай",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-3"
+            ]
+          }
+        ],
+        "check_in": "2026-11-18",
+        "hotel_id": null,
+        "check_out": "2026-11-24",
+        "requested_nights": 6
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 14000000
+    },
+    "groups": [],
+    "origin": "Санкт-Петербург",
+    "trip_id": "184aee3b-2440-469b-9735-fe21fa87949e",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": 0,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 5
+  },
+  "observed_assistant": [
+    "Выберите конкретное место по номеру или ID: 1. Дубай (AE, Дубай); 2. Дубаи Инвестменц Парк (AE, Дубай); 3. Дубай Марина (AE, Дубай)."
+  ],
+  "scope": "PURE_LOCAL_HELPER_REPLAY_NOT_LLM_OR_ASGI"
+}

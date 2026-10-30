@@ -1,0 +1,392 @@
+{
+  "format": "otravel.bulk32.literal_regressions.v1",
+  "source_checkpoint_reported_by_parent": "a36d76efea3f32d299559e6089cd89390f2cc887 / cd021acb7866bac91b249a5fdfc1454b4d27c366f02d061b5b72147083e94f27",
+  "records": [
+    {
+      "kind": "money",
+      "source_case": "ZAI100-002",
+      "source_turn": 7,
+      "source_file_sha256": "aa4c80836fa5a3350e5af20e056504ad653aeffb547c58f47d50ccdc77886a13",
+      "source_user_text": "Урежь обший бюджет на 20 тысяч рублей и напомни теперь возраста обоих детей.",
+      "before": {
+        "legs": [
+          {
+            "id": "leg-2ccd5966-b707-4a88-b122-b1a8e42a7874",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Анталья",
+            "departure_date": "2026-11-10"
+          },
+          {
+            "id": "leg-f3a59c42-4f0d-4346-8720-319c11841151",
+            "mode": "flight",
+            "origin": "Анталья",
+            "destination": "Казань",
+            "departure_date": "2026-11-17"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Анталья",
+            "rooms": [],
+            "check_in": "2026-11-10",
+            "hotel_id": null,
+            "check_out": "2026-11-17"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 15000000
+        },
+        "groups": [],
+        "origin": "Казань",
+        "trip_id": "bulk32-money-owned",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-3",
+            "age": 5,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-4",
+            "age": 9,
+            "type": "child",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 5
+      },
+      "pending": {
+        "text": "Сколько гостиничных номеров вам нужно в городе «Анталья»?",
+        "field": "stay.rooms",
+        "reason": "clarification",
+        "context": {
+          "requested_destination": {
+            "kind": "city",
+            "name": "Анталья",
+            "country_code": "TR"
+          }
+        },
+        "questions": [
+          "Сколько гостиничных номеров вам нужно в городе «Анталья»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "bulk32-money-question",
+        "state_version": 5,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Анталья",
+          "country_code": "TR"
+        }
+      },
+      "raw": {
+        "reply": "Бюджет уменьшен до 148 тысяч рублей. Возраст детей: младшему 5 лет, старшему 9 лет.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 14800000
+            },
+            "target_id": null
+          },
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 5
+            },
+            "target_id": "new-traveler-3"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "old_checked": {
+        "reply": "Бюджет уменьшен до 148 тысяч рублей. Возраст детей: младшему 5 лет, старшему 9 лет.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_budget",
+            "value": {
+              "scope": "whole_trip",
+              "currency": "RUB",
+              "amount_minor": 14800000
+            },
+            "target_id": null
+          },
+          {
+            "type": "update_traveler",
+            "value": {
+              "age": 5
+            },
+            "target_id": "new-traveler-3"
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "old_reply": "Сохранённый маршрут: Казань → Анталья → Казань.\n\nОстановка 1, Анталья: заезд 10.11.2026, выезд 17.11.2026; 7 ночей. Дети на дату заезда: 5 лет, 9 лет. Переезд 1, Казань → Анталья: отправление 10.11.2026. Переезд 2, Анталья → Казань: отправление 17.11.2026.\n\nТекущий состав: 2 взрослых; 2 ребёнка (5 лет, 9 лет).\n\nСохранённый бюджет на всю поездку: 148 000,00 RUB.\n\nСколько гостиничных номеров вам нужно в городе «Анталья»?",
+      "scope": "Source raw operations/text unchanged; trip/question opaque identifiers replaced by synthetic ownership labels. No bearer/supplierhotel/order IDs copied."
+    },
+    {
+      "kind": "date",
+      "source_case": "ZAI100-003",
+      "source_turn": 3,
+      "source_file_sha256": "3348a00eb2c926563cfbaba1acd5c4b17aa1666c9bb7a8ecb48622c63a3cd8ef",
+      "source_user_text": "10 ноября 2026 года выезжаем.",
+      "before": {
+        "legs": [],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Сочи",
+            "rooms": [],
+            "check_in": "2026-11-06",
+            "hotel_id": null,
+            "check_out": null
+          }
+        ],
+        "budget": null,
+        "groups": [],
+        "origin": "Москва",
+        "trip_id": "bulk32-date-owned",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          },
+          {
+            "id": "new-traveler-2",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 2
+      },
+      "pending": {
+        "text": "На какую дату планируете выезд в городе «Сочи»?",
+        "field": "stay.check_out",
+        "reason": "clarification",
+        "context": {
+          "children_count": 0,
+          "children_known": true,
+          "requested_destination": {
+            "kind": "city",
+            "name": "Сочи",
+            "country_code": "RU"
+          }
+        },
+        "questions": [
+          "На какую дату планируете выезд в городе «Сочи»?"
+        ],
+        "target_id": "new-stay-1",
+        "question_id": "bulk32-date-question",
+        "state_version": 2,
+        "requested_destination": {
+          "kind": "city",
+          "name": "Сочи",
+          "country_code": "RU"
+        }
+      },
+      "raw": {
+        "reply": "Я понял, что вы хотите выехать 10 ноября 2026 года. Это означает, что ваше пребывание в Сочи будет с 6 по 10 ноября (4 ночи). Я добавил предпочтение на перелеты с пересадками, чтобы было проще найти варианты.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_constraint",
+            "value": {
+              "key": "nonstop",
+              "hard": false,
+              "value": false
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "old_checked": {
+        "reply": "Я понял, что вы хотите выехать 10 ноября 2026 года. Это означает, что ваше пребывание в Сочи будет с 6 по 10 ноября (4 ночи). Я добавил предпочтение на перелеты с пересадками, чтобы было проще найти варианты.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "old_reply": "На какую дату планируете выезд в городе «Сочи»?",
+      "scope": "Source raw operations/text unchanged; trip/question opaque identifiers replaced by synthetic ownership labels. No bearer/supplierhotel/order IDs copied."
+    },
+    {
+      "kind": "preference",
+      "source_case": "ZAI100-004",
+      "source_turn": 9,
+      "source_file_sha256": "f1e3b66f986227bef4de5f788de41ca12e28ede5de0a53b240639ad841dc5579",
+      "source_user_text": "Вылет лучше рано утрам. На какое число у меня сейчас выезд из отеля?",
+      "before": {
+        "legs": [
+          {
+            "id": "leg-d5a54f0c-9243-4f7c-aa8d-124e25d872d6",
+            "mode": "flight",
+            "origin": "Казань",
+            "destination": "Москва",
+            "departure_date": "2026-11-12"
+          },
+          {
+            "id": "leg-a4e89358-f4a8-48d7-8d3d-ab9c9ee98fdc",
+            "mode": "flight",
+            "origin": "Москва",
+            "destination": "Казань",
+            "departure_date": "2026-11-15"
+          }
+        ],
+        "stays": [
+          {
+            "id": "new-stay-1",
+            "city": "Москва",
+            "rooms": [
+              {
+                "id": "new-room-1",
+                "traveler_ids": []
+              }
+            ],
+            "check_in": "2026-11-12",
+            "hotel_id": null,
+            "check_out": "2026-11-15"
+          }
+        ],
+        "budget": {
+          "scope": "whole_trip",
+          "currency": "RUB",
+          "amount_minor": 7000000
+        },
+        "groups": [],
+        "origin": "Казань",
+        "trip_id": "bulk32-preference-owned",
+        "travelers": [
+          {
+            "id": "new-traveler-1",
+            "age": null,
+            "type": "adult",
+            "group_id": null,
+            "birth_date": null
+          }
+        ],
+        "constraints": [],
+        "preferences": [],
+        "route_policy": {
+          "kind": "round_trip",
+          "end_city": null
+        },
+        "search_policy": {
+          "mode": "HYBRID",
+          "demo_fallback": true,
+          "hotel_provider": "liteapi",
+          "flight_provider": "duffel",
+          "guest_nationality": "RU"
+        },
+        "state_version": 6
+      },
+      "pending": null,
+      "raw": {
+        "reply": "Ваш выезд из отеля в Москве запланирован на 15.11.2026. Добавлено предпочтение на ранний утренний вылет.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [
+          {
+            "type": "set_preference",
+            "value": {
+              "key": "departure_time",
+              "value": "early_morning"
+            },
+            "target_id": null
+          }
+        ],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "old_checked": {
+        "reply": "Ваш выезд из отеля в Москве запланирован на 15.11.2026. Добавлено предпочтение на ранний утренний вылет.",
+        "control": {
+          "action": "continue"
+        },
+        "unknowns": [],
+        "conflicts": [],
+        "operations": [],
+        "speech_act": "CHANGE",
+        "information_subject": null
+      },
+      "old_reply": "Поездка и показанные варианты не изменены.",
+      "scope": "Source raw operations/text unchanged; trip/question opaque identifiers replaced by synthetic ownership labels. No bearer/supplierhotel/order IDs copied."
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "started_at": "2026-10-26T23:53:18.154360+00:00",
+  "scope": "One instrumented original route plus one meaningfully changed control",
+  "source_initial_receipt": "travel-source-smoke-20261027.json",
+  "model_calls": 0,
+  "booking_calls": 0,
+  "automatic_retries": 0,
+  "cases": [
+    {
+      "reason": "Original route with safe error instrumentation",
+      "request": {
+        "slices": [
+          {
+            "origin": "MOW",
+            "destination": "DXB",
+            "departure_date": "2026-11-10"
+          }
+        ],
+        "adults": 1,
+        "children": 0,
+        "currency": "RUB"
+      },
+      "http_status": 200,
+      "provider_error": "Google Flights hasn't returned any results for this query.",
+      "status": "PROVIDER_UNAVAILABLE",
+      "normalized_error_code": "PROVIDER_RESPONSE_ERROR"
+    },
+    {
+      "reason": "Different non-Russian origin route control",
+      "request": {
+        "slices": [
+          {
+            "origin": "IST",
+            "destination": "DXB",
+            "departure_date": "2026-11-10"
+          }
+        ],
+        "adults": 1,
+        "children": 0,
+        "currency": "RUB"
+      },
+      "http_status": 200,
+      "provider_error": null,
+      "status": "NORMALIZED_INDICATIVE_OFFERS",
+      "offer_count": 12,
+      "sample": [
+        {
+          "amount_minor": 2186900,
+          "currency": "RUB",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_ITINERARY_TOTAL",
+          "flights": [
+            {
+              "airline": "flydubai",
+              "flight_number": "FZ 756",
+              "travel_class": "Economy"
+            }
+          ]
+        },
+        {
+          "amount_minor": 2186900,
+          "currency": "RUB",
+          "source_type": "LIVE_INDICATIVE",
+          "price_kind": "INDICATIVE_ITINERARY_TOTAL",
+          "flights": [
+            {
+              "airline": "flydubai",
+              "flight_number": "FZ 728",
+              "travel_class": "Economy"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "http_attempts": 2,
+  "finished_at": "2026-10-26T23:53:21.635988+00:00",
+  "references": [
+    "https://serpapi.com/google-flights-api",
+    "https://support.google.com/travel/answer/2475306?hl=en"
+  ],
+  "diagnosis": {
+    "status": "SELECTED_QUERY_NO_RESULTS_WITH_POSITIVE_ROUTE_CONTROL",
+    "original_provider_message": "Google Flights has not returned results for the selected MOW-DXB query.",
+    "control": "Same date, currency, adults, children and one-way settings; origin IST returns12indicativeoffers.",
+    "confirmed": "Key/service can respond; no error about invalid parameter or exhausted quota returned in this attempt.",
+    "not_confirmed": [
+      "Russia-wide source exclusion",
+      "MOW metropolitan-code resolution versus specific Moscow airports",
+      "Absence of real flights",
+      "Equivalent supplier rates or bookable fare"
+    ],
+    "production_change": "NONE_NO_PROVEN_PARAMETER_BUG"
+  },
+  "normalizer_change": {
+    "scope": "Only fixed SerpApi GET/search.json engine=google_flights HTTP200 and exact observed error string; no conflicting error/results accepted",
+    "result": "ProviderError NO_MATCHES with code-owned safe explanation",
+    "unknown_auth_rate_other_engine_errors": "UNCHANGED",
+    "actual_HTTP_after_normalizer_change": 0,
+    "controlled_validation": "267 related PASS/0skip in4.93s; includes orchestrator/explanation, prebook PG, exact/unknown/shape/auth/rate guards",
+    "Ruff_new_test": "PASS",
+    "fixture_sha256": "6c5e73c395c3a889488a6e20dfccf321633df49ea3099280f05bf97f38f647f0",
+    "test_sha256": "46039882895ca47e6fe833e0e4d440fd1f518eac1940cae0be563c46e47b0860"
+  }
+}

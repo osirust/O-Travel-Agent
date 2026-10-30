@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-27",
+  "status": "PASS_BOUNDED_MOCKED_ROOM_REFRESH_ATTRIBUTION",
+  "new_production_code": false,
+  "external_HTTP": 0,
+  "LLM": 0,
+  "PostgreSQL": 0,
+  "Native_changes": 0,
+  "scenario": "Same four-person roster; two stays/two rooms each; swap child ages3/12 between owned rooms of first stay",
+  "patch_changes": [
+    {
+      "operation": "set_room_members",
+      "target_id": "r1",
+      "field": "stays"
+    },
+    {
+      "operation": "set_room_members",
+      "target_id": "r2",
+      "field": "stays"
+    }
+  ],
+  "full_setter_equivalent_state": true,
+  "same_passenger_roster": true,
+  "same_route_ids_dates_modes": true,
+  "automatic_model_change_search_gate": true,
+  "equivalent_fresh_search_calls": true,
+  "mocked_per_search": {
+    "hotel_searches": 2,
+    "flight_searches": 3,
+    "static_resolvers": 2
+  },
+  "first_stay_new_occupancies": [
+    {
+      "adults": 1,
+      "children": [
+        12
+      ]
+    },
+    {
+      "adults": 1,
+      "children": [
+        3
+      ]
+    }
+  ],
+  "old_first_hotel_amount_minor": 1027000,
+  "fresh_first_hotel_amount_minor": 1018000,
+  "second_stay_hotel_amount_minor": 1027000,
+  "both_hotels_fresh_source_generation": 2,
+  "new_plan_deep_equal_for_both_operations": true,
+  "previous_plan_not_mutated": true,
+  "source_comparison_requires_new_confirmation": true,
+  "old_offers_with_only_binding_version_restamped": {
+    "ready_for_simulated_checkout": false,
+    "blockers": [
+      "changed_allocation"
+    ]
+  },
+  "code_review": {
+    "TripSearch": "Every HYBRID search rebuilds all stay/leg requests from the full current state. previous_plan is comparison input only.",
+    "search_gate": "should_search uses changed boolean, not change.target_id or operation-type enum.",
+    "gateway_cache": "TravelGateway caches only static hotel catalogue lookup; rates/availability are not cached there.",
+    "typed_commands_search_false": "Explicit no-search edit does not qualify new offers; old plan state_version is rejected by current-plan/preview gates.",
+    "optimization": "This is full bounded recomputation, not optimized selective hotel-only refresh. Transport is re-searched too."
+  },
+  "source_files": {
+    "otravel/domain.py": "9e3eac79955822996261d844f63ec0c4514adb69d2bce9203e049666a7db5f8c",
+    "otravel/orchestrator.py": "7f158bfdf58c925d09ae982adc29218358efa8eb3edea61bf467d2ce1549c905",
+    "otravel/planning.py": "46e849a164d0b10a11ea595afbb4a341efb1f1b718cb9612fd168cb2156b5f1f",
+    "otravel/conversational.py": "7e0a61eb51ed4399e0b2cfc0bbd94ae6f7e6dee9e3155f7c9d20c5e77600d9c8",
+    "otravel/harness.py": "6e33ea87395fc4dc318005400570040727d4dbfa5c63ffeceda4104a49d8e8e9",
+    "otravel/providers.py": "d1b2948e689eb2186c3ab1d8c8b99022ecba2c53ea445c66a1e99b40b676f93d"
+  },
+  "not_claimed": [
+    "actual supplier HTTP freshness",
+    "Complete API/PG reallocation replay in this audit",
+    "A dependency cache implementation",
+    "Full language or original80/106 qualification"
+  ]
+}

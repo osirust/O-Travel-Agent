@@ -1,0 +1,92 @@
+{
+  "format": "otravel.existing-city-scope.repair.v1",
+  "created_at": "2026-10-27T05:20:51.461503+00:00",
+  "finding_id": "HARNESS-004-COMPOUND-CITY-REFERENCE-ASK-001",
+  "status": "CONTROLLED_FLOW_FIX_PASS_ACTUAL_TRANSITION_RETEST_PENDING",
+  "actual_source": {
+    "commit": "93f91fda439b85c4825b890bfbe121c62ffdb22f",
+    "package_sha256": "f82e210d1e98a0f4a2207207e498d0886afe77cf3fa9b3ccbed923f986740f72",
+    "projection": {
+      "path": "fixtures/regression/actual-wow-router-r5-20261027.json",
+      "sha256": "35e8d354a1605b04dd6ef4bea0051b3d8b317f02e9e17aeb1f3382d98a0e58d6",
+      "bytes": 51998
+    },
+    "original_score": "PASS",
+    "score_rewritten": false
+  },
+  "cause": {
+    "function": "intent_grounding._facts → ground_intent_operations",
+    "trace": "The generic _TO parser puts hotel-in-Antalya and breakfast-in-Istanbul into two destination facts. The multiple-destinations/not-multicity condition emits an initial destination-choice question even though every referenced city is already in the ordered route and the raw batch does not edit city topology.",
+    "operations_unchanged": true,
+    "guard_created_question": "Выберите один город назначения или явно опишите последовательность остановок."
+  },
+  "action": "Suppress only that initial question for proved existing stay scopes: saved multiple cities, every destination already owned, hotel/room/condition/date scope, no changed city/new stay/origin/route policy, no country/alternative/active geography proposal or explicit route wish. Leave genuine new-route, replacement and country-question paths unchanged.",
+  "files": [
+    {
+      "path": "otravel/intent_grounding.py",
+      "sha256": "9072e38639b5994d3dfd03b0edeb72ad18c0b08f2216a12e5108c6f122749e2f",
+      "bytes": 50854
+    },
+    {
+      "path": "tests/test_existing_city_scope.py",
+      "sha256": "c6cec9abf929e7428e8d5b78b4808ff559598b974639b4c2792830907e13b3e7",
+      "bytes": 5467
+    },
+    {
+      "path": "tests/test_harness_existing_city_scope.py",
+      "sha256": "d4fef259a504856483ab78bbf1ed868785e111df730a418e000a89d75860efc5",
+      "bytes": 4173
+    }
+  ],
+  "initial_reproductions": {
+    "path": ".local/evaluation/geo-20261027/existing-city-scope-initial.xml",
+    "sha256": "46e279caeac8f10d62b2d6cfd12db9d4185834fe1d84a29f8daa79667d2ab5ab",
+    "bytes": 1956,
+    "tests": 3,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0
+  },
+  "related_verification": {
+    "path": ".local/evaluation/geo-20261027/existing-city-scope-related-final.xml",
+    "sha256": "df3e4ec7e94000184b9a222109baf00593fea8935712ee6dfcdc53d3bb02fb00",
+    "bytes": 42951,
+    "tests": 159,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cached_flow_projection_verification": {
+    "path": ".local/evaluation/geo-20261027/existing-city-scope-cached-projection.xml",
+    "sha256": "3edded7cf5f3de0618ee0a4cfbec00e25d235138ea47be0a60fbf432248b64ba",
+    "bytes": 405,
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cached_flow_projection": {
+    "path": ".local/evaluation/geo-20261027/existing-city-cached-flow-pass-002c56c295954df68d59295bd34130a7.json",
+    "sha256": "8fca619a04b09ca3d78547ce241efa158e329ffb1b54f03e55381163067d4531",
+    "bytes": 54222
+  },
+  "cached_flow_projection_sha256": "60884222ac3a1b7d71187ecf98f2accfed44361e0f5fe871907f3031102c2109",
+  "cached_flow_scope": {
+    "status": "OPTIONS_READY",
+    "pending_question": null,
+    "plans": 2,
+    "sources": [
+      "DEMO",
+      "DEMO"
+    ],
+    "model_adapter_calls": 1,
+    "new_remote_model_http": 0,
+    "same_state_oracles": "All original party/group/rooms/budget/selected-hotel/breakfast/date constraints remain asserted; the flow checks were added without weakening them."
+  },
+  "ruff": "PASS three owned files",
+  "hash_scope": "E working-tree bytes, not deployed-source identity.",
+  "closure": "Retest the real T4 NLU transition on a new immutable deployed package. Require OPTIONS_READY, no pending question and at least one current ready plan, alongside all original business facts. A pre-T4 typed bootstrap must be labelled explicitly; it is not a fresh full dialogue.",
+  "native_profile_unchanged": true,
+  "original_actual_scores_preserved": true,
+  "alias_of": "HARNESS-004-EXISTING-ROUTE-COMPONENT-GEO-ASK-001"
+}

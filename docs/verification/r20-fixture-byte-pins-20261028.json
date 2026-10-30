@@ -1,0 +1,38 @@
+{
+  "status": "STAGED_FIXTURE_BYTES_EXACT_MATCH_TESTED_WORKTREE",
+  "scope": "Attributes/index only; no fixture/application/test bytes changed.",
+  "fixtures": [
+    {
+      "path": "fixtures/regression/room4-age-current-078-20261028.json",
+      "tested_and_staged_sha256": "7804ee994a6a74abb6d5bf1913831b94e9f7c346068d788dbcc0205e659f9c66",
+      "prior_git_blob_sha256": "7804ee994a6a74abb6d5bf1913831b94e9f7c346068d788dbcc0205e659f9c66",
+      "prior_difference_only_eol": false
+    },
+    {
+      "path": "fixtures/regression/family-ordinal-count-076-20261028.json",
+      "tested_and_staged_sha256": "16146a3a53a24cabfe0a05f2446721811cd77fe061e045b7b2d75fc06982e6b3",
+      "prior_git_blob_sha256": "43dca3797773067effc8436317da392069998eccb17f43c3ea94eb659ff23e3c",
+      "prior_difference_only_eol": true
+    },
+    {
+      "path": "fixtures/regression/room-fact-labels077-20261028.json",
+      "tested_and_staged_sha256": "3eeaa44a31eae9e31ef19e8810bbaa0ed0def41af7d400f7e4c707b94cbeb90e",
+      "prior_git_blob_sha256": "0148ba0f759fc8d0303a248629d3d9aa12f001243b81174f4a5e414c723c7712",
+      "prior_difference_only_eol": true
+    },
+    {
+      "path": "fixtures/regression/readonly-now-prefix-079-20261028.json",
+      "tested_and_staged_sha256": "efbbd708b928c172d304caae1966c759d4cfeb1ec78c4552ec206991a38d6660",
+      "prior_git_blob_sha256": null,
+      "prior_difference_only_eol": false
+    },
+    {
+      "path": "fixtures/regression/group-pending-budget-080-20261028.json",
+      "tested_and_staged_sha256": "f573e358d85b6c180fb1fa1dafc53926cd59246ce602be2e4b6eb89ef9eb2545",
+      "prior_git_blob_sha256": null,
+      "prior_difference_only_eol": false
+    }
+  ],
+  "initial_metadata_attempt": "Ordinary git add retained old normalized blobs; assertion refused. Explicit --renormalize under -text then preserved the tested raw bytes.",
+  "note": "R19 receipts hash the tested Windows inputs. Earlier three Git blobs differed only by CRLF normalization. Historical receipts remain unchanged."
+}

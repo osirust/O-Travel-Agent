@@ -1,0 +1,124 @@
+{
+  "format": "otravel.price_media.backend_qa.v1",
+  "status": "CONTROLLED_CONTRACT_PASS_SCREENSHOT_UNBOUND_RATING_DTO_OPEN",
+  "date": "2026-10-27",
+  "new_actual_model_calls": 0,
+  "new_actual_supplier_calls": 0,
+  "database_writes": 0,
+  "native_changes": 0,
+  "runtime_source_changes": 0,
+  "new_files": [
+    "tests/test_price_media_contract_20261027.py",
+    "docs/testing/PRICE_MEDIA_BACKEND_QA_20261027.md"
+  ],
+  "test_file_sha256": "b5d6722b2c9020f5cc9c50d5bfd5cd33da80dcc0d5ff85f04f3223bca0c66302",
+  "analysis_sha256": "4547324c1c363d1b3dc59b5252d73b10191e900fec01d8890af9f2e5aa616d82",
+  "verification": {
+    "new_checks": 7,
+    "related_tests": 195,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 4.69,
+    "ruff": "PASS",
+    "junit": ".local/evaluation/after80-20261027/price-media-contract-related-final.xml",
+    "junit_sha256": "e5babc0ca6d0154a42d97e2959370964e558697ab7c5c416d8aa5fcd38d3c30e",
+    "immutable_runtime_package_qualified_by_this_suite": false,
+    "test_db_contacted_by_these_tests": false
+  },
+  "initial_test_expectation_error_preserved": {
+    "junit": ".local/evaluation/after80-20261027/price-media-contract-20261027.xml",
+    "sha256": "10f244865dc8646a2b1289bdd76deef30804223b849e527d6b819ba740d96f31",
+    "pass": 5,
+    "fail": 2,
+    "cause": "Author's incorrect expected31175EURminor*90.0935. Production returned correct2808665RUBminor. Only the new expected values were corrected; production was not edited."
+  },
+  "existing_actual_source": {
+    "scope": "Read-only saved R2 owner12+three followup observations, not the screenshot flight",
+    "package_sha256": "a6af0bbb3f3e56abce3afe398119ebef61c6c8645fd3b219c772c0797e1691f1",
+    "proof": ".local/evaluation/owner-serbia-20261027/ownerfix-isolated-r2-actual-safe-proof-status-corrected.json",
+    "proof_sha256": "f2a7b3fa1175c2a18d96d203807dc1a47625b42b679f41c8fa76adfba4cf51a1",
+    "successful_remote_model_responses": 4,
+    "exact_model_success_http_codes": "NOT_CAPTURED",
+    "supplier_and_reference_fx_http_requests": 17,
+    "source_rates_rub_per_eur": "90.0935",
+    "source_fx_as_of": "2026-10-27",
+    "fx_reference_only": true,
+    "observed_pairs": [
+      {
+        "native_amount_minor": 15020,
+        "native_currency": "EUR",
+        "budget_amount_minor": 1353204,
+        "budget_currency": "RUB"
+      },
+      {
+        "native_amount_minor": 15555,
+        "native_currency": "EUR",
+        "budget_amount_minor": 1401404,
+        "budget_currency": "RUB"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "PRICE-FRONTEND-DISPLAY-001",
+      "status": "SCREENSHOT_PAYLOAD_UNBOUND",
+      "screenshot_reported_rub_display": 2808681,
+      "specific_source_payload_found": false,
+      "frontend_mapper_reviewed": false,
+      "backend_or_frontend_bug_confirmed": false,
+      "conditional_minor_unit_interpretation": "If the actual card DTO is RUB minor2808681, its major value is RUB28086.81. That DTO has not been identified.",
+      "closure": "Bind the screenshot card to its actual offer/run JSON and concrete frontend formatting path; then verify group-total and native/projected currency semantics."
+    },
+    {
+      "id": "PRICE-DTO-UNITS-001",
+      "status": "CONTROLLED_PROVIDER_FX_PUBLIC_API_PASS",
+      "pipeline": "Mock Duffel311.75EUR group of2 -> TravelGateway -> assemble_plan -> GET /api/v1/runs/search",
+      "native_amount_minor": 31175,
+      "native_currency": "EUR",
+      "budget_amount_minor": 2808665,
+      "budget_currency": "RUB",
+      "major_projection": "28086.65",
+      "group_total_repeated_multiplication": false,
+      "partial_total_minor": null,
+      "partial_known_subtotal_minor": 2808665,
+      "screenshot_offer_observation": false
+    },
+    {
+      "id": "MEDIA-PARTIAL-PLAN-001",
+      "status": "CONTROLLED_PUBLIC_API_PASS",
+      "media_route_includes_saved_partial_plan": true,
+      "partial_checkout_preview_http_status": 404,
+      "priced_plan_changed_by_media": false,
+      "actual_new_media_requests": 0
+    },
+    {
+      "id": "MEDIA-HOTEL-IDENTITY-001",
+      "status": "CONTROLLED_PUBLIC_API_PASS",
+      "exact_supplier_property_id_required": true,
+      "same_name_different_response_id": "PLACEHOLDER",
+      "property_photo_promotes_availability_or_booking": false
+    },
+    {
+      "id": "MEDIA-RATING-SOURCE-001",
+      "status": "OPEN_PRESENTATION_DATA_GAP",
+      "current_normalized_stars_and_review_score_dto": false,
+      "fact": "The photo DTO does not publish hotel stars or review score. Do not invent defaults or reinterpret an untyped9.2 as stars.",
+      "closure": "Add separate supplier-bound hotel_stars and review_score metadata with scale/count/source, or hide absent values."
+    },
+    {
+      "id": "CABIN-CLASS-E2E-001",
+      "status": "OPEN_CHAT_TO_RESPONSE_CONTRACT",
+      "fact": "Direct Duffel requests support business, but canonical SearchPolicy, typed schema, TripSearch propagation and response-derived per-segment/per-passenger cabin verification are not integrated.",
+      "implementation_in_this_stage": false,
+      "screenshot_business_claim_bound_to_source": false,
+      "closure": "Durable compatible cabin policy -> reviewed typed/LLM transport -> per-leg request -> all-segments/passengers response proof -> refresh proof -> verified/mixed/unknown public DTO without treating request echo as evidence."
+    }
+  ],
+  "limitations": [
+    "No browser/frontend rendering was tested; screenshot flight, carrier and BUSINESS class remain unbound to a specific source payload.",
+    "The195 checks are controlled provider/FX/API/media assertions, not195 real supplier responses.",
+    "No price/availability refresh, prebook, payment or order was performed.",
+    "The working tree was under concurrent development; root must include the frozen new test file in the final combined source qualification."
+  ]
+}

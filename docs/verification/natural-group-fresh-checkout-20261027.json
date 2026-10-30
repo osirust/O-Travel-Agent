@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-27",
+  "status": "PREVIEW_REJECTED_NO_RETRY_NO_ORDER",
+  "started_at": "2026-10-27T06:27:33.749375+00:00",
+  "source_commit": "b9343c0c6459c6d34e8605371c955de95da2f73d",
+  "package_sha256": "12666a05b41c22bd27965fe1399344e0e2be9ff906c03eb2107608f6f4bb2d11",
+  "input_snapshot_sha256": "25384276962dd480ab389857e308198158cf2cbd7adb43f81276bf9d9cd3b3a9",
+  "business_requirements_sha256": "04be3cbffb0e9983ad816118c16f549a1baad09ad165451ea9493ad991b97dd3",
+  "scope": "Fresh typed seed from previously naturally extracted requirements. Frozen C-source ASGI+actual sandbox APIs+new PostgreSQL DB; not new NLU or Native deployment qualification.",
+  "database": "otravel_natural_eval_20261027",
+  "database_created": true,
+  "model_calls": 0,
+  "supplier_booking_calls": 0,
+  "payment_calls": 0,
+  "wire_cap": 14,
+  "wire": [
+    {
+      "sequence": 1,
+      "phase": "search",
+      "provider": "liteapi",
+      "kind": "hotel_lookup",
+      "method": "GET",
+      "started_at": "2026-10-27T06:27:34.680194+00:00",
+      "http_status": 200,
+      "elapsed_ms": 10447,
+      "raw_response_sha256": "f412029c0a49b54dbd537e31155370fb2b4740840d27077d0272ed440b11e8a5"
+    },
+    {
+      "sequence": 2,
+      "phase": "search",
+      "provider": "liteapi",
+      "kind": "hotel_search",
+      "method": "POST",
+      "started_at": "2026-10-27T06:27:45.137244+00:00",
+      "http_status": 200,
+      "elapsed_ms": 4735,
+      "raw_response_sha256": "ea4103d342823ae6f9de2921a0f403b6d4d59ba786529359d42fcffc480b9648"
+    },
+    {
+      "sequence": 3,
+      "phase": "search",
+      "provider": "liteapi",
+      "kind": "hotel_lookup",
+      "method": "GET",
+      "started_at": "2026-10-27T06:27:50.043756+00:00",
+      "http_status": 200,
+      "elapsed_ms": 98,
+      "raw_response_sha256": "068435f7718191603794f6a310eab2fcdcf9b35f4fdfdc6158e3464d98f974f6"
+    },
+    {
+      "sequence": 4,
+      "phase": "search",
+      "provider": "liteapi",
+      "kind": "hotel_search",
+      "method": "POST",
+      "started_at": "2026-10-27T06:27:50.150833+00:00",
+      "http_status": 200,
+      "elapsed_ms": 2548,
+      "raw_response_sha256": "52a3d0476a6f4ff18d072270c88d64f2a66e54c827b29d612eb5c353ffef0cd5"
+    },
+    {
+      "sequence": 5,
+      "phase": "search",
+      "provider": "duffel",
+      "kind": "flight_search",
+      "method": "POST",
+      "started_at": "2026-10-27T06:27:52.760256+00:00",
+      "http_status": 201,
+      "elapsed_ms": 1313,
+      "raw_response_sha256": "cc1334505e65800cfaaef0704c1d078c961a295d1e9a1f43294327b82344ef57"
+    },
+    {
+      "sequence": 6,
+      "phase": "search",
+      "provider": "cbr",
+      "kind": "reference_fx",
+      "method": "GET",
+      "started_at": "2026-10-27T06:27:54.086880+00:00",
+      "http_status": 200,
+      "elapsed_ms": 5090,
+      "raw_response_sha256": "ac1efa3af3324eb24712594c3c218b4432ae9fb11340ff8b9a1c4c118c7a7591"
+    },
+    {
+      "sequence": 7,
+      "phase": "search",
+      "provider": "duffel",
+      "kind": "flight_search",
+      "method": "POST",
+      "started_at": "2026-10-27T06:27:59.190332+00:00",
+      "http_status": 201,
+      "elapsed_ms": 417,
+      "raw_response_sha256": "e67ea5bdc1bffd4ed8e5adf011338de3719e0a102d6b393cb5461fe972e58c79"
+    },
+    {
+      "sequence": 8,
+      "phase": "search",
+      "provider": "duffel",
+      "kind": "flight_search",
+      "method": "POST",
+      "started_at": "2026-10-27T06:27:59.634025+00:00",
+      "http_status": 201,
+      "elapsed_ms": 1106,
+      "raw_response_sha256": "e4a4ef31609c440a0ffe978fad5f0d74e3c849bbb79d2e8a5a4aa815b7c4ddd8"
+    },
+    {
+      "sequence": 9,
+      "phase": "preview",
+      "provider": "cbr",
+      "kind": "reference_fx",
+      "method": "GET",
+      "started_at": "2026-10-27T06:28:01.047514+00:00",
+      "http_status": 200,
+      "elapsed_ms": 52,
+      "raw_response_sha256": "ac1efa3af3324eb24712594c3c218b4432ae9fb11340ff8b9a1c4c118c7a7591"
+    },
+    {
+      "sequence": 10,
+      "phase": "preview",
+      "provider": "liteapi",
+      "kind": "hotel_prebook",
+      "method": "POST",
+      "started_at": "2026-10-27T06:28:01.101201+00:00",
+      "selected_offer_sha256": "4c670e6f5dca3695c1f98d57d039120b1b33dc0e503f814ff2b26e5419999aee",
+      "hotel_id": "lp8a2f3",
+      "component_id": "new-stay-1",
+      "http_status": 200,
+      "elapsed_ms": 7172,
+      "raw_response_sha256": "c37a24732170a97ca81cb5017d08f6daf59209ed47517190f698cfd843102242"
+    },
+    {
+      "sequence": 11,
+      "phase": "preview",
+      "provider": "liteapi",
+      "kind": "hotel_prebook",
+      "method": "POST",
+      "started_at": "2026-10-27T06:28:08.274617+00:00",
+      "selected_offer_sha256": "0a903fc127ff09ed439c8fc9758dd49da4b953dd136d390d79817b4b5e82e856",
+      "hotel_id": "lp55de7",
+      "component_id": "new-stay-2",
+      "http_status": 409,
+      "elapsed_ms": 2783,
+      "raw_response_sha256": "4e0d5008058c0a477d5cb56f49a5b5cf021c0516600a202ee78e9849cb1fc979",
+      "provider_error": {
+        "code": 2001,
+        "message": "no availability found",
+        "description": "provider price exceeds locked selling price, please search again"
+      }
+    }
+  ],
+  "automatic_retries": 0,
+  "native_changes": 0,
+  "source_changes": 0,
+  "runner_sha256": "bed697aa1906860ec31f7c1268e55d0f61587c868c469e8173ce6225d409bd91",
+  "preserved_setup_refusal": {
+    "path": "docs/verification/natural-group-fresh-checkout-20261027-setup-hba-refusal.json",
+    "sha256": "28bb40d3b678d96b39fac0925cbaab768986211a17ff491e2bc24b6551634e7e",
+    "cause": "The one authorized DB was created, but connection lacked a scoped HBA rule. Explicitly approved exact DB/user/clientSCRAM entry is now verified. No vendor request was sent."
+  },
+  "earlier_test_database_refusal": {
+    "database": "otravel_test",
+    "pending_or_running": 242,
+    "active_sessions": 0,
+    "writes": 0,
+    "reason": "Global pending0 preflight failed; parent explicitly authorized one new isolated qualification DB."
+  },
+  "database_created_this_attempt": false,
+  "database_creation_attempt": 2,
+  "authorized_scoped_hba_setup": {
+    "database": "otravel_natural_eval_20261027",
+    "role": "otravel",
+    "client_ipv4": "172.18.0.1",
+    "cidr": "172.18.0.1/32",
+    "auth_method": "scram-sha-256",
+    "before_sha256": "363378e3d20cc28aeffced441b941f484ed154d09b5f556865c06c0c328cc6f9",
+    "after_sha256": "b0c19ca19a143f1efb16a0e01f47dc71fd637e307085b390b1656f9924969230",
+    "other_bytes_unchanged": true,
+    "appended_rules": 1,
+    "hba_parse_errors": 0,
+    "reload_config": true,
+    "postgres_restart": false,
+    "connection_verified": true,
+    "empty_own_database_tables": 0,
+    "vendor_http_calls": 0,
+    "other_database_rows_changed": 0,
+    "native_application_changes": 0
+  },
+  "database_retained_not_deleted": true,
+  "own_database_tables_before_init": 0,
+  "new_database_preflight": {
+    "pending_or_running": 0,
+    "active_sessions": 0,
+    "schema_versions": [
+      1
+    ]
+  },
+  "search_total_minor": 34308521,
+  "currency": "RUB",
+  "source_counts": {
+    "SANDBOX": 5,
+    "DEMO": 2
+  },
+  "source_type": "MIXED",
+  "coverage": {
+    "covered": [
+      "hotel:new-stay-1:new-room-1",
+      "hotel:new-stay-1:new-room-2",
+      "hotel:new-stay-2:new-room-3",
+      "hotel:new-stay-2:new-room-4",
+      "leg:leg-2bc6d7e8-aac4-43fa-ab69-201434fac51b",
+      "leg:leg-300f351d-0cde-46e0-ac8b-e5be7320265f",
+      "leg:leg-59484ab1-53a1-4f30-8c8c-f3eb61e1383e",
+      "transfer:new-stay-1",
+      "transfer:new-stay-2"
+    ],
+    "missing": [],
+    "complete": true,
+    "required": [
+      "hotel:new-stay-1:new-room-1",
+      "hotel:new-stay-1:new-room-2",
+      "hotel:new-stay-2:new-room-3",
+      "hotel:new-stay-2:new-room-4",
+      "leg:leg-300f351d-0cde-46e0-ac8b-e5be7320265f",
+      "leg:leg-59484ab1-53a1-4f30-8c8c-f3eb61e1383e",
+      "leg:leg-2bc6d7e8-aac4-43fa-ab69-201434fac51b",
+      "transfer:new-stay-1",
+      "transfer:new-stay-2"
+    ],
+    "overlapping": []
+  },
+  "search_tool_calls": 8,
+  "preview_http_status": 503,
+  "preview_error": {
+    "code": "HTTP_ERROR",
+    "message": "Провайдер отклонил запрос.",
+    "retryable": false,
+    "provider": "liteapi",
+    "upstream_http_status": 409
+  },
+  "orders_count": 0,
+  "requirements_unchanged": true,
+  "final_state_version": 0,
+  "order_statuses": [],
+  "finished_at": "2026-10-27T06:28:11.092669+00:00",
+  "actual_wire_calls": 11,
+  "source_phase_order": {
+    "search": 8,
+    "preview": 3
+  },
+  "private_artifact_folder": "/home/aegml/checks/natural-group-fresh-checkout-20261027-attempt3",
+  "private_report_sha256": "ca883b024f487fc614158939f338334cfddafbc26d02239b79e4af74f57664b4",
+  "observation_phase": "BEFORE_ADAPTER_ERROR_CORRECTION",
+  "database_postcheck": {
+    "database": "otravel_natural_eval_20261027",
+    "sessions": 1,
+    "runs": 1,
+    "quotes": 0,
+    "orders": 0,
+    "pending_or_running": 0,
+    "active_sessions": 0,
+    "model_started_events": 0
+  },
+  "database_postcheck_sha256": "ed3dd3827566cb013ee74cb856cd5ebd12f058a873783eb4c7602fb03a8ac510",
+  "current_attempt_failure": {
+    "provider": "liteapi",
+    "hotel_id": "lp55de7",
+    "component_id": "new-stay-2",
+    "upstream_http_status": 409,
+    "business_code": 2001,
+    "source_fact": "The provider declined the selected second-hotel prebook; its description reports a price exceeding the locked selling price. No replacement amount was supplied.",
+    "user_safe_meaning": "The supplier did not confirm the price or availability; a fresh explicit search is required.",
+    "old_unknown409_cause_reclassified": false,
+    "earlier_unknown409_cause": "UNKNOWN"
+  },
+  "adapter_correction": {
+    "finding_id": "TRAVEL-LITEAPI-PREBOOK2001-NORMALIZATION-001",
+    "status": "CONTROLLED_ADAPTER_FIX_TESTED_ROOT_API_PG_VERIFICATION_SEPARATE",
+    "new_code": "OFFER_NOT_CONFIRMED",
+    "retryable": false,
+    "refresh_required": true,
+    "scope": "E-only exact LiteAPI POSTprebook/status400|409/error.code2001 normalization. Native and the actual source of this receipt remain the frozen pre-correction package.",
+    "public_helper": "public_offer_failure_fields(provider, code, details)",
+    "initial_receipt": ".local/evaluation/after80-20261027/liteapi2001-initial.xml",
+    "related_receipt": ".local/evaluation/after80-20261027/liteapi2001-related.xml",
+    "related_pass": 306,
+    "new_case_count": 49,
+    "source_fixture": "fixtures/regression/liteapi-prebook2001-20261027.json",
+    "fixture_sha256": "34dfc96d65f49e23e53c62e3a02c8d358fe1e539c3822c658481349af34e7fac",
+    "post_correction_actual_vendor_replay_executed": false,
+    "additional_vendor_http_calls_after_recorded11": 0
+  },
+  "remaining": [
+    "Fresh complete successful checkout is not qualified by this refused attempt.",
+    "Deploy the separately verified correction before a new controlled/actual outcome check.",
+    "The earlier original409 remains UNKNOWN; only this attempt has a saved code2001 response."
+  ]
+}

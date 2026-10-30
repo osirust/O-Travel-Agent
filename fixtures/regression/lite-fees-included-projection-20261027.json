@@ -1,0 +1,116 @@
+{
+  "format": "otravel.lite_fee_included_projection.v1",
+  "scope": "Sanitized actual numeric/occupancy/fee/cancellation facts only; IDs/names/contacts omitted, not a live reusable offer.",
+  "source_body_sha256": "80c97048a33120385b900b89eac25e408299e59f70f2e1c4b20ae5630a2c0215",
+  "diagnostic_report_sha256": "d69e900a41abe66ff2b2e8fd13c0ae3baabd1f779e66f454f767b2143658e5b6",
+  "source_hotel_bundle_counts": [
+    80,
+    1,
+    39
+  ],
+  "source_normalized_offer_count": 120,
+  "source_first30_fee_known": 0,
+  "source_total_fee_known": 2,
+  "occupancies": [
+    {
+      "adults": 1,
+      "children": []
+    }
+  ],
+  "currency": "RUB",
+  "guestNationality": "RU",
+  "checkin": "2026-11-10",
+  "checkout": "2026-11-17",
+  "included_offers": [
+    {
+      "hotel_index0": 2,
+      "bundle_index0": 0,
+      "normalized_offer_index0": 81,
+      "offerRetailRate": {
+        "amount": 172664.27,
+        "currency": "RUB"
+      },
+      "rates": [
+        {
+          "occupancyNumber": 1,
+          "adultCount": 1,
+          "childCount": 0,
+          "childrenAges": [],
+          "maxOccupancy": 1,
+          "boardType": "RO",
+          "retailRate": {
+            "total": [
+              {
+                "amount": 172664.27,
+                "currency": "RUB"
+              }
+            ],
+            "taxesAndFees": [
+              {
+                "included": true,
+                "description": "Sales tax",
+                "amount": 29964.93,
+                "currency": "RUB"
+              }
+            ]
+          },
+          "cancellationPolicies": {
+            "refundableTag": "NRFN",
+            "cancelPolicyInfos": []
+          }
+        }
+      ]
+    },
+    {
+      "hotel_index0": 2,
+      "bundle_index0": 2,
+      "normalized_offer_index0": 83,
+      "offerRetailRate": {
+        "amount": 173538.08,
+        "currency": "RUB"
+      },
+      "rates": [
+        {
+          "occupancyNumber": 1,
+          "adultCount": 1,
+          "childCount": 0,
+          "childrenAges": [],
+          "maxOccupancy": 1,
+          "boardType": "RO",
+          "retailRate": {
+            "total": [
+              {
+                "amount": 173538.08,
+                "currency": "RUB"
+              }
+            ],
+            "taxesAndFees": [
+              {
+                "included": true,
+                "description": "Sales tax",
+                "amount": 30116.57,
+                "currency": "RUB"
+              }
+            ]
+          },
+          "cancellationPolicies": {
+            "refundableTag": "NRFN",
+            "cancelPolicyInfos": []
+          }
+        }
+      ]
+    }
+  ],
+  "excluded_samples": [
+    {
+      "included": false,
+      "amount": 848.37,
+      "currency": "RUB"
+    },
+    {
+      "included": false,
+      "amount": 851.6,
+      "currency": "RUB"
+    }
+  ]
+}

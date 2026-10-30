@@ -1,0 +1,65 @@
+{
+  "status": "FULL_CONTROLLED_CODE_PASS_ACTUAL_RETEST_PENDING",
+  "date": "2026-10-27",
+  "base_commit": "43050b8a9e0ac344723bd7f942a15205aabba196",
+  "scope": "Current frozen E production files; no external inference or supplier requests in this suite",
+  "full": {
+    "path": "/mnt/e/work/aegml/.local/evaluation/after80-20261027/full-prefrontend-r3-repairs.xml",
+    "sha256": "7162242fbd053700cffaea60a4a850e8a0745920a7b11890ec1462ef790dd1ed",
+    "tests": 4202,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 130.272
+  },
+  "production_files": [
+    {
+      "path": "otravel/api.py",
+      "sha256": "277bcc566ee7f603d66b264b3b549caf5a4365a54543b49a6d284c2b24271275"
+    },
+    {
+      "path": "otravel/answering.py",
+      "sha256": "379dbce5b192230ba039e17dec540ded858e53252cf807f1de7e03a91f926a14"
+    },
+    {
+      "path": "otravel/clarifications.py",
+      "sha256": "ab0f9c80a480677756ac44475b0681521b74c215a0b81baed211c71ba732ece7"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "840a39f5797711fd88ce206dbf4e481c0e4b9833fc7321bc4feaac68c94700e9"
+    },
+    {
+      "path": "otravel/operation_aliases.py",
+      "sha256": "9b65a7e311122cf8110b63757215c14907a49864203468ddc2d73ad8ff52fe45"
+    },
+    {
+      "path": "otravel/room_identity.py",
+      "sha256": "13cbf7d7710901c6cfe4b9b5bf1e9ef93faa6600fc0881a55e897d1fa064d044"
+    },
+    {
+      "path": "otravel/providers.py",
+      "sha256": "d1b2948e689eb2186c3ab1d8c8b99022ecba2c53ea445c66a1e99b40b676f93d"
+    },
+    {
+      "path": "otravel/supplier_comparison.py",
+      "sha256": "b7c677595ce8aa68ec13fdf66a5c6b0072110fb2edfba81b87fd5496693b7939"
+    }
+  ],
+  "new_capabilities": [
+    "Contextual city-country consent and factual geography answer",
+    "Compound quoted hotel name does not disable return-date alias normalization",
+    "Complete bijective existing-room ID repair; no inferred membership",
+    "Explicit Serp property details with source-disclosed sellers and matching guest rates",
+    "Safe optional provider/upstream HTTP diagnostics"
+  ],
+  "not_qualified_by_this_suite": [
+    "New external-model retest",
+    "New Native Serp detail HTTP",
+    "Full80/106 language acceptance"
+  ],
+  "llm_http_calls": 0,
+  "supplier_http_calls": 0,
+  "supplier_booking_calls": 0,
+  "payment_calls": 0
+}

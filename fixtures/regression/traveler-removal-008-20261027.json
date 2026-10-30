@@ -1,0 +1,142 @@
+{
+  "format": "otravel.cached.actual.traveler-removal.v1",
+  "finding_id": "HARNESS-004-UNREQUESTED-TRAVELER-REMOVAL-001",
+  "source_path": "/home/aegml/.local/evaluation/after80-zai45-8086-bulk-epoch4-20261027-201135-2138f5e5/ZAI100-008.json",
+  "source_file_sha256": "644336fe90c183e2973864a5007ee29aa2343e3694a0f06451e82da44663b4ae",
+  "source_commit": "a36d76efea3f32d299559e6089cd89390f2cc887",
+  "input": "Обший бюджет теперь 85000 рублей. Кто в итоге едет?",
+  "before_trip": {
+    "legs": [
+      {
+        "id": "leg-0ebc2086-8fe5-48ec-aefc-7ad398059762",
+        "mode": "flight",
+        "origin": "Санкт-Петербург",
+        "destination": "Сочи",
+        "departure_date": "2026-11-02"
+      },
+      {
+        "id": "leg-81137259-1676-4d0f-a16a-24aba548cc19",
+        "mode": "flight",
+        "origin": "Сочи",
+        "destination": "Санкт-Петербург",
+        "departure_date": "2026-11-07"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Сочи",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2"
+            ]
+          }
+        ],
+        "check_in": "2026-11-02",
+        "hotel_id": null,
+        "check_out": "2026-11-07"
+      }
+    ],
+    "budget": null,
+    "groups": [],
+    "origin": "Санкт-Петербург",
+    "trip_id": "a76e60d8-0eb8-489c-ae14-f91a9dbae2eb",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 5
+  },
+  "raw_contract": {
+    "value": {
+      "reply": "Обновлен бюджет поездки до 85000 рублей. Удален один взрослый путешествующий, в поездке остается один взрослый.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 85000
+          },
+          "target_id": null
+        },
+        {
+          "type": "remove_traveler",
+          "value": {},
+          "target_id": "new-traveler-2"
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "c7e30c7ae3bf504f3c0c6bf77394a234153f1a2e01be8cf76e8b5d226adca1b9",
+    "captured": true,
+    "utf8_bytes": 512
+  },
+  "checked_contract": {
+    "value": {
+      "reply": "Обновлен бюджет поездки до 85000 рублей. Удален один взрослый путешествующий, в поездке остается один взрослый.",
+      "control": {
+        "action": "continue"
+      },
+      "unknowns": [],
+      "conflicts": [],
+      "operations": [
+        {
+          "type": "set_budget",
+          "value": {
+            "scope": "whole_trip",
+            "currency": "RUB",
+            "amount_minor": 8500000
+          },
+          "target_id": null
+        },
+        {
+          "type": "remove_traveler",
+          "value": {},
+          "target_id": "new-traveler-2"
+        }
+      ],
+      "speech_act": "CHANGE",
+      "information_subject": null
+    },
+    "sha256": "a70c9e1b9b47bb420225c4325eb028dd86847be1e892d75087c07b2bf41ea0e2",
+    "captured": true,
+    "utf8_bytes": 514
+  },
+  "new_model_calls": 0,
+  "new_provider_http": 0
+}

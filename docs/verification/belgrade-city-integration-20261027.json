@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-001-BELGRADE-PROVIDER-CAPABILITY-001",
+  "status": "ACTUAL_IDENTITIES_AND_SANDBOX_RATES_CONFIRMED_CONTROLLED_CITY_FLOW_PASS_RUNTIME_OPEN",
+  "scope": "A bounded provider request capability, separate from DEMO inventory and actual availability.",
+  "actual_proofs": {
+    "liteapi": {
+      "receipt": "docs/verification/belgrade-liteapi-coverage-20261027.json",
+      "sha256": "72cf5478c26d0349d7b1823ba4c21af4db03be37fe50b01f0020ce8d6ba5cb8c",
+      "HTTP_requests": 3,
+      "city_dictionary": "RS/Belgrade",
+      "hotels": 3,
+      "normalized_SANDBOX_RUB_rates": 596,
+      "fees_known_rates": 249,
+      "prebook_book_pay": 0
+    },
+    "duffel": {
+      "receipt": "docs/verification/belgrade-duffel-place-20261027.json",
+      "sha256": "966f29ffa564ada34a3ed82e4e603949e2ed549deac5855baa68290e0d240fd4",
+      "HTTP_requests": 1,
+      "endpoint": "GET /places/suggestions?query=BEG",
+      "identities": [
+        "cit_beg_rs",
+        "arp_beg_rs"
+      ],
+      "country": "RS",
+      "IATA": "BEG",
+      "flight_offer_requests": 0
+    }
+  },
+  "repair": {
+    "registry": "available_search_cities(state) -> tuple; DEMO and unqualified provider pairs keep exact CITIES7; HYBRID liteapi+duffel adds only Belgrade.",
+    "hotel_lookup": "Existing seven exact provider labels unchanged; new RS/Belgrade lookup requires matching response country/city.",
+    "transport": "Shared verified request-location mapping; missing IATA yields a component blocker, never KeyError or guessed airport.",
+    "unchanged": [
+      "domain/CITIES7",
+      "DEMO hotel and transport catalogues",
+      "schema",
+      "harness",
+      "geographic identity",
+      "provider model prompt",
+      "external booking policy"
+    ]
+  },
+  "verification": {
+    "new_tests": 26,
+    "related_passed": 119,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 3.7,
+    "junit": ".local/evaluation/after80-20261027/belgrade-city-final.xml",
+    "junit_sha256": "68ce352c54f37c86a8e5a5c4e1dc6b28bcec3c74b23b92febb15612159cbe864",
+    "new_files_ruff": "PASS",
+    "shared_files_import_and_F_checks": "PASS; unrelated pre-existing broad style findings were not changed.",
+    "initial_test_artifact": ".local/evaluation/after80-20261027/belgrade-city-initial.xml",
+    "initial_failure": "One new test incorrectly expected top-level kind on a normalized provider offer; assertion corrected to read details.kind, without weakening no-transfer requirement.",
+    "checks": [
+      "Qualified HYBRID sends BEG in both directions with controlled gateway.",
+      "DEMO7 and unsupported provider pairs perform no external lookup.",
+      "Wrong/missing new-city metadata location is rejected.",
+      "Missing IATA performs no flight request or airport substitution.",
+      "No new DEMO hotel/transfer for Belgrade; partial plan remains not ready.",
+      "Source state and existing lookup labels preserved."
+    ]
+  },
+  "current_source_sha256": {
+    "otravel/provider_cities.py": "b71055932c81e4b6cacef20c100749a2615dd2ba3f97f499cb4f1d806a79b4e4",
+    "otravel/providers.py": "d479ec0a2b7bdbc97a3181da5b0b87e13b84dda3ad9edf071f5e259e9d729b13",
+    "otravel/orchestrator.py": "3ac88dbb6f85590665509ccba45770b9578eee37563e696669231d9aca444e53",
+    "tests/test_provider_cities.py": "6bf56b378c9d9e8190dbbe1061d801d2d111ed9fb8916d87383c93e8ba3c7880",
+    "tests/test_belgrade_live_search.py": "b3b298a715b49f2c87bf95765373fb563db22b2aaa42ae3acb1f9c369072d59e"
+  },
+  "runtime_qualification": {
+    "new_shared_code_deployed": false,
+    "new_actual_Harness_trip_executed": false,
+    "new_actual_group_or_checkout": false,
+    "models": 0,
+    "new_prebook_book_pay": 0,
+    "DB_or_Native_changes": 0
+  },
+  "limits": [
+    "LiteAPI responses are SANDBOX, not production prices or bookability.",
+    "Duffel place identity is not a flight availability response.",
+    "Belgrade live components still lack a qualified transfer; the controlled plan remains partial/not ready.",
+    "No fake eighth-city DEMO catalogue was added.",
+    "Full source-integrated and actual language qualification remain open."
+  ]
+}

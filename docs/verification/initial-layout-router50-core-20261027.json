@@ -1,0 +1,64 @@
+{
+  "status": "CONTROLLED_INITIAL_LAYOUT_COMPARISON_AND_EXPLICIT_FREE50_PASS_ACTUAL_PENDING",
+  "date": "2026-10-27",
+  "base_core_commit": "aefa56ca2f34dfae674299e7cd7b9ac7d8aaad7d",
+  "full": {
+    "path": ".local/evaluation/after80-20261027/full-initial-layout-router50-final.xml",
+    "sha256": "e5acf10fc837cabd6e5f04fe11691cf3845883ec2ebaff8a11cdfb1694776e8c",
+    "tests": 4403,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 147.515
+  },
+  "files": [
+    {
+      "path": "otravel/initial_room_layout.py",
+      "sha256": "d070ff776ac5481e1e9782ee7a245c04d0eb05c3e8da08e5a2dc85251fd23945"
+    },
+    {
+      "path": "otravel/harness.py",
+      "sha256": "d59c8d590e44e3a10fdc2abfc6b57f7069b328883823e9f57a4c27b7d116db96"
+    },
+    {
+      "path": "otravel/answering.py",
+      "sha256": "969f05c081365b6f0c3724440589bfa1804a0b5c695dadc0e6eecb5e74724e39"
+    },
+    {
+      "path": "otravel/store.py",
+      "sha256": "ed8eb6ecf2d14fb05f277fe2ac140f74ba16ccac953155418176b33b12d689ef"
+    },
+    {
+      "path": "scripts/after80_router_backend.py",
+      "sha256": "71cff383fc19de8ebbc173b47bb7cc73b12ae2c73340a78378d34c05fadd498f"
+    },
+    {
+      "path": "scripts/replay_after80.py",
+      "sha256": "384ad4d8198306ece28a8010d1c232e7a5fa596f282239bf34cee8f9c0cf858c"
+    }
+  ],
+  "scope": [
+    "Fresh multi-city initial layout only from a complete literal ordinal/group partition; ambiguity asks, existing layouts untouched.",
+    "Explicit saved-comparison question cannot lose before/after because the model selected only current facts.",
+    "OpenRouter explicit optional50/day preserves prior39reservations and hard-stops51; default40 and Gemini40 remain. No billing change or quota reset."
+  ],
+  "free_account_evidence": "openrouter-quota-after39-20261027.json",
+  "external_model_calls": 0,
+  "supplier_calls": 0,
+  "payments": 0,
+  "supplier_bookings": 0,
+  "limitations": [
+    "Actual new whole dialogue still required.",
+    "Full original80/106 language acceptance remains open."
+  ],
+  "preserved_initial_runs": [
+    {
+      "path": ".local/evaluation/after80-20261027/router50-ledger-initial.xml",
+      "reason": "One obsolete explicit-hard40 test and an async mock-clock test race; no native quota reset."
+    },
+    {
+      "path": ".local/evaluation/after80-20261027/full-initial-layout-router50.xml",
+      "reason": "4389PASS/1old Groq test assumed OpenRouter hard40 even for an explicit raised caller limit; default40 remains strictly tested."
+    }
+  ]
+}

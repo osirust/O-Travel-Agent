@@ -1,0 +1,322 @@
+{
+  "status": "READ_ONLY_RECONSTRUCTION_COMPLETE",
+  "source_commit": "396dd551403f02af7491fe988329ffa61ed7fc1a",
+  "source_package_sha256": "15158e2655681f16c967b14515a73ad72b135f62088e02bad811105759f61cd5",
+  "source_report_sha256": "ab84df6c4fa23f87ac7417178e55add4c8ba2b1c837278c5e8aeb37de5c4f99c",
+  "case": "PF-GROUP-04",
+  "step": "04",
+  "actual_error": {
+    "upstream_http_status": 413,
+    "body_retained": false,
+    "cause": "UNKNOWN"
+  },
+  "actual_recorded_metrics": {
+    "prompt_sha256": "aeb721d2ea97553ab103e7acb2bfa239ac4552e6eb030e8839adb29ed0cbf547",
+    "schema_sha256": "511479134a8beeadbfc714c994975be70a92b0baf97d36fbc91c08e07d95af8f",
+    "schema_utf8_bytes": 10093,
+    "system_utf8_bytes": 15347,
+    "context_utf8_bytes": 22114
+  },
+  "reconstruction": {
+    "original_request_identity_claimed": false,
+    "original_time_recomputed": true,
+    "system_utf8_bytes": 15347,
+    "context_utf8_bytes": 22114,
+    "canonical_schema_utf8_bytes": 10093,
+    "canonical_schema_sha256": "511479134a8beeadbfc714c994975be70a92b0baf97d36fbc91c08e07d95af8f",
+    "wire_schema_utf8_bytes_sorted": 5368,
+    "rendered_compact_json_body_utf8_bytes": 46687,
+    "output_cap_field": "max_completion_tokens",
+    "output_cap": 2048
+  },
+  "top_field_weights": [
+    {
+      "field": "shown_plans",
+      "value_utf8_bytes": 9057
+    },
+    {
+      "field": "operation_contract",
+      "value_utf8_bytes": 6467
+    },
+    {
+      "field": "recent_messages",
+      "value_utf8_bytes": 2504
+    },
+    {
+      "field": "trip",
+      "value_utf8_bytes": 1940
+    },
+    {
+      "field": "first_shown_plan",
+      "value_utf8_bytes": 1276
+    },
+    {
+      "field": "current_message",
+      "value_utf8_bytes": 623
+    },
+    {
+      "field": "reference_now_utc",
+      "value_utf8_bytes": 34
+    },
+    {
+      "field": "default_timezone",
+      "value_utf8_bytes": 15
+    },
+    {
+      "field": "pending_question",
+      "value_utf8_bytes": 4
+    },
+    {
+      "field": "current_selected_plan",
+      "value_utf8_bytes": 4
+    }
+  ],
+  "operation_contract_weights": [
+    {
+      "field": "instruction",
+      "value_utf8_bytes": 1060
+    },
+    {
+      "field": "coverage_rules",
+      "value_utf8_bytes": 871
+    },
+    {
+      "field": "selection_contract",
+      "value_utf8_bytes": 827
+    },
+    {
+      "field": "room_membership_contract",
+      "value_utf8_bytes": 628
+    },
+    {
+      "field": "route_contract",
+      "value_utf8_bytes": 587
+    },
+    {
+      "field": "constraint_contract",
+      "value_utf8_bytes": 575
+    },
+    {
+      "field": "group_contract",
+      "value_utf8_bytes": 360
+    },
+    {
+      "field": "room_constraint_contract",
+      "value_utf8_bytes": 328
+    },
+    {
+      "field": "duration_contract",
+      "value_utf8_bytes": 303
+    },
+    {
+      "field": "leg_mode_contract",
+      "value_utf8_bytes": 214
+    },
+    {
+      "field": "schema_authoritative",
+      "value_utf8_bytes": 184
+    },
+    {
+      "field": "supported_cities",
+      "value_utf8_bytes": 121
+    },
+    {
+      "field": "known_hard_constraints",
+      "value_utf8_bytes": 58
+    },
+    {
+      "field": "do_not_invent",
+      "value_utf8_bytes": 51
+    }
+  ],
+  "trip_field_weights": [
+    {
+      "field": "stays",
+      "value_utf8_bytes": 531
+    },
+    {
+      "field": "legs",
+      "value_utf8_bytes": 456
+    },
+    {
+      "field": "travelers",
+      "value_utf8_bytes": 277
+    },
+    {
+      "field": "groups",
+      "value_utf8_bytes": 170
+    },
+    {
+      "field": "search_policy",
+      "value_utf8_bytes": 115
+    },
+    {
+      "field": "constraints",
+      "value_utf8_bytes": 84
+    },
+    {
+      "field": "budget",
+      "value_utf8_bytes": 63
+    },
+    {
+      "field": "trip_id",
+      "value_utf8_bytes": 38
+    },
+    {
+      "field": "route_policy",
+      "value_utf8_bytes": 37
+    },
+    {
+      "field": "origin",
+      "value_utf8_bytes": 14
+    },
+    {
+      "field": "preferences",
+      "value_utf8_bytes": 2
+    },
+    {
+      "field": "state_version",
+      "value_utf8_bytes": 1
+    }
+  ],
+  "history": {
+    "message_count": 7,
+    "messages": [
+      {
+        "index": 0,
+        "role": "user",
+        "text_utf8_bytes": 761,
+        "same_as_current_message": false
+      },
+      {
+        "index": 1,
+        "role": "assistant",
+        "text_utf8_bytes": 211,
+        "same_as_current_message": false
+      },
+      {
+        "index": 2,
+        "role": "user",
+        "text_utf8_bytes": 35,
+        "same_as_current_message": false
+      },
+      {
+        "index": 3,
+        "role": "assistant",
+        "text_utf8_bytes": 545,
+        "same_as_current_message": false
+      },
+      {
+        "index": 4,
+        "role": "user",
+        "text_utf8_bytes": 54,
+        "same_as_current_message": false
+      },
+      {
+        "index": 5,
+        "role": "assistant",
+        "text_utf8_bytes": 79,
+        "same_as_current_message": false
+      },
+      {
+        "index": 6,
+        "role": "user",
+        "text_utf8_bytes": 621,
+        "same_as_current_message": true
+      }
+    ]
+  },
+  "batches": [
+    {
+      "index": 0,
+      "value_utf8_bytes": 4527,
+      "plan_count": 2,
+      "offer_counts": [
+        7,
+        7
+      ],
+      "plans_projection_sha256": "166736ca69d064ebca60c930ade788b7ebc65b3252e20d28c2b0d00174c5e9d4"
+    },
+    {
+      "index": 1,
+      "value_utf8_bytes": 4527,
+      "plan_count": 2,
+      "offer_counts": [
+        7,
+        7
+      ],
+      "plans_projection_sha256": "166736ca69d064ebca60c930ade788b7ebc65b3252e20d28c2b0d00174c5e9d4"
+    }
+  ],
+  "lossless_projection_candidates": {
+    "exact_plans_batch_dedup": {
+      "full_projected_plans_equal": true,
+      "before_utf8_bytes": 9057,
+      "after_utf8_bytes": 4529,
+      "saved_context_bytes": 4528,
+      "kept_newest_source_run": true,
+      "plan_order_and_fields_unchanged": true
+    },
+    "current_user_exact_duplicate": {
+      "removed_last_history_row_only": true,
+      "text_utf8_bytes": 621,
+      "saved_context_bytes_after_batch_dedup": 647,
+      "older_history_pulled_in": false,
+      "retained_prior_history_count": 6,
+      "retained_prior_history_equal": true
+    },
+    "combined": {
+      "context_before_utf8_bytes": 22114,
+      "context_after_utf8_bytes": 16939,
+      "saved_context_bytes": 5175,
+      "trip_message_pending_selection_time_first_plan_unchanged": true
+    }
+  },
+  "system_layers": {
+    "prefix_utf8_bytes": 4833,
+    "canonical_schema_utf8_bytes": 10093,
+    "suffix_utf8_bytes": 421,
+    "canonical_schema_occurrences": 1
+  },
+  "quote_and_time_caveat": {
+    "current_quote_rows": 0,
+    "latest_quote_metadata": [],
+    "historical_before_snapshot_used_for_trip_pending_phase": true,
+    "history_filtered_through_input_sequence": 2160,
+    "later_message_count_excluded": 1,
+    "current_trip_equals_historical_before": true,
+    "selection_at_original_request": "NONE_PROVEN_NO_QUOTE_ROWS",
+    "time_caveat": "reference_now_utc was recomputed; original full context/body was not retained, so rebuilt SHA is not the original request SHA."
+  },
+  "calls": {
+    "vendor_http": 0,
+    "real_models": 0,
+    "tourism_api": 0,
+    "sql_writes": 0,
+    "sql_read_only_snapshots": 1,
+    "local_mock_serialization": 1,
+    "finisher_sql_reads": 0
+  },
+  "native_changes": 0,
+  "production_changes": 0,
+  "initial_audit_error_preserved": {
+    "error_type": "KeyError",
+    "reason": "cost collector assumed max_tokens; GPT-OSS uses max_completion_tokens",
+    "artifacts_preserved": true
+  },
+  "limits": [
+    "UTF-8 bytes are not token counts.",
+    "HTTP413 root cause cannot be established without the missing upstream response body.",
+    "The exact original full context was not retained; reference_now_utc was recomputed.",
+    "No context or production change was executed; candidates are value-equality checked projections.",
+    "Prices/economic fields, room/stay IDs, plan positions and history references are not removed."
+  ],
+  "private_artifacts": {
+    "folder": "/home/aegml/checks/groq-group04-t4-context-audit-20261027",
+    "costs_sha256": "272f0e75d9439b0fe0a278f52999fee02eb87a2f2dc42ca180e64b1cf9b132dc",
+    "before_context_sha256": "f61bf60fb010b8b1ee13fb434c89d69fcab33cf2e27790c36bbdaf10d0fd64c8",
+    "canonical_schema_artifact_sha256": "f1b0c1249ed85c2f794ee0b28516ed14fba40657f591c709c5dbce6d9952bdc3",
+    "rendered_body_artifact_sha256": "3f1a3ecac5125c6730ba84eab6f7496267b162199b77fd63745aed983e10f5a2",
+    "candidate_artifact_sha256": "e908cec6b5c368dbea7f70574707a1dc3b868b8125e7166c01cc47a046771fe0"
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "source_commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "source_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "source_file_sha256": "72b56a03c0973bbf3109e1a497414d7202a0599fea880051174df3a4de1eeae0",
+  "case": "ZAI100-080",
+  "turn": 7,
+  "user": "Общий бюджет теперь 470000 рублей. Добавь приоритет минимальной общей стоимости. Все девять и распределение номеров остаются.",
+  "captured_before_trip": {
+    "legs": [
+      {
+        "id": "leg-62d38bd0-8642-4223-aa42-3fc6e66227fc",
+        "mode": "flight",
+        "origin": "Москва",
+        "destination": "Дубай",
+        "departure_date": "2026-12-08"
+      },
+      {
+        "id": "leg-26a63695-18d5-426e-96ad-5bee6ffb0d40",
+        "mode": "flight",
+        "origin": "Дубай",
+        "destination": "Москва",
+        "departure_date": "2026-12-14"
+      }
+    ],
+    "stays": [
+      {
+        "id": "new-stay-1",
+        "city": "Дубай",
+        "rooms": [
+          {
+            "id": "new-room-1",
+            "traveler_ids": [
+              "new-traveler-1",
+              "new-traveler-2",
+              "new-traveler-6",
+              "new-traveler-7"
+            ]
+          },
+          {
+            "id": "new-room-2",
+            "traveler_ids": [
+              "new-traveler-3",
+              "new-traveler-4",
+              "new-traveler-8"
+            ]
+          },
+          {
+            "id": "new-room-3",
+            "traveler_ids": [
+              "new-traveler-5",
+              "new-traveler-9"
+            ]
+          }
+        ],
+        "check_in": "2026-12-08",
+        "hotel_id": null,
+        "check_out": "2026-12-14"
+      }
+    ],
+    "budget": {
+      "scope": "whole_trip",
+      "currency": "RUB",
+      "amount_minor": 50000000
+    },
+    "groups": [],
+    "origin": "Москва",
+    "trip_id": "00000000-0000-4000-8000-000000000080",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-2",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-3",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-4",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-5",
+        "age": null,
+        "type": "adult",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-6",
+        "age": 3,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-7",
+        "age": 6,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-8",
+        "age": 9,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      },
+      {
+        "id": "new-traveler-9",
+        "age": 12,
+        "type": "child",
+        "group_id": null,
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": "RU"
+    },
+    "state_version": 2
+  },
+  "captured_pending_question": {
+    "text": "Сколько отдельных семей едет и кто входит в каждую? Состав номеров без этого не распределяю.",
+    "field": "group.membership",
+    "reason": "clarification",
+    "context": {
+      "membership_unknown": true,
+      "force_clarification": true,
+      "requested_destination": {
+        "kind": "city",
+        "name": "Дубай",
+        "country_code": "AE"
+      },
+      "family_separation_required": true
+    },
+    "questions": [
+      "Сколько отдельных семей едет и кто входит в каждую? Состав номеров без этого не распределяю."
+    ],
+    "target_id": null,
+    "question_id": "captured-080-group-question",
+    "state_version": 2,
+    "requested_destination": {
+      "kind": "city",
+      "name": "Дубай",
+      "country_code": "AE"
+    }
+  },
+  "captured_waiting_reason": "clarification",
+  "captured_state_version": 2,
+  "actual_model_calls": 0,
+  "actual_response_source": "contextual_slot",
+  "actual_budget_after_minor": 50000000,
+  "identity_note": "Trip/question IDs rebased to synthetic values; relevant canonical facts and pending context unchanged. API test creates a new own session/version and seeds pending via a declared controlled bootstrap.",
+  "controlled_response": {
+    "speech_act": "CHANGE",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [],
+    "conflicts": [],
+    "reply": "Управляемая extraction независимых правок бюджета и предпочтения.",
+    "operations": [
+      {
+        "type": "set_budget",
+        "value": {
+          "amount_minor": 47000000,
+          "currency": "RUB"
+        }
+      },
+      {
+        "type": "set_preference",
+        "value": {
+          "key": "price_priority",
+          "value": "lowest_total",
+          "weight": 1.0
+        }
+      }
+    ]
+  }
+}

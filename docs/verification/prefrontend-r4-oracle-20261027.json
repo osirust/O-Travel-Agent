@@ -1,0 +1,113 @@
+{
+  "status": "PREPARED_ONLY_ORACLE_CONTROL_REVISION_CORRECTION",
+  "date": "2026-10-27",
+  "source_actual": {
+    "report_path": "/home/aegml/evaluation-runs-prefrontend/prefrontend-20261027-020041-d217d861/report.json",
+    "report_status_at_read": "IN_PROGRESS",
+    "report_sha256_at_read": "4968129ce44715f4eadefe501932b83ac8612e030237b60dcf4821e26fd71514",
+    "sha_scope": "Report snapshot read while epoch may still be running; immutable step separately bound below.",
+    "case_id": "PF-GROUP-04",
+    "step_id": "09",
+    "step_sha256": "bccf05e37af94606a0f728e467adb02defe5efdd9395c7afafc07ee5cf89de3d",
+    "original_step_status": "FAIL",
+    "original_fail_preserved": true
+  },
+  "fact": {
+    "input": "подожди",
+    "only_changed_trip_key": "state_version",
+    "before_version": 2,
+    "after_version": 3,
+    "before_status": "OPTIONS_READY",
+    "after_status": "WAITING_USER",
+    "waiting_reason": "user_pause",
+    "run_status": "completed",
+    "model_or_tool_starts": 0,
+    "event_types": [
+      "USER_MESSAGE_RECEIVED",
+      "USER_PAUSED",
+      "RUN_COMPLETED"
+    ]
+  },
+  "source_recipe": {
+    "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r3.json",
+    "sha256": "c24251b6900c8d3650181bd0c7f038c801f537e67b3aab5c0005feea5f54e2b5"
+  },
+  "new_recipe": {
+    "path": "fixtures/evaluation/prefrontend-dialogues-20261027-r4.json",
+    "sha256": "79acc0928d5163f12d782128485a7976192ea48708cf58bf85ce724cdb4fa4ea",
+    "changed_step_oracles_only": [
+      "PF-GROUP-04/09"
+    ],
+    "metadata_version_and_provenance_updated": true
+  },
+  "new_checks": [
+    {
+      "op": "trip_unchanged_except_version"
+    },
+    {
+      "op": "state_version_delta",
+      "value": 1
+    },
+    {
+      "op": "eq",
+      "path": "/waiting_reason",
+      "value": "user_pause"
+    }
+  ],
+  "old_observation_new_checks": [
+    {
+      "check": {
+        "op": "trip_unchanged_except_version"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "state_version_delta",
+        "value": 1
+      },
+      "status": "PASS"
+    },
+    {
+      "check": {
+        "op": "eq",
+        "path": "/waiting_reason",
+        "value": "user_pause"
+      },
+      "status": "PASS"
+    }
+  ],
+  "negative_checks": {
+    "semantic_mutations_rejected": [
+      "legs",
+      "stays",
+      "budget",
+      "groups",
+      "origin",
+      "trip_id",
+      "travelers",
+      "constraints",
+      "preferences",
+      "route_policy",
+      "search_policy"
+    ],
+    "version_mutations_rejected": 9,
+    "missing_trip_rejected": 2
+  },
+  "safety": {
+    "driver_sha256_before_and_after": "1c565a33599a549c0532211ed274ea036ef7fbdf0adafea13ecf39941db16eb1",
+    "driver_changed": false,
+    "source_reports_changed": false,
+    "native_changed": false,
+    "HTTP": 0,
+    "PostgreSQL": 0,
+    "LLM": 0
+  },
+  "not_claimed": [
+    "R4 actual execution",
+    "PF-GROUP-04 compound-edit PASS",
+    "Repair of original T4 causal failure",
+    "Closing real unsupported-city intent loss",
+    "Changing any other oracle"
+  ]
+}

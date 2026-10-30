@@ -1,0 +1,83 @@
+{
+  "source_case_id": "FINAL40-040",
+  "source_sha256": "6c0fc79075ed97490c107d7ca7641fa288f7dc0d17074b31f757804f2a8d31df",
+  "source_pointer": "/turns/5",
+  "checked_pointer": "/turns/5/source_events/4/payload/structured_contract/value",
+  "user": "Нужны 1 номера, семьи не смешивать. Уточни, каких участников ещё нужно распределить.",
+  "user_sha256": "848e983bacfb2127bef2d419856352d1bc4a6e411844468f4ec9076e491599e2",
+  "before_trip": {
+    "legs": [],
+    "stays": [],
+    "budget": null,
+    "groups": [
+      {
+        "id": "new-group-1",
+        "traveler_ids": [
+          "new-traveler-1"
+        ],
+        "keep_separate": true
+      }
+    ],
+    "origin": "Москва",
+    "trip_id": "2d0a40e4-936d-44e0-b370-8967daca8e30",
+    "travelers": [
+      {
+        "id": "new-traveler-1",
+        "age": null,
+        "type": "adult",
+        "group_id": "new-group-1",
+        "birth_date": null
+      }
+    ],
+    "constraints": [],
+    "preferences": [],
+    "route_policy": {
+      "kind": "round_trip",
+      "end_city": null
+    },
+    "search_policy": {
+      "mode": "HYBRID",
+      "demo_fallback": true,
+      "hotel_provider": "liteapi",
+      "flight_provider": "duffel",
+      "guest_nationality": null
+    },
+    "state_version": 2
+  },
+  "before_pending": {
+    "text": "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание.",
+    "field": "stay.rooms",
+    "reason": "clarification",
+    "context": {
+      "children_count": 0,
+      "children_known": true,
+      "force_clarification": true,
+      "requested_room_count": 1,
+      "room_target_selection_required": true
+    },
+    "questions": [
+      "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание."
+    ],
+    "target_id": null,
+    "question_id": "d99aff52-6bd9-448b-85eb-563ac2a559da-question",
+    "state_version": 2
+  },
+  "before_status": "WAITING_USER",
+  "before_waiting": "clarification",
+  "checked_model": {
+    "reply": "Понял, нужно 1 номер и семьи не смешивать. Однако мне всё ещё нужно уточнить, в каком городе будет это проживание. Укажите город или конкретное проживание, к которому относятся эти номера.",
+    "control": {
+      "action": "continue"
+    },
+    "unknowns": [
+      "К какой именно остановке относятся эти номера? Укажите город или конкретное проживание."
+    ],
+    "conflicts": [],
+    "operations": [],
+    "speech_act": "ASK",
+    "information_subject": null
+  },
+  "original_assistant": [
+    "Поездка и показанные варианты не изменены."
+  ]
+}

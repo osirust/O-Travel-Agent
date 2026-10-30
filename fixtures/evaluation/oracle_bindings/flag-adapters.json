@@ -1,0 +1,838 @@
+{
+  "format": "otravel.oracle_flag_adapters.v1",
+  "revision": 1,
+  "implemented_evaluators": 0,
+  "adapters": {
+    "state.assertions": {
+      "surfaces": [
+        "trip",
+        "session"
+      ],
+      "operators": [
+        "eq",
+        "unchanged",
+        "count_where",
+        "set_eq"
+      ],
+      "requires": [
+        "initial_state",
+        "typed_expected_values",
+        "slot_policy"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "dialogue.intent": {
+      "surfaces": [
+        "messages",
+        "session"
+      ],
+      "operators": [
+        "semantic_claims",
+        "eq"
+      ],
+      "requires": [
+        "speech_act_policy",
+        "pending_slot_context",
+        "confirmation_policy"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "dialogue.response": {
+      "surfaces": [
+        "messages",
+        "session"
+      ],
+      "operators": [
+        "semantic_claims",
+        "contains",
+        "absent"
+      ],
+      "requires": [
+        "allowed_required_forbidden_claims",
+        "human_question_rubric"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "temporal.assertions": {
+      "surfaces": [
+        "trip",
+        "quote",
+        "source"
+      ],
+      "operators": [
+        "eq",
+        "within"
+      ],
+      "requires": [
+        "fixed_clock",
+        "timezone",
+        "calendar_policy",
+        "timestamps"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "allocation.assertions": {
+      "surfaces": [
+        "trip",
+        "source"
+      ],
+      "operators": [
+        "count_where",
+        "set_eq",
+        "eq"
+      ],
+      "requires": [
+        "stable_people_room_stay_leg_ids",
+        "membership_policy",
+        "occupancy_facts"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "quote_order.assertions": {
+      "surfaces": [
+        "quote",
+        "orders",
+        "events"
+      ],
+      "operators": [
+        "eq",
+        "unchanged",
+        "event_count",
+        "no_event"
+      ],
+      "requires": [
+        "quote_and_source_version",
+        "consent_payload",
+        "idempotency_key_alias",
+        "expected_order_effects"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "source.assertions": {
+      "surfaces": [
+        "source",
+        "trip",
+        "quote"
+      ],
+      "operators": [
+        "eq",
+        "semantic_claims",
+        "absent"
+      ],
+      "requires": [
+        "source_snapshot_sha",
+        "freshness_and_coverage",
+        "comparable_tariff_identity"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "fault_trace.assertions": {
+      "surfaces": [
+        "session",
+        "events",
+        "orders"
+      ],
+      "operators": [
+        "unchanged",
+        "no_event",
+        "event_count",
+        "eq"
+      ],
+      "requires": [
+        "exact_fault_point",
+        "fault_schedule",
+        "seed_or_not_supported",
+        "retry_budget",
+        "recovery_assertions"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "ui.assertions": {
+      "surfaces": [
+        "ui",
+        "messages"
+      ],
+      "operators": [
+        "eq",
+        "contains",
+        "absent",
+        "semantic_claims"
+      ],
+      "requires": [
+        "rendered_fixture",
+        "stable_assertion_surface",
+        "display_expected_values"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    },
+    "money.assertions": {
+      "surfaces": [
+        "trip",
+        "quote",
+        "source"
+      ],
+      "operators": [
+        "eq",
+        "within",
+        "count_where"
+      ],
+      "requires": [
+        "integer_minor_units",
+        "fee_basis_person_night",
+        "currency_and_fx_policy",
+        "exact_cost_breakdown"
+      ],
+      "status": "DESIGN_TEMPLATE_ONLY",
+      "implementation_ref": null
+    }
+  },
+  "flags": {
+    "429_no_state_loss": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "fault_trace.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "absence_in_catalog_not_global_impossibility": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "accessible_room_and_transfer_not_inferred": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "actual_ages_passed": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "adult_count_1": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "age_at_travel_date_checked": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "temporal.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "air_transport_excluded": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "all_flight_legs": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "all_nights_covered": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "all_nine_people_allocated_once": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "all_turns_applied": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "bed_config_verified_or_unknown": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "bounded_retry": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "fault_trace.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "budget_scope_not_silently_changed": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "cancellation_deadline_absolute_with_timezone": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "temporal.assertions",
+        "ui.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "canonical_hotel_id_verified": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "changed_price_invalidates_consent": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "changed_quote_requires_new_consent": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "child_not_assigned_adults_only_rate": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "cross_currency_sum_refused_without_fx_source": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "cross_offer_meal_not_invented": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "destination_istanbul": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "destination_not_assumed": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "exactly_one_demo_order": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "explicit_confirm_required": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "families_separate": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "family_occupancy_not_assumed": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "fees_person_night_correct": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "money.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "full_demo_without_external_keys": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "fault_trace.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "hard_direct_flight_constraint_survives": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "hard_direct_flight_not_downgraded_without_consent": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions",
+        "dialogue.intent"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "infant_assumption_not_static": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "temporal.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "meal_and_refund_checked_at_rate_level": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "missing_fields_recorded": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "dialogue.response"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "need_missing_fields_question": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "dialogue.response"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "new_consent": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "new_dates_invalidate_quote": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "new_quote": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "new_quote_before_confirmation": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_checkout_without_business_validations": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_double_stay": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_fabricated_prices": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "dialogue.response",
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_fake_partial_cancel": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_guaranteed_weather": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_old_quote_resurrection": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_past_date": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "temporal.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_real_confirmation_id": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "no_unsourced_visa_guarantee": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "not_found_not_blank_screen": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "ui.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "occupancy_validated": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "offer_references_grounded": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "origin_moscow": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "origin_st_petersburg": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "other_session_forbidden": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "fault_trace.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "partial_restoration_preserves_current_transport": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "pet_airline_and_hotel_separately_verified": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "preview_required": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "previously_cancelled_order_not_resurrected": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "price_delta_explained": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "ui.assertions",
+        "dialogue.response"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "rate_features_not_merged": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "reconfirm_required": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "refresh_restores_current_trip_no_new_order": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "refund_deadline_compared_with_local_timezone": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "temporal.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "relative_date_resolved_using_fixed_test_clock": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "temporal.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "safe_relaxation_suggested": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "dialogue.response",
+        "dialogue.intent"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "stale_price_not_honored": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "supplier_text_not_instructions": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "fault_trace.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "three_rooms_per_stay": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "allocation.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "timeout_no_duplicated_order": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "fault_trace.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "total_budget_120000": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "total_budget_scope_includes_all_known_categories": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "money.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "total_count_not_additional_count": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "total_equals_52500": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "money.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "ui_success_only_when_order_durable": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions",
+        "ui.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "unavailable_offer_invalidated": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "undo_new_revision": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "state.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "unknown_costs_not_zero": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "unknown_outcome_not_retried_blindly": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "quote_order.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    },
+    "unsatisfiable_no_fake_offer": {
+      "status": "UNBOUND",
+      "candidate_adapters": [
+        "source.assertions"
+      ],
+      "implementation_ref": null,
+      "note": "Candidate surfaces only; bind expected values, initial context and evaluator revision before execution."
+    }
+  }
+}

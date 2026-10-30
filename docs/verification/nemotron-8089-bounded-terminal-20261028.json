@@ -1,0 +1,122 @@
+{
+  "verification_id": "HARNESS-008-NEMOTRON-R17-072-080-BOUNDED-20261028",
+  "status": "STOPPED_PARTIAL_KNOWN_PREPOST_ADMISSION",
+  "commit": "db91394202dc1228719b6fd036caeb3774653e00",
+  "archive_package_sha256": "4e53aa605a1ca549d922298df3cb0db4829168f14dbb10f417a2483ea5277041",
+  "source_sha256": "81a7e59c65d41da8dfc6101fc0429c455c259561e44f6a9a79f0dc99323058ca",
+  "oracle_sha256": "518f087dabfb220ce547fd45280aaf0e5fea7d324f2c0b4d3caf0acbd5fffd4c",
+  "model": {
+    "llm_provider": "openrouter",
+    "model": "nvidia/nemotron-3.5-super-vl:free"
+  },
+  "selected_original_inputs": 78,
+  "submitted_completed_inputs": 41,
+  "completed_full_cases": [
+    "ZAI100-072",
+    "ZAI100-073",
+    "ZAI100-074",
+    "ZAI100-075"
+  ],
+  "partial_case": {
+    "id": "ZAI100-076",
+    "completed_turns": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "first_not_submitted": 7,
+    "reason": "39 used plus required next reservation2 exceeds configured40 beforePOST"
+  },
+  "not_run_cases": [
+    "ZAI100-077",
+    "ZAI100-078",
+    "ZAI100-079",
+    "ZAI100-080"
+  ],
+  "actual_http": {
+    "model_attempts": 39,
+    "supplier_attempts": 79
+  },
+  "tool_event_count": 93,
+  "native_terminal_counts": {
+    "agent_events": 502,
+    "agent_runs": 41,
+    "demo_orders": 0,
+    "messages": 82,
+    "quotes": 0,
+    "sessions": 5,
+    "pending_or_running": 0,
+    "model_call_started": 39
+  },
+  "bounds": {
+    "models": 40,
+    "supplier_http": 500,
+    "per_run": 2,
+    "parallel": 1,
+    "pacing_seconds": 2,
+    "no_fallback": true,
+    "no_checkout_or_supplier_booking_payment": true
+  },
+  "key_before_whitelist": {
+    "at": "2026-10-28T01:41:37.279624+00:00",
+    "model": "nvidia/nemotron-3.5-super-vl:free",
+    "key_http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_daily_limit": 50,
+    "free_daily_remaining": 47,
+    "all_pricing_zero": true,
+    "counter_may_lag": true,
+    "prior_micro_attempts_separately_recorded": 4,
+    "inference": 0,
+    "billing_changes": 0
+  },
+  "key_after_whitelist": {
+    "at": "2026-10-28T01:52:35.909338+00:00",
+    "model": "nvidia/nemotron-3.5-super-vl:free",
+    "key_http_status": 200,
+    "is_free_tier": true,
+    "usage_daily_credits": 0,
+    "credit_limit": 0.01,
+    "credit_limit_remaining": 0.01,
+    "free_daily_limit": 50,
+    "free_daily_remaining": 8,
+    "all_pricing_zero": true,
+    "counter_may_lag": true,
+    "prior_micro_attempts_separately_recorded": 4,
+    "inference": 0,
+    "billing_changes": 0
+  },
+  "prior_micro_attempts_separate": 4,
+  "startup_zero_new_counts_checked": true,
+  "runtime_guarded_stopped": true,
+  "database_retained_no_reset": true,
+  "offline_partial_checks": {
+    "case_files_found": 9,
+    "source_cases": 80,
+    "source_turn_ids": 697,
+    "fully_bound_case_oracles": 0,
+    "check_status_counts": {
+      "PASS": 247,
+      "FAIL": 3,
+      "NEEDS_ADAPTIVE": 1,
+      "MISSING_EVIDENCE": 2
+    },
+    "comparability_counts": {}
+  },
+  "full_behavioral_status": "INCOMPLETE_ORACLES_NOT_80PASS",
+  "semantic_review_scope": "Completed41runs do not mean41semanticPASS; manualreview is separate. Omitted edits, extraquestions and replyscope defects remain.",
+  "limitations": [
+    "Known prePOST admission stop is separatelyaudited; original genericUNKNOWN_OR_BLOCKED status not rewritten.",
+    "Startupsource/model/caps/zero counts checked beforeinference, but originalstartupreadiness bytes were overwritten onstop after export-helperquotingfailure. OriginalSHA remains and limitation is preserved in privateaudit.",
+    "Not uniform80dialogue or106scenario languageacceptance.",
+    "LaterGroq continuation is explicitlyseparatemixed-model lineage, not hiddenfallback."
+  ],
+  "private_report_sha256": "67acf38c1be3586195f9ad3fa2952d96351547e0f6561418c3145c49c81f4a0d",
+  "private_admission_audit_sha256": "d6baafee83136a1220579042175888ecbc0bf2c5efd83a69d730db9a5ac50125"
+}

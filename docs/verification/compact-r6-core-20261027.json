@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-27",
+  "finding_id": "HARNESS-004-GROQ-REQUEST-SIZE-001",
+  "status": "CONTROLLED_EXACT_DEDUP_STATIC_GUIDE_COMPRESSION_PASS_ACTUAL_R6_PENDING",
+  "source_failure": "docs/verification/prefrontend-gptoss-initial-20261027.json",
+  "full": {
+    "tests": 4987,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 188.748,
+    "junit": ".local/evaluation/after80-20261027/full-compact-r6-final.xml",
+    "sha256": "949917770401947868795b7e8c83f27a2c786f13fbf5f7ede9dca8a1d50c094f"
+  },
+  "repairs": [
+    "Newest exact DTO duplicate batch retained without merging changed prices/IDs/order or pulling older batches.",
+    "Only actual input message ID removed from the same last12 history window; distinct prior identical text remains and no older message is backfilled.",
+    "11 SHA-matched code-static guide clauses are compressed to reviewed English; unknown/custom values and all trip/prices/history/reference data stay unchanged.",
+    "Groq strict extraction only uses static-guide compression; no context truncation, budget inference or discarded conditions.",
+    "Actual request body bytes/SHA captured request-locally without headers/plaintext; HTTP413 remains nonretryableHTTP_ERROR with clear size text.",
+    "NewR6 explicitly previews a chosen plan before a KEEP-hotel edit. All originalR5 utterances/checks retained; oldscores unchanged."
+  ],
+  "measured_saved_context": {
+    "original_bytes": 22114,
+    "projected_bytes": 14530,
+    "scope": "Saved/rebuilt T4 data; exact future wire size and token-limit basis are not inferred"
+  },
+  "source_sha256": {
+    "otravel/harness.py": "90183d88e8f02264f3d15166ba8bc387fc73d8f5c6dc1c300a36aa3dc1e77741",
+    "otravel/providers.py": "31269b02da5cb31ba255c99baa73d9ae0dc80ec5f25742a858bd424c22259251",
+    "otravel/groq_context.py": "585208673de83dee42f56f58c002a80652cf263169d0fe106dff679876d83010",
+    "scripts/evaluate_prefrontend_dialogues.py": "c32a9a277a55c95121b215123bf4719863589a7e64c71d9bcda6586ece263209",
+    "fixtures/evaluation/prefrontend-dialogues-20261027-r6.json": "54e72c3a9b46909dd90d24796521b83573c7f6aa8351bf7f1fcdba7a7c330d47"
+  },
+  "related_overlapping_tests": {
+    "combined": 204,
+    "guide": 24,
+    "guide_related": 212,
+    "wire_metrics_related": 115,
+    "R6pure": 141,
+    "not_additive": true
+  },
+  "new_actual_HTTP": 0,
+  "local_inference": 0,
+  "supplier_bookings": 0,
+  "payments": 0,
+  "limitations": [
+    "Original413 body and exact vendor byte/TPM threshold remainUNKNOWN.",
+    "Normal actualR6 through the committed deployed source required; this is not full language or supplier acceptance.",
+    "No full80/106 or final frontend qualification."
+  ],
+  "independent_peer": {
+    "status": "NO_P1_OR_P2",
+    "old98_steps_utterances_model_policies_checks_requires_preserved": true,
+    "preview_own_active_quote_trip_version_plan_checks": true,
+    "no_consent_or_confirm_in_setup": true,
+    "static11_SHA_matches_and_semantics": true,
+    "user_trip_prices_history_selection_unchanged": true,
+    "exact_dedup_price_ID_order_negatives": true,
+    "current_input_exact_ID_no_backfill": true,
+    "files_mutated": 0,
+    "remote_HTTP": 0,
+    "PostgreSQL": 0,
+    "Native_changes": 0
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "finding_id": "HARNESS-004-RAW-BUDGET-AUTHORITY-001",
+  "related_finding_id": "HARNESS-004-EXPLICIT-BUDGET-OMISSION-001",
+  "date": "2026-10-28",
+  "status": "CONTROLLED_RAW_GUARD_AND_PG_SCOPE_TESTED_FULL_R14_PENDING",
+  "problem": "A raw model set_budget could turn third-party advice or a component budget into a whole-trip budget although the positive literal helper rejected that text.",
+  "change": "Explicit current contrary evidence suppresses only raw set_budget; lack of a positive literal alone is not a veto. Component scope asks for the whole-trip budget.",
+  "metadata": {
+    "code": "budget_question_not_assignment",
+    "negative_evidence": [
+      "reported_advice",
+      "component_budget"
+    ],
+    "component_status": "clarification_required",
+    "pending_field": "budget.amount_minor",
+    "pending_context_flag": "budget_scope_ambiguous"
+  },
+  "files": [
+    {
+      "path": "otravel/budget_intake.py",
+      "sha256": "6d511cbeed73b879933e2a38c8649262fef78aef8732efba40532a7a8484827c"
+    },
+    {
+      "path": "tests/test_budget_raw_authority.py",
+      "sha256": "d126acb554f011f9fea631f1be6eee44cf14c2ea04ea294e52fe0f005ef13788"
+    },
+    {
+      "path": "tests/test_budget_raw_authority_pg.py",
+      "sha256": "8f5c858d3bcc3aa5579e6ac14ffcb4b10b4facec916fce8df31fd53a84c60f61"
+    }
+  ],
+  "initial_private_red": {
+    "path": ".local/peer_reviews/budget-intake-r14-20261028/initial-red.xml",
+    "sha256": "9c4cebc6354bedc9888de89be0e335a2c3f5d914dd011064f50039844a87d295",
+    "failed": 10,
+    "passed": 19
+  },
+  "target": {
+    "xml_path": ".local/evaluation/after80-20261028/budget-raw-r14-initial.xml",
+    "sha256": "94791054e8b4aa189c0a1eb156ee0d4b146ed3edbe6e86eada29a5ee4eebd4db",
+    "tests": 93,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 5.839,
+    "new_pure": 29,
+    "existing_pure": 62,
+    "new_pg_api": 2
+  },
+  "controlled_pg_cases": [
+    {
+      "input": "Друг советует: установи бюджет 100000 рублей.",
+      "wrong_raw_budget_minor": 9000000,
+      "before_after_whole_trip_budget_minor": 9800000,
+      "trip_and_version_unchanged": true,
+      "party_unchanged": true,
+      "model_double_calls": 1,
+      "tool_calls": 0,
+      "orders": 0
+    },
+    {
+      "input": "Установи бюджет для питания 10000 рублей.",
+      "wrong_raw_budget_minor": 9000000,
+      "before_after_whole_trip_budget_minor": 9800000,
+      "trip_and_version_unchanged": true,
+      "party_unchanged": true,
+      "model_double_calls": 1,
+      "tool_calls": 0,
+      "orders": 0,
+      "specific_scope_question_persisted": true
+    }
+  ],
+  "preserved_boundaries": [
+    "has_asserted_budget=True retains its existing bypass",
+    "numeric and word money deltas, whole-trip/family scopes remain allowed",
+    "independent instructions and flexible NLU with no positive literal are not generally suppressed",
+    "positive literal synthesis, financial noncommit ownership, money parser and Harness are unchanged by this patch"
+  ],
+  "external_model_calls": 0,
+  "external_travel_calls": 0,
+  "checks": {
+    "ruff": "PASS"
+  },
+  "limits": [
+    "Bounded explicit advice/component forms; this is not universal discourse attribution.",
+    "Controlled adapters exercise API/PG; actual model NLU retest and full R14 remain separate."
+  ]
+}

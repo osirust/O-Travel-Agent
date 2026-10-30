@@ -1,0 +1,61 @@
+{
+  "format": "otravel.dynamic_place.hypothetical_pause.v1",
+  "finding_id": "HARNESS-004-DYNAMIC-PLACE-HYPOTHETICAL-PAUSE-001",
+  "status": "REPRODUCED_CONTROLLED_PG_RED_THEN_GREEN_PLACE_DISPATCH_SCOPE",
+  "test_file": "tests/test_place_hypothetical_pause.py",
+  "test_file_sha256": "cb4e5187555874c83a6a0e7561dfb3b633e4b04030e42ef421e3e2c617b318b2",
+  "scope": "Model ASK/PROPOSE plus explicit wait and server-owned place requests must pause without applying ordinary hypothetical domain operations.",
+  "setup": "An owned AR city question is first reached through the public typed resolve endpoint; no pending packet is seeded in SQL. All cases use fresh owned sessions in otravel_test.",
+  "user_input": "А если поехать в Аргентину, сделать бюджет 70 тысяч и возраст ребёнка 7 лет? Подожди, я ещё дополню.",
+  "controlled_model_candidate_operations": [
+    "resolve_place country Argentina for owned stay",
+    "set_budget amount_minor7000000RUB",
+    "update existing child-1 age7"
+  ],
+  "boundaries": [
+    "Harness._interpret dispatcher boundary with runtime ModelResult",
+    "Normal Harness._interpret/_extract with a controlled StubLLM adapter"
+  ],
+  "speech_acts": ["ASK", "PROPOSE"],
+  "red": {
+    "junit": ".local/evaluation/after80-20261027/place-hypothetical-pause-red.xml",
+    "junit_sha256": "4f3c7d400e99cb747d4c292c486f7bf2bf629250b4a7dbbdd9938d59ce6cfdb5",
+    "tests": 4,
+    "failed": 4,
+    "seconds": 3.04,
+    "observed_failure": "Every case changed canonical budget.amount_minor from80000000 to7000000 before the explicit pause, although the model speech act was non-consenting ASK/PROPOSE.",
+    "external_source_calls_after_bootstrap": 0,
+    "preserved": true
+  },
+  "repair_by_parent": "The place dispatcher passes extracted ordinary operations to finish_place_run only when speech_act is CHANGE. ASK/PROPOSE preserve the pause but cannot apply those candidate setters.",
+  "green": {
+    "junit": ".local/evaluation/after80-20261027/place-hypothetical-pause-related-green.xml",
+    "junit_sha256": "edb2cd8fec676155d79b03aa31d491188483dee672be3cfaad8bd6d35be68c6b",
+    "new_hypothesis_cases": 4,
+    "related_shortcut_cases": 3,
+    "total_tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 4.36,
+    "ruff_two_new_files": "PASS",
+    "verified": [
+      "Explicit user_pause is retained.",
+      "Exactly one control revision is created.",
+      "Original budget and child age remain unchanged.",
+      "All canonical trip values other than the control revision remain equal.",
+      "No coordinator/directory call or additional country lookup follows bootstrap.",
+      "No TOOL_CALL_STARTED or order is created for the hypothetical pause."
+    ]
+  },
+  "actual_remote_model_calls": 0,
+  "actual_remote_supplier_or_directory_calls": 0,
+  "native_changes": 0,
+  "runtime_source_edited_by_this_agent": false,
+  "global_recovery_or_table_cleanup_performed": false,
+  "limitations": [
+    "This qualifies the opt-in place dispatcher and normal controlled extraction for these four linked hypotheses; it is not actual NLU qualification.",
+    "The finding does not declare every non-place hypothetical/control combination closed.",
+    "No full80/106/worldwide search, price, live availability or checkout acceptance is implied."
+  ]
+}

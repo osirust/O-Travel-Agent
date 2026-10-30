@@ -1,0 +1,152 @@
+{
+  "status": "ACTUAL_KEYLESS_SAME_ID_RU_EN_CONFIRMED",
+  "scope": "Two authorized reads for explicitly named synthetic Buenos Aires/AR fixture; no application city choice.",
+  "actual_HTTP_requests": 2,
+  "HTTP_cap": 2,
+  "http_status_metrics": "NOT_PERSISTED_BEFORE_REPORT_ENCODING_FAILURE; urlopen completed both reads without HTTPError.",
+  "requests": [
+    {
+      "endpoint": "/v1/search",
+      "params": {
+        "name": "Buenos Aires",
+        "count": 5,
+        "language": "ru",
+        "countryCode": "AR",
+        "format": "json"
+      },
+      "response_sha256": "39a2f60676e9e82004053e9528c95d37148606b6a30844a205496807cc9f782f"
+    },
+    {
+      "endpoint": "/v1/get",
+      "params": {
+        "id": 3435910,
+        "language": "en",
+        "format": "json"
+      },
+      "response_sha256": "31c89e07b5ecc886bd0dfb2d309cca52557d7020e1841e9405324c7dcf1554a4"
+    }
+  ],
+  "search_result_count": 4,
+  "search_candidates": [
+    {
+      "id": 3435910,
+      "name": "Буэнос-Айрес",
+      "country_code": "AR",
+      "country": "Аргентина",
+      "country_id": 3865483,
+      "feature_code": "PPLC",
+      "latitude": -34.61315,
+      "longitude": -58.37723,
+      "timezone": "America/Argentina/Buenos_Aires",
+      "admin1": "Ciudad Autónoma de Buenos Aires",
+      "admin1_id": 3433955
+    },
+    {
+      "id": 3863777,
+      "name": "Buenos Aires",
+      "country_code": "AR",
+      "country": "Аргентина",
+      "country_id": 3865483,
+      "feature_code": "PPL",
+      "latitude": -25.81846,
+      "longitude": -63.06261,
+      "timezone": "America/Argentina/Cordoba",
+      "admin1": "Сантьяго-дель-Эстеро",
+      "admin1_id": 3835868,
+      "admin2": "Departamento de Copo",
+      "admin2_id": 3860289
+    },
+    {
+      "id": 3863774,
+      "name": "Buenos Aires Chico",
+      "country_code": "AR",
+      "country": "Аргентина",
+      "country_id": 3865483,
+      "feature_code": "PPL",
+      "latitude": -42.06697,
+      "longitude": -71.21481,
+      "timezone": "America/Argentina/Catamarca",
+      "admin1": "Чубут",
+      "admin1_id": 3861244,
+      "admin2": "Departamento de Cushamen",
+      "admin2_id": 3859556
+    },
+    {
+      "id": 6300524,
+      "name": "Международный аэропорт имени министра Пистарини",
+      "country_code": "AR",
+      "country": "Аргентина",
+      "country_id": 3865483,
+      "feature_code": "AIRP",
+      "latitude": -34.82222,
+      "longitude": -58.53583,
+      "timezone": "America/Argentina/Buenos_Aires",
+      "admin1": "Буэнос-Айрес",
+      "admin1_id": 3435907,
+      "admin2": "Partido de Ezeiza",
+      "admin2_id": 8063203
+    }
+  ],
+  "localized_ru": {
+    "id": 3435910,
+    "name": "Буэнос-Айрес",
+    "country_code": "AR",
+    "country": "Аргентина",
+    "country_id": 3865483,
+    "feature_code": "PPLC",
+    "latitude": -34.61315,
+    "longitude": -58.37723,
+    "timezone": "America/Argentina/Buenos_Aires",
+    "admin1": "Ciudad Autónoma de Buenos Aires",
+    "admin1_id": 3433955
+  },
+  "localized_en": {
+    "id": 3435910,
+    "name": "Buenos Aires",
+    "country_code": "AR",
+    "country": "Argentina",
+    "country_id": 3865483,
+    "feature_code": "PPLC",
+    "latitude": -34.61315,
+    "longitude": -58.37723,
+    "timezone": "America/Argentina/Buenos_Aires",
+    "admin1": "Buenos Aires F.D.",
+    "admin1_id": 3433955
+  },
+  "physical_identity_unchanged_by_language": true,
+  "source_id": 3435910,
+  "user_trip_selection_created": false,
+  "model_calls": 0,
+  "tourism_API_calls": 0,
+  "Master_or_secret_reads": 0,
+  "DB_or_Native_changes": 0,
+  "VPN_proxy_route_settings_changes": 0,
+  "serialization_recovery": {
+    "initial_error": "Windows CP1251 UnicodeEncodeError while saving report after the two successful reads",
+    "raw_responses_preserved": true,
+    "new_HTTP_during_recovery": 0,
+    "encoding": "UTF-8"
+  },
+  "primary_sources": [
+    "https://open-meteo.com/en/docs/geocoding-api",
+    "https://github.com/open-meteo/geocoding-api/blob/b404e4d5c75eb32a4cec68a665d1c33f523b0dab/Sources/App/GeocodingapiController.swift"
+  ],
+  "source_code_verification": {
+    "official_commit": "b404e4d5c75eb32a4cec68a665d1c33f523b0dab",
+    "path": "Sources/App/GeocodingapiController.swift",
+    "get_query_fields": [
+      "id:Int32",
+      "language:String?",
+      "format:ProtobufSerializationFormat?"
+    ],
+    "language_default_and_unknown_fallback": "en",
+    "lookup": "database.response(id,languageID)"
+  },
+  "private_folder": "E:\\work\\aegml\\.local\\evaluation\\openmeteo-ar-20261027-d55e0379",
+  "limits": [
+    "The probe selected a unique PPLC candidate only to inspect language-by-ID; no production automatic-capital policy exists.",
+    "Multiple AR locations matched the prefix; user-facing city selection must handle ambiguity and AIRP versus populated-place types.",
+    "No typo edit-distance support, hotel/flight supplier association, availability or full Harness qualification follows.",
+    "Hosted API code can differ from current public source; the two actual responses establish only this observed runtime behavior."
+  ]
+}

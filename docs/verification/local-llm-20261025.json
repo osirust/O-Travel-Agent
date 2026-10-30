@@ -1,0 +1,242 @@
+{
+  "observed_at": "2026-10-25T15:21:38.904571+00:00",
+  "source": "Ollama-local",
+  "ollama_version_requested": "0.40.11",
+  "binary_prefix": "/home/aegml/tools/ollama/releases/0.40.11",
+  "models_path": "/home/aegml/models/ollama",
+  "host": "127.0.0.1:11434",
+  "official_sources": [
+    "https://docs.ollama.com/linux",
+    "https://github.com/ollama/ollama/releases/tag/v0.40.11",
+    "https://github.com/ollama/ollama/releases/download/v0.40.11/sha256sum.txt",
+    "https://ollama.com/library/qwen3.5:4b",
+    "https://docs.ollama.com/api/generate"
+  ],
+  "archive_sha256": "7bedab90dd122661be78798e9f0edf37fccf0cccf2699d2c58ea1a3afdc04b6d",
+  "limits": {
+    "OLLAMA_HOST": "127.0.0.1:11434",
+    "OLLAMA_MODELS": "/home/aegml/models/ollama",
+    "OLLAMA_NUM_PARALLEL": "1",
+    "OLLAMA_MAX_LOADED_MODELS": "1",
+    "OLLAMA_CONTEXT_LENGTH": "16384",
+    "OLLAMA_NO_CLOUD": "1"
+  },
+  "process": {
+    "pid": 139894,
+    "uid": 1000,
+    "start_ticks": 1205818,
+    "started_at_utc": "2026-10-25T15:17:39.180000+00:00",
+    "boot_id": "f44f3b60-0918-4ec9-8b28-107f06f5df95",
+    "executable": "/home/aegml/tools/ollama/releases/0.40.11/bin/ollama",
+    "cwd": "/home/aegml/tools/ollama/runtime",
+    "argv": [
+      "/home/aegml/tools/ollama/releases/0.40.11/bin/ollama",
+      "serve"
+    ],
+    "observed_limits": {
+      "OLLAMA_HOST": "127.0.0.1:11434",
+      "OLLAMA_MODELS": "/home/aegml/models/ollama",
+      "OLLAMA_NUM_PARALLEL": "1",
+      "OLLAMA_MAX_LOADED_MODELS": "1",
+      "OLLAMA_CONTEXT_LENGTH": "16384",
+      "OLLAMA_NO_CLOUD": "1"
+    }
+  },
+  "autostart_configured": false,
+  "cloud_credentials_inherited": false,
+  "limitations": [
+    "A single synthetic schema probe is not full harness or 106-case NLU acceptance.",
+    "API main configuration was not changed.",
+    "Loopback binding is not a Docker bridge exposure."
+  ],
+  "before_start": {
+    "observed_at": "2026-10-25T15:10:09.369488+00:00",
+    "port_busy": false,
+    "recorded_owned_process": null,
+    "models_path_existed": false,
+    "model_names_before": []
+  },
+  "retired_owned_processes": [
+    {
+      "pid": 134156,
+      "uid": 1000,
+      "start_ticks": 1160809,
+      "started_at_utc": "2026-10-25T15:10:09.090000+00:00",
+      "boot_id": "f44f3b60-0918-4ec9-8b28-107f06f5df95",
+      "executable": "/home/aegml/tools/ollama/releases/0.40.11/bin/ollama",
+      "cwd": "/mnt/e/work/aegml",
+      "argv": [
+        "/home/aegml/tools/ollama/releases/0.40.11/bin/ollama",
+        "serve"
+      ],
+      "stopped_at_utc": "2026-10-25T15:17:39.453727+00:00",
+      "reason": "explicit_owned_restart"
+    }
+  ],
+  "runtime_archive_bytes": 1508659610,
+  "runtime_archive_source": "https://github.com/ollama/ollama/releases/download/v0.40.11/ollama-linux-amd64.tar.zst",
+  "release_verification": {
+    "version": "0.40.11",
+    "sha256": "7bedab90dd122661be78798e9f0edf37fccf0cccf2699d2c58ea1a3afdc04b6d",
+    "source": "https://github.com/ollama/ollama/releases/download/v0.40.11/ollama-linux-amd64.tar.zst",
+    "verified_at": "2026-10-25T15:09:57.302106+00:00"
+  },
+  "disk_allocated_bytes": {
+    "/home/aegml/tools/ollama": 3993702400,
+    "/home/aegml/models/ollama": 3324276736
+  },
+  "nvidia_smi": {
+    "exit_code": 0,
+    "gpu_rows": [
+      "NVIDIA GeForce RTX 5070 Ti, 16303 MiB, 14413 MiB, 621.01"
+    ]
+  },
+  "server": {
+    "version": "0.40.11"
+  },
+  "model_tags": [
+    {
+      "name": "qwen3.5:4b",
+      "model": "qwen3.5:4b",
+      "modified_at": "2026-10-25T18:15:21.380043227+03:00",
+      "size": 3324173934,
+      "digest": "d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04",
+      "details": {
+        "parent_model": "model.gguf",
+        "format": "gguf",
+        "family": "qwen35",
+        "families": [
+          "qwen35"
+        ],
+        "parameter_size": "4.2B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 262144,
+        "embedding_length": 2560,
+        "runner": "llamacpp"
+      },
+      "capabilities": [
+        "completion",
+        "vision",
+        "tools",
+        "thinking"
+      ]
+    }
+  ],
+  "model_show": {
+    "details": {
+      "parent_model": "model.gguf",
+      "format": "gguf",
+      "family": "qwen35",
+      "families": [
+        "qwen35"
+      ],
+      "parameter_size": "4.2B",
+      "quantization_level": "Q4_K_M",
+      "runner": "llamacpp"
+    },
+    "capabilities": [
+      "completion",
+      "vision",
+      "tools",
+      "thinking"
+    ],
+    "modified_at": "2026-10-25T18:15:21.380043227+03:00"
+  },
+  "model_info": {
+    "general.architecture": "qwen35",
+    "general.parameter_count": 4205751296,
+    "qwen35.context_length": 262144
+  },
+  "micro_probe": {
+    "attempted_at": "2026-10-25T15:18:00.782668+00:00",
+    "source": "Ollama-local",
+    "model": "qwen3.5:4b",
+    "synthetic_data_only": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "destination": {
+          "type": "string",
+          "const": "Казань"
+        },
+        "adults": {
+          "type": "integer",
+          "const": 2
+        },
+        "nights": {
+          "type": "integer",
+          "const": 3
+        },
+        "source": {
+          "type": "string",
+          "const": "Ollama-local"
+        }
+      },
+      "required": [
+        "destination",
+        "adults",
+        "nights",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "request_count": 1,
+    "status": "PASS_MICRO_SCHEMA_ONLY",
+    "response_facts": {
+      "destination": "Казань",
+      "adults": 2,
+      "nights": 3,
+      "source": "Ollama-local"
+    },
+    "latency_seconds": 48.69,
+    "timing": {
+      "total_duration": 48672357201,
+      "load_duration": 25856692176,
+      "prompt_eval_count": 53,
+      "prompt_eval_duration": 21624592000,
+      "eval_count": 44,
+      "eval_duration": 1188222000,
+      "done_reason": "stop"
+    },
+    "ps_after": [
+      {
+        "name": "qwen3.5:4b",
+        "model": "qwen3.5:4b",
+        "size": 3650124512,
+        "digest": "d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.2B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-25T18:20:49.471356957+03:00",
+        "size_vram": 3650124512,
+        "context_length": 16384,
+        "runner": "llamacpp"
+      }
+    ],
+    "processor_cli": "NAME          ID              SIZE      PROCESSOR    CONTEXT    RUNNER      UNTIL                   \nqwen3.5:4b    d8b0f5e9760c    3.7 GB    100% GPU     16384      llamacpp    About a minute from now"
+  },
+  "compute_observed": "GPU",
+  "model_pull": {
+    "model": "qwen3.5:4b",
+    "elapsed_seconds": 283.203,
+    "status": "success",
+    "recorded_from": "observed model_pull_completed setup stdout",
+    "completed_at_model_timestamp": "2026-10-25T18:15:21.380043227+03:00"
+  },
+  "observed_listeners": [
+    {
+      "local_address": "127.0.0.1:11434",
+      "pid": 139894
+    }
+  ],
+  "wsl_distribution": "AegML-Hackathon",
+  "windows_vhd_base_path": "C:\\WSL\\AegML-Hackathon",
+  "windows_c_free_bytes": 659588386816
+}
